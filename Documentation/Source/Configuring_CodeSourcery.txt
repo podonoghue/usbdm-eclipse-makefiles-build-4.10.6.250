@@ -1,0 +1,229 @@
+/*!
+\page codeSourceryPage CodeSourcery HOW-TO for Windows
+
+This page provides brief instructions on how to set up CodeSourcery Lite for use with 
+Eclipse IDE and USBDM BDM hardware for Coldfire V1-V4 targets on a MS-Windows platform.
+
+\section requiredSoftware Required Software
+The following software needs to be installed:\n
+-  Eclipse Helios Classic (3.6.1)  \n
+   Download from: http://www.eclipse.org/downloads/ \n
+   Unzip to a suitable permanent location for the application e.g. "C:\Apps\Eclipse"
+   Create a program object for the main eclipsse application "C:\Apps\Eclipse\eclipse.exe"
+-  Codesourcery Lite \n
+   Download: http://www.codesourcery.com/sgpp/lite_edition.html \n
+   The version at the current time was <i>Sourcery G++ Lite 2010.09-39 for ColdFire ELF</i> \n
+   Run the installer to install to the default location "C:\Program Files\CodeSourcery\Sourcery G++ Lite"
+   Allow the installer to modify the PATHs  
+-  Add Eclipse Extensions \n
+   These are most easily installed from within Eclipse using the Software Installer  \n
+   Due to a bug in the current CDT build it is necssary to download the following file that conains
+   the CDT extension (including cross compiler support):\n
+   http://download.eclipse.org/tools/cdt/builds/7.0.1/I.I201009241320/index.html \n
+   Save in a suitable temporary location.\n
+   Run Eclipse and go to the Desktop from the Welcome Screen (if necessary).\n
+   Access from Eclipse Menu <b>Help->Install New Software...</b> \n
+   Click the <b>Add...</b> button next to the software sites select box.\n
+   Click the <b>Archive...</b> button and select the downloaded file.\n
+   Select the following Features for installation:\n
+   <ul>
+   <li>CDT Main Features</li> \n
+   <li>CDT Optional Features-> \n
+        <ul>
+        <li>C/C++ GCC Cross Compiler Support</li>
+        <li>C/C++ GDB Hardware Debugging</li>
+        </ul>
+   </li>
+   </ul>
+   Restart Eclipse\n
+-  Download USBDM from http://sourceforge.net/projects/usbdm/ \n
+   Unzip and copy the contents of \n 
+   <b>Win32\\Release_DLLs\\CodeSourcery</b> folder to \n
+   <b>C:\\Program Files\\CodeSourcery\\Sourcery G++ Lite\\bin</b> \n
+   These DLLs make the USBDM BDM appear as a OSBDM-JM60 BDM device.
+
+\section creatingEclipseProject Creating an Eclipse Cross-Compiler Project
+<table border="0">
+   <tr>
+      <td>
+         - Select <i>File->New->Project</i> from the Menu\n
+         The dialogue shown should appear.\n
+         Select the options to create a C or C++ Project as needed.\n
+         Click <i>Next</i>
+      </td>
+      <td colspan=2>
+         \image html "NewProject.png"
+      </td>
+   </tr>
+   <tr>
+      <td>
+         - Choose a project Name\n
+         Choose options to create a basic Cross-compile project. \n
+         Click <i>Next</i>
+      </td>
+      <td colspan=2>
+         \image html C++Project.png
+      </td>
+   </tr>
+   <tr>
+      <td>
+         - Eclipse needs to know where to find the GCC Tools and the language-specific prefix used.  These are
+          the ones used by CodeSourcery for a M68K (Coldfire etc) target.\n
+         Click <i>Next</i> 
+      </td>
+      <td colspan=2>
+         \image html CrossCompileOptions.png
+      </td>
+   </tr>
+   <tr>
+      <td>
+         - The Debug and release builds are usually suitable.\n
+         Click <i>Finish</i>
+      </td>
+      <td colspan=2>
+         \image html SelectConfigurations.png
+      </td>
+   </tr>
+   <tr>
+      <td>
+         - It is necessary to change some of the link options for the project.\n
+         Make sure the project is selected in the Project Explorer window and 
+         then select <i>Project Properties</i> from the menu. 
+      </td>
+      <td>
+         \image html ProjectExplorer.png
+      </td>
+      <td>
+         \image html ProjectPropertiesMenu.png
+      </td>
+   </tr>
+</table>
+<table border="0">
+   <tr>
+      <td>
+         - Locate the Linker setting shown below and add the appropriate linker script with the T option.\n
+         This would be similar to <B>-T mcf51cn128-ram.ld</B>.  The example used is for a RAM-based 
+         debugging session to avoid the need for programming the target.\n
+         These script files are located in the m68k-elf\\lib directory of the CodeSourcery
+         installation and are describe in Chapter 4 of the <i>CodeSourcery Getting Started</i> PDF.
+      </td>
+   </tr>
+   <tr>
+      <td>
+         \image html ProjectLinkOptions.png
+      </td>
+   </tr>
+</table>
+<table border="0">
+   <tr>
+      <td>
+         - Add a source folder to the project by right-clicking on the project in the Project Browser.
+         <hr>
+         - Complete the dialogue to create the folder.
+      </td>
+      <td>
+         \image html NewFolderMenu.png
+      </td>
+      <td>
+         \image html NewSourceFolder.png
+      </td>
+   </tr>
+</table>
+<table border="0">
+   <tr>
+      <td>
+         - Add a source folder to the project by right-clicking on the project in the Project Browser.
+         <hr>
+         - Complete the dialogue to create the file.
+      </td>
+      <td>
+         \image html NewSourceMenu.png
+      </td>
+      <td>
+         \image html NewSource.png
+      </td>
+   </tr>
+</table>
+
+- Create a minimal <b>main()</b> function.
+\verbatim
+typedef unsigned char U8;
+#define SOPT1 (*(volatile U8 *) 0xFFFF8101)
+#define PTDDD (*(volatile U8 *) 0xFFFF8031)
+#define PTDD  (*(volatile U8 *) 0xFFFF8030)
+
+#define GREEN_LED (1<<0)
+#define RED_LED   (1<<1)
+
+void delay(void) {
+int i;
+   for(i=0; i<100000; i++) {
+      asm("nop");
+   }
+}
+
+int main(void) {
+   SOPT1  = 0; // Disable COP
+   PTDDD |= GREEN_LED|RED_LED;
+   PTDD  |= GREEN_LED|RED_LED;
+   PTDD  &= ~RED_LED;
+
+   for(;;) {
+      PTDD ^= GREEN_LED|RED_LED;
+      delay();
+   }
+}
+\endverbatim
+
+- You may now build the project by clicking on the hammer icon.
+
+\section creatingLaunchConfiguration Creating A Launch Configuration
+
+- First make sure that the project is selected in the Project Explorer window
+ and then select <b>Run->Debug Configurations</b> from the menu.
+
+\image html DebugConfiguationBare.png
+
+- Select <b>GDB Hardware Debugging</b> in the left panel and then click on the
+  New Launch Configuration button at top left of the dialogue.
+  
+- Select the Debugger Tab in the dialogue.\n
+  Give the launch configuration a name and correct the name of the <b>gdb</b> debugger.\n
+  Unselect <i>Use remote target</i> as we will be launching the CodeSourcery <i>sprite</i> 
+  locally.  
+
+\image html DebuggerTab.png
+
+- Click on the <i>Select other</i> link at the bottom of the dialogue and change the
+  preferred launcher as shown below. Click OK to close and return to the tabbed dialogue.
+
+\image html PreferredLauncher.png
+
+- Select the Startup Tab in the dialogue.\n
+  Complete the following settings:
+    - Choose a reset delay appropriate to your hardware.  1 second should be adequate.
+    - Select Halt
+    - Add commands to start the Codesourcery Sprite with the appropriate options for the
+      target being used and set the initial PC to the entry point of the program. \n
+      <i>target remote | m68k-elf-sprite osbdm://0/ mcf51cn128 \n
+      set $pc=_start</i>
+    - Select to <i>load image</i> from the project binary since we are using a RAM-based program.  Flash-based targets 
+      would need to be programmed beforehand.
+    - Select to <i>load symbols</i> from the project binary as well.
+    - <i>Set a breakpoint</i> at main()and to <i>resume</i> execution.  This will cause the debugger 
+      session to stop at the first line of the main() routine when debugging is started. \n
+
+\image html StartupTab.png
+
+\section debugging Debugging
+
+- You can now start a debugging session using the launch configuration just created. \n
+  You should find that the follow steps occurring:
+   - Session starts
+   - The program is downloaded to the target
+   - Execution commences at the program entry point
+   - Execution stops at the first line of main()
+   
+   You should now be able to debug in the usual fashion.
+
+*/

@@ -1,0 +1,69 @@
+/*!
+ \page driverPage USB Driver Installation
+
+To support the 64-bit version of Windows it has been necessary to update to using libusb1.0 drivers. For 
+consistency this is also done on Linux and the other windows platforms. As part of this process the 
+Vendor-ID/Product-ID (VID/PID) for the hardware (BDM) has been changed. This will allow the co-existence of
+ Freescale's OSBDM-JM60 hardware while using a new driver for USBDM. Formerly both these BDMs used the same
+  VID/PID and changes to the driver would not be possible without rendering the OSBDM-JM60 inoperable. \n\n
+<b>Note:</b> On Windows, libusb1.0 is a thin wrapper around the Microsoft winUSB low-level USB drivers.  Because
+of this you may see references to winusb in the following.\n
+<hr>
+ \section NoteOnFirmwareChange Note for upgrading from version 3.x to 4.x USBDM firmware
+ 
+This change is complicated by the existence of a Bootloader in the BDM firmware.  If not replaced this
+loader will continue to use the original VID/PID.  Because of this, it is desirable to completely replace the
+BDM firmware. \n\n
+For JS16 based BDMs this is a simple process since the Freescale JS12 Bootloader software may be 
+used to replace all the firmware.  See \ref installationPage. \n\n
+For JMxx based BDMs it is necessary to use a HCS08 programmer to re-program the entire device so that the 
+Bootloader is updated when the rest of firmware is changed. If a programmer is not available then it is still
+possible to update the BDM firmware <i>using the Bootloader</i> but the Bootloader will remain unchanged.  
+To do this it will be necessary to install the drivers twice - once for the old VID/PID used by the Bootloader
+and again for the new VID/PID used by the main firmware.  Doing so will render any OSBDM drivers inoperable 
+on that USB port.
+
+<hr> 
+\section InstallingDriversSectionWindows Installation of USBDM USB drivers for Windows
+  
+The driver installation has been considerably simplified from version 4.10.3 by the provision of separate driver 
+installers.  There are two installers provided - One for WIN-32-bit and separate one for WIN-64-bit systems.  
+Please install the drivers before plugging in a BDM.  You may receive several prompts warning you that the 
+drivers are not signed.  This is to be expected since I have not paid for them to be signed.\n
+After installing the drivers, plugging in a BDM should trigger the actual driver installation. \n 
+If you need to update the drivers it will be necessary to uninstall them from the Windows Add/Remove programs 
+utility before installing the new version.
+ 
+<hr> 
+\section InstallingDriversSectionLinux Installation of USBDM USB drivers for Linux
+There isn't any.  The installation script provided will modify the /etc/udev/rules.d file to allow
+access to the USBDM device. The required driver for USBDM BDM interface (LibusbV1) is included in the standard
+Linux (at least Ubuntu current version).  The CDC (serial port) is a standard device and should also be installed
+without any extra steps.
+
+If more installation is required on your version you will have to investigate this yourself.  I'm not a Linux 
+expert and I don't have access to other versions for testing.  If you find other steps are necessary then please
+ advise and I will try to update the installation accordingly.
+
+<hr>
+ \section LinuxDrivers Linux Drivers
+ The shell scripts supplied with the linux version should install the required information for the libusb drivers to work on a linux machine.
+ 
+ You will also need to make sure you have installed some libraries:
+   (Some information posted by joncas on Freescale Forums - thanks)
+  \verbatim
+  Hello PGO,
+  
+  I just tried your version 4.6 with Codewarrior 10.1 on a clean install of Ubuntu 11.04 (32 bit).
+  In case it helps anyone else trying this, it required adding the following libraries with the Synaptic Package Manager:
+    - tcl8.5 
+    - libwxgtk2.8-0 
+    - lbwxgtk2.8-dbg 
+    - libstdc++5 
+    - libxerces-c3.1
+  Then it seems to run fine.
+  Many thanks and best regards!
+   
+  Robert
+  \endverbatim
+*/

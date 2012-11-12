@@ -1,0 +1,326 @@
+/*!
+\page pageHistory History & Issues
+
+\section sectionHistory Revision History
+   V4.10.4 (November 2012) -
+      - Improved HCS08/HCS12 programming speeds (15~30%)
+   
+   V4.10.3 (November 2012) -
+      - Updated device driver installation (V1.0.1) (removed unnecessary driver). 
+      - ELF Files now supported for MC56F80xx devices.
+      - Changed to shared DLLs build for wxWidgets.
+      - Bug fixes:
+        - DSC Access to ONCE registers when target running
+        - Fixed BDM doing reset when setting target even if already powered. 
+          This was interfering with doing a 'gentle' connection to a running target.
+        - ARM interface now reports access errors on failing memory access rather than following access.
+        - Corrected corruption in large reads for ARM GDI Interface.
+   - V4.10.2 (October 2012) -
+      - Updated installer for Codewarrior 10.3 Beta
+      - Changed to shared DLLs build for wxWidgets
+      - Changed to Make based projects
+      - Bug fixes
+         - Kinetis & CFV1 targets now correctly support RAM targets (again).
+         - Firmware fixes for an output glitch on USBDM_JMxx_CLD & CLC.  
+   -  V4.10.0 (September 2012) -
+      - Added support for ARM-SWD interfaces (requires different hardware). \n 
+        ARM-SWD is much faster than ARM-JTAG. For reference, programming a file
+        to flash using Codewarrior 10.2:     \n
+        \verbatim
+                      Readback     Without 
+                      verify       readback
+        OSJTAG        1m 20s         53s
+        USBDM-JTAG       47s         23s
+        USBDM-SWD        21s         17s         \endverbatim
+      - Improved ARM-JTAG interface speed.
+      - ARM interfaces (JTAG & SWD) are now provided by USBDM interface DLL.  This means that the ARM API
+        is now uniform with the RS08, HCS08, HCS12 and CFV1 interfaces.  A compatibility DLL is provided for legacy use.
+      - Simple ARM-SWD interface hardware designs are provided.   
+      - Bug fixes
+         - Alignment error in programming code for some S12 targets
+         - Corrected load addresses for ELF files for HCS08 and HCS12
+         - Added support for MCF51AG128
+   -  V4.9.5 (July 2012) -
+      - Added Support for ELF file format (only tested with Kinetis/Coldefire+) 
+      - DSC programmer extended
+         - Programming firmware updated.
+         - MC56F83xx family extended but untested and limited device entries have been created.  It may be possible to
+           add other devices.
+      - Added device entries for MM912H634 etc.
+      - Programmer dialogue size reduced.
+      - Added support for FlexNVM partitioning in Coldfire+ and Kinetis devices
+      - Added support for programming FlexNVM regions when partitioned (at least partially) as data Flash.
+      - Added GDB servers for Kinetis and Coldfire devices.  Tested with Codesourcery (Tutorial to follow).
+      - Versioning of BDM firmware now has minor numbers
+      - Programming of FlexNVM memory partitioned as Flash is now supported
+      - Partitioning of FlexNVM as EEEPROM is now supported
+      - XML Memory descriptions extended (improved syntax, flexNVM syntax added) 
+      - Bug fixes
+         - Added/corrected entries for several HCS12 devices
+         - Improved DSC communication routines to work correctly with a wider range of devices.
+         - Kinetis device descriptions extended
+   -  V4.9.4 (April 2012) -
+      - Programmers
+         - Added Load and Go.
+         - Added check for disk file change and Auto Reload option.
+         - Added Smart security option.
+         - Deleted Prompt to cycle power option - This was being ignored in most cases anyway :)
+         - Added Advanced option page etc.
+         - Added several command line options corresponding to above.
+      - More bug fixes
+         - HCS08 programming in Codewarrior 10.1 may fail without warning
+      - Extended reset & power options added to GDI & Programmers
+   -  V4.9.3 (March 2012) -
+      - More late bug fixes
+      - Command line operation of stand-alone programmer results in disconnected process.
+      - Added '-execute' option to above.
+      - Fixed bug in Codewarrior 10.1 install, CW 10.1 & 10.2 may both be installed together.
+   -  V4.9.2 (February 2012) -
+      - More late bug fixes
+      - Fixed alignment bug in HCS12 programmer for newer targets using PFlash.
+   -  V4.9.1 (February 2012) -
+      - Some late bug fixes
+   -  V4.9 (February 2012) -
+      - Extensive changes to HCS12 programmer
+      - Added programming algorithms for several HCS12 devices (HY,HA,XE,XS,P).
+   -  V4.8 (December 2011) -
+      - General update of how the programming algorithms are controlled.  \n
+        They are much more configurable by the external XML and TCL files.  This allows for some customisation of the
+        memory map on HCS12 devices or custom startup operations.  
+      - Added Coldfire+ devices & algorithms.
+      - Erase options extended (on some targets).
+      - Re-testing of all devices (see list below) where complete memory images including paging were used.
+      - Bug fixes on HCS08 programming.  Unsure were these were introduced but (hopefully) now squashed.
+      - Paging of Flash and EEPROM has been updated for HCS12 and HCS08 devices.  
+      - The memory image descriptions are now more detailed and are more carefully enforced when programming.  Attempting
+        to program non-existent memory is now reported before programming is attempted.  This should result in more 
+        meaningful error messages.
+      - msi install updated for Codewarrior 10.2
+      - Testing with Codewarrior 10.2 Beta
+   -  V4.7 (October 2011) -
+      - Improved support for devices in low power modes (Eclipse).
+      - Improved support for secured devices (Eclipse).
+      - BDM interface speed control implemented for CFVx devices
+      - Windows Installer
+      - Updates for Eclipse Kinetis device name changes
+      - BDM firmware (including bootloader) will now auto-detect 4, 8 or 12 MHz crystals. (JS16/JMxx)
+      - Added progress dialogues for programmers.
+      - Programmer erase options are more consistent. 
+      - Bug fixes
+         - Devices incorrectly identified as secured
+         - Failure to connect to device in low power modes
+         - Corrections to CFVx connection sequences
+         - Corrections to USB CDC Driver installation
+         - Bootloader reliability improved
+         - Corrections to USB CDC driver installation file. 
+   -  V4.6 (June 2011) -
+      - Support for Kinetis Targets in Codewarrior V10.1 (Eclipse, USBDM/CF only)
+      - Improvements to USB error checking (JMxx/JS16 only)
+      - TCL scripting
+   -  V4.5 (February 2011) -
+      - Added devices
+      - Added EEPROM support
+      - Added Dual-flash support
+      - Restored command line operation
+      - Flash image now dynamically allocated so no (realistic) size limitation  
+      - Support for Codesourcery Lite - Coldfire Vx
+      - Support for Coldfire Flasher (CFFlasher) Coldfire V2,3,4 only
+      - Support for Codewarrior Eclipse 10.1
+      - Flash buffer is now dynamically sized in Flash programmers 
+      - Added fix for Legacy Codewarrior tools missing TBDML/OSBDM targets
+   -  V4.4 (January 2011) -
+      - Less intrusive auto speed detection for targets without sync
+      - Unlocking improved for targets using slow external clocks
+      - Codewarrior V10 New Project Wizard now includes USBDM
+      - Programming support for HCS12/HCS08 targets with EEPROM
+      - Programming support for CFV1 target with multiple Flash (Dual Flash)
+      - Use of XML based device files (needed for above two items)
+      - Automatic unsecure for Legacy HCS12 targets
+   -  V4.3 (December 2010) -
+      - Bug fixes (DSC Speed)
+      - Improved Codewarrior V10 integration
+      - Serial interface on JS16 versions (supported in JMxx but no example implementation)
+   -  V4.0 (September 2010) - <b>Significant changes in some areas - Please read carefully</b>
+      - Support for Linux (Eclipse version of Codewarrior only) \n
+        Installation is still somewhat of a challenge!
+      - Support for Linux and Windows7 64-bit (Eclipse version of Codewarrior only) \n
+        To support the 64-bit version of Windows it has been necessary to update to using libusb-V1 drivers. For consistency
+        this is also done on Linux.  As part of this process the VID/PID for the hardware (BDM) has been changed.  This will 
+        allow the co-existence of Freescale's OSBDM-JM60 hardware while using a new driver for USBDM.  Formerly both these 
+        BDMs used the same VID/PID and changes to the driver would not be possible.
+      - Programming utilities for RS08, HCS08 and CFV1 are now (officially) included.
+      - Support for MC56F800x (digital signal controllers) added. This is only available on USBDM_CF BDMs and the Axiom MC56F8006 Demoboard.
+      - Minor bug fixes (installation script)
+      - The addition of DSC support has pushed the firmware size to greater than 16K on the USBDM_JMxx-CF version.  This means that MC9S08JM32/60 chip must be used.
+      - Changed to wxWidgets for common GUI code on Windows and Linux
+   -  V3.0 (May 2010) - <b>Significant changes in some areas - Please read </b>
+      - Support for Codewarrior V10 has been introduced.  This has required the development of specific GDI Dlls for each target type i.e.
+        RS08, HCS08, CFV1 and CFV2-4.
+      - The handling of RS08 devices has been further changed and now no RS08 derivative specific code is contained in the BDM firmware
+        or USBDM.dll.  RS08 code is handled by the GDI layer for Codewarrior V10 or in the OpenSourceBDM.dll for the older version of
+        Codewarrior.  This should mean that further devices may be added with no changes to either USBDM.dll or BDM Firmware.
+      - Minor bug fixes in the BDM Firmware.
+      - Added support for paged memory (-AC128, -DZ128 etc)
+      - Changed trim algorithm to use linear curve fitting.
+      - FTRIM now combined with existing image value if present.
+      - Changed console handling on command line version.
+      - Fixed "Image" security option modifying flash image. This could prevent programming the clock trim value by itself.
+      - The calculated trim value is now available on the dialogue for use when debugging with a particular chip.
+   -  V2.0 (September 2009) - <b>Major change - Please read </b>
+      - Major revision.  The structure of the software has been revised and the operation with various 
+        targets made more uniform.
+      - Introduction of a new API for using the BDM.  Existing APIs (TBDML, OSBDM, TBLCF) are now 
+        supported by a separate compatibility layer.  This has resulted in a very significant reduction
+        in the complexity of both the BDM firmware and the interface DLLs.  The previous arrangement
+        was becoming impossible to maintain. 
+      - The handling of RS08 devices has been re-written in a more sensible fashion.  This involved moving the bulk of the RS08 code
+        from the BDM firmware to the interface DLLs.  This should mean that additional devices can be introduced without changing the 
+        BDM firmware.  Support for additional RS08 devices has been added.  The BDM now supports KA1, KA2, KA4, KA8, LA8 and LE4.
+      - Because of the above changes, the BDM \b REQUIRES the use of the provided interface DLLs.  The
+        BDM is no longer compatible with the original TBDML or OSBDM dlls.  \n The provided DLLs maintain some limited compatibility with
+        earlier versions of TBDML, OSBDM and USBDM but may not support all features or targets
+   -  V1.5 (June 2009)  <b>Initial USBDM-JMxx-CF release.</b>
+      - Improved/corrected connection strategy for external power cycling
+      - Minor bug fixed (glitch removal)
+      - Improvements to ALT clock handling
+      - Changes to USB code to fixed bugs with BDM being recognized on some PCs 
+        (Thanks to Macias & Enrico for bug chasing and testing)
+      - Minor changes to USB code - Tested with USBCV13.exe from USB.ORG - now passes 
+   -  V1.4 (February 2009)
+      - Fixed a bug in the USB code (unlikely to occur but worth fixing)
+      - Added extra dialogues prompting the user to cycle target power when necessary.  Corresponding options added.
+      - Added connection retry when target power is absent.
+      - Added support for MC51AC256 (a bit of a hack!)
+      - Modified HCS macros (to provide considerable size reduction as needed for USBDM_CF in 16K)
+      - General clean up of code
+   -  V1.3 (November 2008)
+      - Unified Timer MACROS
+      - Re-arrangement of Target Vdd control routines
+      - Minor mods & corrected comments in bdm_syncMeasure()
+      - Reviewed stack size
+      - Increased cable_status.waitX size
+   -  V1.2 (October 2008)
+      - Removed library reference in ICP code - ICP broken when
+        non-ICP code was changed!  This update requires the ICP code
+        to be replaced when updating any code.        
+      - Increased stack size (stack overflow was possible)
+      - Utilities (setBoot) updated to match
+      - Other cosmetic changes
+   -  V1.1 (August 2008)
+      - Vista compatibility
+      - Fixed several bugs related to use of 1T45 buffers (Witztronics etc.)
+   -  V1.0 (Dec 2009) Initial Release
+      - Initial release.
+
+\section sectionMaintenance Limitations & Maintenance
+   - The devices supported are limited to those that I've had a chance to investigate.  The configuration for particular
+     devices are contained in the various \b xxxx_devices.xml files.  This may be modified by hand to include other devices if
+     they are similar to those already supported i.e. have a supported clock type and the usual type of Flash memory.\n
+   - EEPROM (HCS12) and dual-flash (CFV1) are supported but not extensively tested.
+   - The programmer \b requires the use of USBDM Ver 4.9 or later BDMs with <b>matching firmware</b>.  It should be possible to
+     adapt the software to the OSBDM API relatively easily.
+   - Note that Coldfire+ & Kinetis devices are limited to basic Flash programming and partitioning of FlexNVM.  Programming of 
+     EEEPROM (simulated EEPROM) is not supported.  Any region of FlexNVM not allocated to EEEPROM backing store may ben programmed
+     as conventional Flash.
+       
+ \section sectionKnownIssues Known Issues
+
+   - Codewarrior Legacy
+      -  Trim programming is not supported on older Codewarrior version.  It is only available in the Eclipse
+         version and stand-alone programmers.  Trimming is done by Codewarrior not USBDM in the earlier 
+         versions.  It is simply not implemented by Codewarrior (despite there being a nice dialogue box!).
+         I can't do anything about this.  It is NOT a bug in USBDM.  
+      
+   - HCS08   
+      -  The use of WAI or STOP instructions on HCS12 targets with the clocks disabled will cause the 
+         BDM to lose connection.  There is no solution to this as it is a target BDM limitation.
+      -  The use of WAI or STOP instructions on HCS12 targets with the clocks enabled will cause the 
+         BDM target connection to become unreliable when the target is executing.  This will cause the
+         debugger to occasionally update the screen incorrectly and to report that the target is 
+         starting or stopping (in the status area).
+         The screen will be correctly updated when the target is next halted so this is more of a cosmetic
+         problem. 
+      -  On early HCS12 targets (Version <4 BDM interfaces) there may be some minor problems with 
+         single-stepping when using a clock multiplier.  The reason is unknown but I suspect it is a
+         limitation of the Target BDM hardware.  Enabling the "Force BDM Clock Source" option and selecting 
+         "Bus clock" prevents this problem but results in a very high frequency for the BDM interface.
+
+   -  RS08
+      - Programming is not supported on older Codewarrior version.  You must use the Eclipse version.
+
+   - Coldfire   
+      - The Codewarrior 56800E Flash Programmer does not work with the USBDM GDI interface. I cannot find a reason for this but 
+        since it doesn't work with OSBDM either I suspect that the GDI interface on the programmer is broken.\n
+      - The support of MC56F80xx devices by the programmer is very limited since the devices differ significantly in their operation.  To
+        add a device requires considerable work although this has improved somewhat recently.
+      - MC56F80xx devices are NOT supported in the Codewarrior Eclipse version since this version uses extension to the GDI API that are 
+        undocumented.  Some devices may be programmed but the debugging operation is limited as Flash based breakpoints are not properly 
+        supported.  
+      - The use of low power modes and STOP instructions has some issues on Coldfire V2, 3 & 4 targets.
+         - Despite what the device manuals indicates it is not always possible to wake the target using
+           the BKPT signal.  In some cases the only usable method is to reset the target. \n
+           Because of this, it may be desirable to disable the automatic re-connect option as it may lead to 
+           unintended resets when the BDM polls a sleeping target.  \n
+         - A reset may still be done if the debugger tries to halt the target when sleeping (after unsuccessful 
+           BKPT attempts).  This situation is reported to the user.\n
+           The only guaranteed workaround for this problem it to use the RUN mode in the LPCR register although it
+           should not be a real problem provided the target is not continuously sleeping i.e. it is being regularly
+           woken by interrupts etc.
+         - If not using the PST signals it may not be possible to differentiate between STOP (the target is sleeping
+           but is considered to still be executing) and HALT (the target is suspended to allow debugging) states.  
+           Because of this the debugger may incorrectly indicate that the target is halted when it is actually
+           stopped (waiting for interrupts etc).  This also varies with the actual sleep mode selected. It is necessary to
+           restart code execution and then halt the target to synchronise the debugger state if this occurs.\n
+           There is no workaround for this problem as it is a limitation of the register polling method used in lieu
+           of the PST signals.
+
+   - Kinetis & Coldfire+
+      - It is possible to program the these devices with an invalid program that will make it difficult to connect in debug mode.  
+        This can be the case if the device is suffering from a reset trap or watch-dog timer failure.
+        In these cases it is necessary to do a mass erase of the device to restore function.  Since it is difficult to identify this
+        situation the programmers and Codewarrior interfaces do not do this automatically.
+        If connection problems are encountered it may be necessary to use the mass erase option on the <b>stand-alone programmer</b>
+        to erase the device.
+
+ \section sectionCompatibility Compatibility
+   -  The hardware is not compatible with existing TBDML, OSBDM or TBLCF \b hardware and \b requires the 
+      use of custom driver DLLs.
+   
+ \section sectionTesting Testing
+   The drivers and programmers have been tested with the following devices where supported by the particular programmer version
+    (basic programming, debugging and clock trim where applicable):
+   - RS08KA1, -KA2, -KA8, -LA8, -LE4 (<em>only with the Eclipse version of Codewarrior</em>)
+   - MC9S08AC128, -DN16, -DZ128, -EL16, -FL16, -GB60A, -GT16A, -GT32, -JM16, -JM60, -JS16, -LG32, -LL64, \n
+                  -LM26, -PT60, -QA4, -QB8, -QD4, -QE8, -QE16, -QE128, -QG8, -RD16, -SE8, -SF4, -SH8, -SV16, \n
+   - MC13213 \n
+   - MC9S12A64, -C32, -C128, -DP256B, -DG128, -DT256, -G128, -HY64, -NE64, -P128, -XEP100, -XD256, -XDT512, -XS128,\n
+                -UF32(check hardware errata on this chip!) 
+   - MM912H634, MM912G634
+   - MCF51AC256, -CN128, -EM256, -JF128, -JM128, -JU128, -QE96,  \n
+   - MCF52233, MCF52210 and some other ones that I can't recall at the moment.  These are all V2 chips - I don't have any V3/4 to test with.
+   - MC56F8006, MC56F8013, MC56F8014, MC56F8023, MC56F8245, MC56F8323, 
+   - Kinetis K40X256, K60X256
+   - Complete systems - Axiom MC56F8006 Demo board, TWR-K40, TWR-K60, TWR-CFV1 and TWR-RS08/HCS08. \n
+
+   Please advise of any problems with particular chips.  
+
+ \section hardwareErrata Hardware Errata
+   - The previous version of the JM & JS BDMs used a 10M resistor for the crystal clock bias.  I have discovered that this 
+     value is intended for lower frequency cystals.  A 1M resistor is recommended.  I have had no problems with boards using the 10M 
+     value but there may be some issues with some crystals or chips.  I don't recommend changing the value in existing hardware unless
+     there are problems.
+
+  \section sectionQueries Queries
+   Any queries please post on the Freescale 
+   @htmlonly <a href="http://forums.freescale.com/freescale/board?board.id=OSBDM08">OSBDM Discussion Board</a>. @endhtmlonly \n
+
+ \section sectionReferences References
+   -  Doxygen Documentation tool - http://www.stack.nl/~dimitri/doxygen/index.html
+   -  OSBDM - http://forums.freescale.com/freescale/board?board.id=OSBDM08
+   -  Tool Command Language (TCL) http://www.tcl.tk/
+   -  Ultimate Packer for eXecutables (UPX) has been used to pack DLLs and EXEs - http://upx.sourceforge.net/ 
+   -  WxWidgets Cross Platform Library has been used for the GUI - http://www.wxwidgets.org/
+   -  Xerces XML parser http://xerces.apache.org/xerces-c/
+
+*/
+
