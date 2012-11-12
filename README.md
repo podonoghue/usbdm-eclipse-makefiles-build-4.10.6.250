@@ -13,4 +13,4 @@ Documentation: http://usbdm.sourceforge.net/
 
 The projects in the following directories are Eclipse projects and should be imported into Eclipse to build. It is suggested that you use EGit to do this.
 
-Projects require Xerces-3-1-1, MinGW, TCL
+Projects require Xerces-3-1-1, MinGW, TCL and wxWidgets
