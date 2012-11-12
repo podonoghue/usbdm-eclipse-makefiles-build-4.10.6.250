@@ -1,0 +1,53 @@
+include ../Common.mk
+
+# BUILDDIR - Where to build target files
+# TARGET   - Root name of final target (default to BUILDDIR)
+# MODULE   - Name of $(MAKE) file in source directory listing files included in build
+# CDEFS    - C defines to add to CFLAGS
+# target   - either 'dll' or 'exe'
+
+TARGET = CFVx
+target = cfvx
+PROGRAMMER_DEFS = -DTARGET=$(TARGET) -DPACK_STRUCTS=1 -DFLASH_PROGRAMMER -DUSE_ICON
+GDI_DEFS        = -DTARGET=$(TARGET) -DPACK_STRUCTS=1 -DGDI
+GDI_LEGACY_DEFS = -DTARGET=$(TARGET) -DGDI -DLEGACY
+GDB_DEFS        = -DTARGET=$(TARGET) -DPACK_STRUCTS=1 -DGDB
+
+$(TARGET)_FlashProgrammer:
+	$(MAKE) exe -f ../ProgrammerTarget.mk BUILDDIR=$@ MODULE=programmer CDEFS="$(PROGRAMMER_DEFS)"
+
+$(TARGET)_FlashProgrammer-debug:
+	$(MAKE) exe -f ../ProgrammerTarget.mk BUILDDIR=$@ MODULE=programmer CDEFS="$(PROGRAMMER_DEFS)" DEBUG='Y'
+
+usbdm-$(target)-gdi:
+	$(MAKE) dll -f ../GdiTarget.mk        BUILDDIR=$@ MODULE=gdi        CDEFS="$(GDI_DEFS)"
+
+usbdm-$(target)-gdi-debug:
+	$(MAKE) dll -f ../GdiTarget.mk        BUILDDIR=$@ MODULE=gdi        CDEFS="$(GDI_DEFS)" DEBUG='Y'
+
+usbdm-$(target)-gdi-legacy:
+	$(MAKE) dll -f ../GdiLegacyTarget.mk BUILDDIR=$@  MODULE=gdi-legacy CDEFS="$(GDI_LEGACY_DEFS)"
+
+usbdm-$(target)-gdi-legacy-debug:
+	$(MAKE) dll -f ../GdiLegacyTarget.mk BUILDDIR=$@  MODULE=gdi-legacy CDEFS="$(GDI_LEGACY_DEFS)" DEBUG='Y'
+
+usbdm-$(target)-gdbServer:
+	$(MAKE) exe -f ../GdbTarget.mk        BUILDDIR=$@ MODULE=gdb        CDEFS="$(GDB_DEFS)" 
+
+usbdm-$(target)-gdbServer-debug:
+	$(MAKE) exe -f ../GdbTarget.mk        BUILDDIR=$@ MODULE=gdb        CDEFS="$(GDB_DEFS)" DEBUG='Y'
+
+all: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug usbdm-$(target)-gdi usbdm-$(target)-gdi-debug usbdm-$(target)-gdi-legacy usbdm-$(target)-gdi-legacy-debug usbdm-$(target)-gdbServer usbdm-$(target)-gdbServer-debug
+
+clean:
+	$(MAKE) clean -f ../ProgrammerTarget.mk BUILDDIR=$(TARGET)_FlashProgrammer
+	$(MAKE) clean -f ../ProgrammerTarget.mk BUILDDIR=$(TARGET)_FlashProgrammer-debug
+	$(MAKE) clean -f ../GdiTarget.mk BUILDDIR=usbdm-$(target)-gdi
+	$(MAKE) clean -f ../GdiTarget.mk BUILDDIR=usbdm-$(target)-gdi-debug
+	$(MAKE) clean -f ../GdiLegacyTarget.mk BUILDDIR=usbdm-$(target)-gdi-legacy
+	$(MAKE) clean -f ../GdiLegacyTarget.mk BUILDDIR=usbdm-$(target)-gdi-legacy-debug
+	$(MAKE) clean -f ../GdbTarget.mk BUILDDIR=usbdm-$(target)-gdbServer
+	$(MAKE) clean -f ../GdbTarget.mk BUILDDIR=usbdm-$(target)-gdbServer-debug
+
+.PHONY: all clean $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug usbdm-$(target)-gdi usbdm-$(target)-gdi-debug usbdm-$(target)-gdi-legacy usbdm-$(target)-gdi-legacy-debug usbdm-$(target)-gdbServer usbdm-$(target)-gdbServer-debug
+
