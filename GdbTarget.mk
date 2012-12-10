@@ -95,7 +95,7 @@ $(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/timestamp
 $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
 	@echo -- Linking Target $@
-	$(CC) -o $@ $(WIN32_GUI_OPTS) $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
+	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 
 # How to link a DLL
 #==============================================

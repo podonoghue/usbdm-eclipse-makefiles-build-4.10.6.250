@@ -54,12 +54,12 @@ ICP_ErrorType loadFile(FlashImage *flashImageDescription) {
       enumerator->lastValid();
       uint32_t blockSize = enumerator->getAddress() - startBlock + 1;
 
-      //print("Block size = %4.4X (%d)\n", blockSize, blockSize);
+      //Logging::print("Block size = %4.4X (%d)\n", blockSize, blockSize);
       if (blockSize>0) {
          // Program block [startBlock..endBlock]
          progRc = programBlock(flashImageDescription, blockSize, startBlock);
          if (progRc != ICP_RC_OK) {
-            print("loadFile() - programming failed, Reason= %s\n", ICP_GetErrorName(progRc));
+            Logging::print("loadFile() - programming failed, Reason= %s\n", ICP_GetErrorName(progRc));
             break;
          }
       }
@@ -74,45 +74,45 @@ ICP_ErrorType loadFile(FlashImage *flashImageDescription) {
 ICP_ErrorType ProgramFlash(const char *hexFileName) {
    ICP_ErrorType rc;
 
-   print("ProgramFlash() - Loading file \'%s\'\n", hexFileName);
+   Logging::print("ProgramFlash() - Loading file \'%s\'\n", hexFileName);
    FlashImage flashImageDescription;
    FlashImage::ErrorCode Flashrc = flashImageDescription.loadS1S9File(hexFileName, true);
    if (Flashrc != FlashImage::SFILE_RC_OK) {
-      print("main() - Failed to load file, Reason: %s\n", FlashImage::getErrorMessage(Flashrc));
+      Logging::print("main() - Failed to load file, Reason: %s\n", FlashImage::getErrorMessage(Flashrc));
       return ICP_RC_FILE_NOT_FOUND;
    }
-   print("Total Bytes = %d\n", flashImageDescription.getByteCount());
+   Logging::print("Total Bytes = %d\n", flashImageDescription.getByteCount());
 
    do {
-      print("ProgramFlash() - Initialising\n");
+      Logging::print("ProgramFlash() - Initialising\n");
       rc = ICP_Init();
       if (rc != ICP_RC_OK) {
          continue;
       }
-      print("ProgramFlash() - Locating devices\n");
+      Logging::print("ProgramFlash() - Locating devices\n");
       unsigned devCount;
       rc = ICP_FindDevices(&devCount);
       if (rc != ICP_RC_OK) {
          continue;
       }
-      print("ProgramFlash() - Found %d devices\n", devCount);
-      print("ProgramFlash() - Opening device\n");
+      Logging::print("ProgramFlash() - Found %d devices\n", devCount);
+      Logging::print("ProgramFlash() - Opening device\n");
       rc = ICP_Open(0);
       if (rc != ICP_RC_OK) {
          continue;
       }
-      print("ProgramFlash() - Erasing device\n");
+      Logging::print("ProgramFlash() - Erasing device\n");
       rc = ICP_MassErase();
       if (rc != ICP_RC_OK) {
          continue;
       }
-      print("ProgramFlash() - Programming device\n");
+      Logging::print("ProgramFlash() - Programming device\n");
       rc = loadFile(&flashImageDescription);
       if (rc != ICP_RC_OK) {
          continue;
       }
    } while (false);
-   print("ProgramFlash() - Closing device\n");
+   Logging::print("ProgramFlash() - Closing device\n");
    ICP_Close();
    ICP_Exit();
    return rc;

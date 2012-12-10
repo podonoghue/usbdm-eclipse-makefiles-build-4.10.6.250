@@ -83,7 +83,7 @@ extern "C" UINT __stdcall CheckCodewarriorPaths(MSIHANDLE hInstall) {
          {"D.CWS12_X_V5_1",                  "F.CWS12_X_V5_1",                  "bin",          "Codewarrior for S12(X)"},
          {"D.FREEMASTER_V1_3",               "F.FREEMASTER_V1_3",               "plugins",      "FreeMASTER V1.3"},
          {"D.CFFLASHER_V3_1",                "F.CFFLASHER_V3_1",                "BDM Protocol", "CF Flasher V3.1"},
-         {"D.CODESOURCERY_CFV1",             "F.CODESOURCERY_CFV1",             "bin",          "Sourcery Codebench Lite for Coldfire ELF"},
+         {"D.CODESOURCERY_CF",               "F.CODESOURCERY_CF",               "bin",          "Sourcery Codebench Lite for Coldfire ELF"},
          {"D.CODESOURCERY_KINETIS",          "F.CODESOURCERY_KINETIS",          "bin",          "Sourcery Codebench Lite for Kinetis EABI"},
          {"D.CODESOURCERY_ARM",              "F.CODESOURCERY_ARM",              "bin",          "Sourcery Codebench Lite for ARM EABI"},
          {NULL,                              NULL,                              NULL,      NULL}

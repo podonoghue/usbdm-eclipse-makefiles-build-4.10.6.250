@@ -10,7 +10,7 @@
 
 //!   Loads Freescale S-records
 //!
-//! @param srec         : SRECs to load
+//! @param pSrec        : SRECs to load
 //! @param buffer       : Buffer for the image
 //! @param bufferSize   : Size of buffer (in dataType)
 //! @param loadedSize   : Size of loaded image (in dataType)

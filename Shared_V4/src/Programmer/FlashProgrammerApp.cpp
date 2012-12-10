@@ -133,7 +133,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
    // Assumes one and only 1 device
    USBDM_FindDevices(&deviceCount);
    if ((deviceCount == 0) || (USBDM_Open(0) != BDM_RC_OK)) {
-      print("FlashProgrammerApp::doCommandLineProgram() - Failed to open BDM\n");
+      Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to open BDM\n");
 #ifdef _UNIX_
       fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to open BDM\n");
 #endif
@@ -144,7 +144,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
       // Modify some options for programming
 //      bdmOptions.autoReconnect      = AUTOCONNECT_NEVER,
       if ((USBDM_SetExtendedOptions(&bdmOptions) != BDM_RC_OK) || (USBDM_SetTargetType(targetType) != BDM_RC_OK)) {
-         print("FlashProgrammerApp::doCommandLineProgram() - Failed to set BDM Option/Target type\n");
+         Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to set BDM Option/Target type\n");
 #ifdef _UNIX_
          fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to set BDM Option/Target type\n");
 #endif
@@ -153,7 +153,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
       }
       if (!hexFileName.IsEmpty() &&
          (flashImage.loadFile((const char *)hexFileName.ToAscii()) != BDM_RC_OK)) {
-         print("FlashProgrammerApp::doCommandLineProgram() - Failed to load Hex file\n");
+         Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to load Hex file\n");
 #ifdef _UNIX_
          fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to load Hex file\n");
 #endif
@@ -165,7 +165,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
       try {
          deviceDatabase->loadDeviceData();
       } catch (MyException &exception) {
-         print("FlashProgrammerApp::doCommandLineProgram() - Failed to load device database\nReason\n");
+         Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to load device database\nReason\n");
 #ifdef _UNIX_
          fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to load device database\nReason\n");
 #endif
@@ -174,7 +174,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
       }
       const DeviceData *devicePtr = deviceDatabase->findDeviceFromName((const char *)deviceName.ToAscii());
       if (devicePtr == NULL) {
-         print("FlashProgrammerApp::doCommandLineProgram() - Failed to find device\n");
+         Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to find device\n");
 #ifdef _UNIX_
          fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to find device\n");
 #endif
@@ -211,7 +211,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
       }
       delete deviceDatabase;
       if (rc != PROGRAMMING_RC_OK) {
-         print("FlashProgrammerApp::doCommandLineProgram() - failed, rc = %s\n", USBDM_GetErrorString(rc));
+         Logging::print("FlashProgrammerApp::doCommandLineProgram() - failed, rc = %s\n", USBDM_GetErrorString(rc));
 #ifdef _UNIX_
          fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - failed, rc = %s\n", USBDM_GetErrorString(rc));
 #endif
@@ -219,7 +219,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
          break;
       }
    } while (false);
-   print("FlashProgrammerApp::doCommandLineProgram() - Closing BDM\n");
+   Logging::print("FlashProgrammerApp::doCommandLineProgram() - Closing BDM\n");
    if (bdmOptions.leaveTargetPowered) {
 #if (TARGET==HCS08) || (TARGET==RS08) || (TARGET==CFV1)
       USBDM_TargetReset((TargetMode_t)(RESET_SOFTWARE|RESET_NORMAL));
@@ -262,23 +262,23 @@ bool FlashProgrammerApp::OnInit(void) {
 
    SetAppName(_("usbdm")); // So app files are kept in the correct directory
 
-   openLogFile(logFilename);
+   Logging::openLogFile(logFilename);
 
-//   print("Original GetUserDataDir = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetUserDataDir().ToAscii())).c_str());
-//   print("Original GetDataDir     = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetDataDir().    ToAscii())).c_str());
+//   Logging::print("Original GetUserDataDir = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetUserDataDir().ToAscii())).c_str());
+//   Logging::print("Original GetDataDir     = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetDataDir().    ToAscii())).c_str());
 
 #ifndef _WIN32
    ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_("/usr/local"));
 #endif
 
-//   print("Modified GetUserDataDir = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetUserDataDir().ToAscii())).c_str());
-//   print("Modified GetDataDir     = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetDataDir().    ToAscii())).c_str());
+//   Logging::print("Modified GetUserDataDir = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetUserDataDir().ToAscii())).c_str());
+//   Logging::print("Modified GetDataDir     = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetDataDir().    ToAscii())).c_str());
 
 #if TARGET == MC56F80xx
-   DSC_SetLogFile(getLogFileHandle());
+   DSC_SetLogFile(Logging::getLogFileHandle());
 #endif
 
-//   print("FlashProgrammerApp::OnInit()\n");
+//   Logging::print("FlashProgrammerApp::OnInit()\n");
 
    USBDM_Init();
    if (commandLine) {
@@ -299,27 +299,27 @@ bool FlashProgrammerApp::OnInit(void) {
 }
 
 int FlashProgrammerApp::OnRun(void) {
-   print("FlashProgrammerApp::OnRun()\n");
+   Logging::print("FlashProgrammerApp::OnRun()\n");
    if (!commandLine) {
       int exitcode = wxApp::OnRun();
       if (exitcode != 0)
          return exitcode;
    }
    // Everything is done in OnInit()!
-   print("FlashProgrammerApp::OnRun() - return value = %d\n", returnValue);
+   Logging::print("FlashProgrammerApp::OnRun() - return value = %d\n", returnValue);
    return returnValue;
 }
 
 int FlashProgrammerApp::OnExit(void) {
 
-//   print("FlashProgrammerApp::OnExit()\n");
+//   Logging::print("FlashProgrammerApp::OnExit()\n");
    return wxApp::OnExit();
 }
 
 FlashProgrammerApp::~FlashProgrammerApp() {
-//   print("FlashProgrammerApp::~FlashProgrammerApp()\n");
+//   Logging::print("FlashProgrammerApp::~FlashProgrammerApp()\n");
 //   fprintf(stderr, "FlashProgrammerApp::~FlashProgrammerApp()\n");
-   closeLogFile();
+   Logging::closeLogFile();
 }
 
 static const wxCmdLineEntryDesc g_cmdLineDesc[] = {

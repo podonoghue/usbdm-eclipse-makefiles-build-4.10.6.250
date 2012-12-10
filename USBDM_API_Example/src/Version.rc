@@ -52,6 +52,3 @@ END
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 
-#ifdef USE_ICON    
-   IDI_APPICON ICON "Hardware-Chip.ico"
-#endif

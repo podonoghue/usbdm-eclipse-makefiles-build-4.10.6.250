@@ -5,38 +5,83 @@
 #ifndef _LOG_H_
 #define _LOG_H_
 
-#define BYTE_ADDRESS (0<<0)  // Addresses identify a byte in memory
-#define WORD_ADDRESS (1<<0)  // Addresses identify a word in memory
-#define BYTE_DISPLAY (0<<2)  // Display as bytes (8-bits)
-#define WORD_DISPLAY (1<<2)  // Display as words (16-bits)
-#define LONG_DISPLAY (2<<2)  // Display as longs (32-bits)
-#define DBIG_ENDIAN    (0<<4)
-#define DLITTLE_ENDIAN (1<<4)
+#include <stdio.h>
+#include <stdarg.h>
+#include "Version.h"
+
+#define BYTE_ADDRESS    (0<<0)  // Addresses identify a byte in memory
+#define WORD_ADDRESS    (1<<0)  // Addresses identify a word in memory
+#define BYTE_DISPLAY    (0<<2)  // Display as bytes (8-bits)
+#define WORD_DISPLAY    (1<<2)  // Display as words (16-bits)
+#define LONG_DISPLAY    (2<<2)  // Display as longs (32-bits)
+#define DBIG_ENDIAN     (0<<4)
+#define DLITTLE_ENDIAN  (1<<4)
 
 #ifndef LOG
-// Dummy routines if logging is not required
-   inline void print(const char *format, ...) { return; }
-   inline void print(const wchar_t *format, ...) { return; }
-   inline void printDump(unsigned const char *data,
+class Logging {
+public:
+   enum When {neither, entry, exit, both};
+   Logging(const char *name, When when=neither) {};
+   ~Logging() {};
+      static void openLogFile(const char *description){}
+   static void closeLogFile() {}
+   static void enableLogging(bool value) {}
+   static void setLoggingLevel(int level) {}
+   static void error(const char *format, ...) {}
+   static void print(const char *format, ...) {}
+   static void printq(const char *format, ...) {}
+   static void printDump(unsigned const char *data,
                          unsigned int size,
-                         unsigned int dummyStartAddress=0x0000,
-                         unsigned int organization=BYTE_ADDRESS|BYTE_DISPLAY) { return; }
-   inline void openLogFile(const char *description="USBDM Log File") { return; }
-   inline void closeLogFile(void) { return; }
-   inline void enableLogging(bool value) { return; }
+                         unsigned int startAddress=0x0000,
+                         unsigned int organization=BYTE_ADDRESS|BYTE_DISPLAY) {}
+   static FILE* getLogFileHandle() { return (FILE*)0; }
+   static void setLogFileHandle(FILE *logFile) {}
+   static void enableTimestamping(bool enable=true) {}
+};
+#define LOGGING_Q (void*)0
+#define LOGGING_E (void*)0
+#define LOGGING   (void*)0
 #else // LOG
-void print(const char *format, ...);
-void print(const wchar_t *format, ...);
-void printDump(unsigned const char *data,
-               unsigned int size,
-               unsigned int dummyStartAddress=0x0000,
-               unsigned int organization=BYTE_ADDRESS|BYTE_DISPLAY);
-void openLogFile(const char *description="USBDM Log File");
-void closeLogFile(void);
-void enableLogging(bool value);
+class Logging {
+public:
+   enum When {neither, entry, exit, both};
+private:
+   static FILE *logFile;
+   static bool loggingEnabled;
+   static bool timestampEnabled;
+   static int  indent;
+   static int  currentLogLevel;
+   static const char *currentName;
+   const  char *name;
+   const  char *lastName;
+   int    lastLogLevel;
+   When   when;
+public:
+   Logging(const char *name, When when=neither);
+   ~Logging();
+   static void openLogFile(const char *description);
+   static void closeLogFile();
+   static void enableLogging(bool value);
+   static void setLoggingLevel(int level);
+   static void error(const char *format, ...);
+   static void print(const char *format, ...);
+   static void printq(const char *format, ...);
+   static void printDump(unsigned const char *data,
+                         unsigned int size,
+                         unsigned int startAddress=0x0000,
+                         unsigned int organization=BYTE_ADDRESS|BYTE_DISPLAY);
+   static FILE* getLogFileHandle() {
+      return logFile;
+   }
+   static void setLogFileHandle(FILE *logFile) {
+      Logging::logFile = logFile;
+   }
+   static void enableTimestamping(bool enable=true) {
+      timestampEnabled = enable;
+   }
+};
+#define LOGGING_Q Logging log(__FUNCTION__, Logging::neither)
+#define LOGGING_E Logging log(__FUNCTION__, Logging::entry)
+#define LOGGING   Logging log(__FUNCTION__, Logging::both)
 #endif
-
-// To Enable Debug log file
-//#define LOG
-
 #endif // _LOG_H_

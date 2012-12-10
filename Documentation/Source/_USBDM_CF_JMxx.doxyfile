@@ -25,7 +25,7 @@ DOXYFILE_ENCODING = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME = "USBDM/CF (JMxx Version)"
+PROJECT_NAME = "USBDMx"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
@@ -277,17 +277,17 @@ TYPEDEF_HIDES_STRUCT = NO
 # Private class members and static file members will be hidden unless 
 # the EXTRACT_PRIVATE and EXTRACT_STATIC tags are set to YES
 
-EXTRACT_ALL = NO
+EXTRACT_ALL = YES
 
 # If the EXTRACT_PRIVATE tag is set to YES all private members of a class 
 # will be included in the documentation.
 
-EXTRACT_PRIVATE = NO
+EXTRACT_PRIVATE = YES
 
 # If the EXTRACT_STATIC tag is set to YES all static members of a file 
 # will be included in the documentation.
 
-EXTRACT_STATIC = NO
+EXTRACT_STATIC = YES
 
 # If the EXTRACT_LOCAL_CLASSES tag is set to YES classes (and structs) 
 # defined locally in source files will be included in the documentation. 
@@ -534,7 +534,7 @@ WARN_LOGFILE =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT = USBDM_CF_JMxx_Documentation.txt Configuring_EclipseV10_1.txt Configuring_HCS08_HCS12.txt Configuring_CFVx.txt Configuring_DSC.txt Configuring_CodeSourcery.txt Eclipse_CFVx_Flash_Programming.txt CFVx_Unlocker.txt Connector_Coldfire.txt Connector_Kinetis.txt Connector_DSC.txt OtherPrograms.txt "Building_Software.txt" API_Example.txt What_Is_Provided.txt Driver_Installation.txt Installation.txt Tips.txt History.txt ..\..\Shared_V4\src\USBDM_ErrorMessages.h ..\..\Shared_V4\src\USBDM_API.h
+INPUT = USBDM_CF_JMxx_Documentation.txt Software_Installation.txt Driver_Installation.txt Construction.txt Configuring_EclipseV10_1.txt Configuring_HCS08_HCS12.txt Configuring_CFVx.txt Configuring_DSC.txt CodeSourcery_Install.txt CodeSourcery_ARM.txt CodeSourcery_Coldfire.txt Eclipse_CFVx_Flash_Programming.txt CFVx_Unlocker.txt OtherPrograms.txt Connector_Coldfire.txt Connector_Kinetis.txt Connector_DSC.txt Building_Software.txt API_Example.txt Tips.txt History.txt What_Is_Provided.txt ..\..\Shared_V4\src\USBDM_ErrorMessages.h ..\..\Shared_V4\src\USBDM_API.h
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 

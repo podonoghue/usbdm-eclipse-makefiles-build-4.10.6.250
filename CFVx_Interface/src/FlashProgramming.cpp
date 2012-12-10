@@ -26,6 +26,8 @@
 +==============================================================================
 | Revision History
 +==============================================================================
+| 30 Nov 12 | 4.10.4 Changed logging                                      - pgo
++-----------+------------------------------------------------------------------
 | 30 Oct 12 | 4.10.4 Added MS_FAST option for HCS12/HCS12                 - pgo
 +-----------+------------------------------------------------------------------
 | 30 Sep 12 | 4.10.2 RAM write added                                      - pgo
@@ -280,26 +282,26 @@ USBDM_ErrorCode FlashProgrammer::getPageAddress(MemoryRegionPtr memoryRegionPtr,
 
    *pageNo = 0x00;
    if ((memoryRegionPtr == NULL) || !memoryRegionPtr->contains(physicalAddress)) {
-      print("FlashProgrammer::getPageAddress(0x%06X) - Invalid Flash address\n", physicalAddress);
+      Logging::error("FlashProgrammer::getPageAddress(0x%06X) - Invalid Flash address\n", physicalAddress);
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    if (memoryRegionPtr->getAddressType() != AddrPaged) {
-      print("FlashProgrammer::getPageAddress(0x%06X) - Not paged\n", physicalAddress);
+      Logging::print("FlashProgrammer::getPageAddress(0x%06X) - Not paged\n", physicalAddress);
       return PROGRAMMING_RC_OK;
    }
    uint32_t ppageAddress = memoryRegionPtr->getPageAddress();
    if (ppageAddress == 0) {
-      print("FlashProgrammer::getPageAddress(0x%06X) - Not mapped\n", physicalAddress);
+      Logging::print("FlashProgrammer::getPageAddress(0x%06X) - Not mapped\n", physicalAddress);
       return PROGRAMMING_RC_OK;
    }
    uint32_t virtualAddress = (physicalAddress&0xFFFF);
    uint16_t pageNum16 = memoryRegionPtr->getPageNo(physicalAddress);
    if (pageNum16 == MemoryRegion::NoPageNo) {
-      print("FlashProgrammer::getPageAddress(0x%06X) - No page #!\n", physicalAddress);
+      Logging::print("FlashProgrammer::getPageAddress(0x%06X) - No page #!\n", physicalAddress);
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    *pageNo = (uint8_t)pageNum16;
-   print("FlashProgrammer::getPageAddress(0x%06X) - PPAGE=%2.2X (Mapped Address=%06X)\n", physicalAddress, *pageNo, ((*pageNo)<<16)|virtualAddress);
+   Logging::print("FlashProgrammer::getPageAddress(0x%06X) - PPAGE=%2.2X (Mapped Address=%06X)\n", physicalAddress, *pageNo, ((*pageNo)<<16)|virtualAddress);
 
    return PROGRAMMING_RC_OK;
 }
@@ -327,7 +329,7 @@ USBDM_ErrorCode FlashProgrammer::setPageRegisters(uint32_t physicalAddress) {
          uint32_t virtualAddress = (physicalAddress&0xFFFF);
          if (ppageAddress == 0) {
             // Not paged memory
-            print("FlashProgrammer::setPageRegisters() - Not mapped (VirtAddr=PhyAddr=%06X)\n", physicalAddress);
+            Logging::print("Not mapped (VirtAddr=PhyAddr=%06X)\n", physicalAddress);
             return PROGRAMMING_RC_OK;
          }
          uint16_t pageNum16 = memoryRegionPtr->getPageNo(physicalAddress);
@@ -335,7 +337,7 @@ USBDM_ErrorCode FlashProgrammer::setPageRegisters(uint32_t physicalAddress) {
             return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
          }
          uint8_t pageNum = (uint8_t)pageNum16;
-         print("FlashProgrammer::setPageRegisters() - Setting PPAGE=%2.2X (PhyAddr=%06X, VirAddr=%04X)\n", pageNum, physicalAddress, virtualAddress);
+         Logging::print("FlashProgrammer::setPageRegisters() - Setting PPAGE=%2.2X (PhyAddr=%06X, VirAddr=%04X)\n", pageNum, physicalAddress, virtualAddress);
          if (USBDM_WriteMemory(1, 1, ppageAddress, &pageNum) != BDM_RC_OK) {
             return PROGRAMMING_RC_ERROR_PPAGE_FAIL;
          }
@@ -365,10 +367,9 @@ USBDM_ErrorCode FlashProgrammer::setPageRegisters(uint32_t physicalAddress) {
 //!                           USBDM_getStatus() may be used to determine connection method.
 //!
 USBDM_ErrorCode FlashProgrammer::resetAndConnectTarget(void) {
+   LOGGING_E;
    USBDM_ErrorCode bdmRc;
    USBDM_ErrorCode rc;
-
-   print("FlashProgrammer::resetAndConnectTarget()\n");
 
    if (parameters.getTargetName().empty()) {
       return PROGRAMMING_RC_ERROR_ILLEGAL_PARAMS;
@@ -398,11 +399,11 @@ USBDM_ErrorCode FlashProgrammer::resetAndConnectTarget(void) {
    }
 #endif
    if (bdmRc == BDM_RC_SECURED) {
-      print("FlashProgrammer::resetAndConnectTarget() ... Device is secured\n");
+      Logging::error("... Device is secured\n");
       return PROGRAMMING_RC_ERROR_SECURED;
    }
    if (bdmRc != BDM_RC_OK) {
-      print( "FlashProgrammer::resetAndConnectTarget() ... Failed Reset, %s!\n",
+      Logging::error( "... Failed Reset, %s!\n",
             USBDM_GetErrorString(bdmRc));
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
@@ -426,14 +427,14 @@ USBDM_ErrorCode FlashProgrammer::resetAndConnectTarget(void) {
    case BDM_RC_BDM_EN_FAILED:
       // Treat as secured & continue
       rc = PROGRAMMING_RC_ERROR_SECURED;
-      print( "FlashProgrammer::resetAndConnectTarget() ... Partial Connect, rc = %s!\n",
+      Logging::error( "... Partial Connect, rc = %s!\n",
             USBDM_GetErrorString(bdmRc));
       break;
    case BDM_RC_OK:
       rc = PROGRAMMING_RC_OK;
       break;
    default:
-      print( "FlashProgrammer::resetAndConnectTarget() ... Failed Connect, rc = %s!\n",
+      Logging::error( "... Failed Connect, rc = %s!\n",
             USBDM_GetErrorString(bdmRc));
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
@@ -460,13 +461,12 @@ USBDM_ErrorCode FlashProgrammer::resetAndConnectTarget(void) {
 //! @note Assumes the target has been reset in SPECIAL mode
 //!
 USBDM_ErrorCode FlashProgrammer::readTargetChipId(uint32_t *targetSDID, bool doInit) {
+   LOGGING_E;
    const int SDIDLength = 2;
    uint8_t SDIDValue[SDIDLength];
 
-   print("FlashProgrammer::readTargetChipId()\n");
-
    if (parameters.getTargetName().empty()) {
-      print("FlashProgrammer::readTargetChipId() - target name not set\n");
+      Logging::error("Target name not set\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    *targetSDID = 0x0000;
@@ -474,22 +474,22 @@ USBDM_ErrorCode FlashProgrammer::readTargetChipId(uint32_t *targetSDID, bool doI
    if (doInit) {
       USBDM_ErrorCode rc = resetAndConnectTarget();
       if (rc != PROGRAMMING_RC_OK) {
-         print("FlashProgrammer::readTargetChipId() - failed resetAndConnectTarget()\n");
+         Logging::error("Failed resetAndConnectTarget()\n");
          return rc;
       }
    }
    if (ReadMemory(SDIDLength, SDIDLength, parameters.getSDIDAddress(), SDIDValue) !=  BDM_RC_OK) {
-      print("FlashProgrammer::readTargetChipId(0x%06X) - failed ReadMemory()\n", parameters.getSDIDAddress());
+      Logging::error("A=0x%06X - Failed ReadMemory()\n", parameters.getSDIDAddress());
       return PROGRAMMING_RC_ERROR_BDM_READ;
    }
    *targetSDID = getData16Target(SDIDValue);
 
    // Do a sanity check on SDID (may get these values if secured w/o any error being signaled)
    if ((*targetSDID == 0xFFFF) || (*targetSDID == 0x0000)) {
-      print("FlashProgrammer::readTargetChipId(0x%06X) - value invalid (0x%04X)\n", parameters.getSDIDAddress(), *targetSDID);
+      Logging::error("A=0x%06X - Value invalid (0x%04X)\n", parameters.getSDIDAddress(), *targetSDID);
       return PROGRAMMING_RC_ERROR_BDM_READ;
    }
-   print("FlashProgrammer::readTargetChipId(0x%06X) => 0x%04X\n", parameters.getSDIDAddress(), *targetSDID);
+   Logging::print("A=0x%06X => 0x%04X\n", parameters.getSDIDAddress(), *targetSDID);
    return PROGRAMMING_RC_OK;
 }
 
@@ -501,36 +501,37 @@ USBDM_ErrorCode FlashProgrammer::readTargetChipId(uint32_t *targetSDID, bool doI
 //! @note Assumes the target has been connected to
 //!
 USBDM_ErrorCode FlashProgrammer::confirmSDID() {
+   LOGGING_E;
    uint32_t targetSDID;
    USBDM_ErrorCode rc;
 
 //   mtwksDisplayLine("confirmSDID() - #1\n");
    if (parameters.getTargetName().empty()) {
-      print("FlashProgrammer::confirmSDID() - Error: device parameters not set\n");
+      Logging::error("Error: device parameters not set\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
 //   mtwksDisplayLine("confirmSDID() - #2\n");
    // Don't check Target SDID if zero
    if (parameters.getSDID() == 0x0000) {
-      print("FlashProgrammer::confirmSDID(0x0000) => Skipping check\n");
+      Logging::print("V=0x0000 => Skipping check\n");
       return PROGRAMMING_RC_OK;
    }
    // Get SDID from target
    rc = readTargetChipId(&targetSDID);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::confirmSDID(%4.4X) => Failed, error reading SDID, reason = %s\n",
+      Logging::error("V=%4.4X => Failed, error reading SDID, reason = %s\n",
             parameters.getSDID(),
             USBDM_GetErrorString(rc));
       // Return this error even though the cause may be different
       return PROGRAMMING_RC_ERROR_WRONG_SDID;
    }
    if (!parameters.isThisDevice(targetSDID)) {
-      print("FlashProgrammer::confirmSDID(%4.4X) => Failed (Target SDID=%4.4X)\n",
+      Logging::error("V=%4.4X => Failed (Target SDID=%4.4X)\n",
             parameters.getSDID(),
             targetSDID);
       return PROGRAMMING_RC_ERROR_WRONG_SDID;
    }
-   print("FlashProgrammer::confirmSDID(%4.4X) => OK\n", targetSDID);
+   Logging::print("V=%4.4X => OK\n", targetSDID);
    return PROGRAMMING_RC_OK;
 }
 
@@ -542,13 +543,13 @@ USBDM_ErrorCode FlashProgrammer::confirmSDID() {
 //! @note Assumes target has been reset & connected
 //!
 USBDM_ErrorCode FlashProgrammer::initialiseTarget() {
-
+   LOGGING_Q;
    if (initTargetDone) {
-      print("FlashProgrammer::initialiseTarget() - already done, skipped\n");
+      Logging::print("Already done, skipped\n");
       return PROGRAMMING_RC_OK;
    }
    initTargetDone = true;
-   print("FlashProgrammer::initialiseTarget()\n");
+   Logging::print("\n");
 
 #if (TARGET == HCS08)
    char args[200] = "initTarget \"";
@@ -606,7 +607,7 @@ USBDM_ErrorCode FlashProgrammer::initialiseTarget() {
 
    USBDM_ErrorCode rc = runTCLCommand(args);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::initialiseTarget() - initTarget TCL failed\n");
+      Logging::error("Failed - initTarget TCL failed\n");
       return rc;
    }
    return rc;
@@ -620,9 +621,8 @@ USBDM_ErrorCode FlashProgrammer::initialiseTarget() {
 //! @note Assumes target has been reset & connected
 //!
 USBDM_ErrorCode FlashProgrammer::initialiseTargetFlash() {
+   LOGGING_E;
    USBDM_ErrorCode rc;
-
-   print("FlashProgrammer::initialiseTargetFlash()\n");
 
    // Check if already configured
    if (flashReady) {
@@ -650,27 +650,27 @@ USBDM_ErrorCode FlashProgrammer::initialiseTargetFlash() {
          return PROGRAMMING_RC_ERROR_SPEED_APPROX;
 
       busFrequency = parameters.getConnectionFreq()*parameters.getBDMtoBUSFactor();
-      print("FlashProgrammer::initialiseTargetFlash() - Using user-supplied bus speed = %d kHz\n",
+      Logging::print("Using user-supplied bus speed = %d kHz\n",
             busFrequency/1000);
    }
    else
 #endif
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::initialiseTargetFlash() - Failed to get speed\n");
+      Logging::error("Failed to get speed\n");
       return rc;
    }
    // Convert to kHz
    uint32_t targetBusFrequency = (uint32_t)round(busFrequency/1000.0);
    flashOperationInfo.targetBusFrequency = targetBusFrequency;
 
-   print("FlashProgrammer::initialiseTargetFlash(): Target Bus Frequency = %ld kHz\n", targetBusFrequency);
+   Logging::print("Target Bus Frequency = %ld kHz\n", targetBusFrequency);
 #endif
 
    char buffer[100];
    sprintf(buffer, "initFlash %d", flashOperationInfo.targetBusFrequency);
    rc = runTCLCommand(buffer);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::initialiseTargetFlash() - initFlash TCL failed\n");
+      Logging::error("Failed, initFlash TCL failed\n");
       return rc;
    }
    // Flash is now ready for programming
@@ -684,6 +684,7 @@ USBDM_ErrorCode FlashProgrammer::initialiseTargetFlash() {
 //! @return error code, see \ref USBDM_ErrorCode
 //!
 USBDM_ErrorCode FlashProgrammer::massEraseTarget(void) {
+   LOGGING_E;
    if (progressTimer != NULL) {
       progressTimer->restart("Mass Erasing Target");
    }
@@ -738,10 +739,11 @@ USBDM_ErrorCode FlashProgrammer::massEraseTarget(void) {
 //! @note - Tries device program code & then flashRegion specific if necessary
 //!
 USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashOperation flashOperation) {
+   LOGGING_Q;
    // Try to get device general routines
    FlashProgramPtr flashProgram = parameters.getFlashProgram();
    if (!flashProgram) {
-      print("FlashProgrammer::loadTargetProgram() - No default flash program found - searching memory regions\n");
+      Logging::print("No default flash program found - searching memory regions\n");
       // Try code from any flash region
       for (int index=0; ; index++) {
          MemoryRegionPtr memoryRegionPtr = parameters.getMemoryRegion(index);
@@ -754,8 +756,11 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashOperation flashOperation
          }
       }
    }
+   else {
+      Logging::print("Using shared flash program\n");
+   }
    if (!flashProgram) {
-      print("FlashProgrammer::loadTargetProgram() - No flash program found for target\n");
+      Logging::error("No flash program found for target\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    return loadTargetProgram(flashProgram, flashOperation);
@@ -773,9 +778,10 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashOperation flashOperation
 //!         Confirms download (if necessary) and checks RAM boundaries.
 //!
 USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramPtr flashProgram, FlashOperation flashOperation) {
+   LOGGING_Q;
    memoryElementType     buffer[4000];
 
-   print("FlashProgrammer::loadTargetProgram(%s)\n", getFlashOperationName(flashOperation));
+   Logging::print("Op=%s\n", getFlashOperationName(flashOperation));
    switch(flashOperation) {
       case OpSelectiveErase:
       case OpBlockErase:
@@ -787,7 +793,7 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramPtr flashProgram,
          break;
       default:
          currentFlashOperation = OpNone;
-         print("FlashProgrammer::loadTargetProgram(%s) => no target program load needed\n");
+         Logging::print("No target program load needed\n");
          return BDM_RC_OK;
    }
    if (!flashProgram) {
@@ -795,7 +801,7 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramPtr flashProgram,
       flashProgram = parameters.getFlashProgram();
    }
    if (!flashProgram) {
-      print("FlashProgrammer::loadTargetProgram(...) - No flash program found for target\n");
+      Logging::error("Failed, no flash program found for target\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    // Reload flash code if
@@ -803,16 +809,16 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramPtr flashProgram,
    //  - operation changed
    //  - alignment changed
    if (currentFlashProgram != flashProgram)  {
-      print("FlashProgrammer::loadTargetProgram() - reloading due to change in flash code\n");
+      Logging::print("Reloading due to change in flash code\n");
    }
    else if ((currentFlashOperation == OpNone) || (currentFlashOperation != flashOperation)) {
-      print("FlashProgrammer::loadTargetProgram() - reloading due to change in flash operation\n");
+      Logging::print("Reloading due to change in flash operation\n");
    }
    else if (currentFlashAlignment != flashOperationInfo.alignment) {
-      print("FlashProgrammer::loadTargetProgram() - reloading due to change in flash alignment\n");
+      Logging::print("Reloading due to change in flash alignment\n");
    }
    else {
-      print("FlashProgrammer::loadTargetProgram() - re-using existing code\n");
+      Logging::print("Re-using existing code\n");
       return PROGRAMMING_RC_OK;
    }
    currentFlashOperation = OpNone;
@@ -825,7 +831,7 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramPtr flashProgram,
                                  &size,
                                  &loadAddress);
    if (rc !=  BDM_RC_OK) {
-      print("FlashProgrammer::loadTargetProgram(...) - loadSRec() failed\n");
+      Logging::error("Failed, loadSRec() failed\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
 #if TARGET == MC56F80xx
@@ -884,14 +890,14 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType *buffe
                                                         uint32_t           size,
                                                         FlashProgramPtr    flashProgram,
                                                         FlashOperation     flashOperation) {
-
-   print("FlashProgrammer::loadLargeTargetProgram(%s)\n", getFlashOperationName(flashOperation));
+   LOGGING_Q;
+   Logging::print("Op=%s\n", getFlashOperationName(flashOperation));
 
    // Find 'header' in download image
    uint32_t headerAddress = getData32Target(buffer);
    LargeTargetImageHeader *headerPtr = (LargeTargetImageHeader*) (buffer+(headerAddress-loadAddress));
    if (headerPtr > (LargeTargetImageHeader*)(buffer+size)) {
-      print("FlashProgrammer::loadLargeTargetProgram() - Header ptr out of range\n");
+      Logging::error("Header ptr out of range\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    // Save the programming data structure
@@ -901,20 +907,15 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType *buffe
    uint32_t dataHeaderAddress = targetToNative32(headerPtr->flashData);
    uint32_t calibFactor       = targetToNative32(headerPtr->calibFactor);
 
-   print("Loaded Image (unmodified) :\n"
-         "   flashProgramHeader address         = 0x%08X\n"
-         "   flashProgramHeader.loadAddress     = 0x%08X\n"
-         "   flashProgramHeader.entry           = 0x%08X\n"
-         "   flashProgramHeader.capabilities    = 0x%08X(%s)\n"
-         "   flashProgramHeader.flashData       = 0x%08X\n",
-         headerAddress,
-         codeLoadAddress,
-         codeEntry,
-         capabilities,getProgramCapabilityNames(capabilities),
-         dataHeaderAddress
-         );
+   Logging::print("Loaded Image (unmodified) :\n");
+   Logging::print("   flashProgramHeader address         = 0x%08X\n",     headerAddress);
+   Logging::print("   flashProgramHeader.loadAddress     = 0x%08X\n",     codeLoadAddress);
+   Logging::print("   flashProgramHeader.entry           = 0x%08X\n",     codeEntry);
+   Logging::print("   flashProgramHeader.capabilities    = 0x%08X(%s)\n", capabilities, getProgramCapabilityNames(capabilities));
+   Logging::print("   flashProgramHeader.flashData       = 0x%08X\n",     dataHeaderAddress);
+
    if (codeLoadAddress != loadAddress) {
-      print("FlashProgrammer::loadLargeTargetProgram() - Inconsistent actual (0x%06X) and image load addresses (0x%06X).\n",
+      Logging::error("Inconsistent actual (0x%06X) and image load addresses (0x%06X).\n",
             loadAddress, codeLoadAddress);
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
@@ -924,7 +925,7 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType *buffe
       // Relocate Code
       codeLoadAddress = (parameters.getRamStart()+3)&~3; // Relocate to start of RAM
       if (loadAddress != codeLoadAddress) {
-         print("FlashProgrammer::loadLargeTargetProgram() - Loading at non-default address, load@0x%04X (relocated from=%04X)\n",
+         Logging::print("Loading at non-default address, load@0x%04X (relocated from=%04X)\n",
                codeLoadAddress, loadAddress);
          // Relocate entry point
          codeEntry += codeLoadAddress - loadAddress;
@@ -932,11 +933,11 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType *buffe
    }
 #if TARGET != MC56F80xx
    if ((codeLoadAddress < parameters.getRamStart()) || (codeLoadAddress > parameters.getRamEnd())) {
-      print("FlashProgrammer::loadLargeTargetProgram() - Image load address is invalid.\n");
+      Logging::error("Image load address is invalid.\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    if ((codeEntry < parameters.getRamStart()) || (codeEntry > parameters.getRamEnd())) {
-      print("FlashProgrammer::loadLargeTargetProgram() - Image Entry point is invalid.\n");
+      Logging::error("Image Entry point is invalid.\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
 #endif
@@ -944,17 +945,17 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType *buffe
    // Update location of where programming info will be located
    if ((capabilities&CAP_DSC_OVERLAY)!=0) {
       // Loading code into shared RAM - load data offset by code size
-      print("FlashProgrammer::loadLargeTargetProgram() - loading data into overlayed RAM @ 0x%06X\n", dataHeaderAddress);
+      Logging::print("FlashProgrammer::loadLargeTargetProgram() - loading data into overlayed RAM @ 0x%06X\n", dataHeaderAddress);
    }
    else {
       // Loading code into separate program RAM - load data RAM separately
-      print("FlashProgrammer::loadLargeTargetProgram() - loading data into separate RAM @ 0x%06X\n", dataHeaderAddress);
+      Logging::print("FlashProgrammer::loadLargeTargetProgram() - loading data into separate RAM @ 0x%06X\n", dataHeaderAddress);
    }
 #else
    if ((capabilities&CAP_DATA_FIXED)==0) {
       // Relocate Data Entry to immediately after code
       dataHeaderAddress = codeLoadAddress + size;
-      print("FlashProgrammer::loadLargeTargetProgram() - Relocating flashData @ 0x%06X\n", dataHeaderAddress);
+      Logging::print("Relocating flashData @ 0x%06X\n", dataHeaderAddress);
    }
 #endif
 
@@ -982,50 +983,50 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType *buffe
    // Save clock calibration factor
    targetProgramInfo.calibFactor    = calibFactor;
 
-   print("FlashProgrammer::loadLargeTargetProgram() - AlignmentMask=0x%08X\n",
+   Logging::print("AlignmentMask=0x%08X\n",
          flashAlignmentMask);
-   print("FlashProgrammer::loadLargeTargetProgram() -   Program code[0x%06X...0x%06X]\n",
+   Logging::print("Program code[0x%06X...0x%06X]\n",
          codeLoadAddress, codeLoadAddress+size-1);
-   print("FlashProgrammer::loadLargeTargetProgram() -     Parameters[0x%06X...0x%06X]\n",
+   Logging::print("Parameters[0x%06X...0x%06X]\n",
          targetProgramInfo.headerAddress,
          targetProgramInfo.headerAddress+targetProgramInfo.dataOffset-1);
-   print("FlashProgrammer::loadLargeTargetProgram() -     RAM buffer[0x%06X...0x%06X]\n",
+   Logging::print("RAM buffer[0x%06X...0x%06X]\n",
          targetProgramInfo.headerAddress+targetProgramInfo.dataOffset,
          targetProgramInfo.headerAddress+targetProgramInfo.dataOffset+targetProgramInfo.maxDataSize-1);
-   print("FlashProgrammer::loadLargeTargetProgram() -          Entry=0x%06X\n", targetProgramInfo.entry);
+   Logging::print("Entry=0x%06X\n", targetProgramInfo.entry);
 
    // RS08, HCS08, HCS12 are byte aligned
    // MC56F80xx deals with word addresses which are always aligned
    if ((codeLoadAddress & procAlignmentMask) != 0){
-      print("FlashProgrammer::loadLargeTargetProgram() - codeLoadAddress is not aligned\n");
+      Logging::error("CodeLoadAddress is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    if (((targetProgramInfo.headerAddress+targetProgramInfo.dataOffset) & procAlignmentMask) != 0){
-      print("FlashProgrammer::loadLargeTargetProgram() - flashProgramHeader.dataOffset is not aligned\n");
+      Logging::error("FlashProgramHeader.dataOffset is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
 #if (TARGET != ARM)
    if ((targetProgramInfo.entry & procAlignmentMask) != 0){
-      print("FlashProgrammer::loadLargeTargetProgram() - flashProgramHeader.entry is not aligned\n");
+      Logging::error("FlashProgramHeader.entry is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
 #else
    if ((targetProgramInfo.entry & procAlignmentMask) != 1){
-      print("FlashProgrammer::loadLargeTargetProgram() - flashProgramHeader.entry is not aligned\n");
+      Logging::error("FlashProgramHeader.entry is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
 #endif
    // Sanity check buffer
    if (((uint32_t)(targetProgramInfo.headerAddress+targetProgramInfo.dataOffset)<parameters.getRamStart()) ||
        ((uint32_t)(targetProgramInfo.headerAddress+targetProgramInfo.dataOffset+targetProgramInfo.maxDataSize-1)>parameters.getRamEnd())) {
-      print("FlashProgrammer::loadLargeTargetProgram() - Data buffer location [0x%06X..0x%06X] is outside target RAM [0x%06X-0x%06X]\n",
+      Logging::error("Data buffer location [0x%06X..0x%06X] is outside target RAM [0x%06X-0x%06X]\n",
             targetProgramInfo.headerAddress+targetProgramInfo.dataOffset,
             targetProgramInfo.headerAddress+targetProgramInfo.dataOffset+targetProgramInfo.maxDataSize-1,
             parameters.getRamStart(), parameters.getRamEnd());
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    if ((dataLoadAddress+40) > parameters.getRamEnd()) {
-      print("FlashProgrammer::loadLargeTargetProgram() - Data buffer is too small [0x%X..0x%X] \n",
+      Logging::error("Data buffer is too small [0x%X..0x%X] \n",
             dataLoadAddress, parameters.getRamEnd());
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
@@ -1040,25 +1041,21 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType *buffe
 #endif   
    headerPtr->flashData   = nativeToTarget32(targetProgramInfo.headerAddress);
 
-   print("Loaded Image (modified) :\n"
-         "   flashProgramHeader.loadAddress     = 0x%08X\n"
-         "   flashProgramHeader.entry           = 0x%08X\n"
-         "   flashProgramHeader.capabilities    = 0x%08X(%s)\n"
-         "   flashProgramHeader.flashData       = 0x%08X\n",
-         targetToNative32(headerPtr->loadAddress),
-         targetToNative32(headerPtr->entry),
-         capabilities,getProgramCapabilityNames(capabilities),
-         targetToNative32(headerPtr->flashData)
-         );
+   Logging::print("Loaded Image (modified) :\n");
+   Logging::print("   flashProgramHeader.loadAddress     = 0x%08X\n",      targetToNative32(headerPtr->loadAddress));
+   Logging::print("   flashProgramHeader.entry           = 0x%08X\n",      targetToNative32(headerPtr->entry));
+   Logging::print("   flashProgramHeader.capabilities    = 0x%08X(%s)\n",  capabilities,getProgramCapabilityNames(capabilities));
+   Logging::print("   flashProgramHeader.flashData       = 0x%08X\n",      targetToNative32(headerPtr->flashData));
+
    if (currentFlashProgram != flashProgram)  {
-      print("FlashProgrammer::loadLargeTargetProgram(...) - reloading due to change in flash code\n");
+      Logging::print("Reloading due to change in flash code\n");
       // Write the flash programming code to target memory
       if (WriteMemory(memorySpace, codeLoadSize, codeLoadAddress, (uint8_t *)buffer) != BDM_RC_OK) {
          return PROGRAMMING_RC_ERROR_BDM_WRITE;
       }
    }
    else {
-      print("FlashProgrammer::loadLargeTargetProgram() - Suppressing code load as unchanged\n");
+      Logging::print("Suppressing code load as unchanged\n");
    }
    currentFlashProgram   = flashProgram;
    currentFlashOperation = flashOperation;
@@ -1097,8 +1094,8 @@ USBDM_ErrorCode FlashProgrammer::loadSmallTargetProgram(memoryElementType *buffe
                                                         uint32_t           size,
                                                         FlashProgramPtr    flashProgram,
                                                         FlashOperation     flashOperation) {
-
-   print("FlashProgrammer::loadSmallTargetProgram()\n");
+   LOGGING_Q;
+   Logging::error("Error - Unsupported\n");
    return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
 }
 
@@ -1110,6 +1107,7 @@ USBDM_ErrorCode FlashProgrammer::loadSmallTargetProgram(memoryElementType *buffe
 //! @return BDM_RC_OK if successful
 //!
 USBDM_ErrorCode FlashProgrammer::probeMemory(MemorySpace_t memorySpace, uint32_t address) {
+   LOGGING_E;
    static const uint8_t probe1[] = {0xA5, 0xF0,0xA5, 0xF0,};
    static const uint8_t probe2[] = {0x0F, 0x5A,0x0F, 0x5A,};
    uint8_t probeResult1[sizeof(probe1)];
@@ -1130,7 +1128,7 @@ USBDM_ErrorCode FlashProgrammer::probeMemory(MemorySpace_t memorySpace, uint32_t
       return PROGRAMMING_RC_ERROR_BDM_WRITE;
    if ((memcmp(probe1, probeResult1, memorySpace&MS_SIZE) != 0) ||
        (memcmp(probe2, probeResult2, memorySpace&MS_SIZE) != 0)) {
-      print("FlashProgrammer::loadTargetProgram() - RAM memory probe failed @0x%08X\n", address);
+      Logging::error("RAM memory probe failed @0x%08X\n", address);
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    return PROGRAMMING_RC_OK;
@@ -1271,10 +1269,11 @@ static bool usePSTSignals = false;
 //!         other       - error
 //!
 USBDM_ErrorCode getRunStatus(void) {
+   LOGGING_E;
    USBDMStatus_t USBDMStatus;
    USBDM_ErrorCode rc = USBDM_GetBDMStatus(&USBDMStatus);
    if (rc != BDM_RC_OK) {
-      print("getRunStatus() - Failed, rc=%s\n", USBDM_GetErrorString(rc));
+      Logging::error("Failed, rc=%s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    if (usePSTSignals) {
@@ -1311,10 +1310,11 @@ USBDM_ErrorCode getRunStatus(void) {
 //!         other       - error
 //!
 USBDM_ErrorCode getRunStatus(void) {
+   LOGGING_E;
    OnceStatus_t onceStatus;
    USBDM_ErrorCode rc = DSC_GetStatus(&onceStatus);
    if (rc != BDM_RC_OK) {
-      print("getRunStatus() - Failed, rc=%s\n", USBDM_GetErrorString(rc));
+      Logging::error("Failed, rc=%s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    switch (onceStatus) {
@@ -1331,28 +1331,30 @@ USBDM_ErrorCode getRunStatus(void) {
 #endif
 
 #if (TARGET==ARM)
-void report(const char *msg) {
+static void report(const char *msg) {
+   LOGGING_E;
    uint8_t buff[10];
    if (USBDM_ReadMemory(2,2,0x40052000,buff) == BDM_RC_OK) {
-      print("%s::report() - WDOG_STCTRLH=0x%02X\n", msg, getData16Target(buff));
+      Logging::print("%s::report() - WDOG_STCTRLH=0x%02X\n", msg, getData16Target(buff));
    }
    else {
-      print("%s::report() - Unable to read WDOG_STCTRLHL\n", msg);
+      Logging::error("%s::report() - Unable to read WDOG_STCTRLHL\n", msg);
    }
    uint8_t mc_srsh;
    uint8_t mc_srsl;
    // Assume if we can read SRS locations then they are valid (Kinetis chip)
    if ((USBDM_ReadMemory(1,1, MC_SRSH, &mc_srsh) == BDM_RC_OK) &&
        (USBDM_ReadMemory(1,1, MC_SRSL, &mc_srsl) == BDM_RC_OK)) {
-      print("%s::report() - MC_SRSH=0x%02X, MC_SRSL=0x%02X \n", msg, mc_srsh, mc_srsl);
+      Logging::print("%s::report() - MC_SRSH=0x%02X, MC_SRSL=0x%02X \n", msg, mc_srsh, mc_srsl);
    }
    else {
-      print("%s::report() - Unable to read MC_SRSH,MC_SRSL\n", msg);
+      Logging::print("%s::report() - Unable to read MC_SRSH,MC_SRSL\n", msg);
    }
 }
 #endif
 
 USBDM_ErrorCode FlashProgrammer::initLargeTargetBuffer(memoryElementType *buffer) {
+   LOGGING_Q;
    LargeTargetFlashDataHeader *pFlashHeader = (LargeTargetFlashDataHeader*)buffer;
 
    pFlashHeader->errorCode       = nativeToTarget16(-1);
@@ -1369,7 +1371,7 @@ USBDM_ErrorCode FlashProgrammer::initLargeTargetBuffer(memoryElementType *buffer
    case OpNone:
    case OpWriteRam:
    default:
-      print("FlashProgrammer::initLargeTargetBuffer() - unexpected operation %s\n", getFlashOperationName(currentFlashOperation));
+      Logging::error("Unexpected operation %s\n", getFlashOperationName(currentFlashOperation));
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    case OpSelectiveErase:
       operation = DO_INIT_FLASH|DO_ERASE_RANGE;
@@ -1401,29 +1403,20 @@ USBDM_ErrorCode FlashProgrammer::initLargeTargetBuffer(memoryElementType *buffer
    }
    pFlashHeader->flags = nativeToTarget32(operation);
 
-   print("FlashProgrammer::initLargeTargetBuffer() - flashOperationInfo.flashAddress = 0x%08X\n", flashOperationInfo.flashAddress);
-   print("FlashProgrammer::initLargeTargetBuffer() - pFlashHeader->address = 0x%08X\n", pFlashHeader->address);
+   Logging::print("flashOperationInfo.flashAddress = 0x%08X\n", flashOperationInfo.flashAddress);
+   Logging::print("pFlashHeader->address = 0x%08X\n", pFlashHeader->address);
 
-   print("FlashProgrammer::initLargeTargetBuffer()\n"
-         "   currentFlashOperation  = %s\n"
-         "   flags                  = %s\n"
-         "   controller             = 0x%08X\n"
-//         "   watchdogAddress        = 0x%04X\n"
-         "   frequency              = %d (0x%X)\n"
-         "   sectorSize             = 0x%04X\n"
-         "   address                = 0x%08X\n"
-         "   dataSize               = 0x%08X\n"
-         "   dataAddress            = 0x%08X\n",
-         getFlashOperationName(currentFlashOperation),
-         getProgramActionNames(targetToNative32(pFlashHeader->flags)),
-         targetToNative32(pFlashHeader->controller),
-//         targetToNative16(pFlashHeader->watchdogAddress),
-         targetToNative32(pFlashHeader->frequency),targetToNative32(pFlashHeader->frequency),
-         targetToNative16(pFlashHeader->sectorSize),
-         targetToNative32(pFlashHeader->address),
-         targetToNative32(pFlashHeader->dataSize),
-         targetToNative32(pFlashHeader->dataAddress)
-         );
+   Logging::print("Loaded parameters:\n");
+   Logging::print("   currentFlashOperation  = %s\n",        getFlashOperationName(currentFlashOperation));
+   Logging::print("   flags                  = %s\n",        getProgramActionNames(targetToNative32(pFlashHeader->flags)));
+   Logging::print("   controller             = 0x%08X\n",    targetToNative32(pFlashHeader->controller));
+// Logging::print("   watchdogAddress        = 0x%08X\n",    targetToNative32(pFlashHeader->watchdogAddress));
+   Logging::print("   frequency              = %d (0x%X)\n", targetToNative32(pFlashHeader->frequency),targetToNative32(pFlashHeader->frequency));
+   Logging::print("   sectorSize             = 0x%04X\n",    targetToNative16(pFlashHeader->sectorSize));
+   Logging::print("   address                = 0x%08X\n",    targetToNative32(pFlashHeader->address));
+   Logging::print("   dataSize               = 0x%08X\n",    targetToNative32(pFlashHeader->dataSize));
+   Logging::print("   dataAddress            = 0x%08X\n",    targetToNative32(pFlashHeader->dataAddress));
+   pFlashHeader->errorCode = (uint16_t)-1;
    return BDM_RC_OK;
 }
 
@@ -1440,14 +1433,14 @@ USBDM_ErrorCode FlashProgrammer::initSmallTargetBuffer(memoryElementType *buffer
 //! @param dataSize - size of data following header in memoryElementType units
 //!
 USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer, uint32_t dataSize) {
-
-   print("FlashProgrammer::executeTargetProgram(..., dataSize=0x%X)\n", dataSize);
+   LOGGING_Q;
+   Logging::print("dataSize=0x%X\n", dataSize);
 
    USBDM_ErrorCode rc = BDM_RC_OK;
    memoryElementType buffer[1000];
    if (pBuffer == NULL) {
       if (dataSize != 0) {
-         print("FlashProgrammer::executeTargetProgram() - Error: No buffer but size non-zero\n");
+         Logging::error("Error: No buffer but size non-zero\n");
          return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
       }
       pBuffer = buffer;
@@ -1464,7 +1457,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
 #if 0 && defined(LOG) && (TARGET==ARM)
    report("FlashProgrammer::executeTargetProgram()");
 #endif
-   print("FlashProgrammer::executeTargetProgram() - Writing Header+Data\n");
+   Logging::print("Writing Header+Data\n");
 
 #if (TARGET==RS08)
    MemorySpace_t memorySpace = MS_Byte;
@@ -1488,15 +1481,15 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    // Set target PC to start of code & verify
    long unsigned targetRegPC;
    if (WritePC(targetProgramInfo.entry) != BDM_RC_OK) {
-      print("FlashProgrammer::executeTargetProgram() - PC write failed\n");
+      Logging::error("PC write failed\n");
       return PROGRAMMING_RC_ERROR_BDM_WRITE;
    }
    if (ReadPC(&targetRegPC) != BDM_RC_OK) {
-      print("FlashProgrammer::executeTargetProgram() - PC read failed\n");
+      Logging::error("PC read failed\n");
       return PROGRAMMING_RC_ERROR_BDM_READ;
    }
    if ((targetProgramInfo.entry) != targetRegPC) {
-      print("FlashProgrammer::executeTargetProgram() - PC verify failed\n");
+      Logging::error("PC verify failed\n");
       return PROGRAMMING_RC_ERROR_BDM_WRITE;
    }
    USBDMStatus_t status;
@@ -1504,12 +1497,12 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
 
    // Execute the Flash program on target
    if (TargetGo() != BDM_RC_OK) {
-      print("FlashProgrammer::executeTargetProgram() - TargetGo() failed\n");
+      Logging::error("TargetGo() failed\n");
       return PROGRAMMING_RC_ERROR_BDM;
    }
    progressTimer->progress(0, NULL);
 #ifdef LOG
-   print("FlashProgrammer::executeTargetProgram() - Polling");
+   Logging::print("Polling");
    int dotCount = 50;
 #endif
    // Wait for target stop at execution completion
@@ -1517,17 +1510,19 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    do {
       milliSleep(20);
 #ifdef LOG
-      print(".");
+      Logging::printq(".");
       if (++dotCount == 100) {
-         print("\n");
+         Logging::printq("\n");
          dotCount = 0;
       }
 #endif
    } while ((getRunStatus() == BDM_RC_BUSY) && (--timeout>0));
+   Logging::printq("\n");
    TargetHalt();
    unsigned long value;
+   USBDM_Connect();
    ReadPC(&value);
-   print("\nFlashProgrammer::executeTargetProgram() - Start PC = 0x%08X, end PC = 0x%08X\n", targetRegPC, value);
+   Logging::print("Start PC = 0x%08X, end PC = 0x%08X\n", targetRegPC, value);
    // Read the flash parameters back from target memory
    ResultStruct executionResult;
    if (ReadMemory(memorySpace, sizeof(ResultStruct),
@@ -1538,38 +1533,38 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    uint16_t errorCode = targetToNative16(executionResult.errorCode);
    if ((timeout <= 0) && (errorCode == FLASH_ERR_OK)) {
       errorCode = FLASH_ERR_TIMEOUT;
-      print("FlashProgrammer::executeTargetProgram() - Error, Timeout waiting for completion.\n");
+      Logging::error("Error, Timeout waiting for completion.\n");
    }
    if (targetProgramInfo.smallProgram) {
-      print("FlashProgrammer::executeTargetProgram() - complete, errCode=%d\n", errorCode);
+      Logging::print("Complete, errCode=%d\n", errorCode);
    }
    else {
       uint32_t flags = targetToNative32(executionResult.flags);
       if ((flags != IS_COMPLETE) && (errorCode == FLASH_ERR_OK)) {
          errorCode = FLASH_ERR_UNKNOWN;
-         print("FlashProgrammer::executeTargetProgram() - Error, Unexpected flag result.\n");
+         Logging::error("Error, Unexpected flag result.\n");
       }
-      print("FlashProgrammer::executeTargetProgram() - complete, flags = 0x%08X(%s), errCode=%d\n",
+      Logging::print("Complete, flags = 0x%08X(%s), errCode=%d\n",
             flags, getProgramActionNames(flags),
             errorCode);
    }
    rc = convertTargetErrorCode((FlashDriverError_t)errorCode);
    if (rc != BDM_RC_OK) {
-      print("FlashProgrammer::executeTargetProgram() - Error - %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Error - %s\n", USBDM_GetErrorString(rc));
 #if (TARGET == MC56F80xx) && 0
       executionResult.data = targetToNative16(executionResult.data);
       executionResult.dataSize = targetToNative16(executionResult.dataSize);
-      print("   Address = 0x%06X, Data = 0x%04X\n", executionResult.data, executionResult.dataSize);
+      Logging::print("   Address = 0x%06X, Data = 0x%04X\n", executionResult.data, executionResult.dataSize);
 #endif
 #if TARGET == CFV1
       uint8_t SRSreg;
       USBDM_ReadMemory(1, 1, 0xFF9800, &SRSreg);
-      print("FlashProgrammer::executeTargetProgram() - SRS = 0x%02X\n", SRSreg);
+      Logging::error("SRS = 0x%02X\n", SRSreg);
 #endif
 #if TARGET == HCS08
       uint8_t SRSreg;
       USBDM_ReadMemory(1, 1, 0x1800, &SRSreg);
-      print("FlashProgrammer::executeTargetProgram() - SRS = 0x%02X\n", SRSreg);
+      Logging::error("SRS = 0x%02X\n", SRSreg);
 #endif
    }
 #if defined(LOG) && 0
@@ -1588,9 +1583,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
 //! @note - Assumes flash programming code has already been loaded to target.
 //!
 USBDM_ErrorCode FlashProgrammer::determineTargetSpeed(void) {
-
-   print("FlashProgrammer::determineTargetSpeed()\n");
-
+   LOGGING_E;
    uint32_t targetBusFrequency = 0;
 
    flashOperationInfo.alignment = 1;
@@ -1605,8 +1598,7 @@ USBDM_ErrorCode FlashProgrammer::determineTargetSpeed(void) {
    timingData.flags      = nativeToTarget32(DO_TIMING_LOOP|IS_COMPLETE); // IS_COMPLETE as check - should be cleared
 //   timingData.controller = nativeToTarget32(-1);                         // Dummy value - not used
 
-   print("FlashProgrammer::determineTargetSpeed()\n"
-         "   flags      = 0x%08X(%s)\n",
+   Logging::print("flags      = 0x%08X(%s)\n",
          targetToNative32(timingData.flags), getProgramActionNames(targetToNative32(timingData.flags))
          );
    MemorySpace_t memorySpace = MS_Word;
@@ -1621,12 +1613,12 @@ USBDM_ErrorCode FlashProgrammer::determineTargetSpeed(void) {
    }
    // Execute the Flash program on target for 1 second
    if (TargetGo() != BDM_RC_OK) {
-      print("FlashProgrammer::determineTargetSpeed() - USBDM_TargetGo failed\n");
+      Logging::error("USBDM_TargetGo failed\n");
       return PROGRAMMING_RC_ERROR_BDM;
    }
    milliSleep(1000);
    if (TargetHalt() != BDM_RC_OK) {
-      print("FlashProgrammer::determineTargetSpeed() - USBDM_TargetHalt failed\n");
+      Logging::error("USBDM_TargetHalt failed\n");
       return PROGRAMMING_RC_ERROR_BDM;
    }
    // Read the flash parameters back from target memory
@@ -1639,24 +1631,24 @@ USBDM_ErrorCode FlashProgrammer::determineTargetSpeed(void) {
    timingDataResult.errorCode    = targetToNative16(timingDataResult.errorCode);
    timingDataResult.timingCount  = targetToNative32(timingDataResult.timingCount);
 
-   print("FlashProgrammer::determineTargetSpeed() - complete, flags = 0x%08X(%s), errCode=%d\n",
+   Logging::print("Complete, flags = 0x%08X(%s), errCode=%d\n",
          timingDataResult.flags,
          getProgramActionNames(timingDataResult.flags),
          timingDataResult.errorCode);
    unsigned long value;
    ReadPC(&value);
-   print("\nFlashProgrammer::determineTargetSpeed() - Start PC = 0x%08X, end PC = 0x%08X\n", targetProgramInfo.entry, value);
+   Logging::print("Start PC = 0x%08X, end PC = 0x%08X\n", targetProgramInfo.entry, value);
    if ((timingDataResult.flags != DO_TIMING_LOOP) && (timingDataResult.errorCode == FLASH_ERR_OK)) {
       timingDataResult.errorCode    = FLASH_ERR_UNKNOWN;
-      print("FlashProgrammer::determineTargetSpeed() - Error, Unexpected flag result\n");
+      Logging::error("Error, Unexpected flag result\n");
    }
    if (timingDataResult.errorCode != FLASH_ERR_OK) {
-      print("FlashProgrammer::determineTargetSpeed() - Error\n");
+      Logging::error("Error\n");
       return convertTargetErrorCode((FlashDriverError_t)timingDataResult.errorCode);
    }
    targetBusFrequency = 50*int(0.5+((250.0 * timingDataResult.timingCount)/targetProgramInfo.calibFactor));
    flashOperationInfo.targetBusFrequency = targetBusFrequency;
-   print("FlashProgrammer::determineTargetSpeed() - Count = %d(0x%X) => Bus Frequency = %d kHz\n",
+   Logging::print("Count = %d(0x%X) => Bus Frequency = %d kHz\n",
          timingDataResult.timingCount, timingDataResult.timingCount, targetBusFrequency);
    return PROGRAMMING_RC_OK;
 }
@@ -1668,8 +1660,8 @@ USBDM_ErrorCode FlashProgrammer::determineTargetSpeed(void) {
 //! @return error code see \ref USBDM_ErrorCode.
 //!
 USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
+   LOGGING_E;
    USBDM_ErrorCode rc = BDM_RC_OK;
-   print("FlashProgrammer::eraseFlash()\n");
    progressTimer->restart("Erasing all flash blocks...");
 
    // Process each flash region
@@ -1682,7 +1674,7 @@ USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
          continue;
       }
       MemType_t memoryType = memoryRegionPtr->getMemoryType();
-      print("FlashProgrammer::eraseFlash() - Erasing %s\n", MemoryRegion::getMemoryTypeName(memoryType));
+      Logging::print("Erasing %s\n", MemoryRegion::getMemoryTypeName(memoryType));
 
       uint32_t addressFlag  = 0;
       uint32_t flashAddress = memoryRegionPtr->getDummyAddress();
@@ -1719,7 +1711,7 @@ USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
       const FlashProgramPtr flashProgram = memoryRegionPtr->getFlashprogram();
       rc = loadTargetProgram(flashProgram, OpBlockErase);
       if (rc != PROGRAMMING_RC_OK) {
-         print("FlashProgrammer::eraseFlash() - loadTargetProgram() failed \n");
+         Logging::error("loadTargetProgram() failed \n");
          return rc;
       }
       rc = executeTargetProgram();
@@ -1739,8 +1731,8 @@ USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
 //! @return error code see \ref USBDM_ErrorCode.
 //!
 USBDM_ErrorCode FlashProgrammer::selectiveEraseFlashSecurity(void) {
+   LOGGING_E;
    USBDM_ErrorCode rc = BDM_RC_OK;
-   print("FlashProgrammer::selectiveEraseFlashSecurity()\n");
    progressTimer->restart("Erasing all flash security areas...");
 
    // Process each flash region
@@ -1761,7 +1753,7 @@ USBDM_ErrorCode FlashProgrammer::selectiveEraseFlashSecurity(void) {
       if (securityInfo == NULL) {
          continue;
       }
-      print("FlashProgrammer::selectiveEraseFlashSecurity() - erasing security area %s[0x%06X..0x%06X]\n",
+      Logging::print("Erasing security area %s[0x%06X..0x%06X]\n",
             memoryRegionPtr->getMemoryTypeName(), securityAddress, securityAddress+securitySize-1);
 
       flashOperationInfo.controller        = memoryRegionPtr->getRegisterAddress();
@@ -1822,14 +1814,15 @@ USBDM_ErrorCode FlashProgrammer::selectiveEraseFlashSecurity(void) {
 //! @note - Assumes flash programming code has already been loaded to target.
 //!
 USBDM_ErrorCode FlashProgrammer::partitionFlexNVM() {
+   LOGGING_Q;
    uint8_t eeepromSize  = parameters.getFlexNVMParameters()->eeepromSize;
    uint8_t partionValue = parameters.getFlexNVMParameters()->partionValue;
    USBDM_ErrorCode rc = BDM_RC_OK;
    if ((eeepromSize==0xFF)&&(partionValue==0xFF)) {
-      print("FlashProgrammer::partitionFlexNVM() - skipping FlexNVM parameter programming as unprogrammed values\n");
+      Logging::print("Skipping FlexNVM parameter programming as unprogrammed values\n");
       return BDM_RC_OK;
    }
-   print("FlashProgrammer::partitionFlexNVM(eeepromSize=0x%02X, partionValue=0x%02X)\n", eeepromSize, partionValue);
+   Logging::print("eeepromSize=0x%02X, partionValue=0x%02X\n", eeepromSize, partionValue);
    progressTimer->restart("Partitioning DFlash...");
 
    // Find flexNVM region
@@ -1842,11 +1835,11 @@ USBDM_ErrorCode FlashProgrammer::partitionFlexNVM() {
       }
    }
    if (memoryRegionPtr == NULL) {
-      print("FlashProgrammer::partitionFlexNVM() - No FlexNVM Region found\n");
+      Logging::print("No FlexNVM Region found\n");
       return PROGRAMMING_RC_ERROR_ILLEGAL_PARAMS;
    }
    MemType_t memoryType = memoryRegionPtr->getMemoryType();
-   print("FlashProgrammer::partitionFlexNVM() - Partitioning %s\n", MemoryRegion::getMemoryTypeName(memoryType));
+   Logging::print("Partitioning %s\n", MemoryRegion::getMemoryTypeName(memoryType));
    const FlashProgramPtr flashProgram = memoryRegionPtr->getFlashprogram();
    rc = loadTargetProgram(flashProgram, OpPartitionFlexNVM);
    if (rc != PROGRAMMING_RC_OK) {
@@ -1867,6 +1860,7 @@ USBDM_ErrorCode FlashProgrammer::partitionFlexNVM() {
 //! Checks for unsupported device
 //!
 USBDM_ErrorCode FlashProgrammer::checkUnsupportedTarget() {
+   LOGGING_E;
    USBDM_ErrorCode rc;
    uint32_t targetSDID;
 #define brokenUF32_SDID (0x6311)
@@ -1883,7 +1877,7 @@ USBDM_ErrorCode FlashProgrammer::checkUnsupportedTarget() {
    if ((targetSDID == brokenUF32_SDID) &&
        ((parameters.getSecurity() != SEC_UNSECURED) ||
         (checkTargetUnSecured() != PROGRAMMING_RC_OK))) {
-      print("FlashProgrammer::checkUnsupportedTarget() - Can't unsecure/secure UF32 due to hardware bug - See errata MUCts01498\n");
+      Logging::error("Can't unsecure/secure UF32 due to hardware bug - See errata MUCts01498\n");
       return PROGRAMMING_RC_ERROR_CHIP_UNSUPPORTED;
    }
    return PROGRAMMING_RC_OK;
@@ -1907,18 +1901,19 @@ USBDM_ErrorCode FlashProgrammer::checkUnsupportedTarget() {
 //!       - Re-connects to target.
 //!
 USBDM_ErrorCode FlashProgrammer::getTargetBusSpeed(unsigned long *busFrequency) {
-unsigned long connectionFrequency;
-USBDMStatus_t bdmStatus;
-USBDM_ErrorCode rc;
+   LOGGING_E;
+   unsigned long connectionFrequency;
+   USBDMStatus_t bdmStatus;
+   USBDM_ErrorCode rc;
 
-//   print("FlashProgrammer::getTargetBusSpeed()\n");
+//   Logging::print("FlashProgrammer::getTargetBusSpeed()\n");
 
    // Check target connection
    // BDM_RC_BDM_EN_FAILED may mean the target is secured
    rc = USBDM_Connect();
    if (((rc != BDM_RC_OK) && (rc != BDM_RC_BDM_EN_FAILED)) ||
        (USBDM_GetBDMStatus(&bdmStatus) != BDM_RC_OK)) {
-      print("FlashProgrammer::getTargetBusSpeed()- failed connection\n");
+      Logging::error("Failed connection\n");
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
 
@@ -1927,7 +1922,7 @@ USBDM_ErrorCode rc;
        (USBDM_GetSpeedHz(&connectionFrequency) == BDM_RC_OK)) {
       // Use speed determined by BDM SYNC pulse
       *busFrequency = parameters.getBDMtoBUSFactor()*connectionFrequency;
-      print("FlashProgrammer::getTargetBusSpeed() - Using SYNC method, Bus Frequency = %ld kHz\n",
+      Logging::print("Using SYNC method, Bus Frequency = %ld kHz\n",
             (unsigned long)round(*busFrequency/1000.0));
       return PROGRAMMING_RC_OK;
    }
@@ -1938,13 +1933,13 @@ USBDM_ErrorCode rc;
        (USBDM_GetSpeedHz(&connectionFrequency) == BDM_RC_OK)) {
       // Use speed determined by BDM guessing
       *busFrequency = parameters.getBDMtoBUSFactor()*connectionFrequency;
-      print("FlashProgrammer::getTargetBusSpeed() - Using Approximate method, Bus Frequency = %ld kHz\n",
+      Logging::print("FlashProgrammer::getTargetBusSpeed() - Using Approximate method, Bus Frequency = %ld kHz\n",
             (unsigned long)round(*busFrequency/1000.0));
       return PROGRAMMING_RC_ERROR_SPEED_APPROX;
    }
    // We must have a connection for the next method
    if (rc != BDM_RC_OK) {
-      print("FlashProgrammer::getTargetBusSpeed()- failed connection\n");
+      Logging::error("Failed connection\n");
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
    //
@@ -1952,12 +1947,12 @@ USBDM_ErrorCode rc;
    //
    USBDM_ErrorCode flashRc = determineTargetSpeed();
    if (flashRc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::getTargetBusSpeed()- failed connection\n");
+      Logging::error("Failed connection\n");
       return flashRc;
    }
    *busFrequency = 1000*flashOperationInfo.targetBusFrequency;
 
-   print("FlashProgrammer::getTargetBusSpeed() - Using Timing Program method, Bus Frequency = %ld kHz\n",
+   Logging::print("FlashProgrammer::getTargetBusSpeed() - Using Timing Program method, Bus Frequency = %ld kHz\n",
         (unsigned long)round(*busFrequency/1000.0));
 
    return PROGRAMMING_RC_OK;
@@ -1974,14 +1969,15 @@ USBDM_ErrorCode rc;
 //! @note Assumes the target device has already been opened & USBDM options set.
 //!
 USBDM_ErrorCode FlashProgrammer::checkTargetUnSecured() {
+   LOGGING_E;
    USBDM_ErrorCode rc = initialiseTarget();
    if (rc != PROGRAMMING_RC_OK)
       return rc;
    if (runTCLCommand("isUnsecure") != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::checkTargetUnSecured() - secured\n");
+      Logging::print("Secured\n");
       return PROGRAMMING_RC_ERROR_SECURED;
    }
-   print("FlashProgrammer::checkTargetUnSecured() - unsecured\n");
+   Logging::print("Unsecured\n");
    return PROGRAMMING_RC_OK;
 }
 
@@ -1995,27 +1991,28 @@ static const char *secValues[] = {"default", "secured", "unsecured", "intelligen
 //!
 //!
 USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, MemoryRegionPtr flashRegion) {
+   LOGGING_Q;
    uint32_t securityAddress = flashRegion->getSecurityAddress();
    const uint8_t *data;
    int size;
 
    if (securityAddress == 0) {
-      print("FlashProgrammer::setFlashSecurity(): No security area, not modifying flash image\n");
+      Logging::print("No security area, not modifying flash image\n");
       return PROGRAMMING_RC_OK;
    }
    switch (parameters.getSecurity()) {
       case SEC_SECURED: { // SEC=on
          SecurityInfoPtr securityInfo = flashRegion->getSecureInfo();
          if (securityInfo == NULL) {
-            print("FlashProgrammer::setFlashSecurity(): Error - No settings for security area!\n");
+            Logging::error("Error - No settings for security area!\n");
             return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
          }
          size = securityInfo->getSize();
          data = securityInfo->getData();
 #ifdef LOG
-         print("FlashProgrammer::setFlashSecurity(): Setting image as secured, \n"
-               "mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
-         printDump(data, size, securityAddress);
+         Logging::print("Setting image as secured, \n"
+               "              mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
+         Logging::printDump(data, size, securityAddress);
 #endif
          flashImage.loadDataBytes(size, securityAddress, data);
       }
@@ -2023,15 +2020,15 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, Memory
       case SEC_UNSECURED: { // SEC=off
          SecurityInfoPtr unsecurityInfo = flashRegion->getUnsecureInfo();
          if (unsecurityInfo == NULL) {
-            print("FlashProgrammer::setFlashSecurity(): Error - No settings for security area!\n");
+            Logging::error("Error - No settings for security area!\n");
             return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
          }
          size = unsecurityInfo->getSize();
          data = unsecurityInfo->getData();
 #ifdef LOG
-         print("FlashProgrammer::setFlashSecurity(): Setting image as unsecured, \n"
-               "mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
-         printDump(data, size, securityAddress);
+         Logging::print("Setting image as unsecured, \n"
+               "              mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
+         Logging::printDump(data, size, securityAddress);
 #endif
          flashImage.loadDataBytes(size, securityAddress, data);
       }
@@ -2039,22 +2036,22 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, Memory
       case SEC_INTELLIGENT: { // SEC=off if not already modified
          SecurityInfoPtr unsecurityInfo = flashRegion->getUnsecureInfo();
          if (unsecurityInfo == NULL) {
-            print("FlashProgrammer::setFlashSecurity(): Error - No settings for security area!\n");
+            Logging::error("Error - No settings for security area!\n");
             return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
          }
          size = unsecurityInfo->getSize();
          data = unsecurityInfo->getData();
 #ifdef LOG
-         print("FlashProgrammer::setFlashSecurity(): Setting image as intelligently unsecured, \n"
-               "mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
-         printDump(data, size, securityAddress);
+         Logging::print("Setting image as intelligently unsecured, \n"
+               "              mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
+         Logging::printDump(data, size, securityAddress);
 #endif
          flashImage.loadDataBytes(size, securityAddress, data, true);
       }
          break;
       case SEC_DEFAULT:   // Unchanged
       default:
-         print("FlashProgrammer::setFlashSecurity(): Leaving flash image unchanged\n");
+         Logging::print("Leaving flash image unchanged\n");
          break;
    }
    return PROGRAMMING_RC_OK;
@@ -2070,8 +2067,7 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, Memory
 //! @note - Assumes flash programming code has already been loaded to target.
 //!
 USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage) {
-   print("FlashProgrammer::setFlashSecurity()\n");
-
+   LOGGING_E;
    // Process each flash region
    USBDM_ErrorCode rc = BDM_RC_OK;
    for (int index=0; ; index++) {
@@ -2091,19 +2087,18 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage) {
 // Executes a TCL script in the current TCL interpreter
 //
 USBDM_ErrorCode FlashProgrammer::runTCLScript(TclScriptPtr script) {
-   print("FlashProgrammer::runTCLScript(): Running TCL Script...\n");
-
-   if (tclInterpreter == NULL)
+   LOGGING_E;
+   if (tclInterpreter == NULL) {
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
-
+   }
    if (evalTclScript(tclInterpreter, script->getScript().c_str()) != 0) {
-      print("FlashProgrammer::runTCLScript(): Failed\n");
-      print(script->toString().c_str());
+      Logging::error("Failed\n");
+      Logging::print(script->toString().c_str());
       return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
    }
-//   print("FlashProgrammer::runTCLScript(): Script = %s\n",
+//   Logging::print("FlashProgrammer::runTCLScript(): Script = %s\n",
 //          (const char *)script->getScript().c_str());
-//   print("FlashProgrammer::runTCLScript(): Complete\n");
+//   Logging::print("FlashProgrammer::runTCLScript(): Complete\n");
    return PROGRAMMING_RC_OK;
 }
 
@@ -2111,20 +2106,21 @@ USBDM_ErrorCode FlashProgrammer::runTCLScript(TclScriptPtr script) {
 // Executes a TCL command previously loaded in the TCL interpreter
 //
 USBDM_ErrorCode FlashProgrammer::runTCLCommand(const char *command) {
-   print("FlashProgrammer::runTCLCommand(): Running TCL Command '%s'\n", command);
+   LOGGING_Q;
+   Logging::print("Command = '%s'\n", command);
 
    if (!useTCLScript) {
-      print("FlashProgrammer::runTCLCommand(): Not using TCL\n");
+      Logging::print("Not using TCL\n");
       return PROGRAMMING_RC_OK;
    }
    if (tclInterpreter == NULL) {
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    if (evalTclScript(tclInterpreter, command) != 0) {
-      print("FlashProgrammer::runTCLCommand(): TCL Command '%s' failed\n", command);
+      Logging::error("TCL Command '%s' failed\n", command);
       return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
    }
-//   print("FlashProgrammer::runTCLCommand(): Complete\n");
+//   Logging::print("FlashProgrammer::runTCLCommand(): Complete\n");
    return PROGRAMMING_RC_OK;
 }
 
@@ -2132,35 +2128,34 @@ USBDM_ErrorCode FlashProgrammer::runTCLCommand(const char *command) {
 // Initialises TCL support for current target
 //
 USBDM_ErrorCode FlashProgrammer::initTCL(void) {
-
-//   print("FlashProgrammer::initTCL()\n");
+   LOGGING_E;
 
    // Set up TCL interpreter only once
-   if (tclInterpreter != NULL)
+   if (tclInterpreter != NULL) {
       return PROGRAMMING_RC_OK;
-	  
+   }
    useTCLScript = false;
 
 //   FILE *fp = fopen("c:/delme.log", "wt");
 //   tclInterpreter = createTclInterpreter(TARGET_TYPE, fp);
-   tclInterpreter = createTclInterpreter(TARGET_TYPE, getLogFileHandle());
+   tclInterpreter = createTclInterpreter(TARGET_TYPE, Logging::getLogFileHandle());
    if (tclInterpreter == NULL) {
-      print("FlashProgrammer::initTCL() - no TCL interpreter\n");
+      Logging::error("No TCL interpreter\n");
       return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
    }
    // Run initial TCL script (loads routines)
    TclScriptPtr script = parameters.getFlashScripts();
    if (!script) {
-      print("FlashProgrammer::initTCL() - no TCL script found\n");
+      Logging::error("No TCL script found\n");
       return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
    }
 #if defined(LOG) && 0
-   print("FlashProgrammer::initTCL()\n");
-   print(script->toString().c_str());
+   Logging::print("FlashProgrammer::initTCL()\n");
+   Logging::print(script->toString().c_str());
 #endif
    USBDM_ErrorCode rc = runTCLScript(script);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::initTCL() - runTCLScript() failed\n");
+      Logging::error("runTCLScript() failed\n");
       return rc;
    }
    useTCLScript = true;
@@ -2171,6 +2166,7 @@ USBDM_ErrorCode FlashProgrammer::initTCL(void) {
 //  Release the current TCL interpreter
 //
 USBDM_ErrorCode FlashProgrammer::releaseTCL(void) {
+   LOGGING_E;
    if (tclInterpreter != NULL) {
       freeTclInterpreter(tclInterpreter);
       tclInterpreter = NULL;
@@ -2195,12 +2191,12 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
                                               unsigned int    blockSize,
                                               uint32_t       &flashAddress,
                                               FlashOperation flashOperation) {
-
-   print("FlashProgrammer::doFlashBlock(%s, [0x%06X..0x%06X])\n",
+   LOGGING;
+   Logging::print("op=%s, [0x%06X..0x%06X]\n",
          getFlashOperationName(flashOperation), flashAddress, flashAddress+blockSize-1);
 
    if (!flashReady) {
-      print("FlashProgrammer::doFlashBlock() - Error, Flash not ready\n");
+      Logging::error("FlashProgrammer::doFlashBlock() - Error, Flash not ready\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    // OK for empty block
@@ -2231,14 +2227,14 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
          // No suitable region found
          break;
       }
-      print("  Checking %s[0x%06X..0x%06X]...\n",
+      Logging::print("Checking %s[0x%06X..0x%06X]...\n",
             memoryRegionPtr->getMemoryTypeName(),
             memoryRegionPtr->getMemoryRange(0)->start,
             memoryRegionPtr->getMemoryRange(0)->end);
       uint32_t lastContiguous;
       if (!memoryRegionPtr->findLastContiguous((flashAddress-offset), &lastContiguous, memorySpace)) {
          // Not in this memory region
-         print("  ...Not in this region\n");
+         Logging::print("  ...Not in this region\n");
          continue;
       }
       lastContiguous = lastContiguous + offset; // Convert to last byte
@@ -2246,7 +2242,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
       // Check if block crosses boundary and will need to be split
       if ((flashAddress+blockSize-1) > lastContiguous) {
          // The block is split into an contiguous block + rest. Each is handled by recursion
-         print("FlashProgrammer::doFlashBlock() - Block crosses FLASH boundary - recursing\n");
+         Logging::print("  ...Block crosses FLASH boundary - recursing\n");
          uint32_t firstBlockSize = lastContiguous - flashAddress + 1;
          USBDM_ErrorCode rc;
          rc = doFlashBlock(flashImage, firstBlockSize, flashAddress, flashOperation);
@@ -2267,7 +2263,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
                break;
             case OpWriteRam:
                // Assume to be done in later RAM phase
-               print("  ...Skipping block %s[0x%06X..0x%06X]\n",
+               Logging::print("  ...Skipping block %s[0x%06X..0x%06X]\n",
                      memoryRegionPtr->getMemoryTypeName(),
                      flashAddress-offset, flashAddress-offset+blockSize-1);
                // No further processing of this block
@@ -2285,7 +2281,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
             case OpProgram:
             case OpSelectiveErase:
                // Assume done in earlier Flash pass or not applicable
-               print("  ...Skipping block %s[0x%06X..0x%06X]\n",
+               Logging::print("  ...Skipping block %s[0x%06X..0x%06X]\n",
                      memoryRegionPtr->getMemoryTypeName(),
                      flashAddress-offset, flashAddress-offset+blockSize-1);
                // No further processing of this block
@@ -2308,13 +2304,12 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
       }
    }
    if (!foundRegion) {
-      print("FlashProgrammer::doFlashBlock() - Block not within target memory\n");
-      print("  %s[0x%06X...] is not within target memory.\n",
+      Logging::error("Block %s[0x%06X...] is not within target memory.\n",
             getMemSpaceName(memorySpace), flashAddress);
       return PROGRAMMING_RC_ERROR_OUTSIDE_TARGET_FLASH;
    }
    MemType_t memoryType = memoryRegionPtr->getMemoryType();
-   print("FlashProgrammer::doFlashBlock() - Processing %s[0x%06X..0x%06X]\n",
+   Logging::print("Processing %s[0x%06X..0x%06X]\n",
          MemoryRegion::getMemoryTypeName(memoryType),
          flashAddress, flashAddress+blockSize-1);
 
@@ -2323,7 +2318,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
    flashOperationInfo.sectorSize = memoryRegionPtr->getSectorSize();
 
    if ((flashOperation == OpSelectiveErase) && (flashOperationInfo.sectorSize == 0)) {
-      print("FlashProgrammer::doFlashBlock() - Error: sector size is 0\n");
+      Logging::error("Error: sector size is 0\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    USBDM_ErrorCode rc = loadTargetProgram(memoryRegionPtr->getFlashprogram(), flashOperation);
@@ -2342,7 +2337,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
       maxSplitBlockSize = MaxSplitBlockSize;
    }
    uint32_t alignMask = memoryRegionPtr->getAlignment()-1;
-   print("FlashProgrammer::doFlashBlock() - align mask = 0x%08X\n", alignMask);
+   Logging::print("Align mask = 0x%08X\n", alignMask);
 
    // splitBlockSize must be aligned
    maxSplitBlockSize &= ~alignMask;
@@ -2354,20 +2349,20 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
 
 #if (TARGET == HCS08) || (TARGET == HCS12)
    if (memoryRegionPtr->getMemoryType() == MemEEPROM) {
-      print("FlashProgrammer::doFlashBlock() - setting EEPROM address flag\n");
+      Logging::print("Setting EEPROM address flag\n");
       addressFlag |= ADDRESS_EEPROM;
    }
    // Set up linear address
    if (memoryRegionPtr->getAddressType() == AddrLinear) {
       // Set Linear address
-      print("FlashProgrammer::doFlashBlock() - setting Linear address\n");
+      Logging::print("Setting Linear address\n");
       addressFlag |= ADDRESS_LINEAR;
    }
 #endif
 #if (TARGET == MC56F80xx)
       if (memoryType == MemXROM) {
          // |0x80 => XROM, |0x03 => Bank1 (Data)
-         print("FlashProgrammer::doFlashBlock() - setting MemXROM address\n");
+         Logging::print("Setting MemXROM address\n");
          addressFlag = 0x83000000;
       }
 #endif
@@ -2394,7 +2389,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
       // Determine size of block to process
       unsigned int splitBlockSize = blockSize;
       if ((flashOperation == OpProgram)||(flashOperation == OpVerify)||(flashOperation == OpWriteRam)) {
-//         print("FlashProgrammer::doFlashBlock() #2  maxSplitBlockSize=0x%06X, splitBlockSize=0x%06X, blockSize=0x%X\n", maxSplitBlockSize, splitBlockSize, blockSize);
+//         Logging::print("FlashProgrammer::doFlashBlock() #2  maxSplitBlockSize=0x%06X, splitBlockSize=0x%06X, blockSize=0x%X\n", maxSplitBlockSize, splitBlockSize, blockSize);
          // Requires data transfer using buffer
          if (splitBlockSize>maxSplitBlockSize) {
             splitBlockSize = maxSplitBlockSize;
@@ -2435,22 +2430,22 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
       flashOperationInfo.flashAddress = addressFlag|targetAddress;
       flashOperationInfo.dataSize     = flashIndex;
       if (splitBlockSize==0) {
-         print("FlashProgrammer::doFlashBlock() - Error: splitBlockSize size is 0\n");
+         Logging::error("FlashProgrammer::doFlashBlock() - Error: splitBlockSize size is 0\n");
          return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
       }
       flashOperationInfo.pageAddress  = memoryRegionPtr->getPageAddress();
       USBDM_ErrorCode rc;
       if (flashOperation == OpWriteRam) {
-         print("         ramBlock[0x%06X..0x%06X]\n", flashAddress, flashAddress+splitBlockSize-1);
+         Logging::print("ramBlock[0x%06X..0x%06X]\n", flashAddress, flashAddress+splitBlockSize-1);
          rc = WriteMemory(MS_Word, splitBlockSize, flashAddress, (uint8_t *)buffer+targetProgramInfo.dataOffset);
       }
       else {
-         print("       splitBlock[0x%06X..0x%06X]\n", flashAddress, flashAddress+splitBlockSize-1);
-         print("FlashProgrammer::doFlashBlock() - flashOperationInfo.flashAddress = 0x%08X\n", flashOperationInfo.flashAddress);
+         Logging::print("splitBlock[0x%06X..0x%06X]\n", flashAddress, flashAddress+splitBlockSize-1);
+         Logging::print("flashOperationInfo.flashAddress = 0x%08X\n", flashOperationInfo.flashAddress);
          rc = executeTargetProgram(buffer, size);
       }
       if (rc != PROGRAMMING_RC_OK) {
-         print("FlashProgrammer::doFlashBlock() - Error\n");
+         Logging::error("Error\n");
          return rc;
       }
       // Advance to next block of data
@@ -2472,10 +2467,11 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
 //!
 USBDM_ErrorCode FlashProgrammer::applyFlashOperation(FlashImage     *flashImage,
                                                      FlashOperation  flashOperation) {
+   LOGGING;
    USBDM_ErrorCode rc = PROGRAMMING_RC_OK;
    FlashImage::Enumerator *enumerator = flashImage->getEnumerator();
 
-   print("FlashProgrammer::applyFlashOperation(%s) - Total Bytes = %d\n",
+   Logging::print("Op=%s, Total Bytes = %d\n",
          getFlashOperationName(flashOperation), flashImage->getByteCount());
    // Go through each allocated block of memory applying operation
    while (enumerator->isValid()) {
@@ -2490,12 +2486,12 @@ USBDM_ErrorCode FlashProgrammer::applyFlashOperation(FlashImage     *flashImage,
          // Process block [startBlock..endBlock]
          rc = doFlashBlock(flashImage, blockSize, startBlock, flashOperation);
          if (rc != PROGRAMMING_RC_OK) {
-            print("FlashProgrammer::applyFlashOperation() - Error \n");
+            Logging::error("FlashProgrammer::applyFlashOperation() - Error \n");
             break;
          }
       }
       else {
-         print("FlashProgrammer::applyFlashOperation() - empty block\n");
+         Logging::print("FlashProgrammer::applyFlashOperation() - empty block\n");
       }
       enumerator->setAddress(startBlock);
    }
@@ -2511,8 +2507,7 @@ USBDM_ErrorCode FlashProgrammer::applyFlashOperation(FlashImage     *flashImage,
 //! @return error code see \ref USBDM_ErrorCode
 //!
 USBDM_ErrorCode FlashProgrammer::doProgram(FlashImage *flashImage) {
-   print("FlashProgrammer::doProgram()\n");
-
+   LOGGING;
    // Load target flash code to check programming options
    flashOperationInfo.alignment = 2;
    loadTargetProgram(OpBlankCheck);
@@ -2529,7 +2524,7 @@ USBDM_ErrorCode FlashProgrammer::doProgram(FlashImage *flashImage) {
    }
    rc = applyFlashOperation(flashImage, OpProgram);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::doProgram() - Programming failed, Reason= %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Programming failed, Reason= %s\n", USBDM_GetErrorString(rc));
    }
    if ((targetProgramInfo.programOperation&DO_VERIFY_RANGE) == 0) {
       // Do separate verify operation
@@ -2549,14 +2544,13 @@ USBDM_ErrorCode FlashProgrammer::doProgram(FlashImage *flashImage) {
 //! Todo This is sub-optimal as it may erase the same sector multiple times.
 //!
 USBDM_ErrorCode FlashProgrammer::doSelectiveErase(FlashImage *flashImage) {
-
-   print("FlashProgrammer::doSelectiveErase()\n");
+   LOGGING_E;
    progressTimer->restart("Selective Erasing...");
 
    USBDM_ErrorCode rc;
    rc = applyFlashOperation(flashImage, OpSelectiveErase);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::doSelectiveErase() - Selective erase failed, Reason= %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Selective erase failed, Reason= %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -2575,11 +2569,11 @@ USBDM_ErrorCode FlashProgrammer::doSelectiveErase(FlashImage *flashImage) {
 //!       locations are ignored.
 //!
 USBDM_ErrorCode FlashProgrammer::doReadbackVerify(FlashImage *flashImage) {
+   LOGGING_E;
    const unsigned MAX_BUFFER=0x800;
    memoryElementType buffer[MAX_BUFFER];
    int checkResult = TRUE;
    int blockResult;
-   print("FlashProgrammer::doReadbackVerify()\n");
 
    FlashImage::Enumerator *enumerator = flashImage->getEnumerator();
 
@@ -2594,12 +2588,12 @@ USBDM_ErrorCode FlashProgrammer::doReadbackVerify(FlashImage *flashImage) {
       // Find end of block to verify
       enumerator->lastValid();
       unsigned regionSize = enumerator->getAddress() - startBlock + 1;
-      print("FlashProgrammer::doReadbackVerify() - Verifying Block[0x%8.8X..0x%8.8X]\n", startBlock, startBlock+regionSize-1);
+      Logging::print("Verifying Block[0x%8.8X..0x%8.8X]\n", startBlock, startBlock+regionSize-1);
       while (regionSize>0) {
 #if (TARGET==RS08)
          MemorySpace_t memorySpace = MS_Byte;
 #elif (TARGET == MC56F80xx)
-         MemorySpace_t memorySpace = MS_XWord;
+         MemorySpace_t memorySpace = MS_PWord;
 #elif (TARGET == ARM)
          MemorySpace_t memorySpace = MS_Long;
 #elif (TARGET == HCS08) || (TARGET == HCS12)
@@ -2629,13 +2623,13 @@ USBDM_ErrorCode FlashProgrammer::doReadbackVerify(FlashImage *flashImage) {
 #ifndef LOG
                break;
 #endif
-//               print("Verifying location[0x%8.8X]=>failed, image=%2.2X != target=%2.2X\n",
+//               Logging::print("Verifying location[0x%8.8X]=>failed, image=%2.2X != target=%2.2X\n",
 //                     startBlock+testIndex,
 //                     (uint8_t)(flashImage->getValue(startBlock+testIndex]),
 //                     buffer[testIndex]);
             }
          }
-         print("FlashProgrammer::doReadbackVerify() - Verifying Sub-block[0x%8.8X..0x%8.8X]=>%s\n",
+         Logging::print("Verifying Sub-block[0x%8.8X..0x%8.8X]=>%s\n",
                startBlock, startBlock+blockSize-1,blockResult?"OK":"FAIL");
          checkResult = checkResult && blockResult;
          regionSize -= blockSize;
@@ -2669,11 +2663,10 @@ USBDM_ErrorCode FlashProgrammer::doReadbackVerify(FlashImage *flashImage) {
 //! @return error code see \ref USBDM_ErrorCode
 //!
 USBDM_ErrorCode FlashProgrammer::doTargetVerify(FlashImage *flashImage) {
-
-   print("FlashProgrammer::doTargetVerify()\n");
+   LOGGING_E;
    USBDM_ErrorCode rc = applyFlashOperation(flashImage, OpVerify );
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::doTargetVerify() - Target Verifying failed, Reason= %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Target Verifying failed, Reason= %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -2686,8 +2679,8 @@ USBDM_ErrorCode FlashProgrammer::doTargetVerify(FlashImage *flashImage) {
 //! @return error code see \ref USBDM_ErrorCode
 //!
 USBDM_ErrorCode FlashProgrammer::doVerify(FlashImage *flashImage) {
+   LOGGING_E;
    USBDM_ErrorCode rc = PROGRAMMING_RC_ERROR_ILLEGAL_PARAMS;
-   print("FlashProgrammer::doVerify()\n");
    progressTimer->restart("Verifying...");
 
    // Try target verify then read-back verify
@@ -2696,7 +2689,7 @@ USBDM_ErrorCode FlashProgrammer::doVerify(FlashImage *flashImage) {
      rc = doReadbackVerify(flashImage);
    }
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::doVerify() - verifying failed, Reason= %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Verifying failed, Reason= %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    return rc;
@@ -2710,13 +2703,12 @@ USBDM_ErrorCode FlashProgrammer::doVerify(FlashImage *flashImage) {
 //! @return error code see \ref USBDM_ErrorCode
 //!
 USBDM_ErrorCode FlashProgrammer::doBlankCheck(FlashImage *flashImage) {
-
-   print("FlashProgrammer::doBlankCheck()\n");
+   LOGGING_E;
    progressTimer->restart("Blank Checking...");
 
    USBDM_ErrorCode rc = applyFlashOperation(flashImage, OpBlankCheck);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::doBlankCheck() - Blank check failed, Reason= %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Blank check failed, Reason= %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -2729,13 +2721,12 @@ USBDM_ErrorCode FlashProgrammer::doBlankCheck(FlashImage *flashImage) {
 //! @return error code see \ref USBDM_ErrorCode
 //!
 USBDM_ErrorCode FlashProgrammer::doWriteRam(FlashImage *flashImage) {
-
-   print("FlashProgrammer::doWriteRam()\n");
+   LOGGING_E;
    progressTimer->restart("Writing RAM...");
 
    USBDM_ErrorCode rc = applyFlashOperation(flashImage, OpWriteRam);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::doWriteRam() - failed, Reason= %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Failed, Reason= %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -2755,28 +2746,23 @@ USBDM_ErrorCode FlashProgrammer::doWriteRam(FlashImage *flashImage) {
 USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage, 
                                              CallBackT    progressCallBack) {
 
+   LOGGING_Q;
    USBDM_ErrorCode rc;
    if ((this == NULL) || (parameters.getTargetName().empty())) {
-      print("FlashProgrammer::programFlash() - Error: device parameters not set\n");
+      Logging::print("Error: device parameters not set\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-   print("===========================================================\n"
-         "FlashProgrammer::verifyFlash()\n"
-         "\tprogressCallBack = %p\n"
-         "\tDevice = \'%s\'\n"
-         "\tTrim, F=%ld, NVA@%4.4X, clock@%4.4X\n"
-         "\tRam[%4.4X...%4.4X]\n"
-         "\tErase=%s\n"
-         "\tSecurity=%s\n",
-         progressCallBack,
-         parameters.getTargetName().c_str(),
-         parameters.getClockTrimFreq(),
-         parameters.getClockTrimNVAddress(),
-         parameters.getClockAddress(),
-         parameters.getRamStart(),
-         parameters.getRamEnd(),
-         DeviceData::getEraseOptionName(parameters.getEraseOption()),
-         secValues[parameters.getSecurity()]);
+   Logging::print("===========================================================\n");
+   Logging::print("\tprogressCallBack = %p\n",                 progressCallBack);
+   Logging::print("\tDevice = \'%s\'\n",                       parameters.getTargetName().c_str());
+   Logging::print("\tTrim, F=%ld, NVA@%4.4X, clock@%4.4X\n",   parameters.getClockTrimFreq(),
+                                                               parameters.getClockTrimNVAddress(),
+                                                               parameters.getClockAddress());
+   Logging::print("\tRam[%4.4X...%4.4X]\n",                    parameters.getRamStart(), parameters.getRamEnd());
+   Logging::print("\tErase=%s\n",                              DeviceData::getEraseOptionName(parameters.getEraseOption()));
+   Logging::print("\tSecurity=%s\n",                           secValues[parameters.getSecurity()]);
+   Logging::print("\tTotal bytes=%d\n",                        flashImage->getByteCount());
+   Logging::print("===========================================================\n");
 
    this->doRamWrites = false;
 
@@ -2794,7 +2780,7 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
       return rc;
    }
    if (parameters.getTargetName().empty()) {
-      print("FlashProgrammer::verifyFlash() - Error: device parameters not set\n");
+      Logging::error("Error: device parameters not set\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    // Set up the target for Flash operations
@@ -2831,7 +2817,7 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
    }
    rc = doVerify(flashImage);
 
-   print("FlashProgrammer::verifyFlash() - Verifying Time = %3.2f s, rc = %d\n", progressTimer->elapsedTime(), rc);
+   Logging::print("Verifying Time = %3.2f s, rc = %d\n", progressTimer->elapsedTime(), rc);
 
    return rc;
 }
@@ -2851,9 +2837,10 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
 USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage, 
                                               CallBackT    progressCallBack, 
                                               bool         doRamWrites) {
+   LOGGING_Q;
    USBDM_ErrorCode rc;
    if ((this == NULL) || (parameters.getTargetName().empty())) {
-      print("FlashProgrammer::programFlash() - Error: device parameters not set\n");
+      Logging::error("Error: device parameters not set\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    if (parameters.getEraseOption() == DeviceData::eraseNone) {
@@ -2880,27 +2867,18 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
          flashImage->getByteCount(),
          doRamWrites?"T":"F");
 #else
-   print("===========================================================\n"
-         "FlashProgrammer::programFlash()\n"
-         "\tprogressCallBack = %p\n"
-         "\tDevice = \'%s\'\n"
-         "\tTrim, F=%ld, NVA@%4.4X, clock@%4.4X\n"
-         "\tRam[%4.4X...%4.4X]\n"
-         "\tErase=%s\n"
-         "\tSecurity=%s\n"
-         "\tTotal bytes=%d\n"
-         "\tdoRamWrites=%s\n",
-         progressCallBack,
-         parameters.getTargetName().c_str(),
-         parameters.getClockTrimFreq(),
-         parameters.getClockTrimNVAddress(),
-         parameters.getClockAddress(),
-         parameters.getRamStart(),
-         parameters.getRamEnd(),
-         DeviceData::getEraseOptionName(parameters.getEraseOption()),
-         secValues[parameters.getSecurity()],
-         flashImage->getByteCount(),
-         doRamWrites?"T":"F");
+   Logging::print("===========================================================\n");
+   Logging::print("\tprogressCallBack = %p\n",                 progressCallBack);
+   Logging::print("\tDevice = \'%s\'\n",                       parameters.getTargetName().c_str());
+   Logging::print("\tTrim, F=%ld, NVA@%4.4X, clock@%4.4X\n",   parameters.getClockTrimFreq(),
+                                                               parameters.getClockTrimNVAddress(),
+                                                               parameters.getClockAddress());
+   Logging::print("\tRam[%4.4X...%4.4X]\n",                    parameters.getRamStart(), parameters.getRamEnd());
+   Logging::print("\tErase=%s\n",                              DeviceData::getEraseOptionName(parameters.getEraseOption()));
+   Logging::print("\tSecurity=%s\n",                           secValues[parameters.getSecurity()]);
+   Logging::print("\tTotal bytes=%d\n",                        flashImage->getByteCount());
+   Logging::print("\tdoRamWrites=%s\n",                        doRamWrites?"T":"F");
+   Logging::print("===========================================================\n");
 #endif
 
    this->doRamWrites = doRamWrites;
@@ -2908,7 +2886,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
       delete progressTimer;
    }
    progressTimer = new ProgressTimer(progressCallBack, flashImage->getByteCount());
-   progressTimer->restart("Initialising...");
+   progressTimer->restart("Initializing...");
 
    flashReady = FALSE;
    currentFlashProgram.reset();
@@ -2918,7 +2896,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
       return rc;
    }
    if (parameters.getTargetName().empty()) {
-      print("FlashProgrammer::programFlash() - Error: device parameters not set\n");
+      Logging::error("Error: device parameters not set\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    // Connect to target
@@ -3004,7 +2982,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
       rc = doSelectiveErase(flashImage);
    }
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::programFlash() - erasing failed, Reason= %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Erasing failed, Reason= %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    double eraseTime = progressTimer->totalTime();
@@ -3012,23 +2990,23 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
       eraseTime = 0.05;
    }
 #ifdef GDI
-   mtwksDisplayLine("FlashProgrammer::programFlash() - Erase Time = %3.2f s, Speed = %2.2f kBytes/s, rc = %d\n",
+   mtwksDisplayLine("Erase Time = %3.2f s, Speed = %2.2f kBytes/s, rc = %d\n",
          eraseTime, flashImage->getByteCount()/(1024*eraseTime),  rc);
 #endif
 #ifdef LOG
-   print("FlashProgrammer::programFlash() - Erase Time = %3.2f s, Speed = %2.2f kBytes/s, rc = %d\n",
+   Logging::print("Erase Time = %3.2f s, Speed = %2.2f kBytes/s, rc = %d\n",
          eraseTime, flashImage->getByteCount()/(1+1024*eraseTime),  rc);
 #endif
    // Program flash
    rc = doProgram(flashImage);
    if (rc != PROGRAMMING_RC_OK) {
-      print("FlashProgrammer::programFlash() - programming failed, Reason= %s\n", USBDM_GetErrorString(rc));
+      Logging::error("Programming failed, Reason= %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    if (doRamWrites){
       rc = doWriteRam(flashImage);
       if (rc != PROGRAMMING_RC_OK) {
-         print("FlashProgrammer::programFlash() - RAM write failed, Reason= %s\n", USBDM_GetErrorString(rc));
+         Logging::error("RAM write failed, Reason= %s\n", USBDM_GetErrorString(rc));
          return rc;
       }
    }
@@ -3050,10 +3028,10 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
 #if (TARGET == CFV1) || (TARGET == HCS08)
    if (parameters.getClockTrimFreq() != 0) {
       uint16_t trimValue = parameters.getClockTrimValue();
-      print("FlashProgrammer::programFlash() - Device Trim Value = %2.2X.%1X\n", trimValue>>1, trimValue&0x01);
+      Logging::print("Device Trim Value = %2.2X.%1X\n", trimValue>>1, trimValue&0x01);
    }
 #endif
-   print("FlashProgrammer::programFlash() - Programming & verifying Time = %3.2f s, Speed = %2.2f kBytes/s, rc = %d\n",
+   Logging::print("Programming & verifying Time = %3.2f s, Speed = %2.2f kBytes/s, rc = %d\n",
          programTime, flashImage->getByteCount()/(1+1024*programTime),  rc);
 #endif
    return rc;
@@ -3067,9 +3045,10 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
 //! @return error code see \ref USBDM_ErrorCode
 //!
 USBDM_ErrorCode FlashProgrammer::setDeviceData(const DeviceData  &theParameters) {
+   LOGGING_Q;
    currentFlashProgram.reset();
    parameters = theParameters;
-   print("FlashProgrammer::setDeviceData(%s)\n", parameters.getTargetName().c_str());
+   Logging::print("Target=%s\n", parameters.getTargetName().c_str());
    releaseTCL();
    initTCL();
    return PROGRAMMING_RC_OK;
@@ -3077,7 +3056,7 @@ USBDM_ErrorCode FlashProgrammer::setDeviceData(const DeviceData  &theParameters)
 
 //=======================================================================
 FlashProgrammer::~FlashProgrammer() {
-//      print("~FlashProgrammer()\n");
+//      Logging::print("~FlashProgrammer()\n");
    if (progressTimer != NULL) {
       delete progressTimer;
    }

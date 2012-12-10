@@ -42,9 +42,13 @@
 GdbInput::GdbInput(FILE *in) :
    state(hunt),
    full(false),
-   empty(true),
+   idle(false),
+   terminate(false),
    isEndOfFile(false),
-   buffer(NULL)
+   buffer(NULL),
+   pipeIn(NULL),
+   mutex(PTHREAD_MUTEX_INITIALIZER),
+   dataNeeded_cv(PTHREAD_COND_INITIALIZER)
 {
    int inHandle = dup(fileno(in));
    pipeIn= fdopen(inHandle, "rb");
@@ -55,9 +59,6 @@ GdbInput::GdbInput(FILE *in) :
 #else
    setvbuf ( pipeIn,  NULL, _IONBF , 0 );
 #endif
-   pthread_mutex_init(&mutex, NULL);
-   pthread_cond_init(&dataNotFull_cv,  NULL);
-   pthread_cond_init(&dataNotEmpty_cv,  NULL);
 }
 
 //! Create background thread to monitor input pipe
@@ -66,13 +67,33 @@ GdbInput::GdbInput(FILE *in) :
 //!         false - Failed to create thread
 //!
 bool GdbInput::createThread(void) {
-   pthread_t tid;
+
    int rc = pthread_create(&tid, NULL, threadFunc, (void*)this);
    if (rc) {
-      print("AsyncInput::createThread() - ERROR return code from pthread_create() is %d\n", rc);
+      Logging::print("ERROR return code from pthread_create() is %d\n", rc);
       return false;
    }
    return true;
+}
+
+//! Tell background thread to complete
+//!
+void GdbInput::finish(void) {
+   terminate = true;
+   (void)receiveGdbPacket();
+}
+
+//! Kill background thread
+//!
+//! @return true  - Success \n
+//!         false - Failed to create thread
+//!
+void GdbInput::kill(void) {
+   finish();
+   pthread_cancel(tid);
+   if (pipeIn != NULL) {
+      fclose(pipeIn);
+   }
 }
 
 //! GDB Packet that indicate a break has been received.
@@ -106,14 +127,13 @@ static int hex(char ch) {
 //!
 const GdbPacket *GdbInput::receiveGdbPacket(void) {
    static GdbPacket packet1;
-   static GdbPacket packet2;
-   static GdbPacket *packet = &packet1;
+   static GdbPacket *const packet = &packet1;
    static unsigned char  checksum    = 0;
    static unsigned char  xmitcsum    = 0;
    static unsigned int   sequenceNum = 0;
 
-//   print("GdbPipeConnection::getGdbPacket()\n");
-   if (isEndOfFile) {
+   if (terminate || isEndOfFile) {
+      isEndOfFile = true;
 	   return NULL;
    }
    while(1) {
@@ -121,29 +141,32 @@ const GdbPacket *GdbInput::receiveGdbPacket(void) {
       if (ch == EOF) {
          int rc = ferror(pipeIn);
          if (rc != 0) {
-//            print("GdbPipeConnection::getGdbPacket(): ferror() => %d\n", rc);
 //            perror("PipeIn error:");
          }
-//         print("GdbPipeConnection::getGdbPacket() - EOF\n");
+//         Logging::print("GdbPipeConnection::getGdbPacket() - EOF\n");
          isEndOfFile = true;
+      }
+      if (terminate || isEndOfFile) {
+         isEndOfFile = true;
+         fclose(pipeIn);
+         pipeIn = NULL;
          return NULL;
       }
       switch(state) {
       case hunt: // Looking for start of pkt (or Break)
-         //         print("GdbPipeConnection::busyLoop(): h:%c\n", ch);
+//         Logging::print("GdbPipeConnection::busyLoop(): h:%c\n", ch);
          if (ch == '$') { // Start token
-            state        = data;
-            checksum     = 0;
+            state         = data;
+            checksum      = 0;
             packet->size  = 0;
          }
          else if (ch == 0x03) { // Break request
-            state         = hunt;
-//            print("GdbPipeConnection::busyLoop(): BREAK\n");
+//            Logging::print("GdbPipeConnection::busyLoop(): BREAK\n");
             return &GdbPacket::breakToken;
          }
          break;
       case data: // Data bytes within pkt
-         //         print("GdbPipeConnection::busyLoop(): d:%c\n", ch);
+         //         Logging::print("GdbPipeConnection::busyLoop(): d:%c\n", ch);
          if (ch == '}') { // Escape token
             state     = escape;
             checksum  = checksum + ch;
@@ -164,7 +187,7 @@ const GdbPacket *GdbInput::receiveGdbPacket(void) {
          }
          break;
       case escape: // Escaped byte within data
-         //         print("GdbPipeConnection::busyLoop(): e:%c\n", ch);
+         //         Logging::print("GdbPipeConnection::busyLoop(): e:%c\n", ch);
          state    = data;
          checksum = checksum + ch;
          ch       = ch ^ 0x20;
@@ -173,18 +196,18 @@ const GdbPacket *GdbInput::receiveGdbPacket(void) {
          }
          break;
       case checksum1: // 1st Checksum byte
-         //         print("GdbPipeConnection::busyLoop(): c1:%c\n", ch);
+         //         Logging::print("GdbPipeConnection::busyLoop(): c1:%c\n", ch);
          state    = checksum2;
          xmitcsum = hex(ch) << 4;
          break;
       case checksum2: // 2nd Checksum byte
          xmitcsum += hex(ch);
-         //         print("GdbPipeConnection::busyLoop(): c2:%c\n", ch);
+         //         Logging::print("GdbPipeConnection::busyLoop(): c2:%c\n", ch);
          if (checksum != xmitcsum) {
             // Invalid pkt - discard and start again
-//            print("\nBad checksum: my checksum = %2.2X, ", checksum);
-//            print("sent checksum = %2.2X\n", xmitcsum);
-//            print(" -- Bad buffer: \"%s\"\n", packet->buffer);
+//            Logging::print("\nBad checksum: my checksum = %2.2X, ", checksum);
+//            Logging::print("sent checksum = %2.2X\n", xmitcsum);
+//            Logging::print(" -- Bad buffer: \"%s\"\n", packet->buffer);
 //            fputc('-', pipeOut); // failed checksum
 //            fflush(pipeOut);
             state = hunt;
@@ -195,17 +218,10 @@ const GdbPacket *GdbInput::receiveGdbPacket(void) {
             packet->buffer[packet->size] = '\0';
             state = hunt;
             packet->sequence = ++sequenceNum;
-//            print("#%40s<-:%d:%03d$%*.*s#%2.2X\n", "", packet->sequence, packet->size, packet->size, packet->size, packet->buffer, packet->checkSum );
+//            Logging::print("#%40s<-:%d:%03d$%*.*s#%2.2X\n", "", packet->sequence, packet->size, packet->size, packet->size, packet->buffer, packet->checkSum );
             // Pkt ready
-//            print("<=:%03d:\'%*s\'\n", packet->size, packet->size, packet->buffer);
-            GdbPacket *pkt = packet;
-            if (packet == &packet1) {
-               packet = &packet2;
-            }
-            else {
-               packet = &packet1;
-            }
-            return pkt;
+//            Logging::print("<=:%03d:\'%*s\'\n", packet->size, packet->size, packet->buffer);
+            return packet;
          }
          break;
       }
@@ -219,47 +235,74 @@ const GdbPacket *GdbInput::receiveGdbPacket(void) {
 //!
 void *GdbInput::threadFunc(void *arg) {
    GdbInput *me = (GdbInput *)arg;
+   pthread_mutex_lock(&me->mutex);
+   me->full   = false;
+   me->buffer = NULL;
    do {
+      // Wait until pkt needed
+      me->idle = true;
+      pthread_cond_wait(&me->dataNeeded_cv, &me->mutex);
       // Receive a pkt
+      pthread_mutex_unlock(&me->mutex);
       const GdbPacket *pkt = me->receiveGdbPacket();
-      // Wait until last pkt processed
       pthread_mutex_lock(&me->mutex);
-      while (me->full) {
-         pthread_cond_wait(&me->dataNotFull_cv, &me->mutex);
-      }
       me->buffer = pkt;
       me->full   = true;
-      me->empty  = false;
-      pthread_mutex_unlock(&me->mutex);
-      pthread_cond_signal(&me->dataNotEmpty_cv);
    } while(true);
    return NULL;
 }
 
 const GdbPacket *GdbInput::getGdbPacket(void) {
-   timespec timeToWait = {0, 0}; // Absolute time - no waiting
+//   static int lastSequence = -1;
+   LOGGING_Q;
    if (isEndOfFile) {
+      Logging::print("EOF\n");
       return NULL;
    }
+   // Lock shared data flags
+//   Logging::print("before lock\n");
    pthread_mutex_lock(&mutex);
-   while (empty) {
-      int rc = pthread_cond_timedwait(&dataNotEmpty_cv, &mutex, &timeToWait);
-      if (rc != 0) {
-         pthread_mutex_unlock(&mutex);
-         return NULL;
-      }
-      // Expected - re-check empty
-      continue;
+//   Logging::print("locked\n");
+   // Check if new pkt ready & accept it
+   bool pktReady = full;
+   full = false;
+   // Start reception of next pkt
+   if (idle && !pktReady) {
+//      Logging::print("idle && !pktReady => signaling dataNeeded\n");
+      idle = false;
+      pthread_cond_signal(&dataNeeded_cv);
    }
-   const GdbPacket *pkt = buffer;
-   empty = true;
-   full  = false;
    pthread_mutex_unlock(&mutex);
-   pthread_cond_signal(&dataNotFull_cv);
-   return pkt;
+//   Logging::print("unlocked\n");
+   if (pktReady) {
+//      Logging::print("pkt ready\n");
+      if (buffer == NULL) {
+         Logging::print("Rx<='%s'\n", "Buffer NULL!");
+         if (this->isEndOfFile) {
+            Logging::print("Rx<='%s'\n", "EOF");
+         }
+      }
+      else {
+         if (buffer->buffer == NULL) {
+            Logging::print("Rx<='%s'\n", "NULL");
+         }
+         else {
+            Logging::print("Rx<=#:%d:%03d$%*.*s#%2.2X\n", buffer->sequence, buffer->size, buffer->size, buffer->size, buffer->buffer, buffer->checkSum );
+         }
+//         if (buffer->sequence == lastSequence) {
+//            // Discard repeated message
+//            Logging::print("Rx<= **** Discarded repeated pkt\n");
+//            return NULL;
+//         }
+//         lastSequence = buffer->sequence;
+      }
+      return buffer;
+   }
+//   Logging::print("No pkt ready\n");
+   return NULL;
 }
 
 void GdbInput::flush(void) {
-   print("GdbInput::flush()\n");
+   LOGGING_E;
    fflush(pipeIn);
 }

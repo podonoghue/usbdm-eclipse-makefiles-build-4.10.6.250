@@ -2,10 +2,12 @@
 \page pageHistory History & Issues
 
 \section sectionHistory Revision History
-   V4.10.4 (November 2012) -
+   - V4.10.4 (December 2012) -
       - Improved HCS08/HCS12 programming speeds (15~30%)
-   
-   V4.10.3 (November 2012) -
+      - Added Codesourcery and USBDM API examples to installation
+      - Updated/added Codesourcery instructions to help files
+      - Numerous bug fixes to GDB Server
+   - V4.10.3 (November 2012) -
       - Updated device driver installation (V1.0.1) (removed unnecessary driver). 
       - ELF Files now supported for MC56F80xx devices.
       - Changed to shared DLLs build for wxWidgets.
@@ -19,9 +21,13 @@
       - Updated installer for Codewarrior 10.3 Beta
       - Changed to shared DLLs build for wxWidgets
       - Changed to Make based projects
-      - Bug fixes
-         - Kinetis & CFV1 targets now correctly support RAM targets (again).
-         - Firmware fixes for an output glitch on USBDM_JMxx_CLD & CLC.  
+      - Support added for Kinetis KLxx devices
+      - Updated libusbx version (& changed to static linkage)
+      Bug Fixes
+        - Kinetis & CFV1 targets now correctly support RAM only targets (again)
+        - Fixes for an output glitch on USBDM_JMxx_CLD & CLC. (firmware)
+        - Kinetis-SWD reports memory read/write errors on failing access
+          (not following access) (firmware) 
    -  V4.10.0 (September 2012) -
       - Added support for ARM-SWD interfaces (requires different hardware). \n 
         ARM-SWD is much faster than ARM-JTAG. For reference, programming a file

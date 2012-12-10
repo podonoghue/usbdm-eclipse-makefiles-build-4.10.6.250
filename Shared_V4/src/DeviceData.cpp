@@ -39,10 +39,10 @@
 #include <string>
 using namespace std;
 #include "Common.h"
+#include "DeviceXmlParser.h"
 #include "ApplicationFiles.h"
 #include "DeviceData.h"
 #include "Log.h"
-#include "DeviceXmlParser.h"
 
 static string emptyString("");
 
@@ -243,7 +243,7 @@ int sub;
          return (ClockTypes_t) clockNames[sub].getValue();
       }
    }
-   print("getClockType(): Error: invalid clock type '%s'\n", typeName.c_str());
+   Logging::print("getClockType(): Error: invalid clock type '%s'\n", typeName.c_str());
    return CLKINVALID;
 }
 
@@ -275,13 +275,14 @@ int sub;
       if (clockNames[sub].getValue() == clockType)
          return clockNames[sub].getName();
    }
-   print("getClockName(): Error: invalid clock type %d\n", clockType);
+   Logging::print("getClockName(): Error: invalid clock type %d\n", clockType);
    return emptyString;
 }
 
 //! Checks if the SDID is used by the device
 //!
-//! @param desiredSDID The SDID to check against
+//! @param desiredSDID  The SDID to check against
+//! @param acceptZero   Accept a zero SDID
 //!
 //! @return true/false result of check
 //!
@@ -293,7 +294,7 @@ bool DeviceData::isThisDevice(uint32_t  desiredSDID, bool acceptZero) const {
       return true;
    }
    for (index=0; index<targetSDIDs.size(); index++) {
-//      print("Comparing Target=0x%04X with Desired=0x%04X, Mask=0x%04X\n", targetSDIDs[index], desiredSDID, targetSDIDMask);
+//      Logging::print("Comparing Target=0x%04X with Desired=0x%04X, Mask=0x%04X\n", targetSDIDs[index], desiredSDID, targetSDIDMask);
       if (((targetSDIDs[index]^desiredSDID)&targetSDIDMask) == 0x0000)
          return true;
    }
@@ -302,7 +303,8 @@ bool DeviceData::isThisDevice(uint32_t  desiredSDID, bool acceptZero) const {
 
 //! Checks if any of the SDIDs provided are used by the device
 //!
-//! @param desiredSDIDs map of {SDIDaddress,SDIDs} to check against
+//! @param desiredSDIDs Map of {SDIDaddress,SDIDs} to check against
+//! @param acceptZero   Accept a zero SDID
 //!
 //! @return true/false result of check
 //!
@@ -398,7 +400,7 @@ uint16_t DeviceData::getPageNo(uint32_t address) {
 const DeviceData *DeviceDataBase::findDeviceFromName(const string &targetName) {
 
    static int recursionCheck = 0;
-//   print("findDeviceFromName(%s)\n", (const char *)targetName.c_str());
+//   Logging::print("findDeviceFromName(%s)\n", (const char *)targetName.c_str());
 
    if (recursionCheck++>5) {
       throw MyException("Recursion limit in DeviceDataBase::findDeviceFromName");
@@ -414,7 +416,7 @@ const DeviceData *DeviceDataBase::findDeviceFromName(const string &targetName) {
    for (it = deviceData.begin(); it != deviceData.end(); it++) {
       if (strcmp((*it)->getTargetName().c_str(), buff) == 0) {
          theDevice = *it;
-         print("findDeviceFromName(%s) found %s%s\n",
+         Logging::print("findDeviceFromName(%s) found %s%s\n",
                buff, (const char *)(theDevice->getTargetName().c_str()), theDevice->isAlias()?"(alias)":"");
          if (theDevice->isAlias()) {
             theDevice = findDeviceFromName(theDevice->getAliasName());
@@ -424,7 +426,7 @@ const DeviceData *DeviceDataBase::findDeviceFromName(const string &targetName) {
    }
    recursionCheck--;
    if (theDevice == NULL) {
-      print("findDeviceFromName(%s) => Device not found\n", (const char *)targetName.c_str());
+      Logging::print("findDeviceFromName(%s) => Device not found\n", (const char *)targetName.c_str());
    }
    return theDevice;
 }
@@ -442,7 +444,7 @@ int DeviceDataBase::findDeviceIndexFromName(const string &targetName) {
       if ((*it)->getTargetName().compare(targetName) == 0)
          return it - deviceData.begin();
    }
-   print("findDeviceFromName(%s) => Device not found\n", targetName.c_str());
+   Logging::print("findDeviceFromName(%s) => Device not found\n", targetName.c_str());
    return -1;
 }
 
@@ -468,7 +470,7 @@ void DeviceDataBase::loadDeviceData(void) {
    #define CONFIG_FILEPATH DEVICE_DATABASE_DIRECTORY "/dsc_devices.xml"
 #endif
 
-   print("DeviceDataBase::loadDeviceData()\n");
+   Logging::print("DeviceDataBase::loadDeviceData()\n");
    try {
       string appFilePath = getApplicationFilePath(CONFIG_FILEPATH);
       if (appFilePath.empty()) {
@@ -479,7 +481,7 @@ void DeviceDataBase::loadDeviceData(void) {
    catch (MyException &exception) {
       // Create dummy default device
 //      defaultDevice = *aDevice.insert(aDevice.end(), new DeviceData()).base();
-      print("DeviceDataBase::loadDeviceData() - Exception \'%s\'\n", exception.what());
+      Logging::print("DeviceDataBase::loadDeviceData() - Exception \'%s\'\n", exception.what());
       deviceData.clear();
       DeviceData *aDevice = new DeviceData();
       aDevice->setTargetName("Invalid Database");
@@ -488,7 +490,7 @@ void DeviceDataBase::loadDeviceData(void) {
       throw exception;
    }
    catch (...) {
-      print("DeviceDataBase::loadDeviceData() - Unknown exception\n");
+      Logging::print("DeviceDataBase::loadDeviceData() - Unknown exception\n");
       deviceData.clear();
       DeviceData *aDevice = new DeviceData();
       aDevice->setTargetName("Invalid Database");
@@ -499,7 +501,7 @@ void DeviceDataBase::loadDeviceData(void) {
 #if defined(LOG) && 0
    listDevices();
 #endif
-   print("DeviceDataBase::loadDeviceData() - %d devices loaded\n", deviceData.size());
+   Logging::print("DeviceDataBase::loadDeviceData() - %d devices loaded\n", deviceData.size());
 }
 
 void DeviceDataBase::listDevices() {
@@ -510,25 +512,25 @@ void DeviceDataBase::listDevices() {
       for (it = deviceData.begin(); it != deviceData.end(); it++) {
          const DeviceData *deviceData = (*it);
          if (deviceData == NULL) {
-            print("Null device pointer\n");
+            Logging::print("Null device pointer\n");
             continue;
          }
          bool aliased = deviceData->isAlias();
          if (aliased) {
             deviceData = findDeviceFromName(deviceData->getTargetName());
             if (deviceData == NULL) {
-               print("Failed to find alias\n");
+               Logging::print("Failed to find alias\n");
                continue;
             }
          }
 #if (TARGET == ARM) || (TARGET == CFVx) || (TARGET==ARM_SWD)
          if (lineCount == 0) {
-            print("\n"
+            Logging::print("\n"
                   "#                     SDID                                                \n"
                   "#    Target           Address    SDID          Script? Flash?              \n"
                   "#=========================================================================\n");
          }
-         print("%-20s%s 0x%08X 0x%08X %7s %7s\n",
+         Logging::print("%-20s%s 0x%08X 0x%08X %7s %7s\n",
                deviceData->getTargetName().c_str(), aliased?"(A)":"   ",
 //                  ClockTypes::getClockName(deviceData->getClockType()).c_str(),
 //                  deviceData->getClockAddress(),
@@ -541,12 +543,12 @@ void DeviceDataBase::listDevices() {
          );
 #else
          if (lineCount == 0) {
-            print("\n"
+            Logging::print("\n"
                   "#                      RAM          Clock    Clock   NVTRIM    Trim                                     \n"
                   "# Target         Start     End      Name     Addr     Addr     Freq.  SDIDA    SDID  Scripts? FlashP?   \n"
                   "#=======================================================================================================\n");
          }
-         print("%-14s%s 0x%06X 0x%06X %10s 0x%06X 0x%06X %6.2f %08X %08X %4s %4s\n",
+         Logging::print("%-14s%s 0x%06X 0x%06X %10s 0x%06X 0x%06X %6.2f %08X %08X %4s %4s\n",
                deviceData->getTargetName().c_str(), aliased?"(A)":"   ",
                deviceData->getRamStart(), deviceData->getRamEnd(),
                ClockTypes::getClockName(deviceData->getClockType()).c_str(),
@@ -562,45 +564,45 @@ void DeviceDataBase::listDevices() {
 #if 1
          for (int regionNum=0; deviceData->getMemoryRegion(regionNum) != NULL; regionNum++) {
             MemoryRegionPtr reg=deviceData->getMemoryRegion(regionNum);
-            print("      %10s: ", reg->getMemoryTypeName());
+            Logging::print("      %10s: ", reg->getMemoryTypeName());
             if (reg->getFlashprogram())
-               print("FP=Yes, ");
+               Logging::print("FP=Yes, ");
             else
-               print("        ");
-            print("SS=%6d ", reg->getSectorSize());
+               Logging::print("        ");
+            Logging::print("SS=%6d ", reg->getSectorSize());
             for(unsigned index=0; ; index++) {
                const MemoryRegion::MemoryRange *memoryRange = reg->getMemoryRange(index);
                if (memoryRange == NULL) {
                   break;
                }
-               print("(0x%08X,0x%08X", memoryRange->start, memoryRange->end);
+               Logging::print("(0x%08X,0x%08X", memoryRange->start, memoryRange->end);
                if ((memoryRange->pageNo != MemoryRegion::DefaultPageNo) &&
                    (memoryRange->pageNo != MemoryRegion::NoPageNo) &&
                    (memoryRange->pageNo != ((memoryRange->start>>16)&0xFF))){
-                  print(",P=0x%02X)", memoryRange->pageNo);
+                  Logging::print(",P=0x%02X)", memoryRange->pageNo);
                }
                else {
-                  print(")", memoryRange->start, memoryRange->end);
+                  Logging::print(")", memoryRange->start, memoryRange->end);
                }
             }
-            print("\n");
+            Logging::print("\n");
          }
-         print("\n");
+         Logging::print("\n");
 #endif
 //         const TclScript *tclScript;
 //         tclScript = deviceData->getPreSequence();
 //         if (tclScript != NULL) {
-//            print("preSequence \n=========================\n"
+//            Logging::print("preSequence \n=========================\n"
 //                  "%s\n========================\n", tclScript->toString().c_str());
 //         }
 //         tclScript = deviceData->getPostSequence();
 //         if (tclScript != NULL) {
-//            print("postSequence \n=========================\n"
+//            Logging::print("postSequence \n=========================\n"
 //                  "%s\n========================\n", tclScript->toString().c_str());
 //         }
 //         tclScript = deviceData->getUnsecureSequence();
 //         if (tclScript != NULL) {
-//            print("unsecureSequence \n=========================\n"
+//            Logging::print("unsecureSequence \n=========================\n"
 //                  "%s\n========================\n", tclScript->toString().c_str());
 //         }
          //         std::stringstream buffer;
@@ -626,34 +628,34 @@ void DeviceDataBase::listDevices() {
          //             buffer << " " << sdid;
          //         }
          //         buffer << endl;
-         //         print(buffer.str().c_str());
+         //         Logging::print(buffer.str().c_str());
          lineCount = (lineCount+1)%40;
       }
    } catch (...) {
 
    }
 #if 0
-   print("================================================\n"
+   Logging::print("================================================\n"
          "Shared data, #elements = %d\n", sharedInformation.size());
    map<const string, SharedInformationItemPtr>::iterator mapIt;
    for (mapIt = sharedInformation.begin(); mapIt != sharedInformation.end(); mapIt++) {
       std::map<const std::string, SharedInformationItem> sharedInformation;
       const string &key   = mapIt->first;
 //      const TclScript *item     = dynamic_cast<const TclScript *> (mapIt->second);
-      print("key = %s\n", key.c_str());
+      Logging::print("key = %s\n", key.c_str());
 //      if (item == NULL) {
-//         print("Failed cast\n");
+//         Logging::print("Failed cast\n");
 //      }
 //      else {
-//         print("%s", item->toString().c_str());
+//         Logging::print("%s", item->toString().c_str());
 //      }
    }
-   print("================================================\n");
+   Logging::print("================================================\n");
 #endif
 }
 
 DeviceDataBase::~DeviceDataBase() {
-   print("DeviceDataBase::~DeviceDataBase()\n");
+   Logging::print("DeviceDataBase::~DeviceDataBase()\n");
    sharedInformation.clear();
 
    std::vector<DeviceData *>::iterator itDevice = deviceData.begin();
@@ -666,7 +668,7 @@ DeviceDataBase::~DeviceDataBase() {
 }
 
 DeviceData::~DeviceData() {
-//   print("DeviceData::~DeviceData()\n");
+//   Logging::print("DeviceData::~DeviceData()\n");
 }
 
 std::string SecurityInfo::getSecurityInfo() const

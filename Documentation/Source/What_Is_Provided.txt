@@ -1,107 +1,24 @@
 /*!
  \page whatIsProvided What is Provided
 
- \section A Installation Program (Windows only)
-   <b>usbdm.msi</b> - This is a installation package for windows.  It may be used to install the following:
-   - USBDM Patches for Codewarrior tools <b>(Only the latest of the given versions of each is detected and installed.)</b>
-      - Codewarrior V10.1 or 10.2 (Eclipse version)
-      - Codewarrior Development Studio for HCS12(X) V5.1
-      - CW for Microcontrollers V6.3 (RS08 is not supported)
-      - CW for Coldfire V7.1 
-      - CodeWarrior for DSC56800E v8.3
-   - USBDM Programmers
-      - ARM (Kinetis)
-      - Coldfire V1 & V1+
-      - Coldfire V2,3,4
-      - HCS08
-      - HCS12
-      - RS08
-   - Firmware updater for BDM
-      - Firmware files for above
-   - Coldfire V2,3,4 JTAG Unlocker
-   - USBDM TCL Interpreter (Command line tool)
-   - Manuals
-   - Driver folder
-   
+ \section A Installation
+   - Windows:
+      - <b>USBDM_X_X_X_Win.msi</b> - Installer for USBDM software.
+      - <b>USBDM_Drivers_X_X_X_Win_x32.msi</b> - Installer for the USBDM drivers for 32-bit windows.
+      - <b>USBDM_Drivers_X_X_X_Win_x64.msi</b> - Installer for the USBDM drivers for 64-bit windows.
+   - Linux:
+      - tar achive
+      
 \section B Other Files
-
-<b>Release DLLs folder</b> \n
-   This sub folder contains the various driver files.  There is an installation command file provided to install most of these.  
-   See the installion section for more discussion.
-   -  usbdm.X.dll \n
-      This is base level DLL for USBDM.  It is required for all targets and versions. 
-   -  tbdml.dll\n
-      This is a modified DLL for "CodeWarrior Development Studio for S12(X)". Used for HCS12 Targets. \n
-   -  opensourcebdm.dll \n
-      This is a modified DLL for "CodeWarrior Development Studio for Microcontrollers".  Used for HCS08/CFV1 Targets.\n
-   -  usbdm-cfvx-gdi-legacy.dll
-      GDI file for CodeWarrior for Coldfire.\n
-   -  usbdm-dsc-gdi-legacy.dll
-      GDI file for CodeWarrior for DSC56800E.\n
-   -  usbdm-cfv1-gdi.dll, usbdm-cfvx-gdi.dll, usbdm-hcs08-gdi.dll, usbdm-rs08-gdi.dll \n
-      GDI files for the Eclipse version of Codewarrior.\n
-   -  libusb-1.0.dll\n
-      LIBUSB-V1 DLL for accessing USB devices.  This is a thin interface to the MS Winusb kernel level driver.  Changing
-      to this driver should ensure good future portability on both Windows and Linux. This is required for all targets.
-   -  libxerces-c-3-1.dll
-      DLL for parsing XML file in C
-
-      The original tbdml.dll and opensourcebdm.dll files are located in the windows directory (I think).  When installed correctly these versions 
-      hides the original version.  This allows easy un-installation - just delete or rename the added file.
-
-<b>Debug DLLs folder</b> \n
-   This contains debug versions of the above DLLs.  These create copious log files in the $APPDATA/usbdm directory and are slower
-   than the release versions. <i>Not for general use!</i>
-	
-<b>USBDM_Flash_Images folder</b> \n
-   This folder contains pre-compiled firmware images for programming the JMxx/JS16 Flash.  PDF are also provided to aid in the
-   identification of the corresponding hardware.
-
-<b>USB_Driver folder</b> \n
-   libUSB1.0 installation program.
-   This folder is no longer provided.\n
-   Please download the current version of the libusb1.0 driver installation program from 
-   @htmlonly <a href="http://libusb.org/wiki/windows_backend#DriverInstallation">Windows Backend - libusb</a> @endhtmlonly 
-   or using the direct link (at this time) 
-   @htmlonly <a href="http://libusb-winusb-wip.googlecode.com/files/zadig.exe">zadig.exe</a>. @endhtmlonly \n
-
-<b>Utilities folder</b> \n
-   - XXXX_devices.xml & usbdmDeviceSchema.dtd\n
-   These are device description files for the programming features of USBDM (needed for Codewarrior Eclipse DLLs and stand-alone programmers).
-         
-   - Test_USBDM.exe \n
-   This is a simple command line programs that allows the USBDM hardware to be exercised.  It is mostly provided for
-   debugging the hardware. Not usable with DSC devices
-
-   - Setboot.exe \n
-   This command line executable can be used to place the programmed BDM module into ICP mode for re-programming. This is 
-   unlikely to be needed.   This is only usable after initial programming of the module.
-
-   - Bootloader.exe \n
-   This GUI program can be used to update or change the BDM firmware on JS16/JMxx BDMs. This utility also allows the serial 
-   number to be changed from the default value.  Doing this is very desirable if you have more than one BDM.
-
-   - CFUnlocker.exe\n
-   This GUI program can be used to unlock Coldfire V2,3 & 4 devices.  It makes use of the JTAG interface on the target.  
-   Not all devices are supported at the moment.  However, additional devices may be added by the user providing the required
-   unlocking information is known.
-
-   - CFV1_FlashProgrammer.exe \n
-   Programmers for Coldfire V1 targets
-
-   - HCS08_FlashProgrammer.exe \n
-   Programmers for HCS08 targets
-
-   - RS08_FlashProgrammer.exe \n
-   Programmers for RS08 targets
+   - Source code is usually available as a Zip file on Sourceforge or as a GIT repository on GITHUB
    
- \section B PCB folder
+ \section C PCB 
    This folder contains the files necessary to produce the USBDM hardware
    -  Gerber files for the SMT-PTH board
    -  Bill of materials
    -  Schematic & assembly layouts
 
- \section C Source folder
+ \section D Source folder
    This contains the sources for the software (above DLLs and Firmware).
    
  \subsection EclipseFiles Eclipse Archive Files

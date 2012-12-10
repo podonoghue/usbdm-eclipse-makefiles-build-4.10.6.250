@@ -24,7 +24,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
     Change History
-   +=========================================================================
+   +========================================================================================
+   |  30 Nov 2012 | Changed bdmJMxx_usb_transaction() retry method etc               V4.10.4
+   |              | Added bdm_usb_reset_connection()
    |   6 May 2012 | Added BDM_RC_DEVICE_OPEN_FAILED error messages
    |  31 Mar 2011 | Added command toggle
    |  21 Dec 2010 | Fixed 1-off validation of device number in bdm_usb_open()
@@ -32,8 +34,8 @@
    |  20 Oct 2010 | Added libusb_clear_halt() calls to reset data toggle
    |   1 Aug 2009 | Modified extensively for new format USB comms
    |   1 Aug 2009 | Fixed input range validation in bdm_usb_open()
-   |   1 Jan 2009 | Extensive changes to fold TBDML & OSBDM together
-   +==========================================================================
+   |   1 Jan 2009 | Extensive changes to fold USBDM & OSBDM together
+   +========================================================================================
     \endverbatim
 */
 
@@ -58,6 +60,8 @@
 #ifndef LIBUSB_SUCCESS
 #define LIBUSB_SUCCESS (0)
 #endif
+
+//#define RETRY_TEST
 
 #ifdef __unix__
 DLL_LOCAL
@@ -138,7 +142,7 @@ static struct libusb_device *bdmDevices[MAX_BDM_DEVICES+1] = {NULL};
 // Handle of opened device
 static libusb_device_handle *usbDeviceHandle = NULL;
 
-// Indicates LIBUSB has been initialised
+// Indicates LIBUSB has been initialized
 static bool initialised = FALSE;
 
 //**********************************************************
@@ -149,16 +153,18 @@ static bool initialised = FALSE;
 //!
 DLL_LOCAL
 void milliSleep(int milliSeconds) {
+
 #ifdef __unix__
+   LOGGING_Q;
    int rc;
    struct timespec sleepStruct = { 0, 1000000L*milliSeconds };
-   print("milliSleep(%ld ns)\n", sleepStruct.tv_nsec);
+   Logging::print("%ld ns\n", sleepStruct.tv_nsec);
    do {
       rc = nanosleep(&sleepStruct, &sleepStruct);
       if ((rc < 0) && (errno == EINTR))
-         print("milliSleep() - Sleep interrupted\n");
+         Logging::print("milliSleep() - Sleep interrupted\n");
       else if (sleepStruct.tv_sec > 0)
-         print("milliSleep() - time not completed!!\n");
+         Logging::print("milliSleep() - time not completed!!\n");
    } while ((rc < 0) && (errno == EINTR));
 #else
    Sleep(milliSeconds);
@@ -167,7 +173,7 @@ void milliSleep(int milliSeconds) {
 
 //**********************************************************
 //!
-//! Initialisation of low-level USB interface
+//! Initialization of low-level USB interface
 //!
 //!  @return\n
 //!       BDM_RC_OK        - success \n
@@ -175,9 +181,8 @@ void milliSleep(int milliSeconds) {
 //!
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_init( void ) {
-//   print("bdm_usb_init()\n");
-
-   // Not initialised
+   LOGGING_Q;
+   // Not initialized
    initialised = FALSE;
 
    // Clear array of devices found so far
@@ -190,27 +195,24 @@ USBDM_ErrorCode bdm_usb_init( void ) {
 #ifdef WIN32
    const struct libusb_version* version;
    version = libusb_get_version();
-   print("bdm_usb_init(): Using libusbx v%d.%d.%d.%d\n\n", version->major, version->minor, version->micro, version->nano);
+   Logging::print("Using libusbx v%d.%d.%d.%d\n", version->major, version->minor, version->micro, version->nano);
 #endif
 #endif
-
-   // Initialise LIBUSB
+   // Initialize LIBUSB
    if (libusb_init(NULL) != LIBUSB_SUCCESS) {
-      print("bdm_usb_init(): libusb_init() Failed\n");
+      Logging::print("libusb_init() Failed\n");
       return BDM_RC_USB_ERROR;
    }
    initialised = TRUE;
    return BDM_RC_OK;
 }
-
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_exit( void ) {
-//   print("bdm_usb_exit()\n");
-
+   LOGGING_Q;
    if (initialised) {
       bdm_usb_close();     // Close any open devices
-      print("bdm_usb_exit() - libusb_exit() called\n");
       libusb_exit(NULL);
+      Logging::print("libusb_exit() called\n");
    }
    initialised = false;
    return BDM_RC_OK;
@@ -225,14 +227,13 @@ USBDM_ErrorCode bdm_usb_exit( void ) {
 //!
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_releaseDevices(void) {
-
-//   print("bdm_usb_releaseDevices() - \n");
-
+   LOGGING_Q;
    // Unreference all devices
    for(unsigned index=0; index<deviceCount; index++) {
-      print("bdm_usb_releaseDevices() - unreferencing #%d\n", index);
-      if (bdmDevices[index] != NULL)
+      Logging::print("Unreferencing #%d\n", index);
+      if (bdmDevices[index] != NULL) {
          libusb_unref_device(bdmDevices[index]);
+      }
       bdmDevices[index] = NULL;
    }
    deviceCount = 0;
@@ -252,18 +253,15 @@ USBDM_ErrorCode bdm_usb_releaseDevices(void) {
 //!
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_findDevices(unsigned *devCount) {
-
-//   print("bdm_usb_find_devices()\n");
-
+   LOGGING_Q;
    *devCount = 0; // Assume failure
-
    USBDM_ErrorCode rc = BDM_RC_OK;
 
    // Release any currently referenced devices
    bdm_usb_releaseDevices();
 
    if (!initialised) {
-      print("bdm_usb_find_devices() - Not initialised! \n");
+      Logging::print("Not initialised! \n");
       rc = bdm_usb_init(); // try again
       if (rc != BDM_RC_OK) {
          return rc;
@@ -274,7 +272,7 @@ USBDM_ErrorCode bdm_usb_findDevices(unsigned *devCount) {
 
    ssize_t cnt = libusb_get_device_list(NULL, &list);
    if (cnt < 0) {
-      print("bdm_usb_find_devices() - libusb_get_device_list() failed! \n");
+      Logging::print("libusb_get_device_list() failed! \n");
       return BDM_RC_USB_ERROR;
    }
 
@@ -282,21 +280,21 @@ USBDM_ErrorCode bdm_usb_findDevices(unsigned *devCount) {
    deviceCount = 0;
    for (int deviceIndex=0; deviceIndex<cnt; deviceIndex++) {
       // Check each device and copy any USBDMs to local list
-//      print("bdm_usb_find_devices() ==> checking device #%d\n", deviceIndex);
+//      Logging::print("bdm_usb_find_devices() ==> checking device #%d\n", deviceIndex);
       libusb_device *currentDevice = list[deviceIndex];
       libusb_device_descriptor deviceDescriptor;
       int rc = libusb_get_device_descriptor(currentDevice, &deviceDescriptor);
       if (rc != LIBUSB_SUCCESS) {
          continue; // Skip device
       }
-//      print("bdm_usb_find_devices() ==> Checking device VID=%4.4X, PID=%4.4X\n",
+//      Logging::print("bdm_usb_find_devices() ==> Checking device VID=%4.4X, PID=%4.4X\n",
 //            deviceDescriptor.idVendor, deviceDescriptor.idProduct);
       if (((deviceDescriptor.idVendor==USBDM_VID)&&(deviceDescriptor.idProduct==USBDM_PID)) ||
           ((deviceDescriptor.idVendor==TBLCF_VID)&&(deviceDescriptor.idProduct==TBLCF_PID)) ||
           ((deviceDescriptor.idVendor==OSBDM_VID)&&(deviceDescriptor.idProduct==OSBDM_PID)) ||
           ((deviceDescriptor.idVendor==TBDML_VID)&&(deviceDescriptor.idProduct==TBDML_PID))) {
          // Found a device
-         print("bdm_usb_find_devices() ==> found USBDM device #%d\n", deviceIndex);
+         Logging::print("==> Found USBDM device #%d\n", deviceIndex);
          bdmDevices[deviceCount++] = currentDevice; // Record found device
          libusb_ref_device(currentDevice);          // Reference so we don't lose it
          bdmDevices[deviceCount]=NULL;              // Terminate the list again
@@ -310,7 +308,7 @@ USBDM_ErrorCode bdm_usb_findDevices(unsigned *devCount) {
 
    *devCount = deviceCount;
 
-//   print("bdm_usb_find_devices() ==> %d\n", deviceCount);
+//   Logging::print("bdm_usb_find_devices() ==> %d\n", deviceCount);
 
    if(deviceCount>0) {
       return BDM_RC_OK;
@@ -332,9 +330,8 @@ USBDM_ErrorCode bdm_usb_findDevices(unsigned *devCount) {
 //!
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_getDeviceCount(unsigned int *pDeviceCount) {
-
+   LOGGING_Q;
    *pDeviceCount = deviceCount;
-
    return BDM_RC_OK;
 }
 
@@ -350,25 +347,23 @@ USBDM_ErrorCode bdm_usb_getDeviceCount(unsigned int *pDeviceCount) {
 //!
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_open( unsigned int device_no ) {
-
-//   print("bdm_usb_open( %d )\n", device_no);
-
+   LOGGING_Q;
    if (!initialised) {
-      print("bdm_usb_open() - Not initialised! \n");
+      Logging::print("Not initialised! \n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    if (device_no >= deviceCount) {
-      print("bdm_usb_open() - Illegal device #\n");
+      Logging::print("Illegal device #\n");
       return BDM_RC_ILLEGAL_PARAMS;
    }
    if (usbDeviceHandle != NULL) {
-      print("bdm_usb_open() - Closing previous device\n");
+      Logging::print("Closing previous device\n");
       bdm_usb_close();
    }
    int rc = libusb_open(bdmDevices[device_no], &usbDeviceHandle);
 
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_open() - libusb_open() failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
+      Logging::print("libusb_open() failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
       usbDeviceHandle = NULL;
       if (rc == LIBUSB_ERROR_ACCESS) {
          // Probably device is busy (open in another app)
@@ -386,12 +381,12 @@ USBDM_ErrorCode bdm_usb_open( unsigned int device_no ) {
    int configuration = 0;
    rc = libusb_get_configuration(usbDeviceHandle, &configuration);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_open() - libusb_get_configuration() failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
+      Logging::print("libusb_get_configuration() failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
    }
    if (configuration != 1) {
       rc = libusb_set_configuration(usbDeviceHandle, 1);
       if (rc != LIBUSB_SUCCESS) {
-         print("bdm_usb_open() - libusb_set_configuration(1) failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
+         Logging::print("libusb_set_configuration(1) failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
          // Release the device
          libusb_close(usbDeviceHandle);
          usbDeviceHandle = NULL;
@@ -400,7 +395,7 @@ USBDM_ErrorCode bdm_usb_open( unsigned int device_no ) {
    }
    rc = libusb_claim_interface(usbDeviceHandle, 0);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_open() - libusb_claim_interface(0) failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
+      Logging::print("libusb_claim_interface(0) failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
       libusb_close(usbDeviceHandle);
       usbDeviceHandle = NULL;
       if ((rc == LIBUSB_ERROR_ACCESS)||(rc == LIBUSB_ERROR_NOT_SUPPORTED)) {
@@ -412,35 +407,16 @@ USBDM_ErrorCode bdm_usb_open( unsigned int device_no ) {
          return BDM_RC_DEVICE_OPEN_FAILED;
       }
    }
-   rc = libusb_clear_halt(usbDeviceHandle, 0x01);
+   rc = libusb_clear_halt(usbDeviceHandle, EP_IN);
    if (rc != LIBUSB_SUCCESS) {
       // Ignore
-      print("bdm_usb_open() - libusb_clear_halt(...,0x01) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("libusb_clear_halt(...,EP_IN(0x%02X)) failed, rc = %s\n", EP_IN, libusb_error_name((libusb_error)rc));
    }
-   rc = libusb_clear_halt(usbDeviceHandle, 0x82);
+   rc = libusb_clear_halt(usbDeviceHandle, EP_OUT);
    if (rc != LIBUSB_SUCCESS) {
       // Ignore
-      print("bdm_usb_open() - libusb_clear_halt(...,0x82) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("libusb_clear_halt(...,EP_OUT(0x%02X)) failed, rc = %s\n", EP_OUT, libusb_error_name((libusb_error)rc));
    }
-
-//   libusb_set_debug(NULL, 4);
-
-//   int maxTransferSize = libusb_get_max_packet_size(libusb_get_device(usbDeviceHandle), EP_OUT);
-//   if (maxTransferSize<0) {
-//      print("bdm_usb_open() - libusb_get_max_packet_size(EP_OUT) failed, rc = %d\n", maxTransferSize);
-//   }
-//   else {
-//      print("bdm_usb_open() - libusb_get_max_packet_size(EP_OUT) => %d\n", maxTransferSize);
-//   }
-//
-//   maxTransferSize = libusb_get_max_packet_size(libusb_get_device(usbDeviceHandle), EP_IN);
-//   if (maxTransferSize<0) {
-//      print("bdm_usb_open() - libusb_get_max_packet_size(EP_IN) failed, rc = %d\n", maxTransferSize);
-//   }
-//   else {
-//      print("bdm_usb_open() - libusb_get_max_packet_size(EP_IN) => %d\n", maxTransferSize);
-//   }
-
    return (BDM_RC_OK);
 }
 
@@ -453,20 +429,21 @@ USBDM_ErrorCode bdm_usb_open( unsigned int device_no ) {
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_close( void ) {
    int rc;
+   LOGGING_Q;
 
-   print("bdm_usb_close()\n");
+   Logging::print("bdm_usb_close()\n");
    if (usbDeviceHandle == NULL) {
-      print("bdm_usb_close() - device not open - no action\n");
+      Logging::print("Device not open - no action\n");
       return BDM_RC_OK;
    }
    rc = libusb_release_interface(usbDeviceHandle, 0);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_close() - libusb_release_interface() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("libusb_release_interface() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    }
    int configValue;
    rc = libusb_get_configuration(usbDeviceHandle, &configValue);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_close() - libusb_get_configuration() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("libusb_get_configuration() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    }
    // Unconfigure BDM
    // I know the libusb documentation says to use -1 but this ends up being passed
@@ -477,7 +454,7 @@ USBDM_ErrorCode bdm_usb_close( void ) {
    //   rc = libusb_set_configuration(usbDeviceHandle, -1);
    //#endif
    //   if (rc != LIBUSB_SUCCESS) {
-   //      print("bdm_usb_close() - libusb_set_configuration(-1) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+   //      Logging::print("libusb_set_configuration(-1) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    //   }
    libusb_close(usbDeviceHandle);
    usbDeviceHandle = NULL;
@@ -499,11 +476,12 @@ USBDM_ErrorCode bdm_usb_close( void ) {
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_getStringDescriptor(int index, char *descriptorBuffer, unsigned maxLength) {
    const int DT_STRING = 3;
+   LOGGING_Q;
 
    memset(descriptorBuffer, '\0', maxLength);
 
    if (usbDeviceHandle == NULL) {
-      print("bdm_usb_getStringDescriptor() - Device handle NULL! \n");
+      Logging::print("Device handle NULL! \n");
       return BDM_RC_DEVICE_NOT_OPEN;
    }
    int rc = libusb_control_transfer(usbDeviceHandle ,
@@ -517,11 +495,11 @@ USBDM_ErrorCode bdm_usb_getStringDescriptor(int index, char *descriptorBuffer, u
 
    if ((rc < 0) || (descriptorBuffer[1] != DT_STRING)) {
       memset(descriptorBuffer, '\0', maxLength);
-      print("bdm_usb_getDeviceDescription() - bdm_usb_getStringDescriptor() failed\n");
+      Logging::print("libusb_control_transfer() failed\n");
       return BDM_RC_USB_ERROR;
    }
 //   else {
-//      print("bdm_usb_getStringDescriptor() - read %d bytes\n", rc);
+//      Logging::print("read %d bytes\n", rc);
 //      printDump((unsigned char *)descriptorBuffer, rc);
 //   }
    // Determine length
@@ -565,16 +543,17 @@ USBDM_ErrorCode bdm_usb_send_ep0( const unsigned char * data ) {
    unsigned char size       = data[0];   // Size is the first byte
    int rc;
    unsigned index;
+   LOGGING_Q;
 
    if (usbDeviceHandle == NULL) {
-      print("bdm_usb_send_ep0() - Device handle NULL!\n");
+      Logging::print("Device handle NULL!\n");
       return BDM_RC_DEVICE_NOT_OPEN;
    }
 #ifdef LOG_LOW_LEVEL
-   print("============================\n");
-   print("bdm_usb_send_ep0() - USB EP0 send (%s, size=%d):\n", getCommandName(data[1]), size);
+   Logging::print("============================\n");
+   Logging::print("USB EP0 send (%s, size=%d):\n", getCommandName(data[1]), size);
    if (data[1] == CMD_USBDM_DEBUG)
-      print("bdm_usb_send_ep0() - Debug cmd = %s\n", getDebugCommandName(data[2]));
+      Logging::print("Debug cmd = %s\n", getDebugCommandName(data[2]));
    printDump(data, size+1);
 #endif // LOG_LOW_LEVEL
 
@@ -593,7 +572,7 @@ USBDM_ErrorCode bdm_usb_send_ep0( const unsigned char * data ) {
                (size>5)?(size-5):0,                            // size (# of data bytes)
                timeoutValue);                                  // how long to wait for reply
    if (rc < 0) {
-      print("bdm_usb_send_ep0() - USB EP0 send: Send failed (USB error = %d)\n", rc);
+      Logging::print("libusb_control_transfer() failed, send failed (USB error = %d)\n", rc);
       return(BDM_RC_USB_ERROR);
    }
    return(BDM_RC_OK);
@@ -621,23 +600,24 @@ USBDM_ErrorCode bdm_usb_send_ep0( const unsigned char * data ) {
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_recv_ep0(unsigned char *data, unsigned *actualRxSize) {
    unsigned char size = data[0];   // Transfer size is the first byte
-   unsigned char cmd  = data[1];   // OSBDM/TBDML Command byte
+   unsigned char cmd  = data[1];   // OSBDM/USBDM Command byte
    int rc;
    int retry = 5;
+   LOGGING_Q;
 
    *actualRxSize = 0;
 
    if (usbDeviceHandle == NULL) {
-      print("bdm_usb_recv_ep0() - ERROR : Device handle NULL!\n");
+      Logging::print("ERROR : Device handle NULL!\n");
       data[0] = BDM_RC_DEVICE_NOT_OPEN;
       return BDM_RC_DEVICE_NOT_OPEN;
    }
 
 #ifdef LOG_LOW_LEVEL
-   print("============================\n");
-   print("bdm_usb_recv_ep0(%s, size=%d) - \n", getCommandName(cmd), size);
+   Logging::print("============================\n");
+   Logging::print("bdm_usb_recv_ep0(%s, size=%d) - \n", getCommandName(cmd), size);
    if (data[1] == CMD_USBDM_DEBUG)
-      print("bdm_usb_recv_ep0() - Debug cmd = %s\n", getDebugCommandName(data[2]));
+      Logging::print("Debug cmd = %s\n", getDebugCommandName(data[2]));
    printDump(data, 6);
 #endif // LOG_LOW_LEVEL
 
@@ -649,16 +629,16 @@ USBDM_ErrorCode bdm_usb_recv_ep0(unsigned char *data, unsigned *actualRxSize) {
                data[4]+(data[5]<<8),                          // wIndex
                (unsigned char*)data,                          // ptr to data buffer (for Rx)
                size,                                          // wLength = size of transfer
-               5*timeoutValue                                 // timeout
+               timeoutValue                                   // timeout
                );
       if (rc < 0) {
-         print("bdm_usb_recv_ep0(size=%d) - Transfer error (USB error = %s) - retry %d \n", size, libusb_error_name((libusb_error)rc), retry);
-         milliSleep(100); // So we don't monopolise the USB
+         Logging::print("libusb_control_transfer(sz=%d) failed - Transfer error (USB error = %s) - retry %d \n", size, libusb_error_name((libusb_error)rc), retry);
+         milliSleep(100); // So we don't monopolize the USB
       }
    } while ((rc < 0) && (--retry>0));
 
    if (rc < 0) {
-      print("bdm_usb_recv_ep0() - Transfer failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
+      Logging::print("Transfer failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
       data[0] = BDM_RC_USB_ERROR;
       *actualRxSize = 0;
    }
@@ -666,13 +646,13 @@ USBDM_ErrorCode bdm_usb_recv_ep0(unsigned char *data, unsigned *actualRxSize) {
       *actualRxSize = (unsigned) rc;
    }
    if ((data[0] != BDM_RC_OK) && (data[0] != cmd)){ // Error at BDM?
-      print("bdm_usb_recv_ep0() - Cmd Failed (%s):\n", getErrorName(data[0]));
-      printDump(data,*actualRxSize);
+      Logging::print("Cmd Failed (%s):\n", getErrorName(data[0]));
+      Logging::printDump(data,*actualRxSize);
       memset(&data[1], 0x00, size-1);
       return (USBDM_ErrorCode)data[0];
    }
 #ifdef LOG_LOW_LEVEL
-   print("bdm_usb_recv_ep0(size = %d, recvd = %d):\n", size, rc);
+   Logging::print("bdm_usb_recv_ep0(size = %d, recvd = %d):\n", size, rc);
    printDump(data,rc);
 #endif // LOG_LOW_LEVEL
 
@@ -709,14 +689,14 @@ USBDM_ErrorCode bdm_usb_raw_send_ep0(unsigned int  request,
                                      unsigned int  size,
                                      const unsigned char *data) {
    int rc;
-   if (usbDeviceHandle == NULL) {
-      print("bdm_usb_raw_send_ep0() - device not open\n");
+   LOGGING_Q;
+
+if (usbDeviceHandle == NULL) {
+      Logging::print("Device not open\n");
       return BDM_RC_DEVICE_NOT_OPEN;
    }
 #ifdef LOG_LOW_LEVEL
-   print("============================\n");
-   print("bdm_usb_raw_send_ep0(req=%2.2X, val=%2.2X, ind=%d, size=%d)\n",
-         request, wValue, wIndex, size);
+   Logging::print("req=%2.2X, val=%2.2X, ind=%d, size=%d\n", request, wValue, wIndex, size);
 #endif
    rc = libusb_control_transfer(usbDeviceHandle,
             LIBUSB_REQUEST_TYPE_VENDOR|EP_CONTROL_OUT,      // bmRequestType
@@ -727,7 +707,7 @@ USBDM_ErrorCode bdm_usb_raw_send_ep0(unsigned int  request,
             size,                                           // size (# of data bytes)
             timeoutValue);                                  // how long to wait for reply
    if (rc < 0) {
-      print("bdm_usb_raw_send_ep0() - Send failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
+      Logging::print("Send failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
       return(BDM_RC_USB_ERROR);
    }
    return(BDM_RC_OK);
@@ -758,14 +738,15 @@ USBDM_ErrorCode bdm_usb_raw_recv_ep0(unsigned int  request,
                                      unsigned int  size,
                                      unsigned char *data) {
    int rc;
+   LOGGING_Q;
    if (usbDeviceHandle == NULL) {
-      print("bdm_usb_raw_recv_ep0() - device not open\n");
+      Logging::print("Device not open\n");
       data[0] = BDM_RC_DEVICE_NOT_OPEN;
       return BDM_RC_DEVICE_NOT_OPEN;
    }
 #ifdef LOG_LOW_LEVEL
-   print("============================\n");
-   print("bdm_usb_raw_recv_ep0(req=%2.2X, val=%2.2X, ind=%d, size=%d)\n",
+   Logging::print("============================\n");
+   Logging::print("bdm_usb_raw_recv_ep0(req=%2.2X, val=%2.2X, ind=%d, size=%d)\n",
          request, wValue, wIndex, size);
 #endif // LOG_LOW_LEVEL
 
@@ -779,7 +760,7 @@ USBDM_ErrorCode bdm_usb_raw_recv_ep0(unsigned int  request,
             timeoutValue);                                  // how long to wait for reply
 
    if (rc < 0) {
-      print("bdm_usb_raw_recv_ep0() - Transaction failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
+      Logging::print("Transaction failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
       data[0] = BDM_RC_USB_ERROR;
    }
 //#ifdef LOG_LOW_LEVEL
@@ -794,7 +775,7 @@ USBDM_ErrorCode bdm_usb_raw_recv_ep0(unsigned int  request,
 //*****************************************************************************
 //*****************************************************************************
 
-//! \brief Sends a command to the TBDML device over the Out Bulk Endpoint
+//! \brief Sends a command to the USBDM device over the Out Bulk Endpoint
 //!
 //! Since the EP transfer is unidirectional, data returned by the
 //! device must be read in a separate transfer - this includes any status
@@ -821,21 +802,22 @@ DLL_LOCAL
 USBDM_ErrorCode bdm_usb_send_epOut(unsigned int count, const unsigned char *data) {
    int rc;
    int transferCount;
+   LOGGING_Q;
 
    if (usbDeviceHandle==NULL) {
-      print("bdm_usb_send_epOut(): device not open\n");
+      Logging::print("Device not open\n");
       return BDM_RC_DEVICE_NOT_OPEN;
    }
 
 #ifdef LOG_LOW_LEVEL
-   print("============================\n");
+   Logging::print("============================\n");
    if (data[0] == 0) { // Zero as first byte indicates split USBDM command
-      print("bdm_usb_send_epOut() - USB EP0ut send (SPLIT, size=%d):\n", count);
+      Logging::print("bdm_usb_send_epOut() - USB EP0ut send (SPLIT, size=%d):\n", count);
    }
    else {
-      print("bdm_usb_send_epOut() - USB EP0ut send (%s, size=%d):\n", getCommandName(data[1]), count);
+      Logging::print("bdm_usb_send_epOut() - USB EP0ut send (%s, size=%d):\n", getCommandName(data[1]), count);
       if (data[1] == CMD_USBDM_DEBUG)
-         print("bdm_usb_send_epOut() - Debug cmd = %s\n", getDebugCommandName(data[2]));
+         Logging::print("bdm_usb_send_epOut() - Debug cmd = %s\n", getDebugCommandName(data[2]));
    }
    printDump(data, count);
 #endif // LOG_LOW_LEVEL
@@ -848,7 +830,7 @@ USBDM_ErrorCode bdm_usb_send_epOut(unsigned int count, const unsigned char *data
                        timeoutValue             // timeout
                        );
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_send_epOut() - Transfer failed (USB error = %s, timeout=%d)\n", libusb_error_name((libusb_error)rc), timeoutValue);
+      Logging::print("Transfer failed (USB error = %s, timeout=%d)\n", libusb_error_name((libusb_error)rc), timeoutValue);
       return BDM_RC_USB_ERROR;
    }
    return BDM_RC_OK;
@@ -881,16 +863,16 @@ USBDM_ErrorCode bdm_usb_recv_epIn(unsigned count, unsigned char *data, unsigned 
    int rc;
    int retry = 40; // ~4s of retries
    int transferCount;
+   LOGGING_Q;
 
    *actualCount = 0; // Assume failure
 
    if (usbDeviceHandle==NULL) {
-      print("bdm_usb_recv_epIn(): device not open\n");
+      Logging::print("Device not open\n");
       return BDM_RC_DEVICE_NOT_OPEN;
    }
-
 #ifdef LOG_LOW_LEVEL
-   print("bdm_usb_recv_epIn(%d, ...)\n", count);
+   Logging::print("bdm_usb_recv_epIn(%d, ...)\n", count);
 #endif // LOG_LOW_LEVEL
 
 #if OLD
@@ -903,7 +885,7 @@ USBDM_ErrorCode bdm_usb_recv_epIn(unsigned count, unsigned char *data, unsigned 
                           timeoutValue                   // timeout
                           );
       if (rc != LIBUSB_SUCCESS) {
-         print("bdm_usb_recv_epIn(count=%d) - Transfer timeout (USB error = %s, timeout=%d) - retry\n", count, libusb_error_name((libusb_error)rc), timeoutValue);
+         Logging::print("bdm_usb_recv_epIn(count=%d) - Transfer timeout (USB error = %s, timeout=%d) - retry\n", count, libusb_error_name((libusb_error)rc), timeoutValue);
          milliSleep(100); // So we don't monopolise the USB
       }
    } while ((rc!=LIBUSB_SUCCESS) && (--retry>0));
@@ -918,35 +900,64 @@ USBDM_ErrorCode bdm_usb_recv_epIn(unsigned count, unsigned char *data, unsigned 
                                 );
       if ((rc == LIBUSB_SUCCESS)  && (dummyBuffer[0] == BDM_RC_BUSY)) {
          // The BDM has indicated it's busy for a while - try again in 1/10 second
-         print("bdm_usb_recv_epIn(retry=%d) - BDM Busy - retry\n", retry);
+         Logging::print("BDM Busy - retry = %d\n", retry);
          milliSleep(100); // So we don't monopolise the USB
       }
    } while ((rc == LIBUSB_SUCCESS) && (dummyBuffer[0] == BDM_RC_BUSY)  && (--retry>0));
 #endif
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_recv_epIn(count=%d) - Transfer failed (USB error = %s)\n", count, libusb_error_name((libusb_error)rc));
+      Logging::print("Transfer failed (Count = %d, SB error = %s)\n", count, libusb_error_name((libusb_error)rc));
       data[0] = BDM_RC_USB_ERROR;
       memset(&data[1], 0x00, count-1);
       return BDM_RC_USB_ERROR;
    }
-
    memcpy(data, dummyBuffer, transferCount);
    rc = data[0]&0x7F;
 
    if (rc != BDM_RC_OK) {
-      print("bdm_usb_recv_epIn() - Error Return %d (%s):\n", rc, getErrorName(rc));
-      print("bdm_usb_recv_epIn(size = %d, recvd = %d):\n", count, transferCount);
-      printDump(data, transferCount);
+      Logging::print("Error Return %d (%s):\n", rc, getErrorName(rc));
+      Logging::print("size = %d, recvd = %d\n", count, transferCount);
+      Logging::printDump(data, transferCount);
       memset(&data[1], 0x00, count-1);
    }
-
 #ifdef LOG_LOW_LEVEL
    printDump(data, transferCount);
 #endif // LOG_LOW_LEVEL
 
    *actualCount = transferCount;
-
    return (USBDM_ErrorCode)(rc);
+}
+
+//! Attempt to reset the USB connection without upsetting target
+//!
+//! @return BDM_RC_OK => USB device re-opened OK
+//!
+DLL_LOCAL
+USBDM_ErrorCode bdm_usb_reset_connection(void) {
+   USBDM_Version_t version;
+   int rc;
+   LOGGING_Q;
+
+   milliSleep(100);
+   rc = libusb_set_configuration(usbDeviceHandle, 1);
+   if (rc != LIBUSB_SUCCESS) {
+      Logging::print("libusb_set_configuration(1) failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
+   }
+   rc = libusb_clear_halt(usbDeviceHandle, EP_IN);
+   if (rc != LIBUSB_SUCCESS) {
+      Logging::print("libusb_clear_halt(...,EP_IN(0x%02X)) failed, rc = %s\n", EP_IN, libusb_error_name((libusb_error)rc));
+   }
+   rc = libusb_clear_halt(usbDeviceHandle, EP_OUT);
+   if (rc != LIBUSB_SUCCESS) {
+      Logging::print("libusb_clear_halt(...,EP_OUT(0x%02X)) failed, rc = %s\n", EP_OUT, libusb_error_name((libusb_error)rc));
+   }
+   if ((USBDM_GetVersion(&version)  != BDM_RC_OK) &&
+       (USBDM_GetVersion(&version)  != BDM_RC_OK)) { // Get BDM version - reset USB command handler
+      Logging::print("USBDM_GetVersion() failed\n");
+      return BDM_RC_FAIL;
+   }
+   Logging::print("Success\n");
+   return BDM_RC_OK;
 }
 
 //! \brief Executes an USB transaction.
@@ -959,7 +970,7 @@ USBDM_ErrorCode bdmJB16_usb_transaction( unsigned int   txSize,
                                          unsigned char *data,
                                          unsigned int  *actualRxSize) {
    USBDM_ErrorCode rc;
-
+   LOGGING_Q;
    if (txSize <= 5) {
       // Transmission fits in SETUP pkt, Use single IN Data transfer to/from EP0
       *data = rxSize;
@@ -988,10 +999,187 @@ USBDM_ErrorCode bdmJB16_usb_transaction( unsigned int   txSize,
 //! JMxx Version - see \ref bdm_usb_transaction()
 //!
 static
+USBDM_ErrorCode bdmJMxx_simple_usb_transaction( bool                 commandToggle,
+                                                unsigned int         txSize,
+                                                unsigned int         rxSize,
+                                                const unsigned char *outData,
+                                                unsigned char       *inData,
+                                                unsigned int        *actualRxSize) {
+//   const unsigned  MaxFirstTransaction = 30;
+   const unsigned  MaxFirstTransaction = 62;
+   uint8_t         sendBuffer[txSize];
+   USBDM_ErrorCode rc;
+   LOGGING_Q;
+
+   memcpy(sendBuffer, outData, txSize);
+   if (commandToggle) {
+      sendBuffer[1] |= 0x80;
+   }
+   else {
+      sendBuffer[1] &= ~0x80;
+   }
+//   Logging::print("Tx1\n");
+
+   // An initial transaction of up to MaxFirstTransaction bytes is sent
+   // This is guaranteed to fit in a single pkt (<= endpoint MAXPACKETSIZE)
+   sendBuffer[0] = txSize;
+   rc = bdm_usb_send_epOut(txSize>MaxFirstTransaction?MaxFirstTransaction:txSize, (const unsigned char *)sendBuffer);
+   if (rc != BDM_RC_OK) {
+      Logging::print("Tx1 failed\n");
+      return rc;
+   }
+   // Remainder of data (if any) is sent as 2nd transaction
+   // The size of this transaction is know to the receiver
+   // Zero is sent as first byte (size) to allow differentiation from 1st transaction
+   if (txSize>MaxFirstTransaction) {
+//      Logging::print(" Splitting command\n");
+      uint8_t saveByte = sendBuffer[MaxFirstTransaction-1];
+      sendBuffer[MaxFirstTransaction-1] = 0; // Marker indicating later transaction
+      rc = bdm_usb_send_epOut(txSize+1-MaxFirstTransaction,
+            (const unsigned char *)(sendBuffer+MaxFirstTransaction-1));
+      sendBuffer[MaxFirstTransaction-1] = saveByte;
+   }
+   if (rc != BDM_RC_OK) {
+      Logging::print("Tx2 failed\n");
+      return rc;
+   }
+   // Get response
+   rc = bdm_usb_recv_epIn(rxSize, inData, actualRxSize);
+   if (rc == BDM_RC_USB_ERROR) {
+      // Single retry on Rx error
+      Logging::print("USB Rx error\n");
+      milliSleep(100);
+      rc = bdm_usb_recv_epIn(rxSize, inData, actualRxSize);
+      if (rc == BDM_RC_USB_ERROR) {
+         Logging::print("USB Rx error - retry failed\n");
+         return rc;
+      }
+      Logging::print(" USB Rx error- retry success\n");
+   }
+   bool receivedCommandToggle = (inData[0]&0x80) != 0;
+   if (commandToggle != receivedCommandToggle) {
+      // Single retry on toggle error (clear any pending Rx)
+      Logging::print("USB Toggle error, S=%d, R=%d\n", commandToggle?1:0, receivedCommandToggle?1:0);
+      milliSleep(100);
+      rc = bdm_usb_recv_epIn(rxSize, inData, actualRxSize);
+      receivedCommandToggle = (inData[0]&0x80) != 0;
+      if ((rc == BDM_RC_USB_ERROR) || (commandToggle != receivedCommandToggle)) {
+         Logging::print("Immediate retry failed, S=%d, R=%d\n", commandToggle?1:0, receivedCommandToggle?1:0);
+         return BDM_RC_USB_ERROR;
+      }
+      Logging::print("Immediate retry succeeded, S=%d, R=%d\n", commandToggle?1:0, receivedCommandToggle?1:0);
+   }
+   // Mask toggle bit out of data
+   inData[0] &= ~0x80;
+   if (rc != BDM_RC_OK) {
+      Logging::print("Non-USB error, rc = %s\n", USBDM_GetErrorString(rc));
+   }
+   return rc;
+}
+
+//! \brief Executes an USB transaction.
+//! This consists of a transmission of a command and reception of the response
+//! JMxx Version - see \ref bdm_usb_transaction()
+//!
+static
 USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
                                          unsigned int   rxSize,
                                          unsigned char *data,
                                          unsigned int  *actualRxSize) {
+   static bool     commandToggle       = 0;
+   static int      sequence            = 0;
+   int             retry               = 6;
+   bool            resetFlag           = false;
+   bool            reportFlag          = false;
+   USBDM_ErrorCode rc                  = BDM_RC_OK;
+   unsigned char outData[txSize];
+   LOGGING_Q;
+
+   // Save copy of data for retry
+   memcpy(outData, data, txSize);
+
+   if (data[1] == CMD_USBDM_GET_CAPABILITIES) {
+      Logging::print("Setting toggle=0\n");
+      commandToggle = 0;
+      sequence      = 0;
+   }
+   sequence++;
+   do {
+      if (resetFlag) {
+         Logging::print("Reset retry - resetting connection\n");
+         if (bdm_usb_reset_connection() != BDM_RC_OK) {
+            continue;
+         }
+         USBDM_GetCommandStatus();
+         USBDM_GetCommandStatus();
+         USBDMStatus_t   status;
+//         if ((USBDM_GetBDMStatus(&status) != BDM_RC_OK) &&
+//             (USBDM_GetBDMStatus(&status) != BDM_RC_OK)) { // Get status - reset command toggle
+//            Logging::print("USBDM_GetBDMStatus() - USBDM_GetVersion failed\n");
+//            continue;
+//         }
+//         USBDM_GetCommandStatus();
+//         USBDM_GetCommandStatus();
+      }
+      if (reportFlag) {
+         Logging::print("Retrying command, seq = %d, retry = %d\n", sequence, retry);
+      }
+      rc = bdmJMxx_simple_usb_transaction(commandToggle, txSize, rxSize, outData, data, actualRxSize);
+      if (rc == BDM_RC_USB_ERROR) {
+         Logging::print("RX_ERROR response, seq = %d, retry = %d\n", sequence, retry);
+         resetFlag  = true;
+         reportFlag = true;
+         continue;
+      }
+      if (reportFlag) {
+         Logging::print("Retry result, seq = %d, retry = %d, rc = %s\n",
+               sequence, retry, USBDM_GetErrorString((rc)));
+      }
+      commandToggle = !commandToggle;
+      if (rc != BDM_RC_OK) {
+         reportFlag = true;
+      }
+   } while ((rc == BDM_RC_USB_ERROR) && (retry-->0));
+   if (resetFlag) {
+      if (rc == BDM_RC_OK) {
+         Logging::print("USB Success after USB reset\n");
+#if defined(LOG) && defined(RETRY_TEST)
+         rc = BDM_RC_USB_RETRY_OK; // debug - fail even on OK retry
+#endif
+      }
+      else if (rc != BDM_RC_USB_ERROR) {
+         Logging::print("USB OK but operation failed after USB reset\n");
+      }
+   }
+   else if (reportFlag) {
+      if (rc == BDM_RC_OK) {
+         Logging::print("Success after retry\n");
+#if defined(LOG) && defined(RETRY_TEST)
+         rc = BDM_RC_USB_RETRY_OK; // debug - fail even on OK retry
+#endif
+      }
+      else {
+         Logging::print("Failure after retry\n");
+      }
+   }
+   if ((rc != BDM_RC_OK) && (rc != BDM_RC_USB_RETRY_OK)) {
+      data[0] = rc;
+      *actualRxSize = 0;
+      memset(&data[1], 0x00, rxSize-1);
+   }
+   return rc;
+}
+
+#if 0
+//! \brief Executes an USB transaction.
+//! This consists of a transmission of a command and reception of the response
+//! JMxx Version - see \ref bdm_usb_transaction()
+//!
+static
+USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
+                                          unsigned int   rxSize,
+                                          unsigned char *data,
+                                          unsigned int  *actualRxSize) {
    USBDM_ErrorCode rc;
    const unsigned MaxFirstTransaction = 30;
    static bool commandToggle = 0;
@@ -999,15 +1187,17 @@ USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
    static int sequence = 0;
    bool reportFlag = false;
    uint8_t sendBuffer[txSize];
+   LOGGING_Q;
 
    if (data[1] == CMD_USBDM_GET_CAPABILITIES) {
-//      print("bdmJMxx_usb_transaction() Setting toggle=0\n");
+//      Logging::print("Setting toggle=0\n");
       commandToggle = 0;
       sequence = 0;
    }
    sequence++;
    memcpy(sendBuffer, data, txSize);
    do {
+      Logging::print("Tx1 retry\n");
       // An initial transaction of up to MaxFirstTransaction bytes is sent
       // This is guaranteed to fit in a single pkt (<= endpoint MAXPACKETSIZE)
       sendBuffer[0] = txSize;
@@ -1019,17 +1209,19 @@ USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
       }
       rc = bdm_usb_send_epOut(txSize>MaxFirstTransaction?MaxFirstTransaction:txSize,
                               (const unsigned char *)sendBuffer);
-
       if (rc != BDM_RC_OK) {
          reportFlag = true;
-         print("bdmJMxx_usb_transaction() Tx1 failed\n");
+         Logging::print("Tx1 failed\n");
          continue;
+      }
+      else if (reportFlag) {
+         Logging::print("Tx1 success\n");
       }
       // Remainder of data (if any) is sent as 2nd transaction
       // The size of this transaction is know to the receiver
       // Zero is sent as first byte (size) to allow differentiation from 1st transaction
       if ((rc == BDM_RC_OK) && (txSize>MaxFirstTransaction)) {
-         print("bdmJMxx_usb_transaction() Splitting command\n");
+         Logging::print("Splitting command\n");
          uint8_t saveByte = sendBuffer[MaxFirstTransaction-1];
          sendBuffer[MaxFirstTransaction-1] = 0; // Marker indicating later transaction
          rc = bdm_usb_send_epOut(txSize+1-MaxFirstTransaction,
@@ -1038,46 +1230,49 @@ USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
       }
       if (rc != BDM_RC_OK) {
          reportFlag = true;
-         print("bdmJMxx_usb_transaction() Tx2 failed\n");
+         Logging::print("Tx2 failed\n");
          continue;
+      }
+      else if (reportFlag) {
+         Logging::print("Tx2 success\n");
       }
       // Get response
       rc = bdm_usb_recv_epIn(rxSize, data, actualRxSize);
       bool receivedCommandToggle = (data[0]&0x80) != 0;
-
       if ((rc == BDM_RC_USB_ERROR) || (commandToggle != receivedCommandToggle)) {
          // Retry on single USB fail or toggle error
-         print("bdmJMxx_usb_transaction() USB or Toggle error, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
+         Logging::print("USB Rx or Toggle error, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
          milliSleep(100);
          rc = bdm_usb_recv_epIn(rxSize, data, actualRxSize);
          receivedCommandToggle = (data[0]&0x80) != 0;
          if ((rc == BDM_RC_USB_ERROR) || (commandToggle != receivedCommandToggle)) {
-            print("bdmJMxx_usb_transaction() Immediate retry failed, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
+            Logging::print("Immediate retry failed, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
          }
          else {
-            print("bdmJMxx_usb_transaction() Immediate retry succeeded, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
+            Logging::print("Immediate retry succeeded, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
          }
+      }
+      else if (reportFlag) {
+         Logging::print("Rx success\n");
       }
       // Mask toggle bit out of data
       data[0] &= ~0x80;
-
       if (rc == BDM_RC_USB_ERROR) {
          // Retry entire command
          reportFlag = true;
-         print("bdmJMxx_usb_transaction() USB error, seq = %d, retrying command\n", sequence);
+         Logging::print("USB error, seq = %d, retrying command\n", sequence);
          continue;
       }
       // Don't toggle on busy -
       if (rc == BDM_RC_BUSY) {
          reportFlag = true;
-         print("bdmJMxx_usb_transaction() BUSY response, seq = %d\n", sequence);
+         Logging::print("BUSY response, seq = %d\n", sequence);
          continue;
       }
       if (reportFlag) {
-         print("bdmJMxx_usb_transaction() Report, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
+         Logging::print("Report, rc=%d, seq = %d, S=%d, R=%d\n", rc, sequence, commandToggle?1:0, receivedCommandToggle?1:0);
       }
       commandToggle = !commandToggle;
-
       if (rc != BDM_RC_OK) {
          data[0] = rc;
          *actualRxSize = 0;
@@ -1087,6 +1282,7 @@ USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
 
    return rc;
 }
+#endif
 
 //! \brief Executes an USB transaction.
 //! This consists of a transmission of a command and reception of the response
@@ -1124,32 +1320,34 @@ USBDM_ErrorCode bdm_usb_transaction( unsigned int   txSize,
    USBDM_ErrorCode rc;
    unsigned tempRxSize;
    uint8_t command = data[1];
+   LOGGING_Q;
 
    if (usbDeviceHandle==NULL) {
-      print("bdm_usb_transaction(): device not open\n");
+      Logging::print("device not open\n");
 	  return BDM_RC_DEVICE_NOT_OPEN;
    }
    timeoutValue = timeout;
 
    if (bdmState.useOnlyEp0) {
-      rc = bdmJB16_usb_transaction( txSize, rxSize, data, &tempRxSize);
+      rc = bdmJB16_usb_transaction(txSize, rxSize, data, &tempRxSize);
    }
    else {
-      rc = bdmJMxx_usb_transaction( txSize, rxSize, data, &tempRxSize);
+      rc = bdmJMxx_usb_transaction(txSize, rxSize, data, &tempRxSize);
    }
    if (actualRxSize != NULL) {
       // Variable size data expected
       *actualRxSize = tempRxSize;
    }
-   else if ((rc == 0) && (tempRxSize != rxSize)) {
+   else if ((rc == BDM_RC_OK) && (tempRxSize != rxSize)) {
       // Expect exact data size
-      print("bdm_usb_transaction() - cmd = %s, Expected %d; received %d\n",
+      Logging::print("Failed, cmd = %s, Expected %d; received %d\n",
             getCommandName(command), rxSize, tempRxSize);
       rc = BDM_RC_UNEXPECTED_RESPONSE;
    }
    if (rc != BDM_RC_OK) {
-      print("bdm_usb_transaction() - Failed, cmd = %s, rc = %s\n",
+      Logging::print("Failed, cmd = %s, rc = %s\n",
             getCommandName(command), getErrorName(rc));
    }
    return rc;
 }
+

@@ -14,9 +14,9 @@
 
 //! Get name of ARM memory location/region
 //!
-//! @param address address to check
+//! @param address Address to check
 //!
-//! @return ptr to static buffer of form <name>:<address>
+//! @return Pointer to static buffer of form name:address
 //!
 char *ARM_GetMemoryName(uint32_t address) {
 static char name[200];

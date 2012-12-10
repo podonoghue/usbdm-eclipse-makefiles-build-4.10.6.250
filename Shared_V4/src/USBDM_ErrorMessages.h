@@ -46,6 +46,10 @@ typedef enum  {
  BDM_RC_USB_DEVICE_BUSY                        = 9,     //!< BDM Open Failed - LIBUSB_ERROR_ACCESS on open - Probably open in another app
  BDM_RC_USB_DEVICE_NOT_INSTALLED               = 10,    //!< BDM Open Failed - LIBUSB_ERROR_ACCESS on claim I/F - Probably driver not installed
  BDM_RC_USB_DEVICE_REMOVED                     = 11,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
+ BDM_RC_USB_RETRY_OK                           = 12,    //!< USB Debug use only
+ // BDM_RC_USB_TOGGLE_ERROR                       = 12,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
+// BDM_RC_USB_TX_ERROR                           = 13,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
+// BDM_RC_USB_RX_ERROR                           = 14,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
  //
  BDM_RC_UNKNOWN_TARGET                         = 15,    //!< Target unknown or not supported by this BDM
  BDM_RC_NO_TX_ROUTINE                          = 16,    //!< No Tx routine available at measured BDM communication speed

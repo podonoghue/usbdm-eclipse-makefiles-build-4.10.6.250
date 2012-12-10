@@ -29,22 +29,22 @@ ProgressTimer::ProgressTimer(CallBackT progressCallBack, unsigned maximum)
 //!
 //! @param message - Message to post, May be NULL to indicate no change.
 //!
-USBDM_ErrorCode ProgressTimer::restart(const char *_message) {
+USBDM_ErrorCode ProgressTimer::restart(const char *message) {
    USBDM_ErrorCode rc = PROGRAMMING_RC_OK;
 
    lastBytesDone = 0;
    bytesDone     = 0;
    if (gettimeofday(&timeStart, NULL) != 0) {
-      print("ProgressTimer::Timer::restart() - gettimeofday() failed!\n");
+      Logging::print("ProgressTimer::Timer::restart() - gettimeofday() failed!\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-   if (_message != NULL) {
-      message = _message;
+   if (message != NULL) {
+      this->message = message;
    }
    if (progressCallBack != NULL) {
-      rc = progressCallBack(PROGRAMMING_RC_OK, 0, message);
+      rc = progressCallBack(PROGRAMMING_RC_OK, 0, this->message);
    }
-//   print("ProgressTimer::Timer::restart() - \'%s\'\n", message);
+//   Logging::print("ProgressTimer::Timer::restart() - \'%s\'\n", message);
    return rc;
 }
 
@@ -53,10 +53,10 @@ USBDM_ErrorCode ProgressTimer::restart(const char *_message) {
 //! @param progress - How many bytes of progress since last call
 //! @param message  - Message to post, May be NULL to indicate no change.
 //!
-USBDM_ErrorCode ProgressTimer::progress(int progress, const char *_message) {
+USBDM_ErrorCode ProgressTimer::progress(int progress, const char *message) {
    USBDM_ErrorCode rc = PROGRAMMING_RC_OK;
-   if (_message != NULL) {
-      message = _message;
+   if (message != NULL) {
+      this->message = message;
    }
    bytesDone += progress;
    int percent = 0;
@@ -68,20 +68,20 @@ USBDM_ErrorCode ProgressTimer::progress(int progress, const char *_message) {
    if ((elapsed > 0) && (bytesDone > 0)) {
       kBytesPerSec = bytesDone/(1024*elapsed);
    }
-   if (message == NULL) {
-      message = "";
+   if (this->message == NULL) {
+      this->message = "";
    }
    char messageBuffer[200];
-   snprintf(messageBuffer, sizeof(messageBuffer), "%s (%2.2f kBytes/sec)", message, kBytesPerSec);
+   snprintf(messageBuffer, sizeof(messageBuffer), "%s (%2.2f kBytes/sec)", this->message, kBytesPerSec);
    if ((progressCallBack != NULL) && (progress != 0)){
       if (bytesDone>0) {
          rc = progressCallBack(PROGRAMMING_RC_OK, percent, messageBuffer);
       }
       else {
-         rc = progressCallBack(PROGRAMMING_RC_OK, percent, message);
+         rc = progressCallBack(PROGRAMMING_RC_OK, percent, this->message);
       }
    }
-//   print("ProgressTimer::Timer::progress() - \'%s\', Time = %3.2f, Progress done = %d(+%d) (%d%%)\n",
+//   Logging::print("ProgressTimer::Timer::progress() - \'%s\', Time = %3.2f, Progress done = %d(+%d) (%d%%)\n",
 //         messageBuffer, elapsed, bytesDone, progress, percent);
    return rc;
 }
@@ -91,7 +91,7 @@ USBDM_ErrorCode ProgressTimer::progress(int progress, const char *_message) {
 double ProgressTimer::elapsedTime(void) {
    struct timeval now;
    if (gettimeofday(&now, NULL) != 0) {
-      print("ProgressTimer::Timer::elapsedTime() - gettimeofday() failed!\n");
+      Logging::print("ProgressTimer::Timer::elapsedTime() - gettimeofday() failed!\n");
       return 1.0;
    }
    return (now.tv_sec-timeStart.tv_sec) + ((now.tv_usec-timeStart.tv_usec)/1000000.0);
@@ -102,7 +102,7 @@ double ProgressTimer::elapsedTime(void) {
 double ProgressTimer::totalTime(void) {
    struct timeval now;
    if (gettimeofday(&now, NULL) != 0) {
-      print("ProgressTimer::Timer::elapsedTime() - gettimeofday() failed!\n");
+      Logging::print("ProgressTimer::Timer::elapsedTime() - gettimeofday() failed!\n");
       return 1.0;
    }
    return (now.tv_sec-timeCreation.tv_sec) + ((now.tv_usec-timeCreation.tv_usec)/1000000.0);

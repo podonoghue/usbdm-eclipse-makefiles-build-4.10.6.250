@@ -77,7 +77,7 @@ int lineNo = 0;
 
    fp = openApplicationFile("Device_data/JTAG_Devices.cfg", "rt");
    if (fp == NULL) {
-      print("Failed to open config file\n");
+      Logging::print("Failed to open config file\n");
       return;
    }
    deviceData[0] = disabledDevice;
@@ -86,7 +86,7 @@ int lineNo = 0;
 
    while (fgets(lineBuff, sizeof(lineBuff), fp) != NULL) {
       lineNo++;
-//      print("original: %s", lineBuff);
+//      Logging::print("original: %s", lineBuff);
       // Remove comments
       cp = strchr(lineBuff, '#');
       if (cp != NULL) {
@@ -105,7 +105,7 @@ int lineNo = 0;
       if (*cp == '\0') {
          continue;
       }
-//      print( "comment stripped: %s\n", lineBuff);
+//      Logging::print( "comment stripped: %s\n", lineBuff);
       if (sscanf(lineBuff, "%s %x %d %d %x %x %d %ld %ld %20s %20s",
                  type,
                  &idcode, &irLength, &drLength, &unlockInstruction, &idcodeInstruction,
@@ -134,7 +134,7 @@ int lineNo = 0;
          deviceNum++;
       }
       else
-         print( "Illegal line in config file, line #%d \"%s\"\n",
+         Logging::print( "Illegal line in config file, line #%d \"%s\"\n",
                  lineNo, lineBuff);
       deviceCount = deviceNum;
    }
@@ -142,7 +142,7 @@ int lineNo = 0;
 
 #ifdef LOG
    for (deviceNum = 0; deviceData[deviceNum].description != NULL; deviceNum++) {
-      print("0x%8.8x %d 0x%2.2x %10s %s\n",
+      Logging::print("0x%8.8x %d 0x%2.2x %10s %s\n",
               deviceData[deviceNum].idcode,
               deviceData[deviceNum].instructionLength,
               deviceData[deviceNum].unlockInstruction,
@@ -165,12 +165,12 @@ int                sub;
 const DeviceData  *device = NULL;
 
 #ifdef LOG
-  print("lookUpDevice: idcode         => 0x%3.3lx\n",  idcode);
-  print("lookUpDevice: JEDEC code     => 0x%3.3x%s\n",
+  Logging::print("lookUpDevice: idcode         => 0x%3.3lx\n",  idcode);
+  Logging::print("lookUpDevice: JEDEC code     => 0x%3.3x%s\n",
            jedec, (jedec==FREESCALE_JEDEC)?"(Freescale)":"");
-  print("lookUpDevice: part Number    => 0x%3.3x\n",   partNum);
+  Logging::print("lookUpDevice: part Number    => 0x%3.3x\n",   partNum);
    if (jedec==FREESCALE_JEDEC)
-     print("lookUpDevice: freescalePin   => 0x%3.3x\n",   freescalePin);
+     Logging::print("lookUpDevice: freescalePin   => 0x%3.3x\n",   freescalePin);
 #endif
 
    if (idcode == 0x0) // No IDCODE from device

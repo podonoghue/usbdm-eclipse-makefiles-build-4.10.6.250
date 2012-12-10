@@ -201,7 +201,7 @@ END_EVENT_TABLE()
 //! @param event The event to handle
 //!
 void CFUnlockerDialogue::OnSelChanging( wxNotebookEvent& event ) {
-   print("CFUnlockerDialogue::OnNotebookPageChanging() - %d => %d\n", event.GetOldSelection(), event.GetSelection());
+   Logging::print("CFUnlockerDialogue::OnNotebookPageChanging() - %d => %d\n", event.GetOldSelection(), event.GetSelection());
    USBDM_ErrorCode rc = BDM_RC_OK;
 
    int leavingPage = event.GetOldSelection();
@@ -216,10 +216,10 @@ void CFUnlockerDialogue::OnSelChanging( wxNotebookEvent& event ) {
 //   }
    if (panel == usbdmPanel) {
       // Leaving Communication page - Try to open BDM
-      print("CFUnlockerDialogue::OnNotebookPageChanging() - opening BDM\n");
+      Logging::print("CFUnlockerDialogue::OnNotebookPageChanging() - opening BDM\n");
       rc = usbdmPanel->openBdm();
       if (rc != BDM_RC_OK) {
-         print("CFUnlockerDialogue::OnNotebookPageChanging() - openBdm() failed\n");
+         Logging::print("CFUnlockerDialogue::OnNotebookPageChanging() - openBdm() failed\n");
          wxMessageBox(_("Failed to open BDM.\n\n"
                         "Reason: ") +
                       wxString(USBDM_GetErrorString(rc), wxConvUTF8),
@@ -232,7 +232,7 @@ void CFUnlockerDialogue::OnSelChanging( wxNotebookEvent& event ) {
    }
    else if (event.GetOldSelection() == 1) {
       // Leaving Programming page
-      print("CFUnlockerDialogue::OnSelChanging() - closing BDM\n");
+      Logging::print("CFUnlockerDialogue::OnSelChanging() - closing BDM\n");
       USBDM_Close();
       }
    if (rc != BDM_RC_OK)
@@ -244,7 +244,7 @@ void CFUnlockerDialogue::OnSelChanging( wxNotebookEvent& event ) {
 //! @param event The event to handle
 //!
 void CFUnlockerDialogue::OnSelChanged( wxNotebookEvent& event ) {
-   print("USBDMDialogue::OnSelChanged(%d => %d)\n", event.GetOldSelection(), event.GetSelection());
+   Logging::print("USBDMDialogue::OnSelChanged(%d => %d)\n", event.GetOldSelection(), event.GetSelection());
    int enteringPage = event.GetSelection();
    if (enteringPage < 0) {
       return;

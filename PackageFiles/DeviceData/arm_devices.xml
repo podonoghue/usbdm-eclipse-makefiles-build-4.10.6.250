@@ -3,15 +3,15 @@
 [
 <!ENTITY STM32F100xx-default-flashProgram  SYSTEM "ARM/STM32F100xx-default-flash-program.afx.S19">
 <!ENTITY STM32F100xx-default-flashScripts  SYSTEM "ARM/STM32F100xx-default-flash-scripts.tcl">
-<!ENTITY Kinetis-default-flashProgram      SYSTEM "ARM/Kinetis-default-flash-program.afx.S19">
+<!ENTITY Kinetis-default-flashProgram      SYSTEM "ARM/Kinetis-default-flash-program.hex">
 <!ENTITY Kinetis-default-flashScripts      SYSTEM "ARM/Kinetis-default-flash-scripts.tcl">
-<!ENTITY Kinetis-KLxx-flashProgram         SYSTEM "ARM/Kinetis-KLxx-flash-program.afx.S19">
+<!ENTITY Kinetis-KLxx-flashProgram         SYSTEM "ARM/Kinetis-KLxx-flash-program.hex">
 <!ENTITY Kinetis-KLxx-flashScripts         SYSTEM "ARM/Kinetis-KLxx-flash-scripts.tcl">
 <!ENTITY Old-Kinetis-Devices               SYSTEM "ARM/Old-Kinetis-Devices.xml">
 <!ENTITY STM-Devices                       SYSTEM "ARM/STM-Devices.xml">
 <!ENTITY Custom-Devices                    SYSTEM "Custom/custom-arm.xml">
 ]>
-<root version="4.9.5">
+<root version="4.10.4">
    <description>ARM device characteristics 1/7/2012</description>
    <sharedInformation>
       <flashProgram id="STM32F100xx-default-FlashProgram">
@@ -42,13 +42,13 @@
       </securityInfo>  
       <flexNVMInfo id="kinetis32K_FlexPartitionInfo" backingRatio="16">
          <eeepromEntry   description="Unchanged/None"         eeeSize="0"     value="0xFF" />
-         <eeepromEntry   description="32"                     eeeSize="32"    value="0x09" />
-         <eeepromEntry   description="64"                     eeeSize="64"    value="0x08" />
-         <eeepromEntry   description="128"                    eeeSize="128"   value="0x07" />
-         <eeepromEntry   description="256"                    eeeSize="256"   value="0x06" />
-         <eeepromEntry   description="512"                    eeeSize="512"   value="0x05" />
-         <eeepromEntry   description="1024"                   eeeSize="1024"  value="0x04" />
-         <eeepromEntry   description="2048"                   eeeSize="2048"  value="0x03" />
+         <eeepromEntry   description="32"                     eeeSize="32"    value="0x39" />
+         <eeepromEntry   description="64"                     eeeSize="64"    value="0x38" />
+         <eeepromEntry   description="128"                    eeeSize="128"   value="0x37" />
+         <eeepromEntry   description="256"                    eeeSize="256"   value="0x36" />
+         <eeepromEntry   description="512"                    eeeSize="512"   value="0x35" />
+         <eeepromEntry   description="1024"                   eeeSize="1024"  value="0x34" />
+         <eeepromEntry   description="2048"                   eeeSize="2048"  value="0x33" />
          <partitionEntry description="DFlash=32, No EEPROM"   eeSize="0K"     value="0xFF" />
          <partitionEntry description="DFlash=24, EEPROM=8"    eeSize="8K"     value="0x01" />
          <partitionEntry description="DFlash=16, EEPROM=16"   eeSize="16K"    value="0x0A" />
@@ -272,6 +272,23 @@
          <flexNVMInfoRef ref="kinetis512K_FlexPartitionInfo" />
          <memoryRange start="0x10000000" size="512K" />
       </memory>
+      <!-- Kinetis I/O space -->
+      <memory id="kinetisIO_KL" type="io">
+         <memoryRange start="0x40000000" end="0x4007FFFF" />  <!-- AIPS Peripherals -->
+         <memoryRange start="0x400FF000" end="0x400FFFFF" />  <!-- General purpose input/output (GPIO) -->
+         <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
+         <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
+         <memoryRange start="0xF8000000" end="0xFFFFFFFF" />  <!-- IOPORT: GPIO (single cycle) -->
+      </memory>         
+      <memory id="kinetisIO_MK" type="io">
+         <memoryRange start="0x22000000" end="0x23FFFFFF" />  <!-- Aliased to SRAM_U bit-band -->
+         <memoryRange start="0x40000000" end="0x4007FFFF" />  <!-- Bit-band AIPS-Lite0 -->
+         <memoryRange start="0x40080000" end="0x400FEFFF" />  <!-- Bit-band AIPS-Lite1 -->
+         <memoryRange start="0x400FF000" end="0x400FFFFF" />  <!-- Bit-band GPIO -->
+         <memoryRange start="0x42000000" end="0x43FFFFFF" />  <!-- General purpose input/output (GPIO) -->
+         <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
+         <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
+      </memory>         
    </sharedInformation>
    <deviceList>
 <!-- Default -->
@@ -298,119 +315,135 @@
          <note>Default ARM Device</note>
       </device>
 <!-- KL04 -->
-      <device name="KL04Z8M4" family="ARM" subfamily="KL04">
+      <device name="MKL04Z8M4" family="ARM" subfamily="KL04">
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="kinetis8K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x04110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL04Z16M4" family="ARM" subfamily="KL04">
+      <device name="MKL04Z16M4" family="ARM" subfamily="KL04">
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="kinetis16K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x04120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL04Z32M4" family="ARM" subfamily="KL04">
+      <device name="MKL04Z32M4" family="ARM" subfamily="KL04">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x04130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
 <!-- KL05 -->
-      <device name="KL05Z8M4" family="ARM" subfamily="KL05">
+      <device name="MKL05Z8M4" family="ARM" subfamily="KL05">
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="kinetis8K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x05110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL05Z16M4" family="ARM" subfamily="KL05">
+      <device name="MKL05Z16M4" family="ARM" subfamily="KL05">
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="kinetis16K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x05120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL05Z32M4" family="ARM" subfamily="KL05">
+      <device name="MKL05Z32M4" family="ARM" subfamily="KL05">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x05130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
 <!-- KL14 -->
-      <device name="KL14Z32M4" family="ARM" subfamily="KL14">
+      <device name="MKL14Z32M4" family="ARM" subfamily="KL14">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x14130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL14Z64M4" family="ARM" subfamily="KL14">
+      <device name="MKL14Z64M4" family="ARM" subfamily="KL14">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x14140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
 <!-- KL15 -->
-      <device name="KL15Z32M4" family="ARM" subfamily="KL15">
+      <device name="MKL15Z32M4" family="ARM" subfamily="KL15">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x15130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL15Z64M4" family="ARM" subfamily="KL15">
+      <device name="MKL15Z64M4" family="ARM" subfamily="KL15">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x15140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL15Z128M4" family="ARM" subfamily="KL15">
+      <device name="MKL15Z128M4" family="ARM" subfamily="KL15">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x15150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
 <!-- KL24 -->
-      <device name="KL24Z32M4" family="ARM" subfamily="KL24">
+      <device name="MKL24Z32M4" family="ARM" subfamily="KL24">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x24130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL24Z64M4" family="ARM" subfamily="KL24">
+      <device name="MKL24Z64M4" family="ARM" subfamily="KL24">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x24140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
 <!-- KL25 -->
-      <device name="KL25Z32M4" family="ARM" subfamily="KL25">
+      <device name="MKL25Z32M4" family="ARM" subfamily="KL25">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x25130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL25Z64M4" family="ARM" subfamily="KL25">
+      <device name="MKL25Z64M4" family="ARM" subfamily="KL25">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x25140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
       </device>
-      <device name="KL25Z128M4" family="ARM" subfamily="KL25">
+      <device name="MKL25Z128M4" family="ARM" subfamily="KL25">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_KL" />
          <sdid value="0x25150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
@@ -420,66 +453,77 @@
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetis64K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK10DN32" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="kinetis16K_Flash_B0" />
          <memoryRef ref="kinetis16K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK10DN512" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK10DN64" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetis32K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK10DX128_100MHz" family="ARM" subfamily="K10">
+      <device name="MK10DX128M10" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis128K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK10DX128_50MHz" family="ARM" subfamily="K10">
+      <device name="MK10DX128M5" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK10DX128_72MHz" family="ARM" subfamily="K10">
+      <device name="MK10DX128M7" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK10DX256_100MHz" family="ARM" subfamily="K10">
+      <device name="MK10DX256M10" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK10DX256_72MHz" family="ARM" subfamily="K10">
+      <device name="MK10DX256M7" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK10DX32" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis32K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK10DX64" family="ARM" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK20 -->
@@ -487,78 +531,91 @@
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetis64K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK20DN32" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="kinetis16K_Flash_B0" />
          <memoryRef ref="kinetis16K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK20DN512" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK20DN64" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetis32K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK20DX128_100MHz" family="ARM" subfamily="K20">
+      <device name="MK20DX128M10" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis128K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK20DX128_50MHz" family="ARM" subfamily="K20">
+      <device name="MK20DX128M5" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
-         <sdid value="0x00000000" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00001015" />
       </device>
-      <device name="MK20DX128_72MHz" family="ARM" subfamily="K20">
+      <device name="MK20DX128M7" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK20DX256_100MHz" family="ARM" subfamily="K20">
+      <device name="MK20DX256M10" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
-      <device name="MK20DX256_72MHz" family="ARM" subfamily="K20">
+      <device name="MK20DX256M7" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK20DX32" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis32K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK20DX64" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK20FN1M0" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetis512K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK20FX512" family="ARM" subfamily="K20">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_FlexNVM" />
          <memoryRef ref="kinetis512K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK30 -->
@@ -566,36 +623,42 @@
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK30DX128" family="ARM" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK30DX128Z" family="ARM" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis128K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK30DX256" family="ARM" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK30DX256Z" family="ARM" subfamily="K30">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK30DX64" family="ARM" subfamily="K30">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK40 -->
@@ -603,36 +666,42 @@
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK40DX128" family="ARM" subfamily="K40">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK40DX128Z" family="ARM" subfamily="K40">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis128K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK40DX256" family="ARM" subfamily="K40">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK40DX256Z" family="ARM" subfamily="K40">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK40DX64" family="ARM" subfamily="K40">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK50 -->
@@ -640,24 +709,28 @@
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK50DX128" family="ARM" subfamily="K50">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK50DX256" family="ARM" subfamily="K50">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK50DX256Z" family="ARM" subfamily="K50">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK51 -->
@@ -665,30 +738,35 @@
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetis128K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK51DN512Z" family="ARM" subfamily="K51">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK51DX128" family="ARM" subfamily="K51">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK51DX256" family="ARM" subfamily="K51">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK51DX256Z" family="ARM" subfamily="K51">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK52 -->
@@ -696,6 +774,7 @@
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK53 -->
@@ -703,12 +782,14 @@
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK53DX256Z" family="ARM" subfamily="K53">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK60 -->
@@ -716,30 +797,35 @@
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetis128K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK60DN512Z" family="ARM" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK60DX256Z" family="ARM" subfamily="K60">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK60FN1M0" family="ARM" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetis512K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK60FX512" family="ARM" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_FlexNVM" />
          <memoryRef ref="kinetis512K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK61 -->
@@ -747,12 +833,14 @@
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetis512K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK61FX512" family="ARM" subfamily="K61">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_FlexNVM" />
          <memoryRef ref="kinetis512K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- MK70 -->
@@ -760,116 +848,135 @@
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetis512K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
       <device name="MK70FX512" family="ARM" subfamily="K70">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_FlexNVM" />
          <memoryRef ref="kinetis512K_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
       </device>
 <!-- Aliases -->     
-      <device name="PK10N512" alias="MK10DN512"/>
-      <device name="PK10X128" alias="MK10DX128_100MHz"/>
-      <device name="PK10X256" alias="MK10DX256_100MHz"/>
-      <device name="PK20N512" alias="MK20DN512"/>
-      <device name="PK20X128" alias="MK20DX128_100MHz"/>
-      <device name="PK20X256" alias="MK20DX256_100MHz"/>
-      <device name="PK30N512" alias="MK30DN512Z"/>
-      <device name="PK30X128" alias="MK30DX128Z"/>
-      <device name="PK30X256" alias="MK30DX256Z"/>
-      <device name="PK40N512" alias="MK40DN512Z"/>
-      <device name="PK40X128" alias="MK40DX128Z"/>
-      <device name="PK40X256" alias="MK40DX256Z">
+      <device name="PK10N512"      alias="MK10DN512"/>
+      <device name="PK10X128"      alias="MK10DX128M10"/>
+      <device name="PK10X256"      alias="MK10DX256M10"/>
+      <device name="PK20N512"      alias="MK20DN512"/>
+      <device name="PK20X128"      alias="MK20DX128M10"/>
+      <device name="PK20X256"      alias="MK20DX256M10"/>
+      <device name="PK30N512"      alias="MK30DN512Z"/>
+      <device name="PK30X128"      alias="MK30DX128Z"/>
+      <device name="PK30X256"      alias="MK30DX256Z"/>
+      <device name="PK40N512"      alias="MK40DN512Z"/>
+      <device name="PK40X128"      alias="MK40DX128Z"/>
+      <device name="PK40X256"      alias="MK40DX256Z">
          <sdid value="0x00000120" />
       </device>
-      <device name="PK60N256" alias="MK60DN256Z"/>
-      <device name="PK60N512" alias="MK60DN512Z">
+      <device name="PK60N256"      alias="MK60DN256Z"/>
+      <device name="PK60N512"      alias="MK60DN512Z">
          <sdid value="0x00000140" />
       </device>
-      <device name="PK60X256" alias="MK60DX256Z"/>
-      <device name="K10DN128" alias="MK10DN128" hidden="true"/>
-      <device name="K10DN32" alias="MK10DN32" hidden="true"/>
-      <device name="K10DN512M10" alias="MK10DN512" hidden="true"/>
-      <device name="K10DN512Z" alias="MK10DN512" hidden="true"/>
-      <device name="K10DN64" alias="MK10DN64" hidden="true"/>
-      <device name="K10DX128" alias="MK10DX128_50MHz" hidden="true"/>
-      <device name="K10DX128M10" alias="MK10DX128_100MHz" hidden="true"/>
-      <device name="K10DX128M7" alias="MK10DX128_72MHz" hidden="true"/>
-      <device name="K10DX128Z" alias="MK10DX128_100MHz" hidden="true"/>
-      <device name="K10DX256M10" alias="MK10DX256_100MHz" hidden="true"/>
-      <device name="K10DX256M7" alias="MK10DX256_72MHz" hidden="true"/>
-      <device name="K10DX256Z" alias="MK10DX256_100MHz" hidden="true"/>
-      <device name="K10DX32" alias="MK10DX32" hidden="true"/>
-      <device name="K10DX64" alias="MK10DX64" hidden="true"/>
-      <device name="K10DX64M7" alias="MK10DX64" hidden="true"/>
-      <device name="K20DN128" alias="MK20DN128" hidden="true"/>
-      <device name="K20DN32" alias="MK20DN32" hidden="true"/>
-      <device name="K20DN512M10" alias="MK20DN512" hidden="true"/>
-      <device name="K20DN512Z" alias="MK20DN512" hidden="true"/>
-      <device name="K20DN64" alias="MK20DN64" hidden="true"/>
-      <device name="K20DX128" alias="MK20DX128_50MHz" hidden="true"/>
-      <device name="K20DX128M10" alias="MK20DX128_100MHz" hidden="true"/>
-      <device name="K20DX128M7" alias="MK20DX128_72MHz" hidden="true"/>
-      <device name="K20DX128Z" alias="MK20DX128_100MHz" hidden="true"/>
-      <device name="K20DX256M10" alias="MK20DX256_100MHz" hidden="true"/>
-      <device name="K20DX256M7" alias="MK20DX256_72MHz" hidden="true"/>
-      <device name="K20DX256Z" alias="MK20DX256_100MHz" hidden="true"/>
-      <device name="K20DX32" alias="MK20DX32" hidden="true"/>
-      <device name="K20DX64" alias="MK20DX64" hidden="true"/>
-      <device name="K20DX64M7" alias="MK20DX64" hidden="true"/>
-      <device name="K20FN1M0" alias="MK20FN1M0" hidden="true"/>
-      <device name="K20FX512" alias="MK20FX512" hidden="true"/>
-      <device name="K30DN512M10" alias="MK30DN512Z" hidden="true"/>
-      <device name="K30DN512Z" alias="MK30DN512Z" hidden="true"/>
-      <device name="K30DX128M10" alias="MK30DX128Z" hidden="true"/>
-      <device name="K30DX128M7" alias="MK30DX128" hidden="true"/>
-      <device name="K30DX128Z" alias="MK30DX128Z" hidden="true"/>
-      <device name="K30DX256M10" alias="MK30DX256Z" hidden="true"/>
-      <device name="K30DX256M7" alias="MK30DX256" hidden="true"/>
-      <device name="K30DX256Z" alias="MK30DX256Z" hidden="true"/>
-      <device name="K30DX64M7" alias="MK30DX64" hidden="true"/>
-      <device name="K40DN512M10" alias="MK40DN512Z" hidden="true"/>
-      <device name="K40DN512Z" alias="MK40DN512Z" hidden="true"/>
-      <device name="K40DX128M10" alias="MK40DX128Z" hidden="true"/>
-      <device name="K40DX128M7" alias="MK40DX128" hidden="true"/>
-      <device name="K40DX128Z" alias="MK40DX128Z" hidden="true"/>
-      <device name="K40DX256M10" alias="MK40DX256Z" hidden="true"/>
-      <device name="K40DX256M7" alias="MK40DX256" hidden="true"/>
-      <device name="K40DX256Z" alias="MK40DX256Z" hidden="true"/>
-      <device name="K40DX64M7" alias="MK40DX64" hidden="true"/>
-      <device name="K50DN512M10" alias="MK50DN512Z" hidden="true"/>
-      <device name="K50DN512Z" alias="MK50DN512Z" hidden="true"/>
-      <device name="K50DX128M7" alias="MK50DX128" hidden="true"/>
-      <device name="K50DX256M10" alias="MK50DX256Z" hidden="true"/>
-      <device name="K50DX256M7" alias="MK50DX256" hidden="true"/>
-      <device name="K50DX256Z" alias="MK50DX256Z" hidden="true"/>
-      <device name="K51DN256M10" alias="MK51DN256Z" hidden="true"/>
-      <device name="K51DN256Z" alias="MK51DN256Z" hidden="true"/>
-      <device name="K51DN512M10" alias="MK51DN512Z" hidden="true"/>
-      <device name="K51DN512Z" alias="MK51DN512Z" hidden="true"/>
-      <device name="K51DX128M7" alias="MK51DX128" hidden="true"/>
-      <device name="K51DX256M10" alias="MK51DX256Z" hidden="true"/>
-      <device name="K51DX256M7" alias="MK51DX256" hidden="true"/>
-      <device name="K51DX256Z" alias="MK51DX256Z" hidden="true"/>
-      <device name="K52DN512M10" alias="MK52DN512Z" hidden="true"/>
-      <device name="K52DN512Z" alias="MK52DN512Z" hidden="true"/>
-      <device name="K53DN512M10" alias="MK53DN512Z" hidden="true"/>
-      <device name="K53DN512Z" alias="MK53DN512Z" hidden="true"/>
-      <device name="K53DX256M10" alias="MK53DX256Z" hidden="true"/>
-      <device name="K53DX256Z" alias="MK53DX256Z" hidden="true"/>
-      <device name="K60DN256M10" alias="MK60DN256Z" hidden="true"/>
-      <device name="K60DN256Z" alias="MK60DN256Z" hidden="true"/>
-      <device name="K60DN512M10" alias="MK60DN512Z" hidden="true"/>
-      <device name="K60DN512Z" alias="MK60DN512Z" hidden="true"/>
-      <device name="K60DX256M10" alias="MK60DX256Z" hidden="true"/>
-      <device name="K60DX256Z" alias="MK60DX256Z" hidden="true"/>
-      <device name="K60FN1M0" alias="MK60FN1M0" hidden="true"/>
-      <device name="K60FX512" alias="MK60FX512" hidden="true"/>
-      <device name="K61FN1M0" alias="MK61FN1M0" hidden="true"/>
-      <device name="K61FX512" alias="MK61FX512" hidden="true"/>
-      <device name="K70FN1M0" alias="MK70FN1M0" hidden="true"/>
-      <device name="K70FX512" alias="MK70FX512" hidden="true"/>
+      <device name="PK60X256"      alias="MK60DX256Z"/>
+      <device name="K10DN128"      alias="MK10DN128"      hidden="true"/>
+      <device name="K10DN32"       alias="MK10DN32"       hidden="true"/>
+      <device name="K10DN512M10"   alias="MK10DN512"      hidden="true"/>
+      <device name="K10DN512Z"     alias="MK10DN512"      hidden="true"/>
+      <device name="K10DN64"       alias="MK10DN64"       hidden="true"/>
+      <device name="K10DX128"      alias="MK10DX128M5"    hidden="true"/>
+      <device name="K10DX128M10"   alias="MK10DX128M10"   hidden="true"/>
+      <device name="K10DX128M7"    alias="MK10DX128M7"    hidden="true"/>
+      <device name="K10DX128Z"     alias="MK10DX128M10"   hidden="true"/>
+      <device name="K10DX256M10"   alias="MK10DX256M10"   hidden="true"/>
+      <device name="K10DX256M7"    alias="MK10DX256M7"    hidden="true"/>
+      <device name="K10DX256Z"     alias="MK10DX256M10"   hidden="true"/>
+      <device name="K10DX32"       alias="MK10DX32"       hidden="true"/>
+      <device name="K10DX64"       alias="MK10DX64"       hidden="true"/>
+      <device name="K10DX64M7"     alias="MK10DX64"       hidden="true"/>
+      <device name="K20DN128"      alias="MK20DN128"      hidden="true"/>
+      <device name="K20DN32"       alias="MK20DN32"       hidden="true"/>
+      <device name="K20DN512M10"   alias="MK20DN512"      hidden="true"/>
+      <device name="K20DN512Z"     alias="MK20DN512"      hidden="true"/>
+      <device name="K20DN64"       alias="MK20DN64"       hidden="true"/>
+      <device name="K20DX128"      alias="MK20DX128M5"    hidden="true"/>
+      <device name="K20DX128M10"   alias="MK20DX128M10"   hidden="true"/>
+      <device name="K20DX128M7"    alias="MK20DX128M7"    hidden="true"/>
+      <device name="K20DX128Z"     alias="MK20DX128M10"   hidden="true"/>
+      <device name="K20DX256M10"   alias="MK20DX256M10"   hidden="true"/>
+      <device name="K20DX256M7"    alias="MK20DX256M7"    hidden="true"/>
+      <device name="K20DX256Z"     alias="MK20DX256M10"   hidden="true"/>
+      <device name="K20DX32"       alias="MK20DX32"       hidden="true"/>
+      <device name="K20DX64"       alias="MK20DX64"       hidden="true"/>
+      <device name="K20DX64M7"     alias="MK20DX64"       hidden="true"/>
+      <device name="K20FN1M0"      alias="MK20FN1M0"      hidden="true"/>
+      <device name="K20FX512"      alias="MK20FX512"      hidden="true"/>
+      <device name="K30DN512M10"   alias="MK30DN512Z"     hidden="true"/>
+      <device name="K30DN512Z"     alias="MK30DN512Z"     hidden="true"/>
+      <device name="K30DX128M10"   alias="MK30DX128Z"     hidden="true"/>
+      <device name="K30DX128M7"    alias="MK30DX128"      hidden="true"/>
+      <device name="K30DX128Z"     alias="MK30DX128Z"     hidden="true"/>
+      <device name="K30DX256M10"   alias="MK30DX256Z"     hidden="true"/>
+      <device name="K30DX256M7"    alias="MK30DX256"      hidden="true"/>
+      <device name="K30DX256Z"     alias="MK30DX256Z"     hidden="true"/>
+      <device name="K30DX64M7"     alias="MK30DX64"       hidden="true"/>
+      <device name="K40DN512M10"   alias="MK40DN512Z"     hidden="true"/>
+      <device name="K40DN512Z"     alias="MK40DN512Z"     hidden="true"/>
+      <device name="K40DX128M10"   alias="MK40DX128Z"     hidden="true"/>
+      <device name="K40DX128M7"    alias="MK40DX128"      hidden="true"/>
+      <device name="K40DX128Z"     alias="MK40DX128Z"     hidden="true"/>
+      <device name="K40DX256M10"   alias="MK40DX256Z"     hidden="true"/>
+      <device name="K40DX256M7"    alias="MK40DX256"      hidden="true"/>
+      <device name="K40DX256Z"     alias="MK40DX256Z"     hidden="true"/>
+      <device name="K40DX64M7"     alias="MK40DX64"       hidden="true"/>
+      <device name="K50DN512M10"   alias="MK50DN512Z"     hidden="true"/>
+      <device name="K50DN512Z"     alias="MK50DN512Z"     hidden="true"/>
+      <device name="K50DX128M7"    alias="MK50DX128"      hidden="true"/>
+      <device name="K50DX256M10"   alias="MK50DX256Z"     hidden="true"/>
+      <device name="K50DX256M7"    alias="MK50DX256"      hidden="true"/>
+      <device name="K50DX256Z"     alias="MK50DX256Z"     hidden="true"/>
+      <device name="K51DN256M10"   alias="MK51DN256Z"     hidden="true"/>
+      <device name="K51DN256Z"     alias="MK51DN256Z"     hidden="true"/>
+      <device name="K51DN512M10"   alias="MK51DN512Z"     hidden="true"/>
+      <device name="K51DN512Z"     alias="MK51DN512Z"     hidden="true"/>
+      <device name="K51DX128M7"    alias="MK51DX128"      hidden="true"/>
+      <device name="K51DX256M10"   alias="MK51DX256Z"     hidden="true"/>
+      <device name="K51DX256M7"    alias="MK51DX256"      hidden="true"/>
+      <device name="K51DX256Z"     alias="MK51DX256Z"     hidden="true"/>
+      <device name="K52DN512M10"   alias="MK52DN512Z"     hidden="true"/>
+      <device name="K52DN512Z"     alias="MK52DN512Z"     hidden="true"/>
+      <device name="K53DN512M10"   alias="MK53DN512Z"     hidden="true"/>
+      <device name="K53DN512Z"     alias="MK53DN512Z"     hidden="true"/>
+      <device name="K53DX256M10"   alias="MK53DX256Z"     hidden="true"/>
+      <device name="K53DX256Z"     alias="MK53DX256Z"     hidden="true"/>
+      <device name="K60DN256M10"   alias="MK60DN256Z"     hidden="true"/>
+      <device name="K60DN256Z"     alias="MK60DN256Z"     hidden="true"/>
+      <device name="K60DN512M10"   alias="MK60DN512Z"     hidden="true"/>
+      <device name="K60DN512Z"     alias="MK60DN512Z"     hidden="true"/>
+      <device name="K60DX256M10"   alias="MK60DX256Z"     hidden="true"/>
+      <device name="K60DX256Z"     alias="MK60DX256Z"     hidden="true"/>
+      <device name="K60FN1M0"      alias="MK60FN1M0"      hidden="true"/>
+      <device name="K60FX512"      alias="MK60FX512"      hidden="true"/>
+      <device name="K61FN1M0"      alias="MK61FN1M0"      hidden="true"/>
+      <device name="K61FX512"      alias="MK61FX512"      hidden="true"/>
+      <device name="K70FN1M0"      alias="MK70FN1M0"      hidden="true"/>
+      <device name="K70FX512"      alias="MK70FX512"      hidden="true"/>
+
+      <device name="KL04Z8M4"      alias="MKL04Z8M4"      hidden="true"/>
+      <device name="KL04Z16M4"     alias="MKL04Z16M4"     hidden="true"/>
+      <device name="KL04Z32M4"     alias="MKL04Z32M4"     hidden="true"/>
+      <device name="KL05Z8M4"      alias="MKL05Z8M4"      hidden="true"/>
+      <device name="KL05Z16M4"     alias="MKL05Z16M4"     hidden="true"/>
+      <device name="KL05Z32M4"     alias="MKL05Z32M4"     hidden="true"/>
+      <device name="KL14Z32M4"     alias="MKL14Z32M4"     hidden="true"/>
+      <device name="KL14Z64M4"     alias="MKL14Z64M4"     hidden="true"/>
+      <device name="KL15Z32M4"     alias="MKL15Z32M4"     hidden="true"/>
+      <device name="KL15Z64M4"     alias="MKL15Z64M4"     hidden="true"/>
+      <device name="KL15Z128M4"    alias="MKL15Z128M4"    hidden="true"/>
+      <device name="KL24Z32M4"     alias="MKL24Z32M4"     hidden="true"/>
+      <device name="KL24Z64M4"     alias="MKL24Z64M4"     hidden="true"/>
+      <device name="KL25Z32M4"     alias="MKL25Z32M4"      hidden="true"/>
+      <device name="KL25Z64M4"     alias="MKL25Z64M4"      hidden="true"/>
+      <device name="KL25Z128M4"    alias="MKL25Z128M4"     hidden="true"/>
       &Custom-Devices;
 &Old-Kinetis-Devices;
 &STM-Devices;

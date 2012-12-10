@@ -11,6 +11,9 @@
 #include <stdio.h>
 
 class GdbOutput {
+public:
+   enum ErrorType {E_Fatal, E_Memory};
+
 private:
    FILE             *pipeOut;
    const char       *errorMessage;
@@ -24,8 +27,9 @@ public:
    // Add values to gdbBuffer
    void putGdbPreamble(char marker='$');
    void putGdbChar(char ch);
-   void putGdbHex(unsigned count, unsigned char *buff);
+   void putGdbHex(const unsigned char *buffer, unsigned size);
    void putGdbString(const char *s, int size=-1);
+   void putGdbHexString(const char *s, int size=-1);
    int  putGdbPrintf(const char *format, ...);
    void putGdbChecksum(void);
    void putGdbPostscript(void);
@@ -33,13 +37,19 @@ public:
    // Send data to GDB
    void flushGdbBuffer(void);
    void sendGdbBuffer(void);
+   void sendGdbHex(const unsigned char *buffer, unsigned size);
    void sendGdbString(const char *buffer, int size=-1);
+   void sendGdbHexString(const char *id, const char *buffer, int size=-1);
    void sendGdbNotification(const char *buffer, int size=-1);
-   void setErrorMessage(const char *msg) {
-      this->errorMessage = msg;
-   }
-   void sendErrorMessage(void);
+   void sendErrorMessage(ErrorType errorType, const char *msg);
+   void sendErrorMessage(unsigned value);
    void sendAck(char ackValue='+');
+   void close(void) {
+      if (pipeOut != NULL) {
+         fclose(pipeOut);
+         pipeOut = NULL;
+      }
+   }
 private:
    void txGdbPkt(void);
 };

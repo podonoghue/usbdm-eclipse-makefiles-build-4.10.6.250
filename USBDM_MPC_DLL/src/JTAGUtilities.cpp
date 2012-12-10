@@ -53,10 +53,10 @@ USBDM_ErrorCode jtagIdentifyCommand(unsigned &numDevice, std::list<uint32_t> &de
    } while ((temp == 0) && (deviceCount <= MAX_JTAG_CHAIN_LENGTH));
 
    if (deviceCount > MAX_JTAG_CHAIN_LENGTH) {
-      print("Too many devices found - JTAG chain is probably open\n");
+      Logging::print("Too many devices found - JTAG chain is probably open\n");
       return BDM_JTAG_TOO_MANY_DEVICES;
    }
-   print("Number of devices => %d\n", deviceCount);
+   Logging::print("Number of devices => %d\n", deviceCount);
    numDevice = deviceCount;
 
    // Find total length JTAG IRs
@@ -81,7 +81,7 @@ USBDM_ErrorCode jtagIdentifyCommand(unsigned &numDevice, std::list<uint32_t> &de
       irLength++;
    } while ((temp == 1) && (irLength <= MAX_JTAG_IR_CHAIN_LENGTH));
 
-   print("initialiseJTAGChain(): Total length of JTAG IRs => %d bits\n", irLength);
+   Logging::print("initialiseJTAGChain(): Total length of JTAG IRs => %d bits\n", irLength);
 
    // Read the JTAG IRs
    //===========================================================================
@@ -90,7 +90,7 @@ USBDM_ErrorCode jtagIdentifyCommand(unsigned &numDevice, std::list<uint32_t> &de
    USBDM_JTAG_SelectShift(JTAG_SHIFT_IR);
    USBDM_JTAG_Read(irLength, JTAG_STAY_SHIFT|JTAG_WRITE_1, irReg);
 
-   print("initialiseJTAGChain(): JTAG IR chain => \'");
+   Logging::print("initialiseJTAGChain(): JTAG IR chain => \'");
    for (sub=0; sub < (irLength+7)/8; sub++) {
       int bitNum, bitsThisByte;
       if (sub == 0)
@@ -99,10 +99,10 @@ USBDM_ErrorCode jtagIdentifyCommand(unsigned &numDevice, std::list<uint32_t> &de
          bitsThisByte = 8;
       //fprintf(stderr, "bitsThisByte=%d, ", bitsThisByte);
       for (bitNum=bitsThisByte-1; bitNum >= 0; bitNum--)
-         print("%d", ((irReg[sub])&(1<<bitNum))?1:0);
-      print(" ");
+         Logging::print("%d", ((irReg[sub])&(1<<bitNum))?1:0);
+      Logging::print(" ");
    }
-   print("\'\n");
+   Logging::print("\'\n");
 
    // Get the IDCODE for each device
    // The number of devices should agree with the above!
@@ -110,18 +110,18 @@ USBDM_ErrorCode jtagIdentifyCommand(unsigned &numDevice, std::list<uint32_t> &de
    USBDM_JTAG_SelectShift(JTAG_SHIFT_DR);  // Shifting IDCODE register
    for (device = 0; device < deviceCount; device++) {
       USBDM_JTAG_Read(1, JTAG_STAY_SHIFT|JTAG_WRITE_1, &temp);       // Read a single bit
-      //print("Temp = %x\n",temp);
+      //Logging::print("Temp = %x\n",temp);
       if (temp == 0) {// In BYPASS - No IDCODE
-         print("Device #%2d: JTAG IDCODE instruction not supported\n", device+1);
+         Logging::print("Device #%2d: JTAG IDCODE instruction not supported\n", device+1);
       }
       else {
          uint8_t inBuffer[10];
          uint32_t temp;
          USBDM_JTAG_Read(31, JTAG_STAY_SHIFT|JTAG_WRITE_1, inBuffer); // Read rest of IDCODE
-         //print("Buff = %lX\n",inBuffer);
+         //Logging::print("Buff = %lX\n",inBuffer);
          temp = (inBuffer[0]<<24)+(inBuffer[1]<<16)+(inBuffer[2]<<8)+inBuffer[3];
          temp = (temp<<1) | 0x1;
-         print("Device #%2d: JTAG IDCODE = %8.8X\n", device+1, temp);
+         Logging::print("Device #%2d: JTAG IDCODE = %8.8X\n", device+1, temp);
          deviceList.insert(deviceList.end(),temp);
       }
    }

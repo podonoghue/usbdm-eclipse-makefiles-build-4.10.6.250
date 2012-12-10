@@ -52,7 +52,7 @@ static const char *const errorMessages[] = {
    /*  9 */ "BDM Open Failed - Device may be open in another application",
    /* 10 */ "BDM Open Failed - Device driver may be missing or incorrect",
    /* 11 */ "BDM Open Failed - Device may have been removed",
-   /* 12 */ 0,
+   /* 12 */ "USB Retry OK",
    /* 13 */ 0,
    /* 14 */ 0,
    /* 15 */ "Target type is not supported by BDM",

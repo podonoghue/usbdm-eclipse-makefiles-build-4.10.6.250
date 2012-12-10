@@ -18,7 +18,7 @@ class MyException : public std::runtime_error {
 public:
    MyException(const std::string &msg) : runtime_error(msg) {
 #ifdef LOG
-      print("Exception: %s\n", msg.c_str());
+      Logging::print("Exception: %s\n", msg.c_str());
 #endif
    }
 };

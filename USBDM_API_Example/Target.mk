@@ -10,7 +10,7 @@ MODULE ?= module
 # default to same as build directory
 TARGET ?= $(BUILDDIR)
 
-include ../Common.mk
+include Common.mk
 
 VPATH      := src $(BUILDDIR) 
 SOURCEDIRS := src $(SHARED_SRC)

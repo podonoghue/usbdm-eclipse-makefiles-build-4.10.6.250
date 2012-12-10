@@ -74,12 +74,12 @@ static USBDM_ExtendedOptions_t bdmOptions;
 USBDM_ErrorCode getBDMStatus(USBDMStatus_t *USBDMStatus) {
    USBDM_ErrorCode rc;
 
-//   print("getBDMStatus()\n");
+//   Logging::print("getBDMStatus()\n");
 
    // USBDM_GetBDMStatus() should always succeed
    rc = USBDM_GetBDMStatus(USBDMStatus);
    if (rc != BDM_RC_OK) {
-      print("getBDMStatus() - failed, reason = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("getBDMStatus() - failed, reason = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
 
@@ -90,7 +90,7 @@ USBDM_ErrorCode getBDMStatus(USBDMStatus_t *USBDMStatus) {
                       "Please restart the debugging session to restore power.",
                       "USBDM Interface - Target Power Failure",
                       wxICON_ERROR|wxOK);
-      print("getBDMStatus() - failed, reason = Vdd overload\n");
+      Logging::print("getBDMStatus() - failed, reason = Vdd overload\n");
       return BDM_RC_VDD_NOT_PRESENT;
    }
    return BDM_RC_OK;
@@ -121,7 +121,7 @@ static USBDM_ErrorCode retryConnection(USBDMStatus_t *usbdmStatus) {
    }
    if (rc != BDM_RC_OK) {
       // Fatal error
-      print("USBDM_TargetConnectWithRetry() - USBDM_GetBDMStatus() failed!\n");
+      Logging::print("USBDM_TargetConnectWithRetry() - USBDM_GetBDMStatus() failed!\n");
       return rc;
    }
    // Retry connection
@@ -151,7 +151,7 @@ static USBDM_ErrorCode retryConnection(USBDMStatus_t *usbdmStatus) {
 //!
 USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMode retryMode) {
 
-//   print("USBDM_TargetConnectWithRetry(%s)\n", getConnectionRetryName(retryMode));
+//   Logging::print("USBDM_TargetConnectWithRetry(%s)\n", getConnectionRetryName(retryMode));
 
    USBDM_ErrorCode rc;
    
@@ -175,7 +175,7 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
    rc = USBDM_Connect();
    if (rc == BDM_RC_OK) {
       if (!extendedRetry)
-         print("USBDM_TargetConnectWithRetry() - Enabling Extended Retry\n");
+         Logging::print("USBDM_TargetConnectWithRetry() - Enabling Extended Retry\n");
       extendedRetry = true;
       return rc;
    }
@@ -183,7 +183,7 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
    rc = USBDM_Connect();
    if (rc == BDM_RC_OK) {
       if (!extendedRetry)
-         print("USBDM_TargetConnectWithRetry() - Enabling Extended Retry\n");
+         Logging::print("USBDM_TargetConnectWithRetry() - Enabling Extended Retry\n");
       extendedRetry = true;
       return rc;
    }
@@ -193,7 +193,7 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
 
    // Don't retry at all - silently fail
    if ((retryMode&retryMask) == retryNever) {
-      print("USBDM_TargetConnectWithRetry() - failed, rc = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("USBDM_TargetConnectWithRetry() - failed, rc = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
 
@@ -228,7 +228,7 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
       switch (rc) {
       case BDM_RC_BDM_EN_FAILED:
       case BDM_RC_SECURED:
-         print("USBDM_TargetConnectWithRetry() - failed, rc = %s\n", USBDM_GetErrorString(rc));
+         Logging::print("USBDM_TargetConnectWithRetry() - failed, rc = %s\n", USBDM_GetErrorString(rc));
          return rc;
       default:
          break;
@@ -244,7 +244,7 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
       do {
          string message;
          long style = wxYES_NO|wxYES_DEFAULT|wxICON_QUESTION;
-         print("USBDM_TargetConnectWithRetry() - retry, reason = %s\n", USBDM_GetErrorString(rc));
+         Logging::print("USBDM_TargetConnectWithRetry() - retry, reason = %s\n", USBDM_GetErrorString(rc));
 
 #if TARGET == CFVx
          USBDM_ControlPins(PIN_BKPT_LOW|PIN_RESET_LOW); // Set BKPT & RESET low
@@ -307,7 +307,7 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
       } while ((rc != BDM_RC_OK) && (getYesNo == wxYES));
    }
    if (rc != BDM_RC_OK) {
-      print("USBDM_TargetConnectWithRetry() - failed, (disabling Extended Retry)\n");
+      Logging::print("USBDM_TargetConnectWithRetry() - failed, (disabling Extended Retry)\n");
    }
    // Only enable re-try if successful to prevent nagging
    extendedRetry = (rc == BDM_RC_OK);
@@ -325,7 +325,7 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
 int handleError(USBDM_ErrorCode rc) {
    int getYesNo;
 
-   print("handleError(%d (%s))\n", rc, USBDM_GetErrorString(rc));
+   Logging::print("handleError(%d (%s))\n", rc, USBDM_GetErrorString(rc));
 
    switch (rc) {
    case BDM_RC_UNKNOWN_TARGET:
@@ -393,7 +393,7 @@ USBDM_ErrorCode USBDM_SetTargetTypeWithRetry(TargetType_t targetType) {
    int getYesNo = wxNO;
    int firstTryFlag = true;
 
-   print("USBDM_SetTargetTypeWithRetry(%s)\n", getTargetTypeName(targetType));
+   Logging::print("USBDM_SetTargetTypeWithRetry(%s)\n", getTargetTypeName(targetType));
    do {
       rc  = USBDM_SetTargetType(targetType);
       if (firstTryFlag && (rc == BDM_RC_VDD_NOT_PRESENT)) {
@@ -492,7 +492,7 @@ USBDM_ErrorCode rc;
 //!
 USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &bdmInformation) {
 
-//	print("USBDM_FindBDMs()\n");
+//	Logging::print("USBDM_FindBDMs()\n");
 
 	USBDM_Close();          // Close any open devices
 
@@ -502,7 +502,7 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &
 	bdmInformation.clear();
 
 	if (deviceCount==0) {
-		print("USBDM_FindBDMs() - no devices\n");
+		Logging::print("USBDM_FindBDMs() - no devices\n");
 		return BDM_RC_NO_USBDM_DEVICE;
 	}
    int targetCapabilityMask = 0x0000;
@@ -528,40 +528,40 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &
       do {
          USBDM_ErrorCode bdmRc = USBDM_Open(index);
          if (bdmRc != BDM_RC_OK) {
-            print("USBDM_FindBDMs() - USBDM_Open(BDM #%d) failed\n", index);
+            Logging::print("USBDM_FindBDMs() - USBDM_Open(BDM #%d) failed\n", index);
             bdmInfo.suitable = bdmRc;
             break;
          }
          USBDM_bdmInformation_t theBdmInfo = {sizeof(theBdmInfo)};
          bdmRc = USBDM_GetBdmInformation(&theBdmInfo);
          if (bdmRc != BDM_RC_OK) {
-            print("USBDM_GetBdmInformation(BDM #%d) failed \n", index);
+            Logging::print("USBDM_GetBdmInformation(BDM #%d) failed \n", index);
             bdmInfo.suitable = bdmRc;
             break;
          }
          bdmInfo.info = theBdmInfo;
          bdmRc = USBDM_GetBDMDescription(bdmInfo.description);
          if (bdmRc != BDM_RC_OK) {
-            print("USBDM_FindBDMs() - USBDM_GetBDMDescription(BDM #%d) failed \n", index);
+            Logging::print("USBDM_FindBDMs() - USBDM_GetBDMDescription(BDM #%d) failed \n", index);
             bdmInfo.suitable = bdmRc;
             break;
          }
          // Check capabilities against target needs
          if ((theBdmInfo.capabilities & targetCapabilityMask) == 0) {
-            print("USBDM_FindBDMs() - BDM #%d is not suitable for target\n", index);
+            Logging::print("USBDM_FindBDMs() - BDM #%d is not suitable for target\n", index);
             bdmInfo.serialNumber = "BDM Doesn't support target";
             bdmInfo.suitable = BDM_RC_UNKNOWN_TARGET;
             break;
          }
-         print("USBDM_FindBDMs() - USBDM_GetCapabilities(BDM #%d) =>  0x%4.4X \n", index, theBdmInfo.capabilities);
-         print("USBDM_FindBDMs() - USBDM_GetCapabilities() => seeking 0x%4.4X \n", targetCapabilityMask);
-         print("USBDM_FindBDMs() - USBDM_GetCapabilities() => targetType = %d \n", targetType);
+         Logging::print("USBDM_FindBDMs() - USBDM_GetCapabilities(BDM #%d) =>  0x%4.4X \n", index, theBdmInfo.capabilities);
+         Logging::print("USBDM_FindBDMs() - USBDM_GetCapabilities() => seeking 0x%4.4X \n", targetCapabilityMask);
+         Logging::print("USBDM_FindBDMs() - USBDM_GetCapabilities() => targetType = %d \n", targetType);
 
          // Already have capabilities but this is used to check BDM firmware compatibility
          HardwareCapabilities_t bdmCapabilities;
          bdmRc = USBDM_GetCapabilities(&bdmCapabilities);
          if (bdmRc != BDM_RC_OK) {
-            print("USBDM_FindBDMs() - USBDM_GetCapabilities(BDM #%d) failed \n", index);
+            Logging::print("USBDM_FindBDMs() - USBDM_GetCapabilities(BDM #%d) failed \n", index);
             if (bdmRc == BDM_RC_WRONG_BDM_REVISION) {
                bdmInfo.serialNumber = "Wrong Firmware Version";
             }
@@ -572,14 +572,14 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &
          // At least one suitable device
          rc = BDM_RC_OK;
          if (USBDM_GetBDMSerialNumber(bdmInfo.serialNumber) != BDM_RC_OK) {
-            print("USBDM_FindBDMs() - USBDM_GetBDMSerialNumber(BDM #%d) failed \n", index);
+            Logging::print("USBDM_FindBDMs() - USBDM_GetBDMSerialNumber(BDM #%d) failed \n", index);
             break;
          }
       } while (false);
       USBDM_Close();
       bdmInformation.push_back(bdmInfo);
    }
-	print("USBDM_FindBDMs() - %d devices located\n", deviceCount);
+	Logging::print("USBDM_FindBDMs() - %d devices located\n", deviceCount);
 
 	return rc;
 }
@@ -594,7 +594,7 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &
  *
  */
 USBDM_ErrorCode USBDM_OpenBySerialNumber(TargetType_t targetType, const string &serialnumber) {
-	print("USBDM_OpenBySerialNumber(%s, %s)\n",
+	Logging::print("USBDM_OpenBySerialNumber(%s, %s)\n",
 	      getTargetTypeName(targetType), serialnumber.c_str());
 
 	// Enumerate all attached BDMs
@@ -609,7 +609,7 @@ USBDM_ErrorCode USBDM_OpenBySerialNumber(TargetType_t targetType, const string &
 	while (it != bdmInformation.end()) {
 		if (it->suitable == BDM_RC_OK) {
 			if (it->serialNumber.compare(serialnumber) == 0) {
-				print("USBDM_OpenBySerialNumber() opening preferred device #%d\n", it->deviceNumber);
+				Logging::print("USBDM_OpenBySerialNumber() opening preferred device #%d\n", it->deviceNumber);
 				return USBDM_Open(it->deviceNumber);
 			}
 			if (firstSuitableDevice == bdmInformation.end())
@@ -618,27 +618,27 @@ USBDM_ErrorCode USBDM_OpenBySerialNumber(TargetType_t targetType, const string &
   	   it++;
    }
 	if (firstSuitableDevice != bdmInformation.end()) {
-		print("USBDM_OpenBySerialNumber() opening first suitable BDM #%s\n",
+		Logging::print("USBDM_OpenBySerialNumber() opening first suitable BDM #%s\n",
 		      firstSuitableDevice->serialNumber.c_str());
 		rc = USBDM_Open(firstSuitableDevice->deviceNumber);
 	}
 	else if (bdmInformation.begin() != bdmInformation.end()) {
 	   // Return error code from first/only device found
-      print("USBDM_OpenBySerialNumber() no suitable BDM found, first/only found = %s\n",
+      Logging::print("USBDM_OpenBySerialNumber() no suitable BDM found, first/only found = %s\n",
             bdmInformation.begin()->serialNumber.c_str());
 	   rc = bdmInformation.begin()->suitable;
 	}
 	else {
-	   print("USBDM_OpenBySerialNumber() no BDMs found\n");
+	   Logging::print("USBDM_OpenBySerialNumber() no BDMs found\n");
 	   rc = BDM_RC_NO_USBDM_DEVICE;
 	}
-   print("USBDM_OpenBySerialNumber() rc = %s\n", USBDM_GetErrorString(rc));
+   Logging::print("USBDM_OpenBySerialNumber() rc = %s\n", USBDM_GetErrorString(rc));
 	return rc;
 }
 
 USBDM_ErrorCode USBDM_OpenBySerialNumberWithRetry(TargetType_t targetType, const string &serialnumber) {
    USBDM_ErrorCode rc;
-   print("USBDM_OpenBySerialNumberWithRetry()\n");
+   Logging::print("USBDM_OpenBySerialNumberWithRetry()\n");
    int getYesNo = wxNO;
    do {
       rc = USBDM_OpenBySerialNumber(targetType, serialnumber);
@@ -652,7 +652,7 @@ USBDM_ErrorCode USBDM_OpenBySerialNumberWithRetry(TargetType_t targetType, const
 USBDM_ErrorCode  USBDM_SetOptionsWithRetry(USBDM_ExtendedOptions_t *bdmOptions) {
    USBDM_ErrorCode rc;
 
-   print("USBDM_SetOptionsWithRetry()\n");
+   Logging::print("USBDM_SetOptionsWithRetry()\n");
    ::bdmOptions = *bdmOptions;
    // Power cycle is done by GDI not BDM
    bdmOptions->cycleVddOnConnect = FALSE;

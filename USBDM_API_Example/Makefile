@@ -1,8 +1,10 @@
 # BUILDDIR - Where to build target files
 # TARGET   - Root name of final target (default to BUILDDIR)
-# MODULE   - Name of $(MAKE) file in source directory listing files included in build
+# MODULE   - Name of make file in source directory listing files included in build
 # CDEFS    - C defines to add to CFLAGS
 # target   - either 'dll' or 'exe'
+
+include Common.mk
 
 TARGET = USBDM_API_Example
 

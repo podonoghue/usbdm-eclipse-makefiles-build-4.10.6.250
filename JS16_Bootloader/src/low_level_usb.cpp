@@ -146,13 +146,13 @@ void milliSleep(int milliSeconds) {
 #ifdef __unix__
    int rc;
    struct timespec sleepStruct = { 0, 1000000L*milliSeconds };
-   print("milliSleep(%ld ns)\n", sleepStruct.tv_nsec);
+   Logging::print("milliSleep(%ld ns)\n", sleepStruct.tv_nsec);
    do {
       rc = nanosleep(&sleepStruct, &sleepStruct);
       if ((rc < 0) && (errno == EINTR))
-         print("milliSleep() - Sleep interrupted\n");
+         Logging::print("milliSleep() - Sleep interrupted\n");
       else if (sleepStruct.tv_sec > 0)
-         print("milliSleep() - time not completed!!\n");
+         Logging::print("milliSleep() - time not completed!!\n");
    } while ((rc < 0) && (errno == EINTR));
 #else
    Sleep(milliSeconds);
@@ -168,7 +168,7 @@ void milliSleep(int milliSeconds) {
 //!       ICP_RC_USB_ERROR - various errors
 //!
 ICP_ErrorType bdm_usb_init( void ) {
-//   print("bdm_usb_init()\n");
+//   Logging::print("bdm_usb_init()\n");
 
    // Not initialised
    initialised = false;
@@ -181,7 +181,7 @@ ICP_ErrorType bdm_usb_init( void ) {
 
    // Initialise LIBUSB
    if (libusb_init(NULL) != LIBUSB_SUCCESS) {
-      print("libusb_init() Failed\n");
+      Logging::print("libusb_init() Failed\n");
       return ICP_RC_USB_ERROR;
    }
    initialised = true;
@@ -189,11 +189,11 @@ ICP_ErrorType bdm_usb_init( void ) {
 }
 
 ICP_ErrorType bdm_usb_exit( void ) {
-//   print("bdm_usb_exit()\n");
+//   Logging::print("bdm_usb_exit()\n");
 
    if (initialised) {
       bdm_usb_close();     // Close any open devices
-      print("bdm_usb_exit() - libusb_exit() called\n");
+      Logging::print("bdm_usb_exit() - libusb_exit() called\n");
       libusb_exit(NULL);
    }
    initialised = false;
@@ -209,11 +209,11 @@ ICP_ErrorType bdm_usb_exit( void ) {
 //!
 ICP_ErrorType bdm_usb_releaseDevices(void) {
 
-//   print("bdm_usb_releaseDevices() - \n");
+//   Logging::print("bdm_usb_releaseDevices() - \n");
 
    // Unreference all devices
    for(unsigned index=0; index<deviceCount; index++) {
-      print("bdm_usb_releaseDevices() - unreferencing #%d\n", index);
+      Logging::print("bdm_usb_releaseDevices() - unreferencing #%d\n", index);
       if (bdmDevices[index] != NULL)
          libusb_unref_device(bdmDevices[index]);
       bdmDevices[index] = NULL;
@@ -235,7 +235,7 @@ ICP_ErrorType bdm_usb_releaseDevices(void) {
 //!
 ICP_ErrorType bdm_usb_findDevices(unsigned *devCount) {
 
-//   print("bdm_usb_find_devices()\n");
+//   Logging::print("bdm_usb_find_devices()\n");
 
    *devCount = 0; // Assume failure
 
@@ -245,7 +245,7 @@ ICP_ErrorType bdm_usb_findDevices(unsigned *devCount) {
    bdm_usb_releaseDevices();
 
    if (!initialised) {
-      print("bdm_usb_find_devices() - Not initialised! \n");
+      Logging::print("bdm_usb_find_devices() - Not initialised! \n");
       rc = bdm_usb_init(); // try again
       if (rc != ICP_RC_OK) {
          return rc;
@@ -256,7 +256,7 @@ ICP_ErrorType bdm_usb_findDevices(unsigned *devCount) {
 
    ssize_t cnt = libusb_get_device_list(NULL, &list);
    if (cnt < 0) {
-      print("bdm_usb_find_devices() - libusb_get_device_list() failed! \n");
+      Logging::print("bdm_usb_find_devices() - libusb_get_device_list() failed! \n");
       return ICP_RC_USB_ERROR;
    }
 
@@ -264,18 +264,18 @@ ICP_ErrorType bdm_usb_findDevices(unsigned *devCount) {
    deviceCount = 0;
    for (int deviceIndex=0; deviceIndex<cnt; deviceIndex++) {
       // Check each device and copy any devices to local list
-//      print("bdm_usb_find_devices() ==> checking device #%d\n", deviceIndex);
+//      Logging::print("bdm_usb_find_devices() ==> checking device #%d\n", deviceIndex);
       libusb_device *currentDevice = list[deviceIndex];
       libusb_device_descriptor deviceDescriptor;
       int rc = libusb_get_device_descriptor(currentDevice, &deviceDescriptor);
       if (rc != LIBUSB_SUCCESS) {
          continue; // Skip device
       }
-//      print("bdm_usb_find_devices() ==> Checking device VID=%4.4X, PID=%4.4X\n",
+//      Logging::print("bdm_usb_find_devices() ==> Checking device VID=%4.4X, PID=%4.4X\n",
 //            deviceDescriptor.idVendor, deviceDescriptor.idProduct);
       if ((deviceDescriptor.idVendor==JS16_BOOT_VID)&&(deviceDescriptor.idProduct==JS16_BOOT_PID)) {
          // Found a device
-//         print("bdm_usb_find_devices() ==> found USBDM device #%d\n", deviceIndex);
+//         Logging::print("bdm_usb_find_devices() ==> found USBDM device #%d\n", deviceIndex);
          bdmDevices[deviceCount++] = currentDevice; // Record found device
          libusb_ref_device(currentDevice);          // Reference so we don't lose it
          bdmDevices[deviceCount]=NULL;              // Terminate the list again
@@ -289,7 +289,7 @@ ICP_ErrorType bdm_usb_findDevices(unsigned *devCount) {
 
    *devCount = deviceCount;
 
-//   print("bdm_usb_find_devices() ==> %d\n", deviceCount);
+//   Logging::print("bdm_usb_find_devices() ==> %d\n", deviceCount);
 
    if(deviceCount>0) {
       return ICP_RC_OK;
@@ -328,36 +328,36 @@ ICP_ErrorType bdm_usb_getDeviceCount(unsigned int *pDeviceCount) {
 //!
 ICP_ErrorType bdm_usb_open( unsigned int device_no ) {
 
-//   print("bdm_usb_open( %d )\n", device_no);
+//   Logging::print("bdm_usb_open( %d )\n", device_no);
 
    if (!initialised) {
-      print("bdm_usb_open() - Not initialised! \n");
+      Logging::print("bdm_usb_open() - Not initialised! \n");
       return ICP_RC_USB_ERROR;
    }
    if (device_no >= deviceCount) {
-      print("bdm_usb_open() - Illegal device #\n");
+      Logging::print("bdm_usb_open() - Illegal device #\n");
       return ICP_RC_ILLEGAL_PARAMS;
    }
    if (usbDeviceHandle != NULL) {
-      print("bdm_usb_open() - Closing previous device\n");
+      Logging::print("bdm_usb_open() - Closing previous device\n");
       bdm_usb_close();
    }
    int rc = libusb_open(bdmDevices[device_no], &usbDeviceHandle);
 
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_open() - libusb_open() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_open() - libusb_open() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
       usbDeviceHandle = NULL;
       return ICP_RC_USB_ERROR;
       }
    int configuration = 0;
    rc = libusb_get_configuration(usbDeviceHandle, &configuration);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_open() - libusb_get_configuration() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_open() - libusb_get_configuration() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    }
    if (configuration != 1) {
       rc = libusb_set_configuration(usbDeviceHandle, 1);
       if (rc != LIBUSB_SUCCESS) {
-         print("bdm_usb_open() - libusb_set_configuration(1) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+         Logging::print("bdm_usb_open() - libusb_set_configuration(1) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
          // Release the device
          libusb_close(usbDeviceHandle);
          usbDeviceHandle = NULL;
@@ -366,7 +366,7 @@ ICP_ErrorType bdm_usb_open( unsigned int device_no ) {
    }
    rc = libusb_claim_interface(usbDeviceHandle, 0);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_open() - libusb_claim_interface(0) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_open() - libusb_claim_interface(0) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
       // Release the device
       libusb_set_configuration(usbDeviceHandle, 0);
       libusb_close(usbDeviceHandle);
@@ -375,11 +375,11 @@ ICP_ErrorType bdm_usb_open( unsigned int device_no ) {
    }
    rc = libusb_clear_halt(usbDeviceHandle, 0x01);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_open() - libusb_clear_halt(...,0x01) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_open() - libusb_clear_halt(...,0x01) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    }
    rc = libusb_clear_halt(usbDeviceHandle, 0x82);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_open() - libusb_clear_halt(...,0x82) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_open() - libusb_clear_halt(...,0x82) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    }
    return (ICP_RC_OK);
 }
@@ -393,19 +393,19 @@ ICP_ErrorType bdm_usb_open( unsigned int device_no ) {
 ICP_ErrorType bdm_usb_close( void ) {
    int rc;
 
-   //   print("bdm_usb_close()\n");
+   //   Logging::print("bdm_usb_close()\n");
    if (usbDeviceHandle == NULL) {
-      print("bdm_usb_close() - device not open - no action\n");
+      Logging::print("bdm_usb_close() - device not open - no action\n");
       return ICP_RC_OK;
    }
    rc = libusb_release_interface(usbDeviceHandle, 0);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_close() - libusb_release_interface() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_close() - libusb_release_interface() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    }
    int configValue;
    rc = libusb_get_configuration(usbDeviceHandle, &configValue);
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_close() - libusb_get_configuration() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_close() - libusb_get_configuration() failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    }
    // Unconfigure BDM
    // I know the libusb documentation says to use -1 but this ends up being passed
@@ -416,7 +416,7 @@ ICP_ErrorType bdm_usb_close( void ) {
    rc = libusb_set_configuration(usbDeviceHandle, -1);
 #endif
    if (rc != LIBUSB_SUCCESS) {
-      print("bdm_usb_close() - libusb_set_configuration(0) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_close() - libusb_set_configuration(0) failed, rc = %s\n", libusb_error_name((libusb_error)rc));
    }
    libusb_close(usbDeviceHandle);
    usbDeviceHandle = NULL;
@@ -453,12 +453,12 @@ ICP_ErrorType bdm_usb_raw_send_ep0(unsigned int  request,
                                    const unsigned char *data) {
    int rc;
    if (usbDeviceHandle == NULL) {
-      print("bdm_usb_raw_send_ep0() - device not open\n");
+      Logging::print("bdm_usb_raw_send_ep0() - device not open\n");
       return ICP_RC_DEVICE_NOT_OPEN;
    }
 #ifdef LOG_LOW_LEVEL
-   print("============================\n");
-   print("bdm_usb_raw_send_ep0(req=%2.2X, val=%2.2X, ind=%d, size=%d)\n",
+   Logging::print("============================\n");
+   Logging::print("bdm_usb_raw_send_ep0(req=%2.2X, val=%2.2X, ind=%d, size=%d)\n",
          request, wValue, wIndex, size);
 #endif
    rc = libusb_control_transfer(usbDeviceHandle,
@@ -470,7 +470,7 @@ ICP_ErrorType bdm_usb_raw_send_ep0(unsigned int  request,
             size,                                           // size (# of data bytes)
             timeoutValue);                                  // how long to wait for reply
    if (rc < 0) {
-      print("bdm_usb_raw_send_ep0() - Send failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_raw_send_ep0() - Send failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
       return(ICP_RC_USB_ERROR);
    }
    return(ICP_RC_OK);
@@ -501,12 +501,12 @@ ICP_ErrorType bdm_usb_raw_recv_ep0(unsigned int  request,
                                    unsigned char *data) {
    int rc;
    if (usbDeviceHandle == NULL) {
-      print("bdm_usb_raw_recv_ep0() - device not open\n");
+      Logging::print("bdm_usb_raw_recv_ep0() - device not open\n");
       return ICP_RC_DEVICE_NOT_OPEN;
    }
 #ifdef LOG_LOW_LEVEL
-   print("============================\n");
-   print("bdm_usb_raw_recv_ep0(req=%2.2X, val=%2.2X, ind=%d, size=%d)\n",
+   Logging::print("============================\n");
+   Logging::print("bdm_usb_raw_recv_ep0(req=%2.2X, val=%2.2X, ind=%d, size=%d)\n",
          request, wValue, wIndex, size);
 #endif // LOG_LOW_LEVEL
 
@@ -520,7 +520,7 @@ ICP_ErrorType bdm_usb_raw_recv_ep0(unsigned int  request,
             timeoutValue);                                  // how long to wait for reply
 
    if (rc < 0) {
-      print("bdm_usb_raw_recv_ep0() - Transaction failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
+      Logging::print("bdm_usb_raw_recv_ep0() - Transaction failed (USB error = %s)\n", libusb_error_name((libusb_error)rc));
       return ICP_RC_USB_ERROR;
    }
    return ICP_RC_OK;

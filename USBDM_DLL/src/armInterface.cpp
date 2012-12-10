@@ -30,6 +30,8 @@
 \verbatim
  Change History
 +==================================================================================================
+|  1 Dec 2012 | Changed logging                                                     - pgo - V4.10.4
+| 18 Nov 2012 | resetARM() now connects with reset pin asserted for H/W reset       - pgo - V4.10.4
 | 17 Oct 2012 | targetDebugEnable() now sets halt-on-reset in DEMCR to capture POR  - pgo - V4.10.3
 | 18 Aug 2012 | Created                                                             - pgo - V4.10.0
 +==================================================================================================
@@ -108,17 +110,24 @@ static struct ARM_DebugInformation {
 //! @return error code
 //!
 static USBDM_ErrorCode armReadMemoryWord(unsigned long address, unsigned long *data) {
+   LOGGING_Q;
+   Logging::setLoggingLevel(0);
    uint8_t buff[4];
    USBDM_ErrorCode rc = USBDM_ReadMemory(4, 4, address, buff);
    *data = (buff[0])+(buff[1]<<8)+(buff[2]<<16)+(buff[3]<<24);
    switch(address) {
    case DEMCR:
-      print("      armReadMemoryWord(DEMCR, %s)\n", getDEMCRName(*data));
+      Logging::print("A=0x%08X, V=0x%08X, DEMCR => %s\n", address, *data, getDEMCRName(*data));
       break;
    case DHCSR:
-      print("      armReadMemoryWord(DHCSR, %s)\n", getDHCSRName(*data));
+      Logging::print("A=0x%08X, V=0x%08X, DHCSR => %s\n", address, *data, getDHCSRName(*data));
       break;
-   default: break;
+   case DBGMCU_CR:
+      Logging::print("A=0x%08X, V=0x%08X, STM.DBGMCU_CR\n", address, *data);
+      break;
+   default:
+      Logging::print("A=0x%08X, V=0x%08X\n", address, *data);
+      break;
    }
    return rc;
 }
@@ -134,16 +143,23 @@ static USBDM_ErrorCode armReadMemoryWord(unsigned long address, unsigned long *d
 //! @return error code
 //!
 static USBDM_ErrorCode armWriteMemoryWord(unsigned long address, unsigned long data) {
+   LOGGING_Q;
+   Logging::setLoggingLevel(0);
    uint8_t buff[4] = {(uint8_t)data, (uint8_t)(data>>8), (uint8_t)(data>>16), (uint8_t)(data>>24)};
    USBDM_ErrorCode rc = USBDM_WriteMemory(4, 4, address, buff);
    switch(address) {
    case DEMCR:
-      print("      armWriteMemoryWord(DEMCR, %s)\n", getDEMCRName(data));
+      Logging::print("A=0x%08X, V=0x%08X, DEMCR => %s\n", address, data, getDEMCRName(data));
       break;
    case DHCSR:
-      print("      armWriteMemoryWord(DHCSR, %s)\n", getDHCSRName(data));
+      Logging::print("A=0x%08X, V=0x%08X, DHCSR => %s\n", address, data, getDHCSRName(data));
       break;
-   default: break;
+   case DBGMCU_CR:
+      Logging::print("A=0x%08X, V=0x%08X, STM.DBGMCU_CR\n", address, data);
+      break;
+   default:
+      Logging::print("A=0x%08X, V=0x%08X\n", address, data);
+      break;
    }
    return rc;
 }
@@ -154,12 +170,13 @@ static USBDM_ErrorCode armWriteMemoryWord(unsigned long address, unsigned long d
 //!        RESET_SPECIAL/RESET_NORMAL
 //!
 static USBDM_ErrorCode armSoftwareReset(TargetMode_t resetMode) {
+   LOGGING_Q;
    USBDM_ErrorCode rc;
    resetMode   = (TargetMode_t)(resetMode&RESET_MODE_MASK);
 
    unsigned long demcrValue;
    if (resetMode==RESET_SPECIAL) {
-      print("   SWD_TargetReset()- Doing +Special reset\n");
+      Logging::print("Doing +Special reset\n");
       // Set catch on reset vector fetch
       demcrValue = DEMCR_TRCENA|DEMCR_VC_HARDERR|DEMCR_VC_INTERR|DEMCR_VC_BUSERR|DEMCR_VC_STATERR|
                    DEMCR_VC_CHKERR|DEMCR_VC_NOCPERR|DEMCR_VC_MMERR|DEMCR_VC_CORERESET;
@@ -173,14 +190,15 @@ static USBDM_ErrorCode armSoftwareReset(TargetMode_t resetMode) {
 
    unsigned long dbgValue   = (DBGMCU_IWDG_STOP|DBGMCU_WWDG_STOP);
 
-   print("armSoftwareReset()\n");
+   Logging::print("\n");
 
    // This may be unreliable if the target is in a reset loop
 
    // Try to disable watch-dog
-   print("armSoftwareReset()- Attempting to disable Watchdog\n");
-   armWriteMemoryWord(DBGMCU_CR, dbgValue);
-
+   if (!armDebugInformation.MDM_AP_present) {
+      Logging::print("Attempting to disable ST Watchdog\n");
+      armWriteMemoryWord(DBGMCU_CR, dbgValue);
+   }
    // DEMCR
    rc = armWriteMemoryWord(DEMCR, demcrValue);
    if (rc != BDM_RC_OK) {
@@ -211,13 +229,14 @@ static USBDM_ErrorCode armSoftwareReset(TargetMode_t resetMode) {
 //!        RESET_SPECIAL/RESET_NORMAL
 //!
 static USBDM_ErrorCode kinetisSoftwareReset(TargetMode_t resetMode) {
+   LOGGING_Q;
    USBDM_ErrorCode rc;
    resetMode   = (TargetMode_t)(resetMode&RESET_MODE_MASK);
 
-   print("kinetisSoftwareReset()- Using Freescale MDM-AP\n");
+   Logging::print("Using Freescale MDM-AP\n");
    unsigned long demcrValue;
    if (resetMode==RESET_SPECIAL) {
-      print("kinetisSoftwareReset()- Doing +Special reset\n");
+      Logging::print("Doing +Special reset\n");
       // Set catch on reset vector fetch
       demcrValue = DEMCR_TRCENA|DEMCR_VC_HARDERR|DEMCR_VC_INTERR|DEMCR_VC_BUSERR|DEMCR_VC_STATERR|
                    DEMCR_VC_CHKERR|DEMCR_VC_NOCPERR|DEMCR_VC_MMERR|DEMCR_VC_CORERESET;
@@ -254,7 +273,7 @@ static USBDM_ErrorCode kinetisSoftwareReset(TargetMode_t resetMode) {
       unsigned long  mdmApStatus;
       rc2 = USBDM_ReadCReg(ARM_CRegMDM_AP_Status, &mdmApStatus);
       if ((rc2 == BDM_RC_OK) && ((mdmApStatus & MDM_AP_Status_System_Security) != 0)) {
-         print("kinetisSoftwareReset()- Checking Freescale MDM-AP - device is secured\n");
+         Logging::print("Checking Freescale MDM-AP - device is secured\n");
          return BDM_RC_SECURED;
       }
       return BDM_RC_ARM_ACCESS_ERROR;
@@ -271,24 +290,22 @@ static USBDM_ErrorCode kinetisSoftwareReset(TargetMode_t resetMode) {
 //!
 DLL_LOCAL
 USBDM_ErrorCode resetARM(TargetMode_t targetMode) {
+   LOGGING;
+   USBDM_ErrorCode rc = BDM_RC_OK;
    TargetMode_t resetMethod = (TargetMode_t)(targetMode&RESET_METHOD_MASK);
    TargetMode_t resetMode   = (TargetMode_t)(targetMode&RESET_MODE_MASK);
-   print("resetARM() - (%s)\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
+   Logging::print("%s\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
    if (resetMethod == RESET_DEFAULT) {
       resetMethod = RESET_HARDWARE;
-      print("resetARM() - modified=(%s)\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
-   }
-   // Reset requires a target connection to write target registers
-   USBDM_ErrorCode rc;
-   rc = USBDM_Connect();
-   if (rc != BDM_RC_OK) {
-      return rc;
+      Logging::print("modified=(%s)\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
    }
 #ifdef LOG
    {
-   unsigned long dhcsrValue;
-   rc = armReadMemoryWord(DHCSR, &dhcsrValue);
-   print("resetARM()- Target is %s before reset\n", (dhcsrValue&(DHCSR_S_HALT|DHCSR_S_LOCKUP))?"Halted":"Running");
+      unsigned long dhcsrValue;
+      USBDM_ErrorCode rc2 = armReadMemoryWord(DHCSR, &dhcsrValue);
+      if (rc2 == BDM_RC_OK) {
+         Logging::print("Target is %s before reset\n", (dhcsrValue&(DHCSR_S_HALT|DHCSR_S_LOCKUP))?"Halted":"Running");
+      }
    }
 #endif
 
@@ -297,78 +314,97 @@ USBDM_ErrorCode resetARM(TargetMode_t targetMode) {
 
    unsigned long demcrValue;
    if (resetMode==RESET_SPECIAL) {
-      print("resetARM()- Doing +Special reset\n");
+      Logging::print("Doing +Special reset\n");
       // Set catch on reset vector fetch
       demcrValue = DEMCR_TRCENA|DEMCR_VC_HARDERR|DEMCR_VC_INTERR|DEMCR_VC_BUSERR|DEMCR_VC_STATERR|
-                   DEMCR_VC_CHKERR|DEMCR_VC_NOCPERR|DEMCR_VC_MMERR|DEMCR_VC_CORERESET;
+            DEMCR_VC_CHKERR|DEMCR_VC_NOCPERR|DEMCR_VC_MMERR|DEMCR_VC_CORERESET;
    }
    else {
       // Disable catch on reset vector fetch
       demcrValue = DEMCR_TRCENA|DEMCR_VC_HARDERR|DEMCR_VC_INTERR|DEMCR_VC_BUSERR|DEMCR_VC_STATERR|
-                   DEMCR_VC_CHKERR|DEMCR_VC_NOCPERR|DEMCR_VC_MMERR;
+            DEMCR_VC_CHKERR|DEMCR_VC_NOCPERR|DEMCR_VC_MMERR;
    }
    switch (resetMethod) {
-   case RESET_ALL:
-   case RESET_HARDWARE :
-      // Force hardware reset
-      print("resetARM()- Doing Hardware reset\n");
-      USBDM_ControlPins(PIN_RESET_LOW);
-      // ToDo - add STM code
-//      if (armDebugInformation.subType==TARGET_STM32F10x) {
-//         // Disable watch-dog while Reset is asserted (as per STM recommendation)
-//         print("   SWD_TargetReset()- Attempting to disable Watch-dog\n");
-//         armWriteMemoryWord(DBGMCU_CR, &dbgValue);
-//      }
-      // DEMCR
-      rc = armWriteMemoryWord(DEMCR, demcrValue);
-      if (rc != BDM_RC_OK) {
-         return rc;
-      }
-      // DHCSR
-      rc = armWriteMemoryWord(DHCSR, dhcsrValue);
-      if (rc != BDM_RC_OK) {
-         return rc;
-      }
-      milliSleep(bdmOptions.resetDuration);
-      armWriteMemoryWord(DBGMCU_CR, dbgValue);
-      // Release hardware reset
-      USBDM_ControlPins(PIN_RELEASE);
-      milliSleep(bdmOptions.resetRecoveryInterval);
-      break;
-   case RESET_SOFTWARE:
-      // Make sure any pending hardware reset is released first
-      USBDM_ControlPins(PIN_RESET_3STATE, NULL);
-      // Do software (local) reset via ARM debug function
-      print("resetARM()- Doing Software reset\n");
-      if (armDebugInformation.MDM_AP_present) {
-         kinetisSoftwareReset(targetMode);
-      }
-      else {
-         // Default ARM software reset code
-         armSoftwareReset(targetMode);
-      }
-      break;
-   default:
-      print("resetARM()- Illegal options\n");
-      return BDM_RC_ILLEGAL_PARAMS;
+      case RESET_ALL:
+      case RESET_HARDWARE :
+         // Force hardware reset
+         Logging::print("Doing Hardware reset\n");
+         USBDM_ControlPins(PIN_RESET_LOW);
+         do {
+            // Connect with reset asserted
+            // Reset requires a target connection to write target registers
+            rc = USBDM_Connect();
+            if (rc != BDM_RC_OK) {
+               Logging::print("Connect failed\n");
+               continue;
+            }
+            // ToDo - add STM code
+            //      if (armDebugInformation.subType==TARGET_STM32F10x) {
+            //         // Disable watch-dog while Reset is asserted (as per STM recommendation)
+            //         Logging::print("   SWD_TargetReset()- Attempting to disable Watch-dog\n");
+            //         armWriteMemoryWord(DBGMCU_CR, &dbgValue);
+            //      }
+            // DEMCR
+            rc = armWriteMemoryWord(DEMCR, demcrValue);
+            if (rc != BDM_RC_OK) {
+               Logging::print("DEMCR write failed\n");
+               continue;
+            }
+            armReadMemoryWord(DEMCR, &demcrValue);
+            // DHCSR
+            rc = armWriteMemoryWord(DHCSR, dhcsrValue);
+            if (rc != BDM_RC_OK) {
+               Logging::print("DHCSR write failed\n");
+               continue;
+            }
+            milliSleep(bdmOptions.resetDuration);
+            if (!armDebugInformation.MDM_AP_present) {
+               Logging::print("armSoftwareReset()- Attempting to disable ST Watchdog\n");
+               armWriteMemoryWord(DBGMCU_CR, dbgValue);
+            }
+         } while (0);
+         // Release hardware reset
+         USBDM_ControlPins(PIN_RELEASE);
+         milliSleep(bdmOptions.resetRecoveryInterval);
+         break;
+      case RESET_SOFTWARE:
+         // Make sure any pending hardware reset is released first
+         USBDM_ControlPins(PIN_RESET_3STATE, NULL);
+         // Do software (local) reset via ARM debug function
+         Logging::print("Doing Software reset\n");
+         if (armDebugInformation.MDM_AP_present) {
+            kinetisSoftwareReset(targetMode);
+         }
+         else {
+            // Default ARM software reset code
+            armSoftwareReset(targetMode);
+         }
+         break;
+      default:
+         Logging::print("Illegal options\n");
+         rc = BDM_RC_ILLEGAL_PARAMS;
+         break;
    }
 #ifdef LOG
    {
-   unsigned long dhcsrValue;
-   rc = armReadMemoryWord(DHCSR, &dhcsrValue);
-   print("resetARM()- Target is %s after reset\n", (dhcsrValue&(DHCSR_S_HALT|DHCSR_S_LOCKUP))?"Halted":"Running");
+      unsigned long dhcsrValue;
+      USBDM_ErrorCode rc2 = armReadMemoryWord(DHCSR, &dhcsrValue);
+      if (rc2 == BDM_RC_OK) {
+         Logging::print("Target is %s after reset\n", (dhcsrValue&(DHCSR_S_HALT|DHCSR_S_LOCKUP))?"Halted":"Running");
+      }
    }
 #endif
-   return BDM_RC_OK;
+   return rc;
 }
 
 //! Read Information that describes the APs present
 //!
 static USBDM_ErrorCode armCheckAPs(void) {
+   LOGGING_Q;
    USBDM_ErrorCode rc;
    unsigned long dataIn;
 
-   print("   armCheckAPs()\n");
+   Logging::print("\n");
 
    // Check if Kinetis MDM-AP is present
    rc = USBDM_ReadCReg(ARM_CRegMDM_AP_Ident, &dataIn);
@@ -377,7 +413,7 @@ static USBDM_ErrorCode armCheckAPs(void) {
    }
    armDebugInformation.MDM_AP_present = ((dataIn & 0xFFFFFF00)== 0x001C0000);
    if (armDebugInformation.MDM_AP_present) {
-      print("   armCheckAPs(): MDM-AP (Kinetis) found (Id=0x%08X)\n", dataIn);
+      Logging::print("MDM-AP (Kinetis) found (Id=0x%08X)\n", dataIn);
    }
    // Check if ARM AMBA-AHB-AP present
    rc = USBDM_ReadCReg(ARM_CRegAHB_AP_Id, &dataIn);
@@ -385,10 +421,10 @@ static USBDM_ErrorCode armCheckAPs(void) {
       return rc;
    }
    if ((dataIn&0x0FFF000F)!= 0x04770001) {
-      print("   armCheckAPs(): AMBA-AHB-AP not found (Id=0x%08X)!\n", dataIn);
+      Logging::print("AMBA-AHB-AP not found (Id=0x%08X)!\n", dataIn);
       return BDM_RC_ARM_ACCESS_ERROR;
    }
-   print("   armCheckAPs(): AMBA-AHB-AP found (Id=0x%08X)\n", dataIn);
+   Logging::print("AMBA-AHB-AP found (Id=0x%08X)\n", dataIn);
    // Save the AHB_AP_CFG register
    rc = USBDM_ReadCReg(ARM_CRegAHB_AP_CFG, &dataIn);
    if (rc != BDM_RC_OK) {
@@ -396,14 +432,14 @@ static USBDM_ErrorCode armCheckAPs(void) {
    }
    armDebugInformation.memAPConfig = dataIn;
    bool bigEndian = (dataIn&AHB_AP_CFG_BIGENDIAN)!=0;
-   print("   armCheckAPs(): AHB_AP.CFG => 0x%08X, %s\n", dataIn, bigEndian?"BigEndian":"LittleEndian");
+   Logging::print("AHB_AP.CFG => 0x%08X, %s\n", dataIn, bigEndian?"BigEndian":"LittleEndian");
 
    // Get Debug base address
    rc = USBDM_ReadCReg(ARM_CRegAHB_AP_Base, &dataIn);
    if (rc != BDM_RC_OK) {
       return rc;
    }
-   print("   armCheckAPs(): AHB_AP.Base => 0x%08X\n", dataIn);
+   Logging::print("AHB_AP.Base => 0x%08X\n", dataIn);
    armDebugInformation.debugBaseaddr = dataIn & 0xFFFFF000;
 
    return BDM_RC_OK;
@@ -412,9 +448,10 @@ static USBDM_ErrorCode armCheckAPs(void) {
 //! Read Information that describes the debug interface
 //!
 static USBDM_ErrorCode armReadDebugInformation(void) {
+   LOGGING_Q;
    USBDM_ErrorCode rc;
 
-   print("   armReadDebugInformation()\n");
+   Logging::print("   armReadDebugInformation()\n");
 
    // Read ID registers
    unsigned long buffer[4];
@@ -430,12 +467,12 @@ static USBDM_ErrorCode armReadDebugInformation(void) {
    id += (buffer[0x2]&0xFF)<<16;
    id += (buffer[0x3]&0xFF)<<24;
 
-   print("   armReadDebugInformation(): ID => 0x%08X\n", id);
+   Logging::print("   armReadDebugInformation(): ID => 0x%08X\n", id);
    if ((id & 0xFFFF0FFF) != 0xB105000D) {
-      print("   armReadDebugInformation(): ID invalid\n");
+      Logging::print("   armReadDebugInformation(): ID invalid\n");
    }
    armDebugInformation.componentClass = (id>>12)&0xF;
-   print("   armReadDebugInformation(): component class => 0x%X\n", armDebugInformation.componentClass);
+   Logging::print("   armReadDebugInformation(): component class => 0x%X\n", armDebugInformation.componentClass);
 
    // Read Peripheral ID0 register
    rc = armReadMemoryWord(armDebugInformation.debugBaseaddr+0xFD0, buffer);
@@ -444,7 +481,7 @@ static USBDM_ErrorCode armReadDebugInformation(void) {
    }
    id  = (buffer[0x0]>>4)&0xFF;
    armDebugInformation.size4Kb = 1<<id;
-   print("   armReadDebugInformation(): 4Kb size => %d\n", armDebugInformation.size4Kb);
+   Logging::print("   armReadDebugInformation(): 4Kb size => %d\n", armDebugInformation.size4Kb);
    return BDM_RC_OK;
 }
 #endif
@@ -455,9 +492,10 @@ bool armInitialiseDone = false;
 //! Check for target power
 //!
 static USBDM_ErrorCode checkTargetPower(void) {
+   LOGGING_Q;
    USBDM_ErrorCode rc = BDM_RC_OK;
 
-   print("checkTargetPower()\n");
+   Logging::print("\n");
 
    // Check for target power
    USBDMStatus_t status;
@@ -474,6 +512,7 @@ static USBDM_ErrorCode checkTargetPower(void) {
 //! Enable the Debug power
 //!
 static USBDM_ErrorCode debugPowerUp(void) {
+   LOGGING_Q;
    USBDM_ErrorCode rc = BDM_RC_OK;
    unsigned long dataIn;
 
@@ -489,7 +528,7 @@ static USBDM_ErrorCode debugPowerUp(void) {
          return rc;
       }
       rc = USBDM_ReadDReg(ARM_DRegSTATUS, &dataIn);
-      print("debugPowerUp() DP_ControlStatus= 0x%08X\n", dataIn);
+      Logging::print("DP_ControlStatus= 0x%08X\n", dataIn);
       milliSleep(100);
       if (rc != BDM_RC_OK) {
          return rc;
@@ -501,7 +540,7 @@ static USBDM_ErrorCode debugPowerUp(void) {
    if ((dataIn & (CSYSPWRUPACK|CDBGPWRUPACK)) != (unsigned long)(CSYSPWRUPACK|CDBGPWRUPACK)) {
       return BDM_RC_ARM_PWR_UP_FAIL;
    }
-   print("debugPowerUp() System & Debug PWR-UP OK\n");
+   Logging::print("System & Debug PWR-UP OK\n");
    return rc;
 }
 
@@ -510,9 +549,10 @@ static USBDM_ErrorCode debugPowerUp(void) {
 //! @note Assumes low-level SWD connection has been done
 //!
 static USBDM_ErrorCode armSwdInitialise() {
+   LOGGING_Q;
    USBDM_ErrorCode rc = BDM_RC_OK;
 
-   print("swdInitialise()\n");
+   Logging::print("\n");
 
    armInitialiseDone = false;
 
@@ -542,19 +582,20 @@ static USBDM_ErrorCode armSwdInitialise() {
 //!
 DLL_LOCAL
 USBDM_ErrorCode targetDebugEnable() {
+   LOGGING_Q;
 
-   print("targetDebugEnable()\n");
+   Logging::print("\n");
 
    if (armDebugInformation.MDM_AP_present) {
       // Check if Secured Kinetis device
       unsigned long mdm_ap_status;
       USBDM_ErrorCode rc = USBDM_ReadCReg(ARM_CRegMDM_AP_Status, &mdm_ap_status);
       if (rc != BDM_RC_OK) {
-         print("targetDebugEnable()- Checking Freescale MDM-AP - failed read\n");
+         Logging::print("Checking Freescale MDM-AP - failed read\n");
          return rc;
       }
       if ((mdm_ap_status & MDM_AP_Status_System_Security) != 0) {
-         print("targetDebugEnable()- Checking Freescale MDM-AP - device is secured\n");
+         Logging::print("Checking Freescale MDM-AP - device is secured\n");
          return BDM_RC_SECURED;
       }
    }
@@ -564,35 +605,35 @@ USBDM_ErrorCode targetDebugEnable() {
       unsigned long dhcsrValue;
       rc = armReadMemoryWord(DHCSR, &dhcsrValue);
       if (rc != BDM_RC_OK) {
-         print("targetDebugEnable() DHCSR read failed\n");
+         Logging::print("DHCSR read failed\n");
          continue;
       }
-      print("targetDebugEnable() Initial DHCSR value = %s(0x%08X)\n", getDHCSRName(dhcsrValue), dhcsrValue);
+      Logging::print("Initial DHCSR value = %s(0x%08X)\n", getDHCSRName(dhcsrValue), dhcsrValue);
       if ((dhcsrValue&DHCSR_C_DEBUGEN) != 0) {
-         print("targetDebugEnable() Debug Enable already set\n");
+         Logging::print("Debug Enable already set\n");
       }
       else {
          // Note: Must set C_MASKINTS=0 when changing DEBUGEN from 0->1
          uint32_t debugOnValue = (dhcsrValue&~(DHCSR_DBGKEY_MASK|DHCSR_C_MASKINTS))|DHCSR_DBGKEY|DHCSR_C_DEBUGEN;
          rc = armWriteMemoryWord(DHCSR, debugOnValue);
          if (rc != BDM_RC_OK) {
-            print("targetDebugEnable() DHCSR write failed\n");
+            Logging::print("DHCSR write failed\n");
             continue;
          }
          unsigned long dhcsrCheckValue;
          if (rc == BDM_RC_OK) {
             rc = armReadMemoryWord(DHCSR, &dhcsrCheckValue);
             if (rc != BDM_RC_OK) {
-               print("targetDebugEnable() DHCSR read failed\n");
+               Logging::print("DHCSR read failed\n");
                continue;
             }
-            print("targetDebugEnable() Final DHCSR value = %s(0x%08X)\n", getDHCSRName(dhcsrCheckValue), dhcsrCheckValue);
+            Logging::print("Final DHCSR value = %s(0x%08X)\n", getDHCSRName(dhcsrCheckValue), dhcsrCheckValue);
          }
          if ((dhcsrCheckValue&DHCSR_C_DEBUGEN) == 0) {
-            print("targetDebugEnable() Debug enable failed\n");
+            Logging::print("Debug enable failed\n");
             continue;
          }
-         print("targetDebugEnable() Debug Enable complete\n");
+         Logging::print("Debug Enable complete\n");
       }
       break;
    } while (--retry >0);
@@ -603,7 +644,7 @@ USBDM_ErrorCode targetDebugEnable() {
    unsigned long demcrValue;
    armReadMemoryWord(DEMCR, &demcrValue);
    if ((demcrValue & DEMCR_VC_CORERESET) == 0) {
-      print("targetDebugEnable() Setting halt on core reset\n");
+      Logging::print("Setting halt on core reset\n");
       demcrValue |= DEMCR_VC_CORERESET;
       armWriteMemoryWord(DEMCR, demcrValue);
    }
@@ -616,15 +657,23 @@ USBDM_ErrorCode targetDebugEnable() {
 //!
 DLL_LOCAL
 USBDM_ErrorCode armSwdConnect() {
-
-   print("armSwdConnect()\n");
+   LOGGING;
+   USBDM_ErrorCode rc;
    if (!armInitialiseDone) {
       USBDM_ErrorCode rc = armSwdInitialise();
       if (rc != BDM_RC_OK) {
          return rc;
       }
    }
-   return targetDebugEnable();
+   rc = targetDebugEnable();
+   if (rc != BDM_RC_OK) {
+      rc = armSwdInitialise();
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
+      rc = targetDebugEnable();
+   }
+   return rc;
 }
 
 // ARM JTAG Commands
@@ -640,6 +689,7 @@ USBDM_ErrorCode armSwdConnect() {
 //! @note - Leaves Core TAP in RUN-TEST/IDLE
 //!
 static USBDM_ErrorCode readIDCODE(uint32_t *idCode, uint8_t command, uint8_t length, bool resetTAP) {
+   LOGGING_Q;
    // Sequence using readIdcode command to read IDCODE
    uint8_t readCoreIdCodeSequence[] = {
       JTAG_MOVE_IR_SCAN,                              // Write IDCODE command to IR
@@ -666,7 +716,7 @@ static USBDM_ErrorCode readIDCODE(uint32_t *idCode, uint8_t command, uint8_t len
       rc = executeJTAGSequence(sizeof(readCoreIdCodeSequence), readCoreIdCodeSequence,
                                4, idcode.getData(32));
    if (rc != BDM_RC_OK) {
-      print("   readIDCODE() - Failed, reason = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("Failed, reason = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    *idCode = idcode;
@@ -676,9 +726,9 @@ static USBDM_ErrorCode readIDCODE(uint32_t *idCode, uint8_t command, uint8_t len
 //! Initialise ARM-JTAG Target
 //!
 static USBDM_ErrorCode armJtagInitialise() {
+   LOGGING;
    USBDM_ErrorCode rc = BDM_RC_OK;
 
-   print("armJtagInitialise()\n");
    armInitialiseDone = false;
    rc = checkTargetPower();
    if (rc != BDM_RC_OK) {
@@ -693,13 +743,13 @@ static USBDM_ErrorCode armJtagInitialise() {
    if (rc != BDM_RC_OK) {
       return rc;
    }
-   print("   armJtagInitialise() CHIP IDCODE by JTAG_RESET = 0x%08X\n", hardwareIdcode);
+   Logging::print("CHIP IDCODE by JTAG_RESET = 0x%08X\n", hardwareIdcode);
    if ((hardwareIdcode == 0xFFFFFFFF)||(hardwareIdcode == 0x00000000)) {
-      print("   armJtagInitialise() CHIP IDCODE Invalid - no device?\n");
+      Logging::print("   armJtagInitialise() CHIP IDCODE Invalid - no device?\n");
       return BDM_RC_NO_CONNECTION;
    }
    if (hardwareIdcode == ARM_Cortex_M3_IDCODE) {
-      print("   armJtagInitialise() Detected ARM-Cortex3, Assuming STM chip - setting TDR=1/TIR=5\n");
+      Logging::print("Detected ARM-Cortex3, Assuming STM chip - setting TDR=1/TIR=5\n");
       // Assume single STM32F100 for the moment
       const uint8_t sequence[] = {
             JTAG_SET_PADDING,  // #4x16-bit values - sets HDR HIR TDR TIR
@@ -720,23 +770,23 @@ static USBDM_ErrorCode armJtagInitialise() {
    if (rc != BDM_RC_OK) {
       return rc;
    }
-   print("   armJtagInitialise() ARM IDCODE  = 0x%08X\n", idcode);
+   Logging::print("ARM IDCODE  = 0x%08X\n", idcode);
    if (hardwareIdcode != idcode) {
-      print("   armJtagInitialise() - IDCODEs do not agree\n");
+      Logging::print("   armJtagInitialise() - IDCODEs do not agree\n");
    }
    if (idcode == ARM_Cortex_M3_IDCODE) {
-      print("   ARM Core = ARM_Cortex_M3\n");
+      Logging::print("   ARM Core = ARM_Cortex_M3\n");
    }
    else if (idcode == ARM_Cortex_M4_IDCODE) {
-      print("   ARM Core = ARM_Cortex_M4\n");
+      Logging::print("   ARM Core = ARM_Cortex_M4\n");
       // Read device IDCODE (Freescale only)
       rc = readIDCODE(&idcode, JTAG_IDCODE_COMMAND, JTAG_IDCODE_LENGTH, false);
       if (rc != BDM_RC_OK)
          return rc;
-      print("   armJtagInitialise() JTAG IDCODE  = 0x%08X\n", idcode);
+      Logging::print("JTAG IDCODE  = 0x%08X\n", idcode);
    }
    else {
-      print("   armJtagInitialise() - Unrecognised device\n");
+      Logging::print("Unrecognized device\n");
       return BDM_RC_UNKNOWN_DEVICE;
    }
    rc = debugPowerUp();
@@ -761,15 +811,23 @@ static USBDM_ErrorCode armJtagInitialise() {
 //!
 DLL_LOCAL
 USBDM_ErrorCode armJtagConnect() {
-   print("armJtagConnect()\n");
-
+   LOGGING;
+   USBDM_ErrorCode rc;
    if (!armInitialiseDone) {
       USBDM_ErrorCode rc = armJtagInitialise();
       if (rc != BDM_RC_OK) {
          return rc;
       }
    }
-   return targetDebugEnable();
+   rc = targetDebugEnable();
+   if (rc != BDM_RC_OK) {
+      rc = armJtagInitialise();
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
+      rc = targetDebugEnable();
+   }
+   return rc;
 }
 
 ////! Get ARM target status
@@ -781,7 +839,7 @@ USBDM_ErrorCode armJtagConnect() {
 //   uint32_t dataIn;
 //   ArmStatus defaultStatus = {0,0xFFFFFFFF,0,0};
 //
-//   print("   SWD_GetStatus()\n");
+//   Logging::print("   SWD_GetStatus()\n");
 //
 //   //ToDo - Consider Kinetis specific MDM_AP_Status
 //   *status = defaultStatus;
@@ -791,14 +849,14 @@ USBDM_ErrorCode armJtagConnect() {
 //      unsigned long mdmStatus;
 //      rc = USBDM_ReadCReg(ARM_CRegMDM_AP_Status, &mdmStatus);
 //      if (rc != BDM_RC_OK) {
-//         print("   SWD_GetStatus() Can't read MDM_AP_Status!\n");
+//         Logging::print("   SWD_GetStatus() Can't read MDM_AP_Status!\n");
 //         return BDM_RC_BDM_EN_FAILED;
 //      }
 //      status->mdmApStatus = mdmStatus;
 //   }
 //
 //   //      *status = (dataIn&MDM_AP_Status_Core_Halted) != 0;
-//   //      print("   SWD_GetStatus() => MDM_AP_Status=0x%08X (%s)\n",
+//   //      Logging::print("   SWD_GetStatus() => MDM_AP_Status=0x%08X (%s)\n",
 //   //            dataIn,
 //   //            (*status)?"Halted":"Running");
 //   //      return BDM_RC_OK;
@@ -806,39 +864,39 @@ USBDM_ErrorCode armJtagConnect() {
 //   //   else {
 //   rc = armReadMemoryWord(DEMCR, &dataIn);
 //   if (rc != BDM_RC_OK) {
-//      print("   SWD_GetStatus() Can't read DEMCR!\n");
+//      Logging::print("   SWD_GetStatus() Can't read DEMCR!\n");
 //   }
 //   else {
-//      print("   SWD_GetStatus(): DEMCR status=%s(0x%08X)\n", getDEMCRName(dataIn), dataIn);
+//      Logging::print("   SWD_GetStatus(): DEMCR status=%s(0x%08X)\n", getDEMCRName(dataIn), dataIn);
 //   }
 //   // Generic Debug
 //   rc = armReadMemoryWord(DHCSR, &dataIn);
 //   if (rc != BDM_RC_OK) {
-//      print("   SWD_GetStatus() Can't read DHCSR!\n");
+//      Logging::print("   SWD_GetStatus() Can't read DHCSR!\n");
 //      return BDM_RC_BDM_EN_FAILED;
 //   }
-//   //      print("   SWD_GetStatus() DHCSR value = 0x%08X\n", dataIn);
+//   //      Logging::print("   SWD_GetStatus() DHCSR value = 0x%08X\n", dataIn);
 //   //      if ((dataIn&DHCSR_C_DEBUGEN) == 0) {
-//   //         print("   swdInitialise() Debug enable not set!\n");
+//   //         Logging::print("   swdInitialise() Debug enable not set!\n");
 //   //         return BDM_RC_BDM_EN_FAILED;
 //   //      }
 //   if ((dataIn&DHCSR_S_LOCKUP) != 0) {
 //      const uint32_t dataOut = DHCSR_DBGKEY|DHCSR_C_HALT|DHCSR_C_DEBUGEN;
-//      print("   SWD_GetStatus() Clearing Lockup, DHCSR status=%s(0x%08X)\n", getDHCSRName(dataIn), dataIn);
+//      Logging::print("   SWD_GetStatus() Clearing Lockup, DHCSR status=%s(0x%08X)\n", getDHCSRName(dataIn), dataIn);
 //      armWriteMemoryWord(DHCSR, &dataOut);
 //      rc = armReadMemoryWord(DHCSR, &dataIn);
 //      if (rc != BDM_RC_OK) {
-//         print("   SWD_GetStatus() Can't read DHCSR!\n");
+//         Logging::print("   SWD_GetStatus() Can't read DHCSR!\n");
 //         return BDM_RC_BDM_EN_FAILED;
 //      }
 //   }
 //   status->dhcsr = dataIn;
 //
-//   print("   SWD_GetStatus() => DHCSR status=%s(0x%08X) (%s)\n",
+//   Logging::print("   SWD_GetStatus() => DHCSR status=%s(0x%08X) (%s)\n",
 //         getDHCSRName(dataIn), dataIn,
 //         (dataIn&(DHCSR_S_HALT|DHCSR_S_LOCKUP))?"Halted":"Running");
 //   if (armDebugInformation.MDM_AP_present) {
-//      print("                   => MDM_AP=%s(0x%08X)\n",
+//      Logging::print("                   => MDM_AP=%s(0x%08X)\n",
 //            getMDM_APStatusName(status->mdmApStatus), status->mdmApStatus);
 //   }
 //   return BDM_RC_OK;

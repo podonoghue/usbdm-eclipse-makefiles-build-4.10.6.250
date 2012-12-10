@@ -13,5 +13,7 @@
 
 void handleGdb(GdbInput *gdbIn, GdbOutput *gdbOutput, DeviceData &deviceData, ProgressTimer *progressTimer);
 void reportError(USBDM_ErrorCode rc);
+void exitProgram(USBDM_ErrorCode rc);
+void reportErrorAndQuit(USBDM_ErrorCode rc);
 
 #endif /* GDBHANDLER_H_ */

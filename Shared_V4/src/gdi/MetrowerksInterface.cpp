@@ -121,15 +121,15 @@ void setCallback( DiCallbackT dcCallbackType,
 
 	switch (dcCallbackType) {
 		case DI_CB_MTWKS_EXTENSION :
-		      print("setCallback(DI_CB_MTWKS_EXTENSION)\n");
+		      Logging::print("setCallback(DI_CB_MTWKS_EXTENSION)\n");
 				metrowerksCallbackFunction = Callback;
 				break;
       case DI_CB_FEEDBACK :
-            print("setCallback(DI_CB_FEEDBACK)\n");
+            Logging::print("setCallback(DI_CB_FEEDBACK)\n");
             metrowerksFeedbackFunction = Callback;
             break;
       default :
-            print("setCallback(Unknown = %d)\n", dcCallbackType);
+            Logging::print("setCallback(Unknown = %d)\n", dcCallbackType);
             break;
 	}
 }
@@ -145,7 +145,7 @@ DiReturnT mtwksSetMEE(DiUInt32T dnExecId) {
   DiReturnT rc;
   DiUInt32T meeValue = dnExecId;
   if (metrowerksCallbackFunction == NULL) {
-     print("mtwksGetStringValue() - callback not set\n");
+     Logging::print("mtwksGetStringValue() - callback not set\n");
      return setErrorState(DI_ERR_NONFATAL, ("Callback function not set"));
   }
 
@@ -171,7 +171,7 @@ DiReturnT mtwksDisplayLine(const char *format, ...) {
    }
 
    if (callbackFunction == NULL) {
-      print("mtwksGetStringValue() - callback not set\n");
+      Logging::print("mtwksGetStringValue() - callback not set\n");
       return setErrorState(DI_ERR_NONFATAL, ("Callback function not set"));
    }
 
@@ -183,7 +183,7 @@ DiReturnT mtwksDisplayLine(const char *format, ...) {
       vsnprintf(mtwksDisplayLineBuffer, MAX_MTWKS_DISPLAY_STRING_LENGTH, format, list);
       va_end(list);
    }
-   print("mtwksDisplayLine(%s)\n", mtwksDisplayLineBuffer);
+   Logging::print("mtwksDisplayLine(%s)\n", mtwksDisplayLineBuffer);
    callbackFunction(DI_CB_MTWKS_EXTENSION,
                     MTWKS_CB_DISPLAYLINE,
                     mtwksDisplayLineBuffer, &rc);
@@ -212,24 +212,24 @@ DiReturnT rc;
    value = string("");
 
    if (metrowerksCallbackFunction == NULL) {
-      print("mtwksGetStringValue() - callback not set\n");
+      Logging::print("mtwksGetStringValue() - callback not set\n");
       return setErrorState(DI_ERR_NONFATAL, ("Callback function not set"));
    }
 
-//   print("Callback(MTWKS_CB_PROJECTACCESS, Section: %s, Entry: %s)\n",
+//   Logging::print("Callback(MTWKS_CB_PROJECTACCESS, Section: %s, Entry: %s)\n",
 //         deviceTypeAccess.section,
 //         deviceTypeAccess.entry);
 
    metrowerksCallbackFunction(DI_CB_MTWKS_EXTENSION,
                               MTWKS_CB_PROJECTACCESS,
                               &deviceTypeAccess, &rc);
-//   print("Callback(MTWKS_CB_PROJECTACCESS, Section: %s, Entry: %s, %c) => %s\n",
+//   Logging::print("Callback(MTWKS_CB_PROJECTACCESS, Section: %s, Entry: %s, %c) => %s\n",
 //         deviceTypeAccess.section,
 //         deviceTypeAccess.entry,
 //         (deviceTypeAccess.mode&0x01)?'W':'R',
 //         getGDIErrorString(rc));
-//   print("     Buffer = \"%s\"\n", *deviceTypeAccess.buffer);
-//   print("====================================================\n");
+//   Logging::print("     Buffer = \"%s\"\n", *deviceTypeAccess.buffer);
+//   Logging::print("====================================================\n");
 
    if (rc == DI_OK) {
    	value = string(buffer);
@@ -252,7 +252,7 @@ static USBDM_ErrorCode getAttribute(const string &key, int &value, int defaultVa
 
    value = defaultValue;
 	if (mtwksGetStringValue(keyBuffer.c_str(), sValue) != DI_OK) {
-	   print("getAttribute(%s) => Failed\n", (const char *)key.c_str());
+	   Logging::print("getAttribute(%s) => Failed\n", (const char *)key.c_str());
 	   value = defaultValue;
 		return BDM_RC_ILLEGAL_PARAMS;
 	}
@@ -260,12 +260,12 @@ static USBDM_ErrorCode getAttribute(const string &key, int &value, int defaultVa
 		long int temp = strtol(sValue.c_str(), NULL, 10);
 //ToDo some kind of error checking on conversion
 //		if () {
-//		   print("getAttribute(%s) => %s, Failed int conversion\n", (const char *)key.ToAscii(), (const char *)sValue.ToAscii());
+//		   Logging::print("getAttribute(%s) => %s, Failed int conversion\n", (const char *)key.ToAscii(), (const char *)sValue.ToAscii());
 //			return BDM_RC_ILLEGAL_PARAMS;
 //		}
 		value = (int)temp;
 	}
-   print("getAttribute(%s) => %d\n", keyBuffer.c_str(), value);
+   Logging::print("getAttribute(%s) => %d\n", keyBuffer.c_str(), value);
 	return BDM_RC_OK;
 }
 
@@ -339,13 +339,13 @@ static USBDM_ErrorCode getAttribute(const string &key, string &value, const stri
 
 	value = defaultValue;
 	if (mtwksGetStringValue(keyBuffer, sValue) != DI_OK) {
-	   print("getAttribute(%s) => Failed\n", (const char *)key.c_str());
+	   Logging::print("getAttribute(%s) => Failed\n", (const char *)key.c_str());
 		return BDM_RC_ILLEGAL_PARAMS;
 	}
 	if (sValue != emptyString)
 		value = sValue;
 
-   print("getAttribute(%s) => %s\n", (const char *)key.c_str(), (const char *)value.c_str());
+   Logging::print("getAttribute(%s) => %s\n", (const char *)key.c_str(), (const char *)value.c_str());
 	return BDM_RC_OK;
 }
 
@@ -363,18 +363,18 @@ USBDM_ErrorCode getDeviceData(DeviceData &deviceData) {
    // Device name
    diRC = mtwksGetStringValue(processorKey, deviceName);
    if ((diRC != DI_OK) || (deviceName == emptyString)) {
-      print("getDeviceInfo() - Device name not set\n");
-      print("key = %s\n", processorKey.c_str());
+      Logging::print("getDeviceInfo() - Device name not set\n");
+      Logging::print("key = %s\n", processorKey.c_str());
       return  BDM_RC_UNKNOWN_DEVICE;
    }
-   print("getDeviceData() - Device name = \'%s\'\n", (const char *)deviceName.c_str());
+   Logging::print("getDeviceData() - Device name = \'%s\'\n", (const char *)deviceName.c_str());
 
    DeviceDataBase deviceDataBase;
    try {
       deviceDataBase.loadDeviceData();
    }
    catch (MyException &exception) {
-      print("getDeviceData() - Failed to load device database\n");
+      Logging::print("getDeviceData() - Failed to load device database\n");
       string("Failed to load device database\nReason: ")+exception.what();
       displayDialogue((string("Failed to load device database\nReason: ")+exception.what()).c_str(),
                    "Error loading devices",
@@ -382,16 +382,16 @@ USBDM_ErrorCode getDeviceData(DeviceData &deviceData) {
       return BDM_RC_DEVICE_DATABASE_ERROR;
    }
    catch (...){
-      print("getDeviceData() - Failed to load device database\n");
+      Logging::print("getDeviceData() - Failed to load device database\n");
       displayDialogue("Failed to load device database\n",
                       "Error loading devices",
                       wxOK);
       return BDM_RC_DEVICE_DATABASE_ERROR;
    }
    const DeviceData *dev = deviceDataBase.findDeviceFromName(deviceName);
-   print("getDeviceData() - Found device \'%s\' in database\n", (const char *)dev->getTargetName().c_str());
+   Logging::print("getDeviceData() - Found device \'%s\' in database\n", (const char *)dev->getTargetName().c_str());
    if (dev == NULL) {
-      print("getDeviceData() - Unknown device\n");
+      Logging::print("getDeviceData() - Unknown device\n");
       mtwksDisplayLine("Unrecognised device - using default settings");
       dev = deviceDataBase.getDefaultDevice();
 //      return BDM_RC_UNKNOWN_DEVICE;
@@ -427,7 +427,7 @@ USBDM_ErrorCode loadSettings(TargetType_t             targetType,
                              USBDM_ExtendedOptions_t &bdmOptions,
 			  			           string                  &bdmSerialNumber
 						           ) {
-   print("loadSettings(%s)\n", getTargetTypeName(targetType));
+   Logging::print("loadSettings(%s)\n", getTargetTypeName(targetType));
 
    bdmOptions.size       = sizeof(USBDM_ExtendedOptions_t);
    bdmOptions.targetType = targetType;
@@ -474,10 +474,10 @@ USBDM_ErrorCode loadSettings(TargetType_t             targetType,
 DiReturnT loadNames(string &deviceName, string &projectPath) {
    DiReturnT rc;
 
-   print("loadNames()\n");
+   Logging::print("loadNames()\n");
 
    if (metrowerksCallbackFunction == NULL) {
-      print("mtwksGetStringValue() - callback not set\n");
+      Logging::print("mtwksGetStringValue() - callback not set\n");
       return setErrorState(DI_ERR_NONFATAL, ("Callback function not set"));
    }
 
@@ -492,7 +492,7 @@ DiReturnT loadNames(string &deviceName, string &projectPath) {
       return setErrorState(rc, ("MTWKS_LEGACY_CB_COLDFIREAUTOCONFIG failed"));
    }
 
-   print("metrowerksCallbackFunction(MTWKS_CB_HC12AUTOCONFIG) => "
+   Logging::print("metrowerksCallbackFunction(MTWKS_CB_HC12AUTOCONFIG) => "
          "opt=0x%X, deviceID=0x%X, deviceName=\'%s\'\n",
          configValue.options, configValue.deviceID, configValue.deviceName);
 

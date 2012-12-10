@@ -67,7 +67,7 @@ OSBDM_API_JM60 unsigned char osbdm_init(void) {
    USBDM_Init();
    USBDM_FindDevices(&deviceCount);
    deviceCount <<= 1;
-   print("osbdm_INIT: Usb initialised, found %d device(s)\n", deviceCount);
+   Logging::print("osbdm_INIT: Usb initialised, found %d device(s)\n", deviceCount);
    return(deviceCount);
 }
 
@@ -82,7 +82,7 @@ OSBDM_API_JM60 unsigned char osbdm_init(void) {
 OSBDM_API_JM60 OsbdmErrT osbdm_open(unsigned char device_no) {
    targetType = (device_no&0x01)?T_CFVx:T_CFV1;
    device_no >>= 1;
-   print("osbdm_OPEN: Trying to open %s, device #%d\n", getTargetTypeName(targetType), device_no);
+   Logging::print("osbdm_OPEN: Trying to open %s, device #%d\n", getTargetTypeName(targetType), device_no);
    if (USBDM_Open(device_no>>1) != BDM_RC_OK)
       return osbdm_error_usb_transport;
    else
@@ -121,7 +121,7 @@ OSBDM_API_JM60 OsbdmErrT osbdm_init_hardware() {
 
 /* closes currently open device */
 OSBDM_API_JM60 void osbdm_close(void) {
-   print("osbdm_CLOSE: Trying to close the device\n");
+   Logging::print("osbdm_CLOSE: Trying to close the device\n");
    USBDM_Close();
    USBDM_Exit();
 }
@@ -307,7 +307,7 @@ OSBDM_API_JM60 OsbdmErrT osbdm_write_block(unsigned char type, unsigned char wid
    USBDM_ErrorCode rc;
    unsigned long value;
 
-   print("osbdm_write_block() - t=%d, w=%d, a=0x%08X, s=%02X \n", type, width, addr, size);
+   Logging::print("osbdm_write_block() - t=%d, w=%d, a=0x%08X, s=%02X \n", type, width, addr, size);
 //osbdm_write_block() - t=0, w=8, a=0x00800000, s=704
    // Register writes need data as a single unsigned long
    // ToDo check byte order
@@ -423,7 +423,7 @@ OSBDM_API_JM60 OsbdmErrT osbdm_read_block(unsigned char type, unsigned char widt
    USBDM_ErrorCode rc;
    unsigned long value;
 //   unsigned long bdmStatusReg;
-   print("osbdm_read_block() - t=%d, w=%d, a=0x%08X, s=%02X \n", type, width, addr, size);
+   Logging::print("osbdm_read_block() - t=%d, w=%d, a=0x%08X, s=%02X \n", type, width, addr, size);
 
 //   USBDM_ReadStatusReg(&bdmStatusReg); // Cause resync
 
@@ -466,7 +466,7 @@ OSBDM_API_JM60 OsbdmErrT	osbdm_write_32(unsigned char type, unsigned long addres
    byteData[2] = (value>>16);
    byteData[1] = (value>>8);
    byteData[0] = value;
-   print("osbdm_write_32() - t=%d, a=0x%08X, v=%08X \n", type, address, value);
+   Logging::print("osbdm_write_32() - t=%d, a=0x%08X, v=%08X \n", type, address, value);
    return osbdm_write_block(type, 32, address, byteData, 4);
 }
 
@@ -476,13 +476,13 @@ OSBDM_API_JM60 OsbdmErrT	osbdm_write_16(unsigned char type, unsigned long addres
    // ToDo check byte order
    byteData[1] = (value>>8);
    byteData[0] = value;
-   print("osbdm_write_16() - t=%d, a=0x%08X, v=%04X \n", type, address, value);
+   Logging::print("osbdm_write_16() - t=%d, a=0x%08X, v=%04X \n", type, address, value);
    return osbdm_write_block(type, 16, address, byteData, 2);
 }
 
 // write a single 8-bit value to target memory
 OSBDM_API_JM60 OsbdmErrT	osbdm_write_8(unsigned char type, unsigned long address, unsigned char value) {
-   print("osbdm_write_8() - t=%d, a=0x%08X, v=%02X \n", type, address, value);
+   Logging::print("osbdm_write_8() - t=%d, a=0x%08X, v=%02X \n", type, address, value);
    return osbdm_write_block(type, 8, address, &value, 1);
 }
 
@@ -493,7 +493,7 @@ OSBDM_API_JM60 OsbdmErrT	osbdm_read_32(unsigned char type, unsigned long address
    OsbdmErrT rc = osbdm_read_block(type, 32, address, byteData, 4);
    // ToDo check byte order
    *data = (byteData[3]<<24) + (byteData[2]<<16) + (byteData[1]<<8) + byteData[0];
-   print("osbdm_read_32() - t=%d, a=0x%08X, v=%08X \n", type, address, *data);
+   Logging::print("osbdm_read_32() - t=%d, a=0x%08X, v=%08X \n", type, address, *data);
    return rc;
 }
 
@@ -503,7 +503,7 @@ OSBDM_API_JM60 OsbdmErrT osbdm_read_16(unsigned char type, unsigned long address
    OsbdmErrT rc = osbdm_read_block(type, 16, address, byteData, 2);
    // ToDo check byte order
    *data = (byteData[1]<<8) + byteData[0];
-   print("osbdm_read_16() - t=%d, a=0x%08X, v=%04X \n", type, address, *data);
+   Logging::print("osbdm_read_16() - t=%d, a=0x%08X, v=%04X \n", type, address, *data);
    return rc;
 }
 
@@ -512,6 +512,6 @@ OSBDM_API_JM60 OsbdmErrT	osbdm_read_8(unsigned char type, unsigned long address,
    unsigned char byteData[1];
    OsbdmErrT rc = osbdm_read_block(type, 8, address, byteData, 1);
    *data = byteData[0];
-   print("osbdm_read_8() - t=%d, a=0x%08X, v=%02X \n", type, address, *data);
+   Logging::print("osbdm_read_8() - t=%d, a=0x%08X, v=%02X \n", type, address, *data);
    return rc;
 }

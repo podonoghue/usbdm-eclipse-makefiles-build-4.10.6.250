@@ -162,7 +162,7 @@ public:
       //!        true  => current location is occupied
       //!        false => current location is unoccupied/unallocated
       bool isValid() const {
-//         print("enumerator::isValid(0x%06X)\n", address);
+//         Logging::print("enumerator::isValid(0x%06X)\n", address);
          return memoryImage.isValid(address);
       }
 
@@ -171,7 +171,7 @@ public:
       //!        true  => current location is occupied
       //!        false => current location is unoccupied/unallocated
       bool setAddress(uint32_t addr) {
-//         print("enumerator::isValid(0x%06X)\n", address);
+//         Logging::print("enumerator::isValid(0x%06X)\n", address);
          address = addr;
          if (!memoryImage.isValid(address))
             return nextValid();
@@ -258,8 +258,6 @@ public:
    //=====================================================================
    //! Gets an enumerator for the memory
    //!
-   //! @param address - 32-bit memory address
-   //!
    Enumerator *getEnumerator() {
       return new Enumerator(*this);
    }
@@ -330,7 +328,7 @@ public:
 
       memoryPage = getmemoryPage(pageNum);
       if (memoryPage == NULL) {
-         print( "Allocating page #%2.2X [0x%06X-0x%06X]\n", pageNum, pageOffsetToAddress(pageNum, 0), pageOffsetToAddress(pageNum, PageSize-1));
+         Logging::print( "Allocating page #%2.2X [0x%06X-0x%06X]\n", pageNum, pageOffsetToAddress(pageNum, 0), pageOffsetToAddress(pageNum, PageSize-1));
          memoryPage = new MemoryPage<dataType>;
          memoryPages.insert(pair<const uint32_t, MemoryPage<dataType>*>(pageNum, memoryPage));
          // Update cache
@@ -353,7 +351,6 @@ public:
    //! Obtain the value of a Flash memory location
    //!
    //! @param address - 32-bit memory address
-   //! @param memorySpace  - memory space
    //!
    //! @return -dataType value (dummy value of 0xFF.. if unallocated address)
    //!
@@ -364,7 +361,6 @@ public:
    //!
    //! @param address - 32-bit memory byte address
    //! @param value   - dataType value to write to image
-   //! @param memorySpace  - memory space
    //!
    //! @note Allocates a memory location if necessary
    //!
@@ -422,6 +418,7 @@ private:
    USBDM_ErrorCode   loadElfFile(const string &fileName);
 
    USBDM_ErrorCode   loadS1S9File(const string &fileName);
+
    //! Maps Address to PageNum:offset
    //!
    //! @param address - 32-bit address
@@ -441,7 +438,7 @@ private:
    //! @param pageNum - page number portion of address
    //! @param offset  - offset within page
    //!
-   //! @return address - 32-bit address
+   //! @return 32-bit address
    //!
    //! @note - These values do NOT refer to the paging structure used by the target!
    //!
@@ -585,7 +582,7 @@ void FlashImageT<dataType>::dumpRange(uint32_t startAddress, uint32_t endAddress
    uint32_t addr;
    uint32_t rangeEnd;
 
-   print("Dump of [0x%06X-0x%06X]\n", startAddress, endAddress);
+   Logging::print("Dump of [0x%06X-0x%06X]\n", startAddress, endAddress);
    Enumerator iter(*this, startAddress);
    if (!iter.isValid()) {
       iter.nextValid();
@@ -595,17 +592,17 @@ void FlashImageT<dataType>::dumpRange(uint32_t startAddress, uint32_t endAddress
          addr = iter.getAddress() & ~0xF;
          iter.lastValid();
          rangeEnd = iter.getAddress();
-         print("        : 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\n"
+         Logging::print("        : 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\n"
                "==========================================================\n");
          while (addr <= rangeEnd) {
             if (((addr & 0x000F) == 0) || (addr == startAddress))
-               print("%8.8X:", addr);
+               Logging::print("%8.8X:", addr);
             if (isValid(addr))
-               print("%02X ", getValue(addr));
+               Logging::print("%02X ", getValue(addr));
             else
-               print("   ");
+               Logging::print("   ");
             if (((addr & 0x000F) == 0xF) || (addr == rangeEnd))
-               print("\n");
+               Logging::print("\n");
             addr++;
          }
       }
@@ -613,22 +610,22 @@ void FlashImageT<dataType>::dumpRange(uint32_t startAddress, uint32_t endAddress
          addr = iter.getAddress() & ~0xF;
          iter.lastValid();
          rangeEnd = iter.getAddress();
-         print("        : 0    1    2    3    4    5    6    7\n"
+         Logging::print("        : 0    1    2    3    4    5    6    7\n"
                "==================================================\n");
          while (addr <= rangeEnd) {
             if (((addr & 0x0007) == 0) || (addr == startAddress))
-               print("%8.8X:", addr);
+               Logging::print("%8.8X:", addr);
             if (isValid(addr))
-               print("%04X ", getValue(addr));
+               Logging::print("%04X ", getValue(addr));
             else
-               print("     ");
+               Logging::print("     ");
             if (((addr & 0x0007) == 0x7) || (addr == rangeEnd))
-               print("\n");
+               Logging::print("\n");
             addr++;
          }
       }
    } while (iter.nextValid());
-   print("\n\n");
+   Logging::print("\n\n");
 }
 
 //=====================================================================
@@ -638,7 +635,6 @@ void FlashImageT<dataType>::dumpRange(uint32_t startAddress, uint32_t endAddress
 //!   have a non-0xFF upper byte so used locations can be differentiated. \n
 //!
 //! @param fileName         : Path of file to load
-//! @param clearBuffer      : Clear the buffer before loading
 //!
 //! @return error code see \ref USBDM_ErrorCode
 //!
@@ -654,22 +650,22 @@ USBDM_ErrorCode FlashImageT<dataType>::loadS1S9File(const string &fileName) {
    FILE *fp = fopen(fileName.c_str(), "rt");
 
    if (fp == NULL) {
-      print("FlashImageT::MemorySpace::loadS1S9File(\"%s\") - Failed to open input file\n", fileName.c_str());
+      Logging::print("FlashImageT::MemorySpace::loadS1S9File(\"%s\") - Failed to open input file\n", fileName.c_str());
       return SFILE_RC_FILE_OPEN_FAILED;
    }
-   print("FlashImageT::MemorySpace::loadS1S9File(\"%s\")\n", fileName.c_str());
+   Logging::print("FlashImageT::MemorySpace::loadS1S9File(\"%s\")\n", fileName.c_str());
 
    unsigned int lineNum  = 0;
    while (fgets(buffer, sizeof(buffer)-1, fp) != NULL) {
       lineNum++;
-      //print("Input: %s",buffer);
+      //Logging::print("Input: %s",buffer);
       ptr = buffer;
       // Find first non-blank
       while ((*ptr == ' ') || (*ptr == '\t') || (*ptr == '\n') || (*ptr == '\r'))
          ptr++;
       // Check if S-record
       if ((*ptr != 'S') && (*ptr != 's')) {
-         print("FlashImageT::MemorySpace::loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
+         Logging::print("FlashImageT::MemorySpace::loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
          fclose(fp);
          if (fileRecognized) {
             return SFILE_RC_ILLEGAL_LINE;
@@ -692,7 +688,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadS1S9File(const string &fileName) {
             addr = hex4ToDecimal( &ptr );
             checkSum = (uint8_t)srecSize + (uint8_t)(addr>>8) + (uint8_t)addr;
             srecSize -= 3; // subtract 3 from byte count (srecSize + 2 addr bytes)
-            //print("(%2.2X)%4.4lX:\n",srecSize,addr);
+            //Logging::print("(%2.2X)%4.4lX:\n",srecSize,addr);
             break;
          case '2':
             // S2 = 24-bit address, data record
@@ -701,7 +697,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadS1S9File(const string &fileName) {
             addr = hex6ToDecimal( &ptr );
             checkSum = (uint8_t)srecSize + (uint8_t)(addr>>16) + (uint8_t)(addr>>8) + (uint8_t)addr;
             srecSize -= 4; // subtract 4 from byte count (srecSize + 3 addr bytes)
-            //print("srecSize=0x%02X, addr=0x%06X\n",srecSize,addr);
+            //Logging::print("srecSize=0x%02X, addr=0x%06X\n",srecSize,addr);
             break;
          case '3':
             // S3 32-bit address, data record
@@ -710,10 +706,10 @@ USBDM_ErrorCode FlashImageT<dataType>::loadS1S9File(const string &fileName) {
             addr = hex8ToDecimal( &ptr );
             checkSum = (uint8_t)srecSize + (uint8_t)(addr>>24) + (uint8_t)(addr>>16) + (uint8_t)(addr>>8) + (uint8_t)addr;
             srecSize -= 5; // subtract 5 from byte count (srecSize + 4 addr bytes)
-//            print("S3: srecSize=0x%02X, addr=0x%08X, initial chk=0x%02X\n", srecSize, addr, checkSum);
+//            Logging::print("S3: srecSize=0x%02X, addr=0x%08X, initial chk=0x%02X\n", srecSize, addr, checkSum);
             break;
          default:
-            print("FlashImageT::MemorySpace::loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
+            Logging::print("FlashImageT::MemorySpace::loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
             fclose(fp);
             if (fileRecognized) {
                return SFILE_RC_ILLEGAL_LINE;
@@ -729,7 +725,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadS1S9File(const string &fileName) {
             checkSum += (uint8_t)data;
             this->setValue(addr++, (uint8_t)data);
             srecSize--;
-            //         print("%02X",data);
+            //         Logging::print("%02X",data);
          }
       }
       else {
@@ -741,24 +737,24 @@ USBDM_ErrorCode FlashImageT<dataType>::loadS1S9File(const string &fileName) {
             checkSum += (uint8_t)data2;
             this->setValue(addr++, (uint16_t)((data2<<8)+data1)); // Assumes little-endian format
             srecSize -= 2;
-   //         print("%02X",data);
+   //         Logging::print("%02X",data);
          }
       }
       // Get checksum from record
       uint8_t data = hex2ToDecimal( &ptr );
       if ((uint8_t)~checkSum != data) {
-         print("FlashImageT::MemorySpace::loadS1S9File() - illegal line #%5d:\n%s", lineNum, buffer);
-         print("FlashImageT::MemorySpace::loadS1S9File() checksum error, Checksum=0x%02X, "
+         Logging::print("FlashImageT::MemorySpace::loadS1S9File() - illegal line #%5d:\n%s", lineNum, buffer);
+         Logging::print("FlashImageT::MemorySpace::loadS1S9File() checksum error, Checksum=0x%02X, "
                "Calculated Checksum=0x%02X\n",
                data, (uint8_t)~checkSum);
          fclose(fp);
          return SFILE_RC_CHECKSUM;
       }
       fileRecognized = true; // Read at least 1 record - assume it's a SREC file
-      //print("\n");
+      //Logging::print("\n");
    }
    fclose(fp);
-//   print("FlashImageT::MemorySpace::loadS1S9File()\n");
+//   Logging::print("FlashImageT::MemorySpace::loadS1S9File()\n");
 //   printMemoryMap();
    return SFILE_RC_OK;
 }
@@ -773,7 +769,6 @@ USBDM_ErrorCode FlashImageT<dataType>::loadS1S9File(const string &fileName) {
 //! @param fOffset       : Offset to block in file
 //! @param size          : Size of block in bytes
 //! @param addr          : Bytes address to load block
-//! @param wordAddresses : ??
 //!
 template <class dataType>
 USBDM_ErrorCode FlashImageT<dataType>::loadElfBlock(FILE       *fp,
@@ -785,13 +780,13 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfBlock(FILE       *fp,
    addr /= 2;
 #endif
    if (size == 0) {
-      print("FlashImageT::loadElfBlock(): [empty]\n");
+      Logging::print("FlashImageT::loadElfBlock(): [empty]\n");
    }
    else {
 #if TARGET == MC56F80xx
-      print("FlashImageT::loadElfBlock(): [0x%08X..0x%08X]\n", addr, addr+size/2-1);
+      Logging::print("FlashImageT::loadElfBlock(): [0x%08X..0x%08X]\n", addr, addr+size/2-1);
 #else
-      print("FlashImageT::loadElfBlock(): [0x%08X..0x%08X]\n", addr, addr+size-1);
+      Logging::print("FlashImageT::loadElfBlock(): [0x%08X..0x%08X]\n", addr, addr+size-1);
 #endif
    }
    fseek(fp, fOffset, SEEK_SET);
@@ -803,7 +798,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfBlock(FILE       *fp,
       }
       size_t sz;
       if ((sz=fread(buff, 1, blockSize, fp)) != blockSize) {
-         print("FlashImageT::MemorySpace::loadElfFile() - Failed - Undersize read of Block (Expected %d, read %d)\n", blockSize, sz);
+         Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Undersize read of Block (Expected %d, read %d)\n", blockSize, sz);
          return SFILE_RC_ELF_FORMAT_ERROR;
       }
 //#if TARGET == MC56F80xx
@@ -833,7 +828,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfBlock(FILE       *fp,
 //!
 template <class dataType>
 void FlashImageT<dataType>::printElfHeader(Elf32_Ehdr *elfHeader) {
-   print("e_type      = 0x%04X\n"
+   Logging::print("e_type      = 0x%04X\n"
          "e_machine   = 0x%04X\n"
          "e_version   = 0x%08X\n"
          "e_entry     = 0x%08X\n"
@@ -887,11 +882,11 @@ void FlashImageT<dataType>::fixElfHeaderSex(Elf32_Ehdr *elfHeader) {
 //=====================================================================
 //! Print ELF Program Header
 //!
-//! @param elfHeader -  ELF Program header to print
+//! @param programHeader -  ELF Program header to print
 //!
 template <class dataType>
 void FlashImageT<dataType>::printElfProgramHeader(Elf32_Phdr *programHeader) {
-   print("===================\n"
+   Logging::print("===================\n"
          "p_type   = 0x%08X(%s)\n"
          "p_offset = 0x%08X\n"
          "p_vaddr  = 0x%08X\n"
@@ -931,8 +926,7 @@ void FlashImageT<dataType>::fixElfProgramHeaderSex(Elf32_Phdr *elfHeader) {
 //=====================================================================
 //!   Load a ELF file into the buffer. \n
 //!
-//! @param fileName         : Path of file to load
-//! @param wordAddresses : ??
+//! @param filePath         : Path of file to load
 //!
 //! @return error code see \ref USBDM_ErrorCode
 //!
@@ -940,29 +934,29 @@ template <class dataType>
 USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
    FILE *fp = fopen(filePath.c_str(), "rb");
    if (fp == NULL) {
-      print("FlashImageT::MemorySpace::loadElfFile(\"%s\") - Failed to open input file\n", filePath.c_str());
+      Logging::print("FlashImageT::MemorySpace::loadElfFile(\"%s\") - Failed to open input file\n", filePath.c_str());
       return SFILE_RC_FILE_OPEN_FAILED;
    }
-   print("FlashImageT::MemorySpace::loadElfFile(\"%s\")\n", filePath.c_str());
+   Logging::print("FlashImageT::MemorySpace::loadElfFile(\"%s\")\n", filePath.c_str());
 
    Elf32_Ehdr elfHeader;
    if (fread(&elfHeader, 1, sizeof(elfHeader), fp) != sizeof(elfHeader)) {
       return SFILE_RC_ELF_FORMAT_ERROR;
    }
-//   print("FlashImageT::MemorySpace::loadElfFile() - \n");
+//   Logging::print("FlashImageT::MemorySpace::loadElfFile() - \n");
 //   printElfHeader(&elfHeader);
 
    if ((elfHeader.e_ident[EI_MAG0] != ELFMAG0V) ||(elfHeader.e_ident[EI_MAG1] != ELFMAG1V) ||
        (elfHeader.e_ident[EI_MAG2] != ELFMAG2V) ||(elfHeader.e_ident[EI_MAG3] != ELFMAG3V) ||
        (elfHeader.e_ident[EI_CLASS] != ELFCLASS32)) {
-      print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid  format\n", filePath.c_str());
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid  format\n", filePath.c_str());
       fclose(fp);
       return SFILE_RC_UNKNOWN_FILE_FORMAT;
    }
    littleEndian = elfHeader.e_ident[EI_DATA] == ELFDATA2LSB;
    fixElfHeaderSex(&elfHeader);
 
-//   print("FlashImageT::MemorySpace::loadElfFile() - elfHeader.e_machine = 0x%X(%d) \n", elfHeader.e_machine, elfHeader.e_machine);
+//   Logging::print("FlashImageT::MemorySpace::loadElfFile() - elfHeader.e_machine = 0x%X(%d) \n", elfHeader.e_machine, elfHeader.e_machine);
 //   printElfHeader(&elfHeader);
 
 #if TARGET == HCS08
@@ -989,7 +983,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
    return SFILE_RC_UNKNOWN_FILE_FORMAT;
 #endif
    if ((elfHeader.e_type != ET_EXEC) || (elfHeader.e_phoff == 0) || (elfHeader.e_phentsize == 0) || (elfHeader.e_phnum == 0)) {
-      print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid  format\n", filePath.c_str());
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid  format\n", filePath.c_str());
       fclose(fp);
       return SFILE_RC_ELF_FORMAT_ERROR;
    }
@@ -999,7 +993,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
       fseek(fp, elfHeader.e_phoff+entry*elfHeader.e_phentsize, SEEK_SET);
       size_t sz;
       if ((sz=fread(&programHeader, 1, sizeof(programHeader), fp)) != sizeof(programHeader)) {
-         print("FlashImageT::MemorySpace::loadElfFile() - Failed - Undersize read of Header (Expected %d, read %d)\n", sizeof(programHeader), sz);
+         Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Undersize read of Header (Expected %d, read %d)\n", sizeof(programHeader), sz);
          return SFILE_RC_ELF_FORMAT_ERROR;
       }
       fixElfProgramHeaderSex(&programHeader);
@@ -1019,7 +1013,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
       }
    }
    fclose(fp);
-//   print("FlashImageT::MemorySpace::loadElfFile()\n");
+//   Logging::print("FlashImageT::MemorySpace::loadElfFile()\n");
 //   printMemoryMap();
    return SFILE_RC_OK;
 }
@@ -1027,8 +1021,8 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
 //=====================================================================
 //!   Load a S19 or ELF file into the buffer. \n
 //!
-//! @param fileName      : Path of file to load
-//! @param wordAddresses : ??
+//! @param filePath      : Path of file to load
+//! @param clearBuffer   : Clear buffer before loading
 //!
 //! @return error code see \ref USBDM_ErrorCode
 //!
@@ -1041,7 +1035,7 @@ USBDM_ErrorCode  FlashImageT<dataType>::loadFile(const string &filePath,
    if (clearBuffer) {
       initData();
    }
-   print("FlashImageT::MemorySpace::loadFile(\"%s\")\n", filePath.c_str());
+   Logging::print("FlashImageT::MemorySpace::loadFile(\"%s\")\n", filePath.c_str());
 
    // Try ELF Format
    USBDM_ErrorCode rc = loadElfFile(filePath);
@@ -1049,7 +1043,7 @@ USBDM_ErrorCode  FlashImageT<dataType>::loadFile(const string &filePath,
       // Try SREC Format if not recognized as ELF
       rc = loadS1S9File(filePath);
    }
-   //   print("FlashImageT::loadFile()\n"
+   //   Logging::print("FlashImageT::loadFile()\n"
    //         "Lowest used Address \t = 0x%4.4X\n"
    //         "Highest used Address\t = 0x%4.4X\n",
    //         flashImageDescription->firstAddr,  // first non-0xFF address
@@ -1069,14 +1063,14 @@ USBDM_ErrorCode  FlashImageT<dataType>::loadFile(const string &filePath,
 template <class dataType>
 void FlashImageT<dataType>::printMemoryMap() {
    Enumerator *enumerator = getEnumerator();
-   print("FlashImageT::MemorySpace::printMemoryMap()\n");
+   Logging::print("FlashImageT::MemorySpace::printMemoryMap()\n");
    while (enumerator->isValid()) {
       // Start address of block
       uint32_t startBlock = enumerator->getAddress();
       // Find end of block
       enumerator->lastValid();
       uint32_t endBlock = enumerator->getAddress();
-      print("Memory Block[0x%06X...0x%06X]\n", startBlock, endBlock);
+      Logging::print("Memory Block[0x%06X...0x%06X]\n", startBlock, endBlock);
       // Move to start of next occupied range
       enumerator->nextValid();
    }
@@ -1118,11 +1112,11 @@ USBDM_ErrorCode FlashImageT<dataType>::loadData(uint32_t       bufferSize,
                                                 bool           dontOverwrite) {
    uint32_t bufferAddress;
 
-   //   print("FlashImageT::loadData(0x%04X...0x%04X)\n", address, address+bufferSize-1);
+   //   Logging::print("FlashImageT::loadData(0x%04X...0x%04X)\n", address, address+bufferSize-1);
    bufferAddress = 0;
    while (bufferAddress < bufferSize){
 //      if (!allocatePage(address)) {
-//         print("loadData() - Address is too large = 0x%08X > 0x%08lX\n",
+//         Logging::print("loadData() - Address is too large = 0x%08X > 0x%08lX\n",
 //               address, MAX_SFILE_ADDRESS);
 //
 //         return SFILE_RC_ADDRESS_TOO_LARGE;
@@ -1153,7 +1147,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadDataBytes(uint32_t        bufferSize,
                                                      const uint8_t   data[],
                                                      bool            dontOverwrite) {
 
-//    print("FlashImageT::loadData(0x%04X...0x%04X)\n", address, address+bufferSize-1);
+//    Logging::print("FlashImageT::loadData(0x%04X...0x%04X)\n", address, address+bufferSize-1);
    if (sizeof(dataType) == 1) {
       // Copy directly to buffer
       uint32_t bufferAddress = 0;
@@ -1163,13 +1157,13 @@ USBDM_ErrorCode FlashImageT<dataType>::loadDataBytes(uint32_t        bufferSize,
          if (!this->isValid(address) || !dontOverwrite) {
             this->setValue(address, value);
          }
-//         print("FlashImageT::loadDataBytes() - image[0x%06X] <= 0x%04X\n", address, value);
+//         Logging::print("FlashImageT::loadDataBytes() - image[0x%06X] <= 0x%04X\n", address, value);
          address++;
       }
    }
    else {
       if ((bufferSize&0x01) != 0) {
-         print("FlashImageT::loadDataBytes() - Error: Odd buffer size\n");
+         Logging::print("FlashImageT::loadDataBytes() - Error: Odd buffer size\n");
          return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
       }
       // Convert to little-endian native & copy to buffer
@@ -1178,11 +1172,11 @@ USBDM_ErrorCode FlashImageT<dataType>::loadDataBytes(uint32_t        bufferSize,
          unsigned value;
          value = data[bufferAddress++];
          value = (data[bufferAddress++]<<8)+value;
-//         print("FlashImageT::loadDataBytes() - image[0x%06X] <= 0x%04X\n", address, value);
+//         Logging::print("FlashImageT::loadDataBytes() - image[0x%06X] <= 0x%04X\n", address, value);
          if (!this->isValid(address) || !dontOverwrite) {
             this->setValue(address, value);
          }
-//         print("FlashImageT::loadDataBytes() - image[0x%06X] <= 0x%04X\n", address, value);
+//         Logging::print("FlashImageT::loadDataBytes() - image[0x%06X] <= 0x%04X\n", address, value);
          address++;
       }
    }
@@ -1204,11 +1198,11 @@ template <class dataType>
 bool FlashImageT<dataType>::Enumerator::nextValid() {
    const MemoryPage<dataType> *memoryPage = NULL;
    uint16_t pageNum, offset;
-//   print("enumerator::nextValid(start=0x%06X)\n", address);
+//   Logging::print("enumerator::nextValid(start=0x%06X)\n", address);
    address++;
    do {
       addressToPageOffset(address, pageNum, offset);
-//      print("enumerator::nextValid() checking 0x%06X)\n", address);
+//      Logging::print("enumerator::nextValid() checking 0x%06X)\n", address);
 
       // At start of page or haven't checked this page yet
       if ((offset == 0) || (memoryPage == NULL)) {
@@ -1222,19 +1216,19 @@ bool FlashImageT<dataType>::Enumerator::nextValid() {
       }
       if (memoryPage == NULL) {
          // Unallocated page - move to start of next page
-//         print("enumerator::nextValid(a=0x%06X) - skipping unallocated page #0x%X\n", address, pageNum);
+//         Logging::print("enumerator::nextValid(a=0x%06X) - skipping unallocated page #0x%X\n", address, pageNum);
          address += PageSize;
          address &= ~PageMask;
          if (address > memoryImage.lastAllocatedAddress) {
 //            address = memoryImage.lastAllocatedAddress;
-//            print("enumerator::nextValid(end  =0x%06X), no remaining valid addresses\n", address);
+//            Logging::print("enumerator::nextValid(end  =0x%06X), no remaining valid addresses\n", address);
             return false;
          }
          continue;
       }
       // Check if valid byte in page
       if (memoryPage->isValid(offset)) {
-//         print("enumerator::nextValid(end  =0x%06X)\n", address);
+//         Logging::print("enumerator::nextValid(end  =0x%06X)\n", address);
          return true;
       }
       address++;
@@ -1253,18 +1247,18 @@ bool FlashImageT<dataType>::Enumerator::nextValid() {
 template <class dataType>
 void FlashImageT<dataType>::Enumerator::lastValid() {
    uint16_t pageNum, offset;
-//   print("enumerator::lastValid(start=0x%06X)\n", address);
+//   Logging::print("enumerator::lastValid(start=0x%06X)\n", address);
    addressToPageOffset(address, pageNum, offset);
    typename map<uint32_t, MemoryPage<dataType> *>::iterator iter = memoryImage.memoryPages.find(pageNum);
    if (iter == memoryImage.memoryPages.end()) {
-//      print("enumerator::lastValid(end=0x%06X), start address not allocated\n", address);
+//      Logging::print("enumerator::lastValid(end=0x%06X), start address not allocated\n", address);
       return;
    }
    MemoryPage<dataType> *memoryPage = iter->second;
    do {
-//      print("enumerator::lastValid() checking 0x%06X)\n", address);
+//      Logging::print("enumerator::lastValid() checking 0x%06X)\n", address);
       if (address == memoryImage.lastAllocatedAddress) {
-//         print("enumerator::lastValid(end=0x%06X), end of memory\n", address);
+//         Logging::print("enumerator::lastValid(end=0x%06X), end of memory\n", address);
          return;
       }
 
@@ -1272,7 +1266,7 @@ void FlashImageT<dataType>::Enumerator::lastValid() {
 
       // Check if at page boundary or probing one ahead fails
       if ((offset == PageSize-1) || !memoryPage->isValid(++offset)) {
-//         print("enumerator::lastValid(end=0x%06X)\n", address);
+//         Logging::print("enumerator::lastValid(end=0x%06X)\n", address);
          return;
       }
      address++;

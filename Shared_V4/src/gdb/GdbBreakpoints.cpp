@@ -105,7 +105,7 @@ static memoryBreakInfo *findMemoryBreakpoint(uint32_t address) {
         bpPtr < memoryBreakpoints+MAX_MEMORY_BREAKPOINTS;
         bpPtr++) {
 //      if (bpPtr->inUse)
-//         print("findMemoryBreakpoint() - checking PC=0x%08X against 0x%08X\n",
+//         Logging::print("findMemoryBreakpoint() - checking PC=0x%08X against 0x%08X\n",
 //                           address, bpPtr->address);
       if (bpPtr->inUse && (bpPtr->address == address))
          return bpPtr;
@@ -159,7 +159,7 @@ static hardwareBreakInfo *findHardwareBreakpoint(uint32_t address) {
         bpPtr < hardwareBreakpoints+MAX_HARDWARE_BREAKPOINTS;
         bpPtr++) {
 //      if (bpPtr->inUse)
-//         print("findHardwareBreakpoint() - checking PC=0x%08X against 0x%08X\n",
+//         Logging::print("findHardwareBreakpoint() - checking PC=0x%08X against 0x%08X\n",
 //                           address, bpPtr->address);
       if (bpPtr->inUse && (bpPtr->address == address))
          return bpPtr;
@@ -237,7 +237,7 @@ static dataBreakInfo *findFreeDataWatchPoint(void) {
 //! @note writeWatch, readWatch, accessWatch not currently working
 //!
 int insertBreakpoint(breakType type, uint32_t address, unsigned size) {
-   print("insertBreakpoint(%s, a=%08X, s=%d)\n", getBreakpointName(type), address, size);
+   Logging::print("insertBreakpoint(%s, a=%08X, s=%d)\n", getBreakpointName(type), address, size);
 
    switch (type) {
    case memoryBreak: {
@@ -300,7 +300,7 @@ int insertBreakpoint(breakType type, uint32_t address, unsigned size) {
 //! @param size     not used
 //!
 int removeBreakpoint(breakType type, uint32_t address, unsigned size) {
-   print("removeBreakpoint(%s, a=%08X, s=%d)\n", getBreakpointName(type), address, size);
+   Logging::print("removeBreakpoint(%s, a=%08X, s=%d)\n", getBreakpointName(type), address, size);
    switch (type) {
    case memoryBreak: {
       memoryBreakInfo *bpPtr = findMemoryBreakpoint(address);
@@ -311,7 +311,7 @@ int removeBreakpoint(breakType type, uint32_t address, unsigned size) {
       bpPtr->address   = 0;
       bpPtr->opcode[0] = 0;
       bpPtr->opcode[1] = 0;
-      print("removeBreakpoint(t=MEM, a=%08X, s=%d) - done\n", address, size);
+      Logging::print("removeBreakpoint(t=MEM, a=%08X, s=%d) - done\n", address, size);
       return true; // Done
    }
    break;
@@ -321,7 +321,7 @@ int removeBreakpoint(breakType type, uint32_t address, unsigned size) {
          return false; // Non-existent breakpoint
       }
       bpPtr->inUse     = false;
-      print("removeBreakpoint(t=HW, a=%08X, s=%d) - done\n", address, size);
+      Logging::print("removeBreakpoint(t=HW, a=%08X, s=%d) - done\n", address, size);
       return true; // Done
       }
       break;
@@ -358,7 +358,7 @@ static bool breakpointsActive = false;
 //! modifying target breakpoint hardware
 //!
 void activateBreakpoints(void) {
-   print("activateBreakpoints()\n");
+   Logging::print("activateBreakpoints()\n");
    static const uint8_t haltOpcode[] = {0x4a, 0xc8};
    memoryBreakInfo *bpPtr;
    if (breakpointsActive)
@@ -367,7 +367,7 @@ void activateBreakpoints(void) {
         bpPtr < memoryBreakpoints+MAX_MEMORY_BREAKPOINTS;
         bpPtr++) {
       if (bpPtr->inUse) {
-         print("activateBreakpoints(%s@%08X)\n", getBreakpointName(memoryBreak), bpPtr->address);
+         Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(memoryBreak), bpPtr->address);
          USBDM_ReadMemory(2,2,bpPtr->address,bpPtr->opcode);
          USBDM_WriteMemory(2,2,bpPtr->address,haltOpcode);
          breakpointsActive = true;
@@ -379,14 +379,14 @@ void activateBreakpoints(void) {
       USBDM_WriteDReg(CFVx_DRegPBR0, hardwareBreakpoints[0].address&~0x1);
       USBDM_WriteDReg(CFVx_DRegPBMR, 0x00000000);
       breakpointsActive = true;
-      print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
+      Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
                                               hardwareBreakpoints[0].address&~0x1);
    }
    if (hardwareBreakpoints[1].inUse) {
       tdrValue |= TDR_TRC_HALT|TDR_L1T|TDR_L1EBL|TDR_L1EPC;
       USBDM_WriteDReg(CFVx_DRegPBR1, hardwareBreakpoints[1].address|0x1);
       breakpointsActive = true;
-      print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
+      Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
                                               hardwareBreakpoints[1].address&~0x1);
    }
    else {
@@ -396,7 +396,7 @@ void activateBreakpoints(void) {
       tdrValue |= TDR_TRC_HALT|TDR_L1T|TDR_L1EBL|TDR_L1EPC;
       USBDM_WriteDReg(CFVx_DRegPBR2, hardwareBreakpoints[2].address|0x1);
       breakpointsActive = true;
-      print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
+      Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
                                               hardwareBreakpoints[2].address&~0x1);
    }
    else {
@@ -406,7 +406,7 @@ void activateBreakpoints(void) {
       tdrValue |= TDR_TRC_HALT|TDR_L1T|TDR_L1EBL|TDR_L1EPC;
       USBDM_WriteDReg(CFVx_DRegPBR3, hardwareBreakpoints[3].address|0x1);
       breakpointsActive = true;
-      print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
+      Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
                                               hardwareBreakpoints[3].address&~0x1);
    }
    else {
@@ -425,7 +425,7 @@ void activateBreakpoints(void) {
 //! modifying target breakpoint hardware.
 //!
 void deactivateBreakpoints(void) {
-   print("deactivateBreakpoints()\n");
+   Logging::print("deactivateBreakpoints()\n");
    memoryBreakInfo *bpPtr;
    if (!breakpointsActive)
       return;
@@ -433,7 +433,7 @@ void deactivateBreakpoints(void) {
         bpPtr < memoryBreakpoints+MAX_MEMORY_BREAKPOINTS;
         bpPtr++) {
       if (bpPtr->inUse) {
-         print("deactivateBreakpoints(MEM@%08X)\n", bpPtr->address);
+         Logging::print("deactivateBreakpoints(MEM@%08X)\n", bpPtr->address);
          USBDM_WriteMemory(2,2,bpPtr->address,bpPtr->opcode);
       }
    }
@@ -450,7 +450,7 @@ void checkAndAdjustBreakpointHalt(void) {
    USBDM_ReadPC(&pcAddress);
    pcAddress -= 2;
    if (breakpointsActive && (findMemoryBreakpoint(pcAddress) != NULL)) {
-      print("checkAndAdjustBreakpointHalt() - adjusting PC=%08lX\n", pcAddress);
+      Logging::print("checkAndAdjustBreakpointHalt() - adjusting PC=%08lX\n", pcAddress);
       USBDM_WritePC(pcAddress);
    }
 }
@@ -469,7 +469,7 @@ const uint8_t *getFpCompAddress(uint32_t address) {
 //! modifying target breakpoint hardware
 //!
 void activateBreakpoints(void) {
-   print("activateBreakpoints()\n");
+   Logging::print("activateBreakpoints()\n");
    memoryBreakInfo *bpPtr;
    if (breakpointsActive)
       return;
@@ -478,7 +478,7 @@ void activateBreakpoints(void) {
         bpPtr < memoryBreakpoints+MAX_MEMORY_BREAKPOINTS;
         bpPtr++) {
       if (bpPtr->inUse) {
-         print("activateBreakpoints(%s@%08X)\n", getBreakpointName(memoryBreak), bpPtr->address);
+         Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(memoryBreak), bpPtr->address);
          USBDM_ReadMemory(sizeof(haltOpcode),sizeof(haltOpcode),bpPtr->address,bpPtr->opcode);
          USBDM_WriteMemory(sizeof(haltOpcode),sizeof(haltOpcode),bpPtr->address,haltOpcode);
          breakpointsActive = true;
@@ -488,7 +488,7 @@ void activateBreakpoints(void) {
    uint32_t fp_ctrl = FP_CTRL_DISABLE;
    for (int breakPtNum=0; breakPtNum<MAX_HARDWARE_BREAKPOINTS; breakPtNum++) {
       if (hardwareBreakpoints[breakPtNum].inUse) {
-         print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
+         Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
                                                  hardwareBreakpoints[breakPtNum].address&~0x1);
          fp_ctrl = FP_CTRL_ENABLE;
          USBDM_WriteMemory(4, 4, FP_COMP0+4*breakPtNum, getFpCompAddress(hardwareBreakpoints[breakPtNum].address));
@@ -516,9 +516,9 @@ void activateBreakpoints(void) {
          case accessWatch: mode = DWT_FUNCTION_RW_WATCH;    break;
          default : break;
          }
-         print("activateBreakpoints(%s@%08X)\n", getBreakpointName(dataWatchPoints[watchPtNum].type),
+         Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(dataWatchPoints[watchPtNum].type),
                                                  dataWatchPoints[watchPtNum].address);
-         print("activateBreakpoints(%s@%08X, bpSize=%d, sizeValue=%d)\n",
+         Logging::print("activateBreakpoints(%s@%08X, bpSize=%d, sizeValue=%d)\n",
                getBreakpointName(dataWatchPoints[watchPtNum].type),
                dataWatchPoints[watchPtNum].address&(~(bpSize-1)),
                bpSize, sizeValue );
@@ -537,7 +537,7 @@ void activateBreakpoints(void) {
 //! modifying target breakpoint hardware.
 //!
 void deactivateBreakpoints(void) {
-   print("deactivateBreakpoints()\n");
+   Logging::print("deactivateBreakpoints()\n");
    memoryBreakInfo *bpPtr;
    if (!breakpointsActive)
       return;
@@ -546,7 +546,7 @@ void deactivateBreakpoints(void) {
         bpPtr < memoryBreakpoints+MAX_MEMORY_BREAKPOINTS;
         bpPtr++) {
       if (bpPtr->inUse) {
-         print("deactivateBreakpoints(MEM@%08X)\n", bpPtr->address);
+         Logging::print("deactivateBreakpoints(MEM@%08X)\n", bpPtr->address);
          USBDM_WriteMemory(sizeof(haltOpcode),sizeof(haltOpcode),bpPtr->address,bpPtr->opcode);
       }
    }

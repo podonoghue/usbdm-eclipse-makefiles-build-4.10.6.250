@@ -80,7 +80,7 @@ bool JS16_BootloaderApp::OnInit(void) {
 
    SetAppName(_("usbdm")); // So app files are kept in the correct directory
 
-   openLogFile("JS16_Bootloader.log");
+   Logging::openLogFile("JS16_Bootloader.log");
 
 #ifndef _WIN32
    ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_("/usr/local"));
@@ -96,23 +96,23 @@ bool JS16_BootloaderApp::OnInit(void) {
 }
 
 int JS16_BootloaderApp::OnRun(void) {
-   print("FlashProgrammerApp::OnRun()\n");
+   Logging::print("FlashProgrammerApp::OnRun()\n");
    int exitcode = wxApp::OnRun();
    if (exitcode != 0)
       return exitcode;
    // Everything is done in OnInit()!
-   print("FlashProgrammerApp::OnRun() - return value = %d\n", returnValue);
+   Logging::print("FlashProgrammerApp::OnRun() - return value = %d\n", returnValue);
    return returnValue;
 }
 
 int JS16_BootloaderApp::OnExit(void) {
 
-   print("JS16_BootloaderApp::OnExit()\n");
+   Logging::print("JS16_BootloaderApp::OnExit()\n");
    return wxApp::OnExit();
 }
 
 JS16_BootloaderApp::~JS16_BootloaderApp() {
-   print("JS16_BootloaderApp::~JS16_BootloaderApp()\n");
-   closeLogFile();
+   Logging::print("JS16_BootloaderApp::~JS16_BootloaderApp()\n");
+   Logging::closeLogFile();
 }
 

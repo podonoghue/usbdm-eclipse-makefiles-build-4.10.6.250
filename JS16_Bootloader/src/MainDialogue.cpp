@@ -108,7 +108,7 @@ MainDialogue::~MainDialogue() {
 void MainDialogue::OnProgramButtonClick( wxCommandEvent& event ) {
    int bdmType = m_radioBox->GetSelection();
 
-   print("MainDialogue::OnProgramButtonClick() - Loading File %s\n",
+   Logging::print("MainDialogue::OnProgramButtonClick() - Loading File %s\n",
          bdmInfo[bdmType].filename);
    ICP_ErrorType rc = ProgramFlash(bdmInfo[bdmType].filename);
    if (rc != ICP_RC_OK) {
@@ -129,6 +129,6 @@ void MainDialogue::setDescription(int bdmType) {
 
 void MainDialogue::OnRadioBox( wxCommandEvent& event ) {
    int bdmType = m_radioBox->GetSelection();
-   print("MainDialogue::OnRadioBox() - bdmType = %s\n", bdmInfo[bdmType].description);
+   Logging::print("MainDialogue::OnRadioBox() - bdmType = %s\n", bdmInfo[bdmType].description);
    setDescription(bdmType);
 }

@@ -1,4 +1,4 @@
-@echo on
+@echo off
 
 rem Where Eclipse files are
 set ECLIPSE_HOME=.

@@ -296,7 +296,7 @@ void ColdfireUnlockerPanel::OnInitChainButtonClick( wxCommandEvent& event )
  */
 void ColdfireUnlockerPanel::OnJtagDeviceChoiceSelected( wxCommandEvent& event )
 {
-   print("IDC_JTAG_DEVICE_COMBO\n");
+   Logging::print("IDC_JTAG_DEVICE_COMBO\n");
    updateDeviceDetails();
 }
 
@@ -305,7 +305,7 @@ void ColdfireUnlockerPanel::OnJtagDeviceChoiceSelected( wxCommandEvent& event )
  */
 void ColdfireUnlockerPanel::OnIrLengthSpinctrlUpdated( wxSpinEvent& event )
 {
-   //print("IDC_IRLENGTH_EDIT\n");
+   //Logging::print("IDC_IRLENGTH_EDIT\n");
    unsigned int irLength = event.GetPosition();
    JTAG_Chain::getTargetDevice().irLength = irLength;
 }
@@ -488,7 +488,7 @@ void ColdfireUnlockerPanel::updateEraseParameters() {
 
    int index = targetDeviceChoiceControl->GetSelection();
 
-   print("updateEraseParameters(): index = %d\n", index);
+   Logging::print("updateEraseParameters(): index = %d\n", index);
 
    if (index == wxNOT_FOUND) {
       maximumFrequencyTextControl->SetValue(_("Invalid"));
@@ -583,7 +583,7 @@ void ColdfireUnlockerPanel::updateDeviceDetails() {
       }
 
    sprintf(buff, "Desc : %s", JTAG_Chain::getTargetDevice().deviceData->description);
-   //print("%s\n",buff);
+   //Logging::print("%s\n",buff);
    descriptionStaticControl->SetLabel(wxString::FromAscii(buff));
 
    targetDeviceChoiceControl->SetSelection(JTAG_Chain::getTargetDevice().deviceData->index);
@@ -605,7 +605,7 @@ void ColdfireUnlockerPanel::loadJTAGDeviceList() {
    unsigned int device;
    char buff[100];
 
-   print( "loadJTAGDevicesList():Identifying devices\n");
+   Logging::print( "loadJTAGDevicesList():Identifying devices\n");
    JTAG_Chain::initialiseJTAGChain();
 
    // Populate JTAG device list
@@ -669,7 +669,7 @@ void ColdfireUnlockerPanel::findDeviceInJTAGChain(unsigned int deviceNum) {
    unsigned int irStart, irEnd;
    int confirmStart, confirmEnd;
 
-   print( "findDeviceInJTAGChain()\n");
+   Logging::print( "findDeviceInJTAGChain()\n");
 
    irLength = JTAG_Chain::irLength;
 
@@ -679,47 +679,47 @@ void ColdfireUnlockerPanel::findDeviceInJTAGChain(unsigned int deviceNum) {
    USBDM_JTAG_Reset();
    USBDM_JTAG_SelectShift(JTAG_SHIFT_IR);
    USBDM_JTAG_Read(irLength, JTAG_STAY_SHIFT, irReg.getArray());
-   print( "findDeviceInJTAGChain(): JTAG IRs => %s\n", irReg.toBinString());
+   Logging::print( "findDeviceInJTAGChain(): JTAG IRs => %s\n", irReg.toBinString());
 
    // The JTAG standard requires the 1st two bits in the IR to be "01".
    // Read the JTAG IR chain looking for a "01" pattern which MAY indicate the
    // Boundary b/w two device IRs
    //===========================================================================
    //
-   print( "             0    1    2    3    4    5    6    7    8\n");
-   print( "Boundary @");
+   Logging::print( "             0    1    2    3    4    5    6    7    8\n");
+   Logging::print( "Boundary @");
 
    irCount = 0;
    bitNum = 0;
    lastBit = 0;
    do {
-      //print( "bit[%3d] => %d\n", bitNum, irReg[bitNum]);
+      //Logging::print( "bit[%3d] => %d\n", bitNum, irReg[bitNum]);
       if ((irReg[bitNum] == 0) && (lastBit == 1)) {
-         print( " %3d,", bitNum-1);
+         Logging::print( " %3d,", bitNum-1);
          boundaries[irCount++] = bitNum-1;
       }
       lastBit = irReg[bitNum];
    } while (bitNum++ < irReg.getLength());
 
-   print( "\n");
+   Logging::print( "\n");
 
    if (irCount < JTAG_Chain::deviceCount) { // Not enough "01" patterns!
-      print( "Can't find sufficient IRs!\n");
+      Logging::print( "Can't find sufficient IRs!\n");
    }
 
    // Check for special cases
    if (deviceNum == 0) { // 1st in chain
-      print("First in chain\n");
+      Logging::print("First in chain\n");
       irStart = 0;
       irEnd   = JTAG_Chain::devices[deviceNum].deviceData->instructionLength-1;
    }
    else if (deviceNum == JTAG_Chain::deviceCount-1) { // last in chain
-      print("Last in chain\n");
+      Logging::print("Last in chain\n");
       irStart = irLength-JTAG_Chain::devices[deviceNum].deviceData->instructionLength;
       irEnd   = irLength-1;
    }
    else if (irCount == JTAG_Chain::deviceCount) { // Same # of "01" as devices!
-      print("IR pattern matches expected pattern\n");
+      Logging::print("IR pattern matches expected pattern\n");
       irStart = boundaries[deviceNum];
       irEnd   = boundaries[deviceNum]+JTAG_Chain::devices[deviceNum].deviceData->instructionLength;
    }
@@ -730,29 +730,29 @@ void ColdfireUnlockerPanel::findDeviceInJTAGChain(unsigned int deviceNum) {
       usefulIrCount = 0;
       for (oIndex=deviceNum; oIndex<=irCount-(JTAG_Chain::deviceCount-deviceNum); oIndex++) {
          for (iIndex = oIndex+1; iIndex<=irCount-(JTAG_Chain::deviceCount-deviceNum)+1; iIndex++) {
-            print( "Trying %d-%d", oIndex, iIndex);
+            Logging::print( "Trying %d-%d", oIndex, iIndex);
             if (boundaries[iIndex]-boundaries[oIndex] ==
                 JTAG_Chain::devices[deviceNum].deviceData->instructionLength) {
                usefulBoundaries[usefulIrCount].start = boundaries[oIndex];
                usefulBoundaries[usefulIrCount++].end = boundaries[iIndex]-1;
-               print( " X\n");
+               Logging::print( " X\n");
             }
             else
-               print( "\n");
+               Logging::print( "\n");
          }
       }
       if (usefulIrCount == 0) {
-         print( "No suitable boundaries found\n");
+         Logging::print( "No suitable boundaries found\n");
          irStart = 0;
          irEnd   = 0;
       }
       else if (usefulIrCount == 1) {
-         print( "Only 1 suitable boundary found\n");
+         Logging::print( "Only 1 suitable boundary found\n");
          irStart = usefulBoundaries[0].start;
          irEnd   = usefulBoundaries[0].end;
       }
       else {
-         print( "> 1 suitable boundary found\n");
+         Logging::print( "> 1 suitable boundary found\n");
          irStart = 0;
          irEnd   = 0;
       }
@@ -773,10 +773,10 @@ void ColdfireUnlockerPanel::findDeviceInJTAGChain(unsigned int deviceNum) {
 
    // Confirm IDCODE boundaries are plausible
    if (!confirmStart)
-      print( "Start not confirmed\n");
+      Logging::print( "Start not confirmed\n");
    if (!confirmEnd)
-      print( "End not confirmed\n");
-   print( "Device IR[%d...%d]\n", irEnd, irStart);
+      Logging::print( "End not confirmed\n");
+   Logging::print( "Device IR[%d...%d]\n", irEnd, irStart);
 
 #if 0
    // Confirm device location by reading IDCODE
@@ -795,7 +795,7 @@ void ColdfireUnlockerPanel::findDeviceInJTAGChain(unsigned int deviceNum) {
    USBDM_JTAG_Read(32+JTAG_Chain::deviceCount-1, JTAG_EXIT_IDLE, irReg);
 //   extractField(irReg, temp, deviceNum, deviceNum+32-1);
    if (temp[0] != JTAG_Chain::devices[deviceNum].deviceData->idcode)
-      print( "IDCODE not confirmed\n");
+      Logging::print( "IDCODE not confirmed\n");
 #endif
 }
 
@@ -811,7 +811,7 @@ USBDM_ErrorCode ColdfireUnlockerPanel::eraseDscDevice() {
    unlockCommand[0]     = unlockInstructionTextControl->GetHexValue();
    clockDividerValue[0] = clockDividerTextControl->GetHexValue();
 
-   print("Erasing JTAG device #%d, Unlock command=%2.2X, Clock Divider=%2.2X\n",
+   Logging::print("Erasing JTAG device #%d, Unlock command=%2.2X, Clock Divider=%2.2X\n",
          deviceNumber, unlockCommand[0], clockDividerValue[0]);
 
    USBDM_ErrorCode rc = BDM_RC_OK;
@@ -851,7 +851,7 @@ USBDM_ErrorCode ColdfireUnlockerPanel::eraseCFVxDevice() {
    unlockCommand[0]     = unlockInstructionTextControl->GetHexValue();
    clockDividerValue[0] = clockDividerTextControl->GetHexValue();
 
-   print("Erasing JTAG device #%d, Unlock command=%2.2X, Clock Divider=%2.2X\n",
+   Logging::print("Erasing JTAG device #%d, Unlock command=%2.2X, Clock Divider=%2.2X\n",
          deviceNumber, unlockCommand[0], clockDividerValue[0]);
 
    USBDM_ErrorCode rc = BDM_RC_OK;

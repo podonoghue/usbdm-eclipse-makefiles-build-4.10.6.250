@@ -91,7 +91,7 @@ public:
       flashParametersPanel->getDialogueValues(&deviceData);
    };
 #endif
-   bool Create( wxWindow* parent, long style = wxDEFAULT_DIALOG_STYLE);
+   bool Create( wxWindow* parent, long style = wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX);
    bool setDialogueValuesToDefault();
    bool TransferDataToWindow();
    bool TransferDataFromWindow();
@@ -124,13 +124,13 @@ public:
    static const string settingsKey;
    wxString binaryFilename;
 
-#ifdef GDI
+#if defined(GDI) && defined(LEGACY)
    USBDM_ErrorCode execute(string const     &deviceName,
                            string const     &projectName,
                            bool              forceDisplay = false,
                            USBDM_ErrorCode (*openTarget)(void) = 0);
 #elif defined(FLASH_PROGRAMMER)
-   USBDM_ErrorCode execute(wxString const &settingsFilename, wxString const &filename=wxEmptyString);
+   USBDM_ErrorCode execute(wxString const &settingsFilename, wxString const &hexFilename=wxEmptyString);
 #endif
 };
 

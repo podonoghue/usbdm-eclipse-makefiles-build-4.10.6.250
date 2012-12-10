@@ -127,8 +127,8 @@ USBDM_ErrorCode executeJTAGSequence(uint8_t       sequenceLength,
    rc = USBDM_JTAG_ExecuteSequence(sequenceLength, sequenceStart, dataInLength, dataInStart);
 #else
    if (log) {
-      print("executeJTAGSequence()=>\n");
-      print("==============================================================\n");
+      Logging::print("executeJTAGSequence()=>\n");
+      Logging::print("==============================================================\n");
       listJTAGSequence(sequenceLength, sequenceStart);
    }
 #ifdef LOG_JTAG
@@ -138,14 +138,14 @@ USBDM_ErrorCode executeJTAGSequence(uint8_t       sequenceLength,
 #endif
    if (log) {
       if (rc == BDM_RC_OK) {
-         print("Returned data =>    ----------------------------------------\n");
-         printDump(dataInStart, dataInLength);
+         Logging::print("Returned data =>    ----------------------------------------\n");
+         Logging::printDump(dataInStart, dataInLength);
       }
-      print("==============================================================\n");
+      Logging::print("==============================================================\n");
    }
 #endif
    if (rc != BDM_RC_OK) {
-      print("executeJTAGSequence() Failed, reason = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("executeJTAGSequence() Failed, reason = %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -195,7 +195,7 @@ static const uint8_t *skipSequence(const uint8_t *sequence, uint8_t sentinel, in
    uint8_t loopDepth = 0;
    const uint8_t *sequenceStart = sequence;
 
-//   print("skipSequence() \n");
+//   Logging::print("skipSequence() \n");
    for(;;) {
       uint8_t opcode   = *sequence;
       uint8_t numBits  = (opcode&JTAG_NUM_BITS_MASK);  // In case needed
@@ -209,7 +209,7 @@ static const uint8_t *skipSequence(const uint8_t *sequence, uint8_t sentinel, in
                // Unconditionally stop search on any of the following
                case JTAG_END:
                case JTAG_SAVE_SUB:
-                  print("skipSequence(), Found end at %d\n",sequence-sequenceStart);
+                  Logging::print("skipSequence(), Found end at %d\n",sequence-sequenceStart);
                   return sequence;
 
                case JTAG_SUBA:
@@ -318,7 +318,7 @@ static const uint8_t *skipSequence(const uint8_t *sequence, uint8_t sentinel, in
                   break;
 
                default:
-                  print("Unhandled opcode in skipSequence = %d, SP=%d\n", opcode, sequence-sequenceStart);
+                  Logging::print("Unhandled opcode in skipSequence = %d, SP=%d\n", opcode, sequence-sequenceStart);
                   break;
 
                case JTAG_SHIFT_IN_OUT_VARA:
@@ -333,9 +333,9 @@ static const uint8_t *skipSequence(const uint8_t *sequence, uint8_t sentinel, in
             break;
          case JTAG_SHIFT_OUT_Q(0) :
          case JTAG_SHIFT_IN_OUT_Q(0) :
-//            print("JTAG_SHIFT_OUT_Q(%d) SP=%d\n", numBits, sequence-sequenceStart);
+//            Logging::print("JTAG_SHIFT_OUT_Q(%d) SP=%d\n", numBits, sequence-sequenceStart);
             sequence += BITS_TO_BYTES(numBits); // Skip over inline data
-//            print("JTAG_SHIFT_OUT_Q(%d) SP=%d\n", numBits, sequence-sequenceStart);
+//            Logging::print("JTAG_SHIFT_OUT_Q(%d) SP=%d\n", numBits, sequence-sequenceStart);
             break;
          case JTAG_REPEAT_Q(0):
             loopDepth++;
@@ -344,7 +344,7 @@ static const uint8_t *skipSequence(const uint8_t *sequence, uint8_t sentinel, in
          case JTAG_PUSH_Q(0):
             break;
          default:
-            print("Unhandled opcode in skipSequence = %d, SP=%d\n", opcode, sequence-sequenceStart);
+            Logging::print("Unhandled opcode in skipSequence = %d, SP=%d\n", opcode, sequence-sequenceStart);
             break;
       }
       sequence++;
@@ -399,23 +399,23 @@ uint8_t onceStatus;
 uint8_t numberOfInstructions;
 uint8_t retry;
 
-//   print("executeTargetInstructionSequence()\n");
+//   Logging::print("executeTargetInstructionSequence()\n");
    rc = USBDM_JTAG_SelectShift(JTAG_SHIFT_IR);
    numberOfInstructions = *(*dataOutPtr)++;
-   print("executeTargetInstructionSequence(#=%d)\n", numberOfInstructions);
+   Logging::print("executeTargetInstructionSequence(#=%d)\n", numberOfInstructions);
    do {
       uint8_t numWords = *(*dataOutPtr)++;
       rc = USBDM_JTAG_Write(JTAG_CORE_COMMAND_LENGTH, JTAG_EXIT_SHIFT_DR, enableONCECommand);
-      print("executeTargetInstructionSequence(#%d) : ", numberOfInstructions);
+      Logging::print("executeTargetInstructionSequence(#%d) : ", numberOfInstructions);
       do {
          uint16_t opcode = ((**dataOutPtr)<<8) + (*(*dataOutPtr+1));
          if (numWords>1) {
-            print("0x%4.4X, ", opcode);
+            Logging::print("0x%4.4X, ", opcode);
             rc = USBDM_JTAG_Write(ONCE_CMD_LENGTH, JTAG_EXIT_SHIFT_DR, writeOpcode);
             rc = USBDM_JTAG_Write(16, JTAG_EXIT_SHIFT_DR, (*dataOutPtr));
          }
          else {
-            print("0x%4.4X\n", opcode);
+            Logging::print("0x%4.4X\n", opcode);
             rc = USBDM_JTAG_Write(ONCE_CMD_LENGTH, JTAG_EXIT_SHIFT_DR, writeOpcodeAndGo);
             rc = USBDM_JTAG_Write(16, JTAG_EXIT_SHIFT_IR, (*dataOutPtr));
          }
@@ -478,15 +478,15 @@ int                  indent            = 6;
 
    sequence          = sequenceStart;                       // Point to command sequence
    dataOutPtr        = skipSequence(sequence, STOP_ON_END, &indent); // Point to data out sequence
-   print("executeJTAGSequence()- DP=%d\n =>", dataOutPtr-sequenceStart);
+   Logging::print("executeJTAGSequence()- DP=%d\n =>", dataOutPtr-sequenceStart);
    if (*dataOutPtr == JTAG_END)
       dataOutPtr++;
-   print("executeJTAGSequence()- DP=%d\n =>", dataOutPtr-sequenceStart);
+   Logging::print("executeJTAGSequence()- DP=%d\n =>", dataOutPtr-sequenceStart);
 
-   print("\nexecuteJTAGSequence() =>\n");
+   Logging::print("\nexecuteJTAGSequence() =>\n");
    listJTAGSequence(sequenceLength, sequenceStart);
 
-   print("executeJTAGSequence(seqLength = %d, sequence=%d, dataOutPtr=%d, dataInPtr=%d) \n",
+   Logging::print("executeJTAGSequence(seqLength = %d, sequence=%d, dataOutPtr=%d, dataInPtr=%d) \n",
          sequenceLength,
          (sequence==NULL)?0:(sequence-sequenceStart),
          (dataOutPtr==NULL)?0:(dataOutPtr-sequenceStart),
@@ -500,7 +500,7 @@ int                  indent            = 6;
       else if ((sequence>=subroutineCache) && (sequence<(subroutineCache+sizeof(subroutineCache))))
          lineNumber = -(sequence-subroutineCache);
       else {
-         print("%-*d: Illegal sequence ptr = %d\n", indent, lineNumber, sequence-sequenceStart);
+         Logging::print("%-*d: Illegal sequence ptr = %d\n", indent, lineNumber, sequence-sequenceStart);
          rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
       }
       if ((sequence>=sequenceStart) && (sequence<(sequenceStart+sequenceLength)))
@@ -508,7 +508,7 @@ int                  indent            = 6;
       else if ((sequence>=subroutineCache) && (sequence<(subroutineCache+sizeof(subroutineCache))))
          lineNumber = -(sequence-subroutineCache);
       if (dataOutPtr>sequenceStart+sequenceLength) {
-         print("%-*d: Illegal dataOut ptr = %d\n", indent, lineNumber, sequence-sequenceStart);
+         Logging::print("%-*d: Illegal dataOut ptr = %d\n", indent, lineNumber, sequence-sequenceStart);
          rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
       }
 
@@ -523,47 +523,47 @@ int                  indent            = 6;
          case JTAG_MISC1: // Misc commands
             switch (opcode) {
                case JTAG_DEBUG_ON:
-                  print("%-*d: JTAG_DEBUG_ON\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_DEBUG_ON\n", indent, lineNumber);
                   enableLogging(true);
                   break;
                case JTAG_DEBUG_OFF:
-                  print("%-*d: JTAG_DEBUG_OFF\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_DEBUG_OFF\n", indent, lineNumber);
                   enableLogging(false);
                   break;
                case JTAG_TEST_LOGIC_RESET:
-                  print("%-*d: JTAG_TEST_LOGIC_RESET\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_TEST_LOGIC_RESET\n", indent, lineNumber);
                   rc = USBDM_JTAG_Reset();
                   break;
                case JTAG_MOVE_DR_SCAN:
-                  print("%-*d: JTAG_MOVE_DR_SCAN\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_MOVE_DR_SCAN\n", indent, lineNumber);
                   rc = USBDM_JTAG_SelectShift(JTAG_SHIFT_DR);
                   break;
                case JTAG_MOVE_IR_SCAN:
-                  print("%-*d: JTAG_MOVE_IR_SCAN\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_MOVE_IR_SCAN\n", indent, lineNumber);
                   rc = USBDM_JTAG_SelectShift(JTAG_SHIFT_IR);
                   break;
                case JTAG_SET_STAY_SHIFT:
-                  print("%-*d: JTAG_SET_STAY_SHIFT\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_SET_STAY_SHIFT\n", indent, lineNumber);
                   exitAction = JTAG_STAY_SHIFT;
                   break;
                case JTAG_SET_EXIT_SHIFT_DR:
-                  print("%-*d: JTAG_SET_EXIT_SHIFT_DR\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_SET_EXIT_SHIFT_DR\n", indent, lineNumber);
                   exitAction = JTAG_EXIT_SHIFT_DR;
                   break;
                case JTAG_SET_EXIT_SHIFT_IR:
-                  print("%-*d: JTAG_SET_EXIT_SHIFT_IR\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_SET_EXIT_SHIFT_IR\n", indent, lineNumber);
                   exitAction = JTAG_EXIT_SHIFT_IR;
                   break;
                case JTAG_SET_EXIT_IDLE:
-                  print("%-*d: JTAG_SET_EXIT_IDLE\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_SET_EXIT_IDLE\n", indent, lineNumber);
                   exitAction = JTAG_EXIT_IDLE;
                   break;
                case JTAG_SET_IN_FILL_0:
-                  print("%-*d: JTAG_SET_IN_FILL_0\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_SET_IN_FILL_0\n", indent, lineNumber);
                   inFill = JTAG_WRITE_0;
                   break;
                case JTAG_SET_IN_FILL_1:
-                  print("%-*d: JTAG_SET_IN_FILL_1\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_SET_IN_FILL_1\n", indent, lineNumber);
                   inFill = JTAG_WRITE_1;
                   break;
                case JTAG_SAVE_SUB:
@@ -577,7 +577,7 @@ int                  indent            = 6;
                      subPtrs[1] += adjustment;
                      subPtrs[2] += adjustment;
                      subPtrs[3] += adjustment;
-                     print("%-*d: JTAG_SAVE_SUB\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SAVE_SUB\n", indent, lineNumber);
                      complete = true;
                   }
                   break;
@@ -587,14 +587,14 @@ int                  indent            = 6;
                case JTAG_SUBB:
                case JTAG_SUBC:
                case JTAG_SUBD:
-                  print("%-*d: JTAG_SUB%c - start addr=%d\n", indent,
+                  Logging::print("%-*d: JTAG_SUB%c - start addr=%d\n", indent,
                         lineNumber, 'A'+(opcode&0x03), sequence-sequenceStart);
                   subPtrs[regNo] = sequence;
                   // Skip over subroutine
                   sequence = skipSequence(sequence, STOP_ON_SUB, &indent);
                   break;
                case JTAG_CALL_SUBA:
-                  print("%-*d: JTAG_CALL_SUBA*\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_CALL_SUBA*\n", indent, lineNumber);
                   executeTargetInstructionSequence(&dataOutPtr);
                   break;
                case JTAG_CALL_SUBB:
@@ -608,22 +608,22 @@ int                  indent            = 6;
                   subroutineTOS->returnAddress = sequence;
                   subroutineTOS++;
                   sequence       = subPtrs[regNo];
-                  print("%-*d: JTAG_CALL_SUB%c, call addr=%d, dataOutPtr = %d(0x%X), iterator = %d\n", indent,
+                  Logging::print("%-*d: JTAG_CALL_SUB%c, call addr=%d, dataOutPtr = %d(0x%X), iterator = %d\n", indent,
                         lineNumber, 'A'+(opcode&0x03), sequence-sequenceStart,
                         dataOutPtr-sequenceStart, dataOutPtr-sequenceStart, iterator);
-                  print("%-*d: repeatTOS                = %p\n", indent, lineNumber, repeatTOS);
-                  print("%-*d: (subroutineTOS-1)->repeatTOS = %p\n", indent, lineNumber, (subroutineTOS-1)->repeatTOS);
-                  print("%-*d: repeatStack              = %p\n", indent, lineNumber, repeatStack);
-                  print("%-*d: subroutineTOS            = %p\n", indent, lineNumber, subroutineTOS);
-                  print("%-*d: subroutineStack          = %p\n", indent, lineNumber, subroutineStack);
+                  Logging::print("%-*d: repeatTOS                = %p\n", indent, lineNumber, repeatTOS);
+                  Logging::print("%-*d: (subroutineTOS-1)->repeatTOS = %p\n", indent, lineNumber, (subroutineTOS-1)->repeatTOS);
+                  Logging::print("%-*d: repeatStack              = %p\n", indent, lineNumber, repeatStack);
+                  Logging::print("%-*d: subroutineTOS            = %p\n", indent, lineNumber, subroutineTOS);
+                  Logging::print("%-*d: subroutineStack          = %p\n", indent, lineNumber, subroutineStack);
                   indent+=3;
                   break;
                case JTAG_BREAK:
                   iterator = 1;
-                  print("%-*d: JTAG_BREAK...\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_BREAK...\n", indent, lineNumber);
                   // Fall through
                case JTAG_CONTINUE:
-                  print("%-*d: JTAG_CONTINUE...\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_CONTINUE...\n", indent, lineNumber);
                   sequence = skipSequence(sequence, STOP_ON_END_REPEAT|STOP_ON_SUB, &indent);
                   break;
                case JTAG_END_REPEAT:
@@ -631,12 +631,12 @@ int                  indent            = 6;
                   if (((subroutineTOS != subroutineStack) && (repeatTOS == (subroutineTOS-1)->repeatTOS )) ||
                       (repeatTOS == repeatStack)) {
                      rc = BDM_RC_JTAG_UNMATCHED_REPEAT;
-                     print("%-*d: JTAG_END_REPEAT unexpected\n", indent, lineNumber);
-                     print("%-*d: repeatTOS                = %p\n", indent, lineNumber, repeatTOS);
-                     print("%-*d: subroutineTOS->repeatTOS = %p\n", indent, lineNumber, subroutineTOS->repeatTOS);
-                     print("%-*d: repeatStack              = %p\n", indent, lineNumber, repeatStack);
-                     print("%-*d: subroutineTOS            = %p\n", indent, lineNumber, subroutineTOS);
-                     print("%-*d: subroutineStack          = %p\n", indent, lineNumber, subroutineStack);
+                     Logging::print("%-*d: JTAG_END_REPEAT unexpected\n", indent, lineNumber);
+                     Logging::print("%-*d: repeatTOS                = %p\n", indent, lineNumber, repeatTOS);
+                     Logging::print("%-*d: subroutineTOS->repeatTOS = %p\n", indent, lineNumber, subroutineTOS->repeatTOS);
+                     Logging::print("%-*d: repeatStack              = %p\n", indent, lineNumber, repeatStack);
+                     Logging::print("%-*d: subroutineTOS            = %p\n", indent, lineNumber, subroutineTOS);
+                     Logging::print("%-*d: subroutineStack          = %p\n", indent, lineNumber, subroutineStack);
                   }
                   else if (--iterator<=0) {
                      // End of loop - cleanup
@@ -644,44 +644,44 @@ int                  indent            = 6;
                      iterator         = repeatTOS->iterator;
                      startOfIteration = repeatTOS->startOfLoop;
                      indent-=3;
-                     print("%-*d: JTAG_END_REPEAT leaving loop\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_END_REPEAT leaving loop\n", indent, lineNumber);
                   }
                   else {
                      sequence = startOfIteration;
-                     print("%-*d: JTAG_END_REPEAT #%d, addr=%d\n", indent, lineNumber, iterator, sequence-sequenceStart);
+                     Logging::print("%-*d: JTAG_END_REPEAT #%d, addr=%d\n", indent, lineNumber, iterator, sequence-sequenceStart);
                   }
                   break;
                case JTAG_ELSE: // Skip to JTAG_END_IF
                   indent-=3;
-                  print("%-*d: JTAG_ELSE\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_ELSE\n", indent, lineNumber);
                   indent+=3;
                   sequence = skipSequence(sequence, STOP_ON_END_IF|STOP_ON_SUB, &indent);
                   break;
                case JTAG_END_IF:
                   indent-=3;
-                  print("%-*d: JTAG_END_IF\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_END_IF\n", indent, lineNumber);
                   break;
                case JTAG_NOP:
-                  print("%-*d: JTAG_NOP\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_NOP\n", indent, lineNumber);
                   break;
                case JTAG_SKIP_DP:   // Skip over N bytes in data Out sequence
-                  print("%-*d: JTAG_SKIP_DP(%d)", indent, lineNumber, tempValue);
+                  Logging::print("%-*d: JTAG_SKIP_DP(%d)", indent, lineNumber, tempValue);
                   dataOutPtr += tempValue;
-                  print(" New DP=%d\n",dataOutPtr-sequenceStart);
+                  Logging::print(" New DP=%d\n",dataOutPtr-sequenceStart);
                   break;
                case JTAG_END:
                   indent-=3;
-                  print("%-*d: JTAG_END - end of sequence\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_END - end of sequence\n", indent, lineNumber);
                   complete = true;
                   break;
                case JTAG_RETURN:
-                  print("%-*d: JTAG_RETURN...\n", indent, lineNumber);
+                  Logging::print("%-*d: JTAG_RETURN...\n", indent, lineNumber);
                   // End of subroutine
                   // Fall through
                case JTAG_END_SUB:
                   indent-=3;
                   if (subroutineTOS == subroutineStack) {
-                     print("%-*d: JTAG_END_SUB/RETURN - stack underflow, DP=%d(0x%X)\n", indent,
+                     Logging::print("%-*d: JTAG_END_SUB/RETURN - stack underflow, DP=%d(0x%X)\n", indent,
                            lineNumber, dataOutPtr-sequenceStart, dataOutPtr-sequenceStart);
                      rc = BDM_RC_JTAG_STACK_ERROR;
                   }
@@ -694,14 +694,14 @@ int                  indent            = 6;
                      iterator         = repeatTOS->iterator;
                      startOfIteration = repeatTOS->startOfLoop;
 
-                     print("%-*d: JTAG_END_SUB/RETURN - returning, return addr=%d, DP=%d(0x%X)\n", indent,
+                     Logging::print("%-*d: JTAG_END_SUB/RETURN - returning, return addr=%d, DP=%d(0x%X)\n", indent,
                            lineNumber, sequence-sequenceStart,
                            dataOutPtr-sequenceStart, dataOutPtr-sequenceStart);
-                     print("%-*d: repeatTOS                = %p\n", indent, lineNumber, repeatTOS);
-                     print("%-*d: subroutineTOS->repeatTOS = %p\n", indent, lineNumber, subroutineTOS->repeatTOS);
-                     print("%-*d: repeatStack              = %p\n", indent, lineNumber, repeatStack);
-                     print("%-*d: subroutineTOS            = %p\n", indent, lineNumber, subroutineTOS);
-                     print("%-*d: subroutineStack          = %p\n", indent, lineNumber, subroutineStack);
+                     Logging::print("%-*d: repeatTOS                = %p\n", indent, lineNumber, repeatTOS);
+                     Logging::print("%-*d: subroutineTOS->repeatTOS = %p\n", indent, lineNumber, subroutineTOS->repeatTOS);
+                     Logging::print("%-*d: repeatStack              = %p\n", indent, lineNumber, repeatStack);
+                     Logging::print("%-*d: subroutineTOS            = %p\n", indent, lineNumber, subroutineTOS);
+                     Logging::print("%-*d: subroutineStack          = %p\n", indent, lineNumber, subroutineStack);
                   }
                   break;
                case JTAG_SHIFT_OUT_DP_VARA:
@@ -709,14 +709,14 @@ int                  indent            = 6;
                   if (dataOutPtr == NULL) {
                      // Requires data out ptr.
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_OUT_DP_VARA(N) No output buffer\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_OUT_DP_VARA(N) No output buffer\n", indent, lineNumber);
                   }
                   else if (numBits == 0) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_OUT_DP_VARA(0) - Illegal repeat count!\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_OUT_DP_VARA(0) - Illegal repeat count!\n", indent, lineNumber);
                   }
                   else {
-                     print("%-*d: JTAG_SHIFT_OUT_DP_VARA (=%d) => ", indent, lineNumber, numBits);
+                     Logging::print("%-*d: JTAG_SHIFT_OUT_DP_VARA (=%d) => ", indent, lineNumber, numBits);
                      printBits(numBits, dataOutPtr);
                      rc = USBDM_JTAG_Write(numBits, exitAction, dataOutPtr);
                      dataOutPtr += BITS_TO_BYTES(numBits);
@@ -727,14 +727,14 @@ int                  indent            = 6;
                   if (dataOutPtr == NULL) {
                      // Requires data out ptr.
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_OUT_DP(N) No output buffer\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_OUT_DP(N) No output buffer\n", indent, lineNumber);
                   }
                   else if (numBits == 0) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_OUT_DP(0) - Illegal repeat count!\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_OUT_DP(0) - Illegal repeat count!\n", indent, lineNumber);
                   }
                   else {
-                     print("%-*d: JTAG_SHIFT_OUT_DP (%d) => ", indent, lineNumber, numBits);
+                     Logging::print("%-*d: JTAG_SHIFT_OUT_DP (%d) => ", indent, lineNumber, numBits);
                      printBits(numBits, dataOutPtr);
                      rc = USBDM_JTAG_Write(numBits, exitAction, dataOutPtr);
                      dataOutPtr += BITS_TO_BYTES(numBits);
@@ -744,15 +744,15 @@ int                  indent            = 6;
                   numBits = getValueByte(*sequence++);
                   if (dataInPtr == NULL) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_IN_TL(N) - No input buffer!\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_TL(N) - No input buffer!\n", indent, lineNumber);
                   }
                   else if (numBits == 0) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_IN_TL(0) - Illegal repeat count!\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_TL(0) - Illegal repeat count!\n", indent, lineNumber);
                   }
                   else {
                      rc = USBDM_JTAG_Read(numBits, exitAction|inFill, dataInPtr);
-                     print("%-*d: JTAG_SHIFT_IN_TL (%d) <= ", indent, lineNumber, numBits);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_TL (%d) <= ", indent, lineNumber, numBits);
                      printBits(numBits, dataInPtr);
                      dataInPtr += BITS_TO_BYTES(numBits);
                   }
@@ -762,21 +762,21 @@ int                  indent            = 6;
                   if (dataOutPtr == NULL) {
                      // Requires data out ptr.
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_IN_OUT_TL(N) No output buffer\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_OUT_TL(N) No output buffer\n", indent, lineNumber);
                   }
                   else if (dataInPtr == NULL) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_IN_OUT_TL(N) - No input buffer!\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_OUT_TL(N) - No input buffer!\n", indent, lineNumber);
                   }
                   else if (numBits == 0) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_IN_OUT_TL(0) - Illegal repeat count!\n", indent, lineNumber);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_OUT_TL(0) - Illegal repeat count!\n", indent, lineNumber);
                   }
                   else {
-                     print("%-*d: JTAG_SHIFT_IN_OUT_TL (%d) => ", indent, lineNumber, numBits);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_OUT_TL (%d) => ", indent, lineNumber, numBits);
                      printBits(numBits, dataOutPtr);
                      rc = USBDM_JTAG_ReadWrite(numBits, exitAction, dataOutPtr, dataInPtr);
-                     print("%-*d:                      (%d) <= ", indent, lineNumber, numBits);
+                     Logging::print("%-*d:                      (%d) <= ", indent, lineNumber, numBits);
                      printBits(numBits, dataInPtr);
                      dataOutPtr     += BITS_TO_BYTES(numBits);
                      dataInPtr      += BITS_TO_BYTES(numBits);
@@ -784,7 +784,7 @@ int                  indent            = 6;
                   break;
                case JTAG_IF_VARA_EQ:  // IF statement testing variable A/B == value
                case JTAG_IF_VARB_EQ:
-                  print("%-*d: JTAG_IF_VAR%c_EQ var=%d, value=%d\n", indent, lineNumber, 'A'+(opcode&3), (uint32_t)variables[opcode&3], (uint32_t)tempValue);
+                  Logging::print("%-*d: JTAG_IF_VAR%c_EQ var=%d, value=%d\n", indent, lineNumber, 'A'+(opcode&3), (uint32_t)variables[opcode&3], (uint32_t)tempValue);
                   indent+=3;
                   if (variables[regNo] != tempValue) { // Fail => skip to ELSE/END_IF clause
                      sequence = skipSequence(sequence, STOP_ON_ELSE|STOP_ON_END_IF|STOP_ON_SUB, &indent);
@@ -794,7 +794,7 @@ int                  indent            = 6;
                   break;
                case JTAG_IF_VARA_NEQ: // IF statement testing variable A/B != value
                case JTAG_IF_VARB_NEQ:
-                  print("%-*d: JTAG_IF_VAR%c_NEQ var=%d, value=%d\n", indent, lineNumber, 'A'+(opcode&3), (uint32_t)variables[opcode&3], (uint32_t)tempValue);
+                  Logging::print("%-*d: JTAG_IF_VAR%c_NEQ var=%d, value=%d\n", indent, lineNumber, 'A'+(opcode&3), (uint32_t)variables[opcode&3], (uint32_t)tempValue);
                   indent+=3;
                   if (variables[regNo] == tempValue) { // Fail => skip to ELSE clause
                      sequence = skipSequence(sequence, STOP_ON_ELSE|STOP_ON_END_IF|STOP_ON_SUB, &indent);
@@ -803,7 +803,7 @@ int                  indent            = 6;
                      sequence++;
                   break;
                case JTAG_IF_ITER_EQ:
-                  print("%-*d: JTAG_IF_ITER_EQ iterator=%d, value=%d\n", indent, lineNumber, iterator, (uint32_t)tempValue);
+                  Logging::print("%-*d: JTAG_IF_ITER_EQ iterator=%d, value=%d\n", indent, lineNumber, iterator, (uint32_t)tempValue);
                   indent+=3;
                   if (iterator != tempValue) { // Fail => skip to ELSE clause
                      sequence = skipSequence(sequence, STOP_ON_ELSE|STOP_ON_END_IF|STOP_ON_SUB, &indent);
@@ -812,7 +812,7 @@ int                  indent            = 6;
                      sequence++;
                   break;
                case JTAG_IF_ITER_NEQ:
-                  print("%-*d: JTAG_IF_ITER_NEQ iterator=%d, value=%d\n", indent, lineNumber, iterator, (uint32_t)tempValue);
+                  Logging::print("%-*d: JTAG_IF_ITER_NEQ iterator=%d, value=%d\n", indent, lineNumber, iterator, (uint32_t)tempValue);
                   indent+=3;
                   if (iterator == tempValue) { // Fail => skip to ELSE clause
                      sequence = skipSequence(sequence, STOP_ON_ELSE|STOP_ON_END_IF|STOP_ON_SUB, &indent);
@@ -826,7 +826,7 @@ int                  indent            = 6;
                case JTAG_REPEAT:
                   if (tempValue == 0) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_REPEAT(%d) - Illegal repeat count!\n", indent, lineNumber, tempValue);
+                     Logging::print("%-*d: JTAG_REPEAT(%d) - Illegal repeat count!\n", indent, lineNumber, tempValue);
                   }
                   else {
                      repeatTOS->iterator    = iterator;
@@ -834,7 +834,7 @@ int                  indent            = 6;
                      repeatTOS++;
                      iterator               = (uint16_t)tempValue; // Assumes value set previously (e.g. push)
                      startOfIteration       = sequence;
-                     print("%-*d: JTAG_REPEAT(%d)\n", indent, lineNumber, iterator);
+                     Logging::print("%-*d: JTAG_REPEAT(%d)\n", indent, lineNumber, iterator);
                      indent+=3;
                   }
                   break;
@@ -843,12 +843,12 @@ int                  indent            = 6;
 //                  numBits = getValueByte(*sequence++);
 //                  if ((numBits == 0) || (numBits > 32)) {
 //                     rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-//                     print("%-*d: JTAG_SHIFT_IN_VAR%c(%d) - Illegal repeat count!\n", indent, lineNumber, 'A'+(opcode&0x3), numBits);
+//                     Logging::print("%-*d: JTAG_SHIFT_IN_VAR%c(%d) - Illegal repeat count!\n", indent, lineNumber, 'A'+(opcode&0x3), numBits);
 //                  }
 //                  else {
 //                     JTAG32 temp(0,32);
 //                     rc = USBDM_JTAG_Read(numBits, exitAction|inFill, temp.getData(numBits));
-//                     print("%-*d: JTAG_SHIFT_IN_VAR%c (%d) varA <= %s", indent, lineNumber, 'A'+(opcode&0x3), numBits);
+//                     Logging::print("%-*d: JTAG_SHIFT_IN_VAR%c (%d) varA <= %s", indent, lineNumber, 'A'+(opcode&0x3), numBits);
 //                     printBits(numBits, temp.getData(BITS_TO_BYTES(numBits)));
 //                     variables[opcode&0x3] = temp;
 //                  }
@@ -860,11 +860,11 @@ int                  indent            = 6;
                   numBits = getValueByte(*sequence++);
                   if ((numBits == 0) || (numBits > 32)) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_OUT_VAR%c(%d) - Illegal repeat count!\n", indent, lineNumber, 'A'+(opcode&0x3), numBits);
+                     Logging::print("%-*d: JTAG_SHIFT_OUT_VAR%c(%d) - Illegal repeat count!\n", indent, lineNumber, 'A'+(opcode&0x3), numBits);
                   }
                   else {
                      JTAG32 temp(variables[opcode&0x3],32);
-                     print("%-*d: JTAG_SHIFT_OUT_VAR%c(%d) => ", indent, lineNumber, 'A'+(opcode&0x3), numBits);
+                     Logging::print("%-*d: JTAG_SHIFT_OUT_VAR%c(%d) => ", indent, lineNumber, 'A'+(opcode&0x3), numBits);
                      printBits(numBits, sequence);
                      rc = USBDM_JTAG_Write(numBits, exitAction, temp.getData(numBits));
                   }
@@ -876,14 +876,14 @@ int                  indent            = 6;
                   numBits = getValueByte(*sequence++);
                   if ((numBits == 0) || (numBits > 32)) {
                      rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-                     print("%-*d: JTAG_SHIFT_IN_OUT_VAR%c(%d) - Illegal repeat count!\n", indent, lineNumber, 'A'+(opcode&0x3), numBits);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_OUT_VAR%c(%d) - Illegal repeat count!\n", indent, lineNumber, 'A'+(opcode&0x3), numBits);
                   }
                   else {
                      JTAG32 temp(0,32);
-                     print("%-*d: JTAG_SHIFT_IN_OUT_VAR%c(%d) => ", indent, lineNumber, 'A'+(opcode&0x3), numBits);
+                     Logging::print("%-*d: JTAG_SHIFT_IN_OUT_VAR%c(%d) => ", indent, lineNumber, 'A'+(opcode&0x3), numBits);
                      printBits(numBits, sequence);
                      rc = USBDM_JTAG_ReadWrite(numBits, exitAction, sequence, temp.getData(numBits));
-                     print("%-*d:                        (%d) <= ", indent, lineNumber, numBits);
+                     Logging::print("%-*d:                        (%d) <= ", indent, lineNumber, numBits);
                      printBits(numBits, temp.getData(BITS_TO_BYTES(numBits)));
                      variables[opcode&0x3] = temp;
                      sequence += BITS_TO_BYTES(numBits);
@@ -891,24 +891,24 @@ int                  indent            = 6;
                   break;
                case JTAG_SET_ERROR:    // Set error variable & exit
                   rc = (USBDM_ErrorCode)getValueByte(*sequence++);
-                  print("%-*d: JTAG_SET_ERROR error <= %s\n", indent, lineNumber, USBDM_GetErrorString(rc));
+                  Logging::print("%-*d: JTAG_SET_ERROR error <= %s\n", indent, lineNumber, USBDM_GetErrorString(rc));
                   break;
                case JTAG_PUSH8:
                   tempValue = *sequence++;
                   if (tempValue<32) {
-                     print("%-*d: JTAG_PUSH_8(%d, 0x%2.2X) - Warning - Use JTAG_PUSH_Q()\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
+                     Logging::print("%-*d: JTAG_PUSH_8(%d, 0x%2.2X) - Warning - Use JTAG_PUSH_Q()\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
                   }
                   else
-                     print("%-*d: JTAG_PUSH_8(%d, 0x%2.2X)\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
+                     Logging::print("%-*d: JTAG_PUSH_8(%d, 0x%2.2X)\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
                   break;
                case JTAG_PUSH16:
                   tempValue = *sequence++;
                   tempValue = (tempValue<<8)+*sequence++;
                   if (tempValue<=0xFFFFUL) {
-                     print("%-*d: JTAG_PUSH_16(%d, 0x%4.4X) - Warning - Use JTAG_PUSH_Q/8()\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
+                     Logging::print("%-*d: JTAG_PUSH_16(%d, 0x%4.4X) - Warning - Use JTAG_PUSH_Q/8()\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
                   }
                   else
-                     print("%-*d: JTAG_PUSH_16(0x%4.4X)\n", indent, lineNumber, (uint32_t)tempValue);
+                     Logging::print("%-*d: JTAG_PUSH_16(0x%4.4X)\n", indent, lineNumber, (uint32_t)tempValue);
                   break;
                case JTAG_PUSH32:
                   tempValue = *sequence++;
@@ -916,44 +916,44 @@ int                  indent            = 6;
                   tempValue = (tempValue<<8)+*sequence++;
                   tempValue = (tempValue<<8)+*sequence++;
                   if (tempValue<=0xFFFFUL) {
-                     print("%-*d: JTAG_PUSH_32(%d, 0x%8.8X) - Warning - Use JTAG_PUSH_Q/8/16()\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
+                     Logging::print("%-*d: JTAG_PUSH_32(%d, 0x%8.8X) - Warning - Use JTAG_PUSH_Q/8/16()\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
                   }
                   else
-                     print("%-*d: JTAG_PUSH_32(0x%8.8X)\n", indent, lineNumber, (uint32_t)tempValue);
+                     Logging::print("%-*d: JTAG_PUSH_32(0x%8.8X)\n", indent, lineNumber, (uint32_t)tempValue);
                   break;
                case JTAG_PUSH_DP_8:
                   tempValue = *dataOutPtr++;
-                  print("%-*d: JTAG_PUSH_DP_8(DP=%d, %d, 0x%2.2X)\n", indent, lineNumber, dataOutPtr-sequenceStart, (uint32_t)tempValue, (uint32_t)tempValue);
+                  Logging::print("%-*d: JTAG_PUSH_DP_8(DP=%d, %d, 0x%2.2X)\n", indent, lineNumber, dataOutPtr-sequenceStart, (uint32_t)tempValue, (uint32_t)tempValue);
                   break;
                case JTAG_PUSH_DP_16:
                   tempValue = *dataOutPtr++;
                   tempValue = (tempValue<<8)+*dataOutPtr++;
-                  print("%-*d: JTAG_PUSH_DP_16(dptr=%d, 0x%4.4X)\n", indent, lineNumber, dataOutPtr-sequenceStart, (uint32_t)tempValue);
+                  Logging::print("%-*d: JTAG_PUSH_DP_16(dptr=%d, 0x%4.4X)\n", indent, lineNumber, dataOutPtr-sequenceStart, (uint32_t)tempValue);
                   break;
                case JTAG_PUSH_DP_32:
                   tempValue = *dataOutPtr++;
                   tempValue = (tempValue<<8)+*dataOutPtr++;
                   tempValue = (tempValue<<8)+*dataOutPtr++;
                   tempValue = (tempValue<<8)+*dataOutPtr++;
-                  print("%-*d: JTAG_PUSH_DP_32(dptr=%d, 0x%8.8X)\n", indent, lineNumber, dataOutPtr-sequenceStart, (uint32_t)tempValue);
+                  Logging::print("%-*d: JTAG_PUSH_DP_32(dptr=%d, 0x%8.8X)\n", indent, lineNumber, dataOutPtr-sequenceStart, (uint32_t)tempValue);
                   break;
                case JTAG_SAVE_OUT_DP_VARC:
                case JTAG_SAVE_OUT_DP_VARD:
-                  print("%-*d: JTAG_SAVE_DP_VAR%c DP=%d\n", indent, lineNumber, 'A'+(opcode&0x03), dataOutPtr-sequenceStart);
+                  Logging::print("%-*d: JTAG_SAVE_DP_VAR%c DP=%d\n", indent, lineNumber, 'A'+(opcode&0x03), dataOutPtr-sequenceStart);
                   variables[regNo] = dataOutPtr-sequenceStart;
                   break;
                case JTAG_RESTORE_DP_VARC:
                case JTAG_RESTORE_DP_VARD:
                   dataOutPtr = variables[regNo]+sequenceStart;
-                  print("%-*d: JTAG_RESTORE_DP_VAR%c DP=%d\n", indent, lineNumber, 'A'+(opcode&0x03), dataOutPtr-sequenceStart);
+                  Logging::print("%-*d: JTAG_RESTORE_DP_VAR%c DP=%d\n", indent, lineNumber, 'A'+(opcode&0x03), dataOutPtr-sequenceStart);
                   break;
                case JTAG_LOAD_VARA:
                case JTAG_LOAD_VARB:
                   variables[regNo] = tempValue;
-                  print("%-*d: JTAG_LOAD_VAR%c(%d, 0x%X)\n", indent, lineNumber, 'A'+(opcode&0x03), tempValue, tempValue);
+                  Logging::print("%-*d: JTAG_LOAD_VAR%c(%d, 0x%X)\n", indent, lineNumber, 'A'+(opcode&0x03), tempValue, tempValue);
                   break;
                default:
-                  print("%-*d: Unknown opcode = %d\n", indent, lineNumber, opcode);
+                  Logging::print("%-*d: Unknown opcode = %d\n", indent, lineNumber, opcode);
                   rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
                   break;
             }
@@ -966,17 +966,17 @@ int                  indent            = 6;
             if (iterator==1) {
                // Value of 1 indicates use dataOut value
                iterator = *dataOutPtr;
-               print("%-*d: JTAG_REPEAT_DP #%d, DP=%d\n", indent, lineNumber, iterator, dataOutPtr-sequenceStart);
+               Logging::print("%-*d: JTAG_REPEAT_DP #%d, DP=%d\n", indent, lineNumber, iterator, dataOutPtr-sequenceStart);
                indent+=3;
                dataOutPtr++;
             }
             else {
-               print("%-*d: JTAG_REPEAT_Q(%d)\n", indent, lineNumber, iterator);
+               Logging::print("%-*d: JTAG_REPEAT_Q(%d)\n", indent, lineNumber, iterator);
                indent+=3;
             }
             if (iterator == 0) {
                rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-               print("%-*d: JTAG_REPEAT_DP #0 - Illegal repeat count!\n", indent, lineNumber);
+               Logging::print("%-*d: JTAG_REPEAT_DP #0 - Illegal repeat count!\n", indent, lineNumber);
             }
             else {
                startOfIteration       = sequence;
@@ -985,17 +985,17 @@ int                  indent            = 6;
          case JTAG_SHIFT_IN_Q(0) : // Shift sequence in (5-bit count)
             if (dataInPtr == NULL) {
                rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-               print("%-*d: JTAG_SHIFT_IN_Q(%d) - no input buffer!\n", indent, lineNumber, numBits);
+               Logging::print("%-*d: JTAG_SHIFT_IN_Q(%d) - no input buffer!\n", indent, lineNumber, numBits);
             }
             else {
                rc = USBDM_JTAG_Read(numBits, exitAction|inFill, dataInPtr);
-               print("%-*d: JTAG_SHIFT_IN_Q(%d) <= ", indent, lineNumber, numBits);
+               Logging::print("%-*d: JTAG_SHIFT_IN_Q(%d) <= ", indent, lineNumber, numBits);
                printBits(numBits, dataInPtr);
                dataInPtr   += BITS_TO_BYTES(numBits);
             }
             break;
          case JTAG_SHIFT_OUT_Q(0) : // Shift sequence out (5-bit count) - sequence taken inline
-            print("%-*d: JTAG_SHIFT_OUT_Q(%d) => ", indent, lineNumber, numBits);
+            Logging::print("%-*d: JTAG_SHIFT_OUT_Q(%d) => ", indent, lineNumber, numBits);
             printBits(numBits, sequence);
             rc = USBDM_JTAG_Write(numBits, exitAction, sequence);
             sequence += BITS_TO_BYTES(numBits);
@@ -1003,13 +1003,13 @@ int                  indent            = 6;
          case JTAG_SHIFT_IN_OUT_Q(0) : // Shift sequence in & out at same time - sequence taken inline
             if (dataInPtr == NULL) {
                rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-               print("%-*d: JTAG_SHIFT_IN_OUT_Q(%d) - no input buffer!\n", indent, lineNumber, numBits);
+               Logging::print("%-*d: JTAG_SHIFT_IN_OUT_Q(%d) - no input buffer!\n", indent, lineNumber, numBits);
             }
             else {
-               print("%-*d: JTAG_SHIFT_IN_OUT_Q(%d) => ", indent, lineNumber, numBits);
+               Logging::print("%-*d: JTAG_SHIFT_IN_OUT_Q(%d) => ", indent, lineNumber, numBits);
                printBits(numBits, sequence);
                rc = USBDM_JTAG_ReadWrite(numBits, exitAction, sequence, dataInPtr);
-               print("%-*d:                    (%d) <= ", indent, lineNumber, numBits);
+               Logging::print("%-*d:                    (%d) <= ", indent, lineNumber, numBits);
                printBits(numBits, dataInPtr);
                sequence   += BITS_TO_BYTES(numBits);
                dataInPtr     += BITS_TO_BYTES(numBits);
@@ -1017,17 +1017,17 @@ int                  indent            = 6;
             break;
          case JTAG_PUSH_Q(0): // Push a 5-bit value
             tempValue = opcode&JTAG_NUM_BITS_MASK;
-            print("%-*d: JTAG_PUSH_Q(%d, 0x%X)\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
+            Logging::print("%-*d: JTAG_PUSH_Q(%d, 0x%X)\n", indent, lineNumber, (uint32_t)tempValue, (uint32_t)tempValue);
             break;
          default:
-            print("%-*d: Unknown opcode = %d\n", indent, lineNumber, opcode);
+            Logging::print("%-*d: Unknown opcode = %d\n", indent, lineNumber, opcode);
             rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
             break;
       }
 
       // Bounds check ptrs
       if (dataInPtr > dataInStart+dataInLength) {    // Input buffer overflow
-         print("%-*d: Illegal dataIn ptr = %d\n", indent, lineNumber, dataOutPtr-sequenceStart);
+         Logging::print("%-*d: Illegal dataIn ptr = %d\n", indent, lineNumber, dataOutPtr-sequenceStart);
          rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
       }
       if (indent>30)
@@ -1038,10 +1038,10 @@ int                  indent            = 6;
 
    if ((dataInPtr-dataInStart) != dataInLength) {
       rc = BDM_RC_JTAG_ILLEGAL_SEQUENCE;
-      print("executeJTAGSequence(inLength=%d), input length mismatch, actual=%d)\n", dataInLength, dataInPtr-dataInStart);
+      Logging::print("executeJTAGSequence(inLength=%d), input length mismatch, actual=%d)\n", dataInLength, dataInPtr-dataInStart);
    }
    if (rc != BDM_RC_OK) {
-      print("executeJTAGSequence() - error, reason = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("executeJTAGSequence() - error, reason = %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -1055,15 +1055,15 @@ uint8_t byteCount = 0;
 uint8_t bitMask   = 1<<((numBits-1)%8);
 
    while (bitCount++ < numBits) {
-      print("%c", (data[byteCount]&bitMask)?'1':'0');
+      Logging::print("%c", (data[byteCount]&bitMask)?'1':'0');
       bitMask >>= 1;
       if (bitMask == 0) {
-         print("(%2.2X), ", data[byteCount]);
+         Logging::print("(%2.2X), ", data[byteCount]);
          bitMask = (1<<7);
          byteCount++;
       }
    }
-   print("\n");
+   Logging::print("\n");
 }
 
 void listJTAGSequence(uint8_t       sequenceLength,
@@ -1075,7 +1075,7 @@ const uint8_t *sequence = sequenceStart;
 uint8_t complete = false;
 USBDM_ErrorCode rc;
 
-// print("Input Data --------------------------------------\n");
+// Logging::print("Input Data --------------------------------------\n");
 // printDump(sequenceStart,sequenceLength);
 
    do {
@@ -1092,46 +1092,46 @@ USBDM_ErrorCode rc;
          case JTAG_MISC2: // Misc commands 0x40-0x5F
             switch (opcode) {
                case JTAG_SAVE_SUB:
-                  print("%-*d JTAG_SAVE_SUB\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SAVE_SUB\n", indent, lineNumber);
                   break;
                case JTAG_DEBUG_ON:
-                  print("%-*d JTAG_DEBUG_ON\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_DEBUG_ON\n", indent, lineNumber);
                   break;
                case JTAG_DEBUG_OFF:
-                  print("%-*d JTAG_DEBUG_OFF\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_DEBUG_OFF\n", indent, lineNumber);
                   break;
                case JTAG_TEST_LOGIC_RESET:
-                  print("%-*d JTAG_TEST_LOGIC_RESET\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_TEST_LOGIC_RESET\n", indent, lineNumber);
                   break;
                case JTAG_MOVE_DR_SCAN:
-                  print("%-*d JTAG_MOVE_DR_SCAN\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_MOVE_DR_SCAN\n", indent, lineNumber);
                   break;
                case JTAG_MOVE_IR_SCAN:
-                  print("%-*d JTAG_MOVE_IR_SCAN\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_MOVE_IR_SCAN\n", indent, lineNumber);
                   break;
                case JTAG_SET_STAY_SHIFT:
-                  print("%-*d JTAG_SET_STAY_SHIFT\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SET_STAY_SHIFT\n", indent, lineNumber);
                   break;
                case JTAG_SET_EXIT_SHIFT_DR:
-                  print("%-*d JTAG_SET_EXIT_SHIFT_DR\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SET_EXIT_SHIFT_DR\n", indent, lineNumber);
                   break;
                case JTAG_SET_EXIT_SHIFT_IR:
-                  print("%-*d JTAG_SET_EXIT_SHIFT_IR\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SET_EXIT_SHIFT_IR\n", indent, lineNumber);
                   break;
                case JTAG_SET_EXIT_IDLE:
-                  print("%-*d JTAG_SET_EXIT_IDLE\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SET_EXIT_IDLE\n", indent, lineNumber);
                   break;
                case JTAG_SET_IN_FILL_0:
-                  print("%-*d JTAG_SET_IN_FILL_0\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SET_IN_FILL_0\n", indent, lineNumber);
                   break;
                case JTAG_SET_IN_FILL_1:
-                  print("%-*d JTAG_SET_IN_FILL_1\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SET_IN_FILL_1\n", indent, lineNumber);
                   break;
                case JTAG_SUBA:
                case JTAG_SUBB:
                case JTAG_SUBC:
                case JTAG_SUBD:
-                  print("%-*d JTAG_SUB%c\n",
+                  Logging::print("%-*d JTAG_SUB%c\n",
                         indent, lineNumber, 'A'+(opcode&0x03));
                   indent+=3;
                   break;
@@ -1139,157 +1139,157 @@ USBDM_ErrorCode rc;
                case JTAG_CALL_SUBB:
                case JTAG_CALL_SUBC:
                case JTAG_CALL_SUBD:
-                  print("%-*d JTAG_CALL_SUB%c\n",
+                  Logging::print("%-*d JTAG_CALL_SUB%c\n",
                         indent, lineNumber, 'A'+(opcode&0x03));
                   break;
                case JTAG_BREAK:
-                  print("%-*d JTAG_BREAK...\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_BREAK...\n", indent, lineNumber);
                   break;
                case JTAG_CONTINUE:
-                  print("%-*d JTAG_CONTINUE...\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_CONTINUE...\n", indent, lineNumber);
                   break;
                case JTAG_END_REPEAT:
                   indent-=3;
-                  print("%-*d JTAG_END_REPEAT...\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_END_REPEAT...\n", indent, lineNumber);
                   break;
                case JTAG_ELSE: // Skip to JTAG_END_IF
                   indent-=3;
-                  print("%-*d JTAG_ELSE\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_ELSE\n", indent, lineNumber);
                   indent+=3;
                   break;
                case JTAG_END_IF:
                   indent-=3;
-                  print("%-*d JTAG_END_IF\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_END_IF\n", indent, lineNumber);
                   break;
                case JTAG_NOP:
-                  print("%-*d JTAG_NOP\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_NOP\n", indent, lineNumber);
                   break;
                case JTAG_SKIP_DP:
-                  print("%-*d JTAG_SKIP_DP(\?\?)\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SKIP_DP(\?\?)\n", indent, lineNumber);
                   break;
                case JTAG_END:
                   indent-=3;
                   complete = true;
-                  print("%-*d JTAG_END - end of sequence\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_END - end of sequence\n", indent, lineNumber);
                   break;
                case JTAG_RETURN:
-                  print("%-*d JTAG_RETURN\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_RETURN\n", indent, lineNumber);
                   break;
                case JTAG_END_SUB:
                   indent-=3;
-                  print("%-*d JTAG_END_SUB\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_END_SUB\n", indent, lineNumber);
                   break;
                case JTAG_SHIFT_IN_DP : // Shift sequence in (8-bit count)/TL
                   numBits = *sequence++;
-                  print("%-*d JTAG_SHIFT_IN_DP (%d)\n", indent, lineNumber, numBits);
+                  Logging::print("%-*d JTAG_SHIFT_IN_DP (%d)\n", indent, lineNumber, numBits);
                   break;
                case JTAG_SHIFT_OUT_DP_VARA:
-                  print("%-*d JTAG_SHIFT_OUT_DP_VARA\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_SHIFT_OUT_DP_VARA\n", indent, lineNumber);
                   break;
                case JTAG_SHIFT_OUT_DP : // Shift sequence out - sequence taken from dataOutPtr
                   numBits = *sequence++;
-                  print("%-*d JTAG_SHIFT_OUT_DP (%d)\n", indent, lineNumber, numBits);
+                  Logging::print("%-*d JTAG_SHIFT_OUT_DP (%d)\n", indent, lineNumber, numBits);
                   break;
                case JTAG_SHIFT_IN_OUT_DP : // Shift sequence in & out at same time - sequence taken from dataOutPtr
                   numBits = *sequence++;
-                  print("%-*d JTAG_SHIFT_IN_OUT_DP (%d)\n", indent, lineNumber, numBits);
+                  Logging::print("%-*d JTAG_SHIFT_IN_OUT_DP (%d)\n", indent, lineNumber, numBits);
                   break;
                case JTAG_IF_VARA_EQ: // IF statement testing variable A/B == value
 //               case JTAG_IF_VARB_EQ:
-                  print("%-*d JTAG_IF_VAR%c_EQ(%d)\n", indent, lineNumber, 'A'+(opcode&3), tempValue);
+                  Logging::print("%-*d JTAG_IF_VAR%c_EQ(%d)\n", indent, lineNumber, 'A'+(opcode&3), tempValue);
                   indent+=3;
                   break;
                case JTAG_IF_VARA_NEQ: // IF statement testing variable A/B != value
                case JTAG_IF_VARB_NEQ:
-                  print("%-*d JTAG_IF_VAR%c_NEQ(%d)\n", indent, lineNumber, 'A'+(opcode&3), tempValue);
+                  Logging::print("%-*d JTAG_IF_VAR%c_NEQ(%d)\n", indent, lineNumber, 'A'+(opcode&3), tempValue);
                   indent+=3;
                   break;
                case JTAG_IF_ITER_EQ:
-                  print("%-*d JTAG_IF_ITER_EQ(%d)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_IF_ITER_EQ(%d)\n", indent, lineNumber, tempValue);
                   indent+=3;
                   break;
                case JTAG_IF_ITER_NEQ:
-                  print("%-*d JTAG_IF_ITER_NEQ(%d)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_IF_ITER_NEQ(%d)\n", indent, lineNumber, tempValue);
                   indent+=3;
                   break;
                case JTAG_REPEAT8:
                   tempValue = *sequence++;
-                  print("%-*d JTAG_REPEAT8(%d)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_REPEAT8(%d)\n", indent, lineNumber, tempValue);
                   indent+=3;
                   break;
                case JTAG_REPEAT:
-                  print("%-*d JTAG_REPEAT(%d)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_REPEAT(%d)\n", indent, lineNumber, tempValue);
                   indent+=3;
                   break;
                case JTAG_SHIFT_OUT_VARA: // Shift out VarA/B
                case JTAG_SHIFT_OUT_VARB:
                   numBits = *sequence++;
-                  print("%-*d: JTAG_SHIFT_OUT_VAR%c(%d)\n", indent, lineNumber, 'A'+(opcode&0x3), numBits);
+                  Logging::print("%-*d: JTAG_SHIFT_OUT_VAR%c(%d)\n", indent, lineNumber, 'A'+(opcode&0x3), numBits);
                   break;
 //               case JTAG_SHIFT_IN_VARA:    // Set variable A from TDO
 //               case JTAG_SHIFT_IN_VARB:    // Set variable A from TDO
 //                  numBits = *sequence++;
-//                  print("%-*d JTAG_SHIFT_IN_VAR%c(%d)\n", indent, lineNumber, 'A'+(opcode&3), numBits);
+//                  Logging::print("%-*d JTAG_SHIFT_IN_VAR%c(%d)\n", indent, lineNumber, 'A'+(opcode&3), numBits);
 //                  break;
 //               case JTAG_SHIFT_IN_OUT_VARA:
 //               case JTAG_SHIFT_IN_OUT_VARB:
 //                  numBits = *sequence++;
-//                  print("%-*d JTAG_SHIFT_IN_OUT_VAR%c(%d) => ", indent, lineNumber, 'A'+(opcode&3), numBits);
+//                  Logging::print("%-*d JTAG_SHIFT_IN_OUT_VAR%c(%d) => ", indent, lineNumber, 'A'+(opcode&3), numBits);
 //                  printBits(numBits, sequence);
 //                  sequence += BITS_TO_BYTES(numBits);
 //                  break;
                case JTAG_SET_ERROR:    // Set error variable & exit
                   rc = (USBDM_ErrorCode)*sequence++;
-                  print("%-*d JTAG_SET_ERROR error <= %s\n", indent, lineNumber, USBDM_GetErrorString(rc));
+                  Logging::print("%-*d JTAG_SET_ERROR error <= %s\n", indent, lineNumber, USBDM_GetErrorString(rc));
                   break;
                case JTAG_PUSH8:
                   tempValue = *sequence++;
-                  print("%-*d JTAG_PUSH_8(%d, 0x%2.2X)\n", indent, lineNumber, tempValue, tempValue);
+                  Logging::print("%-*d JTAG_PUSH_8(%d, 0x%2.2X)\n", indent, lineNumber, tempValue, tempValue);
                   break;
                case JTAG_PUSH16:
                   tempValue = *sequence++;
                   tempValue = (tempValue<<8)+*sequence++;
-                  print("%-*d JTAG_PUSH_16(0x%4.4X)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_PUSH_16(0x%4.4X)\n", indent, lineNumber, tempValue);
                   break;
                case JTAG_PUSH32:
                   tempValue = *sequence++;
                   tempValue = (tempValue<<8)+*sequence++;
                   tempValue = (tempValue<<8)+*sequence++;
                   tempValue = (tempValue<<8)+*sequence++;
-                  print("%-*d JTAG_PUSH_32(0x%8.8X)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_PUSH_32(0x%8.8X)\n", indent, lineNumber, tempValue);
                   break;
                case JTAG_PUSH_DP_8:
-                  print("%-*d JTAG_PUSH_DP_8\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_PUSH_DP_8\n", indent, lineNumber);
                   break;
                case JTAG_PUSH_DP_16:
-                  print("%-*d JTAG_PUSH_DP_16\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_PUSH_DP_16\n", indent, lineNumber);
                   break;
                case JTAG_PUSH_DP_32:
-                  print("%-*d JTAG_PUSH_32\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_PUSH_32\n", indent, lineNumber);
                   break;
                case JTAG_SAVE_OUT_DP_VARC:
                case JTAG_SAVE_OUT_DP_VARD:
-                  print("%-*d JTAG_SAVE_DP_VAR%c\n", indent, lineNumber, 'A'+(opcode&3));
+                  Logging::print("%-*d JTAG_SAVE_DP_VAR%c\n", indent, lineNumber, 'A'+(opcode&3));
                   break;
                case JTAG_RESTORE_DP_VARC:
                case JTAG_RESTORE_DP_VARD:
-                  print("%-*d JTAG_RESTORE_DP_VAR%c\n", indent, lineNumber, 'A'+(opcode&3));
+                  Logging::print("%-*d JTAG_RESTORE_DP_VAR%c\n", indent, lineNumber, 'A'+(opcode&3));
                   break;
                case JTAG_LOAD_VARA:
                case JTAG_LOAD_VARB:
-                  print("%-*d JTAG_LOAD_VAR%c(%d, 0x%X)\n", indent, lineNumber, 'A'+(opcode&3), tempValue, tempValue);
+                  Logging::print("%-*d JTAG_LOAD_VAR%c(%d, 0x%X)\n", indent, lineNumber, 'A'+(opcode&3), tempValue, tempValue);
                   break;
                case JTAG_ARM_READAP:
                   numBits    = *sequence++;;
                   tempValue  = *sequence++<<24;
                   tempValue += *sequence++;
-                  print("%-*d JTAG_ARM_READAPx (N=%d, A=0x%08X)\n", indent, lineNumber, numBits, tempValue);
+                  Logging::print("%-*d JTAG_ARM_READAPx (N=%d, A=0x%08X)\n", indent, lineNumber, numBits, tempValue);
                   break;
                case JTAG_ARM_WRITEAP:
                   numBits    = *sequence++;;
                   tempValue  = *sequence++<<24;
                   tempValue += *sequence++;
-                  print("%-*d JTAG_ARM_WRITEAPx (N=%d, A=0x%08X)\n", indent, lineNumber, numBits, tempValue);
+                  Logging::print("%-*d JTAG_ARM_WRITEAPx (N=%d, A=0x%08X)\n", indent, lineNumber, numBits, tempValue);
                   break;
                case JTAG_ARM_WRITEAP_I:
                   tempValue   = *sequence++<<24;
@@ -1298,68 +1298,68 @@ USBDM_ErrorCode rc;
                   tempValue2 += *sequence++<<16;
                   tempValue2 += *sequence++<<8;
                   tempValue2 += *sequence++;
-                  print("%-*d JTAG_ARM_WRITEAP_Ix (A=0x%08X, V=0x%08X)\n", indent, lineNumber, tempValue, tempValue2);
+                  Logging::print("%-*d JTAG_ARM_WRITEAP_Ix (A=0x%08X, V=0x%08X)\n", indent, lineNumber, tempValue, tempValue2);
                   break;
                case JTAG_SET_PADDING:  // #Set HDR, HIR, TDR, TIR
                   tempValue  = *sequence++<<8;
                   tempValue += *sequence++;
-                  print("%-*d JTAG_SET_HDR(%d)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_SET_HDR(%d)\n", indent, lineNumber, tempValue);
                   tempValue  = *sequence++<<8;
                   tempValue += *sequence++;
-                  print("%-*d JTAG_SET_HIR(%d)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_SET_HIR(%d)\n", indent, lineNumber, tempValue);
                   tempValue  = *sequence++<<8;
                   tempValue += *sequence++;
-                  print("%-*d JTAG_SET_TDR(%d)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_SET_TDR(%d)\n", indent, lineNumber, tempValue);
                   tempValue  = *sequence++<<8;
                   tempValue += *sequence++;
-                  print("%-*d JTAG_SET_TIR(%d)\n", indent, lineNumber, tempValue);
+                  Logging::print("%-*d JTAG_SET_TIR(%d)\n", indent, lineNumber, tempValue);
                   break;
                case JTAG_READ_MEM:
-                  print("%-*d JTAG_READ_MEM...\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_READ_MEM...\n", indent, lineNumber);
                   break;
                case JTAG_WRITE_MEM:
-                  print("%-*d JTAG_WRITE_MEM...\n", indent, lineNumber);
+                  Logging::print("%-*d JTAG_WRITE_MEM...\n", indent, lineNumber);
                   break;
                default:
-                  print("%-*d Unknown Opcode (%d)\n", indent, lineNumber, opcode);
+                  Logging::print("%-*d Unknown Opcode (%d)\n", indent, lineNumber, opcode);
                   break;
             }
             break;
          case JTAG_REPEAT_Q(0):
             if (numBits == 1) {
                // Value of 1 indicates use top-level value
-               print("%-*d JTAG_REPEAT_DP #N\n", indent, lineNumber);
+               Logging::print("%-*d JTAG_REPEAT_DP #N\n", indent, lineNumber);
             }
             else {
-               print("%-*d JTAG_REPEAT_Q(%d)\n", indent, lineNumber, numBits);
+               Logging::print("%-*d JTAG_REPEAT_Q(%d)\n", indent, lineNumber, numBits);
             }
             indent+=3;
             break;
          case JTAG_SHIFT_IN_Q(0) : // Shift sequence in (5-bit count)
-            print("%-*d JTAG_SHIFT_IN_Q(%d)\n", indent, lineNumber, numBits);
+            Logging::print("%-*d JTAG_SHIFT_IN_Q(%d)\n", indent, lineNumber, numBits);
             break;
          case JTAG_SHIFT_OUT_Q(0) : // Shift sequence out (5-bit count) - sequence taken inline
-            print("%-*d JTAG_SHIFT_OUT_Q(%d) => ", indent, lineNumber, numBits);
+            Logging::print("%-*d JTAG_SHIFT_OUT_Q(%d) => ", indent, lineNumber, numBits);
             printBits(numBits, sequence);
             sequence += BITS_TO_BYTES(numBits);
             break;
          case JTAG_SHIFT_IN_OUT_Q(0) : // Shift sequence in & out at same time - sequence taken inline
-            print("%-*d JTAG_SHIFT_IN_OUT_Q(%d) =>", indent, lineNumber, numBits);
+            Logging::print("%-*d JTAG_SHIFT_IN_OUT_Q(%d) =>", indent, lineNumber, numBits);
             printBits(numBits, sequence);
             sequence             += (numBits+7)/8;
             break;
          case JTAG_PUSH_Q(0): // Push a 5-bit value
             tempValue = opcode&JTAG_NUM_BITS_MASK;
-            print("%-*d JTAG_PUSH_Q(%d, 0x%X)\n", indent, lineNumber, tempValue, tempValue);
+            Logging::print("%-*d JTAG_PUSH_Q(%d, 0x%X)\n", indent, lineNumber, tempValue, tempValue);
             break;
          default:
-            print("%-*d Unknown Opcode (%d)\n", indent, lineNumber, opcode);
+            Logging::print("%-*d Unknown Opcode (%d)\n", indent, lineNumber, opcode);
             break;
       }
    } while ((sequence < sequenceStart+sequenceLength) && !complete);
    if (sequence < sequenceStart+sequenceLength) {
-      print("Output data    =>  -------------------------------------------\n");
-      printDump(sequence,
+      Logging::print("Output data    =>  -------------------------------------------\n");
+      Logging::printDump(sequence,
                 sequenceStart+sequenceLength-sequence,
                 sequence-sequenceStart);
    }

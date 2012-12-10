@@ -78,29 +78,29 @@ void GdbOutput::putGdbChar(char ch) {
    gdbChecksum   += ch;
    gdbCharCount  += 1;
    if (gdbCharCount > sizeof(gdbBuffer)) {
-      print( "putGdbChar(): buffer overflow\n");
+      Logging::print( "putGdbChar(): buffer overflow\n");
       exit(-1);
    }
    *gdbPtr++      = ch;
 }
 
-//! Add hex chars to gdb Tx buffer
+//! Add bytes to gdb Tx buffer as Hex character pairs
 //!
-//! @param s - '\0' terminated string to add
+//! @param count Size of buffer
+//! @param buff  Buffer to add
 //!
-void GdbOutput::putGdbHex(unsigned count, unsigned char *buff) {
+void GdbOutput::putGdbHex(const unsigned char *buffer, unsigned size) {
    unsigned index;
-
-   for (index=0; index<count; index++) {
-      putGdbChar(hexChar(buff[index]>>4));
-      putGdbChar(hexChar(buff[index]));
+   for (index=0; index<size; index++) {
+      putGdbChar(hexChar(buffer[index]>>4));
+      putGdbChar(hexChar(buffer[index]));
    }
 }
 
 //! Add a string to gdb Tx buffer
 //!
 //! @param s    - '\0' terminated string to add
-//! @param size - maximum size to send
+//! @param size - maximum size to send (-1 ignored)
 //!
 void GdbOutput::putGdbString(const char *s, int size) {
    while ((*s != '\0') && (size != 0)) {
@@ -109,6 +109,21 @@ void GdbOutput::putGdbString(const char *s, int size) {
          size--;
    }
 }
+
+//! Add a string to gdb Tx buffer as a series of hex digit pairs
+//!
+//! @param s    - '\0' terminated string to add
+//! @param size - maximum size to send (-1 ignored)
+//!
+void GdbOutput::putGdbHexString(const char *s, int size) {
+   while ((*s != '\0') && (size != 0)) {
+      putGdbChar(hexChar((*s)>>4));
+      putGdbChar(hexChar(*s++));
+      if (size > 0)
+         size--;
+   }
+}
+
 //! Print to gdb Tx buffer in 'printf' manner
 //!
 //! @param format - print control string
@@ -153,30 +168,10 @@ void GdbOutput::putGdbChecksum(void) {
 //! txGdbPkt - transmit the gdbBuffer to GDB
 //!
 void GdbOutput::txGdbPkt(void) {
-
-//   int response = '-';
-//   int retry = 5;
-
    (void)fwrite(gdbBuffer, 1, gdbCharCount, pipeOut);
    (void)fflush(pipeOut);
-//   print( "=>:%03d%*s\n", gdbCharCount, gdbCharCount, gdbBuffer);
-
-   //   do {
-//      (void)fwrite(gdbBuffer, 1, gdbCharCount, pipeOut);
-//      (void)fflush(pipeOut);
-//      print( "=>:%03d%*s\n", gdbCharCount, gdbCharCount, gdbBuffer);
-//
-//      response = fgetc(pipeIn);
-//      if (response == '+') {
-//         print( "%40s<=+\n", "");
-//         return;
-//      }
-//      else {
-//         print( "%40s<=%c\n", "", response);
-//      }
-//   } while ((response != '+') && (retry-- > 0));
+   Logging::print( "txGdbPkt()=>:%03d%*s\n", gdbCharCount, gdbCharCount, gdbBuffer);
 }
-
 
 //!
 //! flushGdbBuffer - flush gdbBuffer (in background thread)
@@ -198,11 +193,41 @@ void GdbOutput::sendGdbString(const char *buffer, int size) {
    flushGdbBuffer();
 }
 
+//! Send a string to GDB as a series of hex digit pairs with leading id string
+//!
+//! @param id   - '\0' terminated string to send unencoded
+//! @param s    - '\0' terminated string to send encoded
+//! @param size - maximum size of encoded string to send (-1 ignored)
+//!
+void GdbOutput::sendGdbHexString(const char *id, const char *s, int size) {
+   if (id == NULL) {
+      id = "";
+   }
+   putGdbPreamble();
+   putGdbString(id);
+   putGdbHexString(s, size);
+   putGdbChecksum();
+   flushGdbBuffer();
+}
+
+//!
+//! Send bytes to GDB as Hex character pairs
+//!
+//! @param buffer   - data to put ('\0' terminated)
+//! @param size     - size of data (-1 ignored)
+//!
+void GdbOutput::sendGdbHex(const unsigned char *buffer, unsigned size) {
+   putGdbPreamble();
+   putGdbHex(buffer, size);
+   putGdbChecksum();
+   flushGdbBuffer();
+}
+
 //!
 //! sendGdbString - send notification pkt to GDB  (pre-amble and postscript are added)
 //!
 //! @param buffer - data to send ('\0' terminated)
-//! @param size   - size of pkt to send (-1 ignored)
+//! @param size   - size of data (-1 ignored)
 //!
 void GdbOutput::sendGdbNotification(const char *buffer, int size) {
    putGdbPreamble('%');
@@ -220,9 +245,22 @@ void GdbOutput::sendGdbBuffer(void) {
    flushGdbBuffer();
 }
 
-void GdbOutput::sendErrorMessage(void) {
-   if (errorMessage != NULL)
-      sendGdbString(errorMessage);
+void GdbOutput::sendErrorMessage(ErrorType errorType, const char *msg) {
+   static const char *errStrings[] = {"fatal", "memType"};
+   if (errorType>E_Memory) {
+      errorType = E_Fatal;
+   }
+   putGdbPreamble();
+   putGdbPrintf("E.%s.%s", errStrings[errorType], msg);
+   putGdbChecksum();
+   flushGdbBuffer();
+}
+
+void GdbOutput::sendErrorMessage(unsigned value) {
+   putGdbPreamble();
+   putGdbPrintf("E%2.2X", value);
+   putGdbChecksum();
+   flushGdbBuffer();
 }
 
 //! Send immediate ACK/NAK response
@@ -230,7 +268,7 @@ void GdbOutput::sendErrorMessage(void) {
 //! @param ackValue - Either '-' or '+' response to send
 //!
 void GdbOutput::sendAck(char ackValue) {
-//   print("=>%c\n", ackValue);
+   Logging::print("sendAck()=>ack=%c\n", ackValue);
    fputc(ackValue, pipeOut);
    fflush(pipeOut);
 }

@@ -4,7 +4,7 @@
  \section introSection Introduction
    USBDM is a debugger hardware interface for a range of Freescale microcontrollers.  
    It is designed to work with Freescale's Codewarrior software under Windows and Linux.  More recently 
-   basic support for Coldfire with Codesourcery Tool chain has been added (WIN only). 
+   basic support for Coldfire and Kinetis with the Codesourcery Tool chain has been added. 
    A set of stand-alone programmers are also provided.
        
    The attached files provide a port of a combined TBDML/OSBDM/TBLCF code to various processors.  
@@ -24,6 +24,14 @@
    - Standard-alone programmers.
    - A description of, and design files for, several versions of suitable BDM hardware
    - The firmware required for the above BDM hardware.
+   
+   <hr>
+ \subsection QuickLinks Quick Links
+
+   - @htmlonly <a href="http://sourceforge.net/projects/usbdm/"><b>Release versions of the software for the various BDMs are available on Sourceforge.</b></a> @endhtmlonly
+   - @htmlonly <a href="USBDM_V4.10/USBDM_FlashProgrammers/html/index.html"><b>Various stand-alone programmers are provided to support the USBDM hardware.</b></a> @endhtmlonly 
+   - @htmlonly <b>Source code is available on </b><a href="https://github.com/podonoghue"><b>GitHub</b></a><b> and Zipped on </b><a href="http://sourceforge.net/projects/usbdm/"><b>Sourceforge</b>.</a>@endhtmlonly 
+   
    
 <hr>
 \subsection JS16Designs JS16 based versions (Current designs)
@@ -93,10 +101,7 @@
 <hr>
  \subsection DeviceCharacteristics Device Characteristics and links to documentation
 
-   - @htmlonly <a href="http://sourceforge.net/projects/usbdm/"><b>Release versions of the software for the various BDMs are available on Sourceforge.</b></a> @endhtmlonly.
-   - @htmlonly <a href="USBDM_V4.10/USBDM_FlashProgrammers/html/index.html"><b>Various stand-alone programmers are provided to support the USBDM hardware.</b></a> @endhtmlonly 
-   
-<b>The table below shows the support provided by each version and provides links to further information.</b>
+The table below shows the support provided by each version and provides links to further information.
 
 @htmlonly
 <table border=1 cellspacing=0 cellpadding=0>
@@ -246,7 +251,6 @@
 <hr>
  \subsection OtherLinks Other Links
 
-   - <b> @htmlonly <a href="https://github.com/podonoghue">Source code is available on GitHub.</a> @endhtmlonly\n\n </b>
    - <b> @htmlonly <a href="http://opax.swin.edu.au/~3340694/USBDM/USBDM_V3.2/USBDM/html/index.html">Previous software version 3.2 may be found here.</a> @endhtmlonly </b>\n
 
 <hr>

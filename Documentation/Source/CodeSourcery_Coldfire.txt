@@ -1,0 +1,227 @@
+/*!
+\page codeSourceryColdfirePage CodeSourcery Coldfire
+
+This page provides brief instructions on how to create and debug an Eclipse C/C++ project using CodeSourcery Lite for use with 
+Eclipse IDE and USBDM BDM hardware for Coldfire targets on a MS-Windows platform.
+
+It assumes that the required software has been installed \ref codeSourceryInstallPage
+   
+\section creatingEclipseProject Creating an Eclipse Cross-Compiler Project for a Coldfire target
+<table border="0">
+   <tr>
+      <td>
+         - Select <i>File->New->Project</i> from the Menu\n
+         The dialogue shown should appear.\n
+         Select the options to create a C or C++ Project as needed.\n
+         Click <i>Next</i>
+      </td>
+      <td colspan=2>
+         \image html "NewProject.png"
+      </td>
+   </tr>
+   <tr>
+      <td>
+         - Choose a project Name\n
+         Choose options to create a basic Cross-compile project. \n
+         Click <i>Next</i>
+      </td>
+      <td colspan=2>
+         \image html C++Project.png
+      </td>
+   </tr>
+   <tr>
+      <td>
+         - Eclipse needs to know where to find the GCC Tools and the target-specific prefix used for the Gnu tools.  
+          The prefix <b>m68k-elf-</b> is for CodeSourcery for a M68K (Coldfire etc) target.\n
+         Click <i>Next</i> 
+      </td>
+      <td colspan=2>
+         \image html CrossCompileOptions.png
+      </td>
+   </tr>
+   <tr>
+      <td>
+         - The Debug and release builds are usually suitable.\n
+         Click <i>Finish</i>
+      </td>
+      <td colspan=2>
+         \image html SelectConfigurations.png
+      </td>
+   </tr>
+   <tr>
+      <td>
+         - It is necessary to change some of the link options for the project.\n
+         Make sure the project is selected in the Project Explorer window and 
+         then select <i>Project Properties</i> from the menu. 
+      </td>
+      <td>
+         \image html ProjectExplorer.png
+      </td>
+      <td>
+         \image html ProjectPropertiesMenu.png
+      </td>
+   </tr>
+</table>
+<table border="0">
+   <tr>
+      <td>
+         - Locate the C/C++ Build setting shown below.  Uncheck <i>Use default build command</i> and change to the Codesourcey make command <b>cs-make</b>.
+      </td>
+   </tr>
+   <tr>
+      <td>
+         \image html ProjectBuildOptions.png
+      </td>
+   </tr>
+</table>
+<table border="0">
+   <tr>
+      <td>
+         - Locate the Linker setting shown below and add the appropriate linker script with the T option. This would be similar to <B>-T mcf51cn128-rom.ld</B>.\n
+         The example used is for a ROM-based debugging session.  The USBDM gdb server supports programming the same targets as the stand-alone programmers and 
+         will program the target at the start of the debugging session.\n
+         These script files are located in the m68k-elf\\lib directory of the CodeSourcery
+         installation and are describe in Chapter 4 of the <i>CodeSourcery Getting Started</i> PDF.
+      </td>
+   </tr>
+   <tr>
+      <td>
+         \image html ProjectLinkOptions.png
+      </td>
+   </tr>
+</table>
+<table border="0">
+   <tr>
+      <td colspan=2>
+         - Add a source folder to the project by right-clicking on the project in the Project Browser.
+         <hr>
+         - Complete the dialogue to create the folder.
+      </td>
+   </tr>
+   <tr>
+      <td>
+         \image html NewFolderMenu.png
+      </td>
+      <td>
+         \image html NewSourceFolder.png
+      </td>
+   </tr>
+</table>
+\n
+- Add a source folder to the project in the same fashion.  Give it the name <b>main.cpp</b>
+
+- Create a minimal <b>main()</b> function in the file.
+\verbatim
+typedef unsigned char U8;
+#define SOPT1 (*(volatile U8 *) 0xFFFF8101)
+#define PTDDD (*(volatile U8 *) 0xFFFF8031)
+#define PTDD  (*(volatile U8 *) 0xFFFF8030)
+
+#define GREEN_LED (1<<0)
+#define RED_LED   (1<<1)
+
+void delay(void) {
+int i;
+   for(i=0; i<100000; i++) {
+      asm("nop");
+   }
+}
+
+int main(void) {
+   SOPT1  = 0; // Disable COP
+   PTDDD |= GREEN_LED|RED_LED;
+   PTDD  |= GREEN_LED|RED_LED;
+   PTDD  &= ~RED_LED;
+
+   for(;;) {
+      PTDD ^= GREEN_LED|RED_LED;
+      delay();
+   }
+}
+\endverbatim
+
+- You may now build the project by clicking on the hammer icon.
+
+\section creatingLaunchConfiguration Creating A Launch Configuration
+
+- First make sure that the project is selected in the Project Explorer window
+ and then select <b>Run->Debug Configurations</b> from the menu.
+
+\image html DebugConfiguationBare.png
+
+- Select <b>GDB Hardware Debugging</b> in the left panel and then click on the
+  New Launch Configuration button at top left of the dialogue.
+  
+- Select the Debugger Tab in the dialogue.\n
+  Give the launch configuration a name and correct the name of the <b>gdb</b> debugger.\n
+  Unselect <i>Use remote target</i> as we will be launching the CodeSourcery <i>sprite</i> 
+  locally.  
+
+\image html DebuggerTab.png
+
+- Click on the <i>Select other</i> link at the bottom of the dialogue and change the
+  preferred launcher as shown below. Click OK to close and return to the tabbed dialogue.
+
+\image html PreferredLauncher.png
+
+- Select the Startup Tab in the dialogue.\n
+  Complete the following settings:
+    - Choose a reset delay appropriate to your hardware.  1 second should be adequate.
+    - Select Halt
+    - Add commands to start the USBDM GDB server with the appropriate options for the target being used.  
+      A list of the target devices (such as mcf51cn128) can be obtained by running the server at the command
+      line with the -d options.
+      The USBDM GDB Server is quite slow to do the initial connect and needs the extended timeout value.
+      Set the initial PC to the entry point of the program. \n
+      \verbatim
+set remotetimeout 3000
+target remote |usbdm-cfv1-gdbServer-debug.exe mcf51cn128
+set $pc=_start
+      \endverbatim
+    - Select to <i>load image</i> from the project binary since the USBDM GDB server supports target 
+      programming.  Alternatively, the target can be programmed beforehand.
+    - Select to <i>load symbols</i> from the project binary as well.
+    - <i>Set a breakpoint</i> at main()and to <i>resume</i> execution.  This will cause the debugger 
+      session to stop at the first line of the main() routine when debugging is started. \n
+
+\image html StartupTab.png
+
+\section debugging Debugging
+
+- You can now start a debugging session using the launch configuration above. \n
+  You should find that the follow steps occurring:
+   - Session starts
+   - The program is down-loaded to the target
+   - Execution commences at the program entry point
+   - Execution stops at the first line of main()
+   
+   You should be able to debug in the usual fashion with breakpoints, single-stepping etc.
+
+- A list of the targets supported by the GDB server can be obtained with the -d option.  \n
+  Currently the following are supported:
+\verbatim
+usbdm-cfv1-gdbServer.exe -d
+MCF51AC128A,    MCF51AC128C,    MCF51AC256A,
+MCF51AC256B,    MCF51AG96,      MCF51AG128,
+MCF51CN128,     MCF51EM128,     MCF51EM256,
+MCF51JE128,     MCF51JE256,     MCF51JF32,
+MCF51JF64,      MCF51JF128,     MCF51JU32,
+MCF51JU64,      MCF51JU128,     MCF51JM32,
+MCF51JM64,      MCF51JM128,     MCF51MM128,
+MCF51MM256,     MCF51QE32,      MCF51QE64,
+MCF51QE96,      MCF51QE128,     MCF51QF32,
+MCF51QF64,      MCF51QF128,     MCF51QH32,
+MCF51QH64,      MCF51QH128,     MCF51QM32,
+MCF51QM64,      MCF51QM128,     MCF51QU32,
+MCF51QU64,      MCF51QU128,     MCF51EVE,
+MCF51FD256,     MCF51JG128,     MCF51JG256,
+MCF51JG64,      UUUMMA9540,     UUUMMA9550,
+
+usbdm-cfvx-gdbServer.exe -d
+MCF52221,       MCF52223,       MCF52230,
+MCF52231,       MCF52232,       MCF52233,
+MCF52234,       MCF52235,       MCF52236,
+MCF52210,       MCF52211,       MCF52212,
+MCF52213,       MCF52259,
+\endverbatim
+*/

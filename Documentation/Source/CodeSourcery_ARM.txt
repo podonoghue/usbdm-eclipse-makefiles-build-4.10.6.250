@@ -1,0 +1,192 @@
+/*!
+\page codeSourceryARMPage CodeSourcery ARM
+
+This page provides brief instructions on how to create and debug an Eclipse C/C++ project using CodeSourcery Lite for use with 
+Eclipse IDE and USBDM BDM hardware for a Kinetis target on a MS-Windows platform.
+
+It assumes that the required software has been installed \ref codeSourceryInstallPage
+   
+\section creatingEclipseProject Creating an Eclipse Cross-Compiler Project for a Kinetis target
+While it is possible to create a minimal ARM project will little effort, it is unlikely to work correctly
+with a Kinetis target due to the absence of some target specific library comonents in the Codesourcery
+Lite version.  \n
+There is a Kinetis version of Codesourcery available but only in the commercial version.\n
+I have found that setting up a project that would actually work to be quite complicated.  Providing 
+instructions to do so would be both tedious and error prone. \n
+
+The easiest way of obtaining a working setup is to import one of the two example Kinetis projects provided.
+These may need to be adapted to a specific processor but at least you have a sensible base to start with. \n
+   
+The file structure used in the projects is the one that I find convenient to organize the various files but
+simpler arrangements will also work e.g. all the source files in a single source folder. \n
+   
+The projects also include a launch configurations to work with GDB and the USBDM GDB server.  
+   
+-  Do the following to import the projects.
+   -  Unzip the projects somewhere convenient.  Do not try to import the ZIP files directly.\n
+   -  Choose <b>File->Import</b> in the Eclipse menu. \n
+   -  Select <b>Existing Projects into Workspace</b> \n
+   -  Browse to the where the projects were unzipped. \n
+   -  Select the projects to be imported.
+   -  The imported projects should be renamed so as to not conflict with later imports.
+   
+-  A brief description of the project structure and files follow:
+   - <b>Source</b>
+      - main.c - Example mainline
+   - <b>Startup_Code</b>
+      - clock.c   - Example clock configuration
+      - start_c.c - Codesourcery C initialization
+      - start.S   - Low-level stack setup
+      - sysinit.c - Initialization 
+      - vectors.c - Vector table - The table entries are weakly assigned to a default handler. 
+                    Creating a function with exactly the same name will override the default 
+                    handler.  There is no need to modify the vector table. 
+   - <b>Project_Headers</b>
+      - clock.h      - Header file for clock.c
+      - derivative.h - A link file to the target specific header file.
+      - MKL25Z4.h    - Target specific header file.  These are available from the Freescale web site. 
+   - <b>Project_Settings</b>
+      - MKL25Z128M4-flash.ld - Target specific linker file.  This may need to be modified for other targets.
+      - Codesourcery-MKL25Z128 Debug.launch - This is a Debug configuration for running GDB with a USBDM interface.
+      .
+   .
+\n \n
+\section importantKinetisProjectSettings Important Kinetis Project Settings
+The following describes important dialogues and settings in the project settings that 
+may need to be modified in the example projects.\n 
+Note that these settings will need to be changed twice - once for each project configuration (Debug & Release).
+   <tr>
+      <td>
+         - The <i>Target Processor</i> setting shown below must match the target:\n
+            - KL series devices e.g. MKL24Z128M4 => Cortex-M0.\n
+            - MK series devices e.g. MK40DX256 => Cortex-M4.\n
+      </td>
+   </tr>
+   <tr>
+      <td>
+         \image html ProjectTargetProcessor.png
+      </td>
+   </tr>
+</table>
+<table border="0">
+   <tr>
+      <td>
+         - Linker Script - This refers to the linker script provided in the project.
+      </td>
+   </tr>
+   <tr>
+      <td>
+         \image html ProjectLinkOptionsKinetis.png
+      </td>
+   </tr>
+</table>
+
+\section launchConfigurationKinetis Launch Configuration Settings
+The following describes important dialogues and settings in the launch configuration that 
+may need to be modified in the example projects.\n 
+
+- Startup Tab\n
+  Check the following settings:
+    - Reset delay appropriate to your hardware.  1 second should be adequate.
+    - Select Halt
+    - Add commands to start the USBDM GDB server with the appropriate options for the target being used.  
+      A list of the target devices (such as MK40DX128Z) can be obtained by running the server at the command
+      line with the -d options.
+      The USBDM GDB Server is quite slow to do the initial connect and needs the extended timeout value.
+      Set the initial PC to the entry point of the program. \n
+      \verbatim
+set remotetimeout 3000
+target remote |usbdm-arm-gdbServer.exe KL25Z128M4
+set $pc=_start
+      \endverbatim
+    - Select to <i>load image</i> from the project binary since the USBDM GDB server supports target 
+      programming.  Alternatively, the target can be programmed beforehand.
+    - Select to <i>load symbols</i> from the project binary as well.
+    - <i>Set a breakpoint</i> at main()and to <i>resume</i> execution.  This will cause the debugger 
+      session to stop at the first line of the main() routine when debugging is started. \n
+
+\image html StartupTabKinetis.png
+
+\section debugging Debugging
+
+- You can now start a debugging session using the launch configuration above. \n
+  You should find that the follow steps occurring:
+   - Session starts
+   - The program is down-loaded to the target
+   - Execution commences at the program entry point
+   - Execution stops at the first line of main()
+   .
+   You should be able to debug in the usual fashion with breakpoints, single-stepping etc.
+
+- A list of the targets supported by the GDB server can be obtained with the -d option.  \n
+  Currently the following are supported:
+\verbatim
+usbdm-arm-gdbServer.exe -d
+KL04Z8M4,       KL04Z16M4,      KL04Z32M4,
+KL05Z8M4,       KL05Z16M4,      KL05Z32M4,
+KL14Z32M4,      KL14Z64M4,      KL15Z32M4,
+KL15Z64M4,      KL15Z128M4,     KL24Z32M4,
+KL24Z64M4,      KL25Z32M4,      KL25Z64M4,
+KL25Z128M4,     MK10DN128,      MK10DN32,
+MK10DN512,      MK10DN64,       MK10DX128_100MHZ,
+MK10DX128_50MHZ,        MK10DX128_72MHZ,        MK10DX256_100MHZ,
+MK10DX256_72MHZ,        MK10DX32,       MK10DX64,
+MK20DN128,      MK20DN32,       MK20DN512,
+MK20DN64,       MK20DX128_100MHZ,       MK20DX128_50MHZ,
+MK20DX128_72MHZ,        MK20DX256_100MHZ,       MK20DX256_72MHZ,
+MK20DX32,       MK20DX64,       MK20FN1M0,
+MK20FX512,      MK30DN512Z,     MK30DX128,
+MK30DX128Z,     MK30DX256,      MK30DX256Z,
+MK30DX64,       MK40DN512Z,     MK40DX128,
+MK40DX128Z,     MK40DX256,      MK40DX256Z,
+MK40DX64,       MK50DN512Z,     MK50DX128,
+MK50DX256,      MK50DX256Z,     MK51DN256Z,
+MK51DN512Z,     MK51DX128,      MK51DX256,
+MK51DX256Z,     MK52DN512Z,     MK53DN512Z,
+MK53DX256Z,     MK60DN256Z,     MK60DN512Z,
+MK60DX256Z,     MK60FN1M0,      MK60FX512,
+MK61FN1M0,      MK61FX512,      MK70FN1M0,
+MK70FX512,      PK10N512,       PK10X128,
+PK10X256,       PK20N512,       PK20X128,
+PK20X256,       PK30N512,       PK30X128,
+PK30X256,       PK40N512,       PK40X128,
+PK40X256,       PK60N256,       PK60N512,
+PK60X256,       K10DN128,       K10DN32,
+K10DN512M10,    K10DN512Z,      K10DN64,
+K10DX128,       K10DX128M10,    K10DX128M7,
+K10DX128Z,      K10DX256M10,    K10DX256M7,
+K10DX256Z,      K10DX32,        K10DX64,
+K10DX64M7,      K20DN128,       K20DN32,
+K20DN512M10,    K20DN512Z,      K20DN64,
+K20DX128,       K20DX128M10,    K20DX128M7,
+K20DX128Z,      K20DX256M10,    K20DX256M7,
+K20DX256Z,      K20DX32,        K20DX64,
+K20DX64M7,      K20FN1M0,       K20FX512,
+K30DN512M10,    K30DN512Z,      K30DX128M10,
+K30DX128M7,     K30DX128Z,      K30DX256M10,
+K30DX256M7,     K30DX256Z,      K30DX64M7,
+K40DN512M10,    K40DN512Z,      K40DX128M10,
+K40DX128M7,     K40DX128Z,      K40DX256M10,
+K40DX256M7,     K40DX256Z,      K40DX64M7,
+K50DN512M10,    K50DN512Z,      K50DX128M7,
+K50DX256M10,    K50DX256M7,     K50DX256Z,
+K51DN256M10,    K51DN256Z,      K51DN512M10,
+K51DN512Z,      K51DX128M7,     K51DX256M10,
+K51DX256M7,     K51DX256Z,      K52DN512M10,
+K52DN512Z,      K53DN512M10,    K53DN512Z,
+K53DX256M10,    K53DX256Z,      K60DN256M10,
+K60DN256Z,      K60DN512M10,    K60DN512Z,
+K60DX256M10,    K60DX256Z,      K60FN1M0,
+K60FX512,       K61FN1M0,       K61FX512,
+K70FN1M0,       K70FX512,       MK10N512VMD100,
+MK10X128VMD100, MK10X256VMD100, MK20N512VMD100,
+MK20X128VMD100, MK20X256VMD100, MK30N512VMD100,
+MK30X128VMD100, MK30X256VMD100, MK40N512VMD100,
+MK40X128VMD100, MK40X256VMD100, MK60N256VMD100,
+MK60N512VMD100, MK60X256VMD100, STM32F100C8,
+STM32F100XX-MEDIUM,     STM32F100XX-HIGH,       STM32F103XX-LOW,
+STM32F103XX-MEDIUM,     STM32F103XX-HIGH,       STM32F103XX-XL,
+STM32F103XX-CONNECTIVITY,       STM32F103RBT6,
+\endverbatim
+
+*/

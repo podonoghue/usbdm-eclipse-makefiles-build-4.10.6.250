@@ -101,7 +101,7 @@ private:
    MemoryRegion *parseFlashMemoryDetails(xercesc::DOMElement *currentProperty, MemType_t memoryType, uint32_t &defaultSectorSize, uint8_t &defaultAlignment);
    SecurityInfo *parseSecurity(xercesc::DOMElement *currentProperty);
    //   void  parseActionSequence(xercesc::DOMElement *sharedRoot, std::map<const string, SharedInformationItem> &shareInformation);
-   FlexNVMInfo *parseFlexNVMInfo(xercesc::DOMElement *currentProperty);
+   FlexNVMInfo *parseFlexNVMInfo(xercesc::DOMElement *flexNVMInfoElement);
    FlexNVMInfo::EeepromSizeValue      parseEeepromEntry(xercesc::DOMElement *eeepromElement);
    FlexNVMInfo::FlexNvmPartitionValue parsePartitionEntry(xercesc::DOMElement *partitionElement);
 

@@ -106,7 +106,7 @@ bool AppSettings::writeToFile(const string &fileName, string const &comment) con
 
    FILE *fp = fopen(fileName.c_str(), "wt");
    if (fp== NULL) {
-      print("AppSettings::writeToFile() - Failed to open Settings File for writing: File = \'%s\'\n",
+      Logging::print("AppSettings::writeToFile() - Failed to open Settings File for writing: File = \'%s\'\n",
             fileName.c_str());
       return false;
    }
@@ -123,7 +123,7 @@ bool AppSettings::writeToFile(const string &fileName, string const &comment) con
 bool AppSettings::writeToAppDirFile(const string &fileName, const string &comment) const {
    FILE *fp = openApplicationFile(fileName.c_str(), "wt");
    if (fp== NULL) {
-      print("AppSettings::writeToAppDirFile() - Failed to open Settings File for writing: File = \'%s\'\n",
+      Logging::print("AppSettings::writeToAppDirFile() - Failed to open Settings File for writing: File = \'%s\'\n",
             fileName.c_str());
       return false;
    }
@@ -135,22 +135,22 @@ bool AppSettings::writeToAppDirFile(const string &fileName, const string &commen
 //! Write settings to log file for debugging
 //!
 void AppSettings::printToLog() const {
-   print("=============================================================\n");
+   Logging::print("=============================================================\n");
    map<string,Value*>::const_iterator it;
    for (it=mymap.begin(); it != mymap.end(); it++ )
       switch (it->second->getType()) {
          case intType:
-            ::print("%s => %d, %d\n", it->first.c_str(), it->second->getType(), it->second->getIntValue());
+            Logging::print("%s => %d, %d\n", it->first.c_str(), it->second->getType(), it->second->getIntValue());
             break;
          case stringType:
-            ::print("%s => %d, '%s'\n", it->first.c_str(), it->second->getType(),
+            Logging::print("%s => %d, '%s'\n", it->first.c_str(), it->second->getType(),
                                         it->second->getStringValue().c_str());
             break;
          default:
-            ::print("Unknown attribute type\n");
+            Logging::print("Unknown attribute type\n");
             break;
       }
-   print("=============================================================\n");
+   Logging::print("=============================================================\n");
 }
 
 //! Read settings from file
@@ -166,11 +166,11 @@ void AppSettings::loadFromFile(FILE *fp) {
    long int optionType;
    char *cp;
    int lineNo = 0;
-   print("AppSettings::loadFromFile(FILE *fp)\n");
+   Logging::print("AppSettings::loadFromFile(FILE *fp)\n");
 
    while (fgets(lineBuff, sizeof(lineBuff), fp) != NULL) {
       lineNo++;
-//         print("original: %s", lineBuff);
+//         Logging::print("original: %s", lineBuff);
       // Remove comments
       cp = strchr(lineBuff, '#');
       if (cp != NULL)
@@ -189,7 +189,7 @@ void AppSettings::loadFromFile(FILE *fp) {
       if (*cp == '\0')
          continue;
 
-//      print("comment stripped: \'%s\'\n", lineBuff);
+//      Logging::print("comment stripped: \'%s\'\n", lineBuff);
       optionName = strtok(lineBuff, " =");
       cptr       = strtok(NULL, ", ");
       optionType = atoi(cptr);
@@ -212,11 +212,11 @@ void AppSettings::loadFromFile(FILE *fp) {
 //!
 bool AppSettings::loadFromFile(const string &fileName) {
 
-   print("AppSettings::loadFromFile(%s)\n", fileName.c_str());
+   Logging::print("AppSettings::loadFromFile(%s)\n", fileName.c_str());
 
    FILE *fp = fopen(fileName.c_str(), "rt");
    if (fp== NULL) {
-      print("AppSettings::loadFromFile() - Failed to open Settings File for reading: File = \'%s\'\n",
+      Logging::print("AppSettings::loadFromFile() - Failed to open Settings File for reading: File = \'%s\'\n",
             fileName.c_str());
      return false;
    }
@@ -233,7 +233,7 @@ bool AppSettings::loadFromAppDirFile(const string &fileName) {
    string fn(fileName.c_str());
    FILE *fp = openApplicationFile(fn, "rt");
    if (fp== NULL) {
-      print("AppSettings::loadFromAppDirFile() - Failed to open Settings File for reading: File = \'%s\'\n",
+      Logging::print("AppSettings::loadFromAppDirFile() - Failed to open Settings File for reading: File = \'%s\'\n",
             fileName.c_str());
       return false;
    }

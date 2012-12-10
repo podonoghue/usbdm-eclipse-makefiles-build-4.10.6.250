@@ -192,14 +192,14 @@ public:
       bdmOptions            = *_bdmOptions;
       bdmOptions.targetType = targetType;
       bdmOptions.size       = sizeof(bdmOptions);
-      print("FlashPanel::setBdmOptions()\n");
+      Logging::print("FlashPanel::setBdmOptions()\n");
       printBdmOptions(_bdmOptions);
    }
    void setDeviceOptions(DeviceDataPtr deviceData) {
       currentDevice.setFlexNVMParameters(deviceData->getFlexNVMParameters());
    }
    DeviceData *getCurrentDevice() {
-      print("FlashPanel::getCurrentDevice()\n");
+      Logging::print("FlashPanel::getCurrentDevice()\n");
       return &currentDevice;
    }
 

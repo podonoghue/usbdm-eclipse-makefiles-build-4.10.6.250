@@ -67,11 +67,11 @@ public:
       *value = GetWindow()->GetDecimalValue();
       return true;
    }
-   //! @param name Assumed to be a statically allocated string and is used by reference
-   //!
-   void setObject(const char *_name, unsigned *_value) {
-      name = _name;
-      value = _value;
+   //! @param name  Assumed to be a statically allocated string and is used by reference
+   //! @param value Value to set
+   void setObject(const char *name, unsigned *value) {
+      this->name  = name;
+      this->value = value;
    }
    void setMin(unsigned _min) {
       min = _min;

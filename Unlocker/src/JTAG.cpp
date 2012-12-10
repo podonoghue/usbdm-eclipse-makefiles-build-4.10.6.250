@@ -72,7 +72,7 @@ uint32_t buff;
 unsigned int deviceNum;
 USBDM_ErrorCode rc = BDM_RC_OK;
 
-   print("initialiseJTAGChain()\n");
+   Logging::print("initialiseJTAGChain()\n");
 
    deviceCount = 0;
    irLength    = 0;
@@ -94,7 +94,7 @@ USBDM_ErrorCode rc = BDM_RC_OK;
    if (rc != BDM_RC_OK)
       return rc;
 
-   print("initialiseJTAGChain(): Total length of JTAG IRs => %d\n", irLength);
+   Logging::print("initialiseJTAGChain(): Total length of JTAG IRs => %d\n", irLength);
 
    // Chain still in SHIFT-IR
 
@@ -115,7 +115,7 @@ USBDM_ErrorCode rc = BDM_RC_OK;
    if (rc != BDM_RC_OK)
       return rc;
 
-   print("initialiseJTAGChain(): Number of JTAG devices => %d\n", deviceCount);
+   Logging::print("initialiseJTAGChain(): Number of JTAG devices => %d\n", deviceCount);
 
    // Re-fill the bypass chain with 0 to ensure we can differentiate
    // BYPASS and IDCODE register in next phase
@@ -174,7 +174,7 @@ USBDM_ErrorCode rc = BDM_RC_OK;
    rc = USBDM_JTAG_Write(bypassAll.getLength(), JTAG_EXIT_IDLE, bypassAll.getArray());  // fill safe command
    if (rc != BDM_RC_OK)
       return rc;
-   print("initialiseJTAGChain(): JTAG IRs => %s\n", irReg->toBinString());
+   Logging::print("initialiseJTAGChain(): JTAG IRs => %s\n", irReg->toBinString());
 #endif
 
 #if (DEBUG & DEBUG_DEVICES) != 0
@@ -220,7 +220,7 @@ USBDM_ErrorCode rc = BDM_RC_OK;
 
    deviceCount = deviceNum;
 
-   print("initialiseJTAGChain(): Number of JTAG devices => %d\n", deviceCount);
+   Logging::print("initialiseJTAGChain(): Number of JTAG devices => %d\n", deviceCount);
 
    rc = validateJTAGChain();
    if (rc != BDM_RC_OK)
@@ -259,7 +259,7 @@ USBDM_ErrorCode JTAG_Chain::validateJTAGChain(void) {
    // Sanity check on IR length
    if ((irLengthCheck + (2*unknownDeviceCount)> irLength) ||
        ((unknownDeviceCount = 0) && (irLengthCheck != irLength))) {
-      print("validateJTAGChain(): IR Length check failed, Unknown=%d, Measured IRL=%d, Expected IRL%s%d\n",
+      Logging::print("validateJTAGChain(): IR Length check failed, Unknown=%d, Measured IRL=%d, Expected IRL%s%d\n",
               unknownDeviceCount,
               irLength,
               unknownDeviceCount?">=":"=",
@@ -300,9 +300,9 @@ void JTAG_Chain::selectTargetDevice(unsigned int devNum) {
          irPostambleLength += devices[devNum].irLength;
       }
    }
-   print("selectTargetDevice(): currrent device #=%d\n", currentDeviceNum);
-   print("selectTargetDevice(): DR Pre=%d, Post=%d\n", irPreambleLength, irPostambleLength);
-   print("selectTargetDevice(): IR Pre=%d, Post=%d\n", drPreambleLength, drPostambleLength);
+   Logging::print("selectTargetDevice(): currrent device #=%d\n", currentDeviceNum);
+   Logging::print("selectTargetDevice(): DR Pre=%d, Post=%d\n", irPreambleLength, irPostambleLength);
+   Logging::print("selectTargetDevice(): IR Pre=%d, Post=%d\n", drPreambleLength, drPostambleLength);
 }
 
 //! Write to the IR of the currently selected device
@@ -334,7 +334,7 @@ void JTAG_Chain::writeIR(const uint8_t *data, const uint8_t exitAction) {
 //!
 void JTAG_Chain::writeIR(bitVector &data, const uint8_t exitAction) {
    if (data.getLength() != getTargetDevice().irLength) {
-      print("JTAG_Chain::writeIR(): IR length incorrect");
+      Logging::print("JTAG_Chain::writeIR(): IR length incorrect");
       return;
    }
    writeIR(data.getArray(), exitAction);
@@ -498,23 +498,23 @@ unsigned int devices;
 
    for (devices = 0; devices < JTAG_Chain::deviceCount; devices++) {
       buff = JTAG_Chain::devices[devices].idcode;
-      print("Device[%d] : ",      devices);
-      print("IDCODE => %8.8X, ", buff);
-      print("PRN => %1.1X, ",   (buff>>28)&0x0F);
-      print("DC => %2.2X, ",    (buff>>22)&0x3F);
-      print("PIN => %3.3X, ",   (buff>>12)&0x3FF);
-      print("JEDEC => %3.3X ",  (buff>>1)&0x7FF);
+      Logging::print("Device[%d] : ",      devices);
+      Logging::print("IDCODE => %8.8X, ", buff);
+      Logging::print("PRN => %1.1X, ",   (buff>>28)&0x0F);
+      Logging::print("DC => %2.2X, ",    (buff>>22)&0x3F);
+      Logging::print("PIN => %3.3X, ",   (buff>>12)&0x3FF);
+      Logging::print("JEDEC => %3.3X ",  (buff>>1)&0x7FF);
       if (JTAG_Chain::devices[devices].deviceData != NULL) {
-         print("IrLength %s %d ",
+         Logging::print("IrLength %s %d ",
                  JTAG_Chain::devices[devices].deviceData->irLengthKnown?"=":">",
                  JTAG_Chain::devices[devices].deviceData->instructionLength
                  );
-         print("Name: %10s ",
+         Logging::print("Name: %10s ",
                  JTAG_Chain::devices[devices].deviceData->name);
-         print("Desc: %10s ",
+         Logging::print("Desc: %10s ",
                  JTAG_Chain::devices[devices].deviceData->description);
       }
-      print("\n");
+      Logging::print("\n");
    }
 }
 #endif

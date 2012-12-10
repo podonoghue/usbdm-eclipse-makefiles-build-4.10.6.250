@@ -70,21 +70,159 @@ using namespace std;
 #error "Unhandled case"
 #endif
 
+enum RunState {halted, stepping, running, breaking};
+
+static GdbOutput       *gdbOutput      = NULL;
+static GdbInput        *gdbInput       = NULL;
+static const GdbPacket *packet         = NULL;
+static RunState         runState       = halted;
+static unsigned         pollInterval   = 100;
+static DeviceData       deviceData;
+static bool             ackMode        = true;  // Send ACK to GDB messages
+static bool             pendingCommand = false; // Pending mult-part GDB command e.g. qfThreadInfo/qsThreadInfo
+
+static ProgressTimer *progressTimer;
+
+USBDM_ErrorCode usbdmInit(TargetType_t targetType = T_CFV1) {
+   LOGGING_Q;
+   unsigned int deviceCount;
+   unsigned int deviceNum;
+   USBDM_ErrorCode rc = USBDM_Init();
+   if (rc != BDM_RC_OK) {
+      return rc;
+   }
+   rc = USBDM_FindDevices(&deviceCount);
+   Logging::print( "Usb initialized, found %d device(s)\n", deviceCount);
+   if (rc != BDM_RC_OK) {
+      return rc;
+   }
+   deviceNum  = 0;
+   rc = USBDM_Open(deviceNum);
+   if (rc != BDM_RC_OK) {
+      Logging::print( "usbdmInit(): Failed to open %s, device #%d\n", getTargetTypeName(targetType), deviceNum);
+      return rc;
+   }
+   Logging::print("Opened %s, device #%d\n", getTargetTypeName(targetType), deviceNum);
+
+   // Set up sensible default since we can't change this (at the moment)
+   USBDM_ExtendedOptions_t bdmOptions = {sizeof(USBDM_ExtendedOptions_t), TARGET_TYPE};
+   USBDM_GetDefaultExtendedOptions(&bdmOptions);
+   bdmOptions.targetVdd                  = BDM_TARGET_VDD_3V3; // BDM_TARGET_VDD_NONE;
+   bdmOptions.autoReconnect              = AUTOCONNECT_ALWAYS; // Aggressively auto-connect
+   bdmOptions.guessSpeed                 = FALSE;
+   bdmOptions.cycleVddOnConnect          = FALSE;
+   bdmOptions.cycleVddOnReset            = FALSE;
+   bdmOptions.leaveTargetPowered         = FALSE;
+   bdmOptions.bdmClockSource             = CS_DEFAULT;
+   bdmOptions.useResetSignal             = FALSE;
+   bdmOptions.usePSTSignals              = FALSE;
+   bdmOptions.interfaceFrequency         = 1000; // 1MHz
+   bdmOptions.powerOnRecoveryInterval    = 100;
+   bdmOptions.resetDuration              = 100;
+   bdmOptions.resetReleaseInterval       = 100;
+   bdmOptions.resetRecoveryInterval      = 100;
+   rc = USBDM_SetExtendedOptions(&bdmOptions);
+   if (rc != BDM_RC_OK) {
+      Logging::print("USBDM_SetExtendedOptions() failed\n");
+      return rc;
+   }
+   rc = USBDM_SetTargetType(targetType);
+   if (rc != BDM_RC_OK) {
+      Logging::print("USBDM_SetTargetType() failed\n");
+      return rc;
+   }
+   USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
+   if (USBDM_Connect() != BDM_RC_OK) {
+      Logging::print("Connecting failed - retry\n");
+      USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
+      rc = USBDM_Connect();
+      if (rc != BDM_RC_OK) {
+         Logging::print("USBDM_SetTargetType() failed\n");
+         return rc;
+      }
+   }
+   Logging::print( "Success\n", deviceCount);
+   return BDM_RC_OK;
+}
+
+/* closes currently open device */
+int usbdmClose(void) {
+   LOGGING;
+   Logging::print("Closing the device\n");
+   USBDM_Close();
+   USBDM_Exit();
+   return 0;
+}
+
 USBDM_ErrorCode lastError = BDM_RC_OK;
+static bool targetConnected = false;
+
+void reportError(USBDM_ErrorCode rc) {
+   if ((rc & BDM_RC_ERROR_HANDLED) == 0) {
+      displayDialogue(USBDM_GetErrorString(rc), "USBDM GDB Server error", wxOK|wxICON_ERROR);
+   }
+}
+
+//! Exit GDB Server
+//!
+void exitProgram(USBDM_ErrorCode rc) {
+   LOGGING_Q;
+   usbdmClose();
+//   fprintf(stderr, "gdbServer - Exiting, rc = %s\n", USBDM_GetErrorString(rc));
+   fflush(stdout);
+   fflush(stderr);
+   if (gdbInput != NULL) {
+      gdbInput->kill();
+   }
+   if (gdbOutput != NULL) {
+      gdbOutput->close();
+   }
+#ifdef LOG
+   Logging::print("Exiting, rc = %s\n", USBDM_GetErrorString(rc));
+   Logging::closeLogFile();
+#endif
+   exit((rc==BDM_RC_OK)?0:-1);
+}
+
+void reportErrorAndQuit(USBDM_ErrorCode rc) {
+   LOGGING;
+   int replyCount = 0;
+   // Report error to user
+   reportError(rc);
+   if ((gdbInput != NULL) && (gdbOutput != NULL)) {
+      // Wait for GDB to go away
+      for (int i = 0; i<50; i++) {
+         milliSleep(100);
+         Logging::print("Getting GDB pkt\n");
+         const GdbPacket *pkt = gdbInput->getGdbPacket();
+         if ((pkt==NULL) && gdbInput->isEOF()) {
+            Logging::print("EOF\n");
+            break;
+         }
+         if (pkt != NULL) {
+            if (ackMode) {
+               Logging::print("Sending GDB ACK\n");
+               gdbOutput->sendAck();
+            }
+            Logging::print("Sending GDB Error\n");
+            gdbOutput->sendErrorMessage(GdbOutput::E_Fatal, USBDM_GetErrorString(rc));
+            replyCount++;
+
+            gdbInput->finish();
+         }
+         if (replyCount>=3) {
+            break;
+         }
+      }
+   }
+   exitProgram(rc);
+}
 
 void setErrorCode(USBDM_ErrorCode rc) {
    if ((lastError == BDM_RC_OK) && (rc != BDM_RC_OK)) {
       lastError = rc;
    }
 }
-
-void reportError(USBDM_ErrorCode rc) {
-   if ((rc & BDM_RC_ERROR_HANDLED) == 0) {
-      displayDialogue(USBDM_GetErrorString(rc), "USBDM GDB Server error", wxOK);
-   }
-}
-
-static ProgressTimer *progressTimer;
 
 inline uint16_t swap16(uint16_t data) {
    return ((data<<8)&0xFF00) + ((data>>8)&0xFF);
@@ -116,8 +254,6 @@ inline uint32_t unchanged32(uint32_t data) {
 #define bigendianToTarget32(x) unchanged32(x)
 
 #endif
-
-bool ackMode = true;
 
 // Note - the following assume bigendian
 inline bool hexToInt(char ch, int *value) {
@@ -172,15 +308,6 @@ inline long hexToInt8(const char *ch, unsigned long *value) {
    return true;
 }
 
-enum RunState {halted, stepping, running, breaking};
-
-static GdbOutput       *gdbOutput      = NULL;
-static GdbInput        *gdbInput       = NULL;
-static const GdbPacket *packet         = NULL;
-static RunState         runState       = halted;
-static unsigned         pollInterval   = 100;
-static DeviceData       deviceData;
-
 //! Description of currently selected device
 //!
 static DeviceData deviceOptions;
@@ -189,6 +316,15 @@ static DeviceData deviceOptions;
 //!
 static FlashImage *flashImage = NULL;
 
+//! reportStatus - report status to GDB ("O...")
+//!
+//! @param s          - string describing status
+//!
+void reportStatus(const char *s, int size=-1) {
+   LOGGING_Q;
+   gdbOutput->sendGdbHexString("O", s, size);
+}
+
 //!
 //! Create XML description of current device memory map in GDB expected format
 //!
@@ -196,6 +332,7 @@ static FlashImage *flashImage = NULL;
 //! @param bufferSize - size of buffer data
 //!
 static void createMemoryMapXML(const char **buffer, unsigned *bufferSize) {
+   LOGGING_Q;
    // Prefix for memory map XML
    static const char xmlPrefix[] =
       "<?xml version=\"1.0\"?>\n"
@@ -218,10 +355,10 @@ static void createMemoryMapXML(const char **buffer, unsigned *bufferSize) {
    for (int memIndex=0; true; memIndex++) {
       MemoryRegionPtr pMemoryregion(deviceData.getMemoryRegion(memIndex));
       if (!pMemoryregion) {
-//       print("FlashProgrammer::setDeviceData() finished\n");
+//       Logging::print("FlashProgrammer::setDeviceData() finished\n");
          break;
       }
-      print("createDeviceXML() memory area #%d", memIndex);
+      Logging::print("memory area #%d", memIndex);
       for (unsigned memRange=0; memRange<pMemoryregion->memoryRanges.size(); memRange++) {
          uint32_t start, size;
          const MemoryRegion::MemoryRange *memoryRange = pMemoryregion->getMemoryRange(memRange);
@@ -232,21 +369,21 @@ static void createMemoryMapXML(const char **buffer, unsigned *bufferSize) {
          case MemXROM:
          case MemPROM:
          case MemPRAM:
-            print(" - XRAM/XROM - Ignored\n");
+            Logging::printq(" - XRAM/XROM - Ignored\n");
             break;
          case MemFlexNVM:
          case MemFlexRAM:
-            print(" - FlexNVM/FlexNVM - Ignored\n");
+            Logging::printq(" - FlexNVM/FlexNVM - Ignored\n");
             break;
          case MemEEPROM:
-            print(" - EEPROM - Ignored\n");
+            Logging::printq(" - EEPROM - Ignored\n");
             break;
          case MemDFlash:
          case MemPFlash:
          case MemFLASH:
             start = memoryRange->start;
             size  = memoryRange->end - start + 1;
-            print(" - FLASH[0x%08X..0x%08X]\n", memoryRange->start, memoryRange->end);
+            Logging::printq(" - FLASH[0x%08X..0x%08X]\n", memoryRange->start, memoryRange->end);
             xmlPtr += sprintf(xmlPtr,
                            "   <memory type=\"flash\" start=\"0x%X\" length=\"0x%X\" > \n"
                            "      <property name=\"blocksize\">0x400</property> \n"
@@ -257,7 +394,7 @@ static void createMemoryMapXML(const char **buffer, unsigned *bufferSize) {
          case MemRAM:
             start = memoryRange->start;
             size  = memoryRange->end - start + 1;
-            print(" - RAM[0x%08X..0x%08X]\n", memoryRange->start, memoryRange->end);
+            Logging::printq(" - RAM[0x%08X..0x%08X]\n", memoryRange->start, memoryRange->end);
             xmlPtr += sprintf(xmlPtr,
                            "<memory type=\"ram\" start=\"0x%X\" length=\"0x%X\" /> \n",
                            start, size);
@@ -265,13 +402,13 @@ static void createMemoryMapXML(const char **buffer, unsigned *bufferSize) {
          case MemROM:
             start = memoryRange->start;
             size  = memoryRange->end - start + 1;
-            print(" - ROM[0x%08X..0x%08X]\n", memoryRange->start, memoryRange->end);
+            Logging::printq(" - ROM[0x%08X..0x%08X]\n", memoryRange->start, memoryRange->end);
             xmlPtr += sprintf(xmlPtr,
                            "<memory type=\"rom\" start=\"0x%X\" length=\"0x%X\" /> \n",
                            start, size);
             break;
          case MemInvalid:
-            print(" - Invalid\n");
+            Logging::printq(" - Invalid\n");
             break;
          }
       }
@@ -279,7 +416,7 @@ static void createMemoryMapXML(const char **buffer, unsigned *bufferSize) {
    strcpy(xmlPtr, xmlSuffix);
    xmlPtr += sizeof(xmlSuffix)-1; // Discard trailing '0'
 
-//   print("XML = \n\"%s\"\n", xmlBuff);
+//   Logging::print("XML = \n\"%s\"\n", xmlBuff);
    *buffer = xmlBuff;
    *bufferSize = xmlPtr-xmlBuff;
 }
@@ -356,7 +493,7 @@ static const char targetRegsXML[] =
    "   <reg name=\"sp\"   bitsize=\"32\" type=\"data_ptr\"/>\n"
    "   <reg name=\"lr\"   bitsize=\"32\" type=\"code_ptr\"/>\n"
    "   <reg name=\"pc\"   bitsize=\"32\" type=\"code_ptr\"/>\n"
-#if 0
+#if 1
    "   <reg name=\"cpsr\" bitsize=\"32\" type=\"uint32\"/>\n"
 #elif 1
    "   <flags id=\"cpsr.type\" size=\"4\">\n"
@@ -481,36 +618,42 @@ bool isValidRegister(unsigned regNo) {
 //! @note characters are written in target byte order
 //!
 static int readReg(unsigned regNo, char *cPtr) {
+   LOGGING_Q;
    unsigned long regValue;
 
    if (!isValidRegister(regNo)) {
-      print("reg[%d] => Invalid\n", regNo);
+      Logging::print("reg[%d] => Invalid\n", regNo);
       return sprintf(cPtr, "%08lX", 0xFF000000UL+regNo);
 //      return sprintf(cPtr, "12345678");
    }
    int usbdmRegNo = registerMap[regNo];
 
 #if (TARGET == ARM)
-   USBDM_ReadReg((ARM_Registers_t)usbdmRegNo, &regValue);
-   print("%s(0x%02X) => %08lX\n", getARMRegName(usbdmRegNo), usbdmRegNo, regValue);
+   USBDM_ErrorCode rc = USBDM_ReadReg((ARM_Registers_t)usbdmRegNo, &regValue);
+   if (rc != BDM_RC_OK) {
+      Logging::print("%s(0x%02X) => Failed\n", getARMRegName(usbdmRegNo), usbdmRegNo, regValue);
+   }
+//   else {
+//      Logging::print("%s(0x%02X) => %08lX\n", getARMRegName(usbdmRegNo), usbdmRegNo, regValue);
+//   }
    regValue = bigendianToTarget32(regValue);
 #elif (TARGET == CFV1)
    if (usbdmRegNo < 0x100) {
       USBDM_ReadReg((CFV1_Registers_t)usbdmRegNo, &regValue);
-      print("%s => %08lX\n", getCFV1RegName(regNo), regValue);
+      Logging::print("%s => %08lX\n", getCFV1RegName(regNo), regValue);
    }
    else {
       USBDM_ReadCReg((CFV1_Registers_t)(usbdmRegNo-0x100), &regValue);
-      print("%s => %08lX\n", getCFV1ControlRegName(regNo), regValue);
+      Logging::print("%s => %08lX\n", getCFV1ControlRegName(regNo), regValue);
    }
 #elif(TARGET == CFVx)
    if (usbdmRegNo < 0x100) {
       USBDM_ReadReg((CFV1_Registers_t)usbdmRegNo, &regValue);
-      print("%s => %08lX\n", getCFVxRegName(regNo), regValue);
+      Logging::print("%s => %08lX\n", getCFVxRegName(regNo), regValue);
    }
    else {
       USBDM_ReadCReg((CFV1_Registers_t)(usbdmRegNo-0x100), &regValue);
-      print("%s => %08lX\n", getCFVxControlRegName(regNo), regValue);
+      Logging::print("%s => %08lX\n", getCFVxControlRegName(regNo), regValue);
    }
 #endif
    return sprintf(cPtr, "%0*lX", 8, regValue);
@@ -521,6 +664,7 @@ static int readReg(unsigned regNo, char *cPtr) {
 //! @note values are returned in target byte order
 //!
 static void readRegs(void) {
+   LOGGING_Q;
    unsigned regNo;
    char buff[1000];
    char *cPtr = buff;
@@ -540,22 +684,23 @@ static void readRegs(void) {
 //! @param regValue  - value to write
 //!
 static void writeReg(unsigned regNo, unsigned long regValue) {
+   LOGGING;
    if (!isValidRegister(regNo))
       return;
    int usbdmRegNo = registerMap[regNo];
 
 #if (TARGET == ARM)
    USBDM_WriteReg((ARM_Registers_t)usbdmRegNo, regValue);
-   print("%s(0x%02X) <= %08lX\n", getARMRegName(usbdmRegNo), usbdmRegNo, regValue);
+   Logging::print("%s(0x%02X) <= %08lX\n", getARMRegName(usbdmRegNo), usbdmRegNo, regValue);
    regValue = bigendianToTarget32(regValue);
 #elif (TARGET == CFV1) || (TARGET == CFVx)
    if (usbdmRegNo < 0x100) {
       USBDM_WriteReg((CFV1_Registers_t)usbdmRegNo, regValue);
-      print("reg[%d] <= %08lX\n", regNo, regValue);
+      Logging::print("reg[%d] <= %08lX\n", regNo, regValue);
    }
    else {
       USBDM_WriteCReg((CFV1_Registers_t)(usbdmRegNo-0x100), regValue);
-      print("reg[%d] <= %08lX\n", regNo, regValue);
+      Logging::print("reg[%d] <= %08lX\n", regNo, regValue);
    }
 #endif
 }
@@ -567,6 +712,7 @@ static void writeReg(unsigned regNo, unsigned long regValue) {
 //! @note characters are written in target byte order
 //!
 static void writeRegs(const char *ccPtr) {
+   LOGGING;
    unsigned long regValue = 0;
    unsigned regNo;
 
@@ -581,18 +727,17 @@ static void writeRegs(const char *ccPtr) {
 }
 
 static void readMemory(uint32_t address, uint32_t numBytes) {
+   LOGGING_Q;
    unsigned char buff[1000] = {0};
 
-//   print("readMemory(addr=%X, size=%X)\n", address, numBytes);
+//   Logging::print("readMemory(addr=%X, size=%X)\n", address, numBytes);
    if (USBDM_ReadMemory(1, numBytes, address, buff) != BDM_RC_OK) {
       // Ignore errors
       memset(buff, 0xAA, numBytes);
-//      gdbOutput->sendGdbString("E11");
+//      gdbOutput->sendErrorMessage(0x11);
 //      return;
    }
-   gdbOutput->putGdbPreamble();
-   gdbOutput->putGdbHex(numBytes, buff);
-   gdbOutput->sendGdbBuffer();
+   gdbOutput->sendGdbHex(buff, numBytes);
 }
 
 //! Convert a hex string to a series of byte values
@@ -605,13 +750,13 @@ static void readMemory(uint32_t address, uint32_t numBytes) {
 //!         false => failed
 //!
 static bool convertFromHex(unsigned numBytes, const char *dataIn, unsigned char *dataOut) {
-//   print("convertFromHex()\n");
+//   Logging::print("convertFromHex()\n");
    for (unsigned index=0; index<numBytes; index++) {
       unsigned long value;
       if (!hexToInt8(dataIn, &value)) {
          return false;
       }
-//      print("convertFromHex() %2.2s => %2.2X\n", dataIn, value);
+//      Logging::print("convertFromHex() %2.2s => %2.2X\n", dataIn, value);
       dataIn += 2;
       *dataOut++ = value;
    }
@@ -621,17 +766,18 @@ static bool convertFromHex(unsigned numBytes, const char *dataIn, unsigned char 
 static void writeMemory(const char *ccPtr, uint32_t address, uint32_t numBytes) {
    unsigned char buff[1000];
 
-   print("writeMemory(addr=%X, size=%X)\n", address, numBytes);
+   Logging::print("writeMemory(addr=%X, size=%X)\n", address, numBytes);
    convertFromHex(numBytes, ccPtr, buff);
    USBDM_WriteMemory(1, numBytes, address, buff);
    gdbOutput->sendGdbString("OK");
 }
 
-#if (TARGET == ARM)
-#define T_RUNNING (1<<0) // Executing
-#define T_HALT    (1<<1) // Debug halt
-#define T_SLEEP   (1<<2) // Low power sleep
+#define T_UNKNOWN (1<<0) // Unknown - error
+#define T_RUNNING (1<<1) // Executing
+#define T_HALT    (1<<2) // Debug halt
+#define T_SLEEP   (1<<3) // Low power sleep
 
+#if (TARGET == ARM)
 //! Reads a word from ARM target memory
 //!
 //! @param address  - 32-bit address (aligned)
@@ -640,132 +786,156 @@ static void writeMemory(const char *ccPtr, uint32_t address, uint32_t numBytes) 
 //! @return error code
 //!
 static USBDM_ErrorCode armReadMemoryWord(unsigned long address, unsigned long *data) {
+   LOGGING_Q;
    uint8_t buff[4];
    USBDM_ErrorCode rc = USBDM_ReadMemory(4, 4, address, buff);
    *data = (buff[0])+(buff[1]<<8)+(buff[2]<<16)+(buff[3]<<24);
-   switch(address) {
-   case DEMCR:
-      print("      armReadMemoryWord(DEMCR, %s)\n", getDEMCRName(*data));
-      break;
-   case DHCSR:
-      print("      armReadMemoryWord(DHCSR, %s)\n", getDHCSRName(*data));
-      break;
-   default: break;
-   }
+//   switch(address) {
+//   case DEMCR:
+//      Logging::print("DEMCR => %s)\n", getDEMCRName(*data));
+//      break;
+//   case DHCSR:
+//      Logging::print("DHCSR => %s)\n", getDHCSRName(*data));
+//      break;
+//   default: break;
+//   }
    return rc;
 }
 
-//! @param status - status
+//! Get target status
 //!
-//! @return \n
-//!     DI_OK              => OK \n
-//!     DI_ERR_FATAL       => Error see \ref currentErrorString
+//! @return status - status of target T_UNKNOWN/T_SLEEP/T_HALT/T_RUNNING
 //!
-static USBDM_ErrorCode getTargetStatus (int *status) {
+static int getTargetStatus(void) {
+   LOGGING_Q;
    USBDM_ErrorCode BDMrc;
    static int lastStatus;
    static int failureCount = 0;
+   int status;
 
    unsigned long dhcsr;
    BDMrc = armReadMemoryWord(DHCSR, &dhcsr);
-   if ((BDMrc != BDM_RC_OK)) {
-      print("getTargetStatus() - Doing autoReconnect\n");
+   if (BDMrc != BDM_RC_OK) {
+      Logging::print("Doing autoReconnect\n");
       if (USBDM_Connect() != BDM_RC_OK) {
-         print("DiExecGetStatus(retryAlways)=> re-connect failed\n");
+         Logging::print("Re-connect failed\n");
       }
       else {
-         print("DiExecGetStatus()=> re-connect OK\n");
+         Logging::print("Re-connect OK\n");
          // retry after connect
          BDMrc = armReadMemoryWord(DHCSR, &dhcsr);
       }
    }
    if (BDMrc != BDM_RC_OK) {
-      print("getTargetStatus() - Failed, rc=%s\n",
-            USBDM_GetErrorString(BDMrc), failureCount);
-      print("getTargetStatus() - Returning FATAL error\n");
-      return BDMrc;
+      failureCount++;
+      Logging::print("Error %s\n", USBDM_GetErrorString(BDMrc));
+      status = T_UNKNOWN;
    }
-   // Reset on OK status
-   failureCount = 0;
-   if ((dhcsr & DHCSR_S_SLEEP) != 0) {
-      // Stopped - low power sleep, treated as special
-      *status = T_SLEEP;
-      if (lastStatus != *status) {
-         print("getTargetStatus() status change => T_SLEEP)\n");
+   else {
+      // Reset on OK status
+      failureCount = 0;
+      if ((dhcsr & DHCSR_S_SLEEP) != 0) {
+         // Stopped - low power sleep, treated as special
+         status = T_SLEEP;
+         if (lastStatus != status) {
+            Logging::print("Status change => T_SLEEP)\n");
+         }
+      }
+      else if ((dhcsr & (DHCSR_S_HALT|DHCSR_S_LOCKUP)) != 0) {
+         // Processor in debug halt
+         status = T_HALT;
+         if (lastStatus != status) {
+            Logging::print("Status change => T_HALT)\n");
+         }
+      }
+      else {
+         // Processor executing
+         status = T_RUNNING;
+         if (lastStatus != status) {
+            Logging::print("Status change => T_RUNNING)\n");
+         }
       }
    }
-   else if ((dhcsr & (DHCSR_S_HALT|DHCSR_S_LOCKUP)) != 0) {
-      // Processor in debug halt
-      *status = T_HALT;
-      if (lastStatus != *status) {
-         print("getTargetStatus() status change => T_HALT)\n");
+   lastStatus = status;
+   return status;
+}
+#elif TARGET == CFV1
+//! Get target status
+//!
+//! @param status - status from target T_UNKNOWN/T_SLEEP/T_HALT/T_RUNNING
+//!
+static int getTargetStatus (void) {
+   LOGGING_Q;
+   static int lastStatus;
+   int status;
+
+   unsigned long value;
+   USBDM_ErrorCode rc = USBDM_ReadStatusReg(&value);
+   if (rc != BDM_RC_OK) {
+      Logging::print("Failed, rc = %s\n", USBDM_GetErrorString(rc));
+      status = T_UNKNOWN;
+   }
+   else if ((value & CFV1_XCSR_ENBDM) == 0) {
+      Logging::print("ENBDM=0\n");
+      status = T_UNKNOWN;
+   }
+   else if (value&CFV1_XCSR_RUNSTATE) {
+      status = T_HALT;
+      if (lastStatus != status) {
+         Logging::print("Status change => T_HALT)\n");
       }
    }
    else {
-      // Processor executing
-      // Processor in debug halt
-      *status = T_RUNNING;
-      if (lastStatus != *status) {
-         print("getTargetStatus() status change => T_RUNNING)\n");
+      status = T_RUNNING;
+      if (lastStatus != status) {
+         Logging::print("Status change => T_RUNNING)\n");
       }
    }
-   lastStatus = *status;
-   return BDM_RC_OK;
+   lastStatus = status;
+   return status;
 }
-#endif
-
-//! Checks if the target is running or runState
-//!
-//! @return true => target runState
-//!
-static bool isTargetHalted(void) {
-   USBDM_ErrorCode rc;
-//   static bool errorReported = false;
-
-   // Check connection
-//   rc = USBDM_Connect();
-//   if (rc != BDM_RC_OK) {
-//      if (!errorReported) {
-//         reportError(rc);
-//      }
-//      errorReported = true;
-//   }
-//   else {
-//      errorReported = false;
-//   }
-#if TARGET == CFV1
-   unsigned long value;
-//   print("isTargetHalted()\n");
-   rc = USBDM_ReadStatusReg(&value);
-   if (rc != BDM_RC_OK) {
-      print("isTargetHalted()=> Status read failed\n");
-      return true;
-   }
-   if ((value & CFV1_XCSR_ENBDM) == 0) {
-      print("isTargetHalted()=> ENBDM=0\n");
-      return true;
-   }
-   return (value&CFV1_XCSR_RUNSTATE) != 0;
 #elif TARGET == CFVx
-   // Crude - Assume if register read succeeds then target is runState
-   USBDM_Connect();
-   unsigned long value;
-   rc = USBDM_ReadReg(CFVx_RegD0, &value);
-   return (rc == BDM_RC_OK);
-#elif (TARGET == ARM)
+//! Get target status
+//!
+//! @param status - status from target T_UNKNOWN/T_SLEEP/T_HALT/T_RUNNING
+//!
+static int getTargetStatus(void) {
+   LOGGING_Q;
+   static int lastStatus;
    int status;
-   rc = getTargetStatus(&status);
-   if (rc != BDM_RC_OK) {
-      print("isTargetHalted()=> Status read failed\n");
-      return true;
-   }
-   return (status&T_RUNNING) == 0;
-#else
-#error "Unhandled case in isTargetHalted()"
-#endif
-}
 
+   USBDM_ErrorCode rc = USBDM_Connect();
+   if (rc != BDM_RC_OK) {
+      Logging::print("Connect failed, rc = %s\n", USBDM_GetErrorString(rc));
+      status = T_UNKNOWN;
+   }
+   else {
+      // Crude - Assume if register read succeeds then target is halted
+      unsigned long value;
+      rc = USBDM_ReadReg(CFVx_RegD0, &value);
+      if (rc == BDM_RC_OK) {
+         status = T_HALT;
+         if (lastStatus != status) {
+            Logging::print("Status change => T_HALT)\n");
+         }
+      }
+      else {
+         status = T_RUNNING;
+         if (lastStatus != status) {
+            Logging::print("Status change => T_RUNNING)\n");
+         }
+      }
+   }
+   lastStatus = status;
+   return status;
+}
+#endif
+
+//! Send portion of XML to debugger
+//!
+//!
 static void sendXML(unsigned size, unsigned offset, const char *buffer, unsigned bufferSize) {
+   LOGGING;
    gdbOutput->putGdbPreamble();
    if (offset >= bufferSize) {
       gdbOutput->putGdbString("l");
@@ -785,39 +955,45 @@ static void sendXML(unsigned size, unsigned offset, const char *buffer, unsigned
    gdbOutput->sendGdbBuffer();
 }
 
-static int doQCommands(const GdbPacket *pkt) {
-int offset, size;
-const char *cmd = pkt->buffer;
+static USBDM_ErrorCode doQCommands(const GdbPacket *pkt) {
+   LOGGING_Q;
+   int offset, size;
+   const char *cmd = pkt->buffer;
 
    if (strncmp(cmd, "qSupported", sizeof("qSupported")-1) == 0) {
+      Logging::print("qSupported\n");
       char buff[200];
       sprintf(buff,"QStartNoAckMode+;qXfer:memory-map:read+;PacketSize=%X;qXfer:features:read+",GdbPacket::MAX_MESSAGE-10);
 //      sprintf(buff,"QStartNoAckMode+;qXfer:memory-map:read+;PacketSize=%X",GdbPacket::MAX_MESSAGE-10);
       gdbOutput->sendGdbString(buff);
    }
-   else if (strncmp(cmd, "qC", sizeof("qC")-1) == 0) {
-      gdbOutput->sendGdbString(""); //("QC-1");
-   }
-   else if (strncmp(cmd, "qfThreadInfo", sizeof("qfThreadInfo")-1) == 0) {
-      gdbOutput->sendGdbString("m-1"); //("m0");
-   }
-   else if (strncmp(cmd, "qsThreadInfo", sizeof("qsThreadInfo")-1) == 0) {
-      gdbOutput->sendGdbString("l");
-   }
-   else if (strncmp(cmd, "qThreadExtraInfo", sizeof("qThreadExtraInfo")-1) == 0) {
-      gdbOutput->sendGdbString("Runnable");
-   }
+//   else if (strncmp(cmd, "qC", sizeof("qC")-1) == 0) {
+//      gdbOutput->sendGdbString(""); //("QC-1");
+//   }
+//   else if (strncmp(cmd, "qfThreadInfo", sizeof("qfThreadInfo")-1) == 0) {
+//      gdbOutput->sendGdbString("m1"); //("m0");
+//      pendingCommand = true;
+//   }
+//   else if (strncmp(cmd, "qsThreadInfo", sizeof("qsThreadInfo")-1) == 0) {
+//      gdbOutput->sendGdbString("l");
+//   }
+//   else if (strncmp(cmd, "qThreadExtraInfo", sizeof("qThreadExtraInfo")-1) == 0) {
+//      gdbOutput->sendGdbHexString(NULL, "Runnable");
+//   }
    else if (strncmp(cmd, "qAttached", sizeof("qAttached")-1) == 0) {
+      Logging::print("qAttached\n");
       gdbOutput->sendGdbString("0");
    }
    else if (strncmp(cmd, "QStartNoAckMode", sizeof("QStartNoAckMode")-1) == 0) {
+      Logging::print("QStartNoAckMode\n");
       gdbOutput->sendGdbString("OK");
       ackMode = false;
    }
-   else if (strncmp(cmd, "qTStatus", sizeof("qTStatus")-1) == 0) {
-      gdbOutput->sendGdbString("");
-   }
+//   else if (strncmp(cmd, "qTStatus", sizeof("qTStatus")-1) == 0) {
+//      gdbOutput->sendGdbString("T0");
+//   }
    else if (strncmp(cmd, "qOffsets", sizeof("qOffsets")-1) == 0) {
+      Logging::print("qOffsets\n");
 //      gdbOutput->sendGdbString("TextSeg=08000000;DataSeg=20000000");
 #if (TARGET == CFV1) || (TARGET == CFVx)
       gdbOutput->sendGdbString("Text=0;Data=0;Bss=0");
@@ -827,11 +1003,11 @@ const char *cmd = pkt->buffer;
    }
    else if (strncmp(cmd, "qXfer:memory-map:read::", sizeof("qXfer:memory-map:read::")-1) == 0) {
       if (sscanf(cmd,"qXfer:memory-map:read::%X,%X",&offset, &size) != 2) {
-         print("Ill formed:\'%s\'", cmd);
+         Logging::print("Ill formed:\'%s\'", cmd);
          gdbOutput->sendGdbString("");
       }
       else {
-         print("memory-map:read::%X:%X\n", offset, size);
+         Logging::print("memory-map:read::%X:%X\n", offset, size);
          unsigned xmlBufferSize;
          const char *xmlBuffer;
          createMemoryMapXML(&xmlBuffer, &xmlBufferSize);
@@ -840,77 +1016,82 @@ const char *cmd = pkt->buffer;
    }
    else if (strncmp(cmd, "qXfer:features:read:target.xml:", sizeof("qXfer:features:read:target.xml:")-1) == 0) {
       if (sscanf(cmd,"qXfer:features:read:target.xml:%X,%X",&offset, &size) != 2) {
-         print("Ill formed:\'%s\'", cmd);
+         Logging::print("Ill formed:\'%s\'", cmd);
          gdbOutput->sendGdbString("");
       }
       else {
-         print("qXfer:features:read:target.xml:%X:%X\n", offset, size);
+         Logging::print("qXfer:features:read:target.xml:%X:%X\n", offset, size);
          sendXML(size, offset, targetXML, sizeof(targetXML));
       }
    }
    else if (strncmp(cmd, "qXfer:features:read:targetRegs.xml:", sizeof("qXfer:features:read:targetRegs.xml:")-1) == 0) {
       if (sscanf(cmd,"qXfer:features:read:targetRegs.xml:%X,%X",&offset, &size) != 2) {
-         print("Ill formed:\'%s\'", cmd);
+         Logging::print("Ill formed:\'%s\'", cmd);
          gdbOutput->sendGdbString("");
       }
       else {
-         print("qXfer:features:read:targetRegs.xml:%X:%X\n", offset, size);
+         Logging::print("qXfer:features:read:targetRegs.xml:%X:%X\n", offset, size);
          sendXML(size, offset, targetRegsXML, sizeof(targetRegsXML));
       }
    }
    else {
+      Logging::print("Unrecognized command:\'%s\'\n", cmd);
       gdbOutput->sendGdbString("");
    }
-   return 0;
+   return BDM_RC_OK;
 }
 
-static int programImage(FlashImage *flashImage) {
+static USBDM_ErrorCode programImage(FlashImage *flashImage) {
+   LOGGING;
+   USBDM_ErrorCode rc;
    FlashProgrammer flashProgrammer;
 
-   deviceData.setEraseOption(DeviceData::eraseAll);
+   deviceData.setEraseOption(DeviceData::eraseMass);
    deviceData.setSecurity(SEC_SMART);
    deviceData.setClockTrimFreq(0);
    deviceData.setClockTrimNVAddress(0);
-   if (flashProgrammer.setDeviceData(deviceData) != PROGRAMMING_RC_OK) {
-      return -1;
-   }
-   USBDM_ErrorCode rc;
-   rc = flashProgrammer.programFlash(flashImage);
+   rc = flashProgrammer.setDeviceData(deviceData);
    if (rc != PROGRAMMING_RC_OK) {
-      print("programImage() - failed, rc = %s\n", USBDM_GetErrorString(rc));
-      return -1;
+      return rc;
    }
-   // Initialise the target after programming
-   USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-   flashProgrammer.initTCL();
-   flashProgrammer.runTCLCommand("initTarget");
-   flashProgrammer.releaseTCL();
-   print("programImage() - Complete\n");
-   return 0;
+   rc = flashProgrammer.programFlash(flashImage);
+
+   // Initialize the target after programming
+   flashProgrammer.resetAndConnectTarget();
+
+   if (rc != PROGRAMMING_RC_OK) {
+      Logging::print("programImage() - failed, rc = %s\n", USBDM_GetErrorString(rc));
+      return rc;
+   }
+   Logging::print("programImage() - Complete\n");
+   return BDM_RC_OK;
 }
 
-static int doVCommands(const GdbPacket *pkt) {
+//! Handle 'v...' commands
+//!
+static USBDM_ErrorCode doVCommands(const GdbPacket *pkt) {
+   LOGGING;
    int address, length;
    const char *cmd = pkt->buffer;
 
    if (strncmp(cmd, "vFlashErase", 11) == 0) {
       // vFlashErase:addr,length
       if (sscanf(cmd, "vFlashErase:%x,%x", &address, &length) != 2) {
-         gdbOutput->sendGdbString("E11");
+         gdbOutput->sendErrorMessage(0x11);
       }
       else {
-         print("doVCommands() - vFlashErase:0x%X:0x%X\n", address, length);
+         Logging::print("vFlashErase:0x%X:0x%X\n", address, length);
          gdbOutput->sendGdbString("OK");
       }
    }
    else if (strncmp(cmd, "vFlashWrite", 11) == 0) {
       // vFlashWrite:addr:XX...
       if (sscanf(cmd, "vFlashWrite:%x:", &address) != 1) {
-         print("doVCommands() - vFlashWrite:error:\n");
-         gdbOutput->sendGdbString("E11");
+         Logging::print(" vFlashWrite:error:\n");
+         gdbOutput->sendErrorMessage(0x11);
       }
       else {
-         print("doVCommands() - vFlashWrite:0x%X:\n", address);
+         Logging::print("vFlashWrite:0x%X:\n", address);
          if (flashImage == NULL) {
             flashImage = new FlashImage();
          }
@@ -922,39 +1103,47 @@ static int doVCommands(const GdbPacket *pkt) {
          while(size-->0) {
             flashImage->setValue(address, *vPtr);
             if (newLine)
-               print("\n%8.8X:", address);
-            print("%2.2X", (unsigned char)*vPtr);
+               Logging::printq("\n%8.8X:", address);
+            Logging::printq("%2.2X", (unsigned char)*vPtr);
             address++;
             vPtr++;
             newLine = (address & 0x0F) == 0;
          }
-         print("\n");
+         Logging::printq("\n");
          gdbOutput->sendGdbString("OK");
       }
    }
    else if (strncmp(cmd, "vFlashDone", 10) == 0) {
       // vFlashDone
-      print("doVCommands() - vFlashDone\n");
+      Logging::print("vFlashDone\n");
       if (flashImage != NULL) {
-         int rc = programImage(flashImage);
+         USBDM_ErrorCode rc = programImage(flashImage);
          delete flashImage;
          if (rc != PROGRAMMING_RC_OK) {
-            print("doVCommands() - vFlashDone: Programming failed\n");
-            gdbOutput->sendGdbString("E11");
-            return 0;
+            Logging::print("vFlashDone: Programming failed, rc=%s\n", USBDM_GetErrorString(rc));
+//            gdbOutput->sendErrorMessage(0x11);
+            gdbOutput->sendErrorMessage(gdbOutput->E_Fatal, "Flash programming failed");
+            reportErrorAndQuit(rc);
+            return rc;
          }
-         else
-            print("doVCommands() - vFlashDone: Programming complete\n");
+         else {
+            Logging::print("vFlashDone: Programming complete\n");
+         }
       }
       else {
-         print("doVCommands() - vFlashDone: Memory image empty, programming skipped\n");
+         Logging::print("vFlashDone: Memory image empty, programming skipped\n");
       }
       gdbOutput->sendGdbString("OK");
    }
-   else {
+   else if (strncmp(cmd, "vCont", sizeof("vCont")) == 0) {
+      // Not yet supported
       gdbOutput->sendGdbString("");
    }
-   return 0;
+   else {
+      Logging::print("Unrecognized command:\'%s\'\n", cmd);
+      gdbOutput->sendGdbString("");
+   }
+   return BDM_RC_OK;
 }
 
 #define THREAD_STAT "'thread':-1.-1;"
@@ -968,6 +1157,7 @@ static int doVCommands(const GdbPacket *pkt) {
 #define PC_STAT ""
 
 static void reportLocation(char mode, int reason) {
+   LOGGING_Q;
    char buff[100];
    char *cPtr = buff;
 
@@ -984,10 +1174,10 @@ static void reportLocation(char mode, int reason) {
    }
    *cPtr++ = '\0';
    gdbOutput->sendGdbString(buff);
-   print("reportLocation \n");
 }
 
-static int doGdbCommand(const GdbPacket *pkt) {
+static USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
+   LOGGING_Q;
    unsigned address;
    unsigned numBytes;
    const char *ccptr;
@@ -997,15 +1187,23 @@ static int doGdbCommand(const GdbPacket *pkt) {
    int value;
    char buff[100] = {0};
 
-//   print("doGdbCommand()\n");
+//   Logging::print("doGdbCommand()\n");
    if (pkt->isBreak()) {
-      print("Break......\n");
+      Logging::print("Break......\n");
       USBDM_Connect();
       USBDM_TargetHalt();
       runState = breaking;
-      return 0;
+      return BDM_RC_OK;
    }
    switch (pkt->buffer[0]) {
+   case '!' : // Enable extended mode
+      Logging::print("Enable extended mode\n");
+      gdbOutput->sendGdbString("OK");
+      break;
+   case 'R' : // Target reset
+      Logging::print("Target Reset\n");
+      USBDM_TargetReset((TargetMode_t)(RESET_SPECIAL|RESET_DEFAULT));
+      break;
    case 'g' : // 'g' - Read general registers.
 //   Reply:
 //   -  'XX...' Each byte of register data is described by two hex digits. The bytes
@@ -1013,7 +1211,7 @@ static int doGdbCommand(const GdbPacket *pkt) {
 //      each register and their position within the 'g' packet are determined
 //      by the gdb internal gdbarch functions and gdbarch_register_name.
 //   -  'E NN' for an error.
-      print("Read Regs =>\n");
+      Logging::print("Read Regs =>\n");
       readRegs();
       break;
    case 'G' : // 'G XX...' - Write general registers.
@@ -1021,15 +1219,16 @@ static int doGdbCommand(const GdbPacket *pkt) {
 //   Reply:
 //     - 'OK' for success
 //     - 'E NN' for an error
-      print("Write Regs =>\n");
+      Logging::print("Write Regs =>\n");
       writeRegs(pkt->buffer+1);
       break;
    case 'm' : // 'm addr,length' - Read memory
       if (sscanf(pkt->buffer, "m%X,%x:", &address, &numBytes) != 2) {
-         gdbOutput->sendGdbString("E01");
+         Logging::print("Illegal cmd format\n");
+         gdbOutput->sendErrorMessage(0x01);
       }
       else {
-         print("readMemory [0x%08X..0x%08X]\n", address, address+numBytes-1);
+         Logging::print("readMemory [0x%08X..0x%08X]\n", address, address+numBytes-1);
          readMemory(address, numBytes);
       }
 //      Read length bytes of memory starting at address addr. Note that addr may
@@ -1048,10 +1247,11 @@ static int doGdbCommand(const GdbPacket *pkt) {
    case 'M' : // 'M addr,length:XX...' - Write memory
       if ((sscanf(pkt->buffer, "M%X,%x:", &address, &numBytes) != 2) ||
           ((ccptr = strchr(pkt->buffer, ':')) == NULL)) {
-         gdbOutput->sendGdbString("E01");
+         Logging::print("Illegal cmd format\n");
+         gdbOutput->sendErrorMessage(0x01);
       }
       else {
-         print("writeMemory [0x%08X...0x%08X] %2s...\n", address, address+numBytes-1, ccptr+1);
+         Logging::print("writeMemory [0x%08X...0x%08X] %2s...\n", address, address+numBytes-1, ccptr+1);
          writeMemory(ccptr+1, address, numBytes);
       }
 //      Write length bytes of memory starting at address addr. XX. . . is the data;
@@ -1062,38 +1262,38 @@ static int doGdbCommand(const GdbPacket *pkt) {
 //      written).
       break;
    case 'c' : // 'c [addr]' - Continue
+      //      Continue. addr is address to resume. If addr is omitted, resume at current
+      //      address.
+      //      Reply: See [Stop Reply Packets] for the reply specifications.
       if (sscanf(pkt->buffer, "c%X", &address) == 1) {
          // Set PC to address
          address = bigendianToTarget32(address);
-         print("Continue @addr=%X\n", address);
+         Logging::print("Continue @addr=%X\n", address);
          USBDM_WritePC(address);
       }
       else {
-         print("Continue @PC\n");
+         Logging::print("Continue @PC\n");
       }
       if (atMemoryBreakpoint()) {
          // Do 1 step before installing memory breakpoints
-         print("Continue - stepping one instruction...\n");
+         Logging::print("Continue - stepping one instruction...\n");
          USBDM_TargetStep();
       }
       activateBreakpoints();
-      print("Continue - executing...\n");
+      Logging::print("Continue - executing...\n");
       USBDM_TargetGo();
       runState = running;
       pollInterval = 1; // Poll fast
-//      Continue. addr is address to resume. If addr is omitted, resume at current
-//      address.
-//      Reply: See [Stop Reply Packets] for the reply specifications.
       break;
    case 's' : // 's' [addr] - Single step.
       if (sscanf(pkt->buffer, "s%X", &address) > 1) {
          // Set PC to address
 //         bigendianToTarget32(address);
-         print("Single step @addr=%X\n", address);
+         Logging::print("Single step @addr=%X\n", address);
          USBDM_WritePC(address);
       }
       else {
-         print("Single step @PC\n");
+         Logging::print("Single step @PC\n");
       }
       runState = stepping;
       pollInterval = 1; // Poll fast
@@ -1102,49 +1302,57 @@ static int doGdbCommand(const GdbPacket *pkt) {
 //      Reply: See [Stop Reply Packets], page for the reply specifications.
       break;
    case 'Z' : // 'z type,addr,kind' - insert/remove breakpoint
+      Logging::print("Z - Set breakpoint\n");
       if (sscanf(pkt->buffer, "Z%d,%x,%d", &type, &address, &kind) != 3) {
-         gdbOutput->sendGdbString("E11");
+         Logging::print("Illegal cmd format\n");
+         gdbOutput->sendErrorMessage(0x11);
          break;
       }
       if (insertBreakpoint((breakType)type, address, kind)) {
          gdbOutput->sendGdbString("OK");
       }
       else {
-         gdbOutput->sendGdbString("E11");
+         Logging::print("Failed to set Breakpoint\n");
+         gdbOutput->sendErrorMessage(0x11);
       }
       break;
    case 'z' : // 'z type,addr,kind' - insert/remove breakpoint
+      Logging::print("z - Remove breakpoint\n");
       if (sscanf(pkt->buffer, "z%d,%x,%d", &type, &address, &kind) != 3) {
-         gdbOutput->sendGdbString("E11");
+         gdbOutput->sendErrorMessage(0x11);
          break;
       }
       if (removeBreakpoint((breakType)type, address, kind)) {
          gdbOutput->sendGdbString("OK");
       }
       else {
-         gdbOutput->sendGdbString("E11");
+         Logging::print("Failed to remove Breakpoint\n");
+         gdbOutput->sendErrorMessage(0x11);
       }
       break;
    case 'P' :
       // 'P n...=r...' Write register n... with value r.... The register number n
       // is in hexadecimal,
       if (sscanf(pkt->buffer, "P%x=%x", &regNo, &value) != 2) {
-         gdbOutput->sendGdbString("E11");
+         Logging::print("Illegal cmd format\n");
+         gdbOutput->sendErrorMessage(0x11);
          break;
       }
-//      print("GDB-P regNo=%x, val=%X\n", regNo, value);
+//      Logging::print("GDB-P regNo=%x, val=%X\n", regNo, value);
       if (isValidRegister(regNo)) {
          value = bigendianToTarget32(value);
          writeReg(regNo, value);
          gdbOutput->sendGdbString("OK");
       }
       else {
-         gdbOutput->sendGdbString("E11");
+         Logging::print("Illegal register\n");
+         gdbOutput->sendErrorMessage(0x11);
       }
       break;
    case 'p' : // 'p n...' Read register n...
       if (sscanf(pkt->buffer, "p%x", &regNo) != 1) {
-         gdbOutput->sendGdbString("E11");
+         Logging::print("Failed to read register\n");
+         gdbOutput->sendErrorMessage(0x11);
          break;
       }
       readReg(regNo, buff);
@@ -1154,22 +1362,36 @@ static int doGdbCommand(const GdbPacket *pkt) {
 //         gdbOutput->sendGdbString(buff);
 //      }
 //      else {
-//         gdbOutput->sendGdbString("E11");
+//         gdbOutput->sendErrorMessage(0x11);
 //      }
       break;
-   case 'H' : // 'Hc num' Set thread
-      gdbOutput->sendGdbString("OK");
-      break;
+//   case 'H' : // 'Hc num' Set thread
+//      gdbOutput->sendGdbString("OK");
+//      break;
    case '?' : // '?' Indicate the reason the target runState.
 //      The reply is the same as for step and continue. This packet has a special interpretation
 //      when the target is in non-stop mode;
+      if (!targetConnected) {
+         USBDM_ErrorCode rc = usbdmInit(TARGET_TYPE);
+         Logging::print("Initial connect to target = %f\n", progressTimer->elapsedTime());
+         if (rc != BDM_RC_OK) {
+            gdbOutput->sendErrorMessage(gdbOutput->E_Fatal, "Target connection failed");
+            reportErrorAndQuit(rc);
+            return rc;
+         }
+         targetConnected = true;
+      }
       reportLocation('T', TARGET_SIGNAL_TRAP);
       break;
+//   case 'T' : // Thread status
+//      Logging::print("Thread Status\n");
+//      gdbOutput->sendGdbString("OK");
+//      break;
    case 'k' : // Kill
-      print("Kill...\n");
-      return -1;
+      Logging::print("Kill...\n");
+      return BDM_RC_OK;
    case 'D' : // Detach
-      print("Detach...\n");
+      Logging::print("Detach...\n");
       gdbOutput->sendGdbString("OK");
       break;
    case 'q' : // q commands
@@ -1179,58 +1401,65 @@ static int doGdbCommand(const GdbPacket *pkt) {
    case 'v' : // v commands
       doVCommands(pkt);
       break;
-   default : // Unrecognised command
+   default : // Unrecognized command
+      Logging::print("Unrecognized command:\'%s\'\n", pkt->buffer);
       gdbOutput->sendGdbString("");
       break;
    }
-   return 0;
+   return BDM_RC_OK;
 }
 
-static void gdbLoop(void) {
+static USBDM_ErrorCode gdbLoop(void) {
+   LOGGING;
    unsigned pollCount = 0;
-   print("gdbLoop()...\n");
-//   gdbInput->flush();
+   USBDM_ErrorCode rc;
+   Logging::print("gdbLoop()...\n");
    do {
-      packet = gdbInput->getGdbPacket();
-      if (packet != NULL) {
-//         print("getGdbPacket()=:%03d:\'%*s\'\n", packet->size, packet->size, packet->buffer);
-         print("After getGdbPacket, Time = %f\n", progressTimer->elapsedTime());
-         if (ackMode) {
-            gdbOutput->sendAck();
+      do {
+         packet = gdbInput->getGdbPacket();
+         if (packet != NULL) {
+   //         Logging::print("After getGdbPacket, Time = %f\n", progressTimer->elapsedTime());
+            pendingCommand = false;
+            if (ackMode) {
+               gdbOutput->sendAck();
+            }
+            rc = doGdbCommand(packet);
+            if (rc != BDM_RC_OK) {
+               return rc;
+            }
          }
-         if (doGdbCommand(packet) < 0) {
-            return;
+         else {
+            if (gdbInput->isEOF()) {
+               return BDM_RC_OK;
+            }
          }
-      }
-      else {
-         if (gdbInput->isEOF()) {
-            return;
-         }
-      }
-//      print("gdbLoop() - polling\n");
+      } while (packet != NULL);
+//      Logging::print("gdbLoop() - polling\n");
       milliSleep(1);
-      if (pollCount++ >= pollInterval) {
+      if (targetConnected && !pendingCommand && (pollCount++ >= pollInterval)) {
          pollCount = 0;
-         if (isTargetHalted()) {
-//            print("Polling - runState\n");
+         static int lastTargetStatus = -1;
+         int targetStatus = getTargetStatus();
+         if (targetStatus == T_HALT) {
+//            Logging::print("Polling - runState\n");
             switch(runState) {
             case halted :  // ??? -> halted
                break;
             case breaking : // user break -> halted
-               print("Target has halted (breaking)\n");
+               Logging::print("Target has halted (breaking)\n");
                deactivateBreakpoints();
                checkAndAdjustBreakpointHalt();
                reportLocation('T', TARGET_SIGNAL_INT);
                break;
             case stepping : // stepping -> halted
-               print("Target has halted (stepping)\n");
+               Logging::print("Target has halted (stepping)\n");
                deactivateBreakpoints();
                checkAndAdjustBreakpointHalt();
                reportLocation('T', TARGET_SIGNAL_TRAP);
                break;
             default:       // ???     -> halted
             case running : // running -> halted
-               print("Target has halted (running)\n");
+               Logging::print("Target has halted (running)\n");
                deactivateBreakpoints();
                checkAndAdjustBreakpointHalt();
                reportLocation('T', TARGET_SIGNAL_TRAP);
@@ -1239,38 +1468,50 @@ static void gdbLoop(void) {
             runState     = halted;
             pollInterval = 1000; // Slow poll when running
          }
-         else {
-//            print("Polling - running\n");
+         else if (targetStatus == T_SLEEP) {
             if (runState == halted) {
                runState = running;
             }
+//            if (lastTargetStatus != targetStatus) {
+//               reportStatus("Sleeping\n");
+//            }
             pollInterval = 10; // Poll fast
          }
+         else {
+//            Logging::print("Polling - running\n");
+            if (runState == halted) {
+               runState = running;
+            }
+//            if (lastTargetStatus != targetStatus) {
+//               reportStatus("Running\n");
+//            }
+            pollInterval = 10; // Poll fast
+         }
+         lastTargetStatus = targetStatus;
       }
    } while (true);
-   print("gdbLoop() - Exiting GDB Loop\n");
+   Logging::print("gdbLoop() - Exiting GDB Loop\n");
 }
 
+//! Handle GDB communication
+//!
+//! @param gdbInput       - Input from GDB
+//! @param gdbOutput      - Output to GDB
+//! @param deviceData     - Selected device
+//! @param progressTimer  - Progress timer commenced at start of program
+//!
 void handleGdb(GdbInput *gdbInput, GdbOutput *gdbOutput, DeviceData &deviceData, ProgressTimer *progressTimer) {
-   print("handleGdb()\n");
-   fprintf(stderr, "Initialising target...\n");
-   TclInterface *tclInterface = new TclInterface(TARGET_TYPE, &deviceData);
-   if (tclInterface == NULL) {
-      fprintf(stderr, "Failed to create TCL interpreter)\n");
-      return;
-   }
-   USBDM_ErrorCode rc = tclInterface->runTCLCommand("initTarget");
-   if (rc != BDM_RC_OK) {
-      fprintf(stderr, "Failed (rc = %d, %s)\n", rc, USBDM_GetErrorString(rc));
-      return;
-   }
-   print("After runTCLCommand, Time = %f\n", progressTimer->elapsedTime());
-   fprintf(stderr, "Done\n");
+   LOGGING_E;
+//   TclInterface *tclInterface = new TclInterface(TARGET_TYPE, &deviceData);
+//   if (tclInterface == NULL) {
+//      Logging::print("Failed to create TCL interpreter)\n");
+//      return;
+//   }
    ::gdbInput      = gdbInput;
    ::gdbOutput     = gdbOutput;
    ::deviceData    = deviceData;
    ::progressTimer = progressTimer;
    clearAllBreakpoints();
    gdbLoop();
-   delete tclInterface;
+//   delete tclInterface;
 }

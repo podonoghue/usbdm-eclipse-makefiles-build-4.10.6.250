@@ -93,14 +93,14 @@ const static EonceRegisterDetails_t eonceRegisterDetails[] = {
 //!
 USBDM_MPC_API
 void MPC_SetLogFile(FILE *fp) {
-   setLogFileHandle(fp);
+   Logging::setLogFileHandle(fp);
 }
 
 //! Get current log file for messages
 //!
 USBDM_MPC_API
 FILE *MPC_GetLogFile(void) {
-   return getLogFileHandle();
+   return Logging::getLogFileHandle();
 }
 
 //! Read IDCODE from JTAG TAP
@@ -140,10 +140,10 @@ USBDM_ErrorCode rc;
    rc = executeJTAGSequence(sizeof(readCoreIdCodeSequence), readCoreIdCodeSequence,
                             4, idcode.getData(32), false);
    if (rc != BDM_RC_OK) {
-      print("   readIDCODE() - Failed, reason = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("   readIDCODE() - Failed, reason = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
-   print("readIDCODE() IDCODE = %s\n", idcode.toString());
+   Logging::print("readIDCODE() IDCODE = %s\n", idcode.toString());
    *idCode = idcode;
    return rc;
 }
@@ -168,10 +168,10 @@ const static uint8_t selectCoreTapSequence[] = {
    JTAG_END,
 };
    USBDM_ErrorCode rc;
-   print("enableEonceTAP()\n");
+   Logging::print("enableEonceTAP()\n");
    rc = executeJTAGSequence(sizeof(selectCoreTapSequence), selectCoreTapSequence, 0, NULL);
    if (rc != BDM_RC_OK) {
-      print("   enableEonceTAP() - Failed, reason = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("   enableEonceTAP() - Failed, reason = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    return rc;
@@ -204,11 +204,11 @@ JTAG32 regData(0,32);
    rc = executeJTAGSequence(sizeof(readRegisterSequence), readRegisterSequence,
                             BITS_TO_BYTES(length), regData.getData(length));
    if (rc != BDM_RC_OK) {
-      print("readONCEReg(%s:%d) => Failed\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length);
+      Logging::print("readONCEReg(%s:%d) => Failed\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length);
       return rc;
    }
    *regValue = (uint32_t)regData;
-   print("readONCEReg(%s:%d) => 0x%X\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length, *regValue);
+   Logging::print("readONCEReg(%s:%d) => 0x%X\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length, *regValue);
    return BDM_RC_OK;
 }
 
@@ -227,7 +227,7 @@ USBDM_ErrorCode writeONCEReg(int regNo, uint32_t regValue, uint8_t modifiers) {
    uint16_t command = eonceRegisterDetails[regNo].address|ONCE_CMD_WRITE|modifiers;
    uint8_t  length  = eonceRegisterDetails[regNo].length;
    JTAG32 regData(regValue,length);
-//   print("writeONCEReg(%s:%d), command=0x%03X\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length, command);
+//   Logging::print("writeONCEReg(%s:%d), command=0x%03X\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length, command);
 
    uint8_t writeRegisterSequence[] = {
          // Write OnCE Command reg
@@ -248,10 +248,10 @@ USBDM_ErrorCode writeONCEReg(int regNo, uint32_t regValue, uint8_t modifiers) {
    // Write EONCE register
    rc = executeJTAGSequence(sizeof(writeRegisterSequence), writeRegisterSequence, 0, NULL);
    if (rc != BDM_RC_OK) {
-      print("writeONCEReg(%s:%d) => Failed\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length);
+      Logging::print("writeONCEReg(%s:%d) => Failed\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length);
       return rc;
    }
-   print("writeONCEReg(%s:%d) <= 0x%X\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length, regValue);
+   Logging::print("writeONCEReg(%s:%d) <= 0x%X\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length, regValue);
    return rc;
 }
 
@@ -274,7 +274,7 @@ USBDM_ErrorCode writeCPUSCRRegs(CpuscrT *regValues) {
 
    uint16_t command = eonceRegisterDetails[1].address|ONCE_CMD_WRITE;
    uint8_t  length  = eonceRegisterDetails[1].length;
-//   print("writeONCEReg(%s:%d), command=0x%03X\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length, command);
+//   Logging::print("writeONCEReg(%s:%d), command=0x%03X\n", eonceRegisterDetails[regNo].name, eonceRegisterDetails[regNo].length, command);
 
    uint8_t writeRegisterSequence[9+6*4] = {
          // Write OnCE Command reg
@@ -304,10 +304,10 @@ USBDM_ErrorCode writeCPUSCRRegs(CpuscrT *regValues) {
    // Write EONCE register
    rc = executeJTAGSequence(sizeof(writeRegisterSequence), writeRegisterSequence, 0, NULL);
    if (rc != BDM_RC_OK) {
-      print("writeCPUSCRRegs(%s:%d) => Failed\n");
+      Logging::print("writeCPUSCRRegs(%s:%d) => Failed\n");
       return rc;
    }
-   print("writeCPUSCRRegs() => \n"
+   Logging::print("writeCPUSCRRegs() => \n"
          "CTL   = 0x%08X\n"
          "IR    = 0x%08X\n"
          "PC    = 0x%08X\n"
@@ -348,7 +348,7 @@ USBDM_ErrorCode rc;
    unsigned char buff[BITS_TO_BYTES(length)];
    rc = executeJTAGSequence(sizeof(readRegisterSequence), readRegisterSequence, BITS_TO_BYTES(length), buff);
    if (rc != BDM_RC_OK) {
-      print("readCPUSCRReg() => Failed\n");
+      Logging::print("readCPUSCRReg() => Failed\n");
       return rc;
    }
    uint8_t const *outPtr   = buff;
@@ -358,7 +358,7 @@ USBDM_ErrorCode rc;
    regValues->MSR   = (uint32_t)JTAG32(outPtr, 32);
    regValues->WBBRH = (uint32_t)JTAG32(outPtr, 32);
    regValues->WBBRL = (uint32_t)JTAG32(outPtr, 32);
-   print("readCPUSCRRegs() => \n"
+   Logging::print("readCPUSCRRegs() => \n"
          "CTL   = 0x%08X\n"
          "IR    = 0x%08X\n"
          "PC    = 0x%08X\n"
@@ -396,11 +396,11 @@ JTAG32 regData(0,32);
    rc = executeJTAGSequence(sizeof(readRegisterSequence), readRegisterSequence,
                             BITS_TO_BYTES(10), regData.getData(10));
    if (rc != BDM_RC_OK) {
-      print("readONCEStatus() => Failed\n");
+      Logging::print("readONCEStatus() => Failed\n");
       return rc;
    }
    *regValue = (uint32_t)regData;
-   print("readONCEStatus() => 0x%X\n", *regValue);
+   Logging::print("readONCEStatus() => 0x%X\n", *regValue);
    return BDM_RC_OK;
 }
 
@@ -966,13 +966,13 @@ JTAG32 regData(0,32);
       return rc;
    *regValue = (uint32_t)regData;
 //   if (regNo == DSC_RegOCR) {
-//      print("   readONCEReg(%s) => %s (%s)\n", getRegisterName(regNo), getOCRString(*regValue), regData.toString());
+//      Logging::print("   readONCEReg(%s) => %s (%s)\n", getRegisterName(regNo), getOCRString(*regValue), regData.toString());
 //   }
 //   else if (regNo == DSC_RegOSR) {
-//      print("   readONCEReg(%s) => %s (%s)\n", getRegisterName(regNo), getOSRString(*regValue), regData.toString());
+//      Logging::print("   readONCEReg(%s) => %s (%s)\n", getRegisterName(regNo), getOSRString(*regValue), regData.toString());
 //   }
 //   else {
-//      print("   readONCEReg(%s) => %s\n", getRegisterName(regNo), regData.toString());
+//      Logging::print("   readONCEReg(%s) => %s\n", getRegisterName(regNo), regData.toString());
 //   }
    return BDM_RC_OK;
 }
@@ -989,7 +989,7 @@ JTAG32 regData(0,32);
 USBDM_ErrorCode writeONCEReg(DSC_Registers_t regNo, uint32_t regValue, uint8_t modifiers) {
 
    if ((regNo<DSC_FirstONCERegister) || (regNo>DSC_LastONCERegister)) {
-      print("   writeONCEReg(%d, %s) => \n", regNo, getRegisterName(regNo));
+      Logging::print("   writeONCEReg(%d, %s) => \n", regNo, getRegisterName(regNo));
       return BDM_RC_ILLEGAL_PARAMS;
    }
    uint8_t regIndex       = regNo - DSC_FirstONCERegister;
@@ -999,10 +999,10 @@ USBDM_ErrorCode writeONCEReg(DSC_Registers_t regNo, uint32_t regValue, uint8_t m
    JTAG32 regData(regValue,length);
 
 //   if (regNo == DSC_RegOCR) {
-//      print("   writeONCEReg(%s) <= %s (%s)\n", getRegisterName(regNo), getOCRString(regValue), regData.toString());
+//      Logging::print("   writeONCEReg(%s) <= %s (%s)\n", getRegisterName(regNo), getOCRString(regValue), regData.toString());
 //   }
 //   else {
-//      print("   writeONCEReg(%s) <= (0x%X) %s\n", name, (uint32_t)regData, regData.toString());
+//      Logging::print("   writeONCEReg(%s) <= (0x%X) %s\n", name, (uint32_t)regData, regData.toString());
 //   }
    uint8_t writeRegisterSequence[] = {
          JTAG_MOVE_DR_SCAN,            // Write to ONCE (DR-CHAIN)
@@ -1068,7 +1068,7 @@ USBDM_ErrorCode rc;
                             BITS_TO_BYTES(JTAG_CORE_COMMAND_LENGTH),
                             coreStatus.getData(JTAG_CORE_COMMAND_LENGTH));
    *status = convertStatus((uint32_t)coreStatus);
-   print("   targetDebugRequest(): Core status = %s\n", DSC_GetOnceStatusName(*status));
+   Logging::print("   targetDebugRequest(): Core status = %s\n", DSC_GetOnceStatusName(*status));
    return rc;
 }
 
@@ -1092,7 +1092,7 @@ USBDM_ErrorCode rc;
                             BITS_TO_BYTES(JTAG_CORE_COMMAND_LENGTH),
                             coreStatus.getData(JTAG_CORE_COMMAND_LENGTH));
    *status = convertStatus((uint32_t)coreStatus);
-   print("   targetDebugRelease(): Core status = %s\n", DSC_GetOnceStatusName(*status));
+   Logging::print("   targetDebugRelease(): Core status = %s\n", DSC_GetOnceStatusName(*status));
    return rc;
 }
 
@@ -1111,14 +1111,14 @@ int             iterationLimit = 20;
       rc = targetDebugRequest(&status);
    } while (((rc == BDM_RC_OK) && (status != debugMode)) && (iterationLimit-->0));
    if (((rc != BDM_RC_OK) || (status != debugMode))) {
-      print("   forceDebugRequest(): Failed!\n");
+      Logging::print("   forceDebugRequest(): Failed!\n");
       if (rc == BDM_RC_OK) {
          rc = BDM_RC_NO_CONNECTION;
       }
    }
    rc = targetDebugRelease(&status);
    if (((rc != BDM_RC_OK) || (status != debugMode))) {
-      print("   forceDebugRequest(): Failed!\n");
+      Logging::print("   forceDebugRequest(): Failed!\n");
       if (rc == BDM_RC_OK) {
          rc = BDM_RC_NO_CONNECTION;
       }
@@ -1145,14 +1145,14 @@ USBDM_ErrorCode rc;
 static OnceStatus_t lastStatus = unknownMode;
 bool statusChange;
 
-//   print("   enableONCE(): Enable EONCE\n");
+//   Logging::print("   enableONCE(): Enable EONCE\n");
 
    *status = unknownMode;
    rc = executeJTAGSequence(sizeof(enableEONCESequence), enableEONCESequence,
                             BITS_TO_BYTES(JTAG_CORE_COMMAND_LENGTH),
                             coreStatus.getData(JTAG_CORE_COMMAND_LENGTH));
    if (rc != BDM_RC_OK) {
-      print("   enableONCE(): - Failed: executeJTAGSequence() failed\n");
+      Logging::print("   enableONCE(): - Failed: executeJTAGSequence() failed\n");
       return rc;
    }
 
@@ -1161,7 +1161,7 @@ bool statusChange;
    lastStatus = *status;
 
    if (statusChange)
-      print("   enableONCE(): Core status change => %s\n", DSC_GetOnceStatusName(*status));
+      Logging::print("   enableONCE(): Core status change => %s\n", DSC_GetOnceStatusName(*status));
 
    switch(*status) {
       case executeMode :
@@ -1175,7 +1175,7 @@ bool statusChange;
          return BDM_RC_OK;
       default:
       case unknownMode:
-         print("   enableONCE(): - Failed: status unknown\n");
+         Logging::print("   enableONCE(): - Failed: status unknown\n");
          return BDM_RC_NO_CONNECTION;
    }
    return BDM_RC_OK;
@@ -1193,10 +1193,10 @@ USBDM_ErrorCode DSC_GetStatus(OnceStatus_t *status) {
 
    USBDM_ErrorCode rc = enableONCE(status);
    if (rc == BDM_RC_OK) {
-      print("   DSC_GetStatus() => %s\n", DSC_GetOnceStatusName(*status));
+      Logging::print("   DSC_GetStatus() => %s\n", DSC_GetOnceStatusName(*status));
    }
    else {
-      print("   DSC_GetStatus() - failed, rc = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("   DSC_GetStatus() - failed, rc = %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -1288,7 +1288,7 @@ USBDM_ErrorCode DSC_Initialise(void) {
 
    USBDM_ErrorCode rc = BDM_RC_OK;
 
-   print("   DSC_Initialise()\n");
+   Logging::print("   DSC_Initialise()\n");
 
    DSC_InitialiseDone = false;
 
@@ -1361,7 +1361,7 @@ USBDM_ErrorCode executeTargetInstruction(uint8_t *instructionSequence) {
          *copyPtr++ = *sequence++;
       }
    }
-   print("   DSC_ExecuteTargetInstruction()\n");
+   Logging::print("   DSC_ExecuteTargetInstruction()\n");
    return executeJTAGSequence(copyPtr-JTAGSequence, JTAGSequence, 0, NULL);
 }
 
@@ -1393,18 +1393,18 @@ USBDM_ErrorCode testTargetExecutionSpeed(void) {
      1,0xE7,0x06,                         //        swap    shadows
 //   1,1,0xE7,0x00,  //        nop
    };
-   print("testTargetExecutionSpeed()\n");
+   Logging::print("testTargetExecutionSpeed()\n");
    return executeJTAGSequence(sizeof(testSequence), testSequence, 0, NULL);
 }
 
 #if 0
 static void printVolatileRegs(void) {
-   print("   A0 => %4.4X\n", volatileRegs.A0);
-   print("   A1 => %4.4X\n", volatileRegs.A1);
-   print("   A2 => %1.1X\n", volatileRegs.A2);
-   print("   PC => %6.6X\n", volatileRegs.PC);
-   print("   R0 => %6.6X\n", volatileRegs.R0);
-   print("   R4 => %6.6X\n", volatileRegs.R4);
+   Logging::print("   A0 => %4.4X\n", volatileRegs.A0);
+   Logging::print("   A1 => %4.4X\n", volatileRegs.A1);
+   Logging::print("   A2 => %1.1X\n", volatileRegs.A2);
+   Logging::print("   PC => %6.6X\n", volatileRegs.PC);
+   Logging::print("   R0 => %6.6X\n", volatileRegs.R0);
+   Logging::print("   R4 => %6.6X\n", volatileRegs.R4);
 }
 #endif
 
@@ -1470,7 +1470,7 @@ uint8_t outBuffer[100];
    if (volatileRegs.valid) // registers already cached
       return BDM_RC_OK;
 
-   print("   saveVolatileTargetRegs()\n");
+   Logging::print("   saveVolatileTargetRegs()\n");
 
    uint8_t* copyPtr = JTAGSequence;
 
@@ -1553,7 +1553,7 @@ uint8_t registerSize;
                             BITS_TO_BYTES(registerSize), regData.getData(registerSize),
                             false);
 
-//   print("   readCoreReg(%s) => %s\n", getRegisterName(regNo), regData.toString());
+//   Logging::print("   readCoreReg(%s) => %s\n", getRegisterName(regNo), regData.toString());
    *regValue = regData;
 
    return rc;
@@ -1628,7 +1628,7 @@ USBDM_ErrorCode rc;
    if (!volatileRegs.valid) // No register to restore
       return BDM_RC_OK;
 
-   print("   restoreVolatileRegs()\n");
+   Logging::print("   restoreVolatileRegs()\n");
 
    uint8_t* copyPtr = JTAGSequence;
 
@@ -1689,7 +1689,7 @@ USBDM_ErrorCode writeCoreReg(DSC_Registers_t regNo, uint32_t regValue) {
 
    JTAG32 regData(regValue, getRegisterSize(regNo));
 
-   print("   writeCoreReg(%s) <= %s\n", getRegisterName(regNo), regData.toString());
+   Logging::print("   writeCoreReg(%s) <= %s\n", getRegisterName(regNo), regData.toString());
 
    uint8_t* copyPtr = JTAGSequence;
 
@@ -1876,10 +1876,10 @@ MemorySpace_t memSpace     = (MemorySpace_t)memorySpace;
 int           elementSize  = memorySpace&MS_SIZE;
 USBDM_ErrorCode rc;
 
-//   print("   readMemoryBlock(A=%s, S=%d, #=%d)\n", getKnownAddress(memSpace,address), elementSize, numBytes);
+//   Logging::print("   readMemoryBlock(A=%s, S=%d, #=%d)\n", getKnownAddress(memSpace,address), elementSize, numBytes);
 
    if (numBytes > dscInfo.maxMemoryReadSize) {
-      print("   DSC_ReadMemoryBlock(): buffer overflow, MaxDataSize = %u\n",
+      Logging::print("   DSC_ReadMemoryBlock(): buffer overflow, MaxDataSize = %u\n",
             dscInfo.maxMemoryReadSize);
       return BDM_RC_ILLEGAL_PARAMS;
    }
@@ -1951,7 +1951,7 @@ USBDM_ErrorCode rc;
          break;
    }
    if (rc != BDM_RC_OK) {
-      print("   DSC_ReadMemoryBlock(A=%s, S=%d, #=%d) - Illegal operands\n", getKnownAddress(memSpace,address), elementSize, numBytes);
+      Logging::print("   DSC_ReadMemoryBlock(A=%s, S=%d, #=%d) - Illegal operands\n", getKnownAddress(memSpace,address), elementSize, numBytes);
       return rc;
    }
    // Size of data elements 8/16/32-bits
@@ -1960,7 +1960,7 @@ USBDM_ErrorCode rc;
    // Execute the code
    rc = executeJTAGSequence(copyPtr-JTAGSequence, JTAGSequence, numBytes, (uint8_t*)buffer);
    if (rc != BDM_RC_OK) {
-      print("   DSC_ReadMemoryBlock() - Failed, rc = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("   DSC_ReadMemoryBlock() - Failed, rc = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
 //   // JTAG interface is big-endian but DSC is little-endian
@@ -2048,7 +2048,7 @@ USBDM_ErrorCode readMemoryBlock(unsigned int   memorySpace,
                                numBytes, (uint8_t*)buffer);
    }
    if (rc != BDM_RC_OK) {
-      print("   DSC_ReadMemoryBlock() - Failed, rc = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("   DSC_ReadMemoryBlock() - Failed, rc = %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -2078,7 +2078,7 @@ USBDM_ErrorCode DSC_ReadMemory(unsigned int        memorySpace,
 
    USBDM_ErrorCode rc = BDM_RC_OK;
 
-   print("   DSC_ReadMemory(A=%s, S=%d, #=%d)\n", getKnownAddress(memSpace,currentAddress), elementSize, numBytes);
+   Logging::print("   DSC_ReadMemory(A=%s, S=%d, #=%d)\n", getKnownAddress(memSpace,currentAddress), elementSize, numBytes);
 
    saveVolatileTargetRegs();
 
@@ -2251,10 +2251,10 @@ USBDM_ErrorCode writeMemoryBlock(unsigned int         memorySpace,
    // D - memory data - words are written littleEndian!
    uint8_t tBuffer[dscInfo.maxMemoryWriteSize+10];
 
-   print("   DSC_WriteMemoryBlock(A=%s, S=%d, #=%d)\n", getKnownAddress(memSpace,address), elementSize, numBytes);
+   Logging::print("   DSC_WriteMemoryBlock(A=%s, S=%d, #=%d)\n", getKnownAddress(memSpace,address), elementSize, numBytes);
 
    if (numBytes > dscInfo.maxMemoryWriteSize) {
-      print("   DSC_WriteMemoryBlock() - buffer size too large\n");
+      Logging::print("   DSC_WriteMemoryBlock() - buffer size too large\n");
       return BDM_RC_ILLEGAL_PARAMS;
    }
 
@@ -2325,7 +2325,7 @@ USBDM_ErrorCode writeMemoryBlock(unsigned int         memorySpace,
          break;
    }
    if (rc != BDM_RC_OK) {
-      print("   DSC_WriteMemoryBlock(A=%s, S=%d, #=%d) - Illegal operands\n", getKnownAddress(memSpace,address), elementSize, numBytes);
+      Logging::print("   DSC_WriteMemoryBlock(A=%s, S=%d, #=%d) - Illegal operands\n", getKnownAddress(memSpace,address), elementSize, numBytes);
       return rc;
    }
    // S, size of data to write (8/16/32 bits)
@@ -2341,7 +2341,7 @@ USBDM_ErrorCode writeMemoryBlock(unsigned int         memorySpace,
    rc = executeJTAGSequence(copyPtr-JTAGSequence, JTAGSequence,
                             0, NULL);
    if (rc != BDM_RC_OK) {
-      print("   DSC_WriteMemoryBlock() - Failed, rc = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("   DSC_WriteMemoryBlock() - Failed, rc = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    return rc;
@@ -2431,7 +2431,7 @@ USBDM_ErrorCode writeMemoryBlock(unsigned int         memorySpace,
       rc = executeJTAGSequence(numBytes+JTAG_WRITE_MEMORY_HEADER_SIZE, JTAGSequence, 0, NULL);
    }
    if (rc != BDM_RC_OK) {
-      print("   DSC_WriteMemoryBlock() - Failed, rc = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("   DSC_WriteMemoryBlock() - Failed, rc = %s\n", USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -2459,7 +2459,7 @@ USBDM_ErrorCode DSC_WriteMemory(unsigned int         memorySpace,
 
    USBDM_ErrorCode rc = BDM_RC_OK;
 
-   print("   DSC_WriteMemory(A=%s, S=%d, #=%d)\n", getKnownAddress(memSpace,address), elementSize, numBytes);
+   Logging::print("   DSC_WriteMemory(A=%s, S=%d, #=%d)\n", getKnownAddress(memSpace,address), elementSize, numBytes);
    printDump((uint8_t*)buffer, numBytes, address, WORD_ADDRESS|WORD_DISPLAY);
 
    saveVolatileTargetRegs();
@@ -2550,23 +2550,23 @@ USBDM_ErrorCode rc = BDM_RC_OK;
 
    // Check if already loaded
    if (loadType == cacheState) {
-//      print("loadCache() - Cache already loaded\n");
+//      Logging::print("loadCache() - Cache already loaded\n");
       return BDM_RC_OK;
    }
    switch (loadType) {
       case CacheFree       :
          break;
       case MemAccessCached  :
-//         print("loadCache() - loading targetMemorySequence, %d bytes\n", sizeof(targetMemorySequence));
+//         Logging::print("loadCache() - loading targetMemorySequence, %d bytes\n", sizeof(targetMemorySequence));
 //         rc = executeJTAGSequence(sizeof(targetMemorySequence), targetMemorySequence, 0, NULL);
          break;
    }
    if (rc != BDM_RC_OK) {
-      print("loadCache() - Failed loading, reason = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("loadCache() - Failed loading, reason = %s\n", USBDM_GetErrorString(rc));
       cacheState = CacheFree;
    }
    else {
-      print("loadCache() - OK\n");
+      Logging::print("loadCache() - OK\n");
       cacheState = loadType;
    }
    return rc;
@@ -2600,10 +2600,10 @@ USBDM_ErrorCode DSC_GetInfo(dscInfo_t *dscInfo_) {
       memset(dscInfo_, 0, dscInfo_->size);
       *dscInfo_ = dscInfo;
    }
-   print("DSC_GetInfo(): usbdmBufferSize = %u\n", bdmInfo.jtagBufferSize);
-   print("DSC_GetInfo(): JTAG_READ_MEMORY_HEADER_SIZE=%d, MaxDataSize = %u\n",
+   Logging::print("DSC_GetInfo(): usbdmBufferSize = %u\n", bdmInfo.jtagBufferSize);
+   Logging::print("DSC_GetInfo(): JTAG_READ_MEMORY_HEADER_SIZE=%d, MaxDataSize = %u\n",
          0, dscInfo.maxMemoryReadSize);
-   print("DSC_GetInfo(): JTAG_WRITE_MEMORY_HEADER_SIZE=%d, MaxDataSize = %u\n",
+   Logging::print("DSC_GetInfo(): JTAG_WRITE_MEMORY_HEADER_SIZE=%d, MaxDataSize = %u\n",
          JTAG_WRITE_MEMORY_HEADER_SIZE, dscInfo.maxMemoryWriteSize);
 
    return BDM_RC_OK;
@@ -2632,13 +2632,13 @@ USBDM_ErrorCode DSC_Connect(void){
          return  rc;
       }
    }
-   print("   DSC_Connect()\n" );
+   Logging::print("   DSC_Connect()\n" );
 
    rc = readIDCODE(&idCode, JTAG_MASTER_COMMAND_LENGTH, true);
    if (rc != BDM_RC_OK) {
       return rc;
    }
-   print("   DSC_Connect() Master IDCODE = %8.8X\n", idCode);
+   Logging::print("   DSC_Connect() Master IDCODE = %8.8X\n", idCode);
    rc = enableEonceTAP();
    if (rc != BDM_RC_OK) {
       return rc;
@@ -2649,7 +2649,7 @@ USBDM_ErrorCode DSC_Connect(void){
       return rc;
    }
    coreIdcode = idCode;
-   print("   DSC_Connect() Core IDCODE = %8.8X\n", coreIdcode);
+   Logging::print("   DSC_Connect() Core IDCODE = %8.8X\n", coreIdcode);
 
    rc = enableONCE(&onceStatus);
 //   if (onceStatus == debugMode)
@@ -2674,14 +2674,14 @@ OnceStatus_t status;
          return  rc;
       }
    }
-   print("   DSC_TargetReset(%s)\n", getTargetModeName(targetMode));
+   Logging::print("   DSC_TargetReset(%s)\n", getTargetModeName(targetMode));
 
    TargetMode_t resetMethod = (TargetMode_t)(targetMode&RESET_METHOD_MASK);
    TargetMode_t resetMode   = (TargetMode_t)(targetMode&RESET_MODE_MASK);
    if (resetMethod == RESET_DEFAULT) {
       resetMethod = RESET_HARDWARE;
    }
-   print("   DSC_TargetReset() - modified=(%s)\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
+   Logging::print("   DSC_TargetReset() - modified=(%s)\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
 
    volatileRegs.valid = false;
 
@@ -2701,7 +2701,7 @@ OnceStatus_t status;
          continue;
       }
       coreIdcode = idCode;
-      print("   DSC_TargetReset() Core IDCODE = %8.8X\n", coreIdcode);
+      Logging::print("   DSC_TargetReset() Core IDCODE = %8.8X\n", coreIdcode);
 
       if (resetMode == RESET_SPECIAL) {
          // Do debug request so target resets in debug mode
@@ -2759,10 +2759,10 @@ USBDM_ErrorCode DSC_ReadRegister(unsigned int regNum, unsigned long *regValue) {
       rc = BDM_RC_OK;
    }
    if (rc == BDM_RC_OK) {
-      print("   DSC_ReadRegister(%s(0x%X)) => 0x%X\n", getRegisterName(regNo), (uint32_t)regNo, *regValue);
+      Logging::print("   DSC_ReadRegister(%s(0x%X)) => 0x%X\n", getRegisterName(regNo), (uint32_t)regNo, *regValue);
    }
    else {
-      print("   DSC_ReadRegister(%d(0x%X)) - illegal\n", (uint32_t)regNo, (uint32_t)regNo);
+      Logging::print("   DSC_ReadRegister(%d(0x%X)) - illegal\n", (uint32_t)regNo, (uint32_t)regNo);
       *regValue = 0;
    }
    return rc;
@@ -2784,7 +2784,7 @@ USBDM_ErrorCode DSC_WriteRegister(unsigned int regNum, unsigned long regValue) {
    saveVolatileTargetRegs();
 
    if ((regNo >= DSC_FirstCoreRegister) && (regNo <= DSC_LastCoreRegister)) {
-      print("   DSC_WriteRegister(%s(0x%X), 0x%X) - doing CORE reg\n", getRegisterName(regNo), regNo, regValue);
+      Logging::print("   DSC_WriteRegister(%s(0x%X), 0x%X) - doing CORE reg\n", getRegisterName(regNo), regNo, regValue);
       switch(regNo) {
          case DSC_RegA0: volatileRegs.A0 = regValue; return BDM_RC_OK;
          case DSC_RegA1: volatileRegs.A1 = regValue; return BDM_RC_OK;
@@ -2798,10 +2798,10 @@ USBDM_ErrorCode DSC_WriteRegister(unsigned int regNum, unsigned long regValue) {
       }
    }
    else if ((regNo >= DSC_FirstONCERegister) && (regNo <= DSC_LastONCERegister)) {
-      print("   DSC_WriteRegister(%s, 0x%X) - doing ONCE reg\n", getRegisterName(regNo), regValue);
+      Logging::print("   DSC_WriteRegister(%s, 0x%X) - doing ONCE reg\n", getRegisterName(regNo), regValue);
       return writeONCEReg((DSC_Registers_t)regNo, regValue, 0);
    }
-   print("   DSC_WriteRegister(%d(0x%X)) <= %X, - illegal\n", regValue, (uint32_t)regNo, (uint32_t)regNo);
+   Logging::print("   DSC_WriteRegister(%d(0x%X)) <= %X, - illegal\n", regValue, (uint32_t)regNo, (uint32_t)regNo);
    return BDM_RC_ILLEGAL_PARAMS;
 }
 
@@ -2821,7 +2821,7 @@ static const uint8_t writeONCESequence[] = {
    };
 USBDM_ErrorCode rc;
 unsigned long currentOCR;
-   print("   DSC_TargetGo()\n");
+   Logging::print("   DSC_TargetGo()\n");
 
    // Clear single-step
    rc = readONCEReg(DSC_RegOCR, &currentOCR);
@@ -2860,7 +2860,7 @@ USBDM_ErrorCode rc;
 //uint32_t oldPC, newPC;
 unsigned long currentOCR;
 
-   print("   TargetStep(%d)\n", numSteps);
+   Logging::print("   TargetStep(%d)\n", numSteps);
 
    // Set single-step mode
    // Clear single-step
@@ -2894,7 +2894,7 @@ USBDM_MPC_API
 USBDM_ErrorCode DSC_TargetHalt(void) {
 USBDM_ErrorCode rc;
 
-   print("   DSC_TargetHalt()\n");
+   Logging::print("   DSC_TargetHalt()\n");
 
    rc = forceDebugRequest();
 //   if (rc == BDM_RC_OK)

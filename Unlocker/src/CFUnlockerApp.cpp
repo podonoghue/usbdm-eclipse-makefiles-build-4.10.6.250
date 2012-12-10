@@ -42,7 +42,7 @@ CFUnlockerApp::CFUnlockerApp()
 {
     Init();
     wxGetApp().SetAppName(_("usbdm"));
-    openLogFile("CFUnlocker.log");
+    Logging::openLogFile("CFUnlocker.log");
 
 #ifndef _WIN32
    ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_("/usr/local"));

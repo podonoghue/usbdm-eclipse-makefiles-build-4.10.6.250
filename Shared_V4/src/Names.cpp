@@ -696,11 +696,10 @@ char const *getCFVxRegName( unsigned int regAddr ) {
 
 //! \brief Maps a DSC register # to a string
 //!
-//! @param regAddr = register address
+//! @param regNum = register number
 //!
-//! @return pointer to static string describing the command
+//! @return pointer to static string describing the register
 //!
-
 char const *getDSCRegName( unsigned int regNum) {
    static const char *const regNames[] =  {
       // Core registers
@@ -942,9 +941,9 @@ char const *getCFV1_XCSR_Name( unsigned int XCSR) {
 //! \brief Maps a Status register value to a string
 //!
 //! @param targetType = Type of target (T_HC12 etc)
-//! @param XCSR       = XCSR register value
+//! @param value      = register value
 //!
-//! @return pointer to static string buffer describing the XCSR
+//! @return pointer to static string buffer describing the value
 //!
 
 char const *getStatusRegName(unsigned int targetType, unsigned int value) {
@@ -1183,7 +1182,8 @@ const char *fillMode;
 //!
 
 void printBdmOptions(const USBDM_ExtendedOptions_t *options) {
-   print("========================================\n"
+   Logging::print("\n"
+         "========================================\n"
          "autoReconnect         => %s\n"
          "bdmClockSource        => %s\n"
          "cycleVddOnConnect     => %s\n"

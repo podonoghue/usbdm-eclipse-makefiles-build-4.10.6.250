@@ -27,13 +27,14 @@ private:
    enum Statetype {hunt, data, escape, checksum1, checksum2};
    Statetype         state;
    bool              full;
-   bool              empty;
+   bool              idle;
+   bool              terminate;
    bool              isEndOfFile;
    const GdbPacket  *buffer;
    FILE             *pipeIn;
    pthread_mutex_t   mutex;
-   pthread_cond_t    dataNotFull_cv;
-   pthread_cond_t    dataNotEmpty_cv;
+   pthread_cond_t    dataNeeded_cv;
+   pthread_t         tid;
 
 public:
    GdbInput(FILE *in);
@@ -41,6 +42,8 @@ public:
    const GdbPacket *getGdbPacket(void);
    bool isEOF(void) {return isEndOfFile;}
    void flush(void);
+   void finish(void);
+   void kill(void);
 
 private:
    static void *threadFunc(void *arg);

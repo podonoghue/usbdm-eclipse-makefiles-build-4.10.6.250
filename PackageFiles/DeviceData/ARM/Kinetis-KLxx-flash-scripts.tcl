@@ -234,15 +234,19 @@ proc initFlash { frequency } {
 ;#
 proc massEraseTarget { } {
 
-   ;# reset target to be sure
+   ;# hold target reset to be sure
    pinSet rst=0
-   # MASS Erase + RESET + Hold CPU reset after release
+
+   ;# Connect with reset asserted, ignore errors as may be secured
+   catch { connect }
+   
+   ;# MASS Erase + RESET + Hold CPU reset after release
    set mdmApControl [rcreg  $::MDM_AP_Control]
    set mdmApControl [expr $mdmApControl | $::MDM_AP_C_CORE_HOLD | $::MDM_AP_C_SYSTEM_RESET | $::MDM_AP_C_MASS_ERASE]
    wcreg $::MDM_AP_Control $mdmApControl
    after 50
 
-   # Release reset (core stays reset)
+   ;# Release reset (core stays reset)
    set mdmApControl [expr $mdmApControl & ~$::MDM_AP_C_SYSTEM_RESET]
    wcreg $::MDM_AP_Control $mdmApControl
 
@@ -258,16 +262,15 @@ proc massEraseTarget { } {
       }
       incr retry
    }
-   # Release the core reset
+   ;# Release the core reset
    set mdmApControl [expr $mdmApControl & ~$::MDM_AP_C_CORE_HOLD]
    wcreg $::MDM_AP_Control $mdmApControl
-   pinSet
-   
+
+   reset s h
+
    if [expr ( [expr $mdmApControl & $::MDM_AP_C_MASS_ERASE]) != 0] {
       error "Flash mass erase failed"
    }
-   reset s h
-   connect
 }
 
 ;######################################################################################

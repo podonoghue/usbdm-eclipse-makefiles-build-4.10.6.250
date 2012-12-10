@@ -96,7 +96,7 @@ char getPathSeparator(void) {
 #ifdef _WIN32
 bool fileExists(string filePath) {
    DWORD attrib = GetFileAttributesA(filePath.c_str());
-   print("fileExists(%s) => attr=%X\n", filePath.c_str(), attrib);
+   Logging::print("fileExists(%s) => attr=%X\n", filePath.c_str(), attrib);
    return  (attrib != INVALID_FILE_ATTRIBUTES) &&
           ((attrib & FILE_ATTRIBUTE_DIRECTORY) == 0);
 }
@@ -188,7 +188,7 @@ FILE *openApplicationFile(const string &filename, const string &attributes) {
       }
    }
    if (configFile != NULL) {
-      print("openApplicationFile() - Opened \'%s\'\n", configFilePath.c_str());
+      Logging::print("openApplicationFile() - Opened \'%s\'\n", configFilePath.c_str());
    }
    return configFile;
 }
@@ -255,7 +255,7 @@ string getApplicationFilePath(const string &filename, const string &attributes) 
    // Try the Executable directory for readonly files
    if (attributes[0] == 'r') {
       configFilePath = getDataDir() + getPathSeparator() + filename;
-      print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
+      Logging::print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
       if (fileExists(configFilePath))
          return configFilePath;
    }
@@ -263,14 +263,14 @@ string getApplicationFilePath(const string &filename, const string &attributes) 
    // Try the Path indicated by registry key if necessary
    if (attributes[0] == 'r') {
       configFilePath = getInstallationDir()+ filename;
-      print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
+      Logging::print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
       if (fileExists(configFilePath))
          return configFilePath;
    }
 #endif
    // Try the Application Data directory
    configFilePath = getUserDataDir() + getPathSeparator() + filename;;
-   print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
+   Logging::print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
    if (fileExists(configFilePath))
       return configFilePath;
 

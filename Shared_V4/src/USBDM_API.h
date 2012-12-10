@@ -34,8 +34,10 @@
 
 //==================================================
 #if defined __cplusplus
+//! Usual C interface for C++
 #define EXTERN_C  extern "C"
 #else
+//! Usual C interface for C++
 #define EXTERN_C
 #endif
 
@@ -55,12 +57,12 @@
 #endif
 
 #if !defined(DLL_LOCAL)
-   // Functions exported from a library
+   //! Functions exported from a library
    #define DLL_EXPORT __attribute__ ((visibility ("default")))
-   // Functions imported from a library
+   //! Functions imported from a library
    #define DLL_IMPORT __attribute__ ((visibility ("default")))
 
-   // Functions local to a library
+   //! Functions local to a library
    #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
 
@@ -69,8 +71,9 @@
    #define USBDM_API      EXTERN_C DLL_EXPORT
    #define OSBDM_API_JM60 EXTERN_C DLL_EXPORT
 #else
-   //! These definitions are used when USBDM_API is being imported (linking against DLL)
+   //! This definition is used when USBDM_API is being imported (linking against DLL)
    #define USBDM_API      EXTERN_C DLL_IMPORT
+   //! This definition is used when OSBDM_API is being imported (linking against DLL)
    #define OSBDM_API_JM60 EXTERN_C DLL_IMPORT
 #endif
 //==================================================

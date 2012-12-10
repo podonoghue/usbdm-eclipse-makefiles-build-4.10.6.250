@@ -149,7 +149,7 @@ void FlashImage::MemorySpace::dumpRange(unsigned int startAddress, unsigned int 
    uint32_t addr;
    uint32_t rangeEnd;
 
-   print("Dump of [0x%06X-0x%06X]\n", startAddress, endAddress);
+   Logging::print("Dump of [0x%06X-0x%06X]\n", startAddress, endAddress);
    Enumerator iter(*this, startAddress);
    if (!iter.isValid())
       iter.nextValid();
@@ -157,21 +157,21 @@ void FlashImage::MemorySpace::dumpRange(unsigned int startAddress, unsigned int 
       addr = iter.getAddress() & ~0xF;
       iter.lastValid();
       rangeEnd = iter.getAddress();
-      print("        : 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\n"
+      Logging::print("        : 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\n"
             "========================================================\n");
       while (addr <= rangeEnd) {
          if (((addr & 0x000F) == 0) || (addr == startAddress))
-            print("%8.8X:", addr);
+            Logging::print("%8.8X:", addr);
                if (isValid(addr))
-                  print("%02X ", getValue(addr));
+                  Logging::print("%02X ", getValue(addr));
                else
-                  print("   ");
+                  Logging::print("   ");
          if (((addr & 0x000F) == 0xF) || (addr == rangeEnd))
-            print("\n");
+            Logging::print("\n");
          addr++;
       }
    } while (iter.nextValid());
-   print("\n\n");
+   Logging::print("\n\n");
 }
 
 //!   Load a Freescale S-record file into the buffer. \n
@@ -200,29 +200,29 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
    if (clearBuffer) {
       initData();
    }
-   print("Filepath = %s\n", fileName.c_str()); fflush(stderr);
+   Logging::print("Filepath = %s\n", fileName.c_str()); fflush(stderr);
 
    fp = fopen(fileName.c_str(), "rb");
 
    if (fp == NULL) {
-      print("Failed to open input file \"%s\"\n", fileName.c_str());
+      Logging::print("Failed to open input file \"%s\"\n", fileName.c_str());
 
       return SFILE_RC_FILE_OPEN_FAILED;
    }
-   print("Loading input file \"%s\"\n", fileName.c_str()); fflush(stderr);
+   Logging::print("Loading input file \"%s\"\n", fileName.c_str()); fflush(stderr);
 
    lineNum  = 0;
    paged    = false; // Assume
    while (fgets(buffer, sizeof(buffer)-1, fp) != NULL) {
       lineNum++;
-      //print("Input: %s",buffer);
+      //Logging::print("Input: %s",buffer);
       ptr = buffer;
       // Find first non-blank
       while ((*ptr == ' ') || (*ptr == '\t') || (*ptr == '\n') || (*ptr == '\r'))
          ptr++;
       // Check if S-record
       if ((*ptr != 'S') && (*ptr != 's')) {
-         print("loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
+         Logging::print("loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
          fclose(fp);
          return SFILE_RC_ILLEGAL_LINE;
       }
@@ -240,7 +240,7 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
             addr = hex4ToDecimal( &ptr );
             checkSum = (uint8_t)size + (uint8_t)(addr>>8) + (uint8_t)addr;
             size -= 3; // subtract 3 from byte count (size + 2 addr bytes)
-            //print("(%2.2X)%4.4lX:\n",size,addr);
+            //Logging::print("(%2.2X)%4.4lX:\n",size,addr);
             break;
          case '2':
             // S2 = 24-bit address, data record
@@ -249,7 +249,7 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
             addr = hex6ToDecimal( &ptr );
             checkSum = (uint8_t)size + (uint8_t)(addr>>16) + (uint8_t)(addr>>8) + (uint8_t)addr;
             size -= 4; // subtract 4 from byte count (size + 3 addr bytes)
-            //print("size=0x%02X, addr=0x%06X\n",size,addr);
+            //Logging::print("size=0x%02X, addr=0x%06X\n",size,addr);
             break;
          case '3':
             // S3 32-bit address, data record
@@ -258,10 +258,10 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
             addr = hex8ToDecimal( &ptr );
             checkSum = (uint8_t)size + (uint8_t)(addr>>24) + (uint8_t)(addr>>16) + (uint8_t)(addr>>8) + (uint8_t)addr;
             size -= 5; // subtract 5 from byte count (size + 4 addr bytes)
-//            print("S3: size=0x%02X, addr=0x%08X, initial chk=0x%02X\n", size, addr, checkSum);
+//            Logging::print("S3: size=0x%02X, addr=0x%08X, initial chk=0x%02X\n", size, addr, checkSum);
             break;
          default:
-            print("loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
+            Logging::print("loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
             fclose(fp);
             return SFILE_RC_ILLEGAL_LINE;
       }
@@ -271,8 +271,8 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
       while (size-->0) {
          data = hex2ToDecimal( &ptr );
 //         if (!allocatePage(addr)) {
-//            print("loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
-//            print("loadS1S9File() Address is too large = 0x%06X > 0x%08lX\n",
+//            Logging::print("loadS1S9File() - illegal line #%5d-%s", lineNum, buffer);
+//            Logging::print("loadS1S9File() Address is too large = 0x%06X > 0x%08lX\n",
 //                  addr, MAX_SFILE_ADDRESS);
 //
 //            fclose(fp);
@@ -281,20 +281,20 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
          if (addr > 0xFFFF)
             largeModel = true;
          this->setValue(addr++, (uint8_t)data);
-//         print("%02X",data);
+//         Logging::print("%02X",data);
          checkSum += (uint8_t)data;
       }
       // Get checksum from record
       data = hex2ToDecimal( &ptr );
       if ((uint8_t)~checkSum != data) {
-         print("loadS1S9File() - illegal line #%5d:\n%s", lineNum, buffer);
-         print("loadS1S9File() checksum error, Checksum=0x%02X, "
+         Logging::print("loadS1S9File() - illegal line #%5d:\n%s", lineNum, buffer);
+         Logging::print("loadS1S9File() checksum error, Checksum=0x%02X, "
                "Calculated Checksum=0x%02X\n",
                data, (uint8_t)~checkSum);
          fclose(fp);
          return SFILE_RC_CHECKSUM;
       }
-      //print("\n");
+      //Logging::print("\n");
    }
 //   fprintf( stderr,
 //            "Lowest used Address \t = 0x%4.4X\n"
@@ -326,11 +326,11 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadData(uint32_t      bufferSize
                                                         bool          dontOverwrite) {
    unsigned int bufferAddress;
 
-   //   print("FlashImage::loadData(0x%04X...0x%04X)\n", address, address+bufferSize-1);
+   //   Logging::print("FlashImage::loadData(0x%04X...0x%04X)\n", address, address+bufferSize-1);
    bufferAddress = 0;
    while (bufferAddress < bufferSize){
 //      if (!allocatePage(address)) {
-//         print("loadData() - Address is too large = 0x%08X > 0x%08lX\n",
+//         Logging::print("loadData() - Address is too large = 0x%08X > 0x%08lX\n",
 //               address, MAX_SFILE_ADDRESS);
 //
 //         return SFILE_RC_ADDRESS_TOO_LARGE;
@@ -369,11 +369,11 @@ void FlashImage::printMemoryMap(void) const {
    //                  last = offset;
    //            }
    //         }
-   //         print("Page #%4X allocated", pageNum);
+   //         Logging::print("Page #%4X allocated", pageNum);
    //         if (first <= last)
-   //            print(", [%8.8X-%8.8X] => [%8.8X-%8.8X] occupied", first, last,
+   //            Logging::print(", [%8.8X-%8.8X] => [%8.8X-%8.8X] occupied", first, last,
    //                   pageOffsetToAddress(pageNum,first), pageOffsetToAddress(pageNum,last));
-   //         print("\n");
+   //         Logging::print("\n");
    ////         dumpRange(first, last);
    //
    //      }
@@ -399,11 +399,11 @@ void FlashImage::printMemoryMap(void) const {
 bool FlashImage::Enumerator::nextValid() {
    const MemoryPage *memoryPage = NULL;
    uint16_t pageNum, offset;
-//   print("enumerator::nextValid(start=0x%06X)\n", address);
+//   Logging::print("enumerator::nextValid(start=0x%06X)\n", address);
    address++;
    do {
       addressToPageOffset(address, pageNum, offset);
-//      print("enumerator::nextValid() checking 0x%06X)\n", address);
+//      Logging::print("enumerator::nextValid() checking 0x%06X)\n", address);
 
       // At start of page or haven't checked this page yet
       if ((offset == 0) || (memoryPage == NULL)) {
@@ -415,19 +415,19 @@ bool FlashImage::Enumerator::nextValid() {
       }
       if (memoryPage == NULL) {
          // Unallocated page - move to start of next page
-//         print("enumerator::nextValid(a=0x%06X) - skipping unallocated page #0x%X\n", address, pageNum);
+//         Logging::print("enumerator::nextValid(a=0x%06X) - skipping unallocated page #0x%X\n", address, pageNum);
          address += PAGE_SIZE;
          address &= ~PAGE_MASK;
          if (address > memoryImage.lastAllocatedAddress) {
 //            address = memoryImage.lastAllocatedAddress;
-//            print("enumerator::nextValid(end  =0x%06X), no remaining valid addresses\n", address);
+//            Logging::print("enumerator::nextValid(end  =0x%06X), no remaining valid addresses\n", address);
             return false;
          }
          continue;
       }
       // Check if valid byte in page
       if (memoryPage->isValid(offset)) {
-//         print("enumerator::nextValid(end  =0x%06X)\n", address);
+//         Logging::print("enumerator::nextValid(end  =0x%06X)\n", address);
          return true;
       }
       address++;
@@ -444,18 +444,18 @@ bool FlashImage::Enumerator::nextValid() {
 //!
 void FlashImage::Enumerator::lastValid() {
    uint16_t pageNum, offset;
-//   print("enumerator::lastValid(start=0x%06X)\n", address);
+//   Logging::print("enumerator::lastValid(start=0x%06X)\n", address);
    addressToPageOffset(address, pageNum, offset);
    map<uint32_t, MemoryPage *>::iterator iter = memoryImage.memoryPages.find(pageNum);
    if (iter == memoryImage.memoryPages.end()) {
-//      print("enumerator::lastValid(end=0x%06X), start address not allocated\n", address);
+//      Logging::print("enumerator::lastValid(end=0x%06X), start address not allocated\n", address);
       return;
    }
    MemoryPage *memoryPage = iter->second;
    do {
-//      print("enumerator::lastValid() checking 0x%06X)\n", address);
+//      Logging::print("enumerator::lastValid() checking 0x%06X)\n", address);
       if (address == memoryImage.lastAllocatedAddress) {
-//         print("enumerator::lastValid(end=0x%06X), end of memory\n", address);
+//         Logging::print("enumerator::lastValid(end=0x%06X), end of memory\n", address);
          return;
       }
 
@@ -463,7 +463,7 @@ void FlashImage::Enumerator::lastValid() {
 
       // Check if at page boundary or probing one ahead fails
       if ((offset == PAGE_SIZE-1) || !memoryPage->isValid(++offset)) {
-//         print("enumerator::lastValid(end=0x%06X)\n", address);
+//         Logging::print("enumerator::lastValid(end=0x%06X)\n", address);
          return;
       }
      address++;
@@ -483,7 +483,7 @@ FlashImage::MemoryPage *FlashImage::MemorySpace::allocatePage(uint32_t pageNum) 
 
    memoryPage = getmemoryPage(pageNum);
    if (memoryPage == NULL) {
-      print( "Allocating page #%2.2X [0x%06X-0x%06X]\n", pageNum, pageOffsetToAddress(pageNum, 0), pageOffsetToAddress(pageNum, PAGE_SIZE-1));
+      Logging::print( "Allocating page #%2.2X [0x%06X-0x%06X]\n", pageNum, pageOffsetToAddress(pageNum, 0), pageOffsetToAddress(pageNum, PAGE_SIZE-1));
       memoryPage = new MemoryPage;
       memoryPages.insert(pair<const uint32_t, MemoryPage*>(pageNum, memoryPage));
       // Update cache

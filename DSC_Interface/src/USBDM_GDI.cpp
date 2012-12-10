@@ -24,6 +24,7 @@
 \verbatim
 Change History
 -============================================================================================
+|  Nov 30 2012 | Changed logging                                                   - pgo V4.10.4
 |  Oct  8 2012 | Modified ARM accesses to use maximum aligned sizes                - pgo V4.10.2
 |  May  7 2012 | Changed to using RESET_DEFAULT for ARM in DiExecResetChild()      - pgo V4.9.5
 |  Mar 30 2012 | Fixed block address error in DIMemoryWrite() when flashing        - pgo V4.9.4
@@ -205,7 +206,7 @@ static const char *currentErrorString = "GDI Not opened";
 //!
 #define CHECK_ERROR_STATE() \
    if (currentError == DI_ERR_FATAL) {\
-      print("CHECK_ERROR_STATE() - failed, rc=%d\n", currentError); \
+      Logging::print("CHECK_ERROR_STATE() - failed, rc=%d\n", currentError); \
       return currentError; \
    }
 
@@ -340,7 +341,7 @@ DSC_Registers_t mapReg(unsigned cwRegNo) {
    if (cwRegNo < sizeof(regMap)/sizeof(regMap[0]))
       mappedRegNo = regMap[cwRegNo];
    if (mappedRegNo<0) {
-      print("mapReg(0x%X) - Unknown reg\n", cwRegNo);
+      Logging::print("mapReg(0x%X) - Unknown reg\n", cwRegNo);
       return DSC_UnknownReg;
    }
    return (DSC_Registers_t)mappedRegNo;
@@ -370,7 +371,7 @@ static DiReturnT closeBDM(void) {
 
    USBDM_ErrorCode rc;
 
-   print("closeBDM()\n");
+   Logging::print("closeBDM()\n");
 
    rc = USBDM_Close();
 
@@ -399,7 +400,7 @@ static DiReturnT closeBDM(void) {
 //!     DI_ERR_FATAL       => Error see \ref currentErrorString
 //!
 static USBDM_ErrorCode initialiseBDMInterface(void) {
-   print("initialiseBDMInterface()\n");
+   Logging::print("initialiseBDMInterface()\n");
 
    USBDM_ErrorCode bdmRC;
 
@@ -408,7 +409,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    bdmRC = USBDM_Init();
    if (bdmRC != BDM_RC_OK) {
       USBDM_Exit();
-      print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(bdmRC));
+      Logging::print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(bdmRC));
       return bdmRC;
    }
    // Close any existing connection
@@ -472,7 +473,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    }
    if (bdmRC != BDM_RC_OK) {
       USBDM_Exit();
-      print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(bdmRC));
+      Logging::print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(bdmRC));
       return bdmRC;
    }
 #ifdef FLASH_PROGRAMMING
@@ -483,6 +484,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    // Load description of device
    bdmRC = getDeviceData(deviceOptions);
    if (bdmRC != BDM_RC_OK) {
+      deviceOptions.setTargetName("Unknown");
       return bdmRC;
    }
 #if (TARGET == RS08)
@@ -531,7 +533,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
 static USBDM_ErrorCode targetConnect(RetryMode retryMode) {
 USBDM_ErrorCode rc;
 
-   print( "   targetConnect(%s)\n", getConnectionRetryName(retryMode) );
+   Logging::print( "   targetConnect(%s)\n", getConnectionRetryName(retryMode) );
 
    do {
       rc = getBDMStatus(&USBDMStatus);
@@ -596,17 +598,17 @@ unsigned sub;
    usbdm_gdi_dll_open();
    
 #if TARGET == MC56F80xx
-   DSC_SetLogFile(getLogFileHandle());
+   DSC_SetLogFile(Logging::getLogFileHandle());
 #endif
 
-   print("DiGdiOpen(\n"
+   Logging::print("DiGdiOpen(\n"
          "   dnGdiVersionH=0x%X, dnGdiVersionL=0x%X, \n"
          "   dnArgc=%d, szArgv=0x%p, \n"
          "   UdProcessEvents=0x%p"
          ")\n",
          dnGdiVersionH, dnGdiVersionL, dnArgc, szArgv, UdProcessEvents);
    for (sub = 0; sub < dnArgc; sub++) {
-      print("argv[%2i]:\'%s\'\n", sub, szArgv[sub]);
+      Logging::print("argv[%2i]:\'%s\'\n", sub, szArgv[sub]);
    }
 
    //   ::UdProcessEvents = UdProcessEvents;
@@ -639,7 +641,7 @@ USBDM_GDI_API
 DiReturnT DiGdiClose ( DiBoolT fClose ) {
    closeBDM();
    USBDM_Exit();
-   print("DiGdiClose()\n");
+   Logging::print("DiGdiClose()\n");
    usbdm_gdi_dll_close();
    setErrorState(DI_ERR_STATE, ("GDI Not open"));
 #ifdef FLASH_PROGRAMMING
@@ -667,7 +669,7 @@ DiReturnT DiGdiClose ( DiBoolT fClose ) {
 USBDM_GDI_API
 DiReturnT DiGdiVersion ( DiUInt32T *dnGdiVersion ) {
 
-   print("DiGdiVersion()\n");
+   Logging::print("DiGdiVersion()\n");
    *dnGdiVersion = USBDM_GDI_INTERFACE_VERSION;
    return setErrorState(DI_OK);
 }
@@ -684,7 +686,7 @@ DiReturnT DiGdiVersion ( DiUInt32T *dnGdiVersion ) {
 USBDM_GDI_API
 DiReturnT DiGdiGetFeatures ( pDiFeaturesT pdfFeatures ) {
 
-   print("DiGdiGetFeatures()\n");
+   Logging::print("DiGdiGetFeatures()\n");
    *pdfFeatures = diFeatures;
    return setErrorState(DI_OK);
 }
@@ -700,7 +702,7 @@ DiReturnT DiGdiGetFeatures ( pDiFeaturesT pdfFeatures ) {
 USBDM_GDI_API
 DiReturnT DiGdiSetConfig ( DiConstStringT szConfig ) {
 
-   print("DiGdiSetConfig() - not implemented\n");
+   Logging::print("DiGdiSetConfig() - not implemented\n");
    return setErrorState(DI_OK);
 }
 
@@ -714,12 +716,12 @@ DiReturnT DiGdiSetConfig ( DiConstStringT szConfig ) {
 USBDM_ErrorCode initialConnect(void) {
    USBDM_ErrorCode bdmRc;
 
-   print("initialConnect()\n");
+   Logging::print("initialConnect()\n");
    // Initial connect using all strategies
    bdmRc = targetConnect(initialConnectOptions);
 
 #if (TARGET == MC56F80xx)
-   print("initialConnect() - doing DSC_TargetHalt()\n");
+   Logging::print("initialConnect() - doing DSC_TargetHalt()\n");
    bdmRc = DSC_TargetHalt();
    if (bdmRc != BDM_RC_OK) {
       if (initialConnectOptions&retryByReset) {
@@ -775,15 +777,9 @@ USBDM_GDI_API
 DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
    USBDM_ErrorCode bdmRc;
 
-   mtwksDisplayLine("\n"
-         "=============================================\n"
-         "  USBDM GDI Version %s\n"
-         "=============================================\n",
-         USBDM_VERSION_STRING);
-
-   print("DiGdiInitIO(pdcCommSetup = %p)\n", pdcCommSetup);
+   Logging::print("DiGdiInitIO(pdcCommSetup = %p)\n", pdcCommSetup);
    if (pdcCommSetup != NULL) {
-      print("DiGdiInitIO()\n"
+      Logging::print("DiGdiInitIO()\n"
             "pdcCommSetup                   = %p\n"
             "pdcCommSetup->dccType          = %d\n"
             "pdcCommSetup->fCheckConnection = %s\n",
@@ -792,28 +788,34 @@ DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
             pdcCommSetup->fCheckConnection?"True":"False"
             );
    }
+   mtwksDisplayLine("\n"
+         "=============================================\n"
+         "  USBDM GDI Version %s\n"
+         "=============================================\n",
+         USBDM_VERSION_STRING);
+
 #if TARGET == MC56F80xx
-   DSC_SetLogFile(getLogFileHandle());
+   DSC_SetLogFile(Logging::getLogFileHandle());
 #endif
    // Open & Configure BDM
    bdmRc = initialiseBDMInterface();
    if ((bdmRc != BDM_RC_OK)&&(bdmRc != BDM_RC_UNKNOWN_DEVICE)) {
       DiReturnT rc = setErrorState(DI_ERR_COMMUNICATION, bdmRc);
-      print("DiGdiInitIO() - Failed - %s\n", currentErrorString);
+      Logging::print("DiGdiInitIO() - Failed - %s\n", currentErrorString);
       return rc;
    }
 #ifndef USE_MEE
    // Initial connect is treated differently
    if (bdmRc != BDM_RC_OK) {
       DiReturnT rc = setErrorState(DI_ERR_COMMUNICATION, bdmRc);
-      print("DiGdiInitIO() - Failed - %s\n", currentErrorString);
+      Logging::print("DiGdiInitIO() - Failed - %s\n", currentErrorString);
       return rc;
    }
 #else
-   print("DiGdiInitIO() - doing mtwksSetMEE()\n");
+   Logging::print("DiGdiInitIO() - doing mtwksSetMEE()\n");
    mtwksSetMEE(1);
 #endif
-   print("DiGdiInitIO() - Completed\n");
+   Logging::print("DiGdiInitIO() - Completed\n");
    return setErrorState(DI_OK);
 }
 
@@ -831,7 +833,7 @@ USBDM_GDI_API
 DiReturnT DiGdiInitRegisterMap ( DiUInt32T        dnEntries,
                                  DiRegisterInfoT   *pdriRegister,
                                  DiUInt32T         dnProgramCounter ) {
-   print("DiGdiInitRegisterMap() - not implemented\n");
+   Logging::print("DiGdiInitRegisterMap() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -847,7 +849,7 @@ DiReturnT DiGdiInitRegisterMap ( DiUInt32T        dnEntries,
 USBDM_GDI_API
 DiReturnT DiGdiInitMemorySpaceMap ( DiUInt32T            dnEntries,
                                      DiMemorySpaceInfoT   *pdmiMemSpace ) {
-   print("DiGdiInitMemorySpaceMap() - not implemented\n");
+   Logging::print("DiGdiInitMemorySpaceMap() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -864,7 +866,7 @@ USBDM_GDI_API
 DiReturnT DiGdiAddCallback ( DiCallbackT dcCallbackType,
                              CallbackF   Callback ) {
 
-	print("DiGdiAddCallback(type=%4.4X, address=%p)\n",
+	Logging::print("DiGdiAddCallback(type=%4.4X, address=%p)\n",
          dcCallbackType, Callback);
 
    setCallback(dcCallbackType, Callback);
@@ -881,7 +883,7 @@ DiReturnT DiGdiAddCallback ( DiCallbackT dcCallbackType,
 USBDM_GDI_API
 DiReturnT DiGdiCancel ( void ) {
 
-   print("DiGdiCancel() - not implemented\n");
+   Logging::print("DiGdiCancel() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -895,7 +897,7 @@ DiReturnT DiGdiCancel ( void ) {
 USBDM_GDI_API
 DiReturnT DiGdiSynchronize ( DiBoolT *pfUpdate ) {
 
-   print("DiGdiSynchronize() - not implemented\n");
+   Logging::print("DiGdiSynchronize() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -914,7 +916,7 @@ USBDM_GDI_API
 DiReturnT DiDirectAddMenuItem ( DiUInt32T    *pdnNrEntries,
                                  pDiMenuItemT *pdmiMenuItem ) {
 
-   print("DiDirectAddMenuItem()\n");
+   Logging::print("DiDirectAddMenuItem()\n");
    *pdnNrEntries = sizeof(menuItems)/sizeof(menuItems[0]);
    *pdmiMenuItem = menuItems;
    return setErrorState(DI_OK);
@@ -953,7 +955,7 @@ USBDM_GDI_API
 DiReturnT DiDirectCommand ( DiConstStringT  pszCommand,
                             DiUserInfoT     *pduiUserInfo ) {
 
-   print("DiDirectCommand(%s, %p)\n", pszCommand, pduiUserInfo);
+   Logging::print("DiDirectCommand(%s, %p)\n", pszCommand, pduiUserInfo);
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -971,7 +973,7 @@ DiReturnT DiDirectReadNoWait ( DiUInt32T  dnNrToRead,
                                char        *pcBuffer,
                                DiUInt32T   *dnNrRead ) {
 
-   print("DiDirectReadNoWait() - not implemented\n");
+   Logging::print("DiDirectReadNoWait() - not implemented\n");
    *pcBuffer = '\0';
    *dnNrRead = 0;
    return setErrorState(DI_ERR_NOTSUPPORTED);
@@ -987,10 +989,10 @@ void DiErrorGetMessage ( DiConstStringT *pszErrorMsg ) {
    *pszErrorMsg = getGDIErrorMessage();
 
    if (pszErrorMsg == NULL) {
-      print("DiErrorGetMessage() => not set\n");
+      Logging::print("DiErrorGetMessage() => not set\n");
    }
    else {
-      print("DiErrorGetMessage() => %s\n", *pszErrorMsg);
+      Logging::print("DiErrorGetMessage() => %s\n", *pszErrorMsg);
    }
    mtwksDisplayLine("DiErrorGetMessage() => %s\n", getGDIErrorMessage());
 
@@ -1010,7 +1012,7 @@ void DiErrorGetMessage ( DiConstStringT *pszErrorMsg ) {
 USBDM_GDI_API
 DiReturnT DiMemorySetMap ( DiMemoryMapT dmmMap ) {
 
-   print("DiMemorySetMap() - not implemented\n");
+   Logging::print("DiMemorySetMap() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1024,7 +1026,7 @@ DiReturnT DiMemorySetMap ( DiMemoryMapT dmmMap ) {
 USBDM_GDI_API
 DiReturnT DiMemoryGetMap ( DiMemoryMapT *pdmmMap ) {
 
-   print("DiMemoryGetMap() - not implemented\n");
+   Logging::print("DiMemoryGetMap() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1038,7 +1040,7 @@ DiReturnT DiMemoryGetMap ( DiMemoryMapT *pdmmMap ) {
 USBDM_GDI_API
 DiReturnT DiMemorySetCpuMap ( DiMemoryToCpuT dmtcMap ) {
 
-   print("DiMemorySetCpuMap() - not implemented\n");
+   Logging::print("DiMemorySetCpuMap() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1052,7 +1054,7 @@ DiReturnT DiMemorySetCpuMap ( DiMemoryToCpuT dmtcMap ) {
 USBDM_GDI_API
 DiReturnT DiMemoryGetCpuMap ( DiMemoryToCpuT *pdmtcMap ) {
 
-   print("DiMemoryGetCpuMap() - not implemented\n");
+   Logging::print("DiMemoryGetCpuMap() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1062,7 +1064,7 @@ DiReturnT programTargetFlash(void) {
 
    USBDM_ErrorCode rc;
 
-   print("programTargetFlash() - Commencing\n");
+   Logging::print("programTargetFlash() - Commencing\n");
 
    // Set BDM options for programming
    USBDM_SetExtendedOptions(&bdmProgrammingOptions);
@@ -1148,7 +1150,7 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
    const char *command[] = {"DI_DNLD_INIT","DI_DNLD_WRITE","DI_DNLD_TERMINATE","DI_DNLD_ABORT"};
    U32c address(ddfDownloadFormat.daAddress);
    DiReturnT rc;
-   print("DiMemoryDownload() - aux=%s, comm=%s, format=0x%X, addr=0x%4.4X, size 0x%X\n",
+   Logging::print("DiMemoryDownload() - aux=%s, comm=%s, format=0x%X, addr=0x%4.4X, size 0x%X\n",
          fUseAuxiliaryPath?"T":"F",
          command[ddcDownloadCommand&0x03],
          ddfDownloadFormat.dafAbsFileFormat,
@@ -1161,14 +1163,14 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
       return setErrorState(DI_ERR_NOTSUPPORTED);
    }
    if ((ddfDownloadFormat.dafAbsFileFormat & (DI_ABSF_FILENAME|DI_ABSF_BINARY)) == 0) {
-      print("DiMemoryDownload() - unsupported format %X\n",
+      Logging::print("DiMemoryDownload() - unsupported format %X\n",
             ddfDownloadFormat.dafAbsFileFormat);
       return setErrorState(DI_ERR_NOTSUPPORTED);
    }
    switch (ddcDownloadCommand) {
       case DI_DNLD_INIT:
          mtwksDisplayLine("DiMemoryDownload() - DI_DNLD_INIT - New memory image opened\n");
-         print("DiMemoryDownload() - DI_DNLD_INIT - New memory image opened\n");
+         Logging::print("DiMemoryDownload() - DI_DNLD_INIT - New memory image opened\n");
          // Create flash image to contain any changes to target memory
          flashImage = new FlashImage();
          return setErrorState(DI_OK);
@@ -1177,13 +1179,13 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
          rc = DI_OK;
          if ((flashImage != NULL) && (!flashImage->isEmpty())) {
             mtwksDisplayLine("DiMemoryDownload() - DI_DNLD_TERMINATE - Programming memory image...\n");
-            print("DiMemoryDownload() - DI_DNLD_TERMINATE - Programming memory image\n");
+            Logging::print("DiMemoryDownload() - DI_DNLD_TERMINATE - Programming memory image\n");
             rc = programTargetFlash();
             mtwksDisplayLine("DiMemoryDownload() - DI_DNLD_TERMINATE - Programming complete, rc = %d\n", rc);
          }
          else {
             mtwksDisplayLine("DiMemoryDownload() - DI_DNLD_TERMINATE - Memory image is empty - Flash programming skipped\n");
-            print("DiMemoryDownload() - DI_DNLD_TERMINATE - Memory image is empty - Flash programming skipped\n");
+            Logging::print("DiMemoryDownload() - DI_DNLD_TERMINATE - Memory image is empty - Flash programming skipped\n");
          }
          delete flashImage;
          flashImage = NULL;
@@ -1193,7 +1195,7 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
          // Restore original options
          USBDM_SetExtendedOptions(&bdmOptions);
          mtwksDisplayLine("DiMemoryDownload() - DI_DNLD_TERMINATE - Resetting target\n");
-         print("DiMemoryDownload() -  Resetting target\n");
+         Logging::print("DiMemoryDownload() -  Resetting target\n");
 #if TARGET == MC56F80xx
          DSC_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
          DSC_Connect();
@@ -1203,10 +1205,10 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
 #endif
          return setErrorState(DI_OK);
       case DI_DNLD_WRITE:
-         print("DI_DNLD_WRITE\n");
+         Logging::print("DI_DNLD_WRITE\n");
          return setErrorState(DI_ERR_NOTSUPPORTED);
       case DI_DNLD_ABORT:
-         print("DI_DNLD_ABORT\n");
+         Logging::print("DI_DNLD_ABORT\n");
          delete flashImage;
          flashImage = NULL;
          break;
@@ -1325,21 +1327,21 @@ uint32_t        endAddress;                      // End address
          endAddress   = address + dnBufferItems - 1;
          break;
       default :
-         print("DiMemoryWrite(daTarget.dmsMemSpace=0x%X, address=0x%4.4X, dnBufferItems=%d)\n"
+         Logging::print("DiMemoryWrite(daTarget.dmsMemSpace=0x%X, address=0x%4.4X, dnBufferItems=%d)\n"
                "Error - Unexpected daTarget.dmsMemSpace value\n",
                daTarget.dmsMemSpace,
                (uint32_t)address,
 			      dnBufferItems);
          return setErrorState(DI_ERR_NOTSUPPORTED, "Unknown memory space");
    }
-   print("DiMemoryWrite(daTarget.dmsMemSpace=%X, dnBufferItems=%d, [0x%06X...0x%06X])\n",
+   Logging::print("DiMemoryWrite(daTarget.dmsMemSpace=%2X, dnBufferItems=%3d, [0x%06X...0x%06X])\n",
          daTarget.dmsMemSpace,
          dnBufferItems,
          address,
          endAddress);
 
 #if defined(LOG) && 0
-   print("DiMemoryWrite                                              0011223344556677\n"
+   Logging::print("DiMemoryWrite                                              0011223344556677\n"
          "daTarget.dmsMemSpace = %X, daTarget.dlaLinAddress.v.val = 0x%02X%02X%02X%02X%02X%02X%02X%02X,"
          " dnBufferItems = %d\n",
          daTarget.dmsMemSpace,
@@ -1350,7 +1352,7 @@ uint32_t        endAddress;                      // End address
          dnBufferItems);
 
    for (unsigned t=0; t<dnBufferItems; t++) {
-   print("DiMemoryWrite                  0011223344556677\n"
+   Logging::print("DiMemoryWrite                  0011223344556677\n"
          "pdmvBuffer[%2d].dmValue.val = 0x%02X%02X%02X%02X%02X%02X%02X%02X\n",
          t,
          pdmvBuffer[t].dmValue.val[0],pdmvBuffer[t].dmValue.val[1],
@@ -1393,14 +1395,14 @@ uint32_t        endAddress;                      // End address
                break;
          }
       }
-      printDump(memoryReadWriteBuffer, sub, address, organization);
+      Logging::printDump(memoryReadWriteBuffer, sub, address, organization);
 
       bool writeDone = false;
 #ifdef FLASH_PROGRAMMING
       int marker = 0;
       if (flashImage != NULL) {
          // Write data to programming buffer
-         print("DiMemoryWrite() - loadDataBytes(address=0x%06X, size=0x%04X)\n", writeAddress, sub);
+         Logging::print("DiMemoryWrite() - loadDataBytes(address=0x%06X, size=0x%04X)\n", writeAddress, sub);
 //         printDump(memoryReadWriteBuffer,sub,writeAddress,memorySpace&MS_SIZE);
          if ((memorySpace&MS_SPACE) == MS_Data) {
             marker = FlashImage::DataOffset; // Uses offset to indicate data memory space
@@ -1413,8 +1415,8 @@ uint32_t        endAddress;                      // End address
       }
 #endif
       if (!writeDone) {
-         USBDM_ErrorCode rc = BDM_RC_OK;
          // Write data directly to memory
+         USBDM_ErrorCode rc = BDM_RC_OK;
 #if TARGET == ARM
          rc = ARM_WriteMemory(memorySpace, sub, writeAddress, memoryReadWriteBuffer);
 #elif TARGET == MC56F80xx
@@ -1422,7 +1424,7 @@ uint32_t        endAddress;                      // End address
 #else
          rc = USBDM_WriteMemory(memorySpace, sub, writeAddress, memoryReadWriteBuffer);
 #endif
-         printDump(memoryReadWriteBuffer, sub, writeAddress);
+         Logging::printDump(memoryReadWriteBuffer, sub, writeAddress);
          if (rc != BDM_RC_OK) {
             return setErrorState(DI_ERR_NONFATAL, rc);
          }
@@ -1503,9 +1505,9 @@ DiReturnT DiMemoryRead ( DiAddrT       daTarget,
                          DiMemValueT   *pdmvBuffer,
                          DiUInt32T     dnBufferItems ) {
 uint32_t        address      = (U32c)daTarget;   // Load address
+MemorySpace_t   memorySpace;                     // Memory space & size
 uint32_t        endAddress;                      // End address
 int             organization;
-MemorySpace_t   memorySpace;                     // Memory space & size
 uint32_t        numBytes;                        // Number of bytes to transfer
 
    CHECK_ERROR_STATE();
@@ -1539,14 +1541,14 @@ uint32_t        numBytes;                        // Number of bytes to transfer
          numBytes     = 2*dnBufferItems;
          break;
       default :
-         print("DiMemoryRead(daTarget.dmsMemSpace=0x%X, address=0x%4.4X, dnBufferItems=%d)\n"
+         Logging::print("DiMemoryRead(daTarget.dmsMemSpace=0x%X, address=0x%4.4X, dnBufferItems=%d)\n"
                "Error - Unexpected daTarget.dmsMemSpace value\n",
                daTarget.dmsMemSpace,
                (uint32_t)address,
                dnBufferItems);
          return setErrorState(DI_ERR_NOTSUPPORTED, "Unknown memory space");
    }
-   print("DiMemoryRead(daTarget.dmsMemSpace=%X, dnBufferItems=%d, [0x%06X...0x%06X])\n",
+   Logging::print("DiMemoryRead(daTarget.dmsMemSpace=%X, dnBufferItems=%d, [0x%06X...0x%06X])\n",
          daTarget.dmsMemSpace,
          dnBufferItems,
          address,
@@ -1569,11 +1571,11 @@ USBDM_ErrorCode rc = BDM_RC_OK;
       rc = USBDM_ReadMemory(memorySpace, blockSize, address, memoryReadWriteBuffer);
 #endif		 
       if (rc != BDM_RC_OK) {
-         print("DiMemoryRead(...) - Failed, rc= %s\n", USBDM_GetErrorString(rc));
+         Logging::print("DiMemoryRead(...) - Failed, rc= %s\n", USBDM_GetErrorString(rc));
          return setErrorState(DI_ERR_NONFATAL, rc);
       }
-//      print("DiMemoryRead(...) - Result\n");
-//      printDump(memoryBuffer, blockSize, address);
+//      Logging::print("DiMemoryRead(...) - Result\n");
+//      Logging::printDump(memoryBuffer, blockSize, address);
 
       // Copy until buffer full or complete
       unsigned sub = 0;
@@ -1629,7 +1631,7 @@ DiReturnT DiRegisterWrite ( DiUInt32T        dnRegNumber,
    DSC_Registers_t regNum = mapReg(dnRegNumber);
    USBDM_ErrorCode rc = BDM_RC_OK;
 
-   print("DiRegisterWrite(0x%X,%s) => %lX\n", dnRegNumber, DSC_GetRegisterName(regNum), (uint32_t)regValue);
+   Logging::print("DiRegisterWrite(0x%X,%s) => %lX\n", dnRegNumber, DSC_GetRegisterName(regNum), (uint32_t)regValue);
 
    CHECK_ERROR_STATE();
 
@@ -1645,7 +1647,7 @@ DiReturnT DiRegisterWrite ( DiUInt32T        dnRegNumber,
       rc = DSC_WriteRegister(regNum, (uint32_t)regValue);
    }
    if (rc != BDM_RC_OK) {
-      print("DiRegisterWrite(0x%X,%s) Failed, reason= %s\n",
+      Logging::print("DiRegisterWrite(0x%X,%s) Failed, reason= %s\n",
             dnRegNumber, DSC_GetRegisterName(regNum), USBDM_GetErrorString(rc));
       return setErrorState(DI_ERR_NONFATAL, rc);
    }
@@ -1664,8 +1666,8 @@ unsigned long dataValue = 0xDEADBEEF;
 DSC_Registers_t regNum = mapReg(dnRegNumber);
 USBDM_ErrorCode rc = BDM_RC_OK;
 
-//   print("DiRegisterRead(reg# 0x%X(%d))\n", regNum, regNum);
-//   print("DiRegisterRead(%s)\n", DSC_GetRegisterName(regNum));
+//   Logging::print("DiRegisterRead(reg# 0x%X(%d))\n", regNum, regNum);
+//   Logging::print("DiRegisterRead(%s)\n", DSC_GetRegisterName(regNum));
 
    CHECK_ERROR_STATE();
 
@@ -1678,12 +1680,12 @@ USBDM_ErrorCode rc = BDM_RC_OK;
       rc = DSC_ReadRegister(regNum, &dataValue);
    }
    if (rc != BDM_RC_OK) {
-      print("DiRegisterRead(0x%X,%s) Failed, reason= %s\n",
+      Logging::print("DiRegisterRead(0x%X,%s) Failed, reason= %s\n",
             dnRegNumber, DSC_GetRegisterName(regNum), USBDM_GetErrorString(rc));
       return setErrorState(DI_ERR_NONFATAL, rc);
    }
    *drvValue = (U32c)dataValue;
-   print("DiRegisterRead(0x%X,%s) => %lX\n", dnRegNumber, DSC_GetRegisterName(regNum), dataValue);
+   Logging::print("DiRegisterRead(0x%X,%s) => %lX\n", dnRegNumber, DSC_GetRegisterName(regNum), dataValue);
    return setErrorState(DI_OK);
 }
 
@@ -1698,7 +1700,7 @@ DiReturnT DiRegisterClassCreate ( DiUInt32T *pdnRegClassId,
                                   DiUInt32T *pdnRegisterId,
                                   DiUInt32T dnRegisterIdEntries ) {
 
-   print("DiRegisterClassCreate() - not implemented\n");
+   Logging::print("DiRegisterClassCreate() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1709,7 +1711,7 @@ DiReturnT DiRegisterClassCreate ( DiUInt32T *pdnRegClassId,
 USBDM_GDI_API
 DiReturnT DiRegisterClassDelete ( DiUInt32T dnRegClassId ) {
 
-   print("DiRegisterClassDelete() - not implemented\n");
+   Logging::print("DiRegisterClassDelete() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1723,7 +1725,7 @@ USBDM_GDI_API
 DiReturnT DiRegisterClassWrite ( DiUInt32T         dnRegClassId,
                                   DiRegisterValueT  *pdrvClassValue ) {
 
-   print("DiRegisterClassWrite() - not implemented\n");
+   Logging::print("DiRegisterClassWrite() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1736,7 +1738,7 @@ USBDM_GDI_API
 DiReturnT DiRegisterClassRead ( DiUInt32T          dnRegClassId,
                                  DiRegisterValueT   *pdrvClassValue ) {
 
-   print("DiRegisterClassRead() - not implemented\n");
+   Logging::print("DiRegisterClassRead() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1749,7 +1751,7 @@ USBDM_GDI_API
 DiReturnT DiBreakpointSet ( DiBpResultT *pdnBreakpointId,
                              DiBpT        dbBreakpoint ) {
 
-   print("DiBreakpointSet() - not implemented\n");
+   Logging::print("DiBreakpointSet() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1760,7 +1762,7 @@ DiReturnT DiBreakpointSet ( DiBpResultT *pdnBreakpointId,
 USBDM_GDI_API
 DiReturnT DiBreakpointClear ( DiUInt32T dnBreakpointId ) {
 
-   print("DiBreakpointClear() - not implemented\n");
+   Logging::print("DiBreakpointClear() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1769,7 +1771,7 @@ DiReturnT DiBreakpointClear ( DiUInt32T dnBreakpointId ) {
 USBDM_GDI_API
 DiReturnT DiBreakpointClearAll ( void ) {
 
-   print("DiBreakpointClearAll() - not implemented\n");
+   Logging::print("DiBreakpointClearAll() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1779,7 +1781,7 @@ USBDM_GDI_API
 DiReturnT DiExecResetChild ( void ) {
 USBDM_ErrorCode rc;
 
-   print("DiExecResetChild()\n");
+   Logging::print("DiExecResetChild()\n");
 
    CHECK_ERROR_STATE();
 
@@ -1791,14 +1793,14 @@ USBDM_ErrorCode rc;
    }
    rc = DSC_Connect();
 #elif TARGET == ARM
-   rc = ARM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
+   rc = USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
    if (rc != BDM_RC_OK) {
-      rc = ARM_TargetReset((TargetMode_t)(RESET_HARDWARE|RESET_SPECIAL));
+      rc = USBDM_TargetReset((TargetMode_t)(RESET_HARDWARE|RESET_SPECIAL));
    }
    if (rc != BDM_RC_OK) {
       return setErrorState(DI_ERR_NONFATAL, rc);
    }
-   rc = ARM_Connect();
+   rc = USBDM_Connect();
 #elif (TARGET == CFV1) || (TARGET == HCS08) || (TARGET == RS08)
    USBDM_TargetHalt(); // Make sure target is awake - may be sleeping due to STOP/WAIT instruction
    USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
@@ -1858,17 +1860,15 @@ USBDM_GDI_API
 DiReturnT DiExecSingleStep ( DiUInt32T dnNrInstructions ) {
 USBDM_ErrorCode BDMrc;
 
-   print("DiExecSingleStep(%d)\n", dnNrInstructions);
+   Logging::print("DiExecSingleStep(%d)\n", dnNrInstructions);
 
    CHECK_ERROR_STATE();
 
 #if (TARGET == MC56F80xx)
    BDMrc = DSC_TargetStepN(dnNrInstructions);
-#elif (TARGET == ARM)
-   BDMrc = ARM_TargetStepN(dnNrInstructions);
 #else
    if (dnNrInstructions>1) {
-      print("DiExecSingleStep() - Only a single step is supported!\n");
+      Logging::print("DiExecSingleStep() - Only a single step is supported!\n");
       return setErrorState(DI_ERR_PARAM, ("Only a single step is allowed"));
    }
    BDMrc = USBDM_TargetStep();
@@ -1887,7 +1887,7 @@ USBDM_ErrorCode BDMrc;
 USBDM_GDI_API
 DiReturnT DiExecContinueUntil ( DiAddrT addrUntil ) {
 
-   print("DiExecContinueUntil() - not implemented\n");
+   Logging::print("DiExecContinueUntil() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1897,7 +1897,7 @@ USBDM_GDI_API
 DiReturnT DiExecContinue ( void ) {
    USBDM_ErrorCode BDMrc;
 
-   print("DiExecContinue()\n");
+   Logging::print("DiExecContinue()\n");
 
    CHECK_ERROR_STATE();
 
@@ -1909,9 +1909,7 @@ DiReturnT DiExecContinue ( void ) {
    // Fix in case actually STOPPED but CW doesn't know it
    USBDM_TargetHalt();
 #endif
-#if TARGET == ARM
-   BDMrc = ARM_TargetGo();
-#elif TARGET == MC56F80xx
+#if TARGET == MC56F80xx
    BDMrc = DSC_TargetGo();
 #else
    BDMrc = USBDM_TargetGo();
@@ -1932,7 +1930,7 @@ DiReturnT DiExecContinue ( void ) {
 USBDM_GDI_API
 DiReturnT DiExecContinueBackground ( void ) {
 
-   print("DiExecContinueBackground() - not implemented\n");
+   Logging::print("DiExecContinueBackground() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -1951,7 +1949,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
    static int pollCount = 0;
    OnceStatus_t onceStatus;
 
-//   print("DiExecGetStatus()\n");
+//   Logging::print("DiExecGetStatus()\n");
 
    // Defaults
    pdesExitStatus->dscCause = DI_WAIT_UNKNOWN;
@@ -1968,7 +1966,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
 //      DIrc = getBDMStatus(&USBDMStatus);
 
 //   if (DIrc != DI_OK) {
-//      print("DiExecGetStatus()=> connect()/getStatus() failed\n");
+//      Logging::print("DiExecGetStatus()=> connect()/getStatus() failed\n");
 //      return DIrc;
 //   }
 
@@ -1976,7 +1974,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
 
    BDMrc = DSC_GetStatus(&onceStatus);
    if (BDMrc != BDM_RC_OK) {
-      print("DiExecGetStatus() - Failed, BDMrc=%s\n", USBDM_GetErrorString(BDMrc));
+      Logging::print("DiExecGetStatus() - Failed, BDMrc=%s\n", USBDM_GetErrorString(BDMrc));
       return setErrorState(DI_ERR_NONFATAL, BDMrc);
    }
 
@@ -1990,8 +1988,8 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
       pdesExitStatus->szReason = (DiStringT)"Debug Halted";
       if ((lastStatus != pdesExitStatus->dscCause) || (pollCount++>20)) {
          pollCount = 0;
-         print("DiExecGetStatus() - %s\n", DSC_GetOnceStatusName(onceStatus));
-         print("DiExecGetStatus() status change => DI_WAIT_MISCELLANEOUS, (%s)\n",
+         Logging::print("DiExecGetStatus() - %s\n", DSC_GetOnceStatusName(onceStatus));
+         Logging::print("DiExecGetStatus() status change => DI_WAIT_MISCELLANEOUS, (%s)\n",
                pdesExitStatus->szReason);
       }
       break;
@@ -2002,8 +2000,8 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
       pdesExitStatus->szReason = (DiStringT)"Running";
       if ((lastStatus != pdesExitStatus->dscCause) || (pollCount++>20)) {
          pollCount = 0;
-         print("DiExecGetStatus() - %s\n", DSC_GetOnceStatusName(onceStatus));
-         print("DiExecGetStatus() status change => DI_WAIT_RUNNING, (%s)\n",
+         Logging::print("DiExecGetStatus() - %s\n", DSC_GetOnceStatusName(onceStatus));
+         Logging::print("DiExecGetStatus() status change => DI_WAIT_RUNNING, (%s)\n",
                pdesExitStatus->szReason);
       }
       break;
@@ -2018,13 +2016,13 @@ USBDM_GDI_API
 DiReturnT DiExecStop ( void ) {
    USBDM_ErrorCode BDMrc = BDM_RC_OK;
 
-   print("DiExecStop()\n");
+   Logging::print("DiExecStop()\n");
 
    CHECK_ERROR_STATE();
 
 #if TARGET == ARM
    targetConnect(softConnectOptions);
-   BDMrc = ARM_TargetHalt();
+   BDMrc = USBDM_TargetHalt();
 #elif TARGET == MC56F80xx
    targetConnect(softConnectOptions);
    BDMrc = DSC_TargetHalt();
@@ -2060,7 +2058,7 @@ DiReturnT DiExecStop ( void ) {
 USBDM_GDI_API
 DiReturnT DiTraceSwitchOn ( DiBoolT fOn ) {
 
-   print("DiTraceSwitchOn() - not implemented\n");
+   Logging::print("DiTraceSwitchOn() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2073,7 +2071,7 @@ USBDM_GDI_API
 DiReturnT DiTraceGetInstructions ( DiUInt32T       dnNrInstr,
                                     pDiInstrTraceT  pditInstrTrace ) {
 
-   print("DiTraceGetInstructions() - not implemented\n");
+   Logging::print("DiTraceGetInstructions() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2088,7 +2086,7 @@ DiReturnT DiTracePrintRawInfo ( DiUInt32T       dnNrFrames,
                                  DiTraceTypeT    dttTraceType,
                                  PrintRawTraceF  PrintRawTrace ) {
 
-   print("DiTracePrintRawInfo() - not implemented\n");
+   Logging::print("DiTracePrintRawInfo() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2103,7 +2101,7 @@ DiReturnT DiTraceGetNrOfNewFrames ( DiTraceTypeT   dttTraceType,
                                      DiUInt32T      dnNrMaxFrames,
                                      pDiNewFramesT  pdnfNewFrames ) {
 
-   print("DiTraceGetNrOfNewFrames() - not implemented\n");
+   Logging::print("DiTraceGetNrOfNewFrames() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2114,7 +2112,7 @@ DiReturnT DiTraceGetNrOfNewFrames ( DiTraceTypeT   dttTraceType,
 USBDM_GDI_API
 DiReturnT DiCoverageSwitchOn ( DiBoolT fOn ) {
 
-   print("DiCoverageSwitchOn() - not implemented\n");
+   Logging::print("DiCoverageSwitchOn() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2129,7 +2127,7 @@ DiReturnT DiCoverageGetInfo ( DiAddrT     daStart,
                                DiUInt32T   dnSize,
                                DiCoverageT *pdcCoverage ) {
 
-   print("DiCoverageGetInfo() - not implemented\n");
+   Logging::print("DiCoverageGetInfo() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2140,7 +2138,7 @@ DiReturnT DiCoverageGetInfo ( DiAddrT     daStart,
 USBDM_GDI_API
 DiReturnT DiProfilingSwitchOn ( DiBoolT fOn ) {
 
-   print("DiProfilingSwitchOn() - not implemented\n");
+   Logging::print("DiProfilingSwitchOn() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2151,7 +2149,7 @@ DiReturnT DiProfilingSwitchOn ( DiBoolT fOn ) {
 USBDM_GDI_API
 DiReturnT DiProfileGetInfo ( DiProfileT *pdpProfile ) {
 
-   print("DiProfileGetInfo() - not implemented\n");
+   Logging::print("DiProfileGetInfo() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2164,7 +2162,7 @@ USBDM_GDI_API
 DiReturnT DiStateOpen ( DiUInt32T      *pdnStateHandle,
                         DiConstStringT  szStateName ) {
 
-   print("DiStateOpen() - not implemented\n");
+   Logging::print("DiStateOpen() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2177,7 +2175,7 @@ USBDM_GDI_API
 DiReturnT DiStateSave ( DiUInt32T dnStateHandle,
                          DiUInt32T dnIndex ) {
 
-   print("DiStateSave() - not implemented\n");
+   Logging::print("DiStateSave() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2190,7 +2188,7 @@ USBDM_GDI_API
 DiReturnT DiStateRestore ( DiUInt32T dnStateHandle,
                             DiUInt32T dnIndex ) {
 
-   print("DiStateRestore() - not implemented\n");
+   Logging::print("DiStateRestore() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2201,7 +2199,7 @@ DiReturnT DiStateRestore ( DiUInt32T dnStateHandle,
 USBDM_GDI_API
 DiReturnT DiStateClose ( DiBoolT fDelete ) {
 
-   print("DiStateClose() - not implemented\n");
+   Logging::print("DiStateClose() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2243,8 +2241,8 @@ static const char *const possibleOptions[maxUSBDMDevices+1] = {
    NULL,
 };
 
-//   print("DiCommGetAcceptableSettings() dccType = %x\n", dccType);
-//   print("DiCommGetAcceptableSettings() szAttr = \'%s\'\n", szAttr);
+//   Logging::print("DiCommGetAcceptableSettings() dccType = %x\n", dccType);
+//   Logging::print("DiCommGetAcceptableSettings() szAttr = \'%s\'\n", szAttr);
 
    if (dccType == DI_COMM_PARALLEL) {
       unsigned int deviceCount;
@@ -2258,12 +2256,12 @@ static const char *const possibleOptions[maxUSBDMDevices+1] = {
          options[index] = possibleOptions[index];
       }
       options[deviceCount] = NULL;
-      print("DiCommGetAcceptableSettings(DI_COMM_PARALLEL) => DI_OK\n");
+      Logging::print("DiCommGetAcceptableSettings(DI_COMM_PARALLEL) => DI_OK\n");
       *pszEntries = options;
       return setErrorState(DI_OK);
    }
    else {
-      print("DiCommGetAcceptableSettings(\?\?) => DI_ERR_NONFATAL\n");
+      Logging::print("DiCommGetAcceptableSettings(\?\?) => DI_ERR_NONFATAL\n");
       return setErrorState(DI_ERR_NONFATAL);
    }
 }
@@ -2275,7 +2273,7 @@ static const char *const possibleOptions[maxUSBDMDevices+1] = {
 USBDM_GDI_API
 DiReturnT DiMeeEnumExecEnv ( DiExecEnvT *pdExecEnv ) {
 
-   print("DiMeeEnumExecEnv() - not implemented\n");
+   Logging::print("DiMeeEnumExecEnv() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2287,17 +2285,17 @@ USBDM_GDI_API
 DiReturnT DiMeeConnect ( DiUInt32T dnExecId ) {
 
 #ifdef USE_MEE
-   print("DiMeeConnect(%d)\n", dnExecId);
+   Logging::print("DiMeeConnect(%d)\n", dnExecId);
 
    // Initial connect is treated differently
    USBDM_ErrorCode bdmRc = initialConnect();
    if (bdmRc != BDM_RC_OK) {
-      print("DiMeeConnect() - Failed - %s\n", currentErrorString);
+      Logging::print("DiMeeConnect() - Failed - %s\n", currentErrorString);
       return setErrorState(DI_ERR_COMMUNICATION, bdmRc);
    }
    return setErrorState(DI_OK);
 #else
-      print("DiMeeConnect() - not implemented\n");
+      Logging::print("DiMeeConnect() - not implemented\n");
       return setErrorState(DI_ERR_NOTSUPPORTED);
 #endif
 }
@@ -2311,7 +2309,7 @@ USBDM_GDI_API
 DiReturnT DiMeeGetFeatures ( DiUInt32T    dnExecId,
                              pDiFeaturesT pdfFeatures ) {
 
-   print("DiMeeGetFeatures() - not implemented\n");
+   Logging::print("DiMeeGetFeatures() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2324,7 +2322,7 @@ USBDM_GDI_API
 DiReturnT DiMeeInitIO ( DiUInt32T      dnExecId,
                         pDiCommSetupT  pdcCommSetup ) {
 
-   print("DiMeeInitIO(%d) - not implemented\n", dnExecId);
+   Logging::print("DiMeeInitIO(%d) - not implemented\n", dnExecId);
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2335,7 +2333,7 @@ DiReturnT DiMeeInitIO ( DiUInt32T      dnExecId,
 USBDM_GDI_API
 DiReturnT DiMeeSelect ( DiUInt32T dnExecId ) {
 
-   print("DiMeeSelect(%d) - dummy\n", dnExecId);
+   Logging::print("DiMeeSelect(%d) - dummy\n", dnExecId);
    return setErrorState(DI_OK);
 }
 
@@ -2348,7 +2346,7 @@ USBDM_GDI_API
 DiReturnT DiMeeDisconnect ( DiUInt32T  dnExecId,
                             DiBoolT    fClose ) {
 
-   print("DiMeeDisconnect(%d, %s) - dummy\n", dnExecId, fClose?"T":"F");
+   Logging::print("DiMeeDisconnect(%d, %s) - dummy\n", dnExecId, fClose?"T":"F");
    return setErrorState(DI_OK);
 }
 
@@ -2359,7 +2357,7 @@ DiReturnT DiMeeDisconnect ( DiUInt32T  dnExecId,
 USBDM_GDI_API
 DiReturnT DiCpuSelect ( DiUInt32T dnCpuId ) {
 
-   print("DiCpuSelect() - not implemented\n");
+   Logging::print("DiCpuSelect() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2370,7 +2368,7 @@ DiReturnT DiCpuSelect ( DiUInt32T dnCpuId ) {
 USBDM_GDI_API
 DiReturnT DiCpuCurrent ( DiUInt32T *dnCpuId ) {
 
-   print("DiCpuCurrent() - not implemented\n");
+   Logging::print("DiCpuCurrent() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
@@ -2385,25 +2383,25 @@ DiReturnT DiProcess ( void *information ) {
 
    uint32_t *dataPtr = (uint32_t *)info32[1];
 
-   print("DiProcess() - &information = %p \n"
+   Logging::print("DiProcess() - &information = %p \n"
          "               information = %p \n"
          "              &DiProcess() = %p \n",
          &information, information, &DiProcess);
 
-   print("information[0] = %p \n"
+   Logging::print("information[0] = %p \n"
          "information[1] = %p \n"
          "information[2] = %p \n",
          info32[0],info32[1],info32[2]);
 
-   print("DiProcess() - not implemented, data = \n"
+   Logging::print("DiProcess() - not implemented, data = \n"
          "=================================================================\n");
-   printDump(info8, 0x100, (uint32_t)info8);
-   print("=================================================================\n");
+   Logging::printDump(info8, 0x100, (uint32_t)info8);
+   Logging::print("=================================================================\n");
 
-   print("DiProcess() - data = \n"
+   Logging::print("DiProcess() - data = \n"
          "=================================================================\n");
-   printDump((uint8_t*)dataPtr, 0x100, (uint32_t)dataPtr);
-   print("=================================================================\n");
+   Logging::printDump((uint8_t*)dataPtr, 0x100, (uint32_t)dataPtr);
+   Logging::print("=================================================================\n");
 
 //   return setErrorState(DI_ERR_NOTSUPPORTED);
    return DI_OK;
@@ -2462,34 +2460,34 @@ bool usbdm_gdi_dll_open(void) {
    }
 #endif
 #if TARGET == HCS08
-   openLogFile("usbdm_HCS08_gdi.log");
+   Logging::openLogFile("usbdm_HCS08_gdi.log");
 #elif TARGET == RS08
-   openLogFile("usbdm_RS08_gdi.log");
+   Logging::openLogFile("usbdm_RS08_gdi.log");
 #elif TARGET == HCS12
-   openLogFile("usbdm_HCS12_gdi.log");
+   Logging::openLogFile("usbdm_HCS12_gdi.log");
 #elif TARGET == CFV1
-   openLogFile("usbdm_CFV1_gdi.log");
+   Logging::openLogFile("usbdm_CFV1_gdi.log");
 #elif TARGET == CFVx
-   openLogFile("usbdm_CFVx_gdi.log");
+   Logging::openLogFile("usbdm_CFVx_gdi.log");
 #elif TARGET == MC56F80xx
-   openLogFile("usbdm_DSC_gdi.log");
+   Logging::openLogFile("usbdm_DSC_gdi.log");
 #elif TARGET == JTAG
-   openLogFile("usbdm_JTAG_gdi.log");
+   Logging::openLogFile("usbdm_JTAG_gdi.log");
 #elif TARGET == ARM
-   openLogFile("usbdm_ARM_gdi.log");
+   Logging::openLogFile("usbdm_ARM_gdi.log");
 #else
    #error Unexpected Target
 #endif
-   print("usbdm_gdi_dll_open() - wxEntryStart() successful\n");
+   Logging::print("usbdm_gdi_dll_open() - wxEntryStart() successful\n");
 #ifdef LEGACY
-   print("usbdm_gdi_dll_open() - savewxApp = %p\n", savewxApp);
-   print("usbdm_gdi_dll_open() - wxTheApp  = %p\n", wxTheApp);
+   Logging::print("usbdm_gdi_dll_open() - savewxApp = %p\n", savewxApp);
+   Logging::print("usbdm_gdi_dll_open() - wxTheApp  = %p\n", wxTheApp);
 #endif
    return true;
 }
 
 bool usbdm_gdi_dll_close(void) {
-   print("usbdm_gdi_dll_close()\n");
+   Logging::print("usbdm_gdi_dll_close()\n");
 #ifdef LEGACY
 #ifdef _WIN32
    if (wxInitializationDone) {
@@ -2499,7 +2497,7 @@ bool usbdm_gdi_dll_close(void) {
    }
 #endif
 #endif
-   closeLogFile();
+   Logging::closeLogFile();
    return true;
 }
 
@@ -2555,23 +2553,23 @@ BOOL DllMain(HINSTANCE _hDLLInst,
 
    switch (fdwReason) {
       case DLL_PROCESS_ATTACH:
-         print("DLL_PROCESS_ATTACH\n");
+         Logging::print("DLL_PROCESS_ATTACH\n");
 //         dll_initialize();
          break;
       case DLL_PROCESS_DETACH:
-         print("DLL_PROCESS_DETACH - closeBDM()\n");
+         Logging::print("DLL_PROCESS_DETACH - closeBDM()\n");
          closeBDM();
-         print("DLL_PROCESS_DETACH - usbdm_gdi_dll_close()\n");
+         Logging::print("DLL_PROCESS_DETACH - usbdm_gdi_dll_close()\n");
          usbdm_gdi_dll_close();
-         print("DLL_PROCESS_DETACH - done\n");
+         Logging::print("DLL_PROCESS_DETACH - done\n");
 //         dll_uninitialize();
          break;
       case DLL_THREAD_ATTACH:
-//         print("DLL_THREAD_ATTACH\n");
+//         Logging::print("DLL_THREAD_ATTACH\n");
 //         dll_initialize(_hDLLInst);
          break;
       case DLL_THREAD_DETACH:
-//         print("DLL_THREAD_DETACH\n");
+//         Logging::print("DLL_THREAD_DETACH\n");
 //         dll_uninitialize();
          break;
    }

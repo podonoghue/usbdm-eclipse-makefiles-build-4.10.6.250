@@ -15,7 +15,7 @@ This change is complicated by the existence of a Bootloader in the BDM firmware.
 loader will continue to use the original VID/PID.  Because of this, it is desirable to completely replace the
 BDM firmware. \n\n
 For JS16 based BDMs this is a simple process since the Freescale JS12 Bootloader software may be 
-used to replace all the firmware.  See \ref installationPage. \n\n
+used to replace all the firmware.  See \ref constructionPage. \n \n
 For JMxx based BDMs it is necessary to use a HCS08 programmer to re-program the entire device so that the 
 Bootloader is updated when the rest of firmware is changed. If a programmer is not available then it is still
 possible to update the BDM firmware <i>using the Bootloader</i> but the Bootloader will remain unchanged.  
@@ -33,6 +33,16 @@ drivers are not signed.  This is to be expected since I have not paid for them t
 After installing the drivers, plugging in a BDM should trigger the actual driver installation. \n 
 If you need to update the drivers it will be necessary to uninstall them from the Windows Add/Remove programs 
 utility before installing the new version.
+
+Steps to follow under WIN-XP (its similar for WIN-7 but there will be other confirmation dialogues)
+   - Download the appropriate driver installation file from Sourceforge
+   - With the BDM removed.
+   - If you have installed a previous driver version (.msi file) and you wish to install a later version then
+     use add/remove programs to uninstall the drivers (look for USBDM drivers).
+   - Install the driver .msi file.  This should clean out any incompatible driver files.
+   - Plug in the BDM - The new hardware wizard should appear.
+   - Select the default (Install the software automatically).
+   - Click Next and the driver should install.
  
 <hr> 
 \section InstallingDriversSectionLinux Installation of USBDM USB drivers for Linux

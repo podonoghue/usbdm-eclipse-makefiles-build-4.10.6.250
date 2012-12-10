@@ -363,8 +363,9 @@ public:
 
    //! Find the last contiguous address relative to the address
    //!
-   //! @param address        - start address to check
-   //! @param lastContinuous - the end address of the largest contiguous memory range including address
+   //! @param address        Start address to check
+   //! @param lastContinuous The end address of the largest contiguous memory range including address
+   //! @param memorySpace    Memory space to check
    //!
    //! @return true  = start address is within memory
    //!         false = start address is not within memory
@@ -395,15 +396,15 @@ public:
 
    //! Obtain string describing the memory type
    //!
-   //! @param type - Memory type
+   //! @param memoryType - Memory type
    //!
    //! @return - ptr to static string describing type
    //!
-   static const char *getMemoryTypeName(MemType_t type);
+   static const char *getMemoryTypeName(MemType_t memoryType);
 
    //! Indicates if a programmable type e.g Flash, eeprom etc.
    //!
-   //! @param type - Memory type
+   //! @param memoryType - Memory type
    //!
    //! @return - true/false result
    //!

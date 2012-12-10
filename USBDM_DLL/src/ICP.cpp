@@ -53,10 +53,8 @@ static ICP_ErrorCode_t getResult(void);
 //! @note Communication is lost.
 //!
 USBDM_API void USBDM_RebootToICP(void) {
+   LOGGING;
    static const unsigned char message[] = { 5, CMD_USBDM_ICP_BOOT, 'B', 'O', 'O', 'T' };
-
-   print("USBDM_RebootToICP()\n");
-
    (void) bdm_usb_send_ep0(message); // USB transfer may be incomplete
 }
 
@@ -70,9 +68,8 @@ USBDM_API void USBDM_RebootToICP(void) {
 //!       The BDM will do the usual flash validity checks before entering BDM mode.
 //!
 USBDM_API void USBDM_ICP_Reboot(void) {
+   LOGGING;
    uint8_t message[] = { 2, ICP_REBOOT };
-
-   print("USBDM_icp_reboot()\n");
 
    (void) bdm_usb_send_ep0(message); // USB transfer may be incomplete
 }
@@ -91,7 +88,8 @@ static icpCallBackT icpCallBack = NULL;
 //! @note The callback is cleared after each ICP operation completes
 //!
 USBDM_API void USBDM_ICP_SetCallback(icpCallBackT icpCallBack_) {
-   print("USBDM_ICP_SetCallback(icpCallBack_ = %p)\n", icpCallBack_);
+   LOGGING_Q;
+   Logging::print("icpCallBack_ = %p\n", icpCallBack_);
    icpCallBack = icpCallBack_;
 }
 
@@ -109,7 +107,7 @@ USBDM_API void USBDM_ICP_SetCallback(icpCallBackT icpCallBack_) {
 USBDM_API ICP_ErrorCode_t USBDM_ICP_Program(unsigned int  addr,
                                             unsigned int  count,
                                             unsigned char *data) {
-
+   LOGGING_Q;
    unsigned int dataSize; // Bytes to program this row
    ICP_ErrorCode_t rc;
    unsigned int temp;
@@ -117,7 +115,7 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Program(unsigned int  addr,
    unsigned int doneCount     = 0;
    unsigned int originalCount = count;
 
-   print("USBDM_ICP_Program() - Programming [%8.8X-%8.8X]\n", addr, addr+count-1);
+   Logging::print("Programming [%8.8X-%8.8X]\n", addr, addr+count-1);
 
    // Have to program within a row in each iteration
    // so there are size and alignment issues.
@@ -138,21 +136,21 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Program(unsigned int  addr,
       }
       if (doBlock) { // Only program non-Blank blocks
 //         print("USBDM_ICP_Program() - Programming block %4.4X-%4.4X\n", addr, addr+dataSize-1);
-         printDump(data, dataSize);
+         Logging::printDump(data, dataSize);
 
          rc =  (ICP_ErrorCode_t)bdm_usb_raw_send_ep0(ICP_PROGRAM_ROW,
                                                      addr & 0xFFFF, // LSB address
                                                      addr >> 16, // MSB address
                                                      dataSize, data);
          if (rc != ICP_RC_OK) {
-            print("USBDM_ICP_Program() - Failed bdm_usb_raw_send_ep0()\n");
+            Logging::print("Failed bdm_usb_raw_send_ep0()\n");
             return rc;
          }
          milliSleep(20);
          rc = getResult();
 
          if (rc != ICP_RC_OK) {
-            print("USBDM_ICP_Program() - Failed icp_get_result() rc = %d\n", rc);
+            Logging::print("Failed icp_get_result() rc = %d\n", rc);
             return rc;
          }
       }
@@ -185,12 +183,13 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Program(unsigned int  addr,
 USBDM_API ICP_ErrorCode_t USBDM_ICP_Verify(unsigned int  addr,
                                            unsigned int  count,
                                            unsigned char *data) {
+   LOGGING_Q;
    unsigned int dataSize;
    ICP_ErrorCode_t rc;
    unsigned int doneCount     = 0;
    unsigned int originalCount = count;
 
-   print("USBDM_ICP_Verify() - Verifying [%8.8X-%8.8X]\n", addr, addr+count-1);
+   Logging::print("Verifying [%8.8X-%8.8X]\n", addr, addr+count-1);
 
    // Can verify MaxDataSize bytes at a time
    // Doesn't have alignment issues
@@ -208,7 +207,7 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Verify(unsigned int  addr,
          dataSize = ICP_MAX_DATA_SIZE;
       }
 //      print("USBDM_ICP_Verify() - Verifying block %4.4X-%4.4X\n", addr, addr+dataSize-1);
-      printDump(data, dataSize);
+      Logging::printDump(data, dataSize);
 
       rc =  (ICP_ErrorCode_t)bdm_usb_raw_send_ep0(ICP_VERIFY_ROW,
                                                   addr & 0xFFFF, // LSB address
@@ -216,21 +215,21 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Verify(unsigned int  addr,
                                                   dataSize, data);
       if (rc != ICP_RC_OK) {
          // Quietly try again
-         print("USBDM_ICP_Verify() - Retry\n");
+         Logging::print("Retry\n");
          rc =  (ICP_ErrorCode_t)bdm_usb_raw_send_ep0(ICP_VERIFY_ROW,
                                                      addr & 0xFFFF, // LSB address
                                                      addr >> 16, // MSB address
                                                      dataSize, data);
       }
       if (rc != ICP_RC_OK) {
-         print("USBDM_ICP_Verify() - Failed bdm_usb_raw_send_ep0()\n");
+         Logging::print("Failed bdm_usb_raw_send_ep0()\n");
          return rc;
       }
       // A bit of a hack - delay to allow verify to complete
       milliSleep(20);
       rc = getResult();
       if (rc != ICP_RC_OK) {
-         print("USBDM_ICP_Verify() - Failed icp_get_result() rc = %d, (%s)\n", rc,
+         Logging::print("Failed icp_get_result() rc = %d, (%s)\n", rc,
                getICPErrorName(rc));
          return rc;
       }
@@ -261,13 +260,14 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Verify(unsigned int  addr,
 //!
 USBDM_API ICP_ErrorCode_t USBDM_ICP_Erase(unsigned int addr,
                                           unsigned int count) {
+   LOGGING_Q;
    unsigned int blockSize;
    unsigned int sectorSize = ICP_JM60_BLOCKSIZE;
    ICP_ErrorCode_t rc;
    unsigned int doneCount     = 0;
    unsigned int originalCount = count;
 
-   print("USBDM_ICP_Erase() - Erasing [%8.8X-%8.8X]\n", addr, addr+count-1);
+   Logging::print("Erasing [%8.8X-%8.8X]\n", addr, addr+count-1);
    USBDM_Version_t version;
 
    if ((USBDM_GetVersion(&version) == BDM_RC_OK) && ((version.icpHardwareVersion & 0xC0) == 0x40)) {
@@ -292,14 +292,14 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Erase(unsigned int addr,
                                                  0,
                                                  NULL);
       if (rc != ICP_RC_OK) {
-         print("USBDM_ICP_Erase() - Failed bdm_usb_raw_send_ep0()\n");
+         Logging::print("Failed bdm_usb_raw_send_ep0()\n");
          return rc;
       }
       rc = getResult();
 
       if (rc != ICP_RC_OK) {
-         print("USBDM_ICP_Erase() - Failed icp_get_result() rc = %d, (%s)\n", rc,
-               getICPErrorName(rc));
+         Logging::print("Failed icp_get_result() rc = %d, (%s)\n", rc,
+                         getICPErrorName(rc));
          return rc;
       }
       addr      += blockSize; // update address
@@ -321,7 +321,7 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Erase(unsigned int addr,
 //!      - != ICP_RC_OK => fail, see \ref ICP_ErrorCode_t
 //!
 static ICP_ErrorCode_t getResult(void) {
-
+   LOGGING;
    unsigned char buff[10];
    int rc;
 
@@ -329,10 +329,11 @@ static ICP_ErrorCode_t getResult(void) {
    do {
       rc = bdm_usb_raw_recv_ep0(ICP_GET_RESULT, 0, 0, sizeof(buff), buff);
       if ((rc != BDM_RC_OK) && (retry-- > 0))
-         print("getResult() Failed (rc=%d) - retry\n", rc);
+         Logging::print("Failed (rc=%d) - retry\n", rc);
    } while ((rc != ICP_RC_OK) && (retry-- > 0));
 
-   if (rc != ICP_RC_OK)
-      print("getResult() Failed\n");
+   if (rc != ICP_RC_OK) {
+      Logging::print("Failed\n");
+   }
    return (ICP_ErrorCode_t) rc;
 }
