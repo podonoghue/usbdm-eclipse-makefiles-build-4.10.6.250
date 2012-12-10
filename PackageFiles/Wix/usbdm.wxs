@@ -61,6 +61,7 @@
                   <Directory Id="D.DeviceData"       Name='DeviceData' />
                   <Directory Id="D.WizardPatchData"  Name='WizardPatches' />
                   <Directory Id="D.FlashImages"      Name='FlashImages' />
+                  <Directory Id="D.Examples"         Name='Examples' />
                   <Component Id='C.ApplicationDirectoryKey' Guid='*'>
                      <RegistryValue Root='HKLM' Key="Software\$(var.Manufacturer)\$(var.ProductName)"
                                     Type='string' Name='InstallationDirectory' Value="[INSTALLDIR]" KeyPath='yes' />
@@ -181,6 +182,18 @@
          <ComponentRef Id='C.CommonFiles'/>
          <ComponentGroupRef Id='Cg.WizardPatchData' />
       </ComponentGroup>
+
+      <!-- Examples folder shortcut -->
+      <DirectoryRef Id="D.UsbdmProgramMenuDir">
+         <Component Id="C.ExampleShortCut">
+            <Shortcut Id="ExampleFolderShortcut"
+               Name="Examples Folder" 
+               Directory="D.UsbdmProgramMenuDir" 
+               Target="[D.Examples]" />
+            <RegistryValue Root='HKCU' Key="Software\$(var.Manufacturer)\$(var.ProductName)"
+                           Type='string' Name='ExamplesShortCut' Value="" KeyPath='yes' />
+         </Component>
+      </DirectoryRef>
 
       <!--====================================================== -->
       <!--         Application Components & shortcuts            -->
@@ -612,6 +625,14 @@
                AllowAdvertise="no"
                Level='1'>
             <ComponentGroupRef Id='Cg.Documentation' />
+         </Feature>
+         <Feature Id='F.Examples'
+               Title='Examples'
+               Description='USBDM Examples:&#10;- Codesourcery Projects&#10;- USBDM API Demonstration Project'
+               AllowAdvertise="no"
+               Level='1'>
+            <ComponentRef      Id='C.ExampleShortCut' />
+            <ComponentGroupRef Id='Cg.Examples' />
          </Feature>
       </Feature>
 

@@ -15,10 +15,10 @@ set PYRO=%WIX_DIR%\pyro.exe
 set WIX_BUILD_DIR=wixBuildDir
 
 rem .wxs regenerated Files 
-set REBUILT_WXS=FlashImages.wxs WizardPatchData.wxs DeviceData.wxs EclipsePlugin_1.wxs EclipsePlugin_2.wxs
+set REBUILT_WXS=DeviceData.wxs FlashImages.wxs WizardPatchData.wxs Examples.wxs EclipsePlugin_1.wxs EclipsePlugin_2.wxs EclipsePlugin_2.wxs
 
 set LIGHT_OPTIONS=-ext WixUIExtension -ext WixUtilExtension -sw0204
-set LIGHT_DIRS=-b bin\DeviceData -b bin\FlashImages -b WizardPatches -b plugins
+set LIGHT_DIRS=-b bin\DeviceData -b bin\FlashImages -b WizardPatches -b Examples -b plugins
 
 set HEAT_OPTIONS=-srd -ke -gg -sfrag -template fragment -sw5150
 set MSI_FILE=USBDM_%VERSION%_Win
@@ -38,7 +38,8 @@ if "%1"=="clean" goto finish
 if not exist %WIX_BUILD_DIR% mkdir %WIX_BUILD_DIR%
 %HEAT% dir .\bin\DeviceData                 %HEAT_OPTIONS% -cg Cg.DeviceData      -dr D.DeviceData       -out %WIX_BUILD_DIR%\DeviceData.wxs
 %HEAT% dir .\bin\FlashImages                %HEAT_OPTIONS% -cg Cg.FlashImages     -dr D.FlashImages      -out %WIX_BUILD_DIR%\FlashImages.wxs
-%HEAT% dir .\wizardPatches                  %HEAT_OPTIONS% -cg Cg.WizardPatchData -dr D.WizardPatchData  -out %WIX_BUILD_DIR%\WizardPatchData.wxs
+%HEAT% dir .\WizardPatches                  %HEAT_OPTIONS% -cg Cg.WizardPatchData -dr D.WizardPatchData  -out %WIX_BUILD_DIR%\WizardPatchData.wxs
+%HEAT% dir .\Examples                       %HEAT_OPTIONS% -cg Cg.Examples        -dr D.Examples         -out %WIX_BUILD_DIR%\Examples.wxs
 %HEAT% dir .\plugins                        %HEAT_OPTIONS% -cg Cg.EclipsePlugin_1 -dr D.EclipsePlugin_1  -out %WIX_BUILD_DIR%\EclipsePlugin_1.wxs
 %HEAT% dir .\plugins                        %HEAT_OPTIONS% -cg Cg.EclipsePlugin_2 -dr D.EclipsePlugin_2  -out %WIX_BUILD_DIR%\EclipsePlugin_2.wxs
 %HEAT% dir .\plugins                        %HEAT_OPTIONS% -cg Cg.EclipsePlugin_3 -dr D.EclipsePlugin_3  -out %WIX_BUILD_DIR%\EclipsePlugin_3.wxs

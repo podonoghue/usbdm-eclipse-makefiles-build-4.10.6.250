@@ -1,25 +1,34 @@
 USBDM V4.10
 =========================
-V4.10.2 (November 2012) -
-   - Added device driver installation (V1.0.0)
-   - Fixed BDM doing reset when setting target even if already powered.
-     This was interfering with doing a 'gentle' connection to a running target.
-   - Fixed DSC bug that prevented ONCE register writes to executing target
-   - Kinetis target connection modified to allow gentle connections  
+V4.10.4 (December 2012) -
+   - Improved HCS08/HCS12 programming speeds (15~30%)
+   - Added Examples to installation
+   - Updated/added Codesourcery instructions to help files
+   - Numerous bug fixes to GDB Server
+   
+V4.10.3 (November 2012) -
+   - Updated device driver installation (V1.0.1) (removed unnecessary driver). 
+   - ELF Files now supported for MC56F80xx devices.
+   - Changed to shared DLLs build for wxWidgets.
+   - Bug fixes:
+     - DSC Access to ONCE registers when target running
+     - Fixed BDM doing reset when setting target even if already powered. 
+       This was interfering with doing a 'gentle' connection to a running target.
+     - ARM interface now reports access errors on failing memory access rather than following access.
+     - Corrected corruption in large reads for ARM GDI Interface.
+
 V4.10.2 (October 2012) -
-This is intended as a interim release to support Codewarrior 10.3 Beta.
-It has not been extensively tested.
-Use only if you wish to experiment with CW10.3!
    - Updated installer for Codewarrior 10.3 Beta
-   - Kinetis & CFV1 targets now correctly support RAM only targets (again)
    - Changed to shared DLLs build for wxWidgets
+   - Changed to Make based projects
    - Support added for Kinetis KLxx devices
    - Updated libusbx version (& changed to static linkage)
    Bug Fixes
+     - Kinetis & CFV1 targets now correctly support RAM only targets (again)
      - Fixes for an output glitch on USBDM_JMxx_CLD & CLC. (firmware)
      - Kinetis-SWD reports memory read/write errors on failing access
        (not following access) (firmware) 
-   
+  
 V4.10.0 (September 2012) -
    - Improved ARM-JTAG interface speed.
    - Added support for ARM-SWD interfaces (requires different hardware). 
