@@ -31,6 +31,9 @@
 #include "GdbInput.h"
 #include "GdbOutput.h"
 
+#include "wxPlugin.h"
+#include "FindWindow.h"
+
 #if TARGET==CFV1
 #define TARGET_TYPE T_CFV1
 #elif TARGET==CFVx
@@ -102,7 +105,7 @@ USBDM_ErrorCode doArgs(int argc, char **argv) {
    Logging::print( "Loaded device database\n");
    if (listDevices) {
       int count = 0;
-      std::vector<DeviceData *>::iterator it;
+      std::vector<DeviceDataPtr>::const_iterator it;
       try {
          for (it = deviceDatabase->begin(); it != deviceDatabase->end(); it++) {
             fprintf(stderr, "%s,\t", (*it)->getTargetName().c_str());
@@ -120,7 +123,7 @@ USBDM_ErrorCode doArgs(int argc, char **argv) {
       return BDM_RC_ERROR_HANDLED;
    }
    else {
-      const DeviceData *devicePtr = deviceDatabase->findDeviceFromName(deviceName);
+      DeviceDataConstPtr devicePtr = deviceDatabase->findDeviceFromName(deviceName);
       if (devicePtr == NULL) {
          Logging::print("Failed to find device '%s' in database\n", deviceName);
          return BDM_RC_UNKNOWN_DEVICE;
@@ -140,12 +143,19 @@ void ex_program(int sig) {
 //
 int main(int argc, char **argv) {
 #ifdef LOG
-   FILE *errorLog = fopen("c:\\delme.log","wt");
+   char buff[1000];
+   if (getUserDataDir(buff, sizeof(buff)) != 0) {
+      strcpy(buff, "c:");
+   }
+   strcat(buff, "/gdbServer.log");
+   FILE *errorLog = fopen(buff, "wt");
    Logging::setLogFileHandle(errorLog);
 #endif
    Logging::setLoggingLevel(100);
    LOGGING;
    (void) signal(SIGINT, SIG_IGN);
+
+//   setDefaultWindowParent(FindEclipseWindowHwnd());
 
    if (progressTimer != NULL) {
       delete progressTimer;

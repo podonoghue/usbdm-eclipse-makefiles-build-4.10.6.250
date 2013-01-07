@@ -4,8 +4,7 @@
             <memoryRange end="0x300FFF" start="0x300000" />
          </memory>
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange end="0x003FFB" start="0x002600" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -22,8 +21,7 @@
             <memoryRange end="0x03FFFF" start="0x020410" />
          </memory>
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange end="0x0203FB" start="0x000000" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -40,8 +38,7 @@
             <memoryRange end="0x01FFFF" start="0x010410" />
          </memory>
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange end="0x0103FB" start="0x000000" />
          </memory>
          <soptAddress value="0xFF80C0" />
@@ -58,8 +55,7 @@
             <memoryRange end="0x03FFFF" start="0x020410" />
          </memory>
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange end="0x0203FB" start="0x000000" />
          </memory>
          <soptAddress value="0xFF80C0" />
@@ -76,8 +72,7 @@
             <memoryRange end="0x00FFFF" start="0x008410" />
          </memory>
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange end="0x0083FB" start="0x000000" />
          </memory>
          <soptAddress value="0xFF80C0" />
@@ -94,8 +89,7 @@
             <memoryRange end="0x300FFF" start="0x300000" />
          </memory>
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange end="0x003FFB" start="0x000000" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -112,8 +106,7 @@
             <memoryRange end="0x8001FE" start="0x800000" />
          </memory>
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange end="0x003FFB" start="0x002600" />
          </memory>
          <soptAddress value="0xFF9802" />

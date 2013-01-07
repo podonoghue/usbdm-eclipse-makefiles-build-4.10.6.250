@@ -48,6 +48,7 @@
 #include <wx/gbsizer.h>
 
 #include "Common.h"
+#include "USBDMDialogue.h"
 #include "USBDMPanel.h"
 #include "USBDM_API.h"
 #include "USBDM_AUX.h"
@@ -124,8 +125,7 @@ int sub;
 //! @note - Settings may be filtered by by target type or BDM capabilities.
 //!
 void USBDMPanel::loadSettings(const AppSettings &settings) {
-
-   Logging::print("USBDMPanel::loadSettings()\n");
+   Logging log("USBDMPanel::loadSettings");
 
 //   Init();
 
@@ -144,7 +144,7 @@ void USBDMPanel::loadSettings(const AppSettings &settings) {
    bdmIdentification             =            wxString(settings.getValue(settingsKey+".bdmSelection",             "").c_str(), wxConvUTF8);
 //   Logging::print("USBDMPanel::loadSettings() - bdmIdentification=%s \n", (const char *)bdmIdentification.ToAscii());
 
-   TransferDataToWindow();
+//   TransferDataToWindow();
 }
 
 //! Save settings
@@ -154,11 +154,9 @@ void USBDMPanel::loadSettings(const AppSettings &settings) {
 //! @note - Settings may be filtered by by target type or BDM capabilities.
 //!
 void USBDMPanel::saveSettings(AppSettings &settings) {
-USBDM_ExtendedOptions_t bdmOptions;
-
    Logging::print("USBDMPanel::saveSettings()\n");
 
-   getDialogueValues(&bdmOptions);
+//   getDialogueValues(&bdmOptions);
    settings.addValue(settingsKey+".setTargetVdd",             bdmOptions.targetVdd);
    settings.addValue(settingsKey+".cycleTargetVddOnReset",    bdmOptions.cycleVddOnReset);
    settings.addValue(settingsKey+".cycleTargetVddonConnect",  bdmOptions.cycleVddOnConnect);
@@ -174,38 +172,49 @@ USBDM_ExtendedOptions_t bdmOptions;
    settings.addValue(settingsKey+".bdmSelection",             bdmIdentification.ToAscii());
 }
 
-//! Get bdm options from dialogue
-//!
-//! @param _bdmOptions  Options structure to modify
-//!
-//! @note - _bdmOptions should be set to default values beforehand
-//!
-void USBDMPanel::getDialogueValues(USBDM_ExtendedOptions_t *_bdmOptions) {
+////! Get bdm options from dialogue
+////!
+////! @param _bdmOptions  Options structure to modify
+////!
+////! @note - _bdmOptions should be set to default values beforehand
+////!
+//void USBDMPanel::getDialogueValues(USBDM_ExtendedOptions_t *_bdmOptions) {
+//
+//   Logging::print("USBDMPanel::getDialogueValues()\n");
+//
+//   _bdmOptions->targetVdd          =  bdmOptions.targetVdd;
+//   _bdmOptions->cycleVddOnReset    =  bdmOptions.cycleVddOnReset;
+//   _bdmOptions->cycleVddOnConnect  =  bdmOptions.cycleVddOnConnect;
+//   _bdmOptions->leaveTargetPowered =  bdmOptions.leaveTargetPowered;
+//   _bdmOptions->autoReconnect      =  bdmOptions.autoReconnect;
+//   _bdmOptions->guessSpeed         =  bdmOptions.guessSpeed;
+//   _bdmOptions->bdmClockSource     =  bdmOptions.bdmClockSource;
+//   _bdmOptions->useResetSignal     =  bdmOptions.useResetSignal;
+//   _bdmOptions->maskInterrupts     =  bdmOptions.maskInterrupts;
+//   _bdmOptions->interfaceFrequency =  bdmOptions.interfaceFrequency;
+//   _bdmOptions->usePSTSignals      =  bdmOptions.usePSTSignals;
+//}
 
-   Logging::print("USBDMPanel::getDialogueValues()\n");
-
-   _bdmOptions->targetVdd          =  bdmOptions.targetVdd;
-   _bdmOptions->cycleVddOnReset    =  bdmOptions.cycleVddOnReset;
-   _bdmOptions->cycleVddOnConnect  =  bdmOptions.cycleVddOnConnect;
-   _bdmOptions->leaveTargetPowered =  bdmOptions.leaveTargetPowered;
-   _bdmOptions->autoReconnect      =  bdmOptions.autoReconnect;
-   _bdmOptions->guessSpeed         =  bdmOptions.guessSpeed;
-   _bdmOptions->bdmClockSource     =  bdmOptions.bdmClockSource;
-   _bdmOptions->useResetSignal     =  bdmOptions.useResetSignal;
-   _bdmOptions->maskInterrupts     =  bdmOptions.maskInterrupts;
-   _bdmOptions->interfaceFrequency =  bdmOptions.interfaceFrequency;
-   _bdmOptions->usePSTSignals      =  bdmOptions.usePSTSignals;
-}
-
-USBDMPanel::USBDMPanel( wxWindow* parent, TargetType_t targetType) {
-   Logging::setLoggingLevel(100);
-   this->targetType = targetType;
+USBDMPanel::USBDMPanel( wxWindow* parent, Shared *shared, TargetType_t targetType) :
+            shared(shared),
+#ifdef FLASH_PROGRAMMER
+            currentDevice(shared->getCurrentDevice()),
+#endif
+            bdmOptions(shared->getBdmOptions()),
+            targetType(targetType) {
+   Logging Log("USBDMPanel::USBDMPanel");
    Init();
    Create(parent);
 }
 
-USBDMPanel::USBDMPanel(TargetType_t targetType) {
-   this->targetType = targetType;
+USBDMPanel::USBDMPanel(Shared *shared, TargetType_t targetType) :
+            shared(shared),
+#ifdef FLASH_PROGRAMMER
+            currentDevice(shared->getCurrentDevice()),
+#endif
+            bdmOptions(shared->getBdmOptions()),
+            targetType(targetType) {
+   Logging Log("USBDMPanel::USBDMPanel");
    Init();
 }
 
@@ -213,15 +222,31 @@ USBDMPanel::USBDMPanel(TargetType_t targetType) {
 //! Set the panel internal state to the default
 //!
 void USBDMPanel::Init() {
-   LOGGING;
+   Logging Log("USBDMPanel::Init");
+
    bdmDeviceNum          = -1;
    bdmIdentification     = wxEmptyString;
    
    // Set options to default
    // TransferDataToWindow() will validate these for the particular dialog/BDM being used.
-   bdmOptions.size       = sizeof(USBDM_ExtendedOptions_t);
-   bdmOptions.targetType = targetType;
-   USBDM_GetDefaultExtendedOptions(&bdmOptions);
+   USBDM_ExtendedOptions_t tempOptions;
+   tempOptions.size       = sizeof(USBDM_ExtendedOptions_t);
+   tempOptions.targetType = targetType;
+   USBDM_GetDefaultExtendedOptions(&tempOptions);
+
+   bdmOptions.size               = sizeof(USBDM_ExtendedOptions_t);
+   bdmOptions.targetType         = targetType;
+   bdmOptions.targetVdd          = tempOptions.targetVdd;
+   bdmOptions.cycleVddOnReset    = tempOptions.cycleVddOnReset;
+   bdmOptions.cycleVddOnConnect  = tempOptions.cycleVddOnConnect;
+   bdmOptions.leaveTargetPowered = tempOptions.leaveTargetPowered;
+   bdmOptions.autoReconnect      = tempOptions.autoReconnect;
+   //bdmOptions.bdmClockSource     = tempOptions.bdmClockSource;
+   bdmOptions.useResetSignal     = tempOptions.useResetSignal;
+   bdmOptions.usePSTSignals      = tempOptions.usePSTSignals;
+   bdmOptions.guessSpeed         = tempOptions.guessSpeed;
+   bdmOptions.interfaceFrequency = tempOptions.interfaceFrequency;
+
 }
 
 //! USBDMParametersDialogue creator
@@ -232,7 +257,7 @@ void USBDMPanel::Init() {
 //! - BDM_RC_OK => success
 //! - else => failed
 USBDM_ErrorCode USBDMPanel::Create(wxWindow* parent) {
-//   Logging::print("USBDMPanel::Create()\n");
+   Logging Log("USBDMPanel::Create");
 
    if (!wxPanelBase::Create(parent, ID_COMMUNICATION, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))
       return BDM_RC_FAIL;
@@ -250,8 +275,7 @@ USBDM_ErrorCode USBDMPanel::Create(wxWindow* parent) {
 //! - BDM_RC_OK => success
 //! - else => failed
 USBDM_ErrorCode USBDMPanel::CreateControls(void) {
-
-//   Logging::print("USBDMPanel::CreateControls()\n");
+   Logging Log("USBDMPanel::CreateControls");
 
    // Determine dialogue features
    targetProperties = HAS_NONE;
@@ -439,8 +463,8 @@ USBDM_ErrorCode USBDMPanel::CreateControls(void) {
 //!
 //!
 bool USBDMPanel::setDialogueValuesToDefault() {
+   Logging Log("USBDMPanel::setDialogueValuesToDefault");
 
-//   Logging::print("USBDMPanel::setDialogueValuesToDefault()\n");
    Init();
    TransferDataToWindow();
    return true;
@@ -450,8 +474,9 @@ bool USBDMPanel::setDialogueValuesToDefault() {
 //! Update the dialogue from internal state
 //!
 bool USBDMPanel::TransferDataToWindow() {
+   Logging Log("USBDMPanel::TransferDataToWindow");
 
-   Logging::print("USBDMPanel::TransferDataToWindow(), BDM = \'%s\'\n", (const char *)bdmIdentification.ToAscii());
+   Logging::print("BDM = \'%s\'\n", (const char *)bdmIdentification.ToAscii());
    HardwareCapabilities_t  bdmCapabilities;
 
    // Try to set choice to match BDM identification string
@@ -571,10 +596,19 @@ bool USBDMPanel::TransferDataToWindow() {
 }
 
 bool USBDMPanel::TransferDataFromWindow() {
+   Logging Log("USBDMPanel::TransferDataFromWindow");
 
-   Logging::print("USBDMPanel::TransferDataFromWindow()\n");
    // NOP - it is assumed that the internal state is always kept consistent with the controls
    return true;
+}
+
+bool USBDMPanel::updateState() {
+   Logging Log("USBDMPanel::updateState");
+
+   bool ok = true;
+   ok = ok && TransferDataToWindow();
+   ok = ok && TransferDataFromWindow();
+   return ok;
 }
 
 /*

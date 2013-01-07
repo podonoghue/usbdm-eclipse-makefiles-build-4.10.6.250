@@ -17,6 +17,8 @@ DSC_Unlocker-debug:
 
 all: CFVx_Unlocker CFVx_Unlocker-debug DSC_Unlocker DSC_Unlocker-debug
 
+test: CFVx_Unlocker-debug
+
 clean:
 	${RMDIR} CFVx_Unlocker
 	${RMDIR} CFVx_Unlocker-debug

@@ -123,7 +123,9 @@ unsigned getRegisterSize(DSC_Registers_t regNo);
 
 //! Converts OnceStatus_t to a string for debug
 //!
+#if !defined(TARGET) || (TARGET != MC56F80xx)
 USBDM_DSC_API
+#endif
 const char *DSC_GetOnceStatusName(OnceStatus_t status);
 
 //! Converts EONCE Status register value to a string for debug

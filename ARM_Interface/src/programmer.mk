@@ -15,7 +15,6 @@ SRC += SimpleSRecords.cpp
 SRC += Names.cpp
 SRC += USBDM_AUX.cpp
 SRC += Utils.cpp
-#SRC += tclInterface.cpp
 
 # Shared files $(SHARED_SRC)/Programmer
 VPATH := $(SHARED_SRC)/Programmer $(VPATH)

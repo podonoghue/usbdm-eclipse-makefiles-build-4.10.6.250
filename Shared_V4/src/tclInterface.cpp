@@ -21,7 +21,7 @@ USBDM_ErrorCode TclInterface::initTCL(void) {
       return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
    }
    // Run initial TCL script (loads routines)
-   TclScriptPtr script = deviceData->getFlashScripts();
+   TclScriptConstPtr script = deviceData->getFlashScripts();
    if (!script) {
       Logging::print("TclInterface::initTCL() - no TCL script found\n");
       return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
@@ -41,7 +41,7 @@ USBDM_ErrorCode TclInterface::initTCL(void) {
 //=======================================================================
 // Executes a TCL script in the current TCL interpreter
 //
-USBDM_ErrorCode TclInterface::runTCLScript(TclScriptPtr script) {
+USBDM_ErrorCode TclInterface::runTCLScript(TclScriptConstPtr script) {
    Logging::print("TclInterface::runTCLScript(): Running TCL Script...\n");
 
    if (initRc != BDM_RC_OK) {

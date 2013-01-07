@@ -92,6 +92,11 @@ const EnumValuePair ClockTypes::clockNames[] = {
    EnumValuePair(  0,              ""),
 };
 
+DeviceData *DeviceData::shallowCopy(const DeviceData &other) {
+   *this = other;
+   return this;
+}
+
 //! Returns the default non-volatile flash location for the clock trim value
 //!
 //! @param  clockType - clock type being queried
@@ -331,7 +336,7 @@ bool DeviceData::isThisDevice(std::map<uint32_t,uint32_t> desiredSDIDs, bool acc
 //!
 //! @return shared_ptr for Memory region found (or NULL if none found)
 //!
-MemoryRegionPtr DeviceData::getMemoryRegionFor(uint32_t address, MemorySpace_t memorySpace) {
+MemoryRegionConstPtr DeviceData::getMemoryRegionFor(uint32_t address, MemorySpace_t memorySpace) const {
    // Check cached location to avoid searching in many cases
    if ((lastMemoryRegionUsed != NULL) &&
         lastMemoryRegionUsed->isCompatibleType(memorySpace) &&
@@ -361,11 +366,36 @@ MemoryRegionPtr DeviceData::getMemoryRegionFor(uint32_t address, MemorySpace_t m
 //! @return Memory type of region (or MemInvalid if no information available)
 //!
 MemType_t DeviceData::getMemoryType(uint32_t address, MemorySpace_t memorySpace) {
-   MemoryRegionPtr memoryRegion = getMemoryRegionFor(address, memorySpace);
+   MemoryRegionConstPtr memoryRegion = getMemoryRegionFor(address, memorySpace);
    if (memoryRegion != NULL) {
       return memoryRegion->getMemoryType();
    }
    return MemInvalid;
+}
+
+//! Sets the security of all memory regions to a custom value
+//!
+//! @param securityValue - custom value to use
+//!
+void DeviceData::setCustomSecurity(const std::string &securityValue) {
+   Logging log("DeviceData::setCustomSecurity");
+   security = SEC_CUSTOM;
+   int index = 0;
+   MemoryRegionPtr memoryRegionPtr = getMemoryRegion(index);
+   while (memoryRegionPtr != NULL) {
+      const MemoryRegion::MemoryRange *memoryRange = memoryRegionPtr->getMemoryRange(0);
+      if (memoryRange == NULL) {
+         throw(MyException("DeviceData::setCustomSecurity() - empty memory range!"));
+      }
+      SecurityEntryPtr securityEntry = memoryRegionPtr->getSecurityEntry();
+      if (securityEntry != NULL) {
+         Logging::print("securityEntry = %p, use_count = %d, securityInfo = %s\n", &*securityEntry, securityEntry.use_count(), (const char *)securityEntry->toString().c_str());
+         securityEntry->setCustomSecureInformation(SecurityInfoPtr(new SecurityInfo(0, SecurityInfo::custom, securityValue)));
+         SecurityInfoPtr getCustomSecureInformation = securityEntry->getCustomSecureInformation();
+//         Logging::print("getCustomSecureInformation = %p, use_count = %d, size = %d, securityInfo = %s\n", &*getCustomSecureInformation, getCustomSecureInformation.use_count(), getCustomSecureInformation->getSize(), (const char *)getCustomSecureInformation->toString().c_str());
+      }
+      memoryRegionPtr = getMemoryRegion(++index);
+   }
 }
 
 //! Determines the page number for an address
@@ -397,7 +427,7 @@ uint16_t DeviceData::getPageNo(uint32_t address) {
 //!
 //! @note - If the device is an alias then it will return the true device
 //!
-const DeviceData *DeviceDataBase::findDeviceFromName(const string &targetName) {
+DeviceDataConstPtr DeviceDataBase::findDeviceFromName(const string &targetName) const {
 
    static int recursionCheck = 0;
 //   Logging::print("findDeviceFromName(%s)\n", (const char *)targetName.c_str());
@@ -411,11 +441,11 @@ const DeviceData *DeviceDataBase::findDeviceFromName(const string &targetName) {
    buff[sizeof(buff)-1] = '\0';
    strUpper(buff);
 
-   const DeviceData *theDevice = NULL;
-   vector<DeviceData *>::iterator it;
+   DeviceDataConstPtr theDevice;
+   vector<DeviceDataPtr>::const_iterator it;
    for (it = deviceData.begin(); it != deviceData.end(); it++) {
       if (strcmp((*it)->getTargetName().c_str(), buff) == 0) {
-         theDevice = *it;
+         theDevice = static_cast<DeviceDataConstPtr>(*it);
          Logging::print("findDeviceFromName(%s) found %s%s\n",
                buff, (const char *)(theDevice->getTargetName().c_str()), theDevice->isAlias()?"(alias)":"");
          if (theDevice->isAlias()) {
@@ -437,9 +467,9 @@ const DeviceData *DeviceDataBase::findDeviceFromName(const string &targetName) {
 //!
 //! @returns index or -1 if not found
 //!
-int DeviceDataBase::findDeviceIndexFromName(const string &targetName) {
+int DeviceDataBase::findDeviceIndexFromName(const string &targetName) const {
 
-   vector<DeviceData *>::iterator it;
+   vector<DeviceDataPtr>::const_iterator it;
    for (it = deviceData.begin(); it != deviceData.end(); it++) {
       if ((*it)->getTargetName().compare(targetName) == 0)
          return it - deviceData.begin();
@@ -449,11 +479,13 @@ int DeviceDataBase::findDeviceIndexFromName(const string &targetName) {
 }
 
 //! A generic device to use as a default
-const DeviceData *DeviceDataBase::defaultDevice = NULL;
+DeviceDataPtr DeviceDataBase::defaultDevice;
 
 //! \brief Loads the known devices list from the configuration file.
 //!
 void DeviceDataBase::loadDeviceData(void) {
+   Logging log("DeviceDataBase::loadDeviceData");
+
 #if TARGET == HCS08
    #define CONFIG_FILEPATH DEVICE_DATABASE_DIRECTORY "/hcs08_devices.xml"
 #elif TARGET == RS08
@@ -470,7 +502,6 @@ void DeviceDataBase::loadDeviceData(void) {
    #define CONFIG_FILEPATH DEVICE_DATABASE_DIRECTORY "/dsc_devices.xml"
 #endif
 
-   Logging::print("DeviceDataBase::loadDeviceData()\n");
    try {
       string appFilePath = getApplicationFilePath(CONFIG_FILEPATH);
       if (appFilePath.empty()) {
@@ -483,7 +514,7 @@ void DeviceDataBase::loadDeviceData(void) {
 //      defaultDevice = *aDevice.insert(aDevice.end(), new DeviceData()).base();
       Logging::print("DeviceDataBase::loadDeviceData() - Exception \'%s\'\n", exception.what());
       deviceData.clear();
-      DeviceData *aDevice = new DeviceData();
+      DeviceDataPtr aDevice = DeviceDataPtr(new DeviceData());
       aDevice->setTargetName("Invalid Database");
       setDefaultDevice(aDevice);
       addDevice(aDevice);
@@ -492,7 +523,7 @@ void DeviceDataBase::loadDeviceData(void) {
    catch (...) {
       Logging::print("DeviceDataBase::loadDeviceData() - Unknown exception\n");
       deviceData.clear();
-      DeviceData *aDevice = new DeviceData();
+      DeviceDataPtr aDevice = DeviceDataPtr(new DeviceData());
       aDevice->setTargetName("Invalid Database");
       setDefaultDevice(aDevice);
       addDevice(aDevice);
@@ -504,13 +535,14 @@ void DeviceDataBase::loadDeviceData(void) {
    Logging::print("DeviceDataBase::loadDeviceData() - %d devices loaded\n", deviceData.size());
 }
 
-void DeviceDataBase::listDevices() {
+void DeviceDataBase::listDevices() const {
+   Logging log("DeviceDataBase::listDevices");
 
-   vector<DeviceData *>::iterator it;
+   vector<DeviceDataPtr>::const_iterator it;
    int lineCount = 0;
    try {
       for (it = deviceData.begin(); it != deviceData.end(); it++) {
-         const DeviceData *deviceData = (*it);
+         DeviceDataConstPtr deviceData = (*it);
          if (deviceData == NULL) {
             Logging::print("Null device pointer\n");
             continue;
@@ -525,10 +557,10 @@ void DeviceDataBase::listDevices() {
          }
 #if (TARGET == ARM) || (TARGET == CFVx) || (TARGET==ARM_SWD)
          if (lineCount == 0) {
-            Logging::print("\n"
-                  "#                     SDID                                                \n"
-                  "#    Target           Address    SDID          Script? Flash?              \n"
-                  "#=========================================================================\n");
+            Logging::print("\n");
+            Logging::print("#                     SDID                                                \n");
+            Logging::print("#    Target           Address    SDID          Script? Flash?             \n");
+            Logging::print("#=========================================================================\n");
          }
          Logging::print("%-20s%s 0x%08X 0x%08X %7s %7s\n",
                deviceData->getTargetName().c_str(), aliased?"(A)":"   ",
@@ -543,10 +575,10 @@ void DeviceDataBase::listDevices() {
          );
 #else
          if (lineCount == 0) {
-            Logging::print("\n"
-                  "#                      RAM          Clock    Clock   NVTRIM    Trim                                     \n"
-                  "# Target         Start     End      Name     Addr     Addr     Freq.  SDIDA    SDID  Scripts? FlashP?   \n"
-                  "#=======================================================================================================\n");
+            Logging::print("\n");
+            Logging::print("#                      RAM          Clock    Clock   NVTRIM    Trim                                     \n");
+            Logging::print("# Target         Start     End      Name     Addr     Addr     Freq.  SDIDA    SDID  Scripts? FlashP?   \n");
+            Logging::print("#=======================================================================================================\n");
          }
          Logging::print("%-14s%s 0x%06X 0x%06X %10s 0x%06X 0x%06X %6.2f %08X %08X %4s %4s\n",
                deviceData->getTargetName().c_str(), aliased?"(A)":"   ",
@@ -563,26 +595,26 @@ void DeviceDataBase::listDevices() {
 #endif
 #if 1
          for (int regionNum=0; deviceData->getMemoryRegion(regionNum) != NULL; regionNum++) {
-            MemoryRegionPtr reg=deviceData->getMemoryRegion(regionNum);
+            MemoryRegionConstPtr reg=deviceData->getMemoryRegion(regionNum);
             Logging::print("      %10s: ", reg->getMemoryTypeName());
             if (reg->getFlashprogram())
-               Logging::print("FP=Yes, ");
+               Logging::printq("FP=Yes, ");
             else
-               Logging::print("        ");
-            Logging::print("SS=%6d ", reg->getSectorSize());
+               Logging::printq("        ");
+            Logging::printq("SS=%6d ", reg->getSectorSize());
             for(unsigned index=0; ; index++) {
                const MemoryRegion::MemoryRange *memoryRange = reg->getMemoryRange(index);
                if (memoryRange == NULL) {
                   break;
                }
-               Logging::print("(0x%08X,0x%08X", memoryRange->start, memoryRange->end);
+               Logging::printq("(0x%08X,0x%08X", memoryRange->start, memoryRange->end);
                if ((memoryRange->pageNo != MemoryRegion::DefaultPageNo) &&
                    (memoryRange->pageNo != MemoryRegion::NoPageNo) &&
                    (memoryRange->pageNo != ((memoryRange->start>>16)&0xFF))){
-                  Logging::print(",P=0x%02X)", memoryRange->pageNo);
+                  Logging::printq(",P=0x%02X)", memoryRange->pageNo);
                }
                else {
-                  Logging::print(")", memoryRange->start, memoryRange->end);
+                  Logging::printq(")", memoryRange->start, memoryRange->end);
                }
             }
             Logging::print("\n");
@@ -658,12 +690,12 @@ DeviceDataBase::~DeviceDataBase() {
    Logging::print("DeviceDataBase::~DeviceDataBase()\n");
    sharedInformation.clear();
 
-   std::vector<DeviceData *>::iterator itDevice = deviceData.begin();
-   while (itDevice != deviceData.end()) {
-      (*itDevice)->valid = false;
-      delete (*itDevice);
-      itDevice++;
-   }
+//   std::vector<DeviceDataPtr>::iterator itDevice = deviceData.begin();
+//   while (itDevice != deviceData.end()) {
+//      (*itDevice)->valid = false;
+//      delete (*itDevice);
+//      itDevice++;
+//   }
    deviceData.clear();
 }
 
@@ -676,13 +708,21 @@ std::string SecurityInfo::getSecurityInfo() const
     return securityInfo;
 }
 
-unsigned SecurityInfo::getSize() const
+std::string SecurityDescription::getSecurityDescription() const
 {
+   return securityDescription;
+}
+
+ void SecurityDescription::setSecurityDescription(std::string s)
+{
+    securityDescription = s;
+}
+
+unsigned SecurityInfo::getSize() const {
     return size;
 }
 
-bool SecurityInfo::getMode() const
-{
+SecurityInfo::SecType SecurityInfo::getMode() const {
     return mode;
 }
 
@@ -697,10 +737,14 @@ int aToi(char ch) {
       return -1;
 }
 
-const uint8_t *SecurityInfo::getData() {
+const uint8_t *SecurityInfo::getData() const {
    unsigned       cSub = 0;
-   static uint8_t data[40];
+   static uint8_t data[100];
+   if (size > sizeof(data)) {
+      throw MyException("Security field too large in SecurityInfo::getData()");
+   }
    for (unsigned sub=0; sub<size; sub++) {
+      // Skip non-numeric leading chars
       while ((aToi(securityInfo[cSub]) < 0) && (cSub < securityInfo.length())) {
          cSub++;
       }
@@ -708,6 +752,22 @@ const uint8_t *SecurityInfo::getData() {
       data[sub] += aToi(securityInfo[cSub++]);
    }
    return data;
+}
+
+static inline char tohex(uint8_t value) {
+   static const char table[] = "0123456789ABCDEF";
+   return table[value&0x0F];
+}
+
+void SecurityInfo::setData(unsigned size, uint8_t *data) {
+   unsigned       cSub = 0;
+   securityInfo.clear();
+   for (unsigned sub=0; sub<size; sub++) {
+      char value[2];
+      value[0] = tohex(data[sub]>>4);
+      value[1] = tohex(data[sub]);
+      securityInfo.append(value);
+   }
 }
 
 //! Obtain string describing the memory type
@@ -718,20 +778,20 @@ const uint8_t *SecurityInfo::getData() {
 //!
 const char *MemoryRegion::getMemoryTypeName(MemType_t memoryType) {
    static const char *names[] = {
-            "MemInvalid",
-            "MemRAM",
-            "MemEEPROM",
-            "MemFLASH",
-            "MemFlexNVM",
-            "MemFlexRAM",
-            "MemROM",
-            "MemIO",
-            "MemPFlash",
-            "MemDFlash",
-            "MemXRAM",
-            "MemPRAM",
-            "MemXROM",
-            "MemPROM",
+            "Invalid",
+            "RAM",
+            "EEPROM",
+            "FLASH",
+            "FlexNVM",
+            "FlexRAM",
+            "ROM",
+            "IO",
+            "PFlash",
+            "DFlash",
+            "XRAM",
+            "PRAM",
+            "XROM",
+            "PROM",
    };
    if((unsigned )((memoryType)) >= (sizeof (names) / sizeof (names[0])))
       memoryType = (MemType_t)((0));

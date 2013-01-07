@@ -14,26 +14,26 @@ class FlashProgrammer {
 private:
    // Error codes return from the flash driver
    enum FlashDriverError_t {
-        FLASH_ERR_OK                = (0),
-        FLASH_ERR_LOCKED            = (1),  // Flash is still locked
-        FLASH_ERR_ILLEGAL_PARAMS    = (2),  // Parameters illegal
-        FLASH_ERR_PROG_FAILED       = (3),  // STM - Programming operation failed - general
-        FLASH_ERR_PROG_WPROT        = (4),  // STM - Programming operation failed - write protected
-        FLASH_ERR_VERIFY_FAILED     = (5),  // Verify failed
-        FLASH_ERR_ERASE_FAILED      = (6),  // Erase or Blank Check failed
-        FLASH_ERR_TRAP              = (7),  // Program trapped (illegal instruction/location etc.)
-        FLASH_ERR_PROG_ACCERR       = (8),  // Kinetis/CFVx - Programming operation failed - ACCERR
-        FLASH_ERR_PROG_FPVIOL       = (9),  // Kinetis/CFVx - Programming operation failed - FPVIOL
-        FLASH_ERR_PROG_MGSTAT0      = (10), // Kinetis - Programming operation failed - MGSTAT0
-        FLASH_ERR_CLKDIV            = (11), // CFVx - Clock divider not set
-        FLASH_ERR_ILLEGAL_SECURITY  = (12), // Kinetis - Illegal value for security location
-        FLASH_ERR_UNKNOWN           = (13), // Unspecified error
-        FLASH_ERR_TIMEOUT           = (14), // Timeout waiting for completion
+        FLASH_ERR_OK                = (0),  //!< No error
+        FLASH_ERR_LOCKED            = (1),  //!< Flash is still locked
+        FLASH_ERR_ILLEGAL_PARAMS    = (2),  //!< Parameters illegal
+        FLASH_ERR_PROG_FAILED       = (3),  //!< STM - Programming operation failed - general
+        FLASH_ERR_PROG_WPROT        = (4),  //!< STM - Programming operation failed - write protected
+        FLASH_ERR_VERIFY_FAILED     = (5),  //!< Verify failed
+        FLASH_ERR_ERASE_FAILED      = (6),  //!< Erase or Blank Check failed
+        FLASH_ERR_TRAP              = (7),  //!< Program trapped (illegal instruction/location etc.)
+        FLASH_ERR_PROG_ACCERR       = (8),  //!< Kinetis/CFVx - Programming operation failed - ACCERR
+        FLASH_ERR_PROG_FPVIOL       = (9),  //!< Kinetis/CFVx - Programming operation failed - FPVIOL
+        FLASH_ERR_PROG_MGSTAT0      = (10), //!< Kinetis - Programming operation failed - MGSTAT0
+        FLASH_ERR_CLKDIV            = (11), //!< CFVx - Clock divider not set
+        FLASH_ERR_ILLEGAL_SECURITY  = (12), //!< Kinetis - Illegal value for security location
+        FLASH_ERR_UNKNOWN           = (13), //!< Unspecified error
+        FLASH_ERR_TIMEOUT           = (14), //!< Timeout waiting for completion
    };
 
    enum AddressModifiers {
-      ADDRESS_LINEAR = 1UL<<31,
-      ADDRESS_EEPROM = 1UL<<30,
+      ADDRESS_LINEAR = 1UL<<31,  //!< Linear address (HCS12)
+      ADDRESS_EEPROM = 1UL<<30,  //!< EEPROM
    };
    //! Structure for MCGCG parameters
    struct MCG_ClockParameters_t {
@@ -65,21 +65,24 @@ private:
    } ;
    typedef USBDM_ErrorCode (*CallBackT)(USBDM_ErrorCode status, int percent, const char *message);
 
-   DeviceData              parameters;               //!< Parameters describing the target device
-   UsbdmTclInterp         *tclInterpreter;          //!< TCL interpreter
-   bool                    useTCLScript;
-   bool                    flashReady;               //!< Safety check - only TRUE when flash is ready for programming
-   bool                    initTargetDone;           //!< Indicates initTarget() has been done.
-   uint32_t                targetBusFrequency;  //! kHz
-   FlashProgramPtr         currentFlashProgram;
-   ProgressTimer          *progressTimer;
-   bool                    doRamWrites;
-   MemoryRegionPtr         flashMemoryRegionPtr;
+   DeviceData              parameters;                   //!< Parameters describing the target device
+   UsbdmTclInterp         *tclInterpreter;               //!< TCL interpreter
+   bool                    flashReady;                   //!< Safety check - only TRUE when flash is ready for programming
+   bool                    initTargetDone;               //!< Indicates initTarget() has been done.
+   uint32_t                targetBusFrequency;           //! kHz
+   FlashProgramConstPtr    currentFlashProgram;          //!< Current program for flash operation
+   ProgressTimer          *progressTimer;                //!< Progress timer (&progress meter)
+   bool                    doRamWrites;                  //!< Write RAM region of image to target (after programming)
+   bool                    securityNeedsSelectiveErase;  //!< Indicates security area needs to be selectively erased
+   MemoryRegionConstPtr    flashMemoryRegionPtr;
 
    USBDM_ErrorCode initialiseTargetFlash();
    USBDM_ErrorCode initialiseTarget();
-   USBDM_ErrorCode setFlashSecurity(FlashImage      &flashImage,
-                                    MemoryRegionPtr flashRegion);
+   void            deleteSecurityAreas(void);
+   USBDM_ErrorCode recordSecurityArea(const uint32_t address, const int size, const uint8_t *data);
+   void            restoreSecurityAreas(FlashImage &flashImage);
+   USBDM_ErrorCode setFlashSecurity(FlashImage           &flashImage,
+                                    MemoryRegionConstPtr flashRegion);
    USBDM_ErrorCode setFlashSecurity(FlashImage  &flashImage);
    USBDM_ErrorCode trimTargetClock(uint32_t       trimAddress,
                                    unsigned long  targetBusFrequency,
@@ -110,6 +113,7 @@ private:
    USBDM_ErrorCode programBlock(FlashImage    *flashImageDescription,
                                 unsigned int   blockSize,
                                 uint32_t       flashAddress);
+   USBDM_ErrorCode doReadbackVerify(FlashImage *flashImage);
    USBDM_ErrorCode doVerify(FlashImage *flashImage);
    USBDM_ErrorCode blankCheckBlock(FlashImage   *flashImageDescription,
                                 unsigned int  blockSize,
@@ -123,9 +127,10 @@ private:
 public:
    USBDM_ErrorCode initTCL(void);
    USBDM_ErrorCode releaseTCL(void);
-   USBDM_ErrorCode setDeviceData(const DeviceData  &theParameters);
+   USBDM_ErrorCode setDeviceData(const DeviceData &theParameters);
+   DeviceData*     getDeviceData() { return &parameters; }
    USBDM_ErrorCode checkTargetUnSecured();
-   USBDM_ErrorCode runTCLScript(TclScriptPtr script);
+   USBDM_ErrorCode runTCLScript(TclScriptConstPtr script);
    USBDM_ErrorCode runTCLCommand(const char *command);
    USBDM_ErrorCode massEraseTarget();
    USBDM_ErrorCode programFlash(FlashImage *flashImage, CallBackT errorCallBack=NULL, bool doRamWrites=false);
@@ -140,12 +145,13 @@ public:
    USBDM_ErrorCode resetAndConnectTarget(void);
    FlashProgrammer() :
       tclInterpreter(NULL),
-      useTCLScript(true),
       flashReady(false),
       initTargetDone(false),
       targetBusFrequency(0),
       progressTimer(NULL),
-      doRamWrites(false) {
+      doRamWrites(false),
+      securityNeedsSelectiveErase(false)
+      {
 //      print("FlashProgrammer()\n");
    }
    ~FlashProgrammer();

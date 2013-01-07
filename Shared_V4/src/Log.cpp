@@ -37,6 +37,7 @@
  */
 #include <stdio.h>
 #include <time.h>
+#include <sys/time.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
@@ -55,11 +56,13 @@
 #define ADDRESS_SIZE_MASK    (3<<0)
 #define DISPLAY_SIZE_MASK    (3<<2)
 
-const char *Logging::currentName     = NULL; //!< Name of current function
-FILE       *Logging::logFile         = NULL; //!< File handle for logging file
-int         Logging::indent          = 0;    //!< Indent level for listing
-int         Logging::currentLogLevel = 1;    //!< Level below which to log messages
-bool        Logging::loggingEnabled  = true; //!< Logging on/off
+
+const char *Logging::currentName       = NULL;  //!< Name of current function
+FILE       *Logging::logFile           = NULL;  //!< File handle for logging file
+int         Logging::indent            = 0;     //!< Indent level for listing
+int         Logging::currentLogLevel   = 100;   //!< Level below which to log messages
+bool        Logging::loggingEnabled    = true;  //!< Logging on/off
+bool        Logging::timestampEnabled  = false; //!< Timestamp messages
 
 /*!  \brief Object to allow logging the execution of a function
  *
@@ -95,6 +98,8 @@ void Logging::openLogFile(const char *logFileName, const char *description){
  *
  *  @param logFileName - Name of log file
  *  @param description - Description written to log file
+ *
+ *  @note logging is enabled and timestamp disabled
  */
 void Logging::openLogFile(const char *logFileName, const char *description){
    time_t time_now;
@@ -114,7 +119,8 @@ void Logging::openLogFile(const char *logFileName, const char *description){
    if (logFile == NULL) {
       return;
    }
-   loggingEnabled = true;
+   loggingEnabled   = true;
+   timestampEnabled = false;
    fprintf(logFile, "%s - %s, Compiled on %s, %s.\n",
          description,
          USBDM_VERSION_STRING, __DATE__,__TIME__);
@@ -138,6 +144,19 @@ void Logging::enableLogging(bool value) {
  */
 void Logging::setLoggingLevel(int level) {
    currentLogLevel = indent + level;
+}
+/*!  \brief Get logging level relative to current level
+ *
+ */
+int Logging::getLoggingLevel() {
+   return indent - currentLogLevel;
+}
+/*! \brief Turns timestamp on or off
+ *
+ *  @param value - true/false => on/off timestamp
+ */
+void Logging::enableTimestamp(bool enable) {
+   timestampEnabled = enable;
 }
 /*!  \brief Close the log file
  *
@@ -175,6 +194,20 @@ void Logging::printq(const char *format, ...) {
    va_end(list);
    fflush(logFile);
 }
+
+/*! \brief Get time as milliseconds
+ *
+ *  @return time value
+ */
+static double getTimeStamp()
+{
+   struct timeval tv;
+   if (gettimeofday(&tv, NULL) != 0) {
+      return 0;
+   }
+   return (tv.tv_sec*1000)+(tv.tv_usec/1000.0);
+}
+
 /*! \brief Provides a print function which prints data into a log file.
  *
  *  @param format Format and parameters as for printf()
@@ -187,12 +220,14 @@ void Logging::print(const char *format, ...) {
    if (format == NULL) {
       format = "print() - Error - empty format string!\n";
    }
+   if (timestampEnabled) {
+      fprintf(logFile, "%04.3f: ",getTimeStamp());
+   }
    fprintf(logFile, "%*s", 3*indent, "");
    if (currentName!=NULL) {
       fprintf(logFile, "%s(): ", currentName);
    }
    va_start(list, format);
-   //fprintf(log_file, "%04.3f: ",1.0*GetTickCount()/1000);
    vfprintf(logFile, format, list);
    va_end(list);
    fflush(logFile);
@@ -209,12 +244,14 @@ void Logging::error(const char *format, ...) {
    if (format == NULL) {
       format = "error() - Error - empty format string!\n";
    }
+   if (timestampEnabled) {
+      fprintf(logFile, "%04.3f: ",getTimeStamp());
+   }
    fprintf(logFile, "%*s", 3*indent, "");
    if (currentName!=NULL) {
       fprintf(logFile, "%s(): ", currentName);
    }
    va_start(list, format);
-   //fprintf(log_file, "%04.3f: ",1.0*GetTickCount()/1000);
    vfprintf(logFile, format, list);
    va_end(list);
    fflush(logFile);
@@ -265,6 +302,9 @@ void Logging::printDump(unsigned const char *data,
    while(size>0) {
       if (eolFlag) {
          eolFlag = false;
+         if (timestampEnabled) {
+            fprintf(logFile, "%04.3f: ",getTimeStamp());
+         }
          fprintf(logFile, "%*s", 3*indent, "");
          fprintf(logFile,"   %8.8X:", address>>addressShift);
       }

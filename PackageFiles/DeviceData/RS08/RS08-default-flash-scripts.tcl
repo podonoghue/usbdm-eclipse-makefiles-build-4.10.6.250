@@ -17,6 +17,12 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -44,7 +50,9 @@ proc loadSymbols {} {
    set ::RS08_FLCR_PGM          0x01
    set ::RS08_FLCR_MASS_HVEN    [expr ($::RS08_FLCR_MASS|$::RS08_FLCR_HVEN)]
    
+   return
 }
+
 ;######################################################################################
 ;#
 ;#
@@ -54,6 +62,8 @@ proc initTarget { sopt fopt flcr } {
    set ::RS08_FLCR  $flcr
 
    wb $::RS08_SOPT $::RS08_SOPT_INIT ;# Disable COP
+   
+   return
 }
 
 ;######################################################################################
@@ -62,6 +72,8 @@ proc initTarget { sopt fopt flcr } {
 ;#
 proc initFlash { busFrequency } {
 ;# Not used
+   
+   return
 }
 
 ;######################################################################################
@@ -93,24 +105,25 @@ proc massEraseTarget { } {
    
    ;# Should be unsecure
    isUnsecure
+
+   ;# Flash is now Blank and unsecured
 }
 
 ;######################################################################################
 ;#
-;#
 proc isUnsecure { } {
-   ;# puts "Checking if unsecured"
+   ;#  puts "Checking if unsecured"
    set securityValue [rb $::RS08_FOPT]
 
    if [ expr ( $securityValue & $::RS08_FOPT_SECD_MASK ) != $::RS08_FOPT_SECD_UNSEC ] {
-      error "Target is secured"
+      return "Target is secured"
    }
+   return
 }
 
 ;######################################################################################
-;#
+;# Actions on initial load
 ;#
 loadSymbols
-return
 
 ;#]]>

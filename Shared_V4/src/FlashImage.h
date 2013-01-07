@@ -114,12 +114,20 @@ private:
       }
 
       //=====================================================================
-      //! Returns contents of page[index] if valid or 0xFF otherwise
+      //! Sets page[index] to value & marks as valid
       //!
-      elementType getValue(unsigned index) {
+      void remove(unsigned index) {
          if (index >= PageSize) {
             throw runtime_error("Page index out of range");
          }
+         data[index]         = 0xFF;
+         validBits[index/8] &= ~(1<<(index&0x7));
+      }
+
+      //=====================================================================
+      //! Returns contents of page[index] if valid or 0xFF otherwise
+      //!
+      elementType getValue(unsigned index) {
          if (!isValid(index)) {
             return 0xFF;
          }
@@ -183,7 +191,6 @@ public:
 
 private:
    std::map<uint32_t,MemoryPage<dataType>*>  memoryPages;            //!< Pointers to occupied memory pages
-   bool                                      empty;                  //!< Memory is blank
    unsigned                                  firstAllocatedAddress;  //!< First used memory locations
    unsigned                                  lastAllocatedAddress;   //!< Last used memory locations
    uint16_t                                  lastPageNumAccessed;    //!< Page # of last page accessed
@@ -198,7 +205,6 @@ public:
    //! Constructor - creates an empty Flash image
    //!
    FlashImageT() :
-      empty(true),
       firstAllocatedAddress((unsigned )(-1)),
       lastAllocatedAddress(0),
       lastPageNumAccessed((uint16_t )(-1)),
@@ -229,7 +235,6 @@ public:
          it++;
       }
       memoryPages.clear();
-      empty                  = true;
       firstAllocatedAddress  = (unsigned )(-1);
       lastAllocatedAddress   = 0;
       lastPageNumAccessed    = (uint16_t )(-1);
@@ -269,7 +274,7 @@ public:
    //!               image is not empty
    //!
    bool isEmpty() const {
-      return empty;
+      return elementCount==0;
    }
 
    //=====================================================================
@@ -296,7 +301,7 @@ public:
    //!
    //! @param   pageNum
    //!
-   //! @return  memory page or NULL id not found
+   //! @return  memory page or NULL if not found
    //!
    MemoryPage<dataType> *getmemoryPage(uint32_t pageNum) {
       MemoryPage<dataType> *memoryPage;
@@ -365,6 +370,13 @@ public:
    //! @note Allocates a memory location if necessary
    //!
    void setValue(uint32_t address, dataType value);
+
+   //=====================================================================
+   //! Remove a Flash memory location (set to unprogrammed)
+   //!
+   //! @param address - 32-bit memory address
+   //!
+   void remove(uint32_t address);
 
    //=====================================================================
    //! Dumps a memory range
@@ -496,7 +508,6 @@ void FlashImageT<dataType>::setValue(uint32_t address, dataType value) {
    uint16_t offset;
    uint16_t pageNum;
 
-   empty = false;
    addressToPageOffset(address, pageNum, offset);
    MemoryPage<dataType> *memoryPage = allocatePage(pageNum);
    if (!memoryPage->isValid(offset)) {
@@ -510,6 +521,26 @@ void FlashImageT<dataType>::setValue(uint32_t address, dataType value) {
    if (lastAllocatedAddress < address) {
       lastAllocatedAddress = address;
    }
+}
+
+//=====================================================================
+//! Remove a Flash memory location (set to unprogrammed)
+//!
+//! @param address - 32-bit memory address
+//!
+template <class dataType>
+void FlashImageT<dataType>::remove(uint32_t address) {
+   uint16_t offset;
+   uint16_t pageNum;
+
+   addressToPageOffset(address, pageNum, offset);
+   MemoryPage<dataType> *memoryPage = getmemoryPage(pageNum);
+   if ((memoryPage == NULL) || !memoryPage->isValid(offset)) {
+      // Doesn't exist
+      return;
+   }
+   elementCount--;
+   memoryPage->remove(offset);
 }
 
 /*! Convert a 32-bit unsigned number between Target and Native format

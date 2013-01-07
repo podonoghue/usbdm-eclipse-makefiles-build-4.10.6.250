@@ -10,6 +10,10 @@
 <!ENTITY Custom-Devices                 SYSTEM "Custom/custom-cfv1.xml">
 ]>
 <!--  Notes
+
+      V4.10.4 - Changed how security information is expressed
+      V4.10.4 - Added I/O spaces
+
 Coldfire
   Memory types should be either
      ram       Programming buffer
@@ -21,7 +25,7 @@ Coldfire+
      flexNVM   Flash that may be partitioned between dFlash and emulated EEPROM backing store
      dFlash    Data flash - as for flash but Block 1
  -->
-<root version="4.9.5">
+<root version="4.10.4">
    <description>Coldfire V1 Device characteristics v4.8.0 25/12/2011</description>
    <sharedInformation>
       <flashProgram id="CFV1-default-FlashProgram">
@@ -39,22 +43,34 @@ Coldfire+
       <flashProgram id="CFV1-Watchdog-FlashProgram">
       &CFV1-Watchdog-flashProgram;
       </flashProgram>
-      <!-- CFV1+ Unsecured value = backdoor[0-7],FPROT[0-3],EEPROT,FOPT,FSEC -->
-      <securityInfo size="16" type="off" id="CFV1Plus-default-security-off">
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE
-      </securityInfo>
-      <!-- CFV1+ Secured value = backdoor[0-7],FPROT[0-3],EEPROT,FOPT,FSEC -->
-      <securityInfo size="16" type="on" id="CFV1Plus-default-security-on">
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBF
-      </securityInfo>
-      <!-- CFV1 Unsecured value = backdoor[0-7],RES[0-4],NVPROT,RES,NVOPT -->
-      <securityInfo size="16" type="off" id="CFV1-default-security-off">
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      </securityInfo>
-      <!-- CFV1 Secured value = backdoor[0-7],RES[0-4],NVPROT,RES,NVOPT -->
-      <securityInfo size="16" type="on" id="CFV1-default-security-on">
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBE
-      </securityInfo>
+      <!-- CFV1 Security Entry -->
+      <securityEntry id="CFV1-default-security">
+         <securityDescription id="CFV1-default-security-description">
+            BACKDOOR\t= %8X\nRES\t\t= %5X\nNVPROT\t= [FPS=%7b, FPOPEN=%b]\nRES \t\t= %1X\nNVOPT\t\t= [KEYEN=%2b, RES=%4b, SEC=%2b]
+         </securityDescription>
+         <!-- CFV1 Unsecured value = backdoor[0-7],RES[0-4],NVPROT,RES,NVOPT -->
+         <securityInfo size="16" type="unsecure" id="CFV1-default-security-off">
+           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+         </securityInfo>
+         <!-- CFV1 Secured value = backdoor[0-7],RES[0-4],NVPROT,RES,NVOPT -->
+         <securityInfo size="16" type="secure" id="CFV1-default-security-on">
+           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBE
+         </securityInfo>
+      </securityEntry>
+      <!-- CFV1+ Security Entry -->
+      <securityEntry id="CFV1Plus-default-security">
+         <securityDescription id="CFV1Plus-default-security-description">
+            BACKDOOR\t= 0x%8X\nFPROT\t\t= 0x%4X\nFDPROT\t= %1X\t\tFEPROT\t\t= %1X\t\tFOPT\t\t= [RES=%7b, EZPORT_DIS=%b]\nFSEC\t\t= [KEYEN=%2b, MEEN=%2b, FSLACC=%2b, SEC=%2b]
+         </securityDescription>
+         <!-- CFV1+ Unsecured value = backdoor[0-7],FPROT[0-3],EEPROT,FOPT,FSEC -->
+         <securityInfo size="16" type="unsecure" id="CFV1Plus-default-security-off">
+           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE
+         </securityInfo>
+         <!-- CFV1+ Secured value = backdoor[0-7],FPROT[0-3],EEPROT,FOPT,FSEC -->
+         <securityInfo size="16" type="secure" id="CFV1Plus-default-security-on">
+           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBF
+         </securityInfo>
+      </securityEntry>
       <flexNVMInfo id="coldfirePlus32kFlexPartionInfo" backingRatio="16">
          <eeepromEntry description="Unchanged/None" eeeSize="0"    value="0xFF" />
          <eeepromEntry description="32"             eeeSize="32"   value="0x39" />
@@ -97,22 +113,19 @@ Coldfire+
       <memory id="coldfirePlus32K_Flash" type="flash" registerAddress="0xFF84E0" securityAddress="0x0400"
          sectorSize="1024" alignment="4" >
          <flashProgramRef ref="CFV1Plus-default-FlashProgram" />
-         <securityInfoRef ref="CFV1Plus-default-security-off" />
-         <securityInfoRef ref="CFV1Plus-default-security-on" />
+         <securityEntryRef ref="CFV1Plus-default-security" />
          <memoryRange start="0x000000" size="32K" />
       </memory>
       <memory id="coldfirePlus64K_Flash" type="flash" registerAddress="0xFF84E0" securityAddress="0x0400"
          sectorSize="1024" alignment="4" >
          <flashProgramRef ref="CFV1Plus-default-FlashProgram" />
-         <securityInfoRef ref="CFV1Plus-default-security-off" />
-         <securityInfoRef ref="CFV1Plus-default-security-on" />
+         <securityEntryRef ref="CFV1Plus-default-security" />
          <memoryRange start="0x000000" size="64K" />
       </memory>
       <memory id="coldfirePlus128K_Flash" type="flash" registerAddress="0xFF84E0" securityAddress="0x0400"
          sectorSize="1024" alignment="4" >
          <flashProgramRef ref="CFV1Plus-default-FlashProgram" />
-         <securityInfoRef ref="CFV1Plus-default-security-off" />
-         <securityInfoRef ref="CFV1Plus-default-security-on" />
+         <securityEntryRef ref="CFV1Plus-default-security" />
          <memoryRange start="0x000000" size="128K" />
       </memory>
       <memory id="coldfire16K_FlexNVM" type="flexNVM" registerAddress="0xFF84E0" sectorSize="1024" alignment="4" >
@@ -160,8 +173,7 @@ Coldfire+
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -175,8 +187,7 @@ Coldfire+
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -190,8 +201,7 @@ Coldfire+
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="256K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -205,8 +215,7 @@ Coldfire+
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="256K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -220,8 +229,7 @@ Coldfire+
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="96K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -235,8 +243,7 @@ Coldfire+
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <soptAddress value="0xFF9880" />
@@ -250,8 +257,7 @@ Coldfire+
          <memoryRef ref="coldfire24K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF82E0" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <soptAddress value="0xFF9880" />
@@ -265,13 +271,11 @@ Coldfire+
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF8780" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="64K" />
          </memory>
          <memory registerAddress="0xFF87A0" type="flash" securityAddress="0x020400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x010000" size="64K" />
          </memory>
          <soptAddress value="0xFF8281" />
@@ -285,13 +289,11 @@ Coldfire+
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF8780" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <memory registerAddress="0xFF87A0" type="flash" securityAddress="0x020400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x020000" size="128K" />
          </memory>
          <soptAddress value="0xFF8281" />
@@ -305,13 +307,10 @@ Coldfire+
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9920" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="64K" />
          </memory>
-         <memory registerAddress="0xFF9930" type="flash" securityAddress="0x010400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+         <memory registerAddress="0xFF9930" type="flash">
             <memoryRange start="0x010000" size="64K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -325,13 +324,10 @@ Coldfire+
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9920" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
-         <memory registerAddress="0xFF9930" type="flash" securityAddress="0x020400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+         <memory registerAddress="0xFF9930" type="flash">
             <memoryRange start="0x020000" size="128K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -417,8 +413,7 @@ Coldfire+
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="32K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -433,8 +428,7 @@ Coldfire+
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="64K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -449,8 +443,7 @@ Coldfire+
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -465,13 +458,11 @@ Coldfire+
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9920" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="64K" />
          </memory>
          <memory registerAddress="0xFF9920" type="flash" securityAddress="0x020400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x010000" size="64K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -485,13 +476,11 @@ Coldfire+
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9920" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <memory registerAddress="0xFF9930" type="flash" securityAddress="0x020400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x020000" size="128K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -505,8 +494,7 @@ Coldfire+
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="32K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -520,8 +508,7 @@ Coldfire+
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="64K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -535,8 +522,7 @@ Coldfire+
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="96K" />
          </memory>
          <soptAddress value="0xFF9802" />
@@ -550,8 +536,7 @@ Coldfire+
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400">
-            <securityInfoRef ref="CFV1-default-security-off" />
-            <securityInfoRef ref="CFV1-default-security-on" />
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <soptAddress value="0xFF9802" />

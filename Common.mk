@@ -90,11 +90,15 @@ ifeq ($(UNAME_S),Windows)
    # Pick up shared DLLs from Shared_V4/lib
    WXWIDGETS_SHARED_LIBDIRS :=
    WXWIDGETS_SHARED_LIBS    := \
-   -lwxmsw294u_core_gcc_custom       -lwxbase294u_gcc_custom \
-   -lwxmsw294u_adv_gcc_custom
-   #-lwxbase294u_net_gcc_custom       -lwxbase294u_xml_gcc_custom     \
-   #-lwxmsw294u_aui_gcc_custom      \
-   #-lwxmsw294u_gl_gcc_custom         -lwxmsw294u_html_gcc_custom     \
+   -lwxmsw294u_core_gcc_custom       \
+   -lwxbase294u_gcc_custom           \
+   -lwxmsw294u_adv_gcc_custom        
+#   -lwxmsw294u_richtext_gcc_custom   \
+   -lwxbase294u_xml_gcc_custom       \
+   -lwxmsw294u_html_gcc_custom
+   #-lwxbase294u_net_gcc_custom            \
+   #-lwxmsw294u_aui_gcc_custom             \
+   #-lwxmsw294u_gl_gcc_custom              \
    #-lwxmsw294u_media_gcc_custom      -lwxmsw294u_propgrid_gcc_custom \
    #-lwxmsw294u_ribbon_gcc_custom     -lwxmsw294u_richtext_gcc_custom \
    #-lwxmsw294u_stc_gcc_custom        -lwxmsw294u_webview_gcc_custom  \

@@ -19,6 +19,19 @@
 #include "CFUnlockerDialogue.h"
 #include "CFUnlockerPanel.h"
 
+const TargetType_t targetType = T_JTAG;
+
+#if TARGET==CFVx
+const char caption[] = "USBDM Coldfire Unlock Utility";
+const char *logFilename("FlashProgrammer_CFVx.log");
+#elif TARGET==MC56F80xx
+#include "USBDM_DSC_API.h"
+const char caption[] = "USBDM MC56F80xx Unlock Utiltiy";
+const char *logFilename("FlashProgrammer_DSC.log");
+#else
+#error "TARGET must be set"
+#endif
+
 /*
  * Application instance implementation
  */
@@ -50,23 +63,26 @@ CFUnlockerApp::CFUnlockerApp()
 }
 
 /*
- * Member initialisation
+ * Member initialization
  */
 void CFUnlockerApp::Init()
 {
 }
 
 /*
- * Initialisation for CFUnlockerApp
+ * Initialization for CFUnlockerApp
  */
 bool CFUnlockerApp::OnInit()
 {
-//   ColdfireUnlockerPanel* mainWindow = new ColdfireUnlockerPanel(NULL);
-//   /* int returnValue = */ mainWindow->ShowModal();
+   Logging::setLoggingLevel(100);
+   Logging log("CFUnlockerApp::OnInit()");
 
-   CFUnlockerDialogue *mainWindow = new CFUnlockerDialogue(NULL);
-   mainWindow->ShowModal();
-   mainWindow->Destroy();
+   USBDM_Init();
+
+   CFUnlockerDialogue *dialogue = new CFUnlockerDialogue(targetType, caption);
+   dialogue->Create(NULL);
+   dialogue->ShowModal();
+   dialogue->Destroy();
 
    return false; // Terminate app on return
 }

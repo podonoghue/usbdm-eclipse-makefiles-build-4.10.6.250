@@ -3,20 +3,29 @@
 [
 <!ENTITY RS08-default-flashScripts      SYSTEM "RS08/RS08-default-flash-scripts.tcl">
 ]>
-<root version="4.9.5">
+<!-- 
+      V4.10.4 - Changed how security information is expressed
+ -->
+<root version="4.10.4">
    <description>RS08 Device characteristics v4.8.0 5/12/2011</description>
    <sharedInformation>
       <tclScript id="RS08-default-Scripts">
          &RS08-default-flashScripts;
       </tclScript>
-      <!-- RS08 Unsecured value = NVOPT -->
-      <securityInfo size="1" type="off" id="RS08-default-security-off">
-         FF
-      </securityInfo>
-      <!-- RS08 Secured value = NVOPT -->
-      <securityInfo size="1" type="on" id="RS08-default-security-on">
-         FE
-      </securityInfo>
+      <!-- Security Values for Flash -->
+      <securityEntry id="HCS12-default-security">
+         <securityDescription id="RS08-default-security-description">
+            NVOPT = [RES=%7b, SECD=%1b]
+         </securityDescription>
+         <!-- RS08 Unsecured value = NVOPT -->
+         <securityInfo size="1" type="unsecure" id="RS08-default-security-off">
+            FF
+         </securityInfo>
+         <!-- RS08 Secured value = NVOPT -->
+         <securityInfo size="1" type="secure" id="RS08-default-security-on">
+            FE
+         </securityInfo>
+      </securityEntry>
    </sharedInformation>
    <deviceList>
       <device family="RS08" name="_Default" isDefault="true" >
@@ -25,8 +34,7 @@
             <memoryRange end="0x004F" start="0x0020" />
          </memory>
          <memory registerAddress="0x210" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x3C00" />
          </memory>
          <sdidMask value="0xFFF" />
@@ -42,8 +50,7 @@
             <memoryRange end="0x004F" start="0x0020" />
          </memory>
          <memory registerAddress="0x210" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x3C00" />
          </memory>
          <soptAddress value="0x201" />
@@ -59,8 +66,7 @@
             <memoryRange end="0x004F" start="0x0020" />
          </memory>
          <memory registerAddress="0x210" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x3800" />
          </memory>
          <soptAddress value="0x201" />
@@ -77,8 +83,7 @@
             <memoryRange end="0x009F" start="0x0030" />
          </memory>
          <memory registerAddress="0x210" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x3000" />
          </memory>
          <soptAddress value="0x201" />
@@ -95,8 +100,7 @@
             <memoryRange end="0x00BF" start="0x0030" />
          </memory>
          <memory registerAddress="0x210" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x2000" />
          </memory>
          <soptAddress value="0x201" />
@@ -112,8 +116,7 @@
             <memoryRange end="0x00BF" start="0x0050" />
          </memory>
          <memory registerAddress="0x208" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x3800" />
          </memory>
          <soptAddress value="0x211" />
@@ -130,8 +133,7 @@
             <memoryRange end="0x00BF" start="0x0050" />
          </memory>
          <memory registerAddress="0x208" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x3000" />
          </memory>
          <soptAddress value="0x211" />
@@ -148,8 +150,7 @@
             <memoryRange end="0x00BF" start="0x0050" />
          </memory>
          <memory registerAddress="0x208" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x2000" />
          </memory>
          <soptAddress value="0x211" />
@@ -166,8 +167,7 @@
             <memoryRange end="0x00BF" start="0x0050" />
          </memory>
          <memory registerAddress="0x208" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x1000" />
          </memory>
          <soptAddress value="0x211" />
@@ -184,8 +184,7 @@
             <memoryRange end="0x00BF" start="0x0050" />
          </memory>
          <memory registerAddress="0x250" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x2000" />
          </memory>
          <soptAddress value="0x019" />
@@ -201,8 +200,7 @@
             <memoryRange end="0x00BF" start="0x0050" />
          </memory>
          <memory registerAddress="0x23C" type="flash" securityAddress="0x3FFC">
-            <securityInfoRef ref="RS08-default-security-off" />
-            <securityInfoRef ref="RS08-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange end="0x3FFF" start="0x3000" />
          </memory>
          <soptAddress value="0x019" />

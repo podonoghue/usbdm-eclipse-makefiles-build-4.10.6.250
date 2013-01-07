@@ -11,6 +11,10 @@
 <!ENTITY STM-Devices                       SYSTEM "ARM/STM-Devices.xml">
 <!ENTITY Custom-Devices                    SYSTEM "Custom/custom-arm.xml">
 ]>
+<!-- 
+      V4.10.4 - Changed how security information is expressed
+      V4.10.4 - Added Kinetis I/O space 
+ -->
 <root version="4.10.4">
    <description>ARM device characteristics 1/7/2012</description>
    <sharedInformation>
@@ -32,14 +36,19 @@
       <tclScript id="Kinetis-KLxx-Scripts">
       &Kinetis-KLxx-flashScripts;
       </tclScript>
-      <!-- Kinetis Unsecured value = backdoor[0-7],FPROT[0-3],EEPROT,FOPT,FSEC -->
-      <securityInfo size="16" type="off" id="Kinetis-default-security-off">
-         FFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFF
-      </securityInfo>
-      <!-- Kinetis Secured value = backdoor[0-7],FPROT[0-3],EEPROT,FOPT,FSEC -->
-      <securityInfo size="16" type="on" id="Kinetis-default-security-on">
-         FFFFFFFFFFFFFFFFFFFFFFFFBFFFFFFF
-      </securityInfo>  
+      <securityEntry id="Kinetis-default-security">
+         <securityDescription id="Kinetis-default-security-description">
+            BACKDOOR\t= 0x%8X\nFPROT\t\t= 0x%4X\nFSEC\t\t= [KEYEN=%2b, MEEN=%2b, FSLACC=%2b, SEC=%2b]\nFOPT\t\t= [RES=%6b, EZPORT_DIS=%b, LPBOOT=%b]\nFEPROT\t\t= 0x%X\t\tFDPROT\t= 0x%X
+         </securityDescription>
+         <!-- Kinetis Unsecured value -->
+         <securityInfo size="16" type="unsecure" id="Kinetis-default-security-off">
+            FFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFF
+         </securityInfo>
+         <!-- Kinetis Secured value -->
+         <securityInfo size="16" type="secure" id="Kinetis-default-security-on">
+            0123456789ABCDEFFFFFFFFFBFFFFFFF
+         </securityInfo>  
+      </securityEntry>
       <flexNVMInfo id="kinetis32K_FlexPartitionInfo" backingRatio="16">
          <eeepromEntry   description="Unchanged/None"         eeeSize="0"     value="0xFF" />
          <eeepromEntry   description="32"                     eeeSize="32"    value="0x39" />
@@ -195,45 +204,37 @@
       <memory id="kinetis256K_Ram" type="ram">
          <memoryRange middle="0x20000000" size="256K" />
       </memory>
-      <!--  Flash Block 0-->
+      <!--  Flash Block 0 -->
       <memory id="kinetis4K_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityInfoRef ref="Kinetis-default-security-off" />
-         <securityInfoRef ref="Kinetis-default-security-on" />
+         <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="4K" />
       </memory>
       <memory id="kinetis8K_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityInfoRef ref="Kinetis-default-security-off" />
-         <securityInfoRef ref="Kinetis-default-security-on" />
+         <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="8K" />
       </memory>
       <memory id="kinetis16K_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityInfoRef ref="Kinetis-default-security-off" />
-         <securityInfoRef ref="Kinetis-default-security-on" />
+         <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="16K" />
       </memory>
       <memory id="kinetis32K_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityInfoRef ref="Kinetis-default-security-off" />
-         <securityInfoRef ref="Kinetis-default-security-on" />
+         <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="32K" />
       </memory>
       <memory id="kinetis64K_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityInfoRef ref="Kinetis-default-security-off" />
-         <securityInfoRef ref="Kinetis-default-security-on" />
+         <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="64K" />
       </memory>
       <memory id="kinetis128K_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityInfoRef ref="Kinetis-default-security-off" />
-         <securityInfoRef ref="Kinetis-default-security-on" />
+         <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="128K" />
       </memory>
       <memory id="kinetis256K_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityInfoRef ref="Kinetis-default-security-off" />
-         <securityInfoRef ref="Kinetis-default-security-on" />
+         <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="256K" />
       </memory>
       <memory id="kinetis512K_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityInfoRef ref="Kinetis-default-security-off" />
-         <securityInfoRef ref="Kinetis-default-security-on" />
+         <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="512K" />
       </memory>
       <!--  Flash Block 1-->

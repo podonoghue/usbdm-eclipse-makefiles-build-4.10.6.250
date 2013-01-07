@@ -18,6 +18,8 @@ SRC += Names.cpp
 SRC += tclInterface.cpp
 SRC += USBDM_AUX.cpp
 SRC += Utils.cpp
+SRC += FindWindow.c
+SRC += GDI_Common.cpp
 
 # Shared files $(SHARED_SRC)/Programmer
 VPATH := $(SHARED_SRC)/gdi $(VPATH)

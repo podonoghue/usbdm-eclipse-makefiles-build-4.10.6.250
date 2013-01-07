@@ -17,6 +17,13 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;#  V4.10.4 - Added disableWatchdog { }
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -27,10 +34,10 @@ proc loadSymbols {} {
    set ::BDMGPR                     0xFF08
    set ::BDMGPR_BGAE                0x80
 
-   set ::NVM_FSEC_SEC_MASK         0x03   ;# Security bits
-   set ::NVM_FSEC_SEC_UNSEC        0x02   ;# Security bits for unsecured device
-   set ::NVM_FSEC_SEC_KEYEN        0x80   ;# Backdoor Key enable
-   set ::NVM_FSEC_UNSEC_VALUE      0xFFFE ;# Value to use when unsecuring (0xFF:NVSEC value)
+   set ::NVM_FSEC_SEC_MASK        0x03   ;# Security bits
+   set ::NVM_FSEC_SEC_UNSEC       0x02   ;# Security bits for unsecured device
+   set ::NVM_FSEC_SEC_KEYEN       0x80   ;# Backdoor Key enable
+   set ::NVM_FSEC_UNSEC_VALUE     0xFFFE ;# Value to use when unsecuring (0xFF:NVSEC value)
                                     
    set ::NVM_FCLKDIV              0x0100
    set ::NVM_FSEC                 0x0101
@@ -48,9 +55,9 @@ proc loadSymbols {} {
    set ::NVM_FECCRHI              0x010E
    set ::NVM_FECCRLO              0x010F
    set ::NVM_FOPT                 0x0110
-
+                                    
    set ::NVM_NVSEC                0x7FFF08  ;# actually SEC as word aligned
-
+                                    
    set ::NVM_FSTAT_CCIF           0x80
    set ::NVM_FSTAT_ACCERR         0x20
    set ::NVM_FSTAT_FPVIOL         0x10
@@ -71,20 +78,43 @@ proc loadSymbols {} {
    set ::HCS12_BDMSTS_CLKSW         0x04
    set ::HCS12_BDMSTS_UNSEC         0x02
 
-   set ::HCS12_PRDIV8               0x40
-
+   set ::COPCTL                     0x3C
+   set ::COPCTL_DISABLE             0x40
+   
    set ::FLASH_REGIONS              "" ;# List of addresses within each unique flash region (incl. eeprom)
+   
+   return
 }
 
 ;######################################################################################
 ;#
-;# @param flashAddresses - list of flash array addresses
+;# Disable watchdog
+;#
+;# A reset is required to prevent a possible timeout before the COPCTL write completes
+;#
+proc disableWatchdog { } {
+
+   ;# Disable watchdog immediately after a reset
+   ;# dialogue "Before reset - XFTMRK" Waiting... ok
+   ;# reset s h
+
+   catch {connect}                 ;# Ignore possible BDM enable fault
+   wb $::COPCTL $::COPCTL_DISABLE  ;# Disable WDOG
+   rb $::COPCTL 
+   
+   return
+}
+
+;######################################################################################
+;#
+;# @param flashRegions - list of flash array addresses
 ;#
 proc initTarget { flashRegions } {
    ;# puts "initTarget {}"
    
    set ::FLASH_REGIONS  $flashRegions 
 
+   disableWatchdog
 }
 
 ;######################################################################################
@@ -97,9 +127,11 @@ proc initFlash { busFrequency } {
    set cfmclkd [calculateFlashDivider $busFrequency]
 
    ;# Set up Flash divider
-   wb $::NVM_FCLKDIV $cfmclkd               ;# Flash divider
+   wb $::NVM_FCLKDIV $cfmclkd             ;# Flash divider
    wb $::NVM_FPROT   $::NVM_xPROT_VALUE   ;# unprotect Flash
    wb $::NVM_EPROT   $::NVM_xPROT_VALUE   ;# unprotect EEPROM
+   
+   return
 }
 
 ;######################################################################################
@@ -111,7 +143,7 @@ proc calculateFlashDivider { busFrequency } {
 ;#   According to data sheets the Flash uses the OSC clock for timing
 ;#   This code assumes busFrequency = Fosc/2
 ;#   Minimum BUS clock of 1MHz
-
+;#
    ;# puts "calculateFlashDivider {}"
    ;# minimum BUS frequency is 1MHz
    if { [expr $busFrequency < 1000] } {
@@ -120,7 +152,7 @@ proc calculateFlashDivider { busFrequency } {
    set fmclkFrequency [expr 2.0*$busFrequency]
    set cfmclkd  [expr round(floor(($fmclkFrequency/1050.0)-0.0001))]
    set flashClk [expr $fmclkFrequency/($cfmclkd+1)]
-   ;# puts "cfmclkd=$cfmclkd, flashClk=$flashClk"
+   ;# puts "cfmclkd = $cfmclkd, flashClk = $flashClk"
    if { [expr ($flashClk<800)||($flashClk>1050)] } {
       error "Not possible to find suitable flash clock divider"
    }      
@@ -136,7 +168,7 @@ proc calculateFlashDivider { busFrequency } {
 proc executeFlashCommand { cmd {address "none"} {data0 "none"} {data1 "none"} {data2 "none"} {data3 "none"} } {
    ;# puts "executeFlashCommand {}"
    
-   wb $::NVM_FSTAT   $::NVM_FSTAT_CLEAR             ;# clear any error flags
+   wb $::NVM_FSTAT     $::NVM_FSTAT_CLEAR           ;# clear any error flags
    wb $::NVM_FCCOBIX   0                            ;# index = 0
    wb $::NVM_FCCOBHI $cmd                           ;# load program command
    if {$address != "none"} {
@@ -176,6 +208,7 @@ proc executeFlashCommand { cmd {address "none"} {data0 "none"} {data1 "none"} {d
       ;# puts [ format "Flash command error NVM_FSTAT=0x%02X, retry=%d" $status $retry ]
       error "Flash command failed"
    }
+   return
 }
 
 ;######################################################################################
@@ -183,10 +216,10 @@ proc executeFlashCommand { cmd {address "none"} {data0 "none"} {data1 "none"} {d
 ;#
 proc massEraseTarget { } {
 
-   ;#  puts "massEraseTarget{}"
+   ;# puts "massEraseTarget{}"
    
-   ;# No initial connect as may fail.  Assumed done by caller.
-
+   ;# disableWatchdog
+   
    ;# Mass erase flash
    initFlash [expr [speed]/1000]  ;# Flash speed calculated from BDM connection speed
 
@@ -209,8 +242,9 @@ proc isUnsecure { } {
    set securityValue [rb $::NVM_FSEC]
 
    if [ expr ( $securityValue & $::NVM_FSEC_SEC_MASK ) != $::NVM_FSEC_SEC_UNSEC ] {
-      error "Target is secured"
+      return "Target is secured"
    }
+   return
 }
 
 ;######################################################################################

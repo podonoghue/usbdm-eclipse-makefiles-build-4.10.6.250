@@ -69,7 +69,12 @@ proc loadSymbols {} {
    set ::DBGMCU_CR              0xE0042004
                                
    set ::DHCSR                  0xE000EDF0
+   
+   return
 }
+
+;######################################################################################
+;#
 proc unlockFlash {} {
    ;#puts "Unlocking Flash"
    ;# Disable watchdog with external reset active
@@ -92,7 +97,12 @@ proc unlockFlash {} {
    if [ expr ( $flashCR & $::FLASH_CR_OPTWRE ) == 0 ] {
       error "Flash options failed to unlock"
    }
+   
+   return
 }
+
+;######################################################################################
+;#
 proc checkFlashError {} {
    set flashBusy $::FLASH_SR_BSY
    set retry 0
@@ -113,13 +123,21 @@ proc checkFlashError {} {
    if [ expr ( $flashSR & $::FLASH_SR_EOP ) == 0 ] {
       error "Flash operation did not complete"
    }
+   
+   return
 }
+
+;######################################################################################
+;#
 proc programWordLocation { addr value } {
 ;#   puts { addr "=" value }
    wl $::FLASH_SR [ expr ($::FLASH_SR_EOP|$::FLASH_SR_PGERR|$::FLASH_SR_WRPRTERR) ]
    ww $addr $value
    checkFlashError
+   
+   return
 }
+
 proc unsecureFlash {} {
 
    unlockFlash
@@ -148,7 +166,10 @@ proc unsecureFlash {} {
    if [ expr ( $flashOBR & $::FLASH_OBR_RDPRT ) != 0 ] {
       error "Flash unprotect error"
    }
+   
+   return
 }
+
 ;######################################################################################
 ;#
 ;#
@@ -160,6 +181,8 @@ proc initTarget { args } {
  ;#  rl $DBGMCU_CR
  ;# pinSet
  ;#  connect
+   
+   return
 }
 
 ;######################################################################################
@@ -168,7 +191,10 @@ proc initTarget { args } {
 ;#
 proc initFlash { busFrequency } {
 ;# Not used
+   
+   return
 }
+
 ;######################################################################################
 ;#
 ;#
@@ -183,6 +209,8 @@ proc massEraseTarget { } {
    wl $::FLASH_CR [ expr ($::FLASH_CR_MER|$::FLASH_CR_STRT) ]
    checkFlashError
    wl $::FLASH_CR 0
+   
+   return
 }
 
 ;######################################################################################
@@ -193,12 +221,13 @@ proc isUnsecure { } {
    if [ expr ( $flashOBR & $::FLASH_OBR_RDPRT ) != 0 ] {
       error "Flash is secured"
    }
+   
+   return
 }
 
 ;######################################################################################
 ;#
 ;#
 loadSymbols
-return
 
 ;#]]>

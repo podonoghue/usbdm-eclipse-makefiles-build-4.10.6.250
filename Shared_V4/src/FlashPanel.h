@@ -26,6 +26,8 @@
 #include "ProgressTimer.h"
 #include "Names.h"
 
+class Shared;
+
 /*!
  * USBDMConfigDialogue class declaration
  */
@@ -35,7 +37,13 @@ class FlashPanel: public wxPanel {
     DECLARE_EVENT_TABLE()
 
 private:
-   static wxProgressDialog *progressDialogue;
+   static wxProgressDialog* progressDialogue;
+   Shared*                  shared;
+
+   // The following are shared between dialogue pages
+   USBDM_ExtendedOptions_t& bdmOptions;             //!< Current BDM options
+   DeviceDataPtr&           currentDevice;          //!< Description of current device
+
    const static string      settingsKey;            //!< Key to use for saving settings
    int                      currentDeviceIndex;     //!< Device type (index into device database)
    bool                     doFilterByChipId;       //!< For dialogue handling - Filter by SDID
@@ -49,13 +57,11 @@ private:
    time_t                   fileLoadTime;           //!< Time last file was loaded
    wxString                 lastFileLoaded;         //!< Path to last file loaded
    FlashImage               flashImageData;         //!< Memory Image loaded from S1S9 files.
-   DeviceData               currentDevice;          //!< Description of current device
-   DeviceDataBase          *deviceDatabase;         //!< Database of available devices
+   DeviceDataBase*          deviceDatabase;         //!< Database of available devices
    TargetType_t             targetType;             //!< Device target type
    HardwareCapabilities_t   bdmCapabilities;        //!< Capabilities of the connected BDM
-   FlashProgrammer         *flashprogrammer;        //!< Flash programmer
-   wxSound                 *beep;
-   USBDM_ExtendedOptions_t  bdmOptions;
+   FlashProgrammer*         flashprogrammer;        //!< Flash programmer
+   wxSound*                 beep;
 //   wxString                 caption;
 //   int                      targetProperties;
 
@@ -149,8 +155,8 @@ private:
 
 public:
    // Constructors
-   FlashPanel(TargetType_t targetType=T_HCS08, HardwareCapabilities_t bdmCapabilities=BDM_CAP_NONE);
-   FlashPanel(wxWindow* parent, TargetType_t targetType=T_HCS08, HardwareCapabilities_t bdmCapabilities=BDM_CAP_NONE);
+   //   FlashPanel(TargetType_t targetType=T_HCS08, HardwareCapabilities_t bdmCapabilities=BDM_CAP_NONE);
+   FlashPanel(wxWindow* parent, Shared *shared, TargetType_t targetType=T_HCS08, HardwareCapabilities_t bdmCapabilities=BDM_CAP_NONE);
 
    // Destructor
    ~FlashPanel() {
@@ -171,6 +177,8 @@ public:
    // Update internal state from window
    bool TransferDataFromWindow();
 
+   bool updateState();
+
    // Set internal state to default
    void Init();
 
@@ -178,7 +186,7 @@ public:
    void saveSettings(AppSettings &settings);
 
    bool chooseDevice(const string &deviceName);
-   void getDialogueValues(DeviceData *state);
+   void getDialogueValues(DeviceData &state);
 
    void failBeep() {
       if (sound && (beep != NULL))
@@ -188,20 +196,20 @@ public:
 
    USBDM_ErrorCode loadHexFile( wxString hexFilename, bool clearBuffer );
 
-   void setBdmOptions(const USBDM_ExtendedOptions_t *_bdmOptions) {
-      bdmOptions            = *_bdmOptions;
-      bdmOptions.targetType = targetType;
-      bdmOptions.size       = sizeof(bdmOptions);
-      Logging::print("FlashPanel::setBdmOptions()\n");
-      printBdmOptions(_bdmOptions);
-   }
-   void setDeviceOptions(DeviceDataPtr deviceData) {
-      currentDevice.setFlexNVMParameters(deviceData->getFlexNVMParameters());
-   }
-   DeviceData *getCurrentDevice() {
-      Logging::print("FlashPanel::getCurrentDevice()\n");
-      return &currentDevice;
-   }
+//   void setBdmOptions(const USBDM_ExtendedOptions_t *_bdmOptions) {
+//      bdmOptions            = *_bdmOptions;
+//      bdmOptions.targetType = targetType;
+//      bdmOptions.size       = sizeof(bdmOptions);
+//      Logging::print("FlashPanel::setBdmOptions()\n");
+//      printBdmOptions(_bdmOptions);
+//   }
+//   void setDeviceOptions(DeviceDataPtr deviceData) {
+//      currentDevice->setFlexNVMParameters(deviceData->getFlexNVMParameters());
+//   }
+//   DeviceDataPtr getCurrentDevice() {
+//      Logging::print("FlashPanel::getCurrentDevice()\n");
+//      return currentDevice;
+//   }
 
 #ifdef GDI
    bool setDevice(const wxString &deviceName);

@@ -17,6 +17,12 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -58,7 +64,8 @@ proc loadSymbols {} {
    
    set ::SIM_COPC               0xFFFF80CA
    set ::SIM_COPC_VALUE         0x00
-   
+
+   return
 }
 
 ;######################################################################################
@@ -67,14 +74,18 @@ proc loadSymbols {} {
 proc initTarget { arg } {
    ;# Disable COP
    wb $::SIM_COPC $::SIM_COPC_VALUE
+   
+   return
 }
 
 ;######################################################################################
 ;#
-;#  frequency - Target bus frequency in kHz
+;#  busFrequency - Target bus frequency in kHz
 ;#
 proc initFlash { busFrequency } {
 ;# Not used
+   
+   return
 }
 
 ;######################################################################################
@@ -98,6 +109,9 @@ proc writeDBGCR { value } {
    wdreg $::CFV1_DRegCSR3byte [expr $::CFV1_CSR3_UI|($value & 0x0F) ]
 }
 
+;######################################################################################
+;# Read value from DBGCR register
+;#
 proc readDBGCR { } {
    set status 0
    set status [expr $status | [ rdreg $::CFV1_DRegCSR3byte ]]
@@ -108,14 +122,15 @@ proc readDBGCR { } {
 }
 
 ;######################################################################################
-;#
+;#  Target is erased so it is temporarily unsecured. Target is blank.
 ;#
 proc massEraseTarget { } {
 
    ;# reset target to be sure
    reset s s
+   
    connect
- 
+   
    ;# Write mass erase bit to DBGCR reg
    writeDBGCR $::CFV1_DBGCR_MASS_ERASE
 
@@ -134,23 +149,23 @@ proc massEraseTarget { } {
    if [ expr ( $status & $::CFV1_DBGSR_ERASE) == 0 ] {
       error "Flash mass erase failed"
    }
+   return
 }
 
 ;######################################################################################
-;#
 ;#
 proc isUnsecure { } {
    ;# Check if not read protected   
-   set status [ rdreg $::CFV1_DRegXCSRbyte ]
-   if [ expr ( $status & ($::CFV1_XCSR_SEC|$::CFV1_XCSR_ENBDM) ) != $::CFV1_XCSR_ENBDM ] {
-      error "Target is secured"
+   set securityValue [ rdreg $::CFV1_DRegXCSRbyte ]
+   if [ expr ( $securityValue & ($::CFV1_XCSR_SEC|$::CFV1_XCSR_ENBDM) ) != $::CFV1_XCSR_ENBDM ] {
+      return "Target is secured"
    }
+   return
 }
 
 ;######################################################################################
-;#
+;# Actions on initial load
 ;#
 loadSymbols
-return
 
 ;#]]>

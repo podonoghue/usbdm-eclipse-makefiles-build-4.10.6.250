@@ -21,12 +21,13 @@
 class Logging {
 public:
    enum When {neither, entry, exit, both};
-   Logging(const char *name, When when=neither) {};
+   Logging(const char *name, When when=both) {};
    ~Logging() {};
    static void openLogFile(const char *logFileName, const char *description="") {}
    static void closeLogFile() {}
    static void enableLogging(bool value) {}
    static void setLoggingLevel(int level) {}
+   static int  getLoggingLevel() { return 0; }
    static void error(const char *format, ...) {}
    static void print(const char *format, ...) {}
    static void printq(const char *format, ...) {}
@@ -36,6 +37,7 @@ public:
                          unsigned int organization=BYTE_ADDRESS|BYTE_DISPLAY) {}
    static FILE* getLogFileHandle() { return (FILE*)0; }
    static void setLogFileHandle(FILE *logFile) {}
+   static void enableTimestamping(bool enable=true) {}
 };
 #define LOGGING_Q (void*)0
 #define LOGGING_E (void*)0
@@ -45,22 +47,25 @@ class Logging {
 public:
    enum When {neither, entry, exit, both};
 private:
-   static FILE *logFile;
-   static bool loggingEnabled;
-   static int indent;
-   static int currentLogLevel;
+   static FILE  *logFile;
+   static bool   loggingEnabled;
+   static bool   timestampEnabled;
+   static int    indent;
+   static int    currentLogLevel;
    static const char *currentName;
-   const  char *name;
-   const  char *lastName;
+   const  char  *name;
+   const  char  *lastName;
    int    lastLogLevel;
    When   when;
 public:
-   Logging(const char *name, When when=neither);
+   Logging(const char *name, When when=both);
    ~Logging();
    static void openLogFile(const char *logFileName, const char *description="");
    static void closeLogFile();
-   static void enableLogging(bool value);
+   static void enableLogging(bool value = true);
+   static void enableTimestamp(bool enable = true);
    static void setLoggingLevel(int level);
+   static int  getLoggingLevel();
    static void error(const char *format, ...);
    static void print(const char *format, ...);
    static void printq(const char *format, ...);

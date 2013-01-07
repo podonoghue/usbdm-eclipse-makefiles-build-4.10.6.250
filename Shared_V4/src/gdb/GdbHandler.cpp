@@ -14,6 +14,7 @@
 #include "signals.h"
 #include "Names.h"
 #include "wxPlugin.h"
+#include "FindWindow.h"
 
 using namespace std;
 
@@ -157,12 +158,6 @@ int usbdmClose(void) {
 USBDM_ErrorCode lastError = BDM_RC_OK;
 static bool targetConnected = false;
 
-void reportError(USBDM_ErrorCode rc) {
-   if ((rc & BDM_RC_ERROR_HANDLED) == 0) {
-      displayDialogue(USBDM_GetErrorString(rc), "USBDM GDB Server error", wxOK|wxICON_ERROR);
-   }
-}
-
 //! Exit GDB Server
 //!
 void exitProgram(USBDM_ErrorCode rc) {
@@ -184,11 +179,9 @@ void exitProgram(USBDM_ErrorCode rc) {
    exit((rc==BDM_RC_OK)?0:-1);
 }
 
-void reportErrorAndQuit(USBDM_ErrorCode rc) {
+void reportGDBErrorAndQuit(USBDM_ErrorCode rc) {
    LOGGING;
    int replyCount = 0;
-   // Report error to user
-   reportError(rc);
    if ((gdbInput != NULL) && (gdbOutput != NULL)) {
       // Wait for GDB to go away
       for (int i = 0; i<50; i++) {
@@ -216,6 +209,46 @@ void reportErrorAndQuit(USBDM_ErrorCode rc) {
       }
    }
    exitProgram(rc);
+}
+
+void reportError(USBDM_ErrorCode rc) {
+   if ((rc & BDM_RC_ERROR_HANDLED) == 0) {
+      displayDialogue(USBDM_GetErrorString(rc), "USBDM GDB Server error", wxOK|wxICON_ERROR);
+   }
+}
+
+//! Report error to user with Connection failure, Continue? dialogue
+//!
+//! @param rc - error code to report
+//!
+//! @note - terminates program on No reply
+//!
+void reportErrorAndRetry(USBDM_ErrorCode rc) {
+   int getYesNo = wxYES;
+   if ((rc & BDM_RC_ERROR_HANDLED) == 0) {
+      char buff[100];
+      snprintf(buff, sizeof(buff), "Error: %s\n\nRetry connection?", USBDM_GetErrorString(rc));
+      getYesNo = displayDialogue(buff, "USBDM GDB Server error", wxYES_NO|wxICON_ERROR);
+   }
+   if (getYesNo != wxYES) {
+      reportGDBErrorAndQuit(rc);
+   }
+}
+
+//! Report error to user with OK dialogue
+//!
+//! @param rc - error code to report
+//!
+//! @note - terminates program
+//!
+void reportErrorAndQuit(USBDM_ErrorCode rc) {
+   LOGGING;
+   int replyCount = 0;
+   // Report error to user
+   if ((rc & BDM_RC_ERROR_HANDLED) == 0) {
+      displayDialogue(USBDM_GetErrorString(rc), "USBDM GDB Server error", wxOK|wxICON_ERROR);
+   }
+   reportGDBErrorAndQuit(rc);
 }
 
 void setErrorCode(USBDM_ErrorCode rc) {
@@ -828,7 +861,10 @@ static int getTargetStatus(void) {
    }
    if (BDMrc != BDM_RC_OK) {
       failureCount++;
-      Logging::print("Error %s\n", USBDM_GetErrorString(BDMrc));
+      Logging::print("Reporting Error: %s\n", USBDM_GetErrorString(BDMrc));
+      reportErrorAndRetry(BDMrc);
+      USBDM_Connect();
+      USBDM_TargetHalt();
       status = T_UNKNOWN;
    }
    else {
@@ -1476,6 +1512,10 @@ static USBDM_ErrorCode gdbLoop(void) {
 //               reportStatus("Sleeping\n");
 //            }
             pollInterval = 10; // Poll fast
+         }
+         else if (targetStatus == T_UNKNOWN) {
+            // Ignore - results in retry
+//            reportLocation('T', TARGET_SIGNAL_INT); // breaks!
          }
          else {
 //            Logging::print("Polling - running\n");

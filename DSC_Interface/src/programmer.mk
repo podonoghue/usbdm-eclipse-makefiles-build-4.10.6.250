@@ -14,7 +14,6 @@ SRC += Log.cpp
 SRC += ProgressTimer.cpp
 SRC += SimpleSRecords.cpp
 SRC += Names.cpp
-SRC += tclInterface.cpp
 SRC += USBDM_AUX.cpp
 SRC += Utils.cpp
 

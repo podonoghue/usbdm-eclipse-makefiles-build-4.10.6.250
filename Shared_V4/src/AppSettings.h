@@ -32,14 +32,18 @@ private:
          //! Create a string attribute
          //!
          //! @param value - value to create
-         Value(const string &value) {
+         Value(const string &value) :
+            intValue(0)
+         {
             stringValue = value;
             type        = stringType;
          }
          //! Create a string attribute
          //!
          //! @param value - value to create
-         Value(const char *value) {
+         Value(const char *value) :
+            intValue(0)
+         {
             if (value == NULL)
                value = " ";
             stringValue = string(value);

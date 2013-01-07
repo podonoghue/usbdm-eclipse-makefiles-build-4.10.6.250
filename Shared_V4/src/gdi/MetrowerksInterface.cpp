@@ -356,6 +356,7 @@ static USBDM_ErrorCode getAttribute(const string &key, string &value, const stri
 //!  @return error code, see \ref USBDM_ErrorCode
 //!
 USBDM_ErrorCode getDeviceData(DeviceData &deviceData) {
+   LOGGING;
    DiReturnT       diRC = DI_OK;
    string          deviceName;
    int value;
@@ -363,18 +364,18 @@ USBDM_ErrorCode getDeviceData(DeviceData &deviceData) {
    // Device name
    diRC = mtwksGetStringValue(processorKey, deviceName);
    if ((diRC != DI_OK) || (deviceName == emptyString)) {
-      Logging::print("getDeviceInfo() - Device name not set\n");
+      Logging::print("Device name not set\n");
       Logging::print("key = %s\n", processorKey.c_str());
       return  BDM_RC_UNKNOWN_DEVICE;
    }
-   Logging::print("getDeviceData() - Device name = \'%s\'\n", (const char *)deviceName.c_str());
+   Logging::print("Device name = \'%s\'\n", (const char *)deviceName.c_str());
 
    DeviceDataBase deviceDataBase;
    try {
       deviceDataBase.loadDeviceData();
    }
    catch (MyException &exception) {
-      Logging::print("getDeviceData() - Failed to load device database\n");
+      Logging::print("Failed to load device database\n");
       string("Failed to load device database\nReason: ")+exception.what();
       displayDialogue((string("Failed to load device database\nReason: ")+exception.what()).c_str(),
                    "Error loading devices",
@@ -382,19 +383,21 @@ USBDM_ErrorCode getDeviceData(DeviceData &deviceData) {
       return BDM_RC_DEVICE_DATABASE_ERROR;
    }
    catch (...){
-      Logging::print("getDeviceData() - Failed to load device database\n");
+      Logging::print("Failed to load device database\n");
       displayDialogue("Failed to load device database\n",
                       "Error loading devices",
                       wxOK);
       return BDM_RC_DEVICE_DATABASE_ERROR;
    }
-   const DeviceData *dev = deviceDataBase.findDeviceFromName(deviceName);
-   Logging::print("getDeviceData() - Found device \'%s\' in database\n", (const char *)dev->getTargetName().c_str());
+   DeviceDataConstPtr dev = deviceDataBase.findDeviceFromName(deviceName);
    if (dev == NULL) {
-      Logging::print("getDeviceData() - Unknown device\n");
+      Logging::print("Unknown device\n");
       mtwksDisplayLine("Unrecognised device - using default settings");
       dev = deviceDataBase.getDefaultDevice();
 //      return BDM_RC_UNKNOWN_DEVICE;
+   }
+   else {
+      Logging::print("Found device \'%s\' in database\n", (const char *)dev->getTargetName().c_str());
    }
    deviceData = *dev;
    getAttribute(KeyTrimTargetClock, value, 0);
@@ -427,7 +430,8 @@ USBDM_ErrorCode loadSettings(TargetType_t             targetType,
                              USBDM_ExtendedOptions_t &bdmOptions,
 			  			           string                  &bdmSerialNumber
 						           ) {
-   Logging::print("loadSettings(%s)\n", getTargetTypeName(targetType));
+   LOGGING;
+   Logging::print(" - %s\n", getTargetTypeName(targetType));
 
    bdmOptions.size       = sizeof(USBDM_ExtendedOptions_t);
    bdmOptions.targetType = targetType;

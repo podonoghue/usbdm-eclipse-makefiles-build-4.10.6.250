@@ -30,7 +30,7 @@
    +============================================================================
    \endverbatim
 */
-#include "Utils.h"
+
 
 #ifdef __unix__
 #include <time.h>
@@ -39,8 +39,13 @@
 #include <windows.h>
 #endif
 
+#include <string>
+using namespace std;
+
 #include "USBDM_API.h"
 #include "Log.h"
+
+#include "Utils.h"
 
 //**********************************************************
 //!
@@ -141,3 +146,22 @@ uint32_t hex8ToDecimal( char **ptr) {
    data      = data * 16 + hex1ToDecimal(ptr);
    return data;
 }
+
+//! Filters a string to only contain a set of permitted values
+//!
+//! @param data    string to filter
+//! @param pattern string containing permitted chars
+//!
+//! @return filtered string
+//!
+string filter(const string &data, const string &pattern) {
+   string s;
+
+   for (int index=0; index<data.length(); index++) {
+      if (pattern.find_first_of(data[index]) != string::npos) {
+         s += data[index];
+      }
+   }
+   return s;
+}
+

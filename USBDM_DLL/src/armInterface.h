@@ -11,7 +11,10 @@
 #include "USBDM_API.h"
 #include "USBDM_API_Private.h"
 
+DLL_LOCAL
 extern bool armInitialiseDone;
+DLL_LOCAL
+extern bool pendingPowerOnReset;
 
 USBDM_ErrorCode resetARM(TargetMode_t targetMode);
 USBDM_ErrorCode armSwdConnect();

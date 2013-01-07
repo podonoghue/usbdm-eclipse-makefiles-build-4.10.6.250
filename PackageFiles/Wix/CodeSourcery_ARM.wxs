@@ -88,7 +88,6 @@
             <File Id='CODESOURCERY_ARM_Files32'  DiskId='1' Source='bin\usbdmTCL-debug.4.dll' />
             <File Id='CODESOURCERY_ARM_Files33'  DiskId='1' Source='bin\usbdm-arm-debug.4.dll' />
             <File Id='CODESOURCERY_ARM_Files34'  DiskId='1' Source='bin\usbdm-dsc-debug.4.dll' />
-
          </Component>
       </DirectoryRef>
 

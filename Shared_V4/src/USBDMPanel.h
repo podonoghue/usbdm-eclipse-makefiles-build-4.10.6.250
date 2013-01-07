@@ -19,6 +19,9 @@
 #include "USBDM_AUX.h"
 #include "Log.h"
 #include "AppSettings.h"
+#include "DeviceData.h"
+
+class Shared;
 
 class USBDMPanel : public wxPanel {
 
@@ -26,8 +29,8 @@ class USBDMPanel : public wxPanel {
    DECLARE_EVENT_TABLE()
 
 public:
-   USBDMPanel( wxWindow* parent, TargetType_t targetType);
-   USBDMPanel(TargetType_t targetType);
+   USBDMPanel(wxWindow* parent, Shared *shared, TargetType_t targetType);
+   USBDMPanel(Shared *shared, TargetType_t targetType);
 
    ~USBDMPanel() {
 //      print("~USBDMPanel\n");
@@ -43,9 +46,13 @@ public:
    void saveSettings(AppSettings &settings);
 
    bool setDialogueValuesToDefault();
+
    bool TransferDataToWindow();
    bool TransferDataFromWindow();
-   void getDialogueValues(USBDM_ExtendedOptions_t *_bdmOptions);
+
+   bool updateState();
+
+//   void getDialogueValues(USBDM_ExtendedOptions_t *_bdmOptions);
 
    void populateBDMChoices(void);
 
@@ -79,6 +86,10 @@ private:
    USBDM_ErrorCode CreateControls();
 
    static const string settingsKey;
+#ifdef FLASH_PROGRAMMER
+   DeviceDataPtr &currentDevice;
+#endif
+   USBDM_ExtendedOptions_t &bdmOptions;
 
    void bdmUpdateTargetVersion(void);
    void findBDMs(void);
@@ -130,9 +141,9 @@ private:
    wxString                bdmIdentification;
    int                     bdmDeviceNum;
 
-   TargetType_t            targetType;
-   TargetOptions           targetProperties;
-   USBDM_ExtendedOptions_t bdmOptions;
+   Shared                  *shared;
+   TargetType_t             targetType;
+   TargetOptions            targetProperties;
 
 };
 

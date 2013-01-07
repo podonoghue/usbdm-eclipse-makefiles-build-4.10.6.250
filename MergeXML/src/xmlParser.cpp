@@ -25,7 +25,12 @@ XERCES_CPP_NAMESPACE_USE
 #include "xmlParser.h"
 
 //const XMLByte XmlParser::MyResolver::data[] = "SHORTCUTS;    ";
+
+#ifdef DEBUG
+bool    XmlParser::verbose = true;
+#else
 bool    XmlParser::verbose = false;
+#endif
 
 class DOMChildIterator {
 
@@ -99,8 +104,9 @@ void XmlParser::load(XercesDOMParser* &parser, DOMDocument* &document, const cha
    parser->setLoadExternalDTD( false ) ;
 //   parser->setEntityResolver(new MyResolver());
 
-   if (errHandler == NULL)
+   if (errHandler == NULL) {
       errHandler = new HandlerBase();
+   }
    parser->setErrorHandler(errHandler);
    try {
        parser->parse(xmlFile);
@@ -119,7 +125,7 @@ void XmlParser::load(XercesDOMParser* &parser, DOMDocument* &document, const cha
        throw new runtime_error("DOM Exception");
    }
    catch (...) {
-       cout << "Unexpected Exception \n" ;
+       cout << "Unexpected Exception \n";
        throw new runtime_error("Unexpected Exception");
    }
    document = parser->getDocument();
@@ -156,16 +162,18 @@ bool XmlParser::nodesMatch(DOMElement *mergeEl, DOMElement *patchEl) {
 
    DualString mergeTagName(mergeEl->getTagName());
    DualString patchTagName(patchEl->getTagName());
-   if (verbose)
-      cerr << "Comparing " << mergeTagName.asCString() << " to " << patchTagName.asCString();
+   if (verbose) {
+      cerr << "Comparing Tag \'" << mergeTagName.asCString() << "\' to \'" << patchTagName.asCString();
+   }
    if (!XMLString::equals(mergeTagName.asXMLString(), patchTagName.asXMLString())) {
-      if (verbose)
-         cerr << " - false\n";
+      if (verbose) {
+         cerr << "\' - false\n";
+      }
       return false;
    }
-   if (verbose)
-      cerr << " - equal\n";
-
+   if (verbose) {
+      cerr << "\' - equal\n";
+   }
    DOMNamedNodeMap *patchAttributes = patchEl->getAttributes();
 
    unsigned attributeCount = patchAttributes->getLength();
@@ -173,28 +181,34 @@ bool XmlParser::nodesMatch(DOMElement *mergeEl, DOMElement *patchEl) {
       DOMNode *attribute = patchAttributes->item(attrIndex);
       DualString attributeName(attribute->getNodeName());
       if (XMLString::equals(attributeName.asXMLString(), attr_merge_actions.asXMLString())) {
-         if (verbose)
-            cerr << "Skipping attribute " << attributeName.asCString();
+         if (verbose) {
+            cerr << "Skipping attribute \'" << attributeName.asCString() << "\'\n";
+         }
          continue;
       }
-      if (verbose)
-         cerr << "Checking for attribute " << attributeName.asCString();
+      if (verbose) {
+         cerr << "Checking for attribute \'" << attributeName.asCString();
+      }
       if (!mergeEl->hasAttribute(attributeName.asXMLString())) {
-         if (verbose)
-            cerr << " - Not present\n";
+         if (verbose) {
+            cerr << "\' - Not present\n";
+         }
          return false;
       }
-      if (verbose)
-         cerr << " - Present";
+      if (verbose) {
+         cerr << "\' - Present";
+      }
       DualString patchAttributeValue(attribute->getNodeValue());
       DualString mergeAttributeValue(mergeEl->getAttribute(attributeName.asXMLString()));
       if (!XMLString::equals(patchAttributeValue.asXMLString(), mergeAttributeValue.asXMLString())) {
-         if (verbose)
-            cerr << " - Not equal\n";
+         if (verbose) {
+            cerr << "\' - Not equal\n";
+         }
          return false;
       }
-      if (verbose)
-         cerr << " - Equal (" << patchAttributeValue.asCString() << ")\n";
+      if (verbose) {
+         cerr << "\' - Equal (" << patchAttributeValue.asCString() << ")\n";
+      }
    }
    return true;
 }
@@ -220,8 +234,72 @@ XmlParser::Actions XmlParser::getAction(DOMElement *patchEl) {
    return currentAction;
 }
 
+bool XmlParser::processAttributes(DOMElement *mergeEl, DOMElement *patchEl) {
+//   cerr << "XmlParser::processAttributes()\n";
+
+   while (patchEl->hasAttribute(attr_merge_actions.asXMLString())) {
+      DualString actionAttributeValue(patchEl->getAttribute(attr_merge_actions.asXMLString()));
+      patchEl->removeAttribute(attr_merge_actions.asXMLString());
+      string attributeValue(actionAttributeValue.asCString());
+//      cerr << "XmlParser::processAttributes( attr = \'" << attributeValue << "\')\n";
+      unsigned index = 0;
+      bool setAttr;
+      if ((index = attributeValue.find("set-attr:", index)) != string::npos) {
+         setAttr = true;
+      }
+      else if ((index = attributeValue.find("del-attr:", index)) != string::npos) {
+         setAttr = false;
+      }
+      else {
+         throw invalid_argument("Illegal merge-action " + attributeValue);
+      }
+      unsigned colonIndex     = attributeValue.find(':',index);
+      if (colonIndex == string::npos) {
+         throw invalid_argument("Illegal merge-action " + attributeValue);
+      }
+      unsigned equalIndex     = attributeValue.find('=',colonIndex);
+      unsigned semiColonIndex = attributeValue.find(';',colonIndex);
+
+      if (semiColonIndex == string::npos) {
+         semiColonIndex = attributeValue.length();
+      }
+      if (equalIndex > semiColonIndex) {
+         equalIndex = semiColonIndex;
+      }
+      if (equalIndex <= colonIndex+1) {
+         throw invalid_argument("Illegal merge-action attribute name " + attributeValue);
+      }
+      string attrName(attributeValue.substr(colonIndex+1, equalIndex-(colonIndex+1)));
+      string attrValue;
+      if (equalIndex == semiColonIndex-1) {
+         throw invalid_argument("Illegal merge-action attribute value " + attributeValue);
+      }
+      else if (equalIndex == semiColonIndex) {
+         attrValue = "";
+      }
+      else {
+         attrValue = attributeValue.substr(equalIndex+1, semiColonIndex-(equalIndex+1));
+      }
+      if (setAttr) {
+         if (verbose) {
+            cerr << "XmlParser::processAttributes() - Adding attribute " << attrName << "=\"" << attrValue <<"\"\n";
+         }
+         mergeEl->setAttribute(DualString(attrName.c_str()).asXMLString(), DualString(attrValue.c_str()).asXMLString());
+      }
+      else {
+         if (verbose) {
+            cerr << "XmlParser::processAttributes() - Deleting attribute " << attrName << "\"\n";
+         }
+         mergeEl->removeAttribute(DualString(attrName.c_str()).asXMLString());
+      }
+      index = semiColonIndex-1;
+   }
+   return true;
+}
+
 DOMElement *XmlParser::removeActionAttributes(DOMElement *element) {
 
+   bool setAttr = false;
    DOMChildIterator elementIter(element);
    for(;;) {
       DOMElement *childElement = elementIter.getCurrentElement();
@@ -236,42 +314,54 @@ DOMElement *XmlParser::removeActionAttributes(DOMElement *element) {
       string attributeValue(actionAttributeValue.asCString());
       unsigned index = 0;
       for (;;) {
-         if ((index = attributeValue.find("add-attr:", index)) != string::npos) {
-         }
-         else if ((index = attributeValue.find("set-attr:", index)) != string::npos) {
+         if ((index = attributeValue.find("set-attr:", index)) != string::npos) {
+            setAttr = true;
          }
          else if ((index = attributeValue.find("del-attr:", index)) != string::npos) {
+            setAttr = false;
          }
-         else
+         else {
             break;
+         }
          unsigned colonIndex     = attributeValue.find(':',index);
-         if (colonIndex == string::npos)
+         if (colonIndex == string::npos) {
             throw invalid_argument("Illegal merge-action");
-
+         }
          unsigned equalIndex     = attributeValue.find('=',colonIndex);
          unsigned semiColonIndex = attributeValue.find(';',colonIndex);
 
-         if (semiColonIndex == string::npos)
+         if (semiColonIndex == string::npos) {
             semiColonIndex = attributeValue.length();
-
+         }
          if (equalIndex > semiColonIndex) {
             equalIndex = semiColonIndex;
          }
-
-         if (equalIndex <= colonIndex+1)
+         if (equalIndex <= colonIndex+1) {
             throw invalid_argument("Illegal merge-action attribute name");
+         }
          string attrName(attributeValue.substr(colonIndex+1, equalIndex-(colonIndex+1)));
-
          string attrValue;
-         if (equalIndex == semiColonIndex-1)
+         if (equalIndex == semiColonIndex-1) {
             throw invalid_argument("Illegal merge-action attribute value");
-         else if (equalIndex == semiColonIndex)
+         }
+         else if (equalIndex == semiColonIndex) {
             attrValue = "";
-         else
+         }
+         else {
             attrValue = attributeValue.substr(equalIndex+1, semiColonIndex-(equalIndex+1));
-         if (verbose)
-            cerr << "Adding attribute " << attrName << "=\"" << attrValue <<"\"\n";
-         element->setAttribute(DualString(attrName.c_str()).asXMLString(), DualString(attrValue.c_str()).asXMLString());
+         }
+         if (setAttr) {
+            if (verbose) {
+               cerr << "Adding attribute " << attrName << "=\"" << attrValue <<"\"\n";
+            }
+            element->setAttribute(DualString(attrName.c_str()).asXMLString(), DualString(attrValue.c_str()).asXMLString());
+         }
+         else {
+            if (verbose) {
+               cerr << "Deleting attribute " << attrName << "\"\n";
+            }
+            element->removeAttribute(DualString(attrName.c_str()).asXMLString());
+         }
          index = semiColonIndex-1;
       }
    }
@@ -283,30 +373,37 @@ bool XmlParser::mergeNodes(DOMElement *mergeEl, DOMElement *patchEl) {
 //   cerr << "mergeNodes()\n";
 
    if (!nodesMatch(mergeEl, patchEl)) {
-//      cerr << "mergeNodes() - nodes don't match\n";
+      if (verbose) {
+         cerr << "mergeNodes() - nodes don't match\n";
+      }
       return false;
    }
    DOMChildIterator patchIter(patchEl);
-   if (patchIter.getCurrentElement() == NULL) {
-      // No more children
-//      cerr << "mergeNodes() - nodes match\n";
-      return true;
-   }
    DOMChildIterator mergeIter(mergeEl);
-   if (mergeIter.getCurrentElement() == NULL) {
-      // Missing required children
-//      cerr << "mergeNodes() - No children in merge node\n";
-      return false;
-   }
+//
+//   if (patchIter.getCurrentElement() == NULL) {
+//      // No more children of patch node - match
+//      if (verbose) {
+//         cerr << "Nodes match\n";
+//      }
+//      processAttributes(mergeEl, patchEl);
+//      return true;
+//   }
+//   if (mergeIter.getCurrentElement() == NULL) {
+//      // Missing required children
+////      cerr << "mergeNodes() - No children in merge node\n";
+//      return false;
+//   }
    // Match each child
    for(;;) {
       DOMElement *mergeChildEl = mergeIter.getCurrentElement();
       DOMElement *patchChildEl = patchIter.getCurrentElement();
-
       if (patchChildEl == NULL) {
-         // No more required children
-         if (verbose)
+         // No more required children (as indicated by patch node)
+         if (verbose) {
             cerr << "mergeNodes() - Patch list end\n";
+         }
+         processAttributes(mergeEl, patchEl);
          return true;
       }
       Actions currentAction = getAction(patchChildEl);
@@ -330,15 +427,17 @@ bool XmlParser::mergeNodes(DOMElement *mergeEl, DOMElement *patchEl) {
             patchIter.advanceElement();
             continue;
          }
-         else
+         else {
             return false;
+         }
       }
       if (mergeNodes(mergeChildEl, patchChildEl)) {
          if (currentAction == replace) {
             // We're replacing this node
             DualString newNodeName(patchChildEl->getNodeName());
-            if (verbose)
+            if (verbose) {
                cerr << "mergeNodes() - Replacing node <" << newNodeName.asCString() << ">\n";
+            }
             DOMComment *commentNode = getCommentNode(patchChildEl);
             if (commentNode != NULL) {
                DOMNode *copyOfNode;
@@ -353,11 +452,15 @@ bool XmlParser::mergeNodes(DOMElement *mergeEl, DOMElement *patchEl) {
             continue;
          }
          // Successfully merged/matched patch node - advance patch
-//         cerr << "mergeNodes() - Advancing patch\n";
+         if (verbose) {
+            cerr << "mergeNodes() - Advancing patch\n";
+         }
          patchIter.advanceElement();
       }
       // Advance original only
-//      cerr << "mergeNodes() - Advancing merge\n";
+      if (verbose) {
+         cerr << "mergeNodes() - Advancing merge\n";
+      }
       mergeIter.advanceElement();
    }
    return 0;
@@ -379,8 +482,9 @@ int XmlParser::mergePatchfile() {
    }
 
    mergeNodes(mergeRoot, patchRoot);
-   if (verbose)
+   if (verbose) {
       cout << "mergePatchfile() - Completed patching XML file \n";
+   }
    return 0;
 }
 
@@ -463,7 +567,6 @@ int rc = 0;
       XMLString::release(&message);
       return -1;
    }
-
    try {
       XmlParser parser;
       if (verbose)
@@ -483,7 +586,6 @@ int rc = 0;
       cerr << "Exception while parsing, reason: " << ex->what() << endl;
       rc = -1;
    }
-
    try {
       xercesc::XMLPlatformUtils::Terminate();
    }

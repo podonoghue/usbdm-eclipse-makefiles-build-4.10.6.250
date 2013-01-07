@@ -1,4 +1,4 @@
-  <!-- Root element -->
+<!-- Root element -->
 <!ELEMENT root (description,sharedInformation?,deviceList)>
      <!ATTLIST root version CDATA #REQUIRED>
   <!-- General Description element. -->
@@ -33,8 +33,7 @@
      <!ATTLIST clock registerAddress CDATA "0">
   <!-- List of memory regions in device -->
 <!ELEMENT memory (flashProgramRef?,
-     (securityInfo|securityInfoRef)?,
-     (securityInfo|securityInfoRef)?,
+     (securityEntry|securityEntryRef)?,
      (flexNVMInfo|flexNVMInfoRef)?,
      description?,
      (memoryRange+))>
@@ -50,10 +49,19 @@
   <!-- SOPT(1) register address -->
 <!ELEMENT memoryRef EMPTY>
      <!ATTLIST memoryRef ref IDREF #REQUIRED>
+<!ELEMENT securityEntry (securityDescription,securityInfo,securityInfo)>
+     <!ATTLIST securityEntry flavour    CDATA "common">
+     <!ATTLIST securityEntry id         ID #IMPLIED>
+<!ELEMENT securityEntryRef EMPTY>
+     <!ATTLIST securityEntryRef ref IDREF #REQUIRED>
 <!ELEMENT securityInfo (#PCDATA)>
      <!ATTLIST securityInfo id         ID #IMPLIED>
      <!ATTLIST securityInfo size    CDATA #REQUIRED>
-     <!ATTLIST securityInfo type (on|off) #REQUIRED>
+     <!ATTLIST securityInfo type (secure|unsecure|custom) #REQUIRED>
+<!ELEMENT securityDescription (#PCDATA)>
+     <!ATTLIST securityDescription id   ID #IMPLIED>
+<!ELEMENT securityDescriptionRef EMPTY>
+     <!ATTLIST securityDescriptionRef ref IDREF #REQUIRED>
 <!ELEMENT securityInfoRef EMPTY>
      <!ATTLIST securityInfoRef ref IDREF #REQUIRED>
 <!ELEMENT soptAddress EMPTY>
@@ -111,7 +119,7 @@
   <!-- Note on device entry -->
 <!ELEMENT note (#PCDATA)>
   <!-- Information shared between devices -->
-<!ELEMENT sharedInformation (memory|tclScript|flashProgram|securityInfo|flexNVMInfo)*>
+<!ELEMENT sharedInformation (memory|tclScript|flashProgram|securityEntry|securityDescription|securityInfo|flexNVMInfo)*>
   <!--TCL Script-->
 <!ELEMENT tclScript (#PCDATA)>
      <!ATTLIST tclScript id ID #IMPLIED>

@@ -4,7 +4,7 @@ SRC += USBDM_GDI.cpp
 SRC += Version.rc
 
 # Shared files $(SHARED_SRC)
-VPATH := $(SHARED_SRC) $(VPATH)
+VPATH := $(SHARED_SRC);$(VPATH)
 SRC += ApplicationFiles.cpp
 SRC += AppSettings.cpp
 SRC += Log.cpp

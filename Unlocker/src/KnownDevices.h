@@ -11,7 +11,7 @@
 #include "Common.h"
 
 //! Information about a known target device
-class DeviceData {
+class UnlockerDeviceData {
 public:
    unsigned int         index;                //<! Index in list box
    unsigned int         idcode;               //<! JTAG IDCODE (REV field is ignored)
@@ -33,17 +33,17 @@ public:
    static const unsigned int     MAX_KNOWN_DEVICES = 200;
 
    static unsigned int           deviceCount;
-   static DeviceData             deviceData[MAX_KNOWN_DEVICES];
+   static UnlockerDeviceData             deviceData[MAX_KNOWN_DEVICES];
 
-   static const DeviceData      *lookUpDevice(uint32_t idcode);
-   static void                   loadConfigFile(void);
+   static const UnlockerDeviceData      *lookUpDevice(uint32_t idcode);
+   static void                            loadConfigFile(void);
 
    // Some 'dummy' devices types
-   static const DeviceData nonFreescaleDevice;
-   static const DeviceData unknownDevice;
-   static const DeviceData disabledDevice;
-   static const DeviceData customDevice;
-   static const DeviceData unRecognizedDevice;
+   static const UnlockerDeviceData nonFreescaleDevice;
+   static const UnlockerDeviceData unknownDevice;
+   static const UnlockerDeviceData disabledDevice;
+   static const UnlockerDeviceData customDevice;
+   static const UnlockerDeviceData unRecognizedDevice;
 } ;
 
 // Macros for use with IDCODE

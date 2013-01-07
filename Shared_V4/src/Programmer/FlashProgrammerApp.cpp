@@ -81,22 +81,24 @@ class FlashProgrammerApp : public wxApp {
    DECLARE_EVENT_TABLE()
 
 private:
-   DeviceData::EraseOptions eraseOptions;
-   SecurityOptions_t        deviceSecurity;
-   USBDMDialogue           *dialogue;
-   bool                     commandLine;
-   bool                     verify;
-   bool                     program;
-   bool                     verbose;
-   wxString                 hexFileName;
-   double                   trimFrequency;
-   long                     trimNVAddress;
-   wxString                 deviceName;
+   DeviceData::EraseOptions         eraseOptions;
+   DeviceData::FlexNVMParameters    flexParameters;
+   SecurityOptions_t                deviceSecurity;
+   std::string                      customSecurityValue;
+   USBDMDialogue*                   dialogue;
+   bool                             commandLine;
+   bool                             verify;
+   bool                             program;
+   bool                             verbose;
+   wxString                         hexFileName;
+   double                           trimFrequency;
+   long                             trimNVAddress;
+   wxString                         deviceName;
 
-   int                      returnValue;
-
-   USBDM_ExtendedOptions_t  bdmOptions; // Used by command line only
+   USBDM_ExtendedOptions_t          bdmOptions; // Used by command line only
    void doCommandLineProgram();
+
+   int                              returnValue;
 
 public:
    // Called on application startup
@@ -126,6 +128,7 @@ USBDM_ErrorCode callBack(USBDM_ErrorCode status, int percent, const char *messag
 
 #if 1
 void FlashProgrammerApp::doCommandLineProgram() {
+   Logging log("FlashProgrammerApp::doCommandLineProgram");
    FlashImage flashImage;
    unsigned int deviceCount;
    FlashProgrammer flashProgrammer;
@@ -142,7 +145,6 @@ void FlashProgrammerApp::doCommandLineProgram() {
    }
    do {
       // Modify some options for programming
-//      bdmOptions.autoReconnect      = AUTOCONNECT_NEVER,
       if ((USBDM_SetExtendedOptions(&bdmOptions) != BDM_RC_OK) || (USBDM_SetTargetType(targetType) != BDM_RC_OK)) {
          Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to set BDM Option/Target type\n");
 #ifdef _UNIX_
@@ -172,7 +174,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
          returnValue = 1;
          break;
       }
-      const DeviceData *devicePtr = deviceDatabase->findDeviceFromName((const char *)deviceName.ToAscii());
+      DeviceDataConstPtr devicePtr = deviceDatabase->findDeviceFromName((const char *)deviceName.ToAscii());
       if (devicePtr == NULL) {
          Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to find device\n");
 #ifdef _UNIX_
@@ -183,11 +185,18 @@ void FlashProgrammerApp::doCommandLineProgram() {
       }
       DeviceData deviceData = *devicePtr;
       deviceData.setClockTrimFreq(trimFrequency);
-      deviceData.setEraseOption(DeviceData::eraseSelective);
       deviceData.setEraseOption(eraseOptions);
       deviceData.setSecurity(deviceSecurity);
-      if (trimNVAddress != 0)
+      if (deviceSecurity == SEC_CUSTOM) {
+         deviceData.setCustomSecurity(customSecurityValue);
+      }
+//      SecurityInfoPtr securityInfoPtr = deviceData.getCustomSecurity();
+//      Logging::print("getCustomSecureInformation = %p, size = %d, securityInfo = %s\n", &*getCustomSecureInformation, getCustomSecureInformation->getSize(), (const char *)getCustomSecureInformation->toString().c_str());
+      Logging::print("customSecurityValue = %s\n", (const char *)customSecurityValue.c_str());
+      deviceData.setFlexNVMParameters(flexParameters);
+      if (trimNVAddress != 0) {
          deviceData.setClockTrimNVAddress(trimNVAddress);
+      }
       if (flashProgrammer.setDeviceData(deviceData) != PROGRAMMING_RC_OK) {
          returnValue = 1;
          break;
@@ -249,20 +258,14 @@ bool FlashProgrammerApp::OnInit(void) {
    if (!wxApp::OnInit()) {
       return false;
    }
-#if 0
-   // Show the frame
-   wxFrame *frame = new wxFrame((wxFrame*) NULL, -1, _("Hello wxWidgets World"));
-   frame->CreateStatusBar();
-   frame->SetStatusText(_("Hello World"));
-   frame->Show(TRUE);
-   SetTopWindow(frame);
-#else
    const wxString settingsFilename(_("FlashProgrammer_"));
    const wxString title(_("Flash Programmer"));
 
    SetAppName(_("usbdm")); // So app files are kept in the correct directory
 
    Logging::openLogFile(logFilename);
+   Logging::setLoggingLevel(100);
+   Logging log("FlashProgrammerApp::OnInit");
 
 //   Logging::print("Original GetUserDataDir = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetUserDataDir().ToAscii())).c_str());
 //   Logging::print("Original GetDataDir     = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetDataDir().    ToAscii())).c_str());
@@ -278,9 +281,9 @@ bool FlashProgrammerApp::OnInit(void) {
    DSC_SetLogFile(Logging::getLogFileHandle());
 #endif
 
-//   Logging::print("FlashProgrammerApp::OnInit()\n");
-
+   Logging::print("Initializing USBDM\n");
    USBDM_Init();
+
    if (commandLine) {
       doCommandLineProgram();
 //      fprintf(stderr, "Programming Complete - rc = %d\n", returnValue);
@@ -294,7 +297,7 @@ bool FlashProgrammerApp::OnInit(void) {
       dialogue->Destroy();
    }
    USBDM_Exit();
-#endif
+
    return true;
 }
 
@@ -325,23 +328,25 @@ FlashProgrammerApp::~FlashProgrammerApp() {
 static const wxCmdLineEntryDesc g_cmdLineDesc[] = {
       { wxCMD_LINE_PARAM,    NULL,         NULL, _("Name of the S19 Hex file to load"),                     wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
       { wxCMD_LINE_OPTION, _("device"),    NULL, _("Target device e.g. MC9S08AW16A"),                       wxCMD_LINE_VAL_STRING },
-      { wxCMD_LINE_OPTION, _("vdd"),       NULL, _("Supply Vdd to target (3V3 or 5V)"),                     wxCMD_LINE_VAL_STRING },
-      { wxCMD_LINE_OPTION, _("trim"),      NULL, _("Trim internal clock to frequency (in kHz) e.g. 32.7"),  wxCMD_LINE_VAL_STRING },
-      { wxCMD_LINE_OPTION, _("nvloc"),     NULL, _("Trim non-volatile memory location (hex)"),              wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("erase"),     NULL, _("Erase method (Mass, All, Selective, None)"),            wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_SWITCH, _("execute"),   NULL, _("Leave target power on & reset to normal mode at completion"), },
-      { wxCMD_LINE_SWITCH, _("secure"),    NULL, _("Leave device secure after programming") },
-      { wxCMD_LINE_SWITCH, _("unsecure"),  NULL, _("Leave device unsecure after programming") },
+      { wxCMD_LINE_OPTION, _("flexNVM"),   NULL, _("FlexNVM parameters (eeprom,partition hex values)"),     wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_SWITCH, _("masserase"), NULL, _("Equivalent to erase=Mass") },
       { wxCMD_LINE_SWITCH, _("noerase"),   NULL, _("Equivalent to erase=None") },
-      { wxCMD_LINE_SWITCH, _("verify"),    NULL, _("Verify flash contents") },
-      { wxCMD_LINE_OPTION, _("reset"),     NULL, _("Reset timing (active,release,recovery) 100-10000 ms"),  wxCMD_LINE_VAL_STRING },
+      { wxCMD_LINE_OPTION, _("nvloc"),     NULL, _("Trim non-volatile memory location (hex)"),              wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("power"),     NULL, _("Power timing (off,recovery) 100-10000 ms"),             wxCMD_LINE_VAL_STRING },
+      { wxCMD_LINE_SWITCH, _("program"),   NULL, _("Program and verify flash contents"), },
+      { wxCMD_LINE_OPTION, _("reset"),     NULL, _("Reset timing (active,release,recovery) 100-10000 ms"),  wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("speed"),     NULL, _("Interface speed (CFVx/Kinetis/DSC) kHz"),               wxCMD_LINE_VAL_STRING },
+      { wxCMD_LINE_OPTION, _("security"),  NULL, _("Explicit security value to use (as hex string)"),       wxCMD_LINE_VAL_STRING },
+      { wxCMD_LINE_SWITCH, _("secure"),    NULL, _("Leave device secure after programming") },
+      { wxCMD_LINE_OPTION, _("trim"),      NULL, _("Trim internal clock to frequency (in kHz) e.g. 32.7"),  wxCMD_LINE_VAL_STRING },
 #ifdef _UNIX_
       { wxCMD_LINE_SWITCH, _("verbose"),   NULL, _("Print progress messages to stdout") },
 #endif
-      { wxCMD_LINE_SWITCH, _("program"),   NULL, _("Program and verify flash contents"), },
+      { wxCMD_LINE_SWITCH, _("unsecure"),  NULL, _("Leave device unsecure after programming") },
+      { wxCMD_LINE_SWITCH, _("verify"),    NULL, _("Verify flash contents") },
+      { wxCMD_LINE_OPTION, _("vdd"),       NULL, _("Supply Vdd to target (3V3 or 5V)"),                     wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_NONE }
 };
 
@@ -365,7 +370,9 @@ void FlashProgrammerApp::OnInitCmdLine(wxCmdLineParser& parser)
           "This will trim the internal clock of MC9S08QG8 to 35.25kHz without erasing\n"
           "the present flash contents. It is necessary that the clock trim locations \n"
           "in flash are still unprogrammed (0xFF) when using the -trim option. The \n"
-          "target must not be secured and cannot be made secured when using -erase=None."
+          "target must not be secured and cannot be made secured when using -erase=None.\n\n"
+          "Programming image with custom security value:\n"
+          "FlashProgrammer -device=MKL25Z128M4 -vdd=3v3 -erase=mass -program -security=123456789ABCDEF0FFFFFFFFFEFFFFFF Image.elf"
           ));
 #endif
 }
@@ -379,8 +386,6 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
    commandLine  = false;
    verbose      = false;
 
-//   USBDM_Init();
-
    if (parser.GetParamCount() > 0) {
       hexFileName = parser.GetParam(0);
    }
@@ -391,9 +396,9 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       if (USBDM_GetDefaultExtendedOptions(&bdmOptions) != BDM_RC_OK) {
          success = false;
       }
-#if (TARGET==HCS08) || (TARGET==RS08)
+#if (TARGET==HCS08) || (TARGET==RS08) || (TARGET==ARM)
       eraseOptions = DeviceData::eraseMass;
-#elif (TARGET==HCS12) || (TARGET==CFV1) || (TARGET==CFVx) || (TARGET==ARM) || (TARGET==MC56F80xx)
+#elif (TARGET==HCS12) || (TARGET==CFV1) || (TARGET==CFVx) || (TARGET==MC56F80xx)
       eraseOptions = DeviceData::eraseAll;
 #else
 #error "TARGET must be set"
@@ -417,6 +422,16 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       }
       else {
          deviceSecurity = SEC_DEFAULT;
+      }
+      if (parser.Found(_("security"), &sValue)) {
+         if (deviceSecurity != SEC_DEFAULT) {
+            // Can't use this option with secure/unsecure
+            success = false;
+         }
+         else {
+            deviceSecurity      = SEC_CUSTOM;
+            customSecurityValue = std::string(sValue);
+         }
       }
       verify   = parser.Found(_("verify"));
       program  = parser.Found(_("program"));
@@ -475,6 +490,34 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       }
       else {
          success = false;
+      }
+      // flexNVM options
+      if (parser.Found(_("flexNVM"), &sValue)) {
+         unsigned long uValue;
+
+         int index1 = 0;
+         int index2 = sValue.find(',');
+         wxString t = sValue.substr(index1, index2-index1);
+         if (!t.ToULong(&uValue, 16)) {
+            success = false;
+         }
+         else {
+            flexParameters.eeepromSize = (uint8_t)uValue;
+            // Check for truncation
+            success = success && (flexParameters.eeepromSize == uValue);
+         }
+         index1 = index2+1;
+         index2 = sValue.find(',', index1);
+         t = sValue.substr(index1, index2-index1);
+         if (!t.ToULong(&uValue, 16)) {
+            success = false;
+         }
+         else {
+            flexParameters.partionValue = (uint8_t)uValue;
+            // Check for truncation
+            success = success && (flexParameters.partionValue == uValue);
+         }
+         flexParameters.partionValue = (uint8_t)uValue;
       }
       // Reset options
       if (parser.Found(_("reset"), &sValue)) {
@@ -540,5 +583,5 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
    if (!success) {
       parser.Usage();
    }
-    return success;
+   return success;
 }

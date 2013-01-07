@@ -162,7 +162,8 @@
 #define CFV1_XCSR_HALT          (0x80) //!< CFv1 XCSR Halt mask
 #define CFV1_XCSR_STOP          (0x40) //!< CFv1 XCSR Stop mask
 #define CFV1_XCSR_CLKSW         (0x04) //!< CFv1 XCSR BDM Clock select
-#define CFV1_XCSR_SEC           (0x02) //!< CFv1 XCSR Device secured
+#define CFV1_XCSR_SEC           (0x02) //!< CFv1 XCSR Device secured/erase busy (read)
+#define CFV1_XCSR_ERASE         (0x02) //!< CFv1 XCSR Erase (write)
 #define CFV1_XCSR_ENBDM         (0x01) //!< CFv1 XCSR Enable BDM mask
 #define CFV1_XCSR_CSTAT         (7<<3) //!< CFv1 XCSR Status mask (all bits)
 #define CFV1_XCSR_CSTAT_OK      (0<<3) //!< CFv1 XCSR Status - OK

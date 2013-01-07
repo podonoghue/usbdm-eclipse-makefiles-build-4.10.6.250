@@ -36,7 +36,8 @@ cleanCommon:
 	${RMDIR} usbdm-$(target)-gdi-debug
 
 ifeq ($(UNAME_S),Windows)
-allWindows: usbdm-$(target)-gdbServer usbdm-$(target)-gdbServer-debug usbdm-$(target)-gdi-legacy usbdm-$(target)-gdi-legacy-debug
+allWindows: usbdm-$(target)-gdbServer usbdm-$(target)-gdbServer-debug
+allWindows: usbdm-$(target)-gdi-legacy usbdm-$(target)-gdi-legacy-debug
 
 cleanWindows:
 	${RMDIR} usbdm-$(target)-gdbServer
@@ -50,10 +51,14 @@ endif
 
 all: allCommon allWindows
 
+
+# used for quick test builds
+test: usbdm-$(target)-gdi-debug
+
 clean: cleanCommon cleanWindows
 
 .PHONY: all clean 
-.PHONY: allCommon allWindows cleanCommon cleanWindows
+.PHONY: allCommon allWindows cleanCommon cleanWIndows
 .PHONY: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug 
 .PHONY: usbdm-$(target)-gdi       usbdm-$(target)-gdi-debug 
 .PHONY: usbdm-$(target)-gdbServer usbdm-$(target)-gdbServer-debug

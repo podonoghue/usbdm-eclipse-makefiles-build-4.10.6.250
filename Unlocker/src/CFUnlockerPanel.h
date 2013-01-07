@@ -18,6 +18,7 @@
 #include "NumberTextEditCtrl.h"
 #include "BitVector.h"
 #include "JTAG.h"
+#include "Shared.h"
 
 class wxSpinCtrl;
 
@@ -27,8 +28,6 @@ class wxSpinCtrl;
 
 #define SYMBOL_COLDFIREUNLOCKERPANEL_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxTAB_TRAVERSAL
 #define SYMBOL_COLDFIREUNLOCKERPANEL_IDNAME ID_COLDFIREUNLOCKERPANEL
-#define SYMBOL_COLDFIREUNLOCKERPANEL_SIZE wxSize(500, 300)
-#define SYMBOL_COLDFIREUNLOCKERPANEL_POSITION wxDefaultPosition
 
 /*!
  * ColdfireUnlockerDialogue class declaration
@@ -39,9 +38,9 @@ class ColdfireUnlockerPanel: public wxPanel
     DECLARE_EVENT_TABLE()
 
 private:
-   KnownDevices knownDevices;
+   KnownDevices      knownDevices;
    FlashEraseMethods flashEraseMethods;
-   JTAG_Chain jtagChain;
+   JTAG_Chain        jtagChain;
 
    void loadDeviceList();
    void loadEraseMethodsList();
@@ -52,76 +51,51 @@ private:
    void findDeviceInJTAGChain(unsigned int deviceNum);
    USBDM_ErrorCode eraseDscDevice();
    USBDM_ErrorCode eraseCFVxDevice();
-   USBDM_ExtendedOptions_t bdmOptions;
+   USBDM_ExtendedOptions_t &bdmOptions;
 
 public:
     /// Constructors
-    ColdfireUnlockerPanel();
-    ColdfireUnlockerPanel( wxWindow* parent, wxWindowID id = SYMBOL_COLDFIREUNLOCKERPANEL_IDNAME,
-                           const wxPoint& pos = SYMBOL_COLDFIREUNLOCKERPANEL_POSITION, const wxSize& size = SYMBOL_COLDFIREUNLOCKERPANEL_SIZE, long style = SYMBOL_COLDFIREUNLOCKERPANEL_STYLE );
+    ColdfireUnlockerPanel( wxWindow* parent, Shared *shared);
 
     /// Creation
-    bool Create( wxWindow* parent, wxWindowID id = SYMBOL_COLDFIREUNLOCKERPANEL_IDNAME, const wxPoint& pos = SYMBOL_COLDFIREUNLOCKERPANEL_POSITION, const wxSize& size = SYMBOL_COLDFIREUNLOCKERPANEL_SIZE, long style = SYMBOL_COLDFIREUNLOCKERPANEL_STYLE );
+    bool Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style);
 
-    /// Destructor
+    // Destructor
     ~ColdfireUnlockerPanel();
 
-    /// Initialises member variables
+    // Initializes member variables
     void Init();
 
-    /// Creates the controls and sizers
+    bool TransferDataToWindow();
+    bool TransferDataFromWindow();
+
+    bool updateState();
+
+    // Creates the controls and sizers
     void CreateControls();
 
-    /// wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_INIT_CHAIN_BUTTON
     void OnInitChainButtonClick( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_CHOICE_SELECTED event handler for ID_JTAG_DEVICE_CHOICE
     void OnJtagDeviceChoiceSelected( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_SPINCTRL_UPDATED event handler for ID_IR_LENGTH_SPINCTRL
     void OnIrLengthSpinctrlUpdated( wxSpinEvent& event );
-
-    /// wxEVT_UPDATE_UI event handler for wxID_PIN_STATIC
     void OnPinStaticUpdate( wxUpdateUIEvent& event );
-
-    /// wxEVT_COMMAND_CHOICE_SELECTED event handler for ID_TARGET_DEVICE_CHOICE
     void OnTargetDeviceChoiceSelected( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_SPEED_TEXTCTRL
     void OnSpeedTextctrlTextUpdated( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_MIN_FREQ_TEXTCTRL
     void OnMinFreqTextctrlTextUpdated( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_MAX_FREQ_TEXTCTRL
     void OnMaxFreqTextctrlTextUpdated( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_CHOICE_SELECTED event handler for ID_EQUATION_CHOICE
     void OnEquationChoiceSelected( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_UNLOCK_VALUE_TEXTCTRL
     void OnUnlockValueTextctrlTextUpdated( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_CLOCK_DIVIDER_VALUE_TEXTCTRL
     void OnClockDividerValueTextctrlTextUpdated( wxCommandEvent& event );
-
-    /// wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_UNLOCK_BUTTON
     void OnUnlockButtonClick( wxCommandEvent& event );
 
-
-
-    /// Retrieves bitmap resources
+    // Retrieves bitmap resources
     wxBitmap GetBitmapResource( const wxString& name );
 
-    /// Retrieves icon resources
+    // Retrieves icon resources
     wxIcon GetIconResource( const wxString& name );
 
-    /// Should we show tooltips?
+    // Should we show tooltips?
     static bool ShowToolTips();
 
-    void setBdmOptions(USBDM_ExtendedOptions_t *bdmOptions) {
-       this->bdmOptions = *bdmOptions;
-    }
     // Controls
     wxButton*              initChainButtonControl;
     wxStaticText*          numberOfDeviceStaticControl;
@@ -161,8 +135,6 @@ public:
         wxID_VERSION_STATIC               = 10015,
         ID_UNLOCK_BUTTON                  = 10007
     };
-
-
 };
 
 #endif /* CFUNLOCKERPANEL_H_ */

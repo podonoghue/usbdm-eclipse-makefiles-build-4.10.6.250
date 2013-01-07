@@ -37,10 +37,10 @@
  */
 #include <stdio.h>
 #include <time.h>
+#include <sys/time.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-//#include <wchar.h>
 #include "Log.h"
 #include "Version.h"
 #include "USBDM_API.h"
@@ -85,8 +85,7 @@ static FILE *openApplicationFile(const char *fileName) {
 //!
 //! @note The configuration directory will be created if it doesn't aleady exist.
 //!
-static int getApplicationDirectoryPath(const char **_configFilePath,
-      const char *filename) {
+static int getApplicationDirectoryPath(const char **_configFilePath, const char *filename) {
    static char configFilePath[MAX_PATH];
 
    memset(configFilePath, '\0', MAX_PATH);
@@ -149,12 +148,12 @@ FILE *openApplicationFile(const char *fileName) {
 }
 #endif
 
-const char *Logging::currentName       = NULL; //!< Name of current function
-FILE       *Logging::logFile           = NULL; //!< File handle for logging file
-int         Logging::indent            = 0;    //!< Indent level for listing
-int         Logging::currentLogLevel   = 100;  //!< Level below which to log messages
-bool        Logging::loggingEnabled    = true; //!< Logging on/off
-bool        Logging::timestampEnabled  = true; //!< Timestamp messages
+const char *Logging::currentName       = NULL;  //!< Name of current function
+FILE       *Logging::logFile           = NULL;  //!< File handle for logging file
+int         Logging::indent            = 0;     //!< Indent level for listing
+int         Logging::currentLogLevel   = 100;   //!< Level below which to log messages
+bool        Logging::loggingEnabled    = true;  //!< Logging on/off
+bool        Logging::timestampEnabled  = false; //!< Timestamp messages
 
 /*!  \brief Object to allow logging the execution of a function
  *
@@ -167,7 +166,7 @@ Logging::Logging(const char *name, When when) : name(name), when(when) {
    lastLogLevel  = currentLogLevel;
    currentName   = name;
    if ((when==entry)||(when==both)) {
-      print("Entry ===============\n");
+      print("Entry ================ (i=%d, l=%d)\n", indent, currentLogLevel);
    }
 }
 /*!  \brief Record exit from a function
@@ -175,7 +174,7 @@ Logging::Logging(const char *name, When when) : name(name), when(when) {
  */
 Logging::~Logging(){
    if ((when==exit)||(when==both)) {
-      print("Exit ================\n");
+      print("Exit ================ (i=%d, l=%d)\n", indent, currentLogLevel);
    }
    currentLogLevel = lastLogLevel;
    currentName     = lastName;
@@ -184,6 +183,8 @@ Logging::~Logging(){
 /*!  \brief Open log file
  *
  *  @param description - Description written to log file
+ *
+ *  @note logging is enabled and timestamp disabled
  */
 void Logging::openLogFile(const char *description){
    time_t time_now;
@@ -197,7 +198,8 @@ void Logging::openLogFile(const char *description){
    if (logFile == NULL) {
       return;
    }
-   loggingEnabled = true;
+   loggingEnabled   = true;
+   timestampEnabled = false;
    fprintf(logFile, "%s - %s, Compiled on %s, %s.\n",
          description,
          USBDM_VERSION_STRING, __DATE__,__TIME__);
@@ -220,6 +222,19 @@ void Logging::enableLogging(bool value) {
  */
 void Logging::setLoggingLevel(int level) {
    currentLogLevel = indent + level;
+}
+/*!  \brief Get logging level relative to current level
+ *
+ */
+int Logging::getLoggingLevel() {
+   return currentLogLevel - indent;
+}
+/*! \brief Turns timestamp on or off
+ *
+ *  @param value - true/false => on/off timestamp
+ */
+void Logging::enableTimestamp(bool enable) {
+   timestampEnabled = enable;
 }
 /*!  \brief Close the log file
  *
@@ -257,6 +272,20 @@ void Logging::printq(const char *format, ...) {
    va_end(list);
    fflush(logFile);
 }
+
+/*! \brief Get time as milliseconds
+ *
+ *  @return time value
+ */
+static double getTimeStamp()
+{
+   struct timeval tv;
+   if (gettimeofday(&tv, NULL) != 0) {
+      return 0;
+   }
+   return (tv.tv_sec*1000)+(tv.tv_usec/1000.0);
+}
+
 /*! \brief Provides a print function which prints data into a log file.
  *
  *  @param format Format and parameters as for printf()
@@ -270,7 +299,7 @@ void Logging::print(const char *format, ...) {
       format = "print() - Error - empty format string!\n";
    }
    if (timestampEnabled) {
-      fprintf(logFile, "%04.3f: ",1.0*GetTickCount()/1000);
+      fprintf(logFile, "%04.3f: ",getTimeStamp());
    }
    fprintf(logFile, "%*s", 3*indent, "");
    if (currentName!=NULL) {
@@ -293,12 +322,14 @@ void Logging::error(const char *format, ...) {
    if (format == NULL) {
       format = "error() - Error - empty format string!\n";
    }
+   if (timestampEnabled) {
+      fprintf(logFile, "%04.3f: ",getTimeStamp());
+   }
    fprintf(logFile, "%*s", 3*indent, "");
    if (currentName!=NULL) {
       fprintf(logFile, "%s(): ", currentName);
    }
    va_start(list, format);
-   //fprintf(log_file, "%04.3f: ",1.0*GetTickCount()/1000);
    vfprintf(logFile, format, list);
    va_end(list);
    fflush(logFile);
@@ -350,7 +381,7 @@ void Logging::printDump(unsigned const char *data,
       if (eolFlag) {
          eolFlag = false;
          if (timestampEnabled) {
-            fprintf(logFile, "%04.3f: ",1.0*GetTickCount()/1000);
+            fprintf(logFile, "%04.3f: ",getTimeStamp());
          }
          fprintf(logFile, "%*s", 3*indent, "");
          fprintf(logFile,"   %8.8X:", address>>addressShift);

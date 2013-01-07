@@ -39,7 +39,7 @@
                      AssignToProperty="yes"
                      Depth="2"
                      Path="$(var.ApplicationFolderName)" />
-        </DirectorySearchRef>
+         </DirectorySearchRef>
       </Property>
       
       <!-- Modify default install path for CodeWarrior Development Studio for MCU V10.x -->

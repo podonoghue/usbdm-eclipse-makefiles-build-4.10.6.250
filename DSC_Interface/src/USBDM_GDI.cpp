@@ -24,6 +24,8 @@
 \verbatim
 Change History
 -============================================================================================
+|  Dec 21 2012 | Fixed Reset PC Hack in HCS08 & CFV1                               - pgo V4.10.4
+|  Dec 21 2012 | Removed Mass Erase as separate operation                          - pgo V4.10.4
 |  Nov 30 2012 | Changed logging                                                   - pgo V4.10.4
 |  Oct  8 2012 | Modified ARM accesses to use maximum aligned sizes                - pgo V4.10.2
 |  May  7 2012 | Changed to using RESET_DEFAULT for ARM in DiExecResetChild()      - pgo V4.9.5
@@ -67,6 +69,7 @@ Change History
 #include "DeviceData.h"
 #include "Names.h"
 #include "wxPlugin.h"
+#include "FindWindow.h"
 #ifdef LEGACY
 #include "USBDMDialogue.h"
 #endif
@@ -96,6 +99,7 @@ Change History
 bool     pcWritten            = false;
 uint32_t pcResetValue         = 0x000000;
 bool     programmingSupported = false;
+bool     forceMassErase       = false;
 
 bool usbdm_gdi_dll_open(void);
 bool usbdm_gdi_dll_close(void);
@@ -404,7 +408,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
 
    USBDM_ErrorCode bdmRC;
 
-   programmingSupported = false;
+   programmingSupported = false; // Default to no programming available
 
    bdmRC = USBDM_Init();
    if (bdmRC != BDM_RC_OK) {
@@ -593,7 +597,8 @@ DiReturnT DiGdiOpen ( DiUInt32T      dnGdiVersionH,
                       DiUInt32T      dnArgc,
                       DiConstStringT szArgv[],
                       void (*UdProcessEvents)(void) ) {
-unsigned sub;
+   LOGGING;
+   unsigned sub;
 
    usbdm_gdi_dll_open();
    
@@ -610,9 +615,6 @@ unsigned sub;
    for (sub = 0; sub < dnArgc; sub++) {
       Logging::print("argv[%2i]:\'%s\'\n", sub, szArgv[sub]);
    }
-
-   //   ::UdProcessEvents = UdProcessEvents;
-
 #ifdef FLASH_PROGRAMMING
    flashImage = NULL;
 #endif
@@ -622,10 +624,12 @@ unsigned sub;
    currentErrorString = "GDI Not opened";
 
    USBDM_ErrorCode rc = USBDM_Init();
-   if (rc != BDM_RC_OK)
+   if (rc != BDM_RC_OK) {
       return setErrorState(DI_ERR_FATAL, rc);
-   else
+   }
+   else {
       return setErrorState(DI_OK);
+   }
 }
 
 //! Close GDI
@@ -714,14 +718,18 @@ DiReturnT DiGdiSetConfig ( DiConstStringT szConfig ) {
 //!     DI_ERR_FATAL       => Error see \ref currentErrorString
 //!
 USBDM_ErrorCode initialConnect(void) {
+   LOGGING;
+
    USBDM_ErrorCode bdmRc;
 
    Logging::print("initialConnect()\n");
    // Initial connect using all strategies
    bdmRc = targetConnect(initialConnectOptions);
+   forceMassErase = false;
+   pcWritten      = false;
 
 #if (TARGET == MC56F80xx)
-   Logging::print("initialConnect() - doing DSC_TargetHalt()\n");
+   Logging::print("Doing DSC_TargetHalt()\n");
    bdmRc = DSC_TargetHalt();
    if (bdmRc != BDM_RC_OK) {
       if (initialConnectOptions&retryByReset) {
@@ -741,24 +749,33 @@ USBDM_ErrorCode initialConnect(void) {
     }
 #endif
 
-   if (bdmRc == BDM_RC_SECURED) {
+   if ((bdmRc == BDM_RC_SECURED) &&
+       (flashProgrammer->getDeviceData()->getEraseOption() != DeviceData::eraseMass)){
+      // Prompt user to change erase option to 'mass erase' if not already so
       mtwksDisplayLine("targetConnect(): Target is secured\n");
       int getOkCancel = displayDialogue(
          "Device appears to be secure and may \n"
          "only be programmed after a mass erase \n"
          "which completely erases the device.\n\n"
-         "Proceed with Mass erase?",
+         "Enable Mass erase?",
          "Device is secured",
-         wxOK|wxCANCEL|wxOK_DEFAULT|wxICON_INFORMATION);
-      if (getOkCancel == wxOK) {
-         if (flashProgrammer->massEraseTarget() != PROGRAMMING_RC_OK) {
-            mtwksDisplayLine("targetConnect(): Target mass erase failed\n");
-         }
-         else {
-            mtwksDisplayLine("targetConnect(): Target mass erase done\n");
-            bdmRc = BDM_RC_OK;
-         }
+         wxYES_NO|wxYES_DEFAULT|wxICON_INFORMATION);
+      if (getOkCancel == wxYES) {
+         Logging::print("Setting forceMassErase\n");
+         forceMassErase = true;
+         flashProgrammer->getDeviceData()->setEraseOption(DeviceData::eraseMass);
+         // Ignore secured error
+         bdmRc = BDM_RC_OK;
       }
+//      if (getOkCancel == wxOK) {
+//         if (flashProgrammer->massEraseTarget() != PROGRAMMING_RC_OK) {
+//            mtwksDisplayLine("targetConnect(): Target mass erase failed\n");
+//         }
+//         else {
+//            mtwksDisplayLine("targetConnect(): Target mass erase done\n");
+//            bdmRc = BDM_RC_OK;
+//         }
+//      }
    }
 #endif
 
@@ -775,11 +792,12 @@ USBDM_ErrorCode initialConnect(void) {
 //!
 USBDM_GDI_API
 DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
+   LOGGING;
    USBDM_ErrorCode bdmRc;
 
-   Logging::print("DiGdiInitIO(pdcCommSetup = %p)\n", pdcCommSetup);
+   Logging::print("pdcCommSetup = %p\n", pdcCommSetup);
    if (pdcCommSetup != NULL) {
-      Logging::print("DiGdiInitIO()\n"
+      Logging::print("\n"
             "pdcCommSetup                   = %p\n"
             "pdcCommSetup->dccType          = %d\n"
             "pdcCommSetup->fCheckConnection = %s\n",
@@ -794,6 +812,11 @@ DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
          "=============================================\n",
          USBDM_VERSION_STRING);
 
+#if !defined(useWxWidgets)
+   // Set up handle on Eclipse Window once only
+   setDefaultWindowParent(FindEclipseWindowHwnd());
+#endif
+
 #if TARGET == MC56F80xx
    DSC_SetLogFile(Logging::getLogFileHandle());
 #endif
@@ -801,25 +824,25 @@ DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
    bdmRc = initialiseBDMInterface();
    if ((bdmRc != BDM_RC_OK)&&(bdmRc != BDM_RC_UNKNOWN_DEVICE)) {
       DiReturnT rc = setErrorState(DI_ERR_COMMUNICATION, bdmRc);
-      Logging::print("DiGdiInitIO() - Failed - %s\n", currentErrorString);
+      Logging::print("Failed - %s\n", currentErrorString);
       return rc;
    }
 #ifndef USE_MEE
    // Initial connect is treated differently
+   bdmRc = initialConnect();
    if (bdmRc != BDM_RC_OK) {
       DiReturnT rc = setErrorState(DI_ERR_COMMUNICATION, bdmRc);
-      Logging::print("DiGdiInitIO() - Failed - %s\n", currentErrorString);
+      Logging::print("Failed - %s\n", currentErrorString);
       return rc;
    }
 #else
-   Logging::print("DiGdiInitIO() - doing mtwksSetMEE()\n");
+   Logging::print("Doing mtwksSetMEE()\n");
    mtwksSetMEE(1);
 #endif
-   Logging::print("DiGdiInitIO() - Completed\n");
    return setErrorState(DI_OK);
 }
 
-//! Initialize Register Name/Number Map
+//! Initialise Register Name/Number Map
 //!
 //! @param dnEntries
 //! @param pdriRegister
@@ -830,8 +853,8 @@ DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
 //!     DI_ERR_FATAL       => Error see \ref currentErrorString
 //!
 USBDM_GDI_API
-DiReturnT DiGdiInitRegisterMap ( DiUInt32T        dnEntries,
-                                 DiRegisterInfoT   *pdriRegister,
+DiReturnT DiGdiInitRegisterMap ( DiUInt32T         dnEntries,
+                                 DiRegisterInfoT*  pdriRegister,
                                  DiUInt32T         dnProgramCounter ) {
    Logging::print("DiGdiInitRegisterMap() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
@@ -848,7 +871,7 @@ DiReturnT DiGdiInitRegisterMap ( DiUInt32T        dnEntries,
 //!
 USBDM_GDI_API
 DiReturnT DiGdiInitMemorySpaceMap ( DiUInt32T            dnEntries,
-                                     DiMemorySpaceInfoT   *pdmiMemSpace ) {
+                                    DiMemorySpaceInfoT*  pdmiMemSpace ) {
    Logging::print("DiGdiInitMemorySpaceMap() - not implemented\n");
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
@@ -1091,34 +1114,30 @@ DiReturnT programTargetFlash(void) {
       mtwksDisplayLine("programTargetFlash() - flashProgrammer NULL\n");
       return setErrorState(DI_ERR_FATAL, "flashProgrammer NULL!");
    }
-   USBDM_ErrorCode flashRC = flashProgrammer->confirmSDID();
-
-   // ToDo - check if should just fail on RS08/HCS08 as SDID should always be readable
-   if (flashRC == PROGRAMMING_RC_ERROR_WRONG_SDID) {
-      // Target is wrong device
-      displayDialogue("Selected device doesn't agree with connected device.",
-                      "Wrong Device",
-                      wxOK|wxICON_ERROR);
-      return setErrorState(DI_ERR_FATAL, flashRC);
-   }
-   if (flashRC != PROGRAMMING_RC_OK) {
-      // Failed to read target type - may  be secured
-      int getYesNo = displayDialogue("Cannot confirm target device type.\n"
-                                     "Device may be secured.\n\n"
-                                     "Continue?",
-                                     "Wrong Device",
-                                  wxYES_NO|wxYES_DEFAULT|wxICON_WARNING);
-      if (getYesNo != wxYES)
-         return setErrorState(DI_ERR_FATAL, flashRC);
-   }
+//   USBDM_ErrorCode flashRC = flashProgrammer->confirmSDID();
+//
+//   // ToDo - check if should just fail on RS08/HCS08 as SDID should always be readable
+//   if (flashRC == PROGRAMMING_RC_ERROR_WRONG_SDID) {
+//      // Target is wrong device
+//      displayDialogue("Selected device doesn't agree with connected device.",
+//                      "Wrong Device",
+//                      wxOK|wxICON_ERROR);
+//      return setErrorState(DI_ERR_FATAL, flashRC);
+//   }
+//   if (flashRC != PROGRAMMING_RC_OK) {
+//      // Failed to read target type - may  be secured
+//      int getYesNo = displayDialogue("Cannot confirm target device type.\n"
+//                                     "Device may be secured.\n\n"
+//                                     "Continue?",
+//                                     "Wrong Device",
+//                                  wxYES_NO|wxYES_DEFAULT|wxICON_WARNING);
+//      if (getYesNo != wxYES)
+//         return setErrorState(DI_ERR_FATAL, flashRC);
+//   }
    // Program target
-   flashRC = flashProgrammer->programFlash(flashImage, NULL, true);
+   USBDM_ErrorCode flashRC = flashProgrammer->programFlash(flashImage, NULL, true);
    if (flashRC != PROGRAMMING_RC_OK) {
       return setErrorState(DI_ERR_FATAL, flashRC);
-   }
-   uint16_t trimValue = deviceOptions.getClockTrimValue();
-   if (trimValue != 0) {
-      mtwksDisplayLine("Info: Device Trim Value = %2.2X.%1X\n", trimValue>>1, trimValue&0x01);
    }
    return DI_OK;
 }
@@ -1177,7 +1196,7 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
 
       case DI_DNLD_TERMINATE:
          rc = DI_OK;
-         if ((flashImage != NULL) && (!flashImage->isEmpty())) {
+         if ((flashImage != NULL) && (!flashImage->isEmpty() || forceMassErase)) {
             mtwksDisplayLine("DiMemoryDownload() - DI_DNLD_TERMINATE - Programming memory image...\n");
             Logging::print("DiMemoryDownload() - DI_DNLD_TERMINATE - Programming memory image\n");
             rc = programTargetFlash();
@@ -1203,6 +1222,7 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
          USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
          USBDM_Connect();
 #endif
+         forceMassErase = false;
          return setErrorState(DI_OK);
       case DI_DNLD_WRITE:
          Logging::print("DI_DNLD_WRITE\n");
@@ -1424,7 +1444,6 @@ uint32_t        endAddress;                      // End address
 #else
          rc = USBDM_WriteMemory(memorySpace, sub, writeAddress, memoryReadWriteBuffer);
 #endif
-         Logging::printDump(memoryReadWriteBuffer, sub, writeAddress);
          if (rc != BDM_RC_OK) {
             return setErrorState(DI_ERR_NONFATAL, rc);
          }
@@ -1780,8 +1799,7 @@ DiReturnT DiBreakpointClearAll ( void ) {
 USBDM_GDI_API
 DiReturnT DiExecResetChild ( void ) {
 USBDM_ErrorCode rc;
-
-   Logging::print("DiExecResetChild()\n");
+   LOGGING;
 
    CHECK_ERROR_STATE();
 
@@ -1820,35 +1838,18 @@ USBDM_ErrorCode rc;
    }
    // Reset into special mode doesn't correctly set the reset vector on these targets
    // Do manually
+   if (pcWritten) {
 #if TARGET == MC56F80xx
-   if (pcWritten) {
+      Logging::print("Fixing initial PC = 0x%08X\n", pcResetValue);
       DSC_WriteRegister(DSC_RegPC, pcResetValue);
-   }
 #elif (TARGET == CFV1)
-   if (pcWritten) {
+      Logging::print("Fixing initial PC = 0x%08X\n", pcResetValue);
       USBDM_WriteCReg(CFV1_CRegPC, pcResetValue);
-   }
 #elif TARGET == HCS08
-   if (pcWritten) {
-      USBDM_WriteReg(HCS08_RegPC,pcResetValue);
-   }
+      Logging::print("Fixing initial PC = 0x%08X\n", pcResetValue);
+      USBDM_WriteReg(HCS08_RegPC, pcResetValue);
 #endif
-
-#if TARGET == HCS08 && 0
-   // Reset into special mode doesn't correctly set the reset vector
-   // Do manually
-   uint8_t data[10];
-   long unsigned int resetVector;
-   rc = USBDM_ReadMemory(1,2,0xFFFE,data);
-   if (rc != BDM_RC_OK) {
-      return setErrorState(DI_ERR_NONFATAL, rc);
    }
-   resetVector = (data[0]<<8)+data[1];
-   rc = USBDM_WriteReg(HCS08_RegPC,resetVector);
-   if (rc != BDM_RC_OK) {
-      return setErrorState(DI_ERR_NONFATAL, rc);
-   }
-#endif
    return setErrorState(DI_OK);
 }
 
@@ -1944,6 +1945,7 @@ DiReturnT DiExecContinueBackground ( void ) {
 //!
 USBDM_GDI_API
 DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
+   LOGGING;
    USBDM_ErrorCode BDMrc;
    static DiExitCauseT lastStatus = DI_WAIT_USER;
    static int pollCount = 0;

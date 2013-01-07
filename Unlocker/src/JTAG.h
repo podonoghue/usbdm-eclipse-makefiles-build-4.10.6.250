@@ -15,7 +15,7 @@ class  JTAG_Device {
 public:
    uint32_t          idcode;     //!< JTAG IDCODE value
    unsigned int      irLength;   //!< JTAG IR Register length
-   const DeviceData *deviceData; //!< Data for this type of device
+   const UnlockerDeviceData *deviceData; //!< Data for this type of device
 } ;
 
 //! Table of information about devices found in the JTAG chain

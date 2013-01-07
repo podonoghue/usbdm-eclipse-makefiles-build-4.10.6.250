@@ -90,7 +90,7 @@ static const char *const errorMessages[] = {
    /* 45 */ "Unknown or not supported device",
    /* 46 */ "Device database error (device not found/incorrect)",
    /* 47 */ "ARM target failed to power up",
-   /* 48 */ "ARM memory access error (illegal/readonly etc)",
+   /* 48 */ "ARM access error (illegal/readonly etc)",
    /* 49 */ "JTAG Chain contains too many devices (or open)",
    /* 50 */ "Device appears secured",
    /* 51 */ "ARM Data Parity error",

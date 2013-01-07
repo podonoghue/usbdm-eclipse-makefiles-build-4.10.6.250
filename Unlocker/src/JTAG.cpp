@@ -152,7 +152,7 @@ USBDM_ErrorCode rc = BDM_RC_OK;
          swapEndian32(&buff);
          buff = (buff<<1) | 0x1;
          devices[deviceNum].idcode     = buff;
-         const DeviceData *deviceData  = KnownDevices::lookUpDevice(buff);
+         const UnlockerDeviceData *deviceData  = KnownDevices::lookUpDevice(buff);
          devices[deviceNum].irLength   = deviceData->instructionLength;
          devices[deviceNum].deviceData = deviceData;
       }
@@ -178,7 +178,7 @@ USBDM_ErrorCode rc = BDM_RC_OK;
 #endif
 
 #if (DEBUG & DEBUG_DEVICES) != 0
-   const DeviceData *deviceData;
+   const UnlockerDeviceData *deviceData;
 
    // Debug - add dummy devices
    buff = (0x04B<<12)|(FREESCALE_JEDEC<<1)|1;

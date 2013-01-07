@@ -30,6 +30,7 @@
 \verbatim
  Change History
 +==================================================================================================
+| 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo - V4.10.4
 |  1 Dec 2012 | Changed logging                                                     - pgo - V4.10.4
 | 30 Nov 2012 | Extended timeout for USBDM_ControlPins()                            - pgo - V4.10.4
 | 30 Oct 2012 | Added MS_Fast report                                                - pgo - V4.10.4
@@ -354,8 +355,8 @@ USBDM_ErrorCode USBDM_Open(unsigned char deviceNo) {
       return rc;
    }
    Logging::print("\n"
-         "        BDM S/W version = %d.%d.%d, H/W version (from BDM) = %1X.%X\n"
-         "        ICP S/W version = %1X.%1X,   H/W version (from ICP) = %1X.%X\n",
+         "         BDM S/W version = %d.%d.%d, H/W version (from BDM) = %1X.%X\n"
+         "         ICP S/W version = %1X.%1X,   H/W version (from ICP) = %1X.%X\n",
          (bdmInfo.BDMsoftwareVersion>>16)&0xFF,(bdmInfo.BDMsoftwareVersion>>8)&0xFF,bdmInfo.BDMsoftwareVersion&0xFF,
          (bdmInfo.BDMhardwareVersion >> 6) & 0x03,
          bdmInfo.BDMhardwareVersion & 0x3F,
@@ -552,13 +553,13 @@ USBDM_ErrorCode USBDM_GetBdmInformation(USBDM_bdmInformation_t *info) {
    LOGGING_Q;
 
    Logging::print("\n"
-         "bdmInfo.capabilities       = %s\n"
-         "bdmInfo.commandBufferSize  = %d\n"
-         "bdmInfo.jtagBufferSize     = %d\n"
-         "bdmInfo.BDMhardwareVersion = %d.%d\n"
-         "bdmInfo.BDMsoftwareVersion = %d.%d.%d\n"
-         "bdmInfo.ICPhardwareVersion = %d.%d\n"
-         "bdmInfo.ICPsoftwareVersion = %d.%d\n",
+         "         bdmInfo.capabilities       = %s\n"
+         "         bdmInfo.commandBufferSize  = %d\n"
+         "         bdmInfo.jtagBufferSize     = %d\n"
+         "         bdmInfo.BDMhardwareVersion = %d.%d\n"
+         "         bdmInfo.BDMsoftwareVersion = %d.%d.%d\n"
+         "         bdmInfo.ICPhardwareVersion = %d.%d\n"
+         "         bdmInfo.ICPsoftwareVersion = %d.%d\n",
          getCapabilityName(bdmInfo.capabilities),
          bdmInfo.commandBufferSize,
          bdmInfo.jtagBufferSize,
@@ -693,7 +694,7 @@ USBDM_ErrorCode USBDM_SetOptions(BDM_Options_t *newBdmOptions) {
 //!
 USBDM_API
 USBDM_ErrorCode USBDM_GetDefaultExtendedOptions(USBDM_ExtendedOptions_t *bdmOptions) {
-   LOGGING_Q;
+   LOGGING_E;
    unsigned size           = bdmOptions->size;
    TargetType_t targetType = bdmOptions->targetType;
 
@@ -732,38 +733,43 @@ USBDM_ErrorCode USBDM_GetDefaultExtendedOptions(USBDM_ExtendedOptions_t *bdmOpti
 //!
 USBDM_API
 USBDM_ErrorCode USBDM_SetExtendedOptions(const USBDM_ExtendedOptions_t *newBdmOptions) {
-   LOGGING_Q;
+   LOGGING;
 #ifdef LOG
    Logging::print("=> proposed\n");
    printBdmOptions(newBdmOptions);
 #endif
    // Validate some options
+   USBDM_ErrorCode rc = BDM_RC_OK;
    if (newBdmOptions->size > sizeof(USBDM_ExtendedOptions_t)) {
-      return BDM_RC_ILLEGAL_PARAMS;
+      rc =  BDM_RC_ILLEGAL_PARAMS;
    }
    if (newBdmOptions->size == 0) {
-      return BDM_RC_ILLEGAL_PARAMS;
+      rc =  BDM_RC_ILLEGAL_PARAMS;
    }
    if ((newBdmOptions->targetType > T_LAST) && (newBdmOptions->targetType != T_OFF)) {
-      return BDM_RC_ILLEGAL_PARAMS;
+      rc =  BDM_RC_ILLEGAL_PARAMS;
    }
    if (newBdmOptions->targetVdd > BDM_TARGET_VDD_5V) {
-      return BDM_RC_ILLEGAL_PARAMS;
-   }
-   if ((newBdmOptions->resetDuration<100) || (newBdmOptions->resetDuration>10000)) {
-      return BDM_RC_ILLEGAL_PARAMS;
-   }
-   if ((newBdmOptions->resetRecoveryInterval<100) || (newBdmOptions->resetRecoveryInterval>10000)) {
-      return BDM_RC_ILLEGAL_PARAMS;
-   }
-   if ((newBdmOptions->resetReleaseInterval<100) || (newBdmOptions->resetReleaseInterval>10000)) {
-      return BDM_RC_ILLEGAL_PARAMS;
+      rc =  BDM_RC_ILLEGAL_PARAMS;
    }
    if ((newBdmOptions->powerOffDuration<100) || (newBdmOptions->powerOffDuration>10000)) {
-      return BDM_RC_ILLEGAL_PARAMS;
+      rc =  BDM_RC_ILLEGAL_PARAMS;
    }
    if ((newBdmOptions->powerOnRecoveryInterval<100) || (newBdmOptions->powerOnRecoveryInterval>10000)) {
-      return BDM_RC_ILLEGAL_PARAMS;
+      rc =  BDM_RC_ILLEGAL_PARAMS;
+   }
+   if ((newBdmOptions->resetDuration<100) || (newBdmOptions->resetDuration>10000)) {
+      rc =  BDM_RC_ILLEGAL_PARAMS;
+   }
+   if ((newBdmOptions->resetReleaseInterval<10) || (newBdmOptions->resetReleaseInterval>10000)) {
+      rc =  BDM_RC_ILLEGAL_PARAMS;
+   }
+   if ((newBdmOptions->resetRecoveryInterval<10) || (newBdmOptions->resetRecoveryInterval>10000)) {
+      rc =  BDM_RC_ILLEGAL_PARAMS;
+   }
+   if (rc != BDM_RC_OK) {
+      Logging::print(" - ERROR - rc = %s\n", USBDM_GetErrorString(rc));
+      return rc;
    }
    TargetType_t currentTargetType = bdmOptions.targetType;
    bdmOptions = defaultBdmOptions;
@@ -984,7 +990,7 @@ USBDM_ErrorCode USBDM_ControlPins(unsigned int control, unsigned int *status) {
    usb_data[2] = (uint8_t)(control>>8);
    usb_data[3] = (uint8_t)control;
 
-   USBDM_ErrorCode rc = bdm_usb_transaction(4, 3, usb_data, 200);
+   USBDM_ErrorCode rc = bdm_usb_transaction(4, 3, usb_data);
    if ((rc == BDM_RC_OK) && (status != NULL)) {
       *status = (usb_data[1]<<8) + usb_data[2];
    }
@@ -1287,8 +1293,8 @@ USBDM_ErrorCode USBDM_GetBDMStatus(USBDMStatus_t *USBDMStatus) {
 USBDM_API
 USBDM_ErrorCode USBDM_Connect(void) {
 USBDM_ErrorCode rc;
-   LOGGING_E;
-   Logging::setLoggingLevel(4); // Log connect sequence
+   LOGGING;
+   Logging::setLoggingLevel(10); // Always log connect sequence
    bdmState.activityFlag = BDM_ACTIVE;
    usb_data[0] = 0;
    usb_data[1] = CMD_USBDM_CONNECT;
@@ -1305,9 +1311,10 @@ USBDM_ErrorCode rc;
    }
    if (pendingPowerOnReset) {
       // Release pending reset
-      Logging::print("Releasing pending reset\n");
+      Logging::print("Releasing pending reset and waiting %d ms\n", bdmOptions.resetRecoveryInterval);
       pendingPowerOnReset = false;
-      USBDM_ControlPins(PIN_RESET_3STATE, NULL);
+      USBDM_ControlPins(PIN_RESET_3STATE);
+      milliSleep(bdmOptions.resetRecoveryInterval);
    }
    return rc;
 }
@@ -1575,6 +1582,7 @@ USBDM_ErrorCode USBDM_WriteControlReg(unsigned int value) {
 //!
 static USBDM_ErrorCode resetHCS(TargetMode_t targetMode) {
    LOGGING_Q;
+   USBDM_ErrorCode rc;
    TargetMode_t resetMethod = (TargetMode_t)(targetMode&RESET_METHOD_MASK);
    TargetMode_t resetMode   = (TargetMode_t)(targetMode&RESET_MODE_MASK);
    Logging::print("mode=%s\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
@@ -1589,7 +1597,10 @@ static USBDM_ErrorCode resetHCS(TargetMode_t targetMode) {
    }
    if (resetMethod == RESET_POWER) {
       Logging::print("Power reset\n");
-      USBDM_SetTargetVdd(BDM_TARGET_VDD_DISABLE);
+      rc = USBDM_SetTargetVdd(BDM_TARGET_VDD_DISABLE);
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
       milliSleep(bdmOptions.powerOffDuration);
       // Note - BKGD may have been set low by the
       // Vdd transition (auto connect interrupt code)
@@ -1599,10 +1610,18 @@ static USBDM_ErrorCode resetHCS(TargetMode_t targetMode) {
       else {
          USBDM_ControlPins(PIN_RESET_LOW|PIN_BKGD_3STATE);
       }
-      USBDM_SetTargetVdd(BDM_TARGET_VDD_ENABLE);
+      rc = USBDM_SetTargetVdd(BDM_TARGET_VDD_ENABLE);
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
       milliSleep(bdmOptions.powerOnRecoveryInterval);
       USBDM_ControlPins(PIN_RESET_3STATE);
       milliSleep(bdmOptions.resetReleaseInterval);
+      // Check for reset rise
+      rc = USBDM_ControlPins(PIN_RESET_3STATE);
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
       USBDM_ControlPins(PIN_RELEASE);
       milliSleep(bdmOptions.resetRecoveryInterval);
       return BDM_RC_OK;
@@ -1618,6 +1637,11 @@ static USBDM_ErrorCode resetHCS(TargetMode_t targetMode) {
       milliSleep(bdmOptions.resetDuration);
       USBDM_ControlPins(PIN_RESET_3STATE);
       milliSleep(bdmOptions.resetReleaseInterval);
+      // Check for reset rise
+      rc = USBDM_ControlPins(PIN_RESET_3STATE);
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
       USBDM_ControlPins(PIN_RELEASE);
       milliSleep(bdmOptions.resetRecoveryInterval);
       return BDM_RC_OK;
@@ -1626,7 +1650,7 @@ static USBDM_ErrorCode resetHCS(TargetMode_t targetMode) {
    usb_data[0] = 0;
    usb_data[1] = CMD_USBDM_TARGET_RESET;
    usb_data[2] = (resetMethod|resetMode);
-   USBDM_ErrorCode rc = bdm_usb_transaction(3, 1, usb_data, 100);
+   rc = bdm_usb_transaction(3, 1, usb_data);
    milliSleep(bdmOptions.resetRecoveryInterval);
    return rc;
 }
@@ -1640,6 +1664,7 @@ static USBDM_ErrorCode resetHCS(TargetMode_t targetMode) {
 //!
 static USBDM_ErrorCode resetCFVx(TargetMode_t targetMode) {
    LOGGING_Q;
+   USBDM_ErrorCode rc;
    TargetMode_t resetMethod = (TargetMode_t)(targetMode&RESET_METHOD_MASK);
    TargetMode_t resetMode   = (TargetMode_t)(targetMode&RESET_MODE_MASK);
    Logging::print("mode=%s\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
@@ -1660,6 +1685,11 @@ static USBDM_ErrorCode resetCFVx(TargetMode_t targetMode) {
       milliSleep(bdmOptions.powerOnRecoveryInterval);
       USBDM_ControlPins(PIN_RESET_3STATE);
       milliSleep(bdmOptions.resetReleaseInterval);
+      // Check for reset rise
+      rc = USBDM_ControlPins(PIN_RESET_3STATE);
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
       USBDM_ControlPins(PIN_RELEASE);
       milliSleep(bdmOptions.resetRecoveryInterval);
       return BDM_RC_OK;
@@ -1674,6 +1704,11 @@ static USBDM_ErrorCode resetCFVx(TargetMode_t targetMode) {
       milliSleep(bdmOptions.resetDuration);
       USBDM_ControlPins(PIN_RESET_3STATE);
       milliSleep(bdmOptions.resetReleaseInterval);
+      // Check for reset rise
+      rc = USBDM_ControlPins(PIN_RESET_3STATE);
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
       USBDM_ControlPins(PIN_RELEASE);
       milliSleep(bdmOptions.resetRecoveryInterval);
       return BDM_RC_OK;
@@ -1689,6 +1724,7 @@ static USBDM_ErrorCode resetCFVx(TargetMode_t targetMode) {
 //!
 static USBDM_ErrorCode resetOther(TargetMode_t targetMode) {
    LOGGING_Q;
+   USBDM_ErrorCode rc;
    TargetMode_t resetMethod = (TargetMode_t)(targetMode&RESET_METHOD_MASK);
    TargetMode_t resetMode   = (TargetMode_t)(targetMode&RESET_MODE_MASK);
    Logging::print("mode=%s\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
@@ -1704,6 +1740,11 @@ static USBDM_ErrorCode resetOther(TargetMode_t targetMode) {
       milliSleep(bdmOptions.resetReleaseInterval);
       USBDM_ControlPins(PIN_RELEASE);
       milliSleep(bdmOptions.resetRecoveryInterval);
+      // Check for reset rise
+      rc = USBDM_ControlPins(PIN_RESET_3STATE);
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
       return BDM_RC_OK;
    }
    if (resetMethod == RESET_HARDWARE) {
@@ -1711,6 +1752,11 @@ static USBDM_ErrorCode resetOther(TargetMode_t targetMode) {
       milliSleep(bdmOptions.resetDuration);
       USBDM_ControlPins(PIN_RELEASE);
       milliSleep(bdmOptions.resetRecoveryInterval);
+      // Check for reset rise
+      rc = USBDM_ControlPins(PIN_RESET_3STATE);
+      if (rc != BDM_RC_OK) {
+         return rc;
+      }
       return BDM_RC_OK;
    }
    return BDM_RC_ILLEGAL_PARAMS;
@@ -1730,7 +1776,7 @@ static USBDM_ErrorCode resetOther(TargetMode_t targetMode) {
 //!
 USBDM_API
 USBDM_ErrorCode USBDM_TargetReset(TargetMode_t target_mode) {
-   LOGGING_Q;
+   LOGGING;
    USBDM_ErrorCode rc;
    bdmState.activityFlag = BDM_ACTIVE;
    Logging::print("mode=%s\n", getTargetModeName(target_mode));
@@ -2084,30 +2130,30 @@ USBDM_ErrorCode USBDM_WriteDReg(unsigned int regNo, unsigned long regValue) {
 #ifdef LOG
    switch (bdmState.targetType) {
       case T_HC12 :
-         Logging::print("USBDM_writeDReg(%s(0x%X), 0x%X)\n",
+         Logging::print("%s(0x%X) <= 0x%X\n",
                getHCS12DebugRegName(regNo), regNo, regValue);
          break;
       case T_HCS08 :
-         Logging::print("USBDM_writeDReg(BKPT, 0x%X)\n", regValue);
+         Logging::print("BKPT <= 0x%X\n", regValue);
          break;
       case T_RS08 :
-         Logging::print("USBDM_writeDReg(BKPT, 0x%X)\n", regValue);
+         Logging::print("BKPT <= 0x%X\n", regValue);
          break;
       case T_CFV1 :
-         Logging::print("USBDM_writeDReg(%s(0x%X), 0x%X)\n",
+         Logging::print("%s(0x%X) <= 0x%X\n",
                getCFV1DebugRegName(regNo), regNo, regValue);
          break;
       case T_CFVx :
-         Logging::print("USBDM_writeDReg(%s(0x%X), 0x%X)\n",
+         Logging::print("%s(0x%X) <= 0x%X\n",
                getCFVxDebugRegName(regNo), regNo, regValue);
          break;
       case T_ARM_SWD :
       case T_ARM_JTAG :
-         Logging::print("USBDM_writeDReg(%s(0x%X), 0x%X)\n",
+         Logging::print("%s(0x%X) <= 0x%X\n",
                getSWDDebugRegName(regNo), regNo, regValue);
          break;
       default :
-         Logging::print("USBDM_writeDReg() - Unknown mode, register(0x%4X) = 0x%X\n",
+         Logging::print("Unknown mode, register(0x%4X) <= 0x%X\n",
                regNo, regValue);
          break;
    };
@@ -2115,7 +2161,7 @@ USBDM_ErrorCode USBDM_WriteDReg(unsigned int regNo, unsigned long regValue) {
 
    if ((bdmState.targetType == T_CFV1) && (regNo == CFV1_DRegCSR)) {
       // MCF51AC Hack
-      Logging::print("USBDM_writeDReg() - hacking CSR value\n", regValue);
+      Logging::print("Hacking CSR value\n", regValue);
       regValue |= CFV1_CSR_VBD;
    }
    usb_data[0] = 0;
@@ -2170,31 +2216,31 @@ USBDM_ErrorCode USBDM_ReadDReg(unsigned int regNo, unsigned long *regValue) {
 #ifdef LOG
    switch (bdmState.targetType) {
       case T_HC12 :
-         Logging::print("reg = %s(0x%X), 0x%X\n",
+         Logging::print("%s(0x%X) => 0x%X\n",
                getHCS12DebugRegName(regNo), regNo, *regValue);
          break;
       case T_HCS08 :
-         Logging::print("reg = BKPT, 0x%X\n", *regValue);
+         Logging::print("BKPT => 0x%X\n", *regValue);
          break;
       case T_RS08 :
-         Logging::print("reg = BKPT, 0x%X\n", *regValue);
+         Logging::print("BKPT => 0x%X\n", *regValue);
          break;
       case T_CFV1 :
-         Logging::print("reg = %s(0x%X), 0x%X\n",
+         Logging::print("%s(0x%X) => 0x%X\n",
                   getCFV1DebugRegName(regNo), regNo, *regValue);
          break;
       case T_CFVx :
-         Logging::print("reg = %s(0x%X), 0x%X=>%s\n",
+         Logging::print("%s(0x%X) => 0x%X=>%s\n",
                   getCFVxDebugRegName(regNo), regNo, *regValue,
                   getCFVx_CSR_Name(*regValue));
          break;
       case T_ARM_SWD :
       case T_ARM_JTAG :
-         Logging::print("reg = %s(0x%X), 0x%X\n",
+         Logging::print("%s(0x%X) => 0x%X\n",
                getSWDDebugRegName(regNo), regNo, *regValue);
          break;
       default :
-         Logging::print("Failed - Unknown mode, register(0x%4X) = 0x%X\n",
+         Logging::print("Failed - Unknown mode, register(0x%4X) => 0x%X\n",
                regNo, *regValue);
          break;
    };
@@ -2276,6 +2322,10 @@ USBDM_ErrorCode USBDM_WriteMemory( unsigned int        memorySpace,
                                    unsigned int        address,
                                    unsigned const char *data) {
    LOGGING_Q;
+   if (Logging::getLoggingLevel()>=0) {
+      // Turn off logging below this level
+      Logging::setLoggingLevel(0);
+   }
    unsigned blockSize;
    unsigned elementSize = memorySpace&MS_SIZE;
    USBDM_ErrorCode rc, stickyRc=BDM_RC_OK;
@@ -2370,6 +2420,10 @@ USBDM_ErrorCode USBDM_ReadMemory( unsigned int  memorySpace,
                                   unsigned int  address,
                                   unsigned char *data) {
    LOGGING_Q;
+   if (Logging::getLoggingLevel()>=0) {
+      // Turn off logging below this level
+      Logging::setLoggingLevel(0);
+   }
    USBDM_ErrorCode rc, stickyRc = BDM_RC_OK;
    unsigned int   blockSize;
    unsigned int   originalCount   = byteCount;
@@ -2398,7 +2452,7 @@ USBDM_ErrorCode USBDM_ReadMemory( unsigned int  memorySpace,
          break;
    }
    if (unaligned) {
-      Logging::print("Failed - alignment error\n");
+      Logging::error("Failed - alignment error\n");
       return BDM_RC_ILLEGAL_PARAMS;
    }
    while (byteCount>0) {
@@ -2407,6 +2461,7 @@ USBDM_ErrorCode USBDM_ReadMemory( unsigned int  memorySpace,
          blockSize = MaxDataSize;
       }
       if ((bdmState.targetType == T_HC12) && ((memorySpace&MS_SPACE) == MS_Global)) {
+         Logging::print("Global Access 0x%6X\n", address);
          // Make sure HCS12 Global access doesn't cross page boundary
          uint32_t nextPageBoundary = (address + 0x10000UL)&~0xFFFFUL;
          if ((address+blockSize-1) >= nextPageBoundary) {

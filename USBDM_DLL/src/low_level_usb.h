@@ -2,6 +2,9 @@
     \brief Low-level USB interface to BDM module .
 
 */
+
+#define DEFAULT_USB_TIMEOUT_VALUE (40) // ms
+
 USBDM_ErrorCode bdm_usb_init(void);
 USBDM_ErrorCode bdm_usb_exit(void);
 USBDM_ErrorCode bdm_usb_findDevices(unsigned *numDevices);
@@ -29,14 +32,14 @@ USBDM_ErrorCode bdm_usb_send_epOut(unsigned int count,
 USBDM_ErrorCode bdm_usb_transaction(unsigned int   txSize,
                                     unsigned int   rxSize,
                                     unsigned char *data,
-                                    unsigned int   timeout=40 /* ms */,
+                                    unsigned int   timeout=DEFAULT_USB_TIMEOUT_VALUE /* ms */,
                                     unsigned int  *actualRxSize = 0);
 // Used if actual rxSize is needed
 DLL_LOCAL
 inline USBDM_ErrorCode bdm_usb_transaction(unsigned int   txSize,
                                            unsigned int  *rxSize,
                                            unsigned char *data,
-                                           unsigned int   timeout=40 /* ms */) {
+                                           unsigned int   timeout=DEFAULT_USB_TIMEOUT_VALUE /* ms */) {
    return bdm_usb_transaction(txSize,
                               *rxSize,
                               data,

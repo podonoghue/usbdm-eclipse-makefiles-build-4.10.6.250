@@ -14,7 +14,11 @@
 
 <!ENTITY Custom-Devices                   SYSTEM "Custom/custom-hcs12.xml">
 ]>
-<root version="4.9.5">
+<!-- 
+      V4.10.4 - Fixed XEP100 EEPROM
+      V4.10.4 - Changed how security information is expressed
+ -->
+<root version="4.10.4">
    <description>HCS12 Device characteristics v4.9.0 9/2/2012</description>
    <sharedInformation>
 <!-- TCL Scripts -->
@@ -46,15 +50,33 @@
       <flashProgram id="HCS12-XMMC-XFTXK-flash-program">
          &HCS12-XMMC-XFTXK-flash-program;
       </flashProgram>
-<!-- Security Values for Flash -->
-      <!-- HCS12 Unsecured value = backdoor[0-7],RES[0-4],FPROT,RES,FSEC -->
-      <securityInfo size="16" type="off" id="HCS12-default-security-off">
-         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE
-      </securityInfo>
-      <!-- HCS12 Secured value = backdoor[0-7],RES[0-4],FPROT,RES,FSEC -->
-      <securityInfo size="16" type="on" id="HCS12-default-security-on">
-         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD
-      </securityInfo>
+      <!-- Security Values for Flash -->
+      <securityEntry id="HCS12-default-security">
+         <securityDescription id="HCS12-default-security-description">
+            BACKDOOR\t= %8X\nRES\t\t= %5X\nFPROT\t\t= %1X\nRES\t\t= %1X\nFSEC\t\t= [KEYEN=%2b, NV=%4b, SEC=%2b]
+         </securityDescription>
+         <!-- HCS12 Unsecured value = backdoor[0-7],RES[0-4],FPROT,RES,FSEC -->
+         <securityInfo size="16" type="unsecure" id="HCS12-default-security-off">
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE
+         </securityInfo>
+         <!-- HCS12 Secured value = backdoor[0-7],RES[0-4],FPROT,RES,FSEC -->
+         <securityInfo size="16" type="secure" id="HCS12-default-security-on">
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD
+         </securityInfo>
+      </securityEntry>
+      <securityEntry id="HCS12-xep-security">
+         <securityDescription id="HCS12-default-security-description">
+            BACKDOOR\t= %8X\nRES\t\t= %4X\nFPROT\t\t= %1X\t\tEPROT\t\t= %1X\nFOPT\t\t= [RES=%4b, ~WCOP=%1b, ~CR=%3b]\nFSEC\t\t= [KEYEN=%2b, NV=%4b, SEC=%2b]
+         </securityDescription>
+         <!-- HCS12 Unsecured value = backdoor[0-7],RES[0-4],FPROT,RES,FSEC -->
+         <securityInfo size="16" type="unsecure" id="HCS12-default-security-off">
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE
+         </securityInfo>
+         <!-- HCS12 Secured value = backdoor[0-7],RES[0-4],FPROT,RES,FSEC -->
+         <securityInfo size="16" type="secure" id="HCS12-default-security-on">
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD
+         </securityInfo>
+      </securityEntry>
    </sharedInformation>
    <deviceList>
       <device family="HCS12" name="_Default" isDefault="true">
@@ -62,12 +84,11 @@
          <memory type="ram">
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
-         <memory registerAddress="0x0110" type="eeprom" sectorSize="4" alignment="2">
+         <memory registerAddress="0x0110" type="eeprom" sectorSize="4" alignment="2" addressMode="paged" >
             <memoryRange start="0x400" end="0x17FF" />
          </memory>
-         <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="2">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+         <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="2" addressMode="paged" >
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" pageNo="0x3E" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3E" pages="16" pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" pageNo="0x3F" />
@@ -98,8 +119,7 @@
             <memoryRange start="0x1000" end="0x17FF" />
          </memory>
          <memory registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3E" pages="32K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -120,8 +140,7 @@
             <memoryRange start="0x0000" end="0x07FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" >
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3C" pages="64K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -142,8 +161,7 @@
             <memoryRange start="0x1000" end="0x17FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3C" pages="64K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -167,8 +185,7 @@
             <memoryRange start="0x1000" end="0x17FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -191,8 +208,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -214,8 +230,7 @@
             <memoryRange start="0x0000" end="0x07FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x20" pages="512K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -240,8 +255,7 @@
             <memoryRange start="0x0000" end="0x07FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K" pageEnd="0x3F" />
@@ -264,8 +278,7 @@
             <memoryRange start="0x0800" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" >
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3E" pages="32K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -281,8 +294,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" >
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0x3F" />
@@ -299,8 +311,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="96K"  pageEnd="0x3F" />
@@ -317,8 +328,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
@@ -340,8 +350,7 @@
             <memoryRange start="0x1000" end="0x17FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3E" pages="32K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -363,8 +372,7 @@
             <memoryRange start="0x1000" end="0x17FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3E" pages="64K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -389,8 +397,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -412,8 +419,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -432,8 +438,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -455,8 +460,7 @@
             <memoryRange start="0x2000" end="0x27FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -478,8 +482,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -498,8 +501,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -521,8 +523,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -542,8 +543,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -566,8 +566,7 @@
             <memoryRange start="0x0000" end="0x07FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -591,8 +590,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -614,8 +612,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -634,8 +631,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -657,8 +653,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -678,8 +673,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -699,8 +693,7 @@
             <memoryRange start="0x0000" end="0x07FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x20" pages="512K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -722,8 +715,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" >
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -742,8 +734,7 @@
             <memoryRange start="0x0000" end="0x07FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x20" pages="512K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -765,8 +756,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -788,8 +778,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -808,8 +797,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -831,8 +819,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -852,8 +839,7 @@
             <memoryRange start="0x0000" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -873,8 +859,7 @@
             <memoryRange start="0x0000" end="0x07FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x20" pages="512K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -896,8 +881,7 @@
             <memoryRange start="0x0400" end="0x07FF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3E" pages="32K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -912,8 +896,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0x3F" />
@@ -929,8 +912,7 @@
             <memoryRange start="0x0400" end="0x1FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x2000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
@@ -946,8 +928,7 @@
             <memoryRange start="0x0400" end="0x3FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x30" pages="256K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -969,8 +950,7 @@
             <memoryRange start="0x000400" size="4K" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1400" end="0x1FFF" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="8"  pageEnd="0x0F" />
@@ -991,8 +971,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3F" pages="16K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
          </memory>
@@ -1006,8 +985,7 @@
             <memoryRange start="0x0800" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" >
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3E" pages="32K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -1022,8 +1000,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" >
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0x3F" />
@@ -1040,8 +1017,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="96K"  pageEnd="0x3F" />
@@ -1058,8 +1034,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
@@ -1081,8 +1056,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8" >
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="32K"  pageEnd="0x0F" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
@@ -1101,8 +1075,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="48K"  pageEnd="0x0F" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -1122,8 +1095,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1400" end="0x2FFF" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="64K"  pageEnd="0x0F" />
@@ -1144,8 +1116,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="32K"  pageEnd="0x0F" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
@@ -1164,8 +1135,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="48K"  pageEnd="0x0F" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -1185,8 +1155,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1400" end="0x2FFF" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="64K"  pageEnd="0x0F" />
@@ -1210,8 +1179,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="32K"  pageEnd="0x0F" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
@@ -1230,8 +1198,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1400" end="0x2FFF" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="64K"  pageEnd="0x0F" />
@@ -1252,8 +1219,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1400" end="0x27FF" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="96K"  pageEnd="0x0F" />
@@ -1274,8 +1240,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1400" end="0x27FF" /> <!-- Part of page 0x0C -->
             <memoryRange start="0x4000" end="0x7FFF" /> <!-- Page 0x0D -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="128K"  pageEnd="0x0F" />
@@ -1296,8 +1261,7 @@
             <memoryRange start="0x0400" end="0x1FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
@@ -1315,8 +1279,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x3E" pages="32K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
          </memory>
@@ -1331,8 +1294,7 @@
             <memoryRange start="0x0800" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0x3F" />
@@ -1348,8 +1310,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pages="96K"  pageEnd="0x3F" />
@@ -1365,8 +1326,7 @@
             <memoryRange start="0x0400" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!--  Fixed 0x3D partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!--  Fixed 0x3E -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x38" pages="128K"  pageEnd="0x3F" />
@@ -1385,8 +1345,7 @@
             <memoryRange start="0x1BC4" end="0x1FFF" />
          </memory>
          <memory registerAddress="0x0100" type="flash" securityAddress="0xFF00">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x8000" end="0xBFFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
@@ -1408,8 +1367,7 @@
             <memoryRange start="0x13F000" end="0x13FFFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0x7FFF00" sectorSize="1024" addressMode="linear">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x780000" end="0x7FFFFF" />
          </memory>
          <sdid value="0xC410" />
@@ -1428,8 +1386,7 @@
             <memoryRange start="0xFF0800" end="0xFF0BFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -1451,8 +1408,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageStart="0xE0" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
@@ -1474,8 +1430,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="256K"  pageStart="0xE0" />
             <memoryRange start="0x8000" end="0xBFFF" pages="256K"  pageEnd="0xFF" />
@@ -1496,8 +1451,7 @@
             <memoryRange start="0xFF0800" end="0xFF0BFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageStart="0xF8" />
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0xFF" />
@@ -1520,8 +1474,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageStart="0xE0" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
@@ -1543,8 +1496,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -1566,8 +1518,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -1588,8 +1539,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageStart="0xE0" />
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0xFE" pages="128K"  pageEnd="0xFF" />
@@ -1611,8 +1561,7 @@
             <memoryRange start="0x0800" end="0x0BFF" pages="2"  pageEnd="0xFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -1635,8 +1584,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="512K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -1656,8 +1604,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageStart="0xE0" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
@@ -1679,8 +1626,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageStart="0xE0" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
@@ -1702,8 +1648,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageStart="0xE0" />
             <memoryRange start="0x8000" end="0xBFFF" pages="256K"  pageEnd="0xFF" />
@@ -1724,8 +1669,7 @@
             <memoryRange start="0x0C00" end="0x0FFF" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
             <memoryRange start="0x8000" end="0xBFFF" pages="512K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
@@ -1746,8 +1690,7 @@
             <memoryRange start="0x0800" end="0x0BFF" pages="4"  pageStart="0x00" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-xep-security" />
             <memoryRange start="0x4000" end="0x7FFF" />               <!--  Fixed 0xFD -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0xFE" pages="64K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />               <!--  Fixed 0xFF -->
@@ -1768,8 +1711,7 @@
             <memoryRange start="0x100000" end="0x100FFF" />
          </memory>
          <memory registerAddress="0x0100" type="flash" securityAddress="0x7FFF00" sectorSize="1024" addressMode="linear" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-xep-security" />
             <memoryRange start="0x7F0000" end="0x7FFFFF" />
          </memory>
          <sdid value="0xC1C0" />
@@ -1788,8 +1730,7 @@
             <memoryRange start="0x0800" end="0x0BFF" pages="8"  pageStart="0x00" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-xep-security" />
             <memoryRange start="0x4000" end="0x7FFF" />               <!--  Fixed 0xFD -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0xFE" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />               <!--  Fixed 0xFF -->
@@ -1810,8 +1751,7 @@
             <memoryRange start="0x100000" end="0x101FFF" />
          </memory>
          <memory registerAddress="0x0100" type="flash" securityAddress="0x7FFF00" sectorSize="1024" addressMode="linear" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x7E0000" end="0x7FFFFF" />
          </memory>
          <sdid value="0xC1C0" />
@@ -1830,8 +1770,7 @@
             <memoryRange start="0x0800" end="0x0BFF" pages="8"  pageStart="0x00" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-xep-security" />
             <memoryRange start="0x4000" end="0x7FFF" />               <!--  Fixed 0xFD -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0xFE" pages="256K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />               <!--  Fixed 0xFF -->
@@ -1852,8 +1791,7 @@
             <memoryRange start="0x100000" end="0x101FFF" />
          </memory>
          <memory registerAddress="0x0100" type="flash" securityAddress="0x7FFF00" sectorSize="1024" addressMode="linear" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-xep-security" />
             <memoryRange start="0x7C0000" end="0x7FFFFF" />
          </memory>
          <sdid value="0xC1C0" />
@@ -1873,11 +1811,9 @@
          </memory>
          <memory pageAddress="0x0017" registerAddress="0x0100" type="eeprom" sectorSize="256" alignment="2">
             <memoryRange start="0x0800" end="0x0BFF" pages="32"  pageStart="0x00" />
-            <memoryRange start="0x0C00" end="0x0FFF" /> <!-- Fixed -->
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-xep-security" />
             <memoryRange start="0x4000" end="0x7FFF" />               <!--  Fixed 0xFD -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0xFE" pages="1024K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />               <!--  Fixed 0xFF -->
@@ -1898,12 +1834,11 @@
             <memoryRange start="0x2000" end="0x3FFF" />
          </memory>
          <memory registerAddress="0x0100" type="eeprom" sectorSize="256" addressMode="linear" alignment="2">
-            <memoryRange start="0x100000" end="0x107FFF" />
+            <memoryRange start="0x100000" end="0x13FFFF" />
          </memory>
          <memory registerAddress="0x0100" type="flash" securityAddress="0x7FFF00" sectorSize="1024" addressMode="linear" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
-            <memoryRange start="0x700000" end="0x7FFFFF" />
+            <securityEntryRef ref="HCS12-xep-security" />
+            <memoryRange start="0x400000" end="0x7FFFFF" />
          </memory>
          <sdidMask value="0xFFF0" />
          <sdid value="0xCC80" />
@@ -1927,8 +1862,7 @@
             <memoryRange start="0x000400" end="0x000BFF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" /> <!-- =Page 0x0D -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="64K"  pageEnd="0x0F" />
             <memoryRange start="0xC000" end="0xFFFF" /> <!-- =Page 0x0F -->
@@ -1949,8 +1883,7 @@
             <memoryRange start="0x000400" end="0x0013FF" />
          </memory>
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1400" end="0x27FF" /> <!-- =Page 0x0C -->
             <memoryRange start="0x4000" end="0x7FFF" /> <!-- =Page 0x0D -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x0E" pages="4"  pageEnd="0x0F" />
@@ -1969,8 +1902,7 @@
             <memoryRange start="0x0800" size="2K" />
          </memory>
          <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" >
-            <securityInfoRef ref="HCS12-default-security-off" />
-            <securityInfoRef ref="HCS12-default-security-on" />
+            <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x1000" end="0x3FFF" />                <!-- =Page 0xFC partial -->
             <memoryRange start="0x4000" end="0x7FFF" />                <!-- =Page 0xFD -->
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0xFE" pages="4"  pageEnd="0xFF" />

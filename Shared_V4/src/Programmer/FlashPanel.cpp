@@ -25,6 +25,7 @@
  \verbatim
 Change History
 -==============================================================================
+| 26 Dec 2012 | 4.10.4  Fixed file change check if file has been deleted  - pgo
 |  4 Nov 2012 | 4.10.4  Fixed filer for file extensions to load           - pgo
 |  4 May 2012 | 4.7.5   More robust error checking                        - pgo
 |    Apr 2012 | 4.7.4   Added Load if changed option                      - pgo
@@ -56,9 +57,11 @@ Change History
 
 #include "Common.h"
 #include "Version.h"
+#include "USBDMDialogue.h"
 #include "FlashPanel.h"
 #include "USBDM_API.h"
 #include "USBDM_AUX.h"
+#include "Names.h"
 #include "ApplicationFiles.h"
 #include "Log.h"
 #include "FlashImage.h"
@@ -143,7 +146,7 @@ void FlashPanel::populateClockDropDown(void) {
 //! @note: the list may be filtered by filterChipIds
 //!
 void FlashPanel::populateDeviceDropDown() {
-   Logging::print("FlashPanel()::populateDeviceDropDown()\n");
+   Logging log("FlashPanel()::populateDeviceDropDown");
 
    // Clear device list
    deviceTypeChoiceControl->Clear();
@@ -151,7 +154,7 @@ void FlashPanel::populateDeviceDropDown() {
    // Populate the list with filtered items
    int firstAddedDeviceIndex       = -1;
    int previousDeviceControlIndex  = -1;
-   vector<DeviceData *>::iterator it;
+   vector<DeviceDataPtr>::const_iterator it;
    int deviceIndex;
    for ( it=deviceDatabase->begin(), deviceIndex=0;
          it < deviceDatabase->end(); it++, deviceIndex++ ) {
@@ -172,13 +175,13 @@ void FlashPanel::populateDeviceDropDown() {
             }
          }
          else {
-            Logging::print("FlashPanel::populateDeviceDropDown() - Add device failed, rc = %d\n", controlIndex);
+            Logging::print("Add device failed, rc = %d\n", controlIndex);
          }
       }
    }
    if (firstAddedDeviceIndex<0) {
       // No devices added
-      Logging::print("FlashPanel::populateDeviceDropDown() - No devices\n");
+      Logging::print("No devices\n");
       setDeviceindex(-1);
       deviceTypeChoiceControl->Append(_("[No matching device]"));
       deviceTypeChoiceControl->SetClientData(0, (void *) -22);
@@ -187,13 +190,13 @@ void FlashPanel::populateDeviceDropDown() {
    }
    else if (previousDeviceControlIndex>=0) {
       // Select originally selected device in list control
-      Logging::print("FlashPanel::populateDeviceDropDown() - Selecting previous device #%d\n", previousDeviceControlIndex);
+      Logging::print("Selecting previous device #%d\n", previousDeviceControlIndex);
       setDeviceindex(currentDeviceIndex);
       deviceTypeChoiceControl->Enable(true);
    }
    else {
       // Select 1st added device in list control
-      Logging::print("FlashPanel::populateDeviceDropDown() - Selecting 1st added device\n");
+      Logging::print("Selecting 1st added device\n");
       setDeviceindex(firstAddedDeviceIndex);
       deviceTypeChoiceControl->Enable(true);
    }
@@ -204,34 +207,36 @@ void FlashPanel::populateDeviceDropDown() {
 //! @param newDeviceIndex - index of device in deviceDatabase to select (or -1 for default)
 //!
 void FlashPanel::setDeviceindex(int newDeviceIndex) {
-   Logging::print("FlashPanel::setDeviceindex() newDeviceIndex = %d\n", newDeviceIndex);
+   Logging log("FlashPanel::setDeviceindex()");
+
+   Logging::print("newDeviceIndex = %d\n", newDeviceIndex);
 
    // Save non-device-specific settings.
-   DeviceData savedDevice = currentDevice;
+   DeviceData savedDevice = *currentDevice;
    if (newDeviceIndex<0) {
-      currentDevice = *deviceDatabase->getDefaultDevice();
+      currentDevice->shallowCopy(*deviceDatabase->getDefaultDevice());
    }
    else {
-      currentDevice = (*deviceDatabase)[newDeviceIndex];
-      if (currentDevice.isAlias()) {
+      currentDevice->shallowCopy((*deviceDatabase)[newDeviceIndex]);
+      if (currentDevice->isAlias()) {
          // Keep device name & SDIDs but update device details from real device
-         string aliasedName = currentDevice.getTargetName();
-         const std::vector<uint32_t> targetSDIDs = currentDevice.getTargetSDIDs();
-         currentDevice = *deviceDatabase->findDeviceFromName(aliasedName);
-         Logging::print("FlashPanel::setDeviceindex(): devIndex=%d, aliased(%s) => %s\n",
-               newDeviceIndex, (const char *)aliasedName.c_str(), (const char *)currentDevice.getTargetName().c_str());
-         currentDevice.setTargetName(aliasedName);
-         currentDevice.setTargetSDIDs(targetSDIDs);
+         string aliasedName = currentDevice->getTargetName();
+         const std::vector<uint32_t> targetSDIDs = currentDevice->getTargetSDIDs();
+         currentDevice->shallowCopy(*deviceDatabase->findDeviceFromName(aliasedName));
+         Logging::print("devIndex=%d, aliased(%s) => %s\n",
+               newDeviceIndex, (const char *)aliasedName.c_str(), (const char *)currentDevice->getTargetName().c_str());
+         currentDevice->setTargetName(aliasedName);
+         currentDevice->setTargetSDIDs(targetSDIDs);
       }
    }
    currentDeviceIndex = newDeviceIndex;
 
    // Restore non-device-specific settings.
-   currentDevice.setSecurity(savedDevice.getSecurity());
-   currentDevice.setEraseOption(savedDevice.getEraseOption());
-   currentDevice.setConnectionFreq(savedDevice.getConnectionFreq());
+   currentDevice->setSecurity(savedDevice.getSecurity());
+   currentDevice->setEraseOption(savedDevice.getEraseOption());
+   currentDevice->setConnectionFreq(savedDevice.getConnectionFreq());
    if (!doTrim) {
-      currentDevice.setClockTrimFreq(0);
+      currentDevice->setClockTrimFreq(0);
    }
 }
 
@@ -246,10 +251,10 @@ USBDM_ErrorCode FlashPanel::hcs12Check(void) {
 
    // Assume we can auto-detect connection speed
    needManualFrequencySet = false;
-   currentDevice.setConnectionFreq(0);
+   currentDevice->setConnectionFreq(0);
    busFrequencyTextControl->Enable(false);
 
-   flashprogrammer->setDeviceData(currentDevice);
+   flashprogrammer->setDeviceData(*currentDevice);
    rc_flash = flashprogrammer->resetAndConnectTarget();
    if ((rc_flash != PROGRAMMING_RC_OK) && (rc_flash != PROGRAMMING_RC_ERROR_SECURED)) {
       return BDM_RC_FAIL;
@@ -265,7 +270,7 @@ USBDM_ErrorCode FlashPanel::hcs12Check(void) {
    }
    // Round to 10's kHz
    connectionFrequency = 10000*round(connectionFrequency/10000.0);
-   currentDevice.setConnectionFreq(connectionFrequency);
+   currentDevice->setConnectionFreq(connectionFrequency);
 
    if (flashprogrammer->checkTargetUnSecured() == PROGRAMMING_RC_ERROR_SECURED) {
       if (usbdmStatus.connection_state == SPEED_SYNC) {
@@ -329,7 +334,6 @@ USBDM_ErrorCode FlashPanel::progressCallBack(USBDM_ErrorCode status, int percent
 //! @note Any errors are flagged to the user
 //!
 USBDM_ErrorCode FlashPanel::autoDetectTargetDevice(void) {
-vector<DeviceData*>::iterator deviceIterator;
 uint32_t targetChipId;
 USBDM_ErrorCode flashRc;
 USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
@@ -374,13 +378,13 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
    }
 //   Logging::print("FlashPanel::autoDetectTargetDevice()\n");
 #elif TARGET == ARM
-   USBDM_ErrorCode rc = USBDM_TargetConnectWithRetry((RetryMode)(retryWithReset|retryNotPartial));
+   USBDM_ErrorCode rc = USBDM_TargetConnectWithRetry((RetryMode)(retryByReset|retryNotPartial));
    if ((rc != BDM_RC_OK) && (rc != BDM_RC_SECURED)) {
       USBDM_SetTargetType(T_OFF);
       return rc;
    }
 #else
-   if (USBDM_TargetConnectWithRetry((RetryMode)(retryAlways|retryWithReset)) != BDM_RC_OK) {
+   if (USBDM_TargetConnectWithRetry((RetryMode)(retryAlways|retryByReset)) != BDM_RC_OK) {
       USBDM_SetTargetType(T_OFF);
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
@@ -429,6 +433,7 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
 #endif
 //   Logging::print("FlashPanel::autoDetectTargetDevice(): Here #1\n");
    // To reduce time keep a history of probed locations for re-use
+   vector<DeviceDataPtr>::const_iterator deviceIterator;
    for ( deviceIterator = deviceDatabase->begin();
          deviceIterator < deviceDatabase->end();
          deviceIterator++ ) {
@@ -497,30 +502,32 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
 //========================================================================================================================
 // FlashPanel
 
-FlashPanel::FlashPanel( wxWindow* parent, TargetType_t targetType, HardwareCapabilities_t bdmCapabilities) :
-      deviceDatabase(NULL),
+FlashPanel::FlashPanel( wxWindow* parent, Shared *shared, TargetType_t targetType, HardwareCapabilities_t bdmCapabilities) :
+      shared(shared),
+      deviceDatabase(shared->getDeviceDataBase()),
+      currentDevice(shared->getCurrentDevice()),
+      bdmOptions(shared->getBdmOptions()),
       targetType(targetType),
       bdmCapabilities(bdmCapabilities),
       flashprogrammer(NULL),
-      beep(0)
-   {
+      beep(0)   {
+   Logging log("FlashPanel::FlashPanel");
    Init();
    Create(parent);
 }
 
-FlashPanel::FlashPanel(TargetType_t targetType, HardwareCapabilities_t bdmCapabilities) :
-      deviceDatabase(NULL),
-      targetType(targetType),
-      bdmCapabilities(bdmCapabilities),
-      flashprogrammer(NULL),
-      beep(0)
-   {
-   Init();
-}
+//FlashPanel::FlashPanel(TargetType_t targetType, HardwareCapabilities_t bdmCapabilities) :
+//      deviceDatabase(NULL),
+//      targetType(targetType),
+//      bdmCapabilities(bdmCapabilities),
+//      flashprogrammer(NULL),
+//      beep(0)
+//   {
+//   Init();
+//}
 
 bool FlashPanel::Create(wxWindow* parent) {
-
-   Logging::print("FlashPanel::Create()\n");
+   Logging log("FlashPanel::Create");
 
    if (!wxPanel::Create(parent) || !CreateControls()) {
       return false;
@@ -542,21 +549,9 @@ bool FlashPanel::Create(wxWindow* parent) {
 //! Set the panel internal state to the default
 //!
 void FlashPanel::Init() {
-   Logging::print("FlashPanel::Init()\n");
+   Logging log("FlashPanel::Init");
 
-   if (deviceDatabase == NULL) {
-      deviceDatabase = new DeviceDataBase;
-      try {
-         deviceDatabase->loadDeviceData();
-      } catch (MyException &exception) {
-         wxMessageBox(_("Failed to load device database\nReason: ") +
-                       wxString(exception.what(), wxConvUTF8),
-                      _("Error loading devices"),
-                      wxOK|wxSTAY_ON_TOP|wxCENTER,
-                      this);
-      }
-   }
-   currentDevice.setSecurity(SEC_DEFAULT);
+   currentDevice->setSecurity(SEC_DEFAULT);
    filterChipIds.clear();
    doFilterByChipId       = false;
    needManualFrequencySet = false;
@@ -564,16 +559,13 @@ void FlashPanel::Init() {
    fileLoaded             = false;
    doTrim                 = false;
    sound                  = false;
-   bdmOptions.size        = sizeof(USBDM_ExtendedOptions_t);
-   bdmOptions.targetType  = targetType;
-//   Logging::print("FlashPanel::Init() - currentdeviceIndex = %d\n", currentDeviceIndex);
 }
 
 //! Control creation for USBDM Flash programming settings
 //!
 bool FlashPanel::CreateControls() {
+   Logging log("FlashPanel::CreateControls");
 
-//   Logging::print("FlashPanel::CreateControls()\n");
    wxStaticText*     itemStaticText;
    wxStaticBox*      itemStaticBox;
    wxStaticBoxSizer* itemStaticBoxSizer;
@@ -598,7 +590,6 @@ bool FlashPanel::CreateControls() {
    itemBoxSizer->Add(loadFileButtonControl, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
    incrementalFileLoadCheckBoxControl = new wxCheckBox( panel, ID_INCREMENTAL_FILE_LOAD_CHECKBOX, _("Incremental Load"), wxDefaultPosition, wxDefaultSize, 0 );
-   incrementalFileLoadCheckBoxControl->SetToolTip(_("Don't clear buffer when loading new file."));
    incrementalFileLoadCheckBoxControl->SetValue(false);
    incrementalFileLoadCheckBoxControl->SetToolTip(_("Load new file without clearing buffer"));
    itemBoxSizer->Add(incrementalFileLoadCheckBoxControl, 0, wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
@@ -720,15 +711,15 @@ bool FlashPanel::CreateControls() {
    securityRadioBoxControlStrings.Add(_("&Image"));
    securityRadioBoxControlStrings.Add(_("&Secure"));
    securityRadioBoxControlStrings.Add(_("&Unsecure"));
-   securityRadioBoxControlStrings.Add(_("&Smart"));
+   securityRadioBoxControlStrings.Add(_("S&mart"));
    securityRadioBoxControl = new wxRadioBox( panel, ID_SECURITY_RADIOBOX, _("Security"), wxDefaultPosition, wxDefaultSize, securityRadioBoxControlStrings, 1, wxRA_SPECIFY_ROWS );
    securityRadioBoxControl->SetSelection(0);
-
    securityRadioBoxControl->SetToolTip(_("Security state after programming:\n"
-                                         "Image    - whatever the flash image contains\n"
-                                         "Secure   - the device will be secured\n"
-                                         "Unsecure - the device will be unsecured\n"
-                                         "Smart    - set unsecured if image doesn't set security"));
+                                         "Image   \t\t- whatever the flash image contains\n"
+                                         "Secure  \t\t- the device will be secured\n"
+                                         "Unsecure\t- the device will be unsecured\n"
+                                         "Smart   \t\t- set unsecured if security area in image is unprogrammed\n"
+                                         "Disabled\t-value is set on Advanced tab"));
    panelBoxSizerV->Add(securityRadioBoxControl, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
 
    //====================================================================
@@ -798,11 +789,12 @@ bool FlashPanel::CreateControls() {
 //! Update the dialogue from internal state
 //!
 bool FlashPanel::TransferDataToWindow() {
+   Logging log("FlashPanel::TransferDataToWindow");
 
 //   Logging::print("FlashPanel::TransferDataToWindow() - target = %s, currentDeviceIndex = %d\n",
 //         (const char *)makeDeviceName(currentDeviceName).ToAscii(),
 //         currentDeviceIndex);
-   Logging::print("FlashPanel::TransferDataToWindow() - currentDeviceIndex = %d\n", currentDeviceIndex);
+   Logging::print("CurrentDeviceIndex = %d\n", currentDeviceIndex);
 
    if (currentDeviceIndex < 0) {
       // No valid device selected (control is empty?)
@@ -811,19 +803,20 @@ bool FlashPanel::TransferDataToWindow() {
    else {
       // Set currently selected device
       wxString deviceName = makeDeviceName(wxString((*deviceDatabase)[currentDeviceIndex].getTargetName().c_str(), wxConvUTF8));
+      Logging::print("Setting device \'%s\'\n", (const char *)deviceName.c_str());
       int deviceIndex = currentDeviceIndex;
       if (!deviceTypeChoiceControl->SetStringSelection(deviceName)) {
          // Device not found - change to 1st device
-         Logging::print("FlashPanel::TransferDataToWindow() - Device not found (%s), changing to dev #0\n", (const char *)deviceName.c_str());
+         Logging::print("Device not found (%s), changing to dev #0\n", (const char *)deviceName.c_str());
          deviceIndex = 0;
       }
       setDeviceindex(deviceIndex);
    }
-   bool usingClock = (currentDevice.getClockType() != CLKEXT) &&
-                     (currentDevice.getClockType() != CLKINVALID);
+   bool usingClock = (currentDevice->getClockType() != CLKEXT) &&
+                     (currentDevice->getClockType() != CLKINVALID);
 //   Logging::print("FlashPanel::TransferDataToWindow() - usingClock=%s, getClockType()=%d\n",
 //            usingClock?"true":"false",
-//                  currentDevice.getClockType()
+//                  currentDevice->getClockType()
 //            );
    clockModuleAddressStaticControl->Enable(usingClock);
    trimFrequencyCheckBoxControl->Enable(usingClock);
@@ -835,14 +828,14 @@ bool FlashPanel::TransferDataToWindow() {
    trimAddressStaticControl->Enable(trimEnabled);
    trimAddressTextControl->Enable(trimEnabled);
 
-   clockModuleTypeChoiceControl->SetStringSelection(wxString(ClockTypes::getClockName(currentDevice.getClockType()).c_str(), wxConvUTF8));
+   clockModuleTypeChoiceControl->SetStringSelection(wxString(ClockTypes::getClockName(currentDevice->getClockType()).c_str(), wxConvUTF8));
 
-   clockModuleAddressTextControl->SetHexValue(currentDevice.getClockAddress());
+   clockModuleAddressTextControl->SetHexValue(currentDevice->getClockAddress());
 
    trimFrequencyCheckBoxControl->Set3StateValue(doTrim?wxCHK_CHECKED:wxCHK_UNCHECKED);
 
-   trimFrequencyTextControl->SetDoubleValue(currentDevice.getClockTrimFreq()/1000.0);
-   trimAddressTextControl->SetHexValue(currentDevice.getClockTrimNVAddress());
+   trimFrequencyTextControl->SetDoubleValue(currentDevice->getClockTrimFreq()/1000.0);
+   trimAddressTextControl->SetHexValue(currentDevice->getClockTrimNVAddress());
 
 #ifdef FLASH_PROGRAMMER
    if (filterChipIds.empty()) {
@@ -862,14 +855,36 @@ bool FlashPanel::TransferDataToWindow() {
       buff.append(_(")"));
       filterByChipIdCheckBoxControl->SetLabel(buff);
    }
-   securityRadioBoxControl->SetSelection(currentDevice.getSecurity());
+   bool customSelected = currentDevice->getSecurity() == SEC_CUSTOM;
+   Logging::print("Setting device security = %s\n", getSecurityName(currentDevice->getSecurity()));
+   if (customSelected) {
+      securityRadioBoxControl->SetLabel(_("Security - see Advanced tab"));
+   }
+   else {
+      securityRadioBoxControl->SetLabel(_("Security"));
+   }
+   securityRadioBoxControl->Enable(0, !customSelected);
+   securityRadioBoxControl->Enable(1, !customSelected);
+   securityRadioBoxControl->Enable(2, !customSelected);
+   securityRadioBoxControl->Enable(3, !customSelected);
+   switch(currentDevice->getSecurity()) {
+      case SEC_DEFAULT:   securityRadioBoxControl->SetSelection(0);  break;
+      case SEC_SECURED:   securityRadioBoxControl->SetSelection(1);  break;
+      case SEC_UNSECURED: securityRadioBoxControl->SetSelection(2);  break;
+      case SEC_SMART:     securityRadioBoxControl->SetSelection(3);  break;
+   }
    enableSoundsCheckBoxControl->SetValue(sound);
-   eraseChoiceControl->SetStringSelection(wxString(DeviceData::getEraseOptionName(currentDevice.getEraseOption()),wxConvUTF7));
+   if (!eraseChoiceControl->SetStringSelection(wxString(DeviceData::getEraseOptionName(currentDevice->getEraseOption()),wxConvUTF7))) {
+      // Current erase option not supported - default to 1st item
+      eraseChoiceControl->SetSelection(0);
+      DeviceData::EraseOptions eraseOption = (DeviceData::EraseOptions)(int)eraseChoiceControl->GetClientData(0);
+      currentDevice->setEraseOption(eraseOption);
+   }
    autoFileReloadCheckBoxControl->Set3StateValue(autoFileLoad?wxCHK_CHECKED:wxCHK_UNCHECKED);
 #endif
 
 #if TARGET == HCS12
-   busFrequencyTextControl->SetDecimalValue(round(currentDevice.getConnectionFreq()/1000));
+   busFrequencyTextControl->SetDecimalValue(round(currentDevice->getConnectionFreq()/1000));
    busFrequencyTextControl->Enable(needManualFrequencySet);
 #endif
    updateProgrammingState();
@@ -882,6 +897,31 @@ bool FlashPanel::TransferDataFromWindow() {
 #ifdef FLASH_PROGRAMMER
    sound        = enableSoundsCheckBoxControl->IsChecked();
    autoFileLoad = autoFileReloadCheckBoxControl->IsChecked();
+#endif
+   return true;
+}
+
+bool FlashPanel::updateState() {
+   Logging log("FlashPanel::updateState");
+
+   bool ok = true;
+   ok = ok && TransferDataToWindow();
+   ok = ok && TransferDataFromWindow();
+   if (!ok) {
+      return false;
+   }
+   if (currentDevice->getClockType() == CLKEXT) {
+      currentDevice->setClockTrimNVAddress(0);
+      currentDevice->setClockTrimFreq(0);
+      currentDevice->setClockAddress(0);
+   }
+   if (!doTrim) {
+      currentDevice->setClockTrimNVAddress(0);
+      currentDevice->setClockTrimFreq(0);
+   }
+#ifdef GDI
+   currentDevice->setSecurity(SEC_UNSECURED);
+   currentDevice->setConnectionFreq(0);
 #endif
    return true;
 }
@@ -921,9 +961,10 @@ END_EVENT_TABLE()
 #if defined(FLASH_PROGRAMMER)
 
 USBDM_ErrorCode FlashPanel::loadHexFile( wxString hexFilename, bool clearBuffer ) {
+   Logging log("FlashPanel::loadHexFile");
    USBDM_ErrorCode rc;
 
-   Logging::print("FlashPanel::loadHexFile(%s)\n", (const char *)hexFilename.ToAscii());
+   Logging::print("(%s)\n", (const char *)hexFilename.ToAscii());
    loadedFilenameStaticControl->SetLabel(_("Loading File"));
    rc = flashImageData.loadFile((const char*)hexFilename.mb_str(wxConvUTF8), clearBuffer);
    if (rc != BDM_RC_OK) {
@@ -956,26 +997,69 @@ USBDM_ErrorCode FlashPanel::loadHexFile( wxString hexFilename, bool clearBuffer 
 //! If so then prompt to reload.
 //!
 USBDM_ErrorCode FlashPanel::checkFileChange(void) {
+   LOGGING;
    if (!fileLoaded) {
+      Logging::print("No file loaded\n");
       return PROGRAMMING_RC_OK;
    }
-   time_t currentFileTime = wxFileModificationTime(lastFileLoaded);
-   if (currentFileTime == fileLoadTime) {
+   time_t currentFileTime;
+   if (!wxFileExists(lastFileLoaded)) {
+      Logging::print("File no longer exists\n");
+      currentFileTime = -1;
+   }
+   else {
+      currentFileTime = wxFileModificationTime(lastFileLoaded);
+   }
+   if ((currentFileTime != -1) && (currentFileTime == fileLoadTime)) {
+      // Up-to-date - Continue operation without re-load
+      Logging::print("Loaded file is up-to-date\n");
       return PROGRAMMING_RC_OK;
    }
-   if (!autoFileLoad) {
-      int getYesNo = wxMessageBox(_("Last loaded file has changed on disk.\n"
-                                    "Reload?"),
-                                  _("File changed"),
+   if (autoFileLoad) {
+      if (currentFileTime == -1) {
+         // Original file no longer exists - alert user
+         int getYesNo = wxMessageBox(_("Unable to auto-reload file as it is no longer accessible.\n\n"
+                                       "Continue operation?"),
+                                     _("Cannot Load File"),
+                                     wxYES_NO|wxICON_QUESTION|wxYES_DEFAULT,
+                                     this
+                                    );
+         if (getYesNo == wxYES) {
+            Logging::print("Continuing without re-load\n");
+            // Continue without re-load
+            return PROGRAMMING_RC_OK;
+         }
+         else {
+            // Abort programming/verifying
+            Logging::print("Aborting operation\n");
+            return PROGRAMMING_RC_ERROR_FILE_OPEN_FAIL;
+         }
+      }
+      // Auto-reload changed file
+      Logging::print("Auto-reloading file\n");
+      return loadHexFile(lastFileLoaded, !incrementalLoad);
+   }
+   else { // !autoFileLoad
+      if (currentFileTime == -1) {
+         // Original file no longer exists - Ignore & continue without re-load
+         return PROGRAMMING_RC_OK;
+      }
+      // File changed - alert user
+      int getYesNo = wxMessageBox(_("Last loaded file has changed on disk.\n\n"
+                                    "Reload file?"),
+                                  _("File Changed"),
                                     wxYES_NO|wxICON_QUESTION,
                                     this
                                     );
        if (getYesNo != wxYES) {
+          // Continue operation without re-load
+          Logging::print("Continuing without re-load\n");
           return PROGRAMMING_RC_OK;
        }
+       // Reload file non user OK
+       Logging::print("Reloading file after user confirmation\n");
+       return loadHexFile(lastFileLoaded, !incrementalLoad);
    }
-   Logging::print("FlashPanel::checkFileChange() - Reloading file\n");
-   return loadHexFile(lastFileLoaded, !incrementalLoad);
 }
 
 //! wxEVT_COMMAND_BUTTON_CLICKED event handler for wxID_DEFAULT
@@ -1079,18 +1163,18 @@ void FlashPanel::OnDetectChipButtonClick( wxCommandEvent& event ) {
  */
 void FlashPanel::OnTrimFrequencyCheckboxClick( wxCommandEvent& event ) {
    doTrim = event.IsChecked() &&
-            (currentDevice.getClockType() != CLKEXT) &&
-            (currentDevice.getClockType() != CLKINVALID);
+            (currentDevice->getClockType() != CLKEXT) &&
+            (currentDevice->getClockType() != CLKINVALID);
 //   Logging::print("FlashPanel::OnTrimFrequencyCheckboxClick(), doTrim= %s\n", doTrim?"True":"False");
    if (doTrim) {
       // Enabling trim - restore to default value
-      currentDevice.setClockTrimFreq(currentDevice.getDefaultClockTrimFreq());
-      currentDevice.setClockTrimNVAddress(currentDevice.getDefaultClockTrimNVAddress());
+      currentDevice->setClockTrimFreq(currentDevice->getDefaultClockTrimFreq());
+      currentDevice->setClockTrimNVAddress(currentDevice->getDefaultClockTrimNVAddress());
    }
    else {
       // Disabling trim
-      currentDevice.setClockTrimFreq(0);
-      currentDevice.setClockTrimNVAddress(currentDevice.getDefaultClockTrimNVAddress());
+      currentDevice->setClockTrimFreq(0);
+      currentDevice->setClockTrimNVAddress(currentDevice->getDefaultClockTrimNVAddress());
    }
    TransferDataToWindow();
 }
@@ -1101,7 +1185,7 @@ void FlashPanel::OnTrimFrequencyCheckboxClick( wxCommandEvent& event ) {
 void FlashPanel::OnTrimFrequencyTextTextUpdated( wxCommandEvent& event ) {
    double value;
    event.GetString().ToDouble(&value);
-   currentDevice.setClockTrimFreq((unsigned long int)trunc(value*1000));
+   currentDevice->setClockTrimFreq((unsigned long int)trunc(value*1000));
 }
 
 /*
@@ -1110,25 +1194,25 @@ void FlashPanel::OnTrimFrequencyTextTextUpdated( wxCommandEvent& event ) {
 void FlashPanel::OnNonvolatileAddressTextTextUpdated( wxCommandEvent& event ) {
    long int value;
    event.GetString().ToLong(&value, 16);
-   currentDevice.setClockTrimNVAddress(value);
+   currentDevice->setClockTrimNVAddress(value);
 }
 
-void FlashPanel::getDialogueValues(DeviceData *state) {
+void FlashPanel::getDialogueValues(DeviceData &state) {
 
-//   Logging::print("FlashPanel::getDialogueValues(), device = %s\n", (const char *)currentDevice.getTargetName().c_str());
-   *state = currentDevice;
-   if (state->getClockType() == CLKEXT) {
-      state->setClockTrimNVAddress(0);
-      state->setClockTrimFreq(0);
-      state->setClockAddress(0);
+//   Logging::print("FlashPanel::getDialogueValues(), device = %s\n", (const char *)currentDevice->getTargetName().c_str());
+   state.shallowCopy(*currentDevice);
+   if (state.getClockType() == CLKEXT) {
+      state.setClockTrimNVAddress(0);
+      state.setClockTrimFreq(0);
+      state.setClockAddress(0);
    }
    if (!doTrim) {
-      state->setClockTrimNVAddress(0);
-      state->setClockTrimFreq(0);
+      state.setClockTrimNVAddress(0);
+      state.setClockTrimFreq(0);
    }
 #ifdef GDI   
-   state->setSecurity(SEC_UNSECURED);
-   state->setConnectionFreq(0);
+   state.setSecurity(SEC_UNSECURED);
+   state.setConnectionFreq(0);
 #endif   
 }
 
@@ -1152,7 +1236,7 @@ bool FlashPanel::chooseDevice(const string &deviceName) {
    }
    setDeviceindex(deviceIndex);
 
-//   Logging::print("FlashPanel::chooseDevice() - device Name = \'%s\'\n", currentDevice.getTargetName().c_str());
+//   Logging::print("FlashPanel::chooseDevice() - device Name = \'%s\'\n", currentDevice->getTargetName().c_str());
 //   Logging::print("FlashPanel::chooseDevice() - currentDeviceIndex = %d\n", currentDeviceIndex);
    return true;
 }
@@ -1161,8 +1245,7 @@ bool FlashPanel::chooseDevice(const string &deviceName) {
 //! @param settings      - Object to load settings from
 //!
 void FlashPanel::loadSettings(const AppSettings &settings) {
-
-   Logging::print("FlashPanel::loadSettings()\n");
+   Logging log("FlashPanel::loadSettings");
 
 //   Init();
 
@@ -1173,21 +1256,21 @@ void FlashPanel::loadSettings(const AppSettings &settings) {
 
    // Load the trim information
    unsigned long clockTrimFrequency = settings.getValue(settingsKey+".clockTrimFrequency", 0);
-   currentDevice.setClockTrimFreq(clockTrimFrequency);
+   currentDevice->setClockTrimFreq(clockTrimFrequency);
    doTrim = (clockTrimFrequency != 0);
-   currentDevice.setClockTrimNVAddress(settings.getValue(settingsKey+".clockTrimNVAddress", currentDevice.getClockTrimNVAddress()));
+   currentDevice->setClockTrimNVAddress(settings.getValue(settingsKey+".clockTrimNVAddress", currentDevice->getClockTrimNVAddress()));
 
    unsigned long targetBusFrequency = settings.getValue(settingsKey+".targetBusFrequency", 0);
-   currentDevice.setConnectionFreq(targetBusFrequency);
+   currentDevice->setConnectionFreq(targetBusFrequency);
 
 #ifdef FLASH_PROGRAMMER
    autoFileLoad = settings.getValue(settingsKey+".autoFileLoad", 0) != 0;
-   currentDevice.setSecurity((SecurityOptions_t)settings.getValue(settingsKey+".security", currentDevice.getSecurity()));
-   currentDevice.setEraseOption((DeviceData::EraseOptions)settings.getValue(settingsKey+".eraseOption", (int)currentDevice.getEraseOption()));
+   currentDevice->setSecurity((SecurityOptions_t)settings.getValue(settingsKey+".security", currentDevice->getSecurity()));
+   currentDevice->setEraseOption((DeviceData::EraseOptions)settings.getValue(settingsKey+".eraseOption", (int)currentDevice->getEraseOption()));
    sound = settings.getValue(settingsKey+".playSounds", 0);
 #endif
 
-   TransferDataToWindow();
+//   TransferDataToWindow();
 }
 
 //! Save setting file
@@ -1195,24 +1278,23 @@ void FlashPanel::loadSettings(const AppSettings &settings) {
 //! @param settings      - Object to save settings to
 //!
 void FlashPanel::saveSettings(AppSettings &settings) {
+   Logging log("FlashPanel::saveSettings");
 
-//   Logging::print("FlashPanel::saveSettings()\n");
-
-   DeviceData deviceData;
-   getDialogueValues(&deviceData);
+//   DeviceData deviceData;
+//   getDialogueValues(deviceData);
 
    // Save device name
-   settings.addValue(settingsKey+".deviceName",   deviceData.getTargetName().c_str());
+   settings.addValue(settingsKey+".deviceName",   currentDevice->getTargetName().c_str());
 
    // Save non-device fixed settings
-   if (deviceData.getClockTrimFreq() != 0) {
-      settings.addValue(settingsKey+".clockTrimFrequency", deviceData.getClockTrimFreq());
-      settings.addValue(settingsKey+".clockTrimNVAddress", deviceData.getClockTrimNVAddress());
+   if (currentDevice->getClockTrimFreq() != 0) {
+      settings.addValue(settingsKey+".clockTrimFrequency", currentDevice->getClockTrimFreq());
+      settings.addValue(settingsKey+".clockTrimNVAddress", currentDevice->getClockTrimNVAddress());
    }
 #ifdef FLASH_PROGRAMMER
-   settings.addValue(settingsKey+".security", deviceData.getSecurity());
+   settings.addValue(settingsKey+".security", currentDevice->getSecurity());
    settings.addValue(settingsKey+".playSounds", (int)sound);
-   settings.addValue(settingsKey+".eraseOption", (int)deviceData.getEraseOption());
+   settings.addValue(settingsKey+".eraseOption", (int)currentDevice->getEraseOption());
    settings.addValue(settingsKey+".autoFileLoad",  autoFileLoad?1:0);
 #endif
 }
@@ -1222,10 +1304,14 @@ void FlashPanel::saveSettings(AppSettings &settings) {
  * Program device with error check and user notification of errors
  */
 USBDM_ErrorCode FlashPanel::programFlash(bool loadAndGo) {
+   Logging log("FlashPanel::programFlash");
    USBDM_ErrorCode rc = PROGRAMMING_RC_OK;
 
+   if (!shared->updateState()) {
+      return BDM_RC_ILLEGAL_PARAMS;
+   }
    wxProgressDialog pd(_("Accessing Target"),
-                       _("Initialising...                     ."),
+                       _("Initialising..."),
                        100,
                        this,
                        wxPD_APP_MODAL|wxPD_ELAPSED_TIME
@@ -1235,8 +1321,6 @@ USBDM_ErrorCode FlashPanel::programFlash(bool loadAndGo) {
    if (flashprogrammer == NULL) {
       flashprogrammer = new FlashProgrammer;
    }
-//   Logging::print("FlashPanel::programFlash()\n");
-
    do {
       // Temporarily change power options for "load & Go"
       bool leaveTargetPowered = bdmOptions.leaveTargetPowered;
@@ -1255,14 +1339,14 @@ USBDM_ErrorCode FlashPanel::programFlash(bool loadAndGo) {
       if (rc != BDM_RC_OK) {
          continue;
       }
-#else
+#elif TARGET != HCS12
       rc = USBDM_TargetConnectWithRetry(retryNotPartial);
       if ((rc != BDM_RC_OK) && (rc != BDM_RC_BDM_EN_FAILED) && (rc != BDM_RC_SECURED)) {
          USBDM_SetTargetType(T_OFF);
          continue;
       }
 #endif
-      rc = flashprogrammer->setDeviceData(currentDevice);
+      rc = flashprogrammer->setDeviceData(*currentDevice);
       if (rc != BDM_RC_OK) {
          continue;
       }
@@ -1361,6 +1445,9 @@ USBDM_ErrorCode FlashPanel::programFlash(bool loadAndGo) {
 USBDM_ErrorCode FlashPanel::verifyFlash(void) {
    USBDM_ErrorCode rc = BDM_RC_OK;
 
+   if (!shared->updateState()) {
+      return BDM_RC_ILLEGAL_PARAMS;
+   }
    wxProgressDialog pd(_("Accessing Target"),
                        _("Initialising..."),
                        100,
@@ -1387,13 +1474,13 @@ USBDM_ErrorCode FlashPanel::verifyFlash(void) {
       if (rc != BDM_RC_OK) {
          continue;
       }
-#else
+#elif (TARGET != HCS12)
       rc = USBDM_TargetConnectWithRetry(retryNotPartial);
       if ((rc != BDM_RC_OK) && (rc != BDM_RC_BDM_EN_FAILED) && (rc != BDM_RC_SECURED)) {
          continue;
       }
 #endif
-      rc = flashprogrammer->setDeviceData(currentDevice);
+      rc = flashprogrammer->setDeviceData(*currentDevice);
       if (rc != BDM_RC_OK) {
          continue;
       }
@@ -1444,6 +1531,7 @@ USBDM_ErrorCode FlashPanel::verifyFlash(void) {
  * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_PROGRAM_FLASH_BUTTON
  */
 void FlashPanel::OnProgramFlashButtonClick( wxCommandEvent& event ) {
+   Logging log("FlashPanel::OnProgramFlashButtonClick");
 
    int getYesNo;
    long style = wxYES_NO|wxNO_DEFAULT |wxICON_QUESTION|wxSTAY_ON_TOP|wxCENTER;
@@ -1524,28 +1612,32 @@ void FlashPanel::OnSecurityRadioboxSelected( wxCommandEvent& event ) {
    switch (event.GetSelection()) {
       default:
       case 0:
-         currentDevice.setSecurity(SEC_DEFAULT);
+         currentDevice->setSecurity(SEC_DEFAULT);
 //         Logging::print("Security = default\n");
          break;
       case 1:
-         currentDevice.setSecurity(SEC_SECURED);
+         currentDevice->setSecurity(SEC_SECURED);
 //         Logging::print("Security = secured\n");
          break;
       case 2:
-         currentDevice.setSecurity(SEC_UNSECURED);
+         currentDevice->setSecurity(SEC_UNSECURED);
 //         Logging::print("Security = unsecured\n");
          break;
       case 3:
-         currentDevice.setSecurity(SEC_SMART);
+         currentDevice->setSecurity(SEC_SMART);
 //         Logging::print("Security = intelligent\n");
          break;
+//      case 3:
+//         currentDevice->setSecurity(SEC_CUSTOM);
+////         Logging::print("Security = custom\n");
+//         break;
    }
 }
 
 void FlashPanel::updateProgrammingState(void) {
    bool enableProgramming = ((currentDeviceIndex>=0)&&
                              (fileLoaded ||
-                             (doTrim && (currentDevice.getEraseOption() != DeviceData::eraseMass))));
+                             (doTrim && (currentDevice->getEraseOption() != DeviceData::eraseMass))));
    programFlashButtonControl->Enable(enableProgramming);
    verifyFlashButtonControl->Enable(enableProgramming);
    loadAndGoButtonControl->Enable(enableProgramming);
@@ -1558,7 +1650,7 @@ void FlashPanel::updateProgrammingState(void) {
 void FlashPanel::OnEraseChoiceSelect( wxCommandEvent& event ) {
    int selIndex = event.GetSelection();
    DeviceData::EraseOptions eraseOption = (DeviceData::EraseOptions)(int)eraseChoiceControl->GetClientData(selIndex);
-   currentDevice.setEraseOption(eraseOption);
+   currentDevice->setEraseOption(eraseOption);
    updateProgrammingState();
 //   Logging::print("FlashPanel::OnEraseChoiceSelect(%s)\n", DeviceData::getEraseOptionName(eraseOption));
 }

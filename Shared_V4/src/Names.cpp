@@ -199,6 +199,17 @@ static char buff[150] = "";
       return buff;
 }
 
+char const *getSecurityName(SecurityOptions_t security) {
+   switch (security) {
+      case SEC_DEFAULT     : return "default";
+      case SEC_SECURED     : return "secured";
+      case SEC_UNSECURED   : return "unsecured";
+      case SEC_INTELLIGENT : return "intelligent";
+      case SEC_CUSTOM      : return "custom";
+      default              : return "security-??";
+   }
+}
+
 #ifdef LOG
 //! Command String from Command #
 static const char *const newCommandTable[]= {
@@ -350,6 +361,9 @@ char const *getConnectionRetryName(RetryMode mode) {
    }
    if (mode & retryByReset) {
       strcat(buff,"+RESET");
+   }
+   if (mode & retryDelayedCheck) {
+      strcat(buff,"+DELAYCHECK");
    }
    return buff;
 }

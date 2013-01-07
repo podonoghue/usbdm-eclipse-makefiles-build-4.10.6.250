@@ -7,6 +7,8 @@
 #include "USBDM_API.h"
 #include "USBDM_AUX.h"
 
+#include "DeviceData.h"
+
 #if !defined(LOG)
 // Dummy the routines if logging is not required
 static inline char const *getCommandName(unsigned char command)                         { return ""; }
@@ -36,7 +38,6 @@ static inline char const *getCFVx_CSR_Name( unsigned int CSR)                   
 static inline char const *getStatusRegName(unsigned int targetType, unsigned int value) { return ""; }
 static inline char const *getCapabilityName(unsigned int vector)                        { return ""; }
 static inline char const *getTargetModeName(TargetMode_t type)                          { return ""; }
-
 static inline char const *getControlLevelName(InterfaceLevelMasks_t level)              { return ""; }
 static inline char const *getClockSelectName(ClkSwValues_t level)                       { return ""; }
 static inline char const *getVoltageSelectName(TargetVddSelect_t level)                 { return ""; }
@@ -103,4 +104,6 @@ char const *getTargetTypeName( unsigned int type );
 char const *getICPErrorName(unsigned char error);
 char const *getConnectionStateName(SpeedMode_t level);
 char const *getBDMStatusName(USBDMStatus_t *USBDMStatus);
+char const *getSecurityName(SecurityOptions_t level);
+
 #endif // _NAMES_H_

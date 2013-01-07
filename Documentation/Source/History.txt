@@ -2,11 +2,14 @@
 \page pageHistory History & Issues
 
 \section sectionHistory Revision History
-   - V4.10.4 (December 2012) -
+   - V4.10.4 (January 2012) -
+      - Added support for Codewarrior 10.3 Release (<b>This version does not work with the BETA</b>)
+      - Added customisable security options to programmers
       - Improved HCS08/HCS12 programming speeds (15~30%)
       - Added Codesourcery and USBDM API examples to installation
       - Updated/added Codesourcery instructions to help files
       - Numerous bug fixes to GDB Server
+      - Improvements to handling secured devices
    - V4.10.3 (November 2012) -
       - Updated device driver installation (V1.0.1) (removed unnecessary driver). 
       - ELF Files now supported for MC56F80xx devices.
@@ -237,7 +240,7 @@
          versions.  It is simply not implemented by Codewarrior (despite there being a nice dialogue box!).
          I can't do anything about this.  It is NOT a bug in USBDM.  
       
-   - HCS08   
+   - HCS12  
       -  The use of WAI or STOP instructions on HCS12 targets with the clocks disabled will cause the 
          BDM to lose connection.  There is no solution to this as it is a target BDM limitation.
       -  The use of WAI or STOP instructions on HCS12 targets with the clocks enabled will cause the 
@@ -254,14 +257,16 @@
    -  RS08
       - Programming is not supported on older Codewarrior version.  You must use the Eclipse version.
 
-   - Coldfire   
+   - 568xx   
       - The Codewarrior 56800E Flash Programmer does not work with the USBDM GDI interface. I cannot find a reason for this but 
         since it doesn't work with OSBDM either I suspect that the GDI interface on the programmer is broken.\n
       - The support of MC56F80xx devices by the programmer is very limited since the devices differ significantly in their operation.  To
         add a device requires considerable work although this has improved somewhat recently.
       - MC56F80xx devices are NOT supported in the Codewarrior Eclipse version since this version uses extension to the GDI API that are 
         undocumented.  Some devices may be programmed but the debugging operation is limited as Flash based breakpoints are not properly 
-        supported.  
+        supported. 
+
+   - Coldfire
       - The use of low power modes and STOP instructions has some issues on Coldfire V2, 3 & 4 targets.
          - Despite what the device manuals indicates it is not always possible to wake the target using
            the BKPT signal.  In some cases the only usable method is to reset the target. \n
@@ -284,9 +289,13 @@
       - It is possible to program the these devices with an invalid program that will make it difficult to connect in debug mode.  
         This can be the case if the device is suffering from a reset trap or watch-dog timer failure.
         In these cases it is necessary to do a mass erase of the device to restore function.  Since it is difficult to identify this
-        situation the programmers and Codewarrior interfaces do not do this automatically.
+        situation the programmers and Codewarrior interfaces may not do this automatically.
         If connection problems are encountered it may be necessary to use the mass erase option on the <b>stand-alone programmer</b>
         to erase the device.
+
+   - Kinetis
+      - If the flash has been protected (using FDPROT etc.) then it is necessary to use the Mass-erase option for programming.  I believe 
+        this is due to a hardware bug in the devices. (FDPROT etc are NOT writable in debug mode.)  
 
  \section sectionCompatibility Compatibility
    -  The hardware is not compatible with existing TBDML, OSBDM or TBLCF \b hardware and \b requires the 
@@ -305,7 +314,7 @@
    - MCF51AC256, -CN128, -EM256, -JF128, -JM128, -JU128, -QE96,  \n
    - MCF52233, MCF52210 and some other ones that I can't recall at the moment.  These are all V2 chips - I don't have any V3/4 to test with.
    - MC56F8006, MC56F8013, MC56F8014, MC56F8023, MC56F8245, MC56F8323, 
-   - Kinetis K40X256, K60X256
+   - Kinetis KL25Z128, MK20DX256M7, PK20X128M5, K40X256, K60X256
    - Complete systems - Axiom MC56F8006 Demo board, TWR-K40, TWR-K60, TWR-CFV1 and TWR-RS08/HCS08. \n
 
    Please advise of any problems with particular chips.  

@@ -29,7 +29,7 @@ cleanCommon:
 	${RMDIR} usbdm-$(target)-gdi
 	${RMDIR} usbdm-$(target)-gdi-debug
 
-ifeq ($(OS),Windows_NT)
+ifeq ($(UNAME_S),Windows)
 allWindows: usbdm-$(target)-gdbServer usbdm-$(target)-gdbServer-debug
 
 cleanWindows:
@@ -41,6 +41,9 @@ cleanWindows:
 endif
 
 all: allCommon allWindows
+#Test: $(TARGET)_FlashProgrammer-debug
+Test: usbdm-$(target)-gdi-debug
+#Test: usbdm-$(target)-gdbServer-debug
 
 clean: cleanCommon cleanWindows
 

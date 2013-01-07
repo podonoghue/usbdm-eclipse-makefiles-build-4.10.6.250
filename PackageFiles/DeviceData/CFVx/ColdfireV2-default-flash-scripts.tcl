@@ -17,6 +17,12 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -47,7 +53,10 @@ proc loadSymbols {} {
    set ::PDDPAR       [expr 0x00100074+$::IPSBASE]
    set ::SYNCR        [expr 0x00120000+$::IPSBASE] ;# 16-bit
    set ::CCHR         [expr 0x00120008+$::IPSBASE] ;# 8-bit
+   
+   return
 }
+
 ;######################################################################################
 ;#
 ;#
@@ -67,34 +76,38 @@ proc initTarget { args } {
    ww $::SYNCR     0x4003     ;# Set desired RFD=0 and MFD=4 
    after 100                  ;# Wait for PLL lock
    ww $::SYNCR     0x4007     ;# Switch to using PLL
+   
+   return
 }
 
 ;######################################################################################
 ;#
-;#  frequency - Target bus frequency in kHz
+;#  busFrequency - Target bus frequency in kHz
 ;#
 proc initFlash { busFrequency } {
 ;# Not used
+   
+   return
 }
 
 ;######################################################################################
-;#
-;#
+;#  Target is erased & unsecured
 proc massEraseTarget { } {
-;# Not possible unless in JTAG mode
+   error "Mass erase is not supported"
+   
+   return
 }
 
 ;######################################################################################
-;#
 ;#
 proc isUnsecure { } {
 ;# ToDo
+   return
 }
 
 ;######################################################################################
-;#
+;# Actions on initial load
 ;#
 loadSymbols
-return
 
 ;#]]>

@@ -17,6 +17,12 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -42,20 +48,27 @@ proc loadSymbols {} {
    set ::CFV1_XCSR_ENBDM        0x01
 
    set ::CFV1_PRDIV8       0x40
-}
-;######################################################################################
-;#
-;#
-proc initTarget { arg } {
-;# Not used
+   
+   return
 }
 
 ;######################################################################################
 ;#
-;#  busFrequency - Target bus busFrequency in kHz
+;#
+proc initTarget { args } {
+;# Not used
+   
+   return
+}
+
+;######################################################################################
+;#
+;#  busFrequency - Target bus frequency in kHz
 ;#
 proc initFlash { busFrequency } {
 ;# Not used
+   
+   return
 }
 
 ;######################################################################################
@@ -64,6 +77,7 @@ proc initFlash { busFrequency } {
 ;#
 proc calculateFlashDivider { busFrequency } {
 
+   ;# puts "calculateFlashDivider {}"
    if { [expr $busFrequency < 300] } {
       error "Clock too low for flash programming"
    }
@@ -74,7 +88,7 @@ proc calculateFlashDivider { busFrequency } {
    }
    set cfmclkd [expr $cfmclkd | (($busFrequency-1)/200)]
    set flashClk [expr $busFrequency / (($cfmclkd&0x3F)+1)]
-;#   puts "cfmclkd = $cfmclkd, flashClk = $flashClk"
+   ;# puts "cfmclkd = $cfmclkd, flashClk = $flashClk"
    if { [expr ($flashClk<150)||($flashClk>200)] } {
       error "Not possible to find suitable flash clock divider"
    }      
@@ -82,7 +96,7 @@ proc calculateFlashDivider { busFrequency } {
 }
 
 ;######################################################################################
-;#
+;#  Target is mass erased and reset so it is unsecured. Target is left blank.
 ;#
 proc massEraseTarget { } {
 
@@ -96,7 +110,7 @@ proc massEraseTarget { } {
    
    ;# Get target speed from BDM connection speed
    set busSpeedkHz [expr [speed]/1000]
-   set cfmclkd [calculateFlashDivider $busSpeedkHz]
+   set cfmclkd [calculateFlashDivider  $busSpeedkHz]
 
    ;# Set Flash clock divider via BDM reg
    wdreg $::CFV1_DRegCSR3byte $cfmclkd
@@ -118,29 +132,30 @@ proc massEraseTarget { } {
       }
       incr retry
    }
-   if [ expr (($status & $::CFV1_XCSR_SEC ) != 0) ] {
+   if [ expr ($status & $::CFV1_XCSR_SEC ) != 0 ] {
       error "Flash mass erase failed"
    }
    ;# reset so security change has effect
    reset s s
    connect
-   }
 
-;######################################################################################
-;#
-;#
-proc isUnsecure { } {
-   ;# Check if not read protected   
-   set status [ rdreg $::CFV1_DRegXCSRbyte ]
-   if [ expr ( $status & $::CFV1_XCSR_SEC ) != 0 ] {
-      error "Target is secured"
-   }
+   return
 }
 
 ;######################################################################################
 ;#
+proc isUnsecure { } {
+   ;#  puts "Checking if unsecured"
+   set securityValue [ rdreg $::CFV1_DRegXCSRbyte ]
+   if [ expr ( $securityValue & $::CFV1_XCSR_SEC ) != 0 ] {
+      return "Target is secured"
+   }
+   return
+}
+
+;######################################################################################
+;# Actions on initial load
 ;#
 loadSymbols
-return
 
 ;#]]>

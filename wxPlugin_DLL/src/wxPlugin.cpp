@@ -2,6 +2,7 @@
 #include <wx/window.h>
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
+#include <wx/filefn.h>
 #include <wx/app.h>
 #include <wx/evtloop.h>
 #ifdef __unix__
@@ -9,6 +10,7 @@
 #endif
 
 #ifdef _WIN32
+#include <wx/msw/private.h>
 #include <wx/msw/registry.h>
 #endif
 
@@ -16,19 +18,10 @@
 #include <string.h>
 
 #include "wxPlugin.h"
+#include "myDialog.h"
 
-static bool dll_open(void);
-static bool dll_close(void);
+static wxWindow *topLevelWindow = NULL;
 
-static WindowHandle *defaultWindowParent = NULL;
-
-//===================================================================
-//
-WXPLUGIN_API
-int setDefaultWindowParent(WindowHandle *windowHandle) {
-   defaultWindowParent = windowHandle;
-   return 0;
-}
 //===================================================================
 //
 WXPLUGIN_API
@@ -40,6 +33,7 @@ WindowHandle *getWindowHandle(const char *windowName) {
 #endif
 }
 
+#if !defined(_WIN32)
 //! Used to make sure that any pending events are handled
 //!
 static void runGuiEventLoop(void) {
@@ -60,28 +54,46 @@ static void runGuiEventLoop(void) {
    }
    wxEventLoopBase::SetActive(originalEventLoop);
 }
+#endif
 
+//FILE *logFile = NULL;
 
 //===================================================================
 //
 WXPLUGIN_API
 int displayDialogue(const char *message, const char *caption, long style) {
-   //printf("displayDialogue()\n");
+//   fprintf(logFile, "displayDialogue() before\n");
+//   fflush(logFile);
+//   MyDialog dialog(topLevelWindow, wxID_ANY, caption, wxDefaultPosition, wxDefaultSize, style);
+//   dialog.ShowModal();
+//   if (topLevelWindow != NULL) {
+//      topLevelWindow->Enable(false);
+//   }
    int rc =  wxMessageBox(
                wxString(message, wxConvUTF8), // message
                wxString(caption, wxConvUTF8), // caption
-               style,                         // style
-               NULL
+               style|wxCENTRE,                // style
+               topLevelWindow                 // parent
                );
+//   fprintf(logFile, "displayDialogue() after\n");
+//   fflush(logFile);
+//   if (topLevelWindow != NULL) {
+//      topLevelWindow->Enable(true);
+//      topLevelWindow->SetFocus();
+//      topLevelWindow->Raise();
+//   }
+#if !defined(_WIN32)
    runGuiEventLoop();
+#endif
    return rc;
 }
 
 #ifdef _WIN32
 //===================================================================
 //
+WXPLUGIN_API
 int getInstallationDir(char *buff, int size) {
-   //printf("getInstallationDir()\n");
+//   fprintf(logFile, "getInstallationDir()\n");
    memset(buff, '\0', size);
    wxString path;
    wxRegKey key(wxRegKey::HKLM, "Software\\pgo\\usbdm");
@@ -98,20 +110,26 @@ int getInstallationDir(char *buff, int size) {
 WXPLUGIN_API
 int getDataDir(char *buff, int size) {
    //printf("getDataDir()\n");
-   wxString s = wxStandardPaths::Get().GetDataDir();
    memset(buff, '\0', size);
-   strncpy(buff, (const char*)s.mb_str(wxConvUTF8), size);
-   return 0;
+   wxString s = wxStandardPaths::Get().GetDataDir();
+   if (!s.empty()) {
+      strncpy(buff, (const char*)s.mb_str(wxConvUTF8), size);
+      return 0;
+   }
+   return -1;
 }
 //===================================================================
 //
 WXPLUGIN_API
 int getUserDataDir(char *buff, int size) {
    //printf("getUserDataDir()\n");
-   wxString s = wxStandardPaths::Get().GetUserDataDir();
    memset(buff, '\0', size);
-   strncpy(buff, (const char*)s.mb_str(wxConvUTF8), size);
-   return 0;
+   wxString s = wxStandardPaths::Get().GetUserDataDir();
+   if (!s.empty()) {
+      strncpy(buff, (const char*)s.mb_str(wxConvUTF8), size);
+      return 0;
+   }
+   return -1;
 }
 //===================================================================
 //
@@ -128,47 +146,57 @@ class MinimalApp : public  wxApp {
 public:
    MinimalApp() :
       wxApp() {
-//      fprintf(stderr, "MinimalApp::MinimalApp()\n");
+//      fprintf(logFile, "MinimalApp::MinimalApp()\n");
    }
    ~MinimalApp(){
-//      fprintf(stderr, "MinimalApp::~MinimalApp()\n");
+//      fprintf(logFile, "MinimalApp::~MinimalApp()\n");
    }
    bool OnInit() {
-//      fprintf(stderr, "MinimalApp::OnInit()\n");
+//      fprintf(logFile, "MinimalApp::OnInit()\n");
       return true;
    }
    int OnExit() {
-//      fprintf(stderr, "MinimalApp::OnExit()\n");
+//      fprintf(logFile, "MinimalApp::OnExit()\n");
       return 0;
    }
 };
 
-IMPLEMENT_APP_NO_MAIN( MinimalApp )
-IMPLEMENT_CLASS( MinimalApp, wxApp )
+static MinimalApp *dummyApp;
 
-static bool wxInitializationDone = false;
+//===================================================================
+//
+WXPLUGIN_API
+int setDefaultWindowParent(WindowHandle *windowHandle) {
+//   fprintf(logFile, "setDefaultWindowParent() windowHandle = %p\n", windowHandle);
+//   fflush(logFile);
+   topLevelWindow = new wxWindow();
+   topLevelWindow->SetHWND((WXHWND)windowHandle);
+   topLevelWindow->AdoptAttributesFromHWND();
+   dummyApp->SetTopWindow(topLevelWindow);
+   return 0;
+}
+
+IMPLEMENT_APP_NO_MAIN(MinimalApp)
+IMPLEMENT_CLASS(MinimalApp, wxApp)
+
+static bool wxInitializationSuccess = false;
 
 static bool dll_open(void) {
-   static wxApp* pApp = NULL;
-   static int argc = 1;
+   static int   argc   = 1;
    static char  arg0[] = "usbdm";
    static char *argv[] = {arg0, NULL};
 
-//   fprintf(stderr, "   dll_open() - pApp = %p\n", pApp);
-   if (pApp == NULL) {
-//      fprintf(stderr, "   dll_open() - creating MinimalApp\n");
-      pApp = new MinimalApp();
-      wxApp::SetInstance(pApp);
+//   logFile = fopen("c:\\delme.log", "wt");
 
-      wxInitializationDone = wxEntryStart(argc, argv);
-//      fprintf(stderr, "   dll_open() - wxTheApp = %p\n", wxTheApp);
-//      fprintf(stderr, "   dll_open() - AppName = %s\n", (const char *)wxTheApp->GetAppName().ToAscii());
-   }
-   if (wxInitializationDone) {
-//      fprintf(stderr, "   dll_open() - wxEntryStart() successful\n");
-   }
-   else {
-//      fprintf(stderr, "   dll_open() - wxEntryStart() failed\n");
+   dummyApp = new MinimalApp();
+
+   wxApp::SetInstance(dummyApp);
+
+   wxInitializationSuccess = wxEntryStart(argc, argv);
+   wxInitializationSuccess = wxInitializationSuccess && (wxTheApp != NULL) && wxTheApp->CallOnInit();
+//   fprintf(logFile, "dll_open() - wxInitializationSuccess = %s\n", wxInitializationSuccess?"TRUE":"FALSE");
+//   fflush(logFile);
+   if (!wxInitializationSuccess) {
       return false;
    }
 #ifndef _WIN32
@@ -179,13 +207,13 @@ static bool dll_open(void) {
 
 #ifdef _WIN32
 static bool dll_close(void) {
-//   fprintf(stderr, "   dll_close()\n");
-
-   if (wxInitializationDone) {
-//      fprintf(stderr, "dll_close() - Doing wxEntryCleanup()\n");
+//   fprintf(logFile, "dll_close()\n");
+   if (wxInitializationSuccess) {
+//      fprintf(logFile, "dll_close() - Doing wxEntryCleanup()\n");
       wxEntryCleanup();
-//      fprintf(stderr, "dll_close() - Done wxEntryCleanup()\n");
+//      fprintf(logFile, "dll_close() - Done wxEntryCleanup()\n");
    }
+//   fflush(logFile); fclose(logFile);
    return true;
 }
 #endif
@@ -206,21 +234,21 @@ extern "C"
 void __attribute__ ((constructor))
 dll_initialize(void) {
 
-   fprintf(stderr, "dll_initialize()...\n");
+   fprintf(logFile, "dll_initialize()...\n");
    dll_open();
    // Lock Library in memory!
    if (libHandle == NULL) {
       libHandle = dlopen(DLL_NAME, RTLD_NOW|RTLD_NODELETE);
       if (libHandle == NULL) {
-         fprintf(stderr, "dll_initialize() - Library failed to lock %s\n", dlerror());
+         fprintf(logFile, "dll_initialize() - Library failed to lock %s\n", dlerror());
          return;
       }
       else {
-         fprintf(stderr, "dll_initialize() - Library locked OK (a=%p)\n", libHandle);
+         fprintf(logFile, "dll_initialize() - Library locked OK (a=%p)\n", libHandle);
       }
    }
    else {
-      fprintf(stderr, "dll_initialize() - Library already locked (a=%p)\n", libHandle);
+      fprintf(logFile, "dll_initialize() - Library already locked (a=%p)\n", libHandle);
    }
 }
 
@@ -229,26 +257,22 @@ void __attribute__ ((destructor))
 dll_uninitialize(void) {
 //   if (libHandle != NULL)
 //      dlclose(libHandle);
-   fprintf(stderr, "dll_uninitialize()...\n");
+   fprintf(logFile, "dll_uninitialize()...\n");
 //   dll_close();
-   //fprintf(stderr, "dll_uninitialize() - done\n");
+   //fprintf(logFile, "dll_uninitialize() - done\n");
 }
 
 #else
 
 extern "C"
 void
-//__attribute__ ((constructor))
 dll_initialize(void) {
-   //fprintf(stderr, "dll_initialize()\n");
    dll_open();
 }
 
 extern "C"
 void
-//__attribute__ ((destructor))
 dll_uninitialize(void) {
-   //fprintf(stderr, "dll_uninitialize()\n");
    dll_close();
 }
 
@@ -259,14 +283,14 @@ bool DllMain(HINSTANCE  hDLLInst,
 
    switch (fdwReason) {
       case DLL_PROCESS_ATTACH:
-//         fprintf(stderr, "=================================\n"
+//         fprintf(logFile, "=================================\n"
 //                         "DLL_PROCESS_ATTACH\n");
-         dll_initialize();
+         dll_open();
          break;
       case DLL_PROCESS_DETACH:
-//         fprintf(stderr, "DLL_PROCESS_DETACH\n"
+//         fprintf(logFile, "DLL_PROCESS_DETACH\n"
 //                         "=================================\n");
-         dll_uninitialize();
+         dll_close();
          break;
       case DLL_THREAD_ATTACH:
          //dll_initialize(_hDLLInst);

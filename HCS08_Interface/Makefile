@@ -29,9 +29,12 @@ cleanWindows:
 
 all: allCommon allWindows
 
+test: usbdm-$(target)-gdi-debug
+#test: $(TARGET)_FlashProgrammer-debug
+
 clean: cleanCommon cleanWindows
 
-.PHONY: all clean 
+.PHONY: all clean test
 .PHONY: allCommon allWindows cleanCommon cleanWIndows
 .PHONY: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug 
 .PHONY: usbdm-$(target)-gdi       usbdm-$(target)-gdi-debug 

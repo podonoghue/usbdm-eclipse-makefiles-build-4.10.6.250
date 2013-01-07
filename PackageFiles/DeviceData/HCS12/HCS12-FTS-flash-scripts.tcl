@@ -17,6 +17,14 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;#  V4.10.4 - Added disableWatchdog { }
+;#  V4.10.4 - Changed memory region names
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -24,59 +32,83 @@ proc loadSymbols {} {
    # BigEndian format for writing numbers to memory
    setbytesex bigEndian
 
-   set ::HCS12_FSEC_SEC_MASK     0x03   ;# Security bits
-   set ::HCS12_FSEC_SEC_UNSEC    0x02   ;# Security bits for unsecured device
-   set ::HCS12_FSEC_SEC_KEYEN    0x80   ;# Backdoor Key enable
-   set ::HCS12_FSEC_SEC_FNORED   0x40   ;# Vector redirection disable
-   set ::HCS12_FSEC_UNSEC_VALUE  0xFFFE ;# Value to use when unsecuring (0xFF:NVSEC value)
+   set ::NVM_FSEC_SEC_MASK     0x03   ;# Security bits
+   set ::NVM_FSEC_SEC_UNSEC    0x02   ;# Security bits for unsecured device
+   set ::NVM_FSEC_SEC_KEYEN    0x80   ;# Backdoor Key enable
+   set ::NVM_FSEC_SEC_FNORED   0x40   ;# Vector redirection disable
+   set ::NVM_FSEC_UNSEC_VALUE  0xFFFE ;# Value to use when unsecuring (0xFF:NVSEC value)
       
-   set ::HCS12_FCLKDIV           0x0100
-   set ::HCS12_FSEC              0x0101
-   set ::HCS12_FTSTMOD           0x0102
-   set ::HCS12_FPROT             0x0104
-   set ::HCS12_FSTAT             0x0105
-   set ::HCS12_FCMD              0x0106
-   set ::HCS12_FADDR             0x0108
-   set ::HCS12_FDATA             0x010A
+   set ::NVM_FCLKDIV           0x0100
+   set ::NVM_FSEC              0x0101
+   set ::NVM_FTSTMOD           0x0102
+   set ::NVM_FPROT             0x0104
+   set ::NVM_FSTAT             0x0105
+   set ::NVM_FCMD              0x0106
+   set ::NVM_FADDR             0x0108
+   set ::NVM_FDATA             0x010A
+   set ::NVM_xPROT_VALUE       0xFF
+   set ::NVM_ECLKDIV           0x0110
+   set ::NVM_EPROT             0x0114
+   set ::NVM_ESTAT             0x0115
+   set ::NVM_ECMD              0x0116
+   set ::NVM_EADDR             0x0118
+   set ::NVM_EDATA             0x011A
 
-   set ::HCS12_ECLKDIV           0x0110
-   set ::HCS12_EPROT             0x0114
-   set ::HCS12_ESTAT             0x0115
-   set ::HCS12_ECMD              0x0116
-   set ::HCS12_EADDR             0x0118
-   set ::HCS12_EDATA             0x011A
+   set ::NVM_NVSEC             0xFF0E  ;# actually NVSEC-1 as word aligned
 
-   set ::HCS12_NVSEC             0xFF0E  ;# actually NVSEC-1 as word aligned
+   set ::NVM_FSTAT_CBEIF       0x80
+   set ::NVM_FSTAT_CCIF        0x40
+   set ::NVM_FSTAT_PVIOL       0x20
+   set ::NVM_FSTAT_ACCERR      0x10
+   set ::NVM_FSTAT_BLANK       0x04
+   set ::NVM_FSTAT_FAIL        0x02  ;# Note: Has to be cleared individually
+   set ::NVM_FSTAT_DONE        0x01
+   set ::NVM_FSTAT_CLEAR       [expr ($::NVM_FSTAT_PVIOL|$::NVM_FSTAT_ACCERR)]
 
-   set ::HCS12_FSTAT_CBEIF       0x80
-   set ::HCS12_FSTAT_CCIF        0x40
-   set ::HCS12_FSTAT_PVIOL       0x20
-   set ::HCS12_FSTAT_ACCERR      0x10
-   set ::HCS12_FSTAT_BLANK       0x04
-   set ::HCS12_FSTAT_FAIL        0x02  ;# Note: Has to be cleared individually
-   set ::HCS12_FSTAT_DONE        0x01
-   set ::HCS12_FSTAT_CLEAR       [expr ($::HCS12_FSTAT_PVIOL|$::HCS12_FSTAT_ACCERR)]
+   set ::NVM_FCMD_ERASE_VER    0x05
+   set ::NVM_FCMD_WORD_PROG    0x20
+   set ::NVM_FCMD_SECTOR_ERASE 0x40
+   set ::NVM_FCMD_MASS_ERASE   0x41
 
-   set ::HCS12_FCMD_ERASE_VER    0x05
-   set ::HCS12_FCMD_WORD_PROG    0x20
-   set ::HCS12_FCMD_SECTOR_ERASE 0x40
-   set ::HCS12_FCMD_MASS_ERASE   0x41
-
-   set ::HCS12_FTSTMOD_WRALL     0x10
+   set ::NVM_FTSTMOD_WRALL     0x10
    
-   set ::HCS12_BDMSTS            0xFF01
-   set ::HCS12_BDMSTS_ENBDM      0x80
-   set ::HCS12_BDMSTS_BDMACT     0x40
-   set ::HCS12_BDMSTS_CLKSW      0x04
-   set ::HCS12_BDMSTS_UNSEC      0x02
+   set ::HCS12_BDMSTS               0xFF01
+   set ::HCS12_BDMSTS_ENBDM         0x80
+   set ::HCS12_BDMSTS_BDMACT        0x40
+   set ::HCS12_BDMSTS_CLKSW         0x04
+   set ::HCS12_BDMSTS_UNSEC         0x02
 
-   set ::HCS12_PRDIV8            0x40
+   set ::COPCTL                     0x3C
+   set ::COPCTL_DISABLE             0x40
+
+   set ::NVM_PRDIV8            0x40
    
    set ::INITEE                  0x0012 ;# EEPROM Mapping
    set ::INITEE_EEON             0x01
    set ::INITEE_EE_MASK          0xF8
 
-   set ::FLASH_REGIONS         "" ;# List of addresses within each unique flash region (incl. eeprom)
+   set ::FLASH_REGIONS              "" ;# List of addresses within each unique flash region (incl. eeprom)
+   
+   return
+}
+
+;######################################################################################
+;#
+;# Disable watchdog
+;#
+;# A reset is required to prevent a possible timeout before the COPCTL write completes
+;#
+proc disableWatchdog { } {
+
+   ;# Disable watchdog immediately after a reset
+   ;# dialogue "Before reset - FTS" Waiting... ok
+   ;# reset s h
+
+   catch {connect}                 ;# Ignore possible BDM enable fault
+   wb $::COPCTL $::COPCTL_DISABLE  ;# Disable WDOG
+   rb $::COPCTL 
+   
+   return
 }
 
 ;######################################################################################
@@ -85,7 +117,10 @@ proc loadSymbols {} {
 ;#
 proc initTarget { flashRegions } {
    ;# puts "initTarget {}"
+   
    set ::FLASH_REGIONS  $flashRegions 
+
+   disableWatchdog
 }
 
 ;######################################################################################
@@ -98,18 +133,18 @@ proc initFlash { busFrequency } {
    set cfmclkd [calculateFlashDivider $busFrequency]
 
    ;# Set up Flash divider
-   wb $::HCS12_FCLKDIV $cfmclkd ;# Flash divider
-   wb $::HCS12_FPROT 0xFF       ;# unprotect Flash
+   wb $::NVM_FCLKDIV $cfmclkd             ;# Flash divider
+   wb $::NVM_FPROT   $::NVM_xPROT_VALUE   ;# unprotect Flash
 
    foreach flashRegion $::FLASH_REGIONS {
       ;# puts "flashRegion = $flashRegion"
       lassign  $flashRegion type address
       ;# puts "type='$type', address='$address'"
       switch $type {
-         "MemEEPROM" {
+         "EEPROM" {
             ;# Set up Eeprom divider
-            wb $::HCS12_ECLKDIV $cfmclkd
-            wb $::HCS12_EPROT 0xFF
+            wb $::NVM_ECLKDIV $cfmclkd
+            wb $::NVM_EPROT $::NVM_xPROT_VALUE
             ;# Re-map EEPROM to base address
             wb $::INITEE [expr $::INITEE_EEON|(($address>>8)&$::INITEE_EE_MASK)]
          }
@@ -117,6 +152,8 @@ proc initFlash { busFrequency } {
          }
       }
    }
+   
+   return
 }
 
 ;######################################################################################
@@ -138,7 +175,7 @@ proc calculateFlashDivider { busFrequency } {
    }
    set cfmclkd 0
    if { [expr $clockFreq > 12800] } {
-      set cfmclkd [expr $::HCS12_PRDIV8 + round(floor(0.249999+1.25*($busFrequency/1000.0)))]
+      set cfmclkd [expr $::NVM_PRDIV8 + round(floor(0.249999+1.25*($busFrequency/1000.0)))]
       set flashClk [expr $clockFreq / (8*(($cfmclkd&0x3F)+1))]
    } else {
       set cfmclkd [expr round(floor(0.99999+($busFrequency/100.0)))+1]
@@ -161,27 +198,27 @@ proc executeFlashCommand { cmd address value } {
 
    ;#  puts "executeFlashCommand {}"
    
-   wb $::HCS12_FSTAT    $::HCS12_FSTAT_CLEAR      ;# Clear PVIOL/ACCERR
-   wb $::HCS12_FTSTMOD  0x00                      ;# Clear WRALL?
-   wb $::HCS12_FSTAT    $::HCS12_FSTAT_FAIL       ;# Clear FAIL
-   if [ expr (($cmd == $::HCS12_FCMD_MASS_ERASE) || ($cmd == $::HCS12_FCMD_ERASE_VER)) ] {
-      wb $::HCS12_FTSTMOD $::HCS12_FTSTMOD_WRALL  ;# Apply to all flash blocks
-      ww $::HCS12_FADDR    $address               ;# Flash address
-      ww $::HCS12_FDATA    $value                 ;# Flash data
+   wb $::NVM_FSTAT    $::NVM_FSTAT_CLEAR      ;# Clear PVIOL/ACCERR
+   wb $::NVM_FTSTMOD  0x00                      ;# Clear WRALL?
+   wb $::NVM_FSTAT    $::NVM_FSTAT_FAIL       ;# Clear FAIL
+   if [ expr (($cmd == $::NVM_FCMD_MASS_ERASE) || ($cmd == $::NVM_FCMD_ERASE_VER)) ] {
+      wb $::NVM_FTSTMOD $::NVM_FTSTMOD_WRALL  ;# Apply to all flash blocks
+      ww $::NVM_FADDR    $address               ;# Flash address
+      ww $::NVM_FDATA    $value                 ;# Flash data
    } else {
       ww $address $value                          ;# Write to flash to buffer address and data
    }
-   wb $::HCS12_FCMD     $cmd                      ;# Write command
-   wb $::HCS12_FSTAT    $::HCS12_FSTAT_CBEIF      ;# Clear CBEIF to execute the command 
+   wb $::NVM_FCMD     $cmd                      ;# Write command
+   wb $::NVM_FSTAT    $::NVM_FSTAT_CBEIF      ;# Clear CBEIF to execute the command 
    
    ;# Wait for command completion
    set flashBusy 1
    set retry 0
    while { $flashBusy } {
       after 20
-      set status [rb $::HCS12_FSTAT]
-      set flashBusy  [expr ($status & $::HCS12_FSTAT_CCIF) == 0x00]
-      set flashError [expr ($status & ($::HCS12_FSTAT_PVIOL|$::HCS12_FSTAT_ACCERR))]
+      set status [rb $::NVM_FSTAT]
+      set flashBusy  [expr ($status & $::NVM_FSTAT_CCIF) == 0x00]
+      set flashError [expr ($status & ($::NVM_FSTAT_PVIOL|$::NVM_FSTAT_ACCERR))]
       if [expr $flashError != 0] {
          break;
       }
@@ -190,11 +227,12 @@ proc executeFlashCommand { cmd address value } {
       }
       incr retry
    }
-   wb $::HCS12_FTSTMOD  0x00                      ;# Clear WRALL
+   wb $::NVM_FTSTMOD  0x00                      ;# Clear WRALL
    if [ expr ($flashError || ($retry>=20)) ] {
-      ;#  puts [ format "Flash command error HCS12_FSTAT=0x%02X, retry=%d" $status $retry ]
+      ;#  puts [ format "Flash command error NVM_FSTAT=0x%02X, retry=%d" $status $retry ]
       error "Flash command failed"
    }
+   return
 }
 
 ;######################################################################################
@@ -207,25 +245,25 @@ proc executeEepromCommand { cmd address value } {
 
    ;#  puts "executeEepromCommand {}"
    
-   wb $::HCS12_ESTAT    $::HCS12_FSTAT_CLEAR  ;# Clear PVIOL/ACCERR
-   wb $::HCS12_ESTAT    $::HCS12_FSTAT_FAIL   ;# Clear FAIL
-   if [ expr (($cmd == $::HCS12_FCMD_MASS_ERASE) || ($cmd == $::HCS12_FCMD_ERASE_VER)) ] {
-      ww $::HCS12_EADDR $address              ;# EEPROM address
-      ww $::HCS12_EDATA $value                ;# EEPROM data
+   wb $::NVM_ESTAT    $::NVM_FSTAT_CLEAR  ;# Clear PVIOL/ACCERR
+   wb $::NVM_ESTAT    $::NVM_FSTAT_FAIL   ;# Clear FAIL
+   if [ expr (($cmd == $::NVM_FCMD_MASS_ERASE) || ($cmd == $::NVM_FCMD_ERASE_VER)) ] {
+      ww $::NVM_EADDR $address              ;# EEPROM address
+      ww $::NVM_EDATA $value                ;# EEPROM data
    } else {
       ww $address $value                      ;# Write to EEPROM to buffer address and data
    }
-   wb $::HCS12_ECMD     $cmd                  ;# Write command
-   wb $::HCS12_ESTAT    $::HCS12_FSTAT_CBEIF  ;# Clear CBEIF to execute the command 
+   wb $::NVM_ECMD     $cmd                  ;# Write command
+   wb $::NVM_ESTAT    $::NVM_FSTAT_CBEIF  ;# Clear CBEIF to execute the command 
    
    ;# Wait for command completion
    set flashBusy 1
    set retry 0
    while { $flashBusy } {
       after 20
-      set status [rb $::HCS12_ESTAT]
-      set flashBusy  [expr ($status & $::HCS12_FSTAT_CCIF) == 0x00]
-      set flashError [expr ($status & ($::HCS12_FSTAT_PVIOL|$::HCS12_FSTAT_ACCERR))]
+      set status [rb $::NVM_ESTAT]
+      set flashBusy  [expr ($status & $::NVM_FSTAT_CCIF) == 0x00]
+      set flashError [expr ($status & ($::NVM_FSTAT_PVIOL|$::NVM_FSTAT_ACCERR))]
       if [expr $flashError != 0] {
          break;
       }
@@ -235,9 +273,10 @@ proc executeEepromCommand { cmd address value } {
       incr retry
    }
    if [ expr ($flashError || ($retry>=20)) ] {
-      ;#  puts [ format "EEPROM command error HCS12_ESTAT=0x%02X, retry=%d" $status $retry ]
+      ;#  puts [ format "EEPROM command error NVM_ESTAT=0x%02X, retry=%d" $status $retry ]
       error "EEPROM command failed"
    }
+   return
 }
 
 ;######################################################################################
@@ -245,10 +284,11 @@ proc executeEepromCommand { cmd address value } {
 ;#
 proc massEraseTarget { } {
 
-   ;#  puts "massEraseTarget{}"
+   ;# puts "massEraseTarget{}"
    
-   ;# No initial connect as may fail.  Assumed done by caller.
-
+   disableWatchdog
+   
+   ;# Mass erase flash
    initFlash [expr [speed]/1000]  ;# Flash speed calculated from BDM connection speed
 
    foreach flashRegion $::FLASH_REGIONS {
@@ -256,13 +296,13 @@ proc massEraseTarget { } {
       lassign  $flashRegion type address
       ;# puts "type='$type', address='$address'"
       switch $type {
-         "MemEEPROM" {
+         "EEPROM" {
              ;# puts "Erasing Eeprom @$address"
-             executeEepromCommand $::HCS12_FCMD_MASS_ERASE $address 0xFFFF
+             executeEepromCommand $::NVM_FCMD_MASS_ERASE $address 0xFFFF
          }
-         "MemFLASH" {
+         "FLASH" {
              ;# puts "Erasing Flash @$address"
-             executeFlashCommand  $::HCS12_FCMD_MASS_ERASE $address  0xFFFF
+             executeFlashCommand  $::NVM_FCMD_MASS_ERASE $address  0xFFFF
          }
          default {
              ;# Ignore others
@@ -271,8 +311,8 @@ proc massEraseTarget { } {
    }
    ;# Device is now Blank but may not be unsecured
    ;#  puts "Checking if target is already unsecured"
-   set securityValue [rb $::HCS12_FSEC]
-   if [ expr ( $securityValue & $::HCS12_FSEC_SEC_MASK ) == $::HCS12_FSEC_SEC_UNSEC ] {
+   set securityValue [rb $::NVM_FSEC]
+   if [ expr ( $securityValue & $::NVM_FSEC_SEC_MASK ) == $::NVM_FSEC_SEC_UNSEC ] {
       ;# Target was originally unsecured - just return now
       ;#  puts "Target was originally unsecured"
       return
@@ -285,7 +325,7 @@ proc massEraseTarget { } {
    ;# Program security location to unsecured value
    initTarget $::FLASH_REGIONS
    initFlash [expr [speed]/1000]   ;# Flash speed calculated from BDM connection speed
-   executeFlashCommand  $::HCS12_FCMD_WORD_PROG $::HCS12_NVSEC $::HCS12_FSEC_UNSEC_VALUE
+   executeFlashCommand  $::NVM_FCMD_WORD_PROG $::NVM_NVSEC $::NVM_FSEC_UNSEC_VALUE
    
    ;# Reset to have unsecured (finally) but not blank device
    reset s h
@@ -293,8 +333,8 @@ proc massEraseTarget { } {
 
    ;# Confirm unsecured
    ;#  puts "Checking if target is unsecured"
-   set securityValue [rb $::HCS12_FSEC]
-   if [ expr ( $securityValue & $::HCS12_FSEC_SEC_MASK ) != $::HCS12_FSEC_SEC_UNSEC ] {
+   set securityValue [rb $::NVM_FSEC]
+   if [ expr ( $securityValue & $::NVM_FSEC_SEC_MASK ) != $::NVM_FSEC_SEC_UNSEC ] {
       ;#  puts "Target failed to unsecure"
       error "Target failed to unsecure"
       return
@@ -302,20 +342,22 @@ proc massEraseTarget { } {
    ;# Erase security location so device is unsecured and blank!
    initTarget $::FLASH_REGIONS
    initFlash [expr [speed]/1000]   ;# Flash speed calculated from BDM connection speed
-   executeFlashCommand  $::HCS12_FCMD_SECTOR_ERASE $::HCS12_NVSEC 0xFFFF
+   executeFlashCommand  $::NVM_FCMD_SECTOR_ERASE $::NVM_NVSEC 0xFFFF
 
    ;# Flash is now Blank and unsecured
+   return
 }
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
    ;#  puts "Checking if unsecured"
-   set securityValue [rb $::HCS12_FSEC]
+   set securityValue [rb $::NVM_FSEC]
 
-   if [ expr ( $securityValue & $::HCS12_FSEC_SEC_MASK ) != $::HCS12_FSEC_SEC_UNSEC ] {
-      error "Target is secured"
+   if [ expr ( $securityValue & $::NVM_FSEC_SEC_MASK ) != $::NVM_FSEC_SEC_UNSEC ] {
+      return "Target is secured"
    }
+   return
 }
 
 ;######################################################################################

@@ -42,9 +42,13 @@ endif
 
 all: allCommon allWindows
 
+# used for quick test builds
+test: $(TARGET)_FlashProgrammer-debug
+#test: usbdm-$(target)-gdi-debug
+
 clean: cleanCommon cleanWindows
 
-.PHONY: all clean 
+.PHONY: all clean test
 .PHONY: allCommon allWindows cleanCommon cleanWIndows
 .PHONY: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug 
 .PHONY: usbdm-$(target)-gdi       usbdm-$(target)-gdi-debug 

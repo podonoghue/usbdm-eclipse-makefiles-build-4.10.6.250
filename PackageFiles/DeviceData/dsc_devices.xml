@@ -13,11 +13,12 @@
 <!-- 
       NOTE: All addresses and sizes refer to words
       
-      V4.9.5 - Revised DSC security options
-               Changed memory types to pROM etc
-               Changes for MC56F8323 etc.
+      V4.10.4 - Changed how security information is expressed
+      V4.9.5  - Revised DSC security options
+                Changed memory types to pROM etc
+                Changes for MC56F8323 etc.
  -->
-<root version="4.9.5">
+<root version="4.10.4">
    <description>DSC Device characteristics v4.9.5 31/5/2012</description>
    <sharedInformation>
       <!-- MC56F8002, MC56F8006, MC56F8014, MC56F8245, MC56F8246, MC56F8247, MC56F8255, MC56F8256, MC56F8257 -->
@@ -42,14 +43,19 @@
       <flashProgram id="DSC-56F8033-flash-program">
          &DSC-56F8033-flash-program;
       </flashProgram>
-     <!-- DSC Unsecured value(words) = SECL,SECH,RES,FPROT,RES,backdoor[0-3] -->
-      <securityInfo size="18" type="off" id="DSC-default-security-off">
-         FFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
-      </securityInfo>
-      <!-- DSC Secured value(words) = SECL,SECH,RES,FPROT,RES,backdoor[0-3] -->
-      <securityInfo size="18" type="on" id="DSC-default-security-on">
-         0AE7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      </securityInfo>
+      <securityEntry id="DSC-default-security">
+         <securityDescription id="DSC-default-security-description">
+            SECL\t\t=[RES=%1X, RES=%6b, SEC=%2b]\t\tSECH\t\t=[KEYEN=%1b, RES=%1X]\nRES\t\t= %2X\t\tFPROT\t\t= %2X\nRES\t\t= %2X\nBACKDOOR\t= %8X
+         </securityDescription>
+         <!-- DSC Unsecured value(words) = SECL,SECH,RES,FPROT,RES,backdoor[0-3] -->
+         <securityInfo size="18" type="unsecure" id="DSC-default-security-off">
+            FFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
+         </securityInfo>
+         <!-- DSC Secured value(words) = SECL,SECH,RES,FPROT,RES,backdoor[0-3] -->
+         <securityInfo size="18" type="secure" id="DSC-default-security-on">
+            0AE7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+         </securityInfo>
+      </securityEntry>
    </sharedInformation>
    <deviceList>
       <device family="DSC" name="_Default" isDefault="true">
@@ -60,8 +66,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0xF400" type="pROM" securityAddress="0x7FF7" sectorSize="2048" alignment="1">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x002000" />
          </memory>
          <copctlAddress value="0x00F110" />
@@ -82,8 +87,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x1FF7" sectorSize="256">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x001FFF" start="0x000800" />
          </memory>
          <copctlAddress value="0x00F140" />
@@ -99,8 +103,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x1FF7" sectorSize="256">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x001FFF" start="0x000000" />
          </memory>
          <copctlAddress value="0x00F140" />
@@ -116,8 +119,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x1FF7" sectorSize="256">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x001FFF" start="0x000800" />
          </memory>
          <memory type="pRAM">
@@ -136,8 +138,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x1FF7" sectorSize="256">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange start="0x000000" end="0x001FFF" />
          </memory>
          <copctlAddress value="0x00F0E0" />
@@ -153,8 +154,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x1FF7" sectorSize="256">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange start="0x000000" end="0x001FFF" />
          </memory>
          <copctlAddress value="0x00F0E0" />
@@ -170,8 +170,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x7FF7" sectorSize="256">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x004000" />
          </memory>
          <memory type="pRAM">
@@ -191,8 +190,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x7FF7" sectorSize="256">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x000000" />
          </memory>
          <memory type="pRAM">
@@ -212,8 +210,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x7FF7" sectorSize="1024">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x002000" />
          </memory>
          <copctlAddress value="0xF110" />
@@ -229,8 +226,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x7FF7" sectorSize="1024">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x002000" />
          </memory>
          <copctlAddress value="0xF110" />
@@ -244,8 +240,7 @@
             <memoryRange end="0x000FFF" start="0x000000" />
          </memory>
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x7FF7" sectorSize="1024">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x002000" />
          </memory>
          <copctlAddress value="0xF110" />
@@ -261,8 +256,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x7FF7" sectorSize="1024">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x000000" />
          </memory>
          <copctlAddress value="0xF110" />
@@ -278,8 +272,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x7FF7" sectorSize="1024">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x000000" />
          </memory>
          <copctlAddress value="0xF110" />
@@ -295,8 +288,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x7FF7" sectorSize="1024">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x007FFF" start="0x000000" />
          </memory>
          <copctlAddress value="0xF110" />
@@ -312,8 +304,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x3FF7" sectorSize="512">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x003FFF" start="0x000000" />
          </memory>
          <memory registerAddress="0x00F400" type="pROM" sectorSize="256">
@@ -342,8 +333,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x3FF7" sectorSize="512">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x003FFF" start="0x000000" />
          </memory>
          <memory registerAddress="0x00F400" type="pROM" sectorSize="256">
@@ -369,8 +359,7 @@
          </memory>
          <!-- Program Space -->
          <memory registerAddress="0x00F400" type="pROM" securityAddress="0x03FFF7" sectorSize="1024">
-            <securityInfoRef ref="DSC-default-security-off" />
-            <securityInfoRef ref="DSC-default-security-on" />
+            <securityEntryRef ref="DSC-default-security" />
             <memoryRange end="0x03FFFF" start="0x000000" />
          </memory>
          <memory registerAddress="0x00F400" type="pROM" sectorSize="512">

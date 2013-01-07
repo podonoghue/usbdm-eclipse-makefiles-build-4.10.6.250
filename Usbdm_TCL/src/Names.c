@@ -1274,7 +1274,7 @@ static const bitInfo bitNames[] = {
       {"MASS_ERASE_ACK|",  MDM_AP_Flash_Mass_Erase_Ack},
       {"FLASH_READY|",     MDM_AP_Flash_Ready},
       {"SECURE|",          MDM_AP_System_Security},
-      {"RESET|",           MDM_AP_System_Security},
+      {"RESET|",           MDM_AP_System_Reset},
       {"MASS_ERASE_EN|",   MDM_AP_Mass_Erase_Enable},
       {"BACKDOOR_EN|",     MDM_AP_Backdoor_Access_Enable},
       {"LOW_POWER_EN|",    MDM_AP_LP_Enable},

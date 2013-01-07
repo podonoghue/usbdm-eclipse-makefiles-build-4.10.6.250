@@ -38,14 +38,15 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, std::vector<BdmInformati
 
 
 enum RetryMode {
-   retryMask       = 0x0F,   // Mask for basic options
-   retryAlways     = 0,      // Always retry - on error the user has already been informed.
-   retryNever      = 1,      // Never retry - the user has not been informed of any error (quiet)
-   retryNotPartial = 2,      // Don't retry on partial connection (BDM_RC_SECURED,BDM_RC_BDM_EN_FAILED)
-   retryByReset   = (1<<4),  // Retry silently using reset if necessary (if supported by target to entry debug mode)
-   retryByPower   = (1<<5),  // Retry by cycling BDM controlled power & prompting user
-   retryWithInit  = (1<<6),  // Option for ARM & DSC - do DSC/ARM_Initialise() first
-   retryWithReset = (1<<7),  // Immediately reset to special mode - useful to avoid Watchdog timeout
+   retryMask       = 0x0F,     // Mask for basic options
+   retryAlways     = 0,        // Always retry - on error the user has already been informed.
+   retryNever      = 1,        // Never retry - the user has not been informed of any error (quiet)
+   retryNotPartial = 2,        // Don't retry on partial connection (BDM_RC_SECURED,BDM_RC_BDM_EN_FAILED)
+   retryByReset   = (1<<4),    // Retry silently using reset if necessary (if supported by target to entry debug mode)
+   retryByPower   = (1<<5),    // Retry by cycling BDM controlled power & prompting user
+   retryWithInit  = (1<<6),    // Option for ARM & DSC - do DSC/ARM_Initialise() first
+   retryDelayedCheck = (1<<8), // Delay check for connection after sync
+//   retryWithReset = (1<<7),  // Immediately reset to special mode - useful to avoid Watchdog timeout
 };
 
 USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMode retry=retryAlways);

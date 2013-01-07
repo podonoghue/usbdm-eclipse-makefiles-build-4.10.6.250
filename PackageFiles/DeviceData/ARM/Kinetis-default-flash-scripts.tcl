@@ -17,6 +17,13 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;#          - Changed Mass erase reset to special-software (FDPROT etc wasn't unprotected)
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -106,10 +113,7 @@ proc loadSymbols {} {
    set ::FTFL_FCCOBA                     0x4002000D ;# Flash Common Command Object Registers, offset: 0xD
    set ::FTFL_FCCOB9                     0x4002000E ;# Flash Common Command Object Registers, offset: 0xE
    set ::FTFL_FCCOB8                     0x4002000F ;# Flash Common Command Object Registers, offset: 0xF
-   set ::FTFL_FPROT3                     0x40020010 ;# Program Flash Protection Registers, offset: 0x10
-   set ::FTFL_FPROT2                     0x40020011 ;# Program Flash Protection Registers, offset: 0x11
-   set ::FTFL_FPROT1                     0x40020012 ;# Program Flash Protection Registers, offset: 0x12
-   set ::FTFL_FPROT0                     0x40020013 ;# Program Flash Protection Registers, offset: 0x13
+   set ::FTFL_FPROT                      0x40020010 ;# Program Flash Protection Registers, offset: 0x10 (4 bytes)
    set ::FTFL_FEPROT                     0x40020016 ;# EEPROM Protection Register, offset: 0x16
    set ::FTFL_FDPROT                     0x40020017 ;# Data Flash Protection Register, offset: 0x17
 
@@ -159,7 +163,12 @@ proc loadSymbols {} {
    set ::WDOG_UNLOCK_SEQ_2               0xD928
    set ::WDOG_STCTRLH                    0x40052000
    set ::WDOG_DISABLED_CTRL              0x0012
+
+   return
 }
+
+;######################################################################################
+;#
 ;#proc unsecureFlash {} {
 ;#   initFlash
 ;#   rblock [expr $::NV_FSEC &~0xF] 0x20
@@ -169,6 +178,9 @@ proc loadSymbols {} {
 ;#   rblock [expr $::NV_FSEC &~0xF] 0x20
 ;#   rb $::NV_FSEC
 ;#}
+
+;######################################################################################
+;#
 proc executeCommand {} {
    ;# Clear any existing errors
    wb $::FTFL_FSTAT [expr $::FTFL_FSTAT_ACCERR|$::FTFL_FSTAT_FPVIOL]
@@ -198,6 +210,9 @@ proc executeCommand {} {
       error "Flash command failed error"
    }  
 }
+
+;######################################################################################
+;#
 proc setFCCOB { cmd addr data } {
    wl $::FTFL_FCCOB3 [expr ($cmd << 24) | $addr]
    rl $::FTFL_FCCOB3
@@ -205,19 +220,28 @@ proc setFCCOB { cmd addr data } {
    rl $::FTFL_FCCOB7
    rblock $::FTFL_FCCOB3 0x10
 }
+
+;######################################################################################
+;#
 proc programLong { addr data } {
    setFCCOB $::F_PGM4 $addr $data
    executeCommand
 }
+
+;######################################################################################
+;#
 proc eraseBlock { addr } {
    setFCCOB $::F_ERSBLK $addr 0x0
    executeCommand
 }
+
 ;######################################################################################
 ;#
 ;#
 proc initTarget { args } {
 ;# Not used
+   
+   return
 }
 
 ;######################################################################################
@@ -225,15 +249,26 @@ proc initTarget { args } {
 ;#  frequency - Target bus frequency in kHz
 ;#
 proc initFlash { frequency } {
-   wl $::FTFL_FPROT3   0xFFFFFFFF
-   rl $::FTFL_FPROT3
-   wb $::FTFL_FDPROT   0xFF
-   rb $::FTFL_FDPROT
-   wl $::FMC_PFB0CR    0x00000000
-   wl $::FMC_PFB1CR    0x00000000
+   ;# Done by target routines
+   ;# Doesn't work in any case because of H/W bug?
+   ;# wl $::FTFL_FPROT   0xFFFFFFFF
+   ;# set fprot [rl $::FTFL_FPROT]
+   ;# if [expr $fprot != -1] {
+   ;#    error "Failed to unprotect Flash (FTFL_FPROT)"
+   ;# }
+   ;# wb $::FTFL_FDPROT   0xFF
+   ;# set fdprot [rb $::FTFL_FDPROT]
+   ;# if [expr $fdprot != 0xFF] {
+   ;#    error "Failed to unprotect Flash fdprot = $fdprot"
+   ;# }
+   ;# wl $::FMC_PFB0CR    0x00000000
+   ;# wl $::FMC_PFB1CR    0x00000000
+   
+   return
 }
+
 ;######################################################################################
-;#
+;#  Target is mass erased and left unsecured (non-blank!)
 ;#
 proc massEraseTarget { } {
 
@@ -269,28 +304,28 @@ proc massEraseTarget { } {
    set mdmApControl [expr $mdmApControl & ~$::MDM_AP_C_CORE_HOLD]
    wcreg $::MDM_AP_Control $mdmApControl
 
-   reset s h
+   reset s s
 
    if [expr ( [expr $mdmApControl & $::MDM_AP_C_MASS_ERASE]) != 0] {
       error "Flash mass erase failed"
    }
+   return
 }
 
 ;######################################################################################
-;#
 ;#
 proc isUnsecure { } {
-   ;# Check if not read protected   
-   set status [ rcreg $::MDM_AP_Status ]
-   if [ expr ( $status & $::MDM_AP_ST_SYSTEM_SECURITY ) != 0 ] {
-      error "Target is secured"
+   ;#  puts "Checking if unsecured"
+   set securityValue [ rcreg $::MDM_AP_Status ]
+   if [ expr ( $securityValue & $::MDM_AP_ST_SYSTEM_SECURITY ) != 0 ] {
+      return "Target is secured"
    }
+   return
 }
 
 ;######################################################################################
-;#
+;# Actions on initial load
 ;#
 loadSymbols
-return
 
 ;#]]>

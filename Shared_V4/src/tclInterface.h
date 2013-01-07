@@ -44,7 +44,7 @@ private:
    // Executes a TCL script in the current TCL interpreter
    //
 public:
-   USBDM_ErrorCode runTCLScript(TclScriptPtr script);
+   USBDM_ErrorCode runTCLScript(TclScriptConstPtr script);
 
    //=======================================================================
    // Executes a TCL command previously loaded in the TCL interpreter

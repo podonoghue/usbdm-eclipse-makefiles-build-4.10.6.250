@@ -47,6 +47,7 @@ typedef enum  {
  BDM_RC_USB_DEVICE_NOT_INSTALLED               = 10,    //!< BDM Open Failed - LIBUSB_ERROR_ACCESS on claim I/F - Probably driver not installed
  BDM_RC_USB_DEVICE_REMOVED                     = 11,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
  BDM_RC_USB_RETRY_OK                           = 12,    //!< USB Debug use only
+ BDM_RC_UNEXPECTED_RESET                       = 13,    //!< Target reset was detected
  // BDM_RC_USB_TOGGLE_ERROR                       = 12,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
 // BDM_RC_USB_TX_ERROR                           = 13,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
 // BDM_RC_USB_RX_ERROR                           = 14,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
@@ -96,6 +97,7 @@ typedef enum  {
  BDM_RC_ARM_PARITY_ERROR                       = 51,    //!< ARM PARITY error
  BDM_RC_ARM_FAULT_ERROR                        = 52,    //!< ARM FAULT response error
  BDM_RC_UNEXPECTED_RESPONSE                    = 53,    //!< Unexpected/inconsistent response from BDM
+ BDM_RC_HCS_ACCESS_ERROR                       = 54,    //!< - Memory access failed due to target in stop or wait state
 
  // Used by programmer
  PROGRAMMING_RC_OK                             = 0,     //!<  0 Success

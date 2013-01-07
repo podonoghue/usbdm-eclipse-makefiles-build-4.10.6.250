@@ -8,6 +8,9 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 #include <stdint.h>
+#if defined(__cplusplus)
+#include <string>
+#endif
 
 /*! Wait for period of time
  *
@@ -54,5 +57,16 @@ uint32_t hex6ToDecimal( char **ptr);
  * @return - a value in the range 0 to 0xFFFFFFU
  */
 uint32_t hex8ToDecimal( char **ptr);
+
+#if defined(__cplusplus)
+//! Filters a string to only contain a set of permitted values
+//!
+//! @param data    string to filter
+//! @param pattern string containing permitted chars
+//!
+//! @return filtered string
+//!
+std::string filter(const std::string &data, const std::string &pattern);
+#endif
 
 #endif /* UTILS_H_ */

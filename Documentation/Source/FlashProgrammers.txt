@@ -24,21 +24,23 @@
   If neither of the \b -program or \b -verify options are given then all options are \b ignored and a GUI interface is opened. \n
   - \b BinaryFilename \n The name of the S19 or ELF binary file to program.\n
   - \b Options (order is not significant). 
-     -  \b -device=device_name        \n Target device e.g. MC9S08AW16A, MCF51CN128.
-     -  \b -erase=erase_option        \n Selects erase method used (Mass, All, Selective, None).
-     -  \b -execute                   \n Leave target power on & reset to normal mode at completion.
-     -  \b -masserase                 \n Equivalent to erase=Mass.
-     -  \b -noerase                   \n Equivalent to erase=None.    
-     -  \b -nvloc=address             \n Trim non-volatile memory location address (hex).
-     -  \b -power=dur,\b rec          \n Power off duration & recovery times (ms). 
-     -  \b -program                   \n Program and verify flash contents.
-     -  \b -reset=dur,\b rel,\b rec   \n Reset duration, release & recovery times (ms). 
-     -  \b -secure                    \n Leave device secured after programming.
-     -  \b -speed                     \n Communication speed on some targets (kHz).
-     -  \b -trim=trim_frequency       \n Trim internal clock to frequency (in kHz) e.g. 32.7.
-     -  \b -unsecure                  \n Leave device unsecured after programming.
-     -  \b -vdd=vdd_value             \n Supply Vdd to target (3V3 or 5V).
-     -  \b -verify                    \n Verify flash contents.\n
+     -  \b -device=device_name            \n Target device e.g. MC9S08AW16A, MCF51CN128.
+     -  \b -erase=erase_option            \n Selects erase method used (Mass, All, Selective, None).
+     -  \b -execute                       \n Leave target power on & reset to normal mode at completion.
+     -  \b -flexNVM=eeprom,\b partition   \n FlexNVM parameters (eeprom,partition hex values)
+     -  \b -masserase                     \n Equivalent to erase=Mass.
+     -  \b -noerase                       \n Equivalent to erase=None.    
+     -  \b -nvloc=address                 \n Trim non-volatile memory location address (hex).
+     -  \b -power=dur,\b rec              \n Power off duration & recovery times (ms). 
+     -  \b -program                       \n Program and verify flash contents.
+     -  \b -reset=dur,\b rel,\b rec       \n Reset duration, release & recovery times (ms). 
+     -  \b -secure                        \n Leave device secured after programming.
+     -  \b -security=value                \n Explicit security value to use (as hex string)
+     -  \b -speed                         \n Communication speed on some targets (kHz).
+     -  \b -trim=trim_frequency           \n Trim internal clock to frequency (in kHz) e.g. 32.7.
+     -  \b -unsecure                      \n Leave device unsecured after programming.
+     -  \b -vdd=vdd_value                 \n Supply Vdd to target (3V3 or 5V).
+     -  \b -verify                        \n Verify flash contents.\n
 
   The program sets the error code to 0 on success, non-zero otherwise.\n\n
   The program will use the first BDM located.  There is no option to select a BDM.
@@ -57,7 +59,11 @@
    It is necessary that the clock trim locations in flash are still unprogrammed (0xFF) when using
    the \b -trim option. The target cannot be secured after trimming.\n\n
   
-\section sectionGUI Interactive (GUI)
+  - Programming image with custom security value:
+   \verbatim FlashProgrammer -device=MKL25Z128M4 -vdd=3v3 -erase=mass -program -security=123456789ABCDEF0FFFFFFFFFEFFFFFF Image.elf \endverbatim
+   This will program the device with Image.elf and explicitly set the security area to '123456789ABCDEF0FFFFFFFFFEFFFFFF'.
+   
+   \section sectionGUI Interactive (GUI)
    If the program is started without the \b -program or \b -verify options then an interactive dialogue is opened to 
    allow the user to configure the programmer.  The other options are \b ignored.\n
    
@@ -204,7 +210,9 @@
    memory.  This is controlled through the security locations in the flash memory.\n
    Note that programming security options will require erasing of the entire flash block containing the 
    security locations (with collateral erasure).\n
-   Note that the entire security area is controlled by these options (usually ~16 bytes).
+   The security may also be controlled by the Custom Security options on the Advanced tab.  The options on this 
+   page will then appear disabled.\n
+   Note that the entire security area is controlled by these options (usually ~16 bytes).\n
    - Image\n
       The security bits in the Flash memory are programmed with whatever value is contained within the flash 
       buffer being programmed. \n
@@ -221,8 +229,15 @@
      The security bits will be programmed to disable security where this does not conflict with the present buffer 
      contents i.e. only unoccupied security area locations will be programmed.  This is useful if the image contains
      values for part of the security area (e.g. Flash protection) but you still want to have control of the remaining 
-     locations (e.g. securing the chip) through the programmer.   
-     
+     locations (e.g. securing the chip) through the programmer.       
+   </td>
+   <td>
+   \image html "TargetTab(CFV1).png" "RS08, HCS08, CFV1, DSC, ARM Dialogue."
+   \image html "TargetTab(HCS12).png" "HCS12 Dialogue."
+   </td>
+   </tr>
+   <tr>
+   <td colspan="2">
  - <b>Device Operations </b>\n
    - Erase Options\n
       This option controls the erasing method used before programming:
@@ -254,10 +269,6 @@
    - Load and Go\n
       As for <b>Program Flash</b> but the target is reset into normal (user) mode after programming.  This will result
       in the target executing the just programmed code.
-   </td>
-   <td>
-   \image html "TargetTab(CFV1).png" "RS08, HCS08, CFV1, DSC, ARM Dialogue."
-   \image html "TargetTab(HCS12).png" "HCS12 Dialogue."
    </td>
    </tr>
    </table>
@@ -318,13 +329,36 @@
    setting with the mass-erase option.
    </td>
    </tr>   
+   
+   <tr>
+   <td colspan="2">
+   <b>Custom Security Parameters</b>\n
+   This section allows the security area of the target to be programmed to a custom value.
+   -  Enable - Enable the use of a custom value.  \n
+      If this option is selected then the Security options on the <i>Target</i> tab are disabled and security is controlled by the
+      information on this page.\n
+      If not selected then the Custom parameters will be disable and the information on this page will simply describe the
+      security option selected on the <i>Target</i> tab.   
+   - Flash area selector\n
+      This allows selection of the Flash area being customized.  There is usually only a single security area so only
+      a single option will be available.  Devices with multiple Flash areas with <i>individual security</i> e.g. MCF51EM256 will
+      have multiple regions selectable.   
+   - Reset Values\n
+      This will reset all customized values to the default unsecured value.
+   - Custom value entry field\n
+      This allows entering the custom value to be used.  The value will be padded with zeroes on the right to the required
+      security area size.
+   - Information area\n
+      This area shows the security memory address and an abbreviated description of composition of the security value.  
+   </td>
+   </tr>   
    </table>
 
  \section licenseSection License
    \verbatim
 
    USBDM Flash programmer & Utilties
-   Copyright (C) 2009-11  Peter O'Donoghue
+   Copyright (C) 2009-13  Peter O'Donoghue
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

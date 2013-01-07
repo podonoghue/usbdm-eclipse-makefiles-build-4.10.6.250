@@ -17,6 +17,12 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -79,6 +85,8 @@ proc loadSymbols {} {
    set ::HCS08_PRDIV8               0x40
 
    set ::FLASH_REGIONS              "" ;# List of addresses within each unique flash region (incl. eeprom)
+   
+   return
 }
 
 ;######################################################################################
@@ -99,6 +107,8 @@ proc initTarget { flashRegions } {
 ;#   wb  $::ramAddress 0x45 $wdogH $wdogL 0xA6 0x10  0xE7 0x04 0x4F  0xE7 0x05 0xE7 0x01 0xF7 0x82
 ;#   wpc $::ramAddress
 ;#   go 
+   
+   return
 }
 
 ;######################################################################################
@@ -114,6 +124,8 @@ proc initFlash { busFrequency } {
    wb $::NVM_FCLKDIV $cfmclkd               ;# Flash divider
    wb $::NVM_FPROT   $::NVM_xPROT_VALUE   ;# unprotect Flash
    wb $::NVM_EPROT   $::NVM_xPROT_VALUE   ;# unprotect EEPROM
+   
+   return
 }
 
 ;######################################################################################
@@ -189,6 +201,7 @@ proc executeFlashCommand { cmd {address "none"} {data0 "none"} {data1 "none"} {d
       ;# puts [ format "Flash command error NVM_FSTAT=0x%02X, retry=%d" $status $retry ]
       error "Flash command failed"
    }
+   return
 }
 
 ;######################################################################################
@@ -220,8 +233,9 @@ proc isUnsecure { } {
    set securityValue [rb $::NVM_FSEC]
 
    if [ expr ( $securityValue & $::NVM_FSEC_SEC_MASK ) != $::NVM_FSEC_SEC_UNSEC ] {
-      error "Target is secured"
+      return "Target is secured"
    }
+   return
 }
 
 ;######################################################################################

@@ -12,7 +12,6 @@ typedef int bool;
 #include <errno.h>
 #include <ctype.h>
 
-#include "TargetDefines.h"
 #include "USBDM_API.h"
 #include "USBDM_DSC_API.h"
 #include "USBDM_API_Private.h"
@@ -22,17 +21,17 @@ typedef int bool;
 #include "ARM_Definitions.h"
 
 #ifdef WIN32
+#include "FindWindow.h"
 #include "tcl.h"
 #else
 #include "tcl8.5/tcl.h"
 #endif
 #include "Names.h"
 #include "Common.h"
-#include "Utils.h"
 #include "Names.h"
-#ifdef INTERACTIVE
+//#ifdef INTERACTIVE
 #include "wxPlugin.h"
-#endif
+//#endif
 #include "TargetDefines.h"
 
 #ifndef _WIN32
@@ -51,6 +50,13 @@ typedef int bool;
 #else
 #define API_FUNC
 #endif
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef TRUE
+#define TRUE 1
 #endif
 
 static API_FUNC USBDM_ErrorCode  errorHandler() {
@@ -185,8 +191,11 @@ static const uint8_t *getData2x8(uint32_t data) {
       return getData2x8Le(data);
 }
 
+static USBDM_ErrorCode lastError = BDM_RC_OK;
+
 static int checkUsbdmRC(Tcl_Interp *interp, USBDM_ErrorCode errorCode) {
    if (errorCode != BDM_RC_OK) {
+      lastError = errorCode;
       Tcl_SetResult(interp, (char*)USBDM_GetErrorString(errorCode), TCL_STATIC);
       return TCL_ERROR;
    }
@@ -395,8 +404,9 @@ static int setTargetCommand(ClientData notneededhere, Tcl_Interp *interp, int ar
    USBDM_ExtendedOptions_t defaultBdmOptions = {sizeof(USBDM_ExtendedOptions_t), targetType};
    USBDM_GetDefaultExtendedOptions(&defaultBdmOptions);
    defaultBdmOptions.targetVdd  = bdmOptions.targetVdd;
-   USBDM_SetExtendedOptions(&defaultBdmOptions);
-
+   if (checkUsbdmRC(interp,  USBDM_SetExtendedOptions(&defaultBdmOptions))) {
+      return TCL_ERROR;
+   }
    USBDM_Version_t version;
    USBDM_GetVersion(&version);
    printf("USBDM DLL Version = %s\n", USBDM_DLLVersionString());
@@ -741,23 +751,35 @@ static int goCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl
 
    switch (targetType) {
       case T_HC12 :
-         USBDM_ReadReg(HCS12_RegPC, &oldPC);
+         if (checkUsbdmRC(interp,  USBDM_ReadReg(HCS12_RegPC, &oldPC)) != 0) {
+            return TCL_ERROR;
+         }
          break;
       case T_HCS08 :
-         USBDM_ReadReg(HCS08_RegPC, &oldPC);
+         if (checkUsbdmRC(interp,  USBDM_ReadReg(HCS08_RegPC, &oldPC)) != 0) {
+            return TCL_ERROR;
+         }
          break;
       case T_RS08 :
-         USBDM_ReadReg(RS08_RegCCR_PC, &oldPC);
+         if (checkUsbdmRC(interp,  USBDM_ReadReg(RS08_RegCCR_PC, &oldPC)) != 0) {
+            return TCL_ERROR;
+         }
          oldPC &= 0x3FFF;
          break;
       case T_CFV1 :
-         USBDM_ReadCReg(0xF, &oldPC);
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFV1_CRegPC, &oldPC)) != 0) {
+            return TCL_ERROR;
+         }
          break;
       case T_CFVx :
-         USBDM_ReadCReg(0x80F, &oldPC);
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFVx_CRegPC, &oldPC)) != 0) {
+            return TCL_ERROR;
+         }
          break;
       case T_ARM :
-         pUSBDM_ReadReg(ARM_RegPC, &oldPC);
+         if (checkUsbdmRC(interp,  pUSBDM_ReadReg(ARM_RegPC, &oldPC)) != 0) {
+            return TCL_ERROR;
+         }
          break;
       default:
          break;
@@ -912,14 +934,14 @@ unsigned long BDMStatus = 0x00;
       else {
          printf("MDM-AP.Control => 0x%08lX %s\n", lValue, getMDM_APControlName(lValue));
       }
-      if (checkUsbdmRC(interp,  pUSBDM_ReadMemory(1,4,DHCSR,value)) != BDM_RC_OK) {
+      if (checkUsbdmRC(interp,  pUSBDM_ReadMemory(4,4,DHCSR,value)) != BDM_RC_OK) {
          printf("DHCSR          => Failed\n");
       }
       else {
          data = getData32(value);
          printf("DHCSR          => 0x%08X %s\n", data, getDHCSRName(data));
       }
-      if (checkUsbdmRC(interp,  pUSBDM_ReadMemory(1,4,DEMCR,value)) != BDM_RC_OK) {
+      if (checkUsbdmRC(interp,  pUSBDM_ReadMemory(4,4,DEMCR,value)) != BDM_RC_OK) {
          printf("DEMCR          => Failed\n");
       }
       else {
@@ -963,6 +985,37 @@ unsigned long BDMStatus = 0x00;
              getStatusRegName(targetType, BDMStatus));
       return reportState(interp);
    }
+}
+//! Get last USBDM error code as number
+static int getLastError(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
+   Tcl_SetObjResult(interp, Tcl_NewIntObj(lastError));
+   lastError = BDM_RC_OK;
+   return TCL_OK;
+}
+
+//! Get last USBDM error code as message
+static int getErrorMessage(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
+   if (argc > 2) {
+      Tcl_WrongNumArgs(interp, 1, argv, "");
+      return TCL_ERROR;
+   }
+   int error;
+   if (argc > 1) {
+      // # steps
+      if (Tcl_GetIntFromObj(interp, argv[1], &error) != TCL_OK) {
+         Tcl_WrongNumArgs(interp, 1, argv, "<value>");
+         return TCL_ERROR;
+      }
+   }
+   Tcl_SetResult(interp, (char*)USBDM_GetErrorString(error), TCL_STATIC);
+   return TCL_OK;
+}
+
+//! Get last USBDM error code as message
+static int getLastErrorMessage(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
+   Tcl_SetResult(interp, (char*)USBDM_GetErrorString(lastError), TCL_STATIC);
+   lastError = BDM_RC_OK;
+   return TCL_OK;
 }
 
 //! Read & report Status Value from Target status register - no sync
@@ -1031,7 +1084,7 @@ int regNo;
 unsigned long regVal;
 unsigned long oldPC;
 unsigned int oldInstruction;
-USBDM_ErrorCode rc = BDM_RC_OK;
+int rc = TCL_OK;
 
    if (argc != 1) {
       Tcl_WrongNumArgs(interp, 1, argv, "");
@@ -1042,72 +1095,93 @@ USBDM_ErrorCode rc = BDM_RC_OK;
    switch (targetType) {
       case T_HC12 :
          for ( regIndex =0;
-               (regIndex<sizeof(HCS12regList)/sizeof(HCS12regList[0])) && (rc == BDM_RC_OK);
+               (regIndex<sizeof(HCS12regList)/sizeof(HCS12regList[0])) && (rc == TCL_OK);
                regIndex++) {
             regNo = HCS12regList[regIndex];
-            rc = USBDM_ReadReg(regNo, &regVal);
+            if (checkUsbdmRC(interp,  USBDM_ReadReg(regNo, &regVal))) {
+               return TCL_ERROR;
+            }
             printf("%3s =%4X, ", getHCS12RegName(regNo), (int)regVal);
          }
          printf("\n");
-         if (rc != BDM_RC_OK) {
-            break;
+         if (checkUsbdmRC(interp,  USBDM_ReadReg(HCS12_RegPC, &oldPC))) {
+            return TCL_ERROR;
          }
-         USBDM_ReadReg(HCS12_RegPC, &oldPC);
-         pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction);
-         swapEndian32(&oldInstruction);
-         printf("PC = 0x%4.4X : 0x%4.4X 0x%4.4X\n",
-                (int)oldPC, oldInstruction>>16, oldInstruction&0xFFFF);
+         printf("PC = 0x%4.4X : ", (int)oldPC);
+         if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) == BDM_RC_OK) {
+            swapEndian32(&oldInstruction);
+            printf("0x%4.4X 0x%4.4X\n", oldInstruction>>16, oldInstruction&0xFFFF);
+         }
+         else {
+            printf("<invalid>\n");
+         }
          break;
       case T_HCS08 :
          for (regIndex =0;
-              (regIndex<sizeof(HCS08regList)/sizeof(HCS08regList[0])) && (rc == BDM_RC_OK);
+              (regIndex<sizeof(HCS08regList)/sizeof(HCS08regList[0])) && (rc == TCL_OK);
               regIndex++) {
             regNo = HCS08regList[regIndex];
-            rc = USBDM_ReadReg(regNo, &regVal);
+            if (checkUsbdmRC(interp,  USBDM_ReadReg(regNo, &regVal))) {
+               return TCL_ERROR;
+            }
             printf("%3s =%4X, ", getHCS08RegName(regNo), (int)regVal);
          }
          printf("\n");
-         if (rc != BDM_RC_OK) {
-            break;
+         if (checkUsbdmRC(interp,  USBDM_ReadReg(HCS08_RegPC, &oldPC))) {
+            return TCL_ERROR;
          }
-         USBDM_ReadReg(HCS08_RegPC, &oldPC);
-         pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction);
-         swapEndian32(&oldInstruction);
-         printf("PC = 0x%4.4X : 0x%4.4X 0x%4.4X\n",
-                (int)oldPC, oldInstruction>>16, oldInstruction&0xFFFF);
+         printf("PC = 0x%4.4X : ", (int)oldPC);
+         if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) == BDM_RC_OK) {
+            swapEndian32(&oldInstruction);
+            printf("0x%4.4X 0x%4.4X\n", oldInstruction>>16, oldInstruction&0xFFFF);
+         }
+         else {
+            printf("<invalid>\n");
+         }
          break;
       case T_RS08 :
          for (regIndex =0;
-              (regIndex<sizeof(RS08regList)/sizeof(RS08regList[0])) && (rc == BDM_RC_OK);
+              (regIndex<sizeof(RS08regList)/sizeof(RS08regList[0])) && (rc == TCL_OK);
               regIndex++) {
             regNo = RS08regList[regIndex];
-            rc = USBDM_ReadReg(regNo, &regVal);
+            if (checkUsbdmRC(interp,  USBDM_ReadReg(regNo, &regVal))) {
+               return TCL_ERROR;
+            }
             printf("%3s =%4X, ", getRS08RegName(regNo), (int)regVal);
          }
          printf("\n");
-         if (rc != BDM_RC_OK) {
-            break;
+         if (checkUsbdmRC(interp,  USBDM_ReadReg(RS08_RegCCR_PC, &oldPC))) {
+            return TCL_ERROR;
          }
-         USBDM_ReadReg(RS08_RegCCR_PC, &oldPC);
          oldPC &= 0x3FFF;
-         pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction);
-         swapEndian32(&oldInstruction);
-         printf("PC = 0x%4.4X : 0x%4.4X 0x%4.4X\n",
-                (int)oldPC, oldInstruction>>16, oldInstruction&0xFFFF);
+         printf("PC = 0x%4.4X : ", (int)oldPC);
+         if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) == BDM_RC_OK) {
+            swapEndian32(&oldInstruction);
+            printf("0x%4.4X 0x%4.4X\n", oldInstruction>>16, oldInstruction&0xFFFF);
+         }
+         else {
+            printf("<invalid>\n");
+         }
          break;
       case T_CFV1 :
-         for( regNo = 0; (regNo<=15) && (rc == BDM_RC_OK); regNo++) {  // D0-7, A0-7
-            rc = USBDM_ReadReg(regNo, &regVal);
+         for( regNo = 0; (regNo<=15) && (rc == TCL_OK); regNo++) {  // D0-7, A0-7
+            if (checkUsbdmRC(interp,  USBDM_ReadReg(regNo, &regVal))) {
+               return TCL_ERROR;
+            }
             printf("%3s =%8.8X, ", getCFV1RegName(regNo), (int)regVal);
             if ((regNo&0x03)== 0x03)
                printf("\n");
          }
-         if (rc != BDM_RC_OK) {
+         if (rc != TCL_OK) {
             break;
          }
-         USBDM_ReadCReg(CFV1_CRegPC, &regVal); // PC
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFV1_CRegPC, &regVal))) { // PC
+            return TCL_ERROR;
+         }
          printf("%3s =%8.8X, ", getCFV1ControlRegName(CFV1_CRegPC), (int)regVal);
-         USBDM_ReadCReg(CFV1_CRegSR, &regVal); // SR
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFV1_CRegSR, &regVal))) { // SR
+            return TCL_ERROR;
+         }
          printf("%3s =%C-%C%C-%d---%C%C%C%C%C,          ",
                 getCFV1ControlRegName(CFV1_CRegSR),
                 (regVal&0x8000)?'T':'-',
@@ -1119,33 +1193,47 @@ USBDM_ErrorCode rc = BDM_RC_OK;
                 (regVal&0x0004)?'Z':'-',
                 (regVal&0x0002)?'V':'-',
                 (regVal&0x0001)?'C':'-' );
-         USBDM_ReadCReg(CFV1_CRegOTHER_A7, &regVal); // Other A7
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFV1_CRegOTHER_A7, &regVal))) { // Other A7
+            return TCL_ERROR;
+         }
          printf("%3s =%8.8X, \n", getCFV1ControlRegName(CFV1_CRegOTHER_A7), (int)regVal);
-         USBDM_ReadCReg(CFV1_CRegVBR, &regVal); // VBR
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFV1_CRegVBR, &regVal))) { // VBR
+            return TCL_ERROR;
+         }
          regVal &= 0x00F00000;
          printf("%3s =%8.8X, ", getCFV1ControlRegName(CFV1_CRegVBR), (int)regVal);
-         USBDM_ReadCReg(CFV1_CRegCPUCR, &regVal); // CPUCR
+         if (checkUsbdmRC(interp, USBDM_ReadCReg(CFV1_CRegCPUCR, &regVal))) { // CPUCR
+            return TCL_ERROR;
+         }
          printf("%3s =%8.8X\n", getCFV1ControlRegName(CFV1_CRegCPUCR), (int)regVal);
-
-         USBDM_ReadCReg(CFV1_CRegPC, &oldPC);
-         pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction);
-         swapEndian32(&oldInstruction);
-         printf("PC = 0x%8.8X : 0x%4.4X 0x%4.4X\n",
-                (int)oldPC, oldInstruction>>16, oldInstruction&0xFFFF);
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFV1_CRegPC, &oldPC))) {
+            return TCL_ERROR;
+         }
+         printf("PC = 0x%8.8X : ", (int)oldPC);
+         if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) == BDM_RC_OK) {
+            swapEndian32(&oldInstruction);
+            printf("0x%4.4X 0x%4.4X\n", oldInstruction>>16, oldInstruction&0xFFFF);
+         }
+         else {
+            printf("<invalid>\n");
+         }
          break;
       case T_CFVx :
-         for( regNo = 0; (regNo<=15) && (rc == BDM_RC_OK); regNo++) { // D0-7, A0-7
-            rc = USBDM_ReadReg(regNo, &regVal);
+         for( regNo = 0; (regNo<=15) && (rc == TCL_OK); regNo++) { // D0-7, A0-7
+            if (checkUsbdmRC(interp,  USBDM_ReadReg(regNo, &regVal))) {
+               return TCL_ERROR;
+            }
             printf("%3s =%8.8X, ", getCFVxRegName(regNo), (int)regVal);
             if ((regNo&0x03)== 0x03)
                printf("\n");
          }
-         if (rc != BDM_RC_OK) {
-            break;
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFVx_CRegPC, &regVal))) { // PC
+            return TCL_ERROR;
          }
-         USBDM_ReadCReg(CFVx_CRegPC, &regVal); // PC
          printf("%3s =%8.8X, ", getCFVxControlRegName(CFVx_CRegPC), (int)regVal);
-         USBDM_ReadCReg(CFVx_CRegSR, &regVal); // SR
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFVx_CRegSR, &regVal))) { // SR
+            return TCL_ERROR;
+         }
          printf("%3s =%C-%C%C-%d---%C%C%C%C%C,          ",
                 getCFVxControlRegName(CFVx_CRegSR),
                 (regVal&0x8000)?'T':'-',
@@ -1157,73 +1245,85 @@ USBDM_ErrorCode rc = BDM_RC_OK;
                 (regVal&0x0004)?'Z':'-',
                 (regVal&0x0002)?'V':'-',
                 (regVal&0x0001)?'C':'-' );
-         USBDM_ReadCReg(CFVx_CRegOTHER_SP, &regVal); // Other A7
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFVx_CRegOTHER_SP, &regVal))) { // Other A7
+            return TCL_ERROR;
+         }
          printf("%3s =%8.8X\n", getCFVxControlRegName(CFVx_CRegOTHER_SP), (int)regVal);
-         USBDM_ReadCReg(CFVx_CRegVBR, &regVal); // VBR
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFVx_CRegVBR, &regVal))) { // VBR
+            return TCL_ERROR;
+         }
          printf("%3s =%8.8X, ", getCFVxControlRegName(CFVx_CRegVBR), (int)regVal);
-         USBDM_ReadCReg(CFV1_CRegFLASHBAR, &regVal); // FLASHBAR
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFV1_CRegFLASHBAR, &regVal))) {// FLASHBAR
+            return TCL_ERROR;
+         }
          printf("%3s =%8.8X, ", getCFVxControlRegName(CFV1_CRegFLASHBAR), (int)regVal);
-         USBDM_ReadCReg(CFV1_CRegRAMBAR, &regVal); // RAMBAR
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFV1_CRegRAMBAR, &regVal))) { // RAMBAR
+            return TCL_ERROR;
+         }
          printf("%3s =%8.8X\n", getCFVxControlRegName(CFV1_CRegRAMBAR), (int)regVal);
-
-         USBDM_ReadCReg(CFVx_CRegPC, &oldPC);
-         pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction);
-         swapEndian32(&oldInstruction);
-         printf("PC = 0x%8.8X : 0x%4.4X 0x%4.4X\n",
-                (int)oldPC, oldInstruction>>16, oldInstruction&0xFFFF);
+         if (checkUsbdmRC(interp,  USBDM_ReadCReg(CFVx_CRegPC, &oldPC))) {
+            return TCL_ERROR;
+         }
+         printf("PC = 0x%8.8X : ", (int)oldPC);
+         if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) == BDM_RC_OK) {
+            swapEndian32(&oldInstruction);
+            printf("0x%4.4X 0x%4.4X\n", oldInstruction>>16, oldInstruction&0xFFFF);
+         }
+         else {
+            printf("<invalid>\n");
+         }
          break;
       case T_ARM :
          for (regIndex =0;
-             (regIndex<sizeof(ARMregList)/sizeof(ARMregList[0])) && (rc == BDM_RC_OK);
+             (regIndex<sizeof(ARMregList)/sizeof(ARMregList[0])) && (rc == TCL_OK);
              regIndex++) {
             regNo = ARMregList[regIndex];
             if (regNo>=0) {
-               rc = pUSBDM_ReadReg(regNo, &regVal);
+               if (checkUsbdmRC(interp,  pUSBDM_ReadReg(regNo, &regVal))) {
+                  return TCL_ERROR;
+               }
                printf("%4s => %8.8X, ", getARMRegName(regNo), (int)regVal);
             }
             if ((regIndex&0x03)== 0x03)
                printf("\n");
          }
          printf("\n");
-         if (rc != BDM_RC_OK) {
-            break;
+         if (checkUsbdmRC(interp,  pUSBDM_ReadReg(ARM_RegPC, &oldPC))) {
+            return TCL_ERROR;
          }
-         pUSBDM_ReadReg(ARM_RegPC, &oldPC);
-         if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) != BDM_RC_OK) {
-            printf(":PC = 0x%8.8X : <invalid> \n",
-                  (int)oldPC );
+         printf("PC = 0x%8.8X : ", (int)oldPC);
+         if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) == BDM_RC_OK) {
+            swapEndian32(&oldInstruction);
+            printf("0x%4.4X 0x%4.4X\n", oldInstruction>>16, oldInstruction&0xFFFF);
          }
          else {
-            swapEndian32(&oldInstruction);
-            printf(":PC = 0x%8.8X : 0x%4.4X 0x%4.4X\n",
-                  (int)oldPC,  oldInstruction>>16,  oldInstruction&0xFFFF);
+            printf("<invalid>\n");
          }
          break;
       case T_MC56F80xx:
          DSC_SetLogFile(NULL);
          for (regIndex =0;
-              (regIndex<sizeof(DSCregList)/sizeof(DSCregList[0])) && (rc == BDM_RC_OK);
+              (regIndex<sizeof(DSCregList)/sizeof(DSCregList[0])) && (rc == TCL_OK);
               regIndex++) {
             regNo = DSCregList[regIndex];
             if (regNo >= 0) {
-               rc = DSC_ReadRegister(regNo, &regVal);
+               if (checkUsbdmRC(interp,  DSC_ReadRegister(regNo, &regVal))) {
+                  return TCL_ERROR;
+               }
                printf("%6s=0x%08X, ", DSC_GetRegisterName(regNo), (int)regVal);
             }
             if ((regIndex%4) == 3)
                printf("\n");
          }
          printf("\n");
-         if (logging)
+         if (logging) {
             DSC_SetLogFile(stderr);
+         }
          break;
       default:
          break;
    }
-   if (rc != BDM_RC_OK) {
-      printf("Error: %s\n", USBDM_GetErrorString(rc));
-      return TCL_ERROR;
-   }
-   return TCL_OK;
+   return rc;
 }
 
 //! Convert string to long integer
@@ -1439,47 +1539,57 @@ static int wlCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl
 static int wpcCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
 // wpc<addr> <data>
    int  data;
-   USBDM_ErrorCode rc;
 
    if (argc != 2) {
       Tcl_WrongNumArgs(interp, 1, argv, "<pc_value>");
       return TCL_ERROR;
    }
    // # PC value
-   rc = Tcl_GetIntFromObj(interp, argv[1], &data);
-   if (rc != TCL_OK) {
+   if (Tcl_GetIntFromObj(interp, argv[1], &data) != TCL_OK) {
       Tcl_WrongNumArgs(interp, 1, argv, "<address> <pc_value>1");
       return TCL_ERROR;
    }
    switch (targetType) {
       case T_CFV1:
-         rc = checkUsbdmRC(interp,  USBDM_WriteCReg(CFV1_CRegPC, data));
+         if (checkUsbdmRC(interp,  USBDM_WriteCReg(CFV1_CRegPC, data))) {
+            return TCL_ERROR;
+         }
          break;
       case T_CFVx:
-         rc = checkUsbdmRC(interp,  USBDM_WriteCReg(CFVx_CRegPC, data));
+         if (checkUsbdmRC(interp,  USBDM_WriteCReg(CFVx_CRegPC, data))) {
+            return TCL_ERROR;
+         }
          break;
       case T_HCS08:
-         rc = checkUsbdmRC(interp,  USBDM_WriteReg(HCS08_RegPC, data));
+         if (checkUsbdmRC(interp,  USBDM_WriteReg(HCS08_RegPC, data))) {
+            return TCL_ERROR;
+         }
          break;
       case T_RS08:
-         rc = checkUsbdmRC(interp,  USBDM_WriteReg(RS08_RegCCR_PC, data));
+         if (checkUsbdmRC(interp,  USBDM_WriteReg(RS08_RegCCR_PC, data))) {
+            return TCL_ERROR;
+         }
          break;
       case T_HC12:
-         rc = checkUsbdmRC(interp,  USBDM_WriteReg(HCS12_RegPC, data));
+         if (checkUsbdmRC(interp,  USBDM_WriteReg(HCS12_RegPC, data))) {
+            return TCL_ERROR;
+         }
          break;
       case T_ARM:
-         rc = checkUsbdmRC(interp,  pUSBDM_WriteReg(ARM_RegPC, data));
+         if (checkUsbdmRC(interp,  pUSBDM_WriteReg(ARM_RegPC, data))) {
+            return TCL_ERROR;
+         }
          break;
       case T_MC56F80xx:
-         rc = checkUsbdmRC(interp,  DSC_WriteRegister(DSC_RegPC, data));
+         if (checkUsbdmRC(interp,  DSC_WriteRegister(DSC_RegPC, data))) {
+            return TCL_ERROR;
+         }
          break;
       default:
-         rc = checkUsbdmRC(interp,  BDM_RC_UNKNOWN_TARGET);
+         if (checkUsbdmRC(interp,  BDM_RC_UNKNOWN_TARGET)) {
+            return TCL_ERROR;
+         }
          break;
-   }
-   if (rc != 0) {
-      printf(":wpc Failed\n");
-      return TCL_ERROR;
    }
    printf(":wpc 0x%X\n", data);
    return TCL_OK;
@@ -1497,24 +1607,21 @@ static int wRegCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, T
       return TCL_ERROR;
    }
    // Register #
-   rc = Tcl_GetIntFromObj(interp, argv[1], &regNo);
-   if (rc != TCL_OK) {
+   if (Tcl_GetIntFromObj(interp, argv[1], &regNo) != TCL_OK) {
       Tcl_WrongNumArgs(interp, 1, argv, "<address> <value>");
       return TCL_ERROR;
    }
    // # data
-   rc = Tcl_GetIntFromObj(interp, argv[2], &data);
-   if (rc != TCL_OK) {
+   if (Tcl_GetIntFromObj(interp, argv[2], &data) != TCL_OK) {
       Tcl_WrongNumArgs(interp, 1, argv, "<address> <value>");
       return TCL_ERROR;
    }
-   if (checkUsbdmRC(interp,  pUSBDM_WriteReg(regNo, data)) != 0) {
+   if (checkUsbdmRC(interp,  pUSBDM_WriteReg(regNo, data)) != TCL_OK) {
       printf(":wReg Failed\n");
       return TCL_ERROR;
    }
    printf(":wReg r=0x%X(%s)<-0x%8.8X\n",
           regNo, getRegName( targetType, regNo ), data);
-
    return TCL_OK;
 }
 
@@ -2359,7 +2466,6 @@ static int writeControlCommand(ClientData notneededhere, Tcl_Interp *interp, int
 //! Set communication speed
 static int setSpeedCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
 // speed <Hz>
-   int rc;
    unsigned long freq;
 
    if (argc > 1) {
@@ -2372,8 +2478,7 @@ static int setSpeedCommand(ClientData notneededhere, Tcl_Interp *interp, int arg
       if (Tcl_GetDoubleFromObj(interp, argv[1], &speed) != TCL_OK) {
          return TCL_ERROR;
       }
-      rc = checkUsbdmRC(interp, USBDM_SetSpeed(round(1000UL*speed)));
-      if (rc != 0) {
+      if (checkUsbdmRC(interp, USBDM_SetSpeed(round(1000UL*speed)))) {
          return TCL_ERROR;
       }
       if (speed == 0) {
@@ -2384,7 +2489,7 @@ static int setSpeedCommand(ClientData notneededhere, Tcl_Interp *interp, int arg
                 speed, (60.0 * 128)/speed, (2 * 128)/speed);
       }
    }
-   if (checkUsbdmRC(interp, USBDM_GetSpeed(&freq)) != 0) {
+   if (checkUsbdmRC(interp, USBDM_GetSpeed(&freq))) {
       return TCL_ERROR;
    }
    printf("Speed = %.3f MHz\n", freq/1000.0);
@@ -2541,7 +2646,7 @@ static int jtagResetCommand(ClientData notneededhere, Tcl_Interp *interp, int ar
       Tcl_WrongNumArgs(interp, 1, argv, "");
       return TCL_ERROR;
    }
-   if (checkUsbdmRC(interp,  USBDM_JTAG_Reset()) != 0) {
+   if (checkUsbdmRC(interp,  USBDM_JTAG_Reset())) {
       return TCL_ERROR;
    }
    return TCL_OK;
@@ -2741,6 +2846,7 @@ int sub;
          swapEndian32(&buff);
          buff = (buff<<1) | 0x1;
          printf("Device #%2d: JTAG IDCODE = %8.8X\n", device+1, buff);
+         Tcl_SetObjResult(interp, Tcl_NewLongObj(buff));
       }
    }
    USBDM_JTAG_Read(1, JTAG_EXIT_IDLE|JTAG_WRITE_1, &temp);  // Return JTAG to idle state
@@ -2775,8 +2881,14 @@ static int setLogCommand(ClientData notneededhere, Tcl_Interp *interp, int argc,
    return TCL_OK;
 }
 
-#ifdef INTERACTIVE
 static int guiDialogue(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
+   static HWND hwnd = 0;
+
+   if (hwnd == 0) {
+      hwnd = GetConsoleHwnd();
+//      fprintf(stderr, "HWND=%p\n", hwnd);
+      setDefaultWindowParent(hwnd);
+   }
    // dialogue title message options
    if (argc <= 3) {
        Tcl_WrongNumArgs(interp, 1, argv, "title message style");
@@ -2806,12 +2918,14 @@ static int guiDialogue(ClientData notneededhere, Tcl_Interp *interp, int argc, T
       }
    }
 //   fprintf(stderr, "style = 0x%X\n", style);
-   if (style == 0)
+   if (style == 0) {
       style = wxOK;
+   }
   //    4    2    8       0             0x80         0x80000000     0             10
   //  wxOK,wxYES,wxNO,wxYES_DEFAULT,wxNO_DEFAULT,wxCANCEL_DEFAULT,wxOK_DEFAULT,wxCANCEL;
    int rc = displayDialogue(message, title, style);
    switch (rc) {
+      default:
       case wxCANCEL:    rc = 0; break;
       case wxYES:       rc = 1; break;
       case wxNO:        rc = 2; break;
@@ -2820,6 +2934,8 @@ static int guiDialogue(ClientData notneededhere, Tcl_Interp *interp, int argc, T
    Tcl_SetObjResult(interp, Tcl_NewIntObj(rc));
    return TCL_OK;
 }
+
+#ifdef INTERACTIVE
 static int exitCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv)
 {
     long exitCode = 0;
@@ -2846,6 +2962,9 @@ static const char usageText[] =
    "       returns 0=>cancel, 1=yes, 2=no, 3=ok\n"
    "                             - display dialogue\n"
    "exit                         - Exit program\n"
+   "getErrorMessage <rc>         - Get given USBDM rc as String\n"
+   "getLastError                 - Get last USBDM rc as number\n"
+   "getLastErrorMessage          - Get last USBDM rc as string\n"
    "go                           - Start from current PC\n"
    "gs                           - Read status register\n"
    "halt                         - Halt the target\n"
@@ -2880,8 +2999,7 @@ static const char usageText[] =
    "sync                         - Execute a low level sync\n"
    "tblock <start> <end> <count> - Random RAM write/read block test\n"
    "testcreg                     - Test control register\n"
-   "testinterface <value>        - Directly control interface signals\n"
-   "teststatus                   - Read target status in an infinite loop\n"
+   "testStatus                   - Read target status in an infinite loop\n"
    "wc <value>                   - Write control register\n"
    "wpc <value>                  - Write to PC\n"
    "wblock <addr> <size> <data>  - Write block\n"
@@ -2942,6 +3060,9 @@ const char *name;
       { debugCommand,           "debug"},
       { goCommand,              "go"},
       { getStatusCommand,       "gs"},
+      { getLastError,           "getLastError"},
+      { getErrorMessage,        "getErrorMessage"},
+      { getLastErrorMessage,    "getLastErrorMessage"},
       { haltCommand,            "halt"},
       { jtagResetCommand,       "jtag-reset"},
       { jtagShiftCommand,       "jtag-shift"},
@@ -2987,8 +3108,8 @@ const char *name;
       { exitCommand,            "exit"},
       { helpCommand,            "help"},
       { helpCommand,            "?"},
-      { guiDialogue,            "dialogue"},
 #endif
+      { guiDialogue,            "dialogue"},
       { NULL, NULL } 
 };
 
@@ -3054,6 +3175,15 @@ int evalTclScript(UsbdmTclInterp *usbdmTclInterp, const char *script) {
       }
    }
    return rc;
+}
+
+TCL_API
+const char *getTclResult(UsbdmTclInterp *interp) {
+   const char *res = Tcl_GetStringResult(interp);
+//   if (logFile != NULL) {
+//      fprintf(logFile, "TCL Result = %s\n", res);
+//   }
+   return res;
 }
 
 TCL_API

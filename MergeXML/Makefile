@@ -6,7 +6,7 @@ $(TARGET):
 	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON"
 
 $(TARGET)-debug:
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON" DEBUG="Y"
+	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON -DDEBUG" DEBUG="Y"
 
 all: $(TARGET) $(TARGET)-debug
 

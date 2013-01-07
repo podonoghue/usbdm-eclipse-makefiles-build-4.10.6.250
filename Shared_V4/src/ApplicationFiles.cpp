@@ -147,17 +147,19 @@ bool dirExists(string filePath) {
 //! Files opened for writing only use the last directory.
 //!
 FILE *openApplicationFile(const string &filename, const string &attributes) {
-
+   LOGGING_Q;
    string configFilePath;
    FILE *configFile = NULL;
 
    // Try the Executable directory for readonly files
    if (attributes[0] == 'r') {
       configFilePath = getDataDir();
+//      Logging::print("openApplicationFile() -  getDataDir() => \"%s\"\n", (const char *)configFilePath.c_str());
       if (!configFilePath.empty()) {
          // Append filename
          configFilePath += getPathSeparator() + filename;
          // Open the file
+//         Logging::print("openApplicationFile() -  Trying \"%s\"\n", (const char *)configFilePath.c_str());
          configFile = fopen(configFilePath.c_str(), attributes.c_str());
       }
    }
@@ -165,11 +167,11 @@ FILE *openApplicationFile(const string &filename, const string &attributes) {
    // Try the Path indicated by registry key if necessary
    if (((attributes[0] == 'r')||(attributes[0] == 'a')) && (configFile == NULL )) {
       configFilePath = getInstallationDir();
-      // fprintf(stderr, "openApplicationFile() - \"%s\"\n", (const char *)configFilePath.ToAscii());
       if (!configFilePath.empty()) {
          // Append filename
          configFilePath += filename;
          // Open the file
+//         Logging::print("openApplicationFile() -  Trying \"%s\"\n", (const char *)configFilePath.c_str());
          configFile = fopen(configFilePath.c_str(), attributes.c_str());
       }
    }
@@ -177,7 +179,6 @@ FILE *openApplicationFile(const string &filename, const string &attributes) {
    // Try the Application Data directory if necessary
    if (configFile == NULL ) {
       configFilePath = getUserDataDir();
-      // fprintf(stderr, "openApplicationFile() - \"%s\"\n", (const char *)configFilePath.ToAscii());
       if (!configFilePath.empty()) {
          if (!dirExists(configFilePath)) {
             // Doesn't exist - create it
@@ -191,11 +192,15 @@ FILE *openApplicationFile(const string &filename, const string &attributes) {
          configFilePath += getPathSeparator() + filename;
 
          // Open the file
+         Logging::print("openApplicationFile() -  Trying \"%s\"\n", (const char *)configFilePath.c_str());
          configFile = fopen(configFilePath.c_str(), attributes.c_str());
       }
    }
    if (configFile != NULL) {
       Logging::print("openApplicationFile() - Opened \'%s\'\n", configFilePath.c_str());
+   }
+   else {
+      Logging::print("openApplicationFile() - Failed to open \'%s\'\n", configFilePath.c_str());
    }
    return configFile;
 }
@@ -216,7 +221,7 @@ int checkExistsApplicationFile(const string &filename, const string &attributes)
 
    string configFilePath;
 
-   // Try the Executable directory for readonly files
+   // Try the Executable directory for read-only files
    if (attributes[0] == 'r') {
       configFilePath = getDataDir() + getPathSeparator() + filename;
       if (fileExists(configFilePath))
@@ -226,7 +231,7 @@ int checkExistsApplicationFile(const string &filename, const string &attributes)
    // Try the Path indicated by registry key if necessary
    if (attributes[0] == 'r') {
       configFilePath = getInstallationDir();
-      // fprintf(stderr, "openApplicationFile() - \"%s\"\n", (const char *)configFilePath.ToAscii());
+      // Logging::print("openApplicationFile() - \"%s\"\n", (const char *)configFilePath.ToAscii());
       if (!configFilePath.empty()) {
          // Append filename
          configFilePath += filename;
@@ -256,13 +261,14 @@ int checkExistsApplicationFile(const string &filename, const string &attributes)
 //! - Application directory (where the .exe is)
 //!
 string getApplicationFilePath(const string &filename, const string &attributes) {
+   Logging log("getApplicationFilePath");
 
    string configFilePath;
 
    // Try the Executable directory for readonly files
    if (attributes[0] == 'r') {
       configFilePath = getDataDir() + getPathSeparator() + filename;
-      Logging::print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
+      Logging::print("Trying %s\n", configFilePath.c_str());
       if (fileExists(configFilePath))
          return configFilePath;
    }
@@ -270,14 +276,14 @@ string getApplicationFilePath(const string &filename, const string &attributes) 
    // Try the Path indicated by registry key if necessary
    if (attributes[0] == 'r') {
       configFilePath = getInstallationDir()+ filename;
-      Logging::print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
+      Logging::print("Trying %s\n", configFilePath.c_str());
       if (fileExists(configFilePath))
          return configFilePath;
    }
 #endif
    // Try the Application Data directory
    configFilePath = getUserDataDir() + getPathSeparator() + filename;;
-   Logging::print("getApplicationFilePath() - trying %s\n", configFilePath.c_str());
+   Logging::print("Trying %s\n", configFilePath.c_str());
    if (fileExists(configFilePath))
       return configFilePath;
 

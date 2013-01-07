@@ -11,6 +11,7 @@ SRC += Log.cpp
 SRC += Names.cpp
 SRC += USBDM_AUX.cpp
 SRC += Utils.cpp
+SRC += GDI_Common.cpp
 
 # Shared files $(SHARED_SRC)/gdi
 VPATH := $(SHARED_SRC)/gdi $(VPATH)

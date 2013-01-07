@@ -50,47 +50,50 @@
 #include "USBDM_API.h"
 #include "USBDMPanel.h"
 
-/*
- * CFUnlockerDialogue type definition
- */
-
-IMPLEMENT_DYNAMIC_CLASS( CFUnlockerDialogue, wxDialog )
-
-
 //===================================================================
 //===================================================================
 //===================================================================
 
-//! CFUnlockerDialogue constructors
+//! CFUnlockerDialogue constructor
 //!
 //!
-CFUnlockerDialogue::CFUnlockerDialogue()
-{
+//! @note: It is necessary to call Create()
+//!
+CFUnlockerDialogue::CFUnlockerDialogue(TargetType_t targetType, const wxString &caption) :
+                  Shared(targetType),
+                  targetType(targetType),
+                  caption(caption) {
+   Logging::setLoggingLevel(100);
+   Logging log("CFUnlockerDialogue::CFUnlockerDialogue");
    Init();
 }
 
-//! CFUnlockerDialogue constructors
+
+
+//! Set the dialogue internal state to the default (not including pages)
 //!
-//! @param parent          : Parent window to pass to Create()
-//! @note: Calls Create() to creates the dialogue
-//!
-CFUnlockerDialogue::CFUnlockerDialogue( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
+bool CFUnlockerDialogue::Init()
 {
-    Init();
-    Create(parent, id, caption, pos, size, style);
+   Logging log("CFUnlockerDialogue::Init");
+
+   usbdmPanel = NULL;
+   cfUnlockerPanel = NULL;
+
+   // Set options to default
+   bdmOptions.size       = sizeof(USBDM_ExtendedOptions_t);
+   bdmOptions.targetType = targetType;
+   USBDM_GetDefaultExtendedOptions(&bdmOptions);
+   return true;
 }
-
-
 
 //! CFUnlockerDialgue creator
 //!
 //! @param parent     : Parent window
 //!
-bool CFUnlockerDialogue::Create( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
-{
-    SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
-    wxDialog::Create( parent, id, caption, pos, wxSize(-1,-1), style );
+bool CFUnlockerDialogue::Create(wxWindow* parent, long style) {
+   Logging log("CFUnlockerDialogue::Create");
 
+   wxDialog::Create( parent, SYMBOL_CFUNLOCKERDIALOGUE_IDNAME, caption, wxDefaultPosition, wxSize(-1,-1), style);
 
    CreateControls();
 
@@ -105,85 +108,110 @@ bool CFUnlockerDialogue::Create( wxWindow* parent, wxWindowID id, const wxString
 //! CFUnlockerDialogue destructor
 //!
 
-CFUnlockerDialogue::~CFUnlockerDialogue()
-{
+CFUnlockerDialogue::~CFUnlockerDialogue() {
 }
 
+//! Control creation
+//!
+void CFUnlockerDialogue::CreateControls() {
+   Logging log("CFUnlockerDialogue::CreateControls");
 
-/*
- * Member initialisation
- */
+   CFUnlockerDialogue* frame = this;
 
-void CFUnlockerDialogue::Init()
-{
-   usbdmPanel = NULL;
-   cfUnlockerPanel = NULL;
+   wxBoxSizer* itemBoxSizer2 = new wxBoxSizer(wxVERTICAL);
+   frame->SetSizer(itemBoxSizer2);
+
+   noteBook = new wxNotebook( frame, ID_NOTEBOOK, wxDefaultPosition, wxDefaultSize, wxBK_DEFAULT );
+   itemBoxSizer2->Add(noteBook, 0, wxGROW|wxALL, 5);
+
+   usbdmPanel = new USBDMPanel(noteBook, this, targetType);
+   noteBook->AddPage(usbdmPanel, _("Connection"));
+
+   cfUnlockerPanel = new ColdfireUnlockerPanel(noteBook, this);
+
+   noteBook->AddPage(cfUnlockerPanel, _("Unlocker"));
+
 }
 
+//===================================================================
+//! Copy internal state to Dialogue controls
+//!
+bool CFUnlockerDialogue::TransferDataToWindow() {
+   Logging log("CFUnlockerDialogue::TransferDataToWindow");
 
-/*
- * Control creation for CFUnlockerDialogue
- */
-
-void CFUnlockerDialogue::CreateControls()
-{
-    CFUnlockerDialogue* frame = this;
-
-    wxBoxSizer* itemBoxSizer2 = new wxBoxSizer(wxVERTICAL);
-    frame->SetSizer(itemBoxSizer2);
-
-    noteBook = new wxNotebook( frame, ID_NOTEBOOK, wxDefaultPosition, wxDefaultSize, wxBK_DEFAULT );
-
-#if TARGET == CFVx
-    usbdmPanel = new USBDMPanel( noteBook, T_CFVx);
-#elif TARGET == MC56F80xx
-    usbdmPanel = new USBDMPanel( noteBook, T_MC56F80xx);
-#endif
-
-    noteBook->AddPage(usbdmPanel, _("Connection"));
-
-    cfUnlockerPanel = new ColdfireUnlockerPanel( noteBook, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-
-    noteBook->AddPage(cfUnlockerPanel, _("Unlocker"));
-
-    itemBoxSizer2->Add(noteBook, 0, wxGROW|wxALL, 5);
+   bool ok = wxDialog::TransferDataToWindow();
+   ok = ok && usbdmPanel->TransferDataToWindow();
+   ok = ok && cfUnlockerPanel->TransferDataToWindow();
+   return ok;
 }
 
+//===================================================================
+//! Update internal state on all pages
+//!
+//! @return true  => success
+//!         false => dialogue page has inconsistent data
+//!
+bool CFUnlockerDialogue::updateState() {
+   bool ok = true;
+   ok = ok && usbdmPanel->updateState();
+   ok = ok && cfUnlockerPanel->updateState();
+   return ok;
+}
 
-/*
- * Should we show tooltips?
- */
+//===================================================================
+//! Set dialogue state to default values
+//!
+bool CFUnlockerDialogue::setDialogueValuesToDefault() {
+   Logging log("CFUnlockerDialogue::setDialogueValuesToDefault");
 
-bool CFUnlockerDialogue::ShowToolTips()
-{
+   Init();
+   TransferDataToWindow();
+
+   return true;
+}
+
+//===================================================================
+//! Copy internal state from Dialogue controls
+//!
+bool CFUnlockerDialogue::TransferDataFromWindow() {
+   Logging log("CFUnlockerDialogue::TransferDataFromWindow");
+
+   bool ok = wxDialog::TransferDataFromWindow();
+   ok = ok && usbdmPanel->TransferDataFromWindow();
+   ok = ok && cfUnlockerPanel->TransferDataFromWindow();
+   return ok;
+}
+
+//! Should we show tooltips?
+//!
+bool CFUnlockerDialogue::ShowToolTips() {
     return true;
 }
 
-/*
- * Get bitmap resources
- */
-
-wxBitmap CFUnlockerDialogue::GetBitmapResource( const wxString& name )
-{
+//! Get bitmap resources
+//!
+//! @param name
+//!
+wxBitmap CFUnlockerDialogue::GetBitmapResource( const wxString& name ) {
     // Bitmap retrieval
-////@begin CFUnlockerDialogue bitmap retrieval
     wxUnusedVar(name);
     return wxNullBitmap;
-////@end CFUnlockerDialogue bitmap retrieval
+}
+
+//! Get icon resources
+//!
+//! @param name
+//!
+wxIcon CFUnlockerDialogue::GetIconResource( const wxString& name ) {
+    // Icon retrieval
+    wxUnusedVar(name);
+    return wxNullIcon;
 }
 
 /*
- * Get icon resources
+ * USBDMDialogue type definition
  */
-
-wxIcon CFUnlockerDialogue::GetIconResource( const wxString& name )
-{
-    // Icon retrieval
-////@begin CFUnlockerDialogue icon retrieval
-    wxUnusedVar(name);
-    return wxNullIcon;
-////@end CFUnlockerDialogue icon retrieval
-}
+IMPLEMENT_CLASS( CFUnlockerDialogue, wxDialog )
 
 //
 //  CFUnlockerDialogue event table definition
@@ -191,18 +219,16 @@ wxIcon CFUnlockerDialogue::GetIconResource( const wxString& name )
 
 BEGIN_EVENT_TABLE( CFUnlockerDialogue, wxDialog )
 
-//   EVT_NOTEBOOK_PAGE_CHANGING( ID_NOTEBOOK, CFUnlockerDialogue::OnSelChanging )
    EVT_NOTEBOOK_PAGE_CHANGING( ID_NOTEBOOK, CFUnlockerDialogue::OnSelChanging )
    EVT_NOTEBOOK_PAGE_CHANGED( ID_NOTEBOOK,  CFUnlockerDialogue::OnSelChanged )
 END_EVENT_TABLE()
 
 //! wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING event handler for ID_NOTEBOOK
 //!
-//! @param event The event to handle
+//! @param event The event to handle.
 //!
 void CFUnlockerDialogue::OnSelChanging( wxNotebookEvent& event ) {
-   Logging::print("CFUnlockerDialogue::OnNotebookPageChanging() - %d => %d\n", event.GetOldSelection(), event.GetSelection());
-   USBDM_ErrorCode rc = BDM_RC_OK;
+   Logging log("CFUnlockerDialogue::OnSelChanging");
 
    int leavingPage = event.GetOldSelection();
    if (leavingPage < 0) {
@@ -210,14 +236,15 @@ void CFUnlockerDialogue::OnSelChanging( wxNotebookEvent& event ) {
    }
    // Validate page before leaving
    wxPanel *panel = static_cast<wxPanel *>(noteBook->GetPage(leavingPage));
-//   if (!panel->TransferDataFromWindow()) {
-//      event.Veto();
-//      return;
-//   }
+   if (!panel->TransferDataFromWindow()) {
+      Logging::print("Vetoing page change\n");
+      event.Veto();
+      return;
+   }
    if (panel == usbdmPanel) {
       // Leaving Communication page - Try to open BDM
-      Logging::print("CFUnlockerDialogue::OnNotebookPageChanging() - opening BDM\n");
-      rc = usbdmPanel->openBdm();
+      Logging::print("Opening BDM\n");
+      USBDM_ErrorCode rc = usbdmPanel->openBdm();
       if (rc != BDM_RC_OK) {
          Logging::print("CFUnlockerDialogue::OnNotebookPageChanging() - openBdm() failed\n");
          wxMessageBox(_("Failed to open BDM.\n\n"
@@ -230,34 +257,25 @@ void CFUnlockerDialogue::OnSelChanging( wxNotebookEvent& event ) {
          event.Veto();
       }
    }
-   else if (event.GetOldSelection() == 1) {
-      // Leaving Programming page
-      Logging::print("CFUnlockerDialogue::OnSelChanging() - closing BDM\n");
-      USBDM_Close();
-      }
-   if (rc != BDM_RC_OK)
-      event.Veto();
 }
 
 //! wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED event handler for ID_NOTEBOOK
 //!
-//! @param event The event to handle
+//! @param event The event to handle.
 //!
 void CFUnlockerDialogue::OnSelChanged( wxNotebookEvent& event ) {
-   Logging::print("USBDMDialogue::OnSelChanged(%d => %d)\n", event.GetOldSelection(), event.GetSelection());
+   Logging log("CFUnlockerDialogue::OnSelChanged");
+//   Logging::print("(%d => %d)\n", event.GetOldSelection(), event.GetSelection());
    int enteringPage = event.GetSelection();
    if (enteringPage < 0) {
       return;
    }
-   wxPanel *panel = static_cast<wxPanel *>(noteBook->GetPage(event.GetSelection()));
+   wxPanel *panel = static_cast<wxPanel *>(noteBook->GetPage(enteringPage));
    if (panel == usbdmPanel) {
       // Entering Communication page - Close the BDM
+//      Logging::print("Closing BDM\n");
       USBDM_Close();
-      }
-   if (panel == cfUnlockerPanel) {
-      USBDM_ExtendedOptions_t bdmOptions;
-      getBdmOptions(bdmOptions);
-      cfUnlockerPanel->setBdmOptions(&bdmOptions);
    }
+   panel->TransferDataToWindow();
 }
 

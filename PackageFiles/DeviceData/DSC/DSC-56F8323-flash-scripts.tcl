@@ -17,6 +17,12 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -59,6 +65,8 @@ proc loadSymbols {} {
    set ::DSC_PRDIV8            0x40
      
    set ::BUS_FREQUENCY         4000
+   
+   return
 }
 
 ;######################################################################################
@@ -73,6 +81,8 @@ proc initTarget { args } {
    set osctl     [rw $::OCCS_OSCTL] 
    set osctl     [expr ($osctl & 0xFFFFFC00) | ($clockTrim & 0x000003FF)] 
    ww $::OCCS_OSCTL $osctl
+   
+   return
 }
 
 ;######################################################################################
@@ -93,6 +103,8 @@ proc initFlash { busFrequency } {
    ww $::HFM_CR    0x0000     ;# select flash bank 0 => Program/Boot
    ww $::HFM_PROT  0x0000     ;# unprotect Flash
    ww $::HFM_PROTB 0x0000
+   
+   return
 }
 
 ;######################################################################################
@@ -103,7 +115,7 @@ proc calculateFlashDivider { busFrequency } {
 ;# NOTES:
 ;# According to data sheets the Flash uses the sysclock
 ;#
-;# This code assumes that busFrequency = sysclock = oscclk/2 (at boot)
+;# This code assumes that busFrequency = sysclock = oscclk/2
 ;#
    ;#  puts "calculateFlashDivider {}"
    if { [expr $busFrequency < 1000] } {
@@ -131,6 +143,8 @@ proc calculateFlashDivider { busFrequency } {
 ;#  Target is erased & unsecured
 proc massEraseTarget { } {
    error "Mass erase is not supported"
+   
+   return
 }
 
 ;######################################################################################
@@ -143,6 +157,8 @@ proc isUnsecure { } {
    if [ expr ( $securityValue & $::DSC_FSEC_SEC_MASK ) != $::DSC_FSEC_SEC_UNSEC ] {
       error "Target is secured"
    }
+   
+   return
 }
 
 ;######################################################################################

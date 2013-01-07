@@ -1,5 +1,5 @@
 /*
- * usbdmJimTcl.h
+ * usbdmTcl.h
  *
  *  Created on: 06/04/2011
  *      Author: podonoghue
@@ -62,6 +62,7 @@ typedef void UsbdmTclInterp;
 TCL_API UsbdmTclInterp *createTclInterpreter(TargetType_t target, FILE *fp);
 TCL_API void freeTclInterpreter(UsbdmTclInterp *interp);
 TCL_API int evalTclScript(UsbdmTclInterp *interp, const char *script);
+TCL_API const char *getTclResult(UsbdmTclInterp *interp);
 
 #if defined __cplusplus
     }

@@ -41,6 +41,10 @@ private:
    DualString   tag_flashScripts;
    DualString   tag_flashProgram;
    DualString   tag_flashProgramRef;
+   DualString   tag_securityEntry;
+   DualString   tag_securityEntryRef;
+   DualString   tag_securityDescription;
+   DualString   tag_securityDescriptionRef;
    DualString   tag_securityInfo;
    DualString   tag_securityInfoRef;
    DualString   tag_flexNvmInfo;
@@ -91,17 +95,19 @@ private:
 
 
 private:
-   TclScript    *parseTCLScript(xercesc::DOMElement *xmlTclScript);
-   FlashProgram *parseFlashProgram(xercesc::DOMElement *xmlFlashProgram);
-   void          parseSharedXML(void);
-   void          parseDeviceXML(void);
-   DeviceData   *parseDevice(xercesc::DOMElement *deviceEl);
-   TclScriptPtr  parseSequence(xercesc::DOMElement *sequence);
-   MemoryRegion *parseMemory(xercesc::DOMElement *currentProperty);
-   MemoryRegion *parseFlashMemoryDetails(xercesc::DOMElement *currentProperty, MemType_t memoryType, uint32_t &defaultSectorSize, uint8_t &defaultAlignment);
-   SecurityInfo *parseSecurity(xercesc::DOMElement *currentProperty);
+   TclScriptPtr                       parseTCLScript(xercesc::DOMElement *xmlTclScript);
+   FlashProgramPtr                    parseFlashProgram(xercesc::DOMElement *xmlFlashProgram);
+   void                               parseSharedXML(void);
+   void                               parseDeviceXML(void);
+   DeviceDataPtr                      parseDevice(xercesc::DOMElement *deviceEl);
+   TclScriptConstPtr                  parseSequence(xercesc::DOMElement *sequence);
+   MemoryRegionPtr                    parseMemory(xercesc::DOMElement *currentProperty);
+   MemoryRegionPtr                    parseFlashMemoryDetails(xercesc::DOMElement *currentProperty, MemType_t memoryType, uint32_t &defaultSectorSize, uint8_t &defaultAlignment);
+   SecurityEntryPtr                   parseSecurityEntry(xercesc::DOMElement *currentProperty);
+   SecurityDescriptionPtr             parseSecurityDescription(xercesc::DOMElement *currentProperty);
+   SecurityInfoPtr                    parseSecurityInfo(xercesc::DOMElement *currentProperty);
    //   void  parseActionSequence(xercesc::DOMElement *sharedRoot, std::map<const string, SharedInformationItem> &shareInformation);
-   FlexNVMInfo *parseFlexNVMInfo(xercesc::DOMElement *flexNVMInfoElement);
+   FlexNVMInfoPtr                     parseFlexNVMInfo(xercesc::DOMElement *flexNVMInfoElement);
    FlexNVMInfo::EeepromSizeValue      parseEeepromEntry(xercesc::DOMElement *eeepromElement);
    FlexNVMInfo::FlexNvmPartitionValue parsePartitionEntry(xercesc::DOMElement *partitionElement);
 

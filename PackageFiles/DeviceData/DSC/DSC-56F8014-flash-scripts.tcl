@@ -17,6 +17,12 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;#####################################################################################
+;#  History
+;#
+;#  V4.10.4 - Changed return code handling
+;# 
+
 ;######################################################################################
 ;#
 ;#
@@ -60,6 +66,8 @@ proc loadSymbols {} {
    set ::DSC_PRDIV8            0x40
      
    set ::BUS_FREQUENCY         4000
+   
+   return
 }
 
 ;######################################################################################
@@ -74,11 +82,13 @@ proc initTarget { args } {
    set osctl     [rw $::OCCS_OSCTL] 
    set osctl     [expr ($osctl & 0xFFFFFC00) | ($clockTrim & 0x000003FF)] 
    ww $::OCCS_OSCTL $osctl
+   
+   return
 }
 
 ;######################################################################################
 ;#
-;#  busFrequency - Target bus busFrequency in kHz
+;#  busFrequency - Target bus frequency in kHz
 ;#
 proc initFlash { busFrequency } {
    ;#  puts "initFlash {}"
@@ -89,6 +99,8 @@ proc initFlash { busFrequency } {
    set cfmclkd [calculateFlashDivider $busFrequency]
    ww $::HFM_FCLKD $cfmclkd   ;# Flash divider
    ww $::HFM_PROT  0x0000     ;# unprotect Flash
+   
+   return
 }
 
 ;######################################################################################
@@ -128,6 +140,8 @@ proc calculateFlashDivider { busFrequency } {
 ;#  Target is erased & unsecured
 proc massEraseTarget { } {
    error "Mass erase is not supported"
+   
+   return
 }
 
 ;######################################################################################
@@ -140,6 +154,8 @@ proc isUnsecure { } {
    if [ expr ( $securityValue & $::DSC_FSEC_SEC_MASK ) != $::DSC_FSEC_SEC_UNSEC ] {
       error "Target is secured"
    }
+   
+   return
 }
 
 ;######################################################################################

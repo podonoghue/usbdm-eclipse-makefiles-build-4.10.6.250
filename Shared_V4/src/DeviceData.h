@@ -94,6 +94,7 @@ typedef enum {
    SEC_UNSECURED    = 2,   //!< Make Flash image unsecured
    SEC_SMART        = 3,   //!< Modify flash image unless already modified
    SEC_INTELLIGENT  = 3,   //!< Modify flash image unless already modified
+   SEC_CUSTOM       = 4,   //!< Use custom value
 } SecurityOptions_t;
 
 class SharedInformationItem {
@@ -129,6 +130,7 @@ public:
    }
 };
 typedef std::tr1::shared_ptr<TclScript>   TclScriptPtr;
+typedef std::tr1::shared_ptr<const TclScript>   TclScriptConstPtr;
 
 class FlashProgram: public SharedInformationItem {
 public:
@@ -149,34 +151,124 @@ public:
    }
 };
 typedef std::tr1::shared_ptr<FlashProgram> FlashProgramPtr;
+typedef std::tr1::shared_ptr<const FlashProgram> FlashProgramConstPtr;
+
+class SecurityDescription: public SharedInformationItem {
+private:
+   std::string securityDescription;
+
+public:
+   SecurityDescription(std::string desc)
+    : securityDescription(desc) {
+//        print("SecurityInfo()\n");
+    }
+    ~SecurityDescription() {
+//        print("~SecurityInfo()\n");
+    }
+    const std::string toString() const {
+       return std::string("SecurityDescription ==") + securityDescription + "==";
+    }
+    std::string    getSecurityDescription() const;
+    void           setSecurityDescription(std::string s);
+};
+
+typedef std::tr1::shared_ptr<SecurityDescription> SecurityDescriptionPtr;
+typedef std::tr1::shared_ptr<const SecurityDescription> SecurityDescriptionConstPtr;
 
 class SecurityInfo: public SharedInformationItem {
+public:
+   enum SecType {unsecure, secure, custom};
+
 private:
    unsigned    size;
-   bool        mode;
+   SecType     mode;
    std::string securityInfo;
 
 public:
-    SecurityInfo(int size, bool mode, std::string data)
-    : size(size), mode(mode), securityInfo(data)
-    {
+   SecurityInfo()
+   : size(0), mode(custom), securityInfo("")
+   {
 //        print("SecurityInfo()\n");
+   }
+    SecurityInfo(int size, SecType mode, std::string securityInfo)
+    : size(size), mode(mode), securityInfo(securityInfo)
+    {
+       Logging::print("SecurityInfo(%d, %d, %s)\n", size, mode, (const char *)securityInfo.c_str());
+       if (size == 0) {
+          // Auto size security
+          this->size = securityInfo.size()/2;
+       }
+       else if (this->securityInfo.size()/2 != this->size) {
+          throw MyException("Security value does not have correct length");
+       }
+    }
+    SecurityInfo(const SecurityInfo& other)
+    : size(other.size), mode(other.mode), securityInfo(other.securityInfo)
+    {
     }
     ~SecurityInfo() {
 //        print("~SecurityInfo()\n");
     }
     const std::string toString() const {
-       return std::string("SecurityInfo - ") + std::string(mode?"secure":"unsecure") +
-              "\n========================================================================="
-              + std::string(securityInfo) +
-              "=========================================================================\n";
+       static const char *modeNames[] = {"unsecure", "secure", "custom"};
+       return std::string("SecurityInfo - ") + modeNames[mode] + " ==" + securityInfo + "==";
     }
     std::string    getSecurityInfo() const;
+    void           setSecurityInfo(const std::string &securityInfo) {
+       this->securityInfo = securityInfo;
+    }
     unsigned       getSize() const;
-    bool           getMode() const;
-    const uint8_t *getData();
+    SecType        getMode() const;
+    const uint8_t *getData() const;
+    void           setData(unsigned size, uint8_t *data);
 };
 typedef std::tr1::shared_ptr<SecurityInfo> SecurityInfoPtr;
+typedef std::tr1::shared_ptr<const SecurityInfo> SecurityInfoConstPtr;
+
+class SecurityEntry: public SharedInformationItem {
+private:
+   SecurityDescriptionPtr  securityDescription;
+   SecurityInfoPtr         unsecureInformation;
+   SecurityInfoPtr         secureInformation;
+   SecurityInfoPtr         customSecureInformation;
+
+public:
+   SecurityEntry(SecurityDescriptionPtr securityDesc,
+                 SecurityInfoPtr        unsecureInfo,
+                 SecurityInfoPtr        secureInfo)
+    : securityDescription(securityDesc),
+      unsecureInformation(unsecureInfo),
+      secureInformation(secureInfo) {
+//        print("SecurityInfo()\n");
+    }
+   SecurityEntry() {
+        Logging::print("SecurityInfo()\n");
+    }
+    ~SecurityEntry() {
+       Logging::print("~SecurityInfo()\n");
+    }
+    const std::string toString() const {
+       return std::string("SecurityEntry - \n") +
+              "=========================================================================\n" +
+              "description =" + ((securityDescription==NULL)?std::string("null"):securityDescription->toString()) + "\n" +
+              "unsecured   =" + ((unsecureInformation==NULL)?std::string("null"):unsecureInformation->toString()) + "\n" +
+              "secured     =" + ((secureInformation==NULL)?std::string("null"):secureInformation->toString()) + "\n" +
+              "custom      =" + ((customSecureInformation==NULL)?std::string("null"):customSecureInformation->toString()) + "\n" +
+              "=========================================================================\n";
+    }
+    SecurityDescriptionConstPtr getSecurityDescription()     const { return securityDescription; };
+    SecurityInfoConstPtr        getUnsecureInformation()     const { return unsecureInformation; };
+    SecurityInfoConstPtr        getSecureInformation()       const { return secureInformation; };
+    SecurityInfoConstPtr        getCustomSecureInformation() const { return customSecureInformation; };
+    SecurityDescriptionPtr      getSecurityDescription()           { return securityDescription; };
+    SecurityInfoPtr             getUnsecureInformation()           { return unsecureInformation; };
+    SecurityInfoPtr             getSecureInformation()             { return secureInformation; };
+    SecurityInfoPtr             getCustomSecureInformation()       { return customSecureInformation; };
+    void                        setCustomSecureInformation(SecurityInfoPtr ptr)  { customSecureInformation = ptr; };
+};
+
+typedef std::tr1::shared_ptr<SecurityEntry> SecurityEntryPtr;
+typedef std::tr1::shared_ptr<const SecurityEntry> SecurityEntryConstPtr;
 
 class FlexNVMInfo: public SharedInformationItem {
 
@@ -225,14 +317,14 @@ public:
     //!
     //! @return vector of permitted values
     //!
-    std::vector<FlexNVMInfo::EeepromSizeValue> &getEeepromSizeValues() {
+    const std::vector<FlexNVMInfo::EeepromSizeValue> &getEeepromSizeValues() const {
         return eeepromSizeValues;
     }
     //! Returns list of permitted Partition values for use in partition command
     //!
     //! @return vector of permitted values
     //!
-    std::vector<FlexNVMInfo::FlexNvmPartitionValue> &getFlexNvmPartitionValues() {
+    const std::vector<FlexNVMInfo::FlexNvmPartitionValue> &getFlexNvmPartitionValues() const {
         return flexNvmPartitionValues;
     }
     void addEeepromSizeValues(const EeepromSizeValue &eeepromSizeValue);
@@ -242,6 +334,7 @@ public:
     void setBackingRatio(unsigned  backingRatio);
 };
 typedef std::tr1::shared_ptr<FlexNVMInfo> FlexNVMInfoPtr;
+typedef std::tr1::shared_ptr<const FlexNVMInfo> FlexNVMInfoConstPtr;
 
 // Represents a collection of related memory ranges
 //
@@ -263,19 +356,18 @@ public:
          uint32_t end;
          uint16_t pageNo;
    };
-   std::vector<MemoryRange> memoryRanges;  //!< Memory ranges making up this region
-   MemType_t       type;                   //!< Type of memory regions
-   AddressType     addressType;            //!< Linear/Paged addressing
-   uint32_t        registerAddress;        //!< Control register addresses
-   uint32_t        pageAddress;            //!< Paging register address
-   uint32_t        securityAddress;        //!< Non-volatile option address
-   uint32_t        sectorSize;             //!< Size of sectors i.e. minimum erasable unit
-   uint8_t         alignment;              //!< Memory programming alignment requirement (1,2,4 etc)
-   uint32_t        lastIndexUsed;          //!< Last used memoryRanges index
-   FlashProgramPtr flashProgram;           //!< Region-specific flash algorithm
-   SecurityInfoPtr unsecureInfo;           //!< Region-specific unsecure data
-   SecurityInfoPtr secureInfo;             //!< Region-specific secure data
-   FlexNVMInfoPtr  flexNVMInfo;
+   std::vector<MemoryRange> memoryRanges;           //!< Memory ranges making up this region
+   MemType_t                type;                   //!< Type of memory regions
+   AddressType              addressType;            //!< Linear/Paged addressing
+   uint32_t                 registerAddress;        //!< Control register addresses
+   uint32_t                 pageAddress;            //!< Paging register address
+   uint32_t                 securityAddress;        //!< Non-volatile option address
+   uint32_t                 sectorSize;             //!< Size of sectors i.e. minimum erasable unit
+   uint8_t                  alignment;              //!< Memory programming alignment requirement (1,2,4 etc)
+   mutable uint32_t         lastIndexUsed;          //!< Last used memoryRanges index
+   FlashProgramConstPtr     flashProgram;           //!< Region-specific flash algorithm
+   SecurityEntryPtr         securityInformation;    //!< Region-specific security data
+   FlexNVMInfoConstPtr  flexNVMInfo;
 
 private:
    //! Find the index of the memory range containing the given address
@@ -286,14 +378,14 @@ private:
    //!
    //! @note - Uses cache
    //!
-   int findMemoryRangeIndex(uint32_t address) {
+   int findMemoryRangeIndex(uint32_t address) const {
       if (type == MemInvalid)
          return -1;
       // Check cached address
       if ((lastIndexUsed < memoryRanges.size()) &&
           (memoryRanges[lastIndexUsed].start <= address) && (address <= memoryRanges[lastIndexUsed].end)) {
-            return lastIndexUsed;
-         }
+         return lastIndexUsed;
+      }
       // Look through all memory ranges
       for (lastIndexUsed=0; lastIndexUsed<memoryRanges.size(); lastIndexUsed++) {
          if ((memoryRanges[lastIndexUsed].start <= address) && (address <= memoryRanges[lastIndexUsed].end)) {
@@ -357,7 +449,7 @@ public:
    //!
    //! @return true/false result
    //!
-   bool contains(uint32_t address) {
+   bool contains(uint32_t address) const {
       return findMemoryRangeIndex(address) >= 0;
    }
 
@@ -370,7 +462,7 @@ public:
    //! @return true  = start address is within memory
    //!         false = start address is not within memory
    //!
-   bool findLastContiguous(uint32_t address, uint32_t *lastContinuous, MemorySpace_t memorySpace = MS_None) {
+   bool findLastContiguous(uint32_t address, uint32_t *lastContinuous, MemorySpace_t memorySpace = MS_None) const {
       if (!isCompatibleType(memorySpace)) {
          return false;
       }
@@ -388,7 +480,7 @@ public:
    //!
    //! @return MemoryRegion::NoPageNo if not paged/within memory
    //!
-   uint16_t getPageNo(uint32_t address) {
+   uint16_t getPageNo(uint32_t address) const {
       if (!contains(address))
          return MemoryRegion::NoPageNo;
       return memoryRanges[lastIndexUsed].pageNo;
@@ -414,7 +506,7 @@ public:
    //!
    //! @return - true/false result
    //!
-   bool isProgrammableMemory() {
+   bool isProgrammableMemory() const {
       return isProgrammableMemory(type);
    }
    //! Get name of memory type
@@ -452,10 +544,9 @@ public:
 
    MemType_t getMemoryType() const { return type; }
    static bool isCompatibleType(MemType_t memType, MemorySpace_t memorySpace);
-   bool isCompatibleType(MemorySpace_t memorySpace) {
+   bool isCompatibleType(MemorySpace_t memorySpace) const {
       return isCompatibleType(type, memorySpace);
    }
-   const char *getMemoryTypeName() {return getMemoryTypeName(type);}
    uint32_t  getPageAddress() const { return pageAddress; }
    uint32_t  getRegisterAddress() const {
 //      if (registerAddress == 0) {
@@ -474,30 +565,28 @@ public:
          return NULL;
       return &memoryRanges[index];
    }
-   const FlashProgramPtr &getFlashprogram() const { return flashProgram; }
-   const SecurityInfoPtr &getSecureInfo()   const { return secureInfo; }
-   const SecurityInfoPtr &getUnsecureInfo() const { return unsecureInfo; }
+   const FlashProgramConstPtr          getFlashprogram()        const { return flashProgram; }
+   const SecurityDescriptionConstPtr   getSecurityDescription() const { return securityInformation->getSecurityDescription(); }
+   const SecurityInfoConstPtr          getSecureInfo()          const { return securityInformation->getSecureInformation(); }
+   const SecurityInfoConstPtr          getUnsecureInfo()        const { return securityInformation->getUnsecureInformation(); }
+   const SecurityInfoConstPtr          getCustomSecureInfo()    const { return securityInformation->getCustomSecureInformation(); }
 
-   void setFlashProgram(FlashProgramPtr program) { flashProgram = program; }
-   void setAddressType(AddressType type)         { addressType = type; }
+   void setFlashProgram(FlashProgramConstPtr program) { flashProgram = program; }
+   void setAddressType(AddressType type)              { addressType = type; }
 
-   void setSecureInfo(SecurityInfoPtr info) {
-      if (info->getMode() != true) {
-         throw MyException("MemoryRegion::setSecureInfo() - info has wrong type");
-      }
-      secureInfo = info;
-   }
-   void setUnsecureInfo(SecurityInfoPtr info) {
-      if (info->getMode() != false) {
-         throw MyException("MemoryRegion::setSecureInfo() - info has wrong type");
-      }
-      unsecureInfo = info;
-   }
-   FlexNVMInfoPtr    getflexNVMInfo()           { return flexNVMInfo; }
-   void setflexNVMInfo(FlexNVMInfoPtr info)     { flexNVMInfo = info; }
+   void setSecurityEntry(SecurityEntryPtr info)      { securityInformation = info; }
+   void setflexNVMInfo(FlexNVMInfoConstPtr info)     { flexNVMInfo = info; }
+   SecurityEntryConstPtr   getSecurityEntry() const  { return securityInformation;  }
+   SecurityEntryPtr        getSecurityEntry()        { return securityInformation;  }
+   FlexNVMInfoConstPtr     getflexNVMInfo()   const  { return flexNVMInfo; }
 };
 
 typedef std::tr1::shared_ptr<MemoryRegion> MemoryRegionPtr;
+typedef std::tr1::shared_ptr<const MemoryRegion> MemoryRegionConstPtr;
+
+class DeviceData;
+typedef std::tr1::shared_ptr<DeviceData> DeviceDataPtr;
+typedef std::tr1::shared_ptr<const DeviceData> DeviceDataConstPtr;
 
 //! Information required to program a target
 //!
@@ -510,6 +599,8 @@ public:
       eraseAll,         //! Erase all flash arrays
       eraseSelective,   //! Erase flash block selectively
    } EraseOptions;
+
+   //! Get readable names for erase options
    static const char *getEraseOptionName(EraseOptions option) {
       switch (option) {
       case eraseNone      : return "EraseNone";
@@ -519,10 +610,16 @@ public:
       default :             return "Illegal erase option";
       }
    }
-   typedef struct {
+   //! Structure to hold FlexNVM information
+   class FlexNVMParameters {
+   public:
+      FlexNVMParameters() :
+         eeepromSize(0xFF),
+         partionValue(0xFF) {
+      }
       uint8_t eeepromSize;
       uint8_t partionValue;
-   } FlexNVMParameters;
+   } ;
 
 private:
    std::string                   targetName;             //!< Name of target
@@ -544,65 +641,67 @@ private:
    uint16_t                      clockTrimValue;         //!< Clock trim value calculated for a particular device
    uint32_t                      targetSDIDMask;         //!< Mask for valid bits in SDID
    std::vector<MemoryRegionPtr>  memoryRegions;          //!< Different memory regions e.g. EEPROM, RAM etc.
-   MemoryRegionPtr               lastMemoryRegionUsed;   //!< To improve memory searches
-   TclScriptPtr                  flashScripts;           //!< Flash script
-   FlashProgramPtr               flashProgram;           //!< Common flash code
+   mutable MemoryRegionConstPtr  lastMemoryRegionUsed;   //!< To improve memory searches
+   TclScriptConstPtr             flashScripts;           //!< Flash script
+   FlashProgramConstPtr          flashProgram;           //!< Common flash code
    FlexNVMParameters             flexNVMParameters;      //!< FlexNVM partitioning values
-   FlexNVMInfoPtr                flexNVMInfo;            //!< Table describing FlexNVM partitioning
+   FlexNVMInfoConstPtr           flexNVMInfo;            //!< Table describing FlexNVM partitioning
    std::vector<uint32_t>         targetSDIDs;            //!< System Device Identification Register values (0=> don't know/care)
 
 public:
-   bool                       valid;
    static const DeviceData    defaultDevice;
    static const unsigned int  BDMtoBUSFactor = 1;   //!< Factor relating measured BDM frequency to Target BUS frequency\n
                                                     //!< busFrequency = connectionFreq * BDMtoBUSFactor
 public:
-   const std::string getTargetName()              const { return targetName; }
-   const std::string getAliasName()               const { return aliasName; }
-   bool              isHidden()                   const { return hidden; }
-   uint32_t          getRamStart()                const { return ramStart; }
-   uint32_t          getRamEnd()                  const { return ramEnd; }
-   ClockTypes_t      getClockType()               const { return clockType; }
-   uint32_t          getClockAddress()            const { return clockAddress; }
-   uint32_t          getClockTrimNVAddress()      const { return clockTrimNVAddress; }
-   uint16_t          getClockTrimValue()          const { return clockTrimValue; }
-   unsigned long     getClockTrimFreq() /*Hz*/    const { return clockTrimFreq; }
-   unsigned long     getConnectionFreq() /*Hz*/   const { return connectionFreq; }
-   SecurityOptions_t getSecurity()                const { return security; }
-   EraseOptions      getEraseOption()             const { return eraseOption; }
+   const std::string              getTargetName()              const { return targetName; }
+   const std::string              getAliasName()               const { return aliasName; }
+   bool                           isHidden()                   const { return hidden; }
+   uint32_t                       getRamStart()                const { return ramStart; }
+   uint32_t                       getRamEnd()                  const { return ramEnd; }
+   ClockTypes_t                   getClockType()               const { return clockType; }
+   uint32_t                       getClockAddress()            const { return clockAddress; }
+   uint32_t                       getClockTrimNVAddress()      const { return clockTrimNVAddress; }
+   uint16_t                       getClockTrimValue()          const { return clockTrimValue; }
+   unsigned long                  getClockTrimFreq() /*Hz*/    const { return clockTrimFreq; }
+   unsigned long                  getConnectionFreq() /*Hz*/   const { return connectionFreq; }
+   SecurityOptions_t              getSecurity()                const { return security; }
+   EraseOptions                   getEraseOption()             const { return eraseOption; }
 #if (TARGET == HC12)||(TARGET == MC56F80xx)
-   uint32_t          getCOPCTLAddress()           const { return COPCTLAddress; }
+   uint32_t              getCOPCTLAddress()           const { return COPCTLAddress; }
 #else
-   uint32_t          getSOPTAddress()             const { return SOPTAddress; }
+   uint32_t                       getSOPTAddress()             const { return SOPTAddress; }
 #endif
+   uint32_t                       getSDIDAddress()             const { return SDIDAddress; }
+   uint32_t                       getSDIDMask()                const { return targetSDIDMask; }
+   unsigned int                   getBDMtoBUSFactor()          const { return BDMtoBUSFactor; }
+   FlashProgramConstPtr           getFlashProgram()            const { return flashProgram; }
+   TclScriptConstPtr              getFlashScripts()            const { return flashScripts; }
+   FlexNVMInfoConstPtr            getflexNVMInfo()             const { return flexNVMInfo; }
+   FlexNVMParameters              getFlexNVMParameters()       const { return flexNVMParameters; }
+   const std::vector<uint32_t>&   getTargetSDIDs()             const { return targetSDIDs; }
+   bool                           isAlias(void)                const { return !aliasName.empty();}
 
-   uint32_t          getSDIDAddress()             const { return SDIDAddress; }
-   uint32_t          getSDIDMask()                const { return targetSDIDMask; }
-
-   unsigned int      getBDMtoBUSFactor()          const { return BDMtoBUSFactor; }
-
-   FlashProgramPtr   getFlashProgram()            const { return flashProgram; }
-   TclScriptPtr      getFlashScripts()            const { return flashScripts; }
-   FlexNVMInfoPtr    getflexNVMInfo()             const { return flexNVMInfo; }
-   const std::vector<uint32_t>
-                    &getTargetSDIDs()             const { return targetSDIDs; }
-   void setTargetSDIDs(const std::vector<uint32_t> &value) { targetSDIDs = value; }
-
-   MemoryRegionPtr getMemoryRegion(unsigned index) const {
+   MemoryRegionConstPtr getMemoryRegion(unsigned index) const {
       if (index >= memoryRegions.size()) {
          return MemoryRegionPtr();
       }
       return memoryRegions[index];
    }
 
-   MemoryRegionPtr getMemoryRegionFor(uint32_t address, MemorySpace_t memorySpace=MS_None);
+   MemoryRegionPtr getMemoryRegion(unsigned index) {
+      if (index >= memoryRegions.size()) {
+         return MemoryRegionPtr();
+      }
+      return memoryRegions[index];
+   }
+
+   MemoryRegionConstPtr getMemoryRegionFor(uint32_t address, MemorySpace_t memorySpace=MS_None) const;
 
    uint32_t getSDID(unsigned index=0) const {
+      if (index >= targetSDIDs.size()) {
+         return (uint32_t)-1;
+      }
       return targetSDIDs[index];
-//      if (index >= targetSDIDCount) {
-//         return 0;
-//      }
-//      return targetSDID[index];
    }
    static uint32_t   getDefaultClockTrimFreq(ClockTypes_t clockType);
    static uint32_t   getDefaultClockTrimNVAddress(ClockTypes_t clockType);
@@ -619,65 +718,50 @@ public:
 
    void  addSDID(uint32_t newSDID) {
       targetSDIDs.push_back(newSDID);
-//      if (targetSDIDCount>= sizeof(targetSDID)/sizeof(targetSDID[0]))
-//         throw MyException("DeviceData::addSDID() - Too many SDIDs");
-//      targetSDID[targetSDIDCount++] = newSDID;
    }
    void addMemoryRegion(MemoryRegionPtr pMemoryRegion) {
       memoryRegions.push_back(pMemoryRegion);
       if (((pMemoryRegion->getMemoryType() == MemRAM)||
            (pMemoryRegion->getMemoryType() == MemXRAM)) && (ramStart == 0)) {
+         // Set default RAM range to first added RAM memory region
          const MemoryRegion::MemoryRange *mr = pMemoryRegion->getMemoryRange(0);
-//         print("%s[0x%X...0x%X]\n",
-//               MemoryRegion::getMemoryTypeName(pMemoryRegion->getMemoryType()),
-//               mr->start,
-//               mr->end);
          ramStart = mr->start;
          ramEnd   = mr->end;
       }
       if (pMemoryRegion->getMemoryType() == MemFlexNVM) {
-         // Copy FlexInfo from memory region to device
+         // Copy FlexInfo from memory region to device - Only one FlexNVM in device allowed
+         if (getflexNVMInfo() != NULL) {
+            throw MyException("Multiple MemFlexNVM regions in device");
+         }
          setflexNVMInfo(pMemoryRegion->getflexNVMInfo());
       }
    }
-
-   void setTargetName(const std::string &value)       { targetName = value; }
-   void setAliasName(const std::string &value)        { aliasName = value; }
-   void setHidden(bool value = true)                  { hidden = value; }
-   void setRamStart(uint32_t value)                   { ramStart = value; }
-   void setRamEnd(uint32_t value)                     { ramEnd = value; }
-   void setClockType(ClockTypes_t value)              { clockType = value; }
-   void setClockAddress(uint32_t value)               { clockAddress = value; }
-   void setClockTrimNVAddress(uint32_t value)         { clockTrimNVAddress = value; }
-   void setClockTrimValue(uint16_t value)             { clockTrimValue = value; }
-   void setClockTrimFreq(unsigned long value) /*Hz*/  { clockTrimFreq = value; }
-   void setConnectionFreq(unsigned long value /*Hz*/) { connectionFreq = value; }
-   void setSecurity(SecurityOptions_t value)          { security = value; }
-   void setEraseOption(EraseOptions value)            { eraseOption = value; }
+   void setTargetName(const std::string &name)                    { targetName = name; }
+   void setAliasName(const std::string &name)                     { aliasName = name; }
+   void setHidden(bool value = true)                              { hidden = value; }
+   void setRamStart(uint32_t addr)                                { ramStart = addr; }
+   void setRamEnd(uint32_t addr)                                  { ramEnd = addr; }
+   void setClockType(ClockTypes_t type)                           { clockType = type; }
+   void setClockAddress(uint32_t addr)                            { clockAddress = addr; }
+   void setClockTrimNVAddress(uint32_t addr)                      { clockTrimNVAddress = addr; }
+   void setClockTrimValue(uint16_t value)                         { clockTrimValue = value; }
+   void setClockTrimFreq(unsigned long hertz) /*Hz*/              { clockTrimFreq = hertz; }
+   void setConnectionFreq(unsigned long hertz /*Hz*/)             { connectionFreq = hertz; }
+   void setSecurity(SecurityOptions_t option)                     { security = option; }
+   void setCustomSecurity(const std::string &securityValue);
+   void setEraseOption(EraseOptions option)                       { eraseOption = option; }
 #if (TARGET == HC12)||(TARGET == MC56F80xx)
-   void setCOPCTLAddress(uint32_t value)              { COPCTLAddress = value; }
+   void setCOPCTLAddress(uint32_t addr)                           { COPCTLAddress = addr; }
 #else
-   void setSOPTAddress(uint32_t value)                { SOPTAddress = value; }
+   void setSOPTAddress(uint32_t addr)                             { SOPTAddress = addr; }
 #endif
-   void setSDIDAddress(uint32_t value)                { SDIDAddress = value; }
-   void setSDIDMask(uint32_t value)                   { targetSDIDMask = value; }
-//   void setSecurityAddress(uint32_t value)            { securityAddress = value; }
-   void setFlashScripts(TclScriptPtr script)          { flashScripts = script; }
-   void setFlashProgram(FlashProgramPtr program)      { flashProgram = program; }
-   void setflexNVMInfo(FlexNVMInfoPtr info)           { flexNVMInfo = info; }
-   void setFlexNVMParameters(const FlexNVMParameters *parameters) {
-      flexNVMParameters = *parameters;
-   }
-   const FlexNVMParameters *getFlexNVMParameters() {
-      return &flexNVMParameters;
-   }
-   bool isAlias(void) const { return !aliasName.empty();}
-
-//#if (TARGET == HC12)
-//   void setFSECAddress(uint32_t value)                     { FSECAddress = value; }
-//#elif (TARGET == HCS08) || (TARGET == RS08)
-//   void setFOPTAddress(uint32_t value)                     { FOPTAddress = value; }
-//#endif
+   void setSDIDAddress(uint32_t addr)                             { SDIDAddress = addr; }
+   void setSDIDMask(uint32_t mask)                                { targetSDIDMask = mask; }
+   void setFlashScripts(TclScriptConstPtr script)                 { flashScripts = script; }
+   void setFlashProgram(FlashProgramConstPtr program)             { flashProgram = program; }
+   void setflexNVMInfo(FlexNVMInfoConstPtr info)                  { flexNVMInfo = info; }
+   void setFlexNVMParameters(const FlexNVMParameters &param)      { flexNVMParameters = param;}
+   void setTargetSDIDs(const std::vector<uint32_t> &list)         { targetSDIDs = list; }
 
    DeviceData( const std::string    &targetName,
                uint32_t             ramStart,
@@ -713,8 +797,7 @@ public:
                       security(security),
                       eraseOption(eraseAll),
                       clockTrimValue(clockTrimValue),
-                      targetSDIDMask(0),
-                      valid(true)
+                      targetSDIDMask(0)
                       {
 //      print("DeviceData::DeviceData()\n");
       flexNVMParameters.eeepromSize  = 0xFF;
@@ -737,69 +820,124 @@ public:
                   security(SEC_DEFAULT),
                   eraseOption(eraseAll),
                   clockTrimValue(0),
-                  targetSDIDMask(0),
-                  valid(true)
+                  targetSDIDMask(0)
                   {
 //      print("DeviceData::DeviceData() - default\n");
       flexNVMParameters.eeepromSize  = 0xFF;
       flexNVMParameters.partionValue = 0xFF;
    }
    ~DeviceData();
-};
+   DeviceData *shallowCopy(const DeviceData&);
 
-typedef std::tr1::shared_ptr<DeviceData> DeviceDataPtr;
-typedef std::tr1::shared_ptr<const DeviceData> ConstDeviceDataPtr;
+//private:
+//   DeviceData &operator=(const DeviceData &);
+};
 
 //! Information required to program a Device
 //!
 class DeviceDataBase {
 
 private:
-   std::vector<DeviceData *>  deviceData;                   // List of devices
-   std::map<const std::string, SharedInformationItemPtr> sharedInformation;   // Shared information that may be referenced by devices
-   static const DeviceData  *defaultDevice;
-   DeviceDataBase (DeviceDataBase &);
-   DeviceDataBase &operator=(DeviceDataBase &);
+   std::vector<DeviceDataPtr>  deviceData;                                   //! List of devices
+   std::map<const std::string, SharedInformationItemPtr> sharedInformation;  //! Shared information referenced by devices
+   static DeviceDataPtr defaultDevice;                                       //! Generic 'default' device
+   DeviceDataBase (DeviceDataBase &);                                        //! No copying
+   DeviceDataBase &operator=(DeviceDataBase &);                              //! No assignment
 
 public:
    void   loadDeviceData();
-
-   const DeviceData *findDeviceFromName(const std::string &targetName);
-   int findDeviceIndexFromName(const std::string &targetName);
-   const DeviceData &operator[](unsigned index) {
+   DeviceDataConstPtr findDeviceFromName(const std::string &targetName) const;
+   int findDeviceIndexFromName(const std::string &targetName) const;
+   const DeviceData &operator[](unsigned index) const {
       if (index > deviceData.size()) {
          throw MyException("DeviceDataBase::operator[] - illegal index");
       }
       return *deviceData[index];
    };
-   std::vector<DeviceData *>::iterator begin() {
-      return deviceData.begin();
+   std::vector<DeviceDataPtr>::const_iterator begin() const {
+      return static_cast<std::vector<DeviceDataPtr>::const_iterator>(deviceData.begin());
    }
-   std::vector<DeviceData *>::iterator end() {
-      return deviceData.end();
+   std::vector<DeviceDataPtr>::const_iterator end() const {
+      return static_cast<std::vector<DeviceDataPtr>::const_iterator>(deviceData.end());
    }
-   void   listDevices();
-   static const DeviceData *getDefaultDevice() { return defaultDevice; }
-   static const DeviceData *setDefaultDevice(const DeviceData *defaultDevice) {
+   void   listDevices() const;
+   static DeviceDataConstPtr getDefaultDevice() { return defaultDevice; }
+   static DeviceDataConstPtr setDefaultDevice(const DeviceDataPtr defaultDevice) {
       DeviceDataBase::defaultDevice = defaultDevice;
       return defaultDevice;
    }
    unsigned getNumDevice() const { return this->deviceData.size(); }
 
-   DeviceData *addDevice(DeviceData *device) {
-      std::vector<DeviceData*>::iterator itDev = deviceData.insert(deviceData.end(),device);
+   DeviceDataPtr addDevice(DeviceDataPtr device) {
+      std::vector<DeviceDataPtr>::iterator itDev = deviceData.insert(deviceData.end(), device);
       return *itDev;
    }
-   void addSharedData(std::string key, SharedInformationItem *sharedData) {
-      SharedInformationItemPtr psharedData(sharedData);
-      sharedInformation.insert(std::pair<const std::string, SharedInformationItemPtr>(key, psharedData));
+   SharedInformationItemPtr addSharedData(std::string key, SharedInformationItemPtr pSharedData) {
+      sharedInformation.insert(std::pair<const std::string, SharedInformationItemPtr>(key, pSharedData));
+      return pSharedData;
    }
-   SharedInformationItemPtr getSharedData(std::string key) {
-      std::map<const std::string, SharedInformationItemPtr>::iterator it = sharedInformation.find(key);
-      if (it == sharedInformation.end())
-         return SharedInformationItemPtr();
-      else
-         return it->second;
+   SharedInformationItemPtr addSharedData(std::string key, SharedInformationItem *sharedData) {
+      SharedInformationItemPtr pSharedData(sharedData);
+      sharedInformation.insert(std::pair<const std::string, SharedInformationItemPtr>(key, pSharedData));
+      return pSharedData;
+   }
+private:
+   SharedInformationItemPtr getSharedData(std::string key) const {
+      std::map<const std::string, SharedInformationItemPtr>::const_iterator it = sharedInformation.find(key);
+      if (it == sharedInformation.end()) {
+         throw MyException(std::string("DeviceDataBase::getSharedData() - Unable to find reference - ")+key);
+      }
+      return it->second;
+   }
+public:
+   SecurityEntryPtr getSecurityEntry(std::string key) {
+      SecurityEntryPtr ptr(std::tr1::dynamic_pointer_cast<SecurityEntry>(getSharedData(key)));
+      if (ptr == NULL) {
+         throw MyException(std::string("DeviceDataBase::getSecurityEntry() - Reference has wrong type - ")+key);
+      }
+      return ptr;
+   }
+   SecurityDescriptionPtr getSecurityDescription(std::string key) {
+      SecurityDescriptionPtr ptr(std::tr1::dynamic_pointer_cast<SecurityDescription>(getSharedData(key)));
+      if (ptr == NULL) {
+         throw MyException(std::string("DeviceDataBase::getSecurityEntry() - Reference has wrong type - ")+key);
+      }
+      return ptr;
+   }
+   SecurityInfoConstPtr getSecurityInfo(std::string key) const {
+      SecurityInfoPtr ptr(std::tr1::dynamic_pointer_cast<SecurityInfo>(getSharedData(key)));
+      if (ptr == NULL) {
+         throw MyException(std::string("DeviceDataBase::getSecurityEntry() - Reference has wrong type - ")+key);
+      }
+      return ptr;
+   }
+   MemoryRegionPtr getMemoryRegion(std::string key) {
+      MemoryRegionPtr ptr(std::tr1::dynamic_pointer_cast<MemoryRegion>(getSharedData(key)));
+      if (ptr == NULL) {
+         throw MyException(std::string("DeviceDataBase::getSecurityEntry() - Reference has wrong type - ")+key);
+      }
+      return ptr;
+   }
+   TclScriptConstPtr getTclScript(std::string key) const {
+      TclScriptPtr ptr(std::tr1::dynamic_pointer_cast<TclScript>(getSharedData(key)));
+      if (ptr == NULL) {
+         throw MyException(std::string("DeviceDataBase::getSecurityEntry() - Reference has wrong type - ")+key);
+      }
+      return ptr;
+   }
+   FlashProgramConstPtr getFlashProgram(std::string key) const {
+      FlashProgramPtr ptr(std::tr1::dynamic_pointer_cast<FlashProgram>(getSharedData(key)));
+      if (ptr == NULL) {
+         throw MyException(std::string("DeviceDataBase::getSecurityEntry() - Reference has wrong type - ")+key);
+      }
+      return ptr;
+   }
+   FlexNVMInfoConstPtr getFlexNVMInfo(std::string key) const {
+      FlexNVMInfoPtr ptr(std::tr1::dynamic_pointer_cast<FlexNVMInfo>(getSharedData(key)));
+      if (ptr == NULL) {
+         throw MyException(std::string("DeviceDataBase::getSecurityEntry() - Reference has wrong type - ")+key);
+      }
+      return ptr;
    }
    DeviceDataBase() {
 //      print("DeviceDataBase::DeviceDataBase()\n");

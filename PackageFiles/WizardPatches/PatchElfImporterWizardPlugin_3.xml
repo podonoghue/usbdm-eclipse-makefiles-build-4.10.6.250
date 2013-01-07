@@ -101,61 +101,56 @@
 	<extension id="com.freescale.mcu.elfimporter.ui" point="com.freescale.core.ide.wizard.ui.wizardUI">
 		<pages>
 			<page id="mcu.elfimporter.page.connections.s08">
-				<uiElement id="mcu.elfimporter.connections.list.s08.rseHostComboComposite">
-					<uiElement id="mcu.elfimporter.connections.list.s08" >
-						<!-- Added pgo #SO8 -->
-						<elementChoice merge-actions="insert"
-							contentHelp="Connect to USBDM Open Source BDM Cable."
-							enablementCondition="mcu.elfimporter.connections.list.s08.createNewSystemID"
-							id="mcu.elfimporter.conn.08.usbdm" name="USBDM">
-						</elementChoice>
-					</uiElement>
+				<uiElement id="mcu.elfimporter.connections.list.s08" 
+               merge-actions="set-attr:defaultValue=mcu.elfimporter.conn.08.usbdm">
+					<!-- Added pgo #SO8 -->
+					<elementChoice merge-actions="insert"
+						contentHelp="Connect to USBDM Open Source BDM Cable."
+						enablementCondition="mcu.elfimporter.connections.list.s08.createNewSystemID"
+						id="mcu.elfimporter.conn.08.usbdm" name="USBDM">
+					</elementChoice>
 				</uiElement>
 			</page>
 			<page id="mcu.elfimporter.page.connections.cf" >
-				<uiElement id="mcu.elfimporter.page.connections.cf.rseHostComboComposite">
-					<uiElement id="mcu.elfimporter.connections.list.cf">
-						<!-- Added pgo #CFV1 + CFVx -->
-						<elementChoice merge-actions="insert"
-							contentHelp="Connect to USBDM Open Source BDM Cable."
-							enablementCondition="mcu.elfimporter.page.connections.cf.createNewSystemID"
-							id="mcu.elfimporter.conn.cf.usbdm" name="USBDM">
-						</elementChoice>
-					</uiElement>
+				<uiElement id="mcu.elfimporter.connections.list.cf"
+               merge-actions="set-attr:defaultValue=mcu.elfimporter.conn.cf.usbdm">
+					<!-- Added pgo #CFV1 + CFVx -->
+					<elementChoice merge-actions="insert"
+						contentHelp="Connect to USBDM Open Source BDM Cable."
+						enablementCondition="mcu.elfimporter.page.connections.cf.createNewSystemID"
+						id="mcu.elfimporter.conn.cf.usbdm" name="USBDM">
+					</elementChoice>
 				</uiElement>
 			</page>
 			<page id="mcu.elfimporter.page.connections.cf.v2_v4.kd" >
-				<uiElement id="mcu.elfimporter.page.connections.cf.v2_v4.kd.rseHostComboComposite">
-					<uiElement id="mcu.elfimporter.connections.list.cf.v2_v4.kd">
-						<!-- Added pgo #CFVx -->
-						<elementChoice merge-actions="insert"
-							contentHelp="Connect to USBDM Open Source BDM."
-							enablementCondition="mcu.elfimporter.page.connections.cf.v2_v4.kd.createNewSystemID"
-							id="mcu.elfimporter.connection.cf.v2_v4.kd.usbdm" name="USBDM">
-						</elementChoice>
-					</uiElement>
+				<uiElement id="mcu.elfimporter.connections.list.cf.v2_v4.kd"
+               merge-actions="set-attr:defaultValue=mcu.elfimporter.connection.cf.v2_v4.kd.usbdm">
+					<!-- Added pgo #CFVx -->
+					<elementChoice merge-actions="insert"
+						contentHelp="Connect to USBDM Open Source BDM."
+						enablementCondition="mcu.elfimporter.page.connections.cf.v2_v4.kd.createNewSystemID"
+						id="mcu.elfimporter.connection.cf.v2_v4.kd.usbdm" name="USBDM">
+					</elementChoice>
 				</uiElement>
 			</page>
 			<page id="mcu.elfimporter.page.connections.arm" >
-				<uiElement id="mcu.elfimporter.connections.list.arm.rseHostComboComposite">
-					<uiElement id="mcu.elfimporter.connections.list.arm" >
-						<!-- Added pgo #ARM -->
-						<elementChoice merge-actions="insert"
-							contentHelp="Connect to USBDM Open Source BDM Cable."
-							enablementCondition="mcu.elfimporter.connections.list.arm.createNewSystemID"
-							id="mcu.elfimporter.conn.arm.usbdm" name="USBDM" />
-					</uiElement>
+				<uiElement id="mcu.elfimporter.connections.list.arm" 
+               merge-actions="set-attr:defaultValue=mcu.elfimporter.conn.arm.usbdm">
+					<!-- Added pgo #ARM -->
+					<elementChoice merge-actions="insert"
+						contentHelp="Connect to USBDM Open Source BDM Cable."
+						enablementCondition="mcu.elfimporter.connections.list.arm.createNewSystemID"
+						id="mcu.elfimporter.conn.arm.usbdm" name="USBDM" />
 				</uiElement>
 			</page>
 			<page id="mcu.elfimporter.page.connections.s12z" >
-				<uiElement id="mcu.elfimporter.connections.list.s12z.rseHostComboComposite">
-					<uiElement id="mcu.elfimporter.connections.list.s12z">
-						<!-- Added pgo #s12z -->
-						<elementChoice merge-actions="insert"
-							contentHelp="Connect to USBDM Open Source BDM Cable."
-							enablementCondition="mcu.elfimporter.connections.list.s12z.createNewSystemID"
-							id="mcu.elfimporter.conn.s12z.usbdm" name="USBDM" />
-					</uiElement>
+				<uiElement id="mcu.elfimporter.connections.list.s12z"
+               merge-actions="set-attr:defaultValue=mcu.elfimporter.conn.s12z.usbdm">
+					<!-- Added pgo #s12z -->
+					<elementChoice merge-actions="insert"
+						contentHelp="Connect to USBDM Open Source BDM Cable."
+						enablementCondition="mcu.elfimporter.connections.list.s12z.createNewSystemID"
+						id="mcu.elfimporter.conn.s12z.usbdm" name="USBDM" />
 				</uiElement>
 			</page>
 		</pages>

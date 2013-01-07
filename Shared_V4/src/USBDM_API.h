@@ -171,7 +171,7 @@ typedef enum {
    MS_None     = 0<<4,     // Memory space unused/undifferentiated
    MS_Program  = 1<<4,     // Program memory space (e.g. P: on DSC)
    MS_Data     = 2<<4,     // Data memory space (e.g. X: on DSC)
-   MS_Global   = 3<<4,     // HCS12 Global addresses
+   MS_Global   = 3<<4,     // HCS12 Global addresses (Using BDMPPR register)
    // Fast memory access for HCS08/HCS12 (stopped target, regs. are modified
    MS_Fast     = 1<<7,
    // Masks for above
@@ -383,7 +383,7 @@ typedef enum {
    ARM_RegR12    = 12, //!< R12
    ARM_RegSP     = 13, //!< SP
    ARM_RegLR     = 14, //!< LR
-   ARM_RegPC     = 15, //!< PC (Debug return adderss)
+   ARM_RegPC     = 15, //!< PC (Debug return address)
    ARM_RegxPSR   = 16, //!< xPSR
    ARM_RegMSP    = 17, //!< Main Stack Ptr
    ARM_RegPSP    = 18, //!< Process Stack Ptr

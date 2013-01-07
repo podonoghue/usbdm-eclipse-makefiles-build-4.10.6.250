@@ -40,20 +40,20 @@
 unsigned int KnownDevices::deviceCount;
 
 //! Each known device
-DeviceData   KnownDevices::deviceData[MAX_KNOWN_DEVICES];
+UnlockerDeviceData   KnownDevices::deviceData[MAX_KNOWN_DEVICES];
 
 // Some 'dummy' devices types
 //                                                  Idx ID   IRl DRl IRKn UNLK  IDC   Fl  Fmin    Fmax    Name               Description
 //! Description of a Non-Freescale device
-const DeviceData KnownDevices::nonFreescaleDevice = {0, 0x00, 2, 7,  0,   0x00, 0x00, 0,       0,      0, "Non-Freescale",  "-"};
+const UnlockerDeviceData KnownDevices::nonFreescaleDevice = {0, 0x00, 2, 7,  0,   0x00, 0x00, 0,       0,      0, "Non-Freescale",  "-"};
 //! Description of a device without IDCODE
-const DeviceData KnownDevices::unknownDevice      = {0, 0x00, 2, 7,  0,   0x00, 0x00, 0,       0,      0, "No JTAG IDCODE", "-" };
+const UnlockerDeviceData KnownDevices::unknownDevice      = {0, 0x00, 2, 7,  0,   0x00, 0x00, 0,       0,      0, "No JTAG IDCODE", "-" };
 //! Dummy description used when no device type is sel
-const DeviceData KnownDevices::disabledDevice     = {0, 0x00, 2, 7,  0,   0x00, 0x00, 0,       0,      0, "Disabled",       "-" };
+const UnlockerDeviceData KnownDevices::disabledDevice     = {0, 0x00, 2, 7,  0,   0x00, 0x00, 0,       0,      0, "Disabled",       "-" };
 //! Description of a Customisable device (i.e. Freescale - parameters may be cutomised)
-const DeviceData KnownDevices::customDevice       = {1, 0x00, 2, 7,  0,   0x0B, 0x00, 1,  150000, 200000, "Custom",         "-" };
+const UnlockerDeviceData KnownDevices::customDevice       = {1, 0x00, 2, 7,  0,   0x0B, 0x00, 1,  150000, 200000, "Custom",         "-" };
 //! Description for an unknown Freescale device
-const DeviceData KnownDevices::unRecognizedDevice = {1, 0x00, 4, 7,  0,   0x0B, 0x00, 1,  150000, 200000, "Unrecognized",   "Freescale_Unknown"};
+const UnlockerDeviceData KnownDevices::unRecognizedDevice = {1, 0x00, 4, 7,  0,   0x0B, 0x00, 1,  150000, 200000, "Unrecognized",   "Freescale_Unknown"};
 
 //! \brief Loads the known devices list from the config file.
 //!
@@ -75,9 +75,9 @@ int equation;
 int lineNo = 0;
 
 
-   fp = openApplicationFile("Device_data/JTAG_Devices.cfg", "rt");
+   fp = openApplicationFile("DeviceData/JTAG_Devices.cfg", "rt");
    if (fp == NULL) {
-      Logging::print("Failed to open config file\n");
+      Logging::print("Failed to open configuration file\n");
       return;
    }
    deviceData[0] = disabledDevice;
@@ -156,13 +156,13 @@ int lineNo = 0;
 //!
 //! @param idcode : JTAG IDCODE read from device
 //!
-const DeviceData *KnownDevices::lookUpDevice(uint32_t idcode) {
+const UnlockerDeviceData *KnownDevices::lookUpDevice(uint32_t idcode) {
 
 unsigned int       jedec          = JEDEC_ID(idcode);
 unsigned int       freescalePin   = FREESCALE_PIN(idcode);
 unsigned int       partNum        = PART_NUM(idcode);
 int                sub;
-const DeviceData  *device = NULL;
+const UnlockerDeviceData  *device = NULL;
 
 #ifdef LOG
   Logging::print("lookUpDevice: idcode         => 0x%3.3lx\n",  idcode);
