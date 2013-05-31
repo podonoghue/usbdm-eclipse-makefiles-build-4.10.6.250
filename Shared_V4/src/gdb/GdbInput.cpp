@@ -36,6 +36,9 @@
 #include <fcntl.h>
 #endif
 
+#include <pthread.h>
+#include <unistd.h>
+
 #include "GdbInput.h"
 #include "Log.h"
 
@@ -46,10 +49,10 @@ GdbInput::GdbInput(FILE *in) :
    terminate(false),
    isEndOfFile(false),
    buffer(NULL),
-   pipeIn(NULL),
-   mutex(PTHREAD_MUTEX_INITIALIZER),
-   dataNeeded_cv(PTHREAD_COND_INITIALIZER)
+   pipeIn(NULL)
 {
+   pthread_mutex_init(&mutex, NULL);
+   pthread_cond_init(&dataNeeded_cv, NULL);
    int inHandle = dup(fileno(in));
    pipeIn= fdopen(inHandle, "rb");
 

@@ -39,9 +39,9 @@ public:
    static void setLogFileHandle(FILE *logFile) {}
    static void enableTimestamping(bool enable=true) {}
 };
-#define LOGGING_Q (void*)0
-#define LOGGING_E (void*)0
-#define LOGGING   (void*)0
+#define LOGGING_Q (void)0
+#define LOGGING_E (void)0
+#define LOGGING   (void)0
 #else // LOG
 class Logging {
 public:

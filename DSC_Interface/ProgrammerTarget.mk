@@ -41,6 +41,9 @@ LIBS += -l$(LIB_USBDM_TCL)
 LIBS += -l$(LIB_USBDM_DSC)
 LIBS += $(WXWIDGETS_LIBS)
 LIBS += $(XERCES_LIBS)
+ifneq ($(UNAME_S),Windows)
+LIBS += -l$(LIB_WX_PLUGIN)
+endif
 
 # Each module will add to this
 SRC :=

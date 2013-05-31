@@ -388,7 +388,9 @@ char const *getCFV1ControlRegName( unsigned int regAddr ){
    regAddr &= 0x1F; // CRN field is only 5 bits
    regName = names[regAddr];
    if (regName == NULL) {
-      regName = "unknown";
+      static char buff[100];
+      snprintf(buff, sizeof(buff), "unknown CFV1 Control Reg (0x%X)", regAddr);
+      regName = buff;
    }
    return regName;
 }
@@ -429,7 +431,9 @@ const char *regName = NULL;
       regName = "RAMBAR";
    }
    if (regName == NULL) {
-      regName = "unknown";
+      static char buff[100];
+      snprintf(buff, sizeof(buff), "unknown CFVx Control Reg (0x%X)", regAddr);
+      regName = buff;
    }
    return regName;
 }

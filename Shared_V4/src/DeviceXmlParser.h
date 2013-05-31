@@ -51,6 +51,9 @@ private:
    DualString   tag_flexNvmInfoRef;
    DualString   tag_eeepromEntry;
    DualString   tag_partitionEntry;
+   DualString   tag_gnuInfoList;
+   DualString   tag_gnuInfoListRef;
+   DualString   tag_gnuInfo;
 
    DualString   attr_name;
    DualString   attr_isDefault;
@@ -82,6 +85,7 @@ private:
    DualString   attr_eeeSize;
    DualString   attr_eeSize;
    DualString   attr_alignment;
+   DualString   attr_path;
 
    static char  currentDeviceName[100];
 
@@ -110,6 +114,8 @@ private:
    FlexNVMInfoPtr                     parseFlexNVMInfo(xercesc::DOMElement *flexNVMInfoElement);
    FlexNVMInfo::EeepromSizeValue      parseEeepromEntry(xercesc::DOMElement *eeepromElement);
    FlexNVMInfo::FlexNvmPartitionValue parsePartitionEntry(xercesc::DOMElement *partitionElement);
+   GnuInfoPtr                         parseGnuInfo(xercesc::DOMElement *currentProperty);
+   GnuInfoListPtr                     parseGnuInfoList(xercesc::DOMElement *currentProperty);
 
    void          loadFile(const std::string &xmlFile);
 

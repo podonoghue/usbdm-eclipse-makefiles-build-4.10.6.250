@@ -29,17 +29,10 @@ DEFS += $(WXWIDGETS_DEFS)
 INCS := $(patsubst %,-I%,$(SOURCEDIRS))
 INCS += $(WXWIDGETS_INC)
 
-ifeq ($(UNAME_S),Windows)
-# Extra Library dirs
-LIBDIRS += $(WXWIDGETS_STATIC_LIBDIRS)
-# Extra libraries
-LIBS += $(WXWIDGETS_STATIC_LIBS)
-else
 # Extra Library dirs
 LIBDIRS += $(WXWIDGETS_LIBDIRS)
 # Extra libraries
 LIBS += $(WXWIDGETS_LIBS)
-endif
 
 # Each module will add to this
 SRC :=
@@ -99,12 +92,23 @@ $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo -- Linking Target $@
 	$(CC) -o $@  $(WIN32_GUI_OPTS) $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 
-# How to link a DLL
+# How to link a LIBRARY
 #==============================================
 $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
 	@echo -- Linking Target $@
 	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
+
+# How to copy a LIBRARY to the shared directory
+#==============================================
+$(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
+	@echo --
+	@echo -- Copying $? to $(SHARED_LIBDIRS)
+	$(CP) $? $@
+ifneq ($(UNAME_S),Windows)
+	$(LN) -f ./$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
+	$(LN) -f ./$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
+endif
 
 $(BUILDDIR) : $(BUILDDIR)/timestamp
 	
@@ -116,7 +120,7 @@ clean:
 	-$(RM) $(BUILDDIR)/*.*
 	-$(RMDIR) $(BUILDDIR)
 
-dll: $(BUILDDIR) $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
+dll: $(BUILDDIR) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
 #	@echo SRC          = $(SRC)
 #	@echo OBJ          = $(OBJ)
 #	@echo RESOURCE_OBJ = $(RESOURCE_OBJ)

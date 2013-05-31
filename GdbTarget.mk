@@ -33,7 +33,9 @@ INCS += $(XERCES_INC)
 LIBDIRS += $(XERCES_LIBDIRS)
 
 # Extra libraries
+ifeq ($(UNAME_S),Windows)
 LIBS += -lpthreadGC2
+endif
 LIBS += -l$(LIB_USBDM) 
 LIBS += -l$(LIB_USBDM_TCL)
 LIBS += -l$(LIB_WX_PLUGIN)

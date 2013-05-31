@@ -2,7 +2,20 @@
 \page pageHistory History & Issues
 
 \section sectionHistory Revision History
-   - V4.10.4 (January 2012) -
+V4.10.5 (May 2013) -
+      - Added support for Codewarrior 10.4 Release
+      - Added support for Eclipse CDT projects using Codesourcery (USBDM New project Wizard)
+      - Added Plugin for using USBDM + GDB with Eclipse
+      - Updated Codesourcery and USBDM API examples (for Eclipse)
+      - Updated Codesourcery instructions in help files
+      - Bug fixes to GDB sprites
+      - OpenSDA firmware now supports CDC interface (serial over USB).
+      - Updated Kinetis device description files (Added devices, added GDB information)
+      - Updated Codlfire device description files (Added GDB information)
+      - Fixes to programmer GUI (setting trim options)
+      - Updated OpenSDA USBDM firmware to work with later versions of OpenSDA bootloaders 
+   
+   - V4.10.4 (January 2013) -
       - Added support for Codewarrior 10.3 Release (<b>This version does not work with the BETA</b>)
       - Added customisable security options to programmers
       - Improved HCS08/HCS12 programming speeds (15~30%)
@@ -10,6 +23,8 @@
       - Updated/added Codesourcery instructions to help files
       - Numerous bug fixes to GDB Server
       - Improvements to handling secured devices
+      - Added Examples to installation
+      - Added OpenSDA firmware (This allows use of FRDM-KL25 board as general purpose Kinetis BDM)
    - V4.10.3 (November 2012) -
       - Updated device driver installation (V1.0.1) (removed unnecessary driver). 
       - ELF Files now supported for MC56F80xx devices.

@@ -55,6 +55,7 @@ Change History
 #include <assert.h>
 #ifdef __unix__
 #include <dlfcn.h>
+#define WXSTUB_DLL_NAME "libusbdm-wxStub.so"
 #endif
 #include "Common.h"
 #include "Log.h"
@@ -342,7 +343,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
       deviceOptions.setEraseOption(DeviceData::eraseMass);
    }
 #endif
-   deviceOptions.setSecurity(SEC_INTELLIGENT);
+   deviceOptions.setSecurity(SEC_UNSECURED);
    
    // Copy required options for Flash programming.
    // Other options are reset to default.
@@ -659,8 +660,10 @@ DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
          USBDM_VERSION_STRING);
 
 #if !defined(useWxWidgets)
+#ifdef _WIN32
    // Set up handle on Eclipse Window once only
    setDefaultWindowParent(FindEclipseWindowHwnd());
+#endif
 #endif
 
 #if TARGET == MC56F80xx
@@ -1170,7 +1173,8 @@ uint32_t        endAddress;                      // End address
    CHECK_ERROR_STATE();
 
    switch(daTarget.dmsMemSpace) {
-      case 1 :
+	   case 0 : // Treat 0 as byte
+	   case 1 :
          memorySpace  = MS_Byte;
          organization = BYTE_DISPLAY|BYTE_ADDRESS;
          endAddress   = address + dnBufferItems - 1;
@@ -1378,22 +1382,23 @@ DiReturnT DiMemoryRead ( DiAddrT       daTarget,
 uint32_t        address      = (U32c)daTarget;   // Load address
 MemorySpace_t   memorySpace;                     // Memory space & size
 uint32_t        endAddress;                      // End address
-int             organization;
+//int             organization;
 
    switch(daTarget.dmsMemSpace) {
+      case 0 : // Treat 0 as byte
       case 1 : // byte
          memorySpace  = MS_Byte;
-         organization = BYTE_DISPLAY|BYTE_ADDRESS;
+//         organization = BYTE_DISPLAY|BYTE_ADDRESS;
          endAddress = address + 1*dnBufferItems - 1;
          break;
       case 2 : // word
          memorySpace  = MS_Word;
-         organization = WORD_DISPLAY|BYTE_ADDRESS;
+//         organization = WORD_DISPLAY|BYTE_ADDRESS;
          endAddress = address + 2*dnBufferItems - 1;
          break;
       case 4 : // Long
          memorySpace  = MS_Long;
-         organization = LONG_DISPLAY|BYTE_ADDRESS;
+//         organization = LONG_DISPLAY|BYTE_ADDRESS;
          endAddress = address + 4*dnBufferItems - 1;
          break;
       default :
@@ -1422,7 +1427,7 @@ int             organization;
 
    unsigned offset = 0;
    while (dnBufferItems>0) {
-      int blockSize = dnBufferItems*(memorySpace&MS_SIZE);
+      unsigned blockSize = dnBufferItems*(memorySpace&MS_SIZE);
       if (blockSize > sizeof(memoryReadWriteBuffer)) {
          blockSize = sizeof(memoryReadWriteBuffer);
       }
@@ -2141,6 +2146,10 @@ gdi_dll_initialize(void) {
    }
    else
       fprintf(stderr, "gdi_dll_initialize() - Library already locked\n");
+#ifdef __unix__
+   // Load wxWindows Stub
+   (void)dlopen(WXSTUB_DLL_NAME, RTLD_NOW|RTLD_NODELETE);
+#endif
 }
 
 extern "C"

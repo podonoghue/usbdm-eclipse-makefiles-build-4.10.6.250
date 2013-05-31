@@ -597,12 +597,12 @@ JTAG32 regData(0,32);
    uint8_t length         = eonceRegisterDetails[regIndex].length;
 
    uint8_t readRegisterSequence[] = {
-      JTAG_MOVE_DR_SCAN,                          // Access ONCE (DR-CHAIN)
-      JTAG_SET_EXIT_SHIFT_DR,
-      JTAG_SHIFT_OUT_Q(ONCE_CMD_LENGTH), command, // ONCE Command to Read register + RegNo
-      JTAG_SET_EXIT_IDLE,
-      JTAG_SHIFT_IN_Q(length),                    // Shift-in data value
-      JTAG_END
+      (uint8_t)JTAG_MOVE_DR_SCAN,                          // Access ONCE (DR-CHAIN)
+      (uint8_t)JTAG_SET_EXIT_SHIFT_DR,
+      (uint8_t)JTAG_SHIFT_OUT_Q(ONCE_CMD_LENGTH), command, // ONCE Command to Read register + RegNo
+      (uint8_t)JTAG_SET_EXIT_IDLE,
+      (uint8_t)JTAG_SHIFT_IN_Q(length),                    // Shift-in data value
+      (uint8_t)JTAG_END
    };
    // Read EONCE register
    rc = executeJTAGSequence(sizeof(readRegisterSequence), readRegisterSequence,
@@ -650,16 +650,16 @@ USBDM_ErrorCode writeONCEReg(DSC_Registers_t regNo, uint32_t regValue, uint8_t m
 //      Logging::print("   writeONCEReg(%s) <= (0x%X) %s\n", name, (uint32_t)regData, regData.toString());
 //   }
    uint8_t writeRegisterSequence[] = {
-         JTAG_MOVE_DR_SCAN,            // Write to ONCE (DR-CHAIN)
-         JTAG_SET_EXIT_SHIFT_DR,
-         JTAG_SHIFT_OUT_Q(ONCE_CMD_LENGTH), command, // ONCE command - Write register+RegNo+modifier
-         JTAG_SET_EXIT_IDLE,
-         JTAG_SHIFT_OUT_Q(length),     // Shift-out data value
-/* 6 */  JTAG_NOP,   // 4-byte space for value to write (1-32 bits)
-         JTAG_NOP,
-         JTAG_NOP,
-         JTAG_NOP,
-         JTAG_END, // Terminate sequence
+         (uint8_t)JTAG_MOVE_DR_SCAN,            // Write to ONCE (DR-CHAIN)
+         (uint8_t)JTAG_SET_EXIT_SHIFT_DR,
+         (uint8_t)JTAG_SHIFT_OUT_Q(ONCE_CMD_LENGTH), command, // ONCE command - Write register+RegNo+modifier
+         (uint8_t)JTAG_SET_EXIT_IDLE,
+         (uint8_t)JTAG_SHIFT_OUT_Q(length),     // Shift-out data value
+/* 6 */  (uint8_t)JTAG_NOP,   // 4-byte space for value to write (1-32 bits)
+         (uint8_t)JTAG_NOP,
+         (uint8_t)JTAG_NOP,
+         (uint8_t)JTAG_NOP,
+         (uint8_t)JTAG_END, // Terminate sequence
    };
    // Copy value to write
    regData.copyToArray(writeRegisterSequence+6);
@@ -863,16 +863,16 @@ USBDM_ErrorCode DSC_GetStatus(OnceStatus_t *status) {
 //!
 USBDM_ErrorCode readIDCODE(uint32_t *idCode, uint8_t commandRegLength, int resetTAP) {
 uint8_t readCoreIdCodeSequence[] = {
-   JTAG_TEST_LOGIC_RESET,                          // Reset TAP
-//   JTAG_REPEAT_Q(TEST_LOGIC_RESET_RECOVERY_NOPS), // ~2.26ms
-//      JTAG_NOP,
-//   JTAG_END_REPEAT,
-   JTAG_MOVE_IR_SCAN,                              // Write IDCODE command to IR
-   JTAG_SET_EXIT_SHIFT_DR,
-   JTAG_SHIFT_OUT_Q(commandRegLength), JTAG_IDCODE_COMMAND,
-   JTAG_SET_EXIT_IDLE,                             // Read IDCODE from DR
-   JTAG_SHIFT_IN_Q(32),
-   JTAG_END
+   (uint8_t)JTAG_TEST_LOGIC_RESET,                          // Reset TAP
+// (uint8_t)  JTAG_REPEAT_Q(TEST_LOGIC_RESET_RECOVERY_NOPS), // ~2.26ms
+// (uint8_t)     JTAG_NOP,
+// (uint8_t)  JTAG_END_REPEAT,
+   (uint8_t)JTAG_MOVE_IR_SCAN,                              // Write IDCODE command to IR
+   (uint8_t)JTAG_SET_EXIT_SHIFT_DR,
+   (uint8_t)JTAG_SHIFT_OUT_Q(commandRegLength), (uint8_t)JTAG_IDCODE_COMMAND,
+   (uint8_t)JTAG_SET_EXIT_IDLE,                             // Read IDCODE from DR
+   (uint8_t)JTAG_SHIFT_IN_Q(32),
+   (uint8_t)JTAG_END
 };
 
 JTAG32 idcode(0,32);
@@ -1742,14 +1742,14 @@ USBDM_ErrorCode readMemoryBlock(unsigned int   memorySpace,
   *    +-----------------------+
   */
    uint8_t JTAGSequence[JTAG_READ_MEMORY_HEADER_SIZE] = {
-    /* 0 */     JTAG_READ_MEM,
-    /* 1 */     JTAG_END,
-    /* 2 */     (address>>24),  // Address
-    /* 3 */     (address>>16),
-    /* 4 */     (address>>8),
-    /* 5 */     address,
-    /* 6 */     0,              // # Elements
-    /* 7 */     memorySpace,    // Memory space
+    /* 0 */     (uint8_t)JTAG_READ_MEM,
+    /* 1 */     (uint8_t)JTAG_END,
+    /* 2 */     (uint8_t)(address>>24),  // Address
+    /* 3 */     (uint8_t)(address>>16),
+    /* 4 */     (uint8_t)(address>>8),
+    /* 5 */     (uint8_t)address,
+    /* 6 */     (uint8_t)0,              // # Elements
+    /* 7 */     (uint8_t)memorySpace,    // Memory space
       };
    USBDM_ErrorCode rc = BDM_RC_ILLEGAL_PARAMS; // Assume illegal parameters
    switch(memorySpace&MS_SIZE) {
@@ -2121,14 +2121,14 @@ USBDM_ErrorCode writeMemoryBlock(unsigned int         memorySpace,
   *    +-----------------------+
   */
    uint8_t JTAGSequence[JTAG_WRITE_MEMORY_HEADER_SIZE+300] = {
-    /* 0 */     JTAG_WRITE_MEM,
-    /* 1 */     JTAG_END,
-    /* 2 */     (address>>24),  // Address
-    /* 3 */     (address>>16),
-    /* 4 */     (address>>8),
-    /* 5 */     address,
-    /* 6 */     0,              // # Elements
-    /* 7 */     memorySpace,    // Memory space
+    /* 0 */     (uint8_t)JTAG_WRITE_MEM,
+    /* 1 */     (uint8_t)JTAG_END,
+    /* 2 */     (uint8_t)(address>>24),  // Address
+    /* 3 */     (uint8_t)(address>>16),
+    /* 4 */     (uint8_t)(address>>8),
+    /* 5 */     (uint8_t)address,
+    /* 6 */     (uint8_t)0,              // # Elements
+    /* 7 */     (uint8_t)memorySpace,    // Memory space
     /* 8 */                     // data .... (offset = JTAG_WRITE_MEMORY_HEADER_SIZE!)
          };
    if ((numBytes+JTAG_WRITE_MEMORY_HEADER_SIZE) > sizeof(JTAGSequence)) {

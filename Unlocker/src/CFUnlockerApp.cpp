@@ -22,11 +22,11 @@
 const TargetType_t targetType = T_JTAG;
 
 #if TARGET==CFVx
-const char caption[] = "USBDM Coldfire Unlock Utility";
+#define caption _("USBDM Coldfire Unlock Utility")
 const char *logFilename("FlashProgrammer_CFVx.log");
 #elif TARGET==MC56F80xx
 #include "USBDM_DSC_API.h"
-const char caption[] = "USBDM MC56F80xx Unlock Utiltiy";
+#define caption _("USBDM MC56F80xx Unlock Utiltiy")
 const char *logFilename("FlashProgrammer_DSC.log");
 #else
 #error "TARGET must be set"

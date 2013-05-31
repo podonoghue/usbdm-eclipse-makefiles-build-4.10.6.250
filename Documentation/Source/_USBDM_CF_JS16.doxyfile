@@ -31,7 +31,7 @@ PROJECT_NAME = "USBDM"
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER = V4.10.4
+PROJECT_NUMBER = V4.10.5
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -446,12 +446,6 @@ MAX_INITIALIZER_LINES = 30
 
 SHOW_USED_FILES = YES
 
-# If the sources in your project are distributed over multiple directories 
-# then setting the SHOW_DIRECTORIES tag to YES will show the directory hierarchy 
-# in the documentation. The default is NO.
-
-SHOW_DIRECTORIES = NO
-
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page.
 # This will remove the Files entry from the Quick Index and from the 
 # Folder Tree View (if specified). The default is YES.
@@ -534,7 +528,7 @@ WARN_LOGFILE =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT = USBDM_CF_JS16_Documentation.txt Software_Installation.txt Driver_Installation.txt Construction.txt Configuring_EclipseV10_1.txt Configuring_CFVx.txt Configuring_DSC.txt CodeSourcery_Install.txt CodeSourcery_ARM.txt CodeSourcery_Coldfire.txt Eclipse_CFVx_Flash_Programming.txt CFVx_Unlocker.txt OtherPrograms.txt Connector_Coldfire.txt Connector_Kinetis.txt Connector_DSC.txt Building_Software.txt API_Example.txt Tips.txt History.txt What_Is_Provided.txt ..\..\Shared_V4\src\USBDM_ErrorMessages.h ..\..\Shared_V4\src\USBDM_API.h
+INPUT = USBDM_CF_JS16_Documentation.txt Software_Installation.txt Driver_Installation.txt Construction.txt Configuring_EclipseV10_1.txt Configuring_CFVx.txt Configuring_DSC.txt CodeSourcery_Install.txt CodeSourcery_NewProject.txt Eclipse_CFVx_Flash_Programming.txt CFVx_Unlocker.txt OtherPrograms.txt Connector_Coldfire.txt Connector_Kinetis.txt Connector_DSC.txt Building_Software.txt API_Example.txt Tips.txt History.txt What_Is_Provided.txt ..\..\Shared_V4\src\USBDM_ErrorMessages.h ..\..\Shared_V4\src\USBDM_API.h
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -816,7 +810,7 @@ CHM_FILE = "..\..\..\USBDM_CF_JS16.chm"
 # the HTML help compiler (hhc.exe). If non-empty doxygen will try to run 
 # the HTML help compiler on the generated index.hhp.
 
-HHC_LOCATION = "C:\Program Files\HTML Help Workshop\hhc.exe"
+HHC_LOCATION = "C:\Program Files (x86)\HTML Help Workshop\hhc.exe"
 
 # If the GENERATE_HTMLHELP tag is set to YES, the GENERATE_CHI flag 
 # controls if a separate .chi index file is generated (YES) or that 

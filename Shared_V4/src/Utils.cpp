@@ -157,7 +157,7 @@ uint32_t hex8ToDecimal( char **ptr) {
 string filter(const string &data, const string &pattern) {
    string s;
 
-   for (int index=0; index<data.length(); index++) {
+   for (unsigned index=0; index<data.length(); index++) {
       if (pattern.find_first_of(data[index]) != string::npos) {
          s += data[index];
       }

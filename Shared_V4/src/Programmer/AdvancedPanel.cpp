@@ -310,7 +310,12 @@ bool AdvancedPanel::CreateControls() {
    row++;
 
    //===
-   securityDescriptionStaticText = new wxStaticText( panel, wxID_STATIC, _("...Status..."), wxDefaultPosition, wxSize(300, 65), wxALIGN_LEFT|wxST_NO_AUTORESIZE );
+#ifdef _WIN32
+#define CONTROL_WIDTH (320)
+#else
+#define CONTROL_WIDTH (380)
+#endif
+   securityDescriptionStaticText = new wxStaticText( panel, wxID_STATIC, _("...Status..."), wxDefaultPosition, wxSize(CONTROL_WIDTH, 75), wxALIGN_LEFT|wxST_NO_AUTORESIZE );
    gridBagSizer->Add(securityDescriptionStaticText, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
    securityDescriptionStaticText->SetToolTip(_("See Target tab to change how these value are used"));
    row++;
@@ -456,7 +461,7 @@ void AdvancedPanel::populatePartitionControl() {
                // Use 1st added choice entry as default
                newIndex = index;
             }
-            if (index == (unsigned)flexNvmPartitionIndex) {
+            if (index == flexNvmPartitionIndex) {
                // Previously selected value still available - use it selected entry
                flexNvmPartitionChoice = controlIndex; // record control entry to select
                newIndex               = index;        // record corresponding table entry
@@ -595,8 +600,10 @@ void AdvancedPanel::populateSecurityControl() {
 //         Logging::print("securityEntry => %s\n", (const char *)securityEntry->toString().c_str());
          // Add memory to list as has security area
          securityRegionFound = true;
+         wxString memName(memoryRegionPtr->getMemoryTypeName(), wxConvUTF8);
          wxString descr;
-         descr.Printf("%s @ %X", memoryRegionPtr->getMemoryTypeName(), memoryRange->start);
+         descr.Printf(_("%s @ %X"), (const char *)memName.c_str(), memoryRange->start);
+//         descr.Printf(_("%s @ %X"), memoryRange->start);
          int itemIndex = securityMemoryRegionChoice->Append(descr);
          securityMemoryRegionChoice->SetClientData(itemIndex, (void*)index);
          if (customSecurityInfoPtr[itemIndex] == NULL) {
@@ -653,7 +660,7 @@ wxString AdvancedPanel::parseSecurityValue() {
       SecurityValidator *validator = dynamic_cast<SecurityValidator*>(securityValuesTextControl->GetValidator());
       securityInfoPtr->setSecurityInfo(validator->getHexValues());
 
-      unsigned       size          = securityInfoPtr->getSize();
+//      unsigned       size          = securityInfoPtr->getSize();
       const uint8_t *securityValue = securityInfoPtr->getData();
 
       char buffer[500], *b=buffer;
@@ -663,8 +670,8 @@ wxString AdvancedPanel::parseSecurityValue() {
       unsigned value    = 0;
       unsigned bitMask  = 0;
       unsigned bitCount = 0;
-      char bitName[20], *pBitName;
-      for (int index=0; index<s.length(); index++) {
+      char bitName[20], *pBitName=bitName;
+      for (unsigned index=0; index<s.length(); index++) {
          if (b+2*width+4 >= buffer+sizeof(buffer)) {
             Logging::print("result too large\n");
             break;
@@ -709,12 +716,12 @@ wxString AdvancedPanel::parseSecurityValue() {
                      width = 1;
                   }
                   state = s_text;
-                  unsigned value;
+                  unsigned value = 0;
                   switch(s[index]) {
                      case 'x':
                      case 'X':
                         bitCount = 0;
-                        for(int sub=0; sub < width; sub++) {
+                        for(unsigned sub=0; sub < width; sub++) {
                            *b++ = tohex(securityValue[securityIndex]>>4);
                            *b++ = tohex(securityValue[securityIndex++]);
                         }
@@ -736,7 +743,7 @@ wxString AdvancedPanel::parseSecurityValue() {
                      case '[':
                         bitCount = 0;
                         value = 0;
-                        for(int sub=0; sub < width; sub++) {
+                        for(unsigned sub=0; sub < width; sub++) {
                            value *= 8;
                            value += securityValue[securityIndex++];
                         }
@@ -865,7 +872,7 @@ void AdvancedPanel::updateSecurity() {
    }
    else {
       wxString sAddress;
-      sAddress.Printf("security @ %08X", memoryRegionPtr->getSecurityAddress());
+      sAddress.Printf(_("security @ %08X"), memoryRegionPtr->getSecurityAddress());
       securityMemoryRegionSecurityAddress->SetLabel(sAddress);
       validator->enable(true);
       securityValuesTextControl->Enable(currentDevice->getSecurity() == SEC_CUSTOM);
@@ -1058,7 +1065,7 @@ bool AdvancedPanel::updateState() {
    if (currentDevice->getSecurity() == SEC_CUSTOM) {
       Logging::print("SEC_CUSTOM\n");
       // Transfer custom security setting to device
-      for(int index=0; index<securityMemoryRegionChoice->GetCount(); index++) {
+      for(unsigned index=0; index<securityMemoryRegionChoice->GetCount(); index++) {
          int memoryIndex = (int)securityMemoryRegionChoice->GetClientData(index);
          Logging::print("memoryIndex = %d\n", memoryIndex);
          MemoryRegionPtr memoryRegionPtr = currentDevice->getMemoryRegion(memoryIndex);

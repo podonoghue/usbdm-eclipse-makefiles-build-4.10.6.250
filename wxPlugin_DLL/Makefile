@@ -1,9 +1,9 @@
 include ../Common.mk
 
 ifeq ($(UNAME_S),Windows)
-TARGET=wxPlugin
+TARGET=usbdm-wxPlugin
 else
-TARGET=usbdm-wx
+TARGET=usbdm-wxPlugin
 endif
 
 $(TARGET):

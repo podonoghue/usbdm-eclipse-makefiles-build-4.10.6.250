@@ -5,5 +5,7 @@ SRC += usbdmTcl.c
 SRC += Version.rc
 
 # Shared files $(SHARED_SRC)
+ifeq ($(UNAME_S),Windows)
 VPATH := $(VPATH) $(SHARED_SRC) 
 SRC += FindWindow.c
+endif

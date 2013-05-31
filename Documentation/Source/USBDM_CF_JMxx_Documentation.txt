@@ -124,7 +124,7 @@
    Portions of this software is based on TBDML software
 
    USBDM
-   Copyright (C) 2007-11  Peter O'Donoghue
+   Copyright (C) 2007-13  Peter O'Donoghue
 
    Opensource BDM (OSBDM)
    Copyright (C) ?

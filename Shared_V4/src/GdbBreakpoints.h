@@ -19,5 +19,6 @@ extern int  removeBreakpoint(breakType type, uint32_t address, unsigned size);
 extern void activateBreakpoints(void);
 extern void deactivateBreakpoints(void);
 extern int  atMemoryBreakpoint();
+extern USBDM_ErrorCode initBreakpoints();
 
 #endif /* GDBBREAKPOINTS_H_ */

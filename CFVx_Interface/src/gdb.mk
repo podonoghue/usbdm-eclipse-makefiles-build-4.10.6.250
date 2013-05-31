@@ -16,7 +16,9 @@ SRC += Names.cpp
 SRC += tclInterface.cpp
 SRC += USBDM_AUX.cpp
 SRC += Utils.cpp
+ifeq ($(UNAME_S),Windows)
 SRC += FindWindow.c
+endif
 
 # Shared files $(SHARED_SRC)/gdb
 VPATH := $(SHARED_SRC)/gdb $(VPATH)

@@ -30,6 +30,7 @@
 \verbatim
  Change History
 +==================================================================================================
+| 16 Mar 2013 | Added default frequency to getDefaultExtendedOptions()              - pgo - V4.10.4
 | 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo - V4.10.4
 |  1 Dec 2012 | Changed logging                                                     - pgo - V4.10.4
 | 30 Nov 2012 | Extended timeout for USBDM_ControlPins()                            - pgo - V4.10.4
@@ -116,7 +117,7 @@ static const USBDM_ExtendedOptions_t defaultBdmOptions = {
       CS_DEFAULT,          // bdmClockSource;         - Use alternative BDM clock source in target
       false,               // useResetSignal;         - Whether to use RESET signal on BDM interface
       false,               // maskInterrupts;         - Whether to mask interrupts when  stepping
-      500,                 // interfaceSpeed;         - JTAG/CFVx/DSC only (kHz)
+      0,                   // interfaceSpeed;         - JTAG/CFVx/DSC only (kHz), 0 => selected by connection type
       false,               // usePSTSignals           - CFVx only
       1000,                // powerOffDuration        - How long to remove power
       1000,                // powerOnRecoveryInterval - How long to wait after power enabled
@@ -291,9 +292,9 @@ USBDM_ErrorCode USBDM_GetBDMSerialNumber(const char **deviceSerialNumber) {
 
    //ToDo - assumes serial number is string descr. #3 - should check device descriptor.
    USBDM_ErrorCode rc = bdm_usb_getStringDescriptor(3, buffer, sizeof(buffer));
-   if (rc == BDM_RC_OK) {
-      Logging::print("=> s=%ls\n", *deviceSerialNumber);
-   }
+//   if (rc == BDM_RC_OK) {
+//      Logging::print("=> s=%ls\n", *deviceSerialNumber);
+//   }
    return rc;
 }
 
@@ -315,9 +316,9 @@ USBDM_ErrorCode USBDM_GetBDMDescription(const char **deviceDescription) {
 
    //ToDo - assumes description is string descr. #2 - should check device descriptor.
    USBDM_ErrorCode rc = bdm_usb_getStringDescriptor(2, buffer, sizeof(buffer));
-   if (rc == BDM_RC_OK) {
-      Logging::print("=> s=%ls\n", *deviceDescription);
-   }
+//   if (rc == BDM_RC_OK) {
+//      Logging::print("=> s=%ls\n", *deviceDescription);
+//   }
    return rc;
 }
 
@@ -622,13 +623,28 @@ static void adaptBdmOptions(USBDM_ExtendedOptions_t *bdmOptions) {
    case T_HC12:
       bdmOptions->useResetSignal = true;
       break;
-   case T_ARM:
    case T_ARM_SWD:
+      if (bdmOptions->interfaceFrequency == 0) {
+         bdmOptions->interfaceFrequency = 12000; // kHz
+      }
+      bdmOptions->guessSpeed         = false;
+      bdmOptions->useResetSignal     = true;
+      break;
+   case T_ARM:
    case T_ARM_JTAG:
+      if (bdmOptions->interfaceFrequency == 0) {
+         bdmOptions->interfaceFrequency = 2000; // kHz
+      }
+      bdmOptions->guessSpeed         = false;
+      bdmOptions->useResetSignal     = true;
+      break;
    case T_CFVx:
    case T_MC56F80xx:
    case T_EZFLASH:
    case T_JTAG:
+      if (bdmOptions->interfaceFrequency == 0) {
+         bdmOptions->interfaceFrequency = 2000; // kHz
+      }
       bdmOptions->guessSpeed     = false;
       bdmOptions->useResetSignal = true;
       break;
@@ -1187,7 +1203,7 @@ USBDM_ErrorCode USBDM_Debug(unsigned char *usb_data) {
    usb_data[0] = 0;
    usb_data[1] = CMD_USBDM_DEBUG;
    Logging::print("%s => 0x%2.2X, 0x%2.2X\n", getDebugCommandName(usb_data[2]), usb_data[3], usb_data[4]);
-   return bdm_usb_transaction(10, 10, usb_data, 1000, &actualRxSize);
+   return bdm_usb_transaction(20, 20, usb_data, 1000, &actualRxSize);
 }
 
 //! Get status of the last command
@@ -1222,7 +1238,7 @@ USBDM_API
 USBDM_ErrorCode USBDM_GetBDMStatus(USBDMStatus_t *USBDMStatus) {
    LOGGING_Q;
 
-   static   unsigned lastBDMStatus   = -1;
+//   static   unsigned lastBDMStatus   = -1;
    unsigned          BDMStatus       = 0;
    USBDM_ErrorCode   rc;
 
@@ -1274,7 +1290,7 @@ USBDM_ErrorCode USBDM_GetBDMStatus(USBDMStatus_t *USBDMStatus) {
       case S_VPP_ERR    : // Error
          USBDMStatus->flash_state = BDM_TARGET_VPP_ERROR;    break;
    };
-   lastBDMStatus = BDMStatus;
+//   lastBDMStatus = BDMStatus;
    Logging::print("=> %s\n", getBDMStatusName(USBDMStatus));
    return rc;
 }
@@ -1898,6 +1914,7 @@ USBDM_ErrorCode USBDM_WriteReg(unsigned int regNo, unsigned long regValue) {
    usb_data[5] = (uint8_t)(regValue>>16);
    usb_data[6] = (uint8_t)(regValue>>8);
    usb_data[7] = (uint8_t)(regValue);
+
    return bdm_usb_transaction(8, 1, usb_data);
 }
 

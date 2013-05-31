@@ -24,9 +24,10 @@
 
     \verbatim
    Change History
-   -============================================================================
-   |  1 Jul 2010 | wxWidgets version created                               - pgo
-   +============================================================================
+   -=============================================================================================
+   | 16 Jan 2013 | Corrected exit of USBDMDialogue::Init() on exception             - pgo 4.10.4a
+   |  1 Jul 2010 | wxWidgets version created                                        - pgo
+   +=============================================================================================
    \endverbatim
  */
 
@@ -347,33 +348,11 @@ USBDMDialogue::USBDMDialogue(TargetType_t targetType, const wxString &caption) :
    Init();
 }
 
-////! USBDMDialogue constructors
-////!
-////! @param parent          : Parent window to pass to Create()
-////! @param targetType      : Target type - controls which dialogue & options are displayed
-////! @param caption         : Base caption to display on dialogue
-////!
-////! @note: Calls Create() to creates the dialogue
-////!
-//USBDMDialogue::USBDMDialogue( wxWindow* parent, TargetType_t targetType, const wxString &caption) :
-//                              targetType(targetType),
-//                              caption(caption),
-//                              bdmCapabilities(BDM_CAP_NONE),
-//                              errorSet(BDM_RC_OK),
-//                              binaryFilename(wxEmptyString) {
-//
-//   Logging::print("USBDMDialogue::USBDMDialogue()\n");
-//
-//   Init();
-//   Create(parent);
-//
-//   Logging::print("USBDMDialogue::USBDMDialogue() #2\n");
-//}
-
 //! Set the dialogue internal state to the default (not including pages)
 //!
 bool USBDMDialogue::Init() {
    Logging log("USBDMDialogue::Init");
+   bool success = true;
 
    disableDialogueDisplay = false;
 
@@ -388,7 +367,7 @@ bool USBDMDialogue::Init() {
                _("Error loading devices"),
                wxOK|wxSTAY_ON_TOP|wxCENTER,
                this);
-         return false;
+         success = false;
       }
    }
    DeviceDataConstPtr defaultDevice = deviceDatabase->getDefaultDevice();
@@ -396,7 +375,7 @@ bool USBDMDialogue::Init() {
    currentDevice->shallowCopy(*defaultDevice);
 #endif
 
-   return true;
+   return success;
 }
 
 //! USBDMDialogue creator

@@ -3,8 +3,16 @@
  *
  *  Created on: 06/03/2011
  *      Author: podonoghue
+\verbatim
+Change History
+-==================================================================================
+| 31 Mar 2013 | Updated gdbLoop so that break updates status promptly         - pgo
+| 23 Apr 2012 | Created                                                       - pgo
++==================================================================================
+\endverbatim
  */
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <sys/types.h>
 #include <string>
@@ -73,16 +81,18 @@ using namespace std;
 
 enum RunState {halted, stepping, running, breaking};
 
-static GdbOutput       *gdbOutput      = NULL;
-static GdbInput        *gdbInput       = NULL;
-static const GdbPacket *packet         = NULL;
-static RunState         runState       = halted;
-static unsigned         pollInterval   = 100;
+static GdbOutput       *gdbOutput                  = NULL;
+static GdbInput        *gdbInput                   = NULL;
+static const GdbPacket *packet                     = NULL;
+static RunState         runState                   = halted;
+static unsigned         pollInterval               = 100;
 static DeviceData       deviceData;
-static bool             ackMode        = true;  // Send ACK to GDB messages
-static bool             pendingCommand = false; // Pending mult-part GDB command e.g. qfThreadInfo/qsThreadInfo
+static bool             ackMode                    = true;  // Send ACK to GDB messages
+static bool             pendingMultiMessageCommand = false; // Pending mult-part GDB command e.g. qfThreadInfo/qsThreadInfo - not currently used
 
 static ProgressTimer *progressTimer;
+
+static void reportLocation(char mode, int reason);
 
 USBDM_ErrorCode usbdmInit(TargetType_t targetType = T_CFV1) {
    LOGGING_Q;
@@ -117,7 +127,11 @@ USBDM_ErrorCode usbdmInit(TargetType_t targetType = T_CFV1) {
    bdmOptions.bdmClockSource             = CS_DEFAULT;
    bdmOptions.useResetSignal             = FALSE;
    bdmOptions.usePSTSignals              = FALSE;
-   bdmOptions.interfaceFrequency         = 1000; // 1MHz
+#if TARGET == T_ARM
+   bdmOptions.interfaceFrequency         = 12000; // 12 MHz
+#else
+   bdmOptions.interfaceFrequency         = 1000; // 1 MHz
+#endif
    bdmOptions.powerOnRecoveryInterval    = 100;
    bdmOptions.resetDuration              = 100;
    bdmOptions.resetReleaseInterval       = 100;
@@ -243,7 +257,6 @@ void reportErrorAndRetry(USBDM_ErrorCode rc) {
 //!
 void reportErrorAndQuit(USBDM_ErrorCode rc) {
    LOGGING;
-   int replyCount = 0;
    // Report error to user
    if ((rc & BDM_RC_ERROR_HANDLED) == 0) {
       displayDialogue(USBDM_GetErrorString(rc), "USBDM GDB Server error", wxOK|wxICON_ERROR);
@@ -661,6 +674,10 @@ static int readReg(unsigned regNo, char *cPtr) {
    }
    int usbdmRegNo = registerMap[regNo];
 
+#ifndef TARGET
+#define TARGET CFVx
+#endif
+
 #if (TARGET == ARM)
    USBDM_ErrorCode rc = USBDM_ReadReg((ARM_Registers_t)usbdmRegNo, &regValue);
    if (rc != BDM_RC_OK) {
@@ -682,11 +699,12 @@ static int readReg(unsigned regNo, char *cPtr) {
 #elif(TARGET == CFVx)
    if (usbdmRegNo < 0x100) {
       USBDM_ReadReg((CFV1_Registers_t)usbdmRegNo, &regValue);
-      Logging::print("%s => %08lX\n", getCFVxRegName(regNo), regValue);
+      Logging::print("%s => %08lX\n", getCFVxRegName(usbdmRegNo), regValue);
    }
    else {
-      USBDM_ReadCReg((CFV1_Registers_t)(usbdmRegNo-0x100), &regValue);
-      Logging::print("%s => %08lX\n", getCFVxControlRegName(regNo), regValue);
+      usbdmRegNo -= 0x100;
+      USBDM_ReadCReg((CFV1_Registers_t)(usbdmRegNo), &regValue);
+      Logging::print("%s => %08lX\n", getCFVxControlRegName(usbdmRegNo), regValue);
    }
 #endif
    return sprintf(cPtr, "%0*lX", 8, regValue);
@@ -991,6 +1009,116 @@ static void sendXML(unsigned size, unsigned offset, const char *buffer, unsigned
    gdbOutput->sendGdbBuffer();
 }
 
+//!
+//! Mask/unmask interrupt
+//!
+//! @return original int mask
+// ToDo - fix this
+bool maskInterrupts(bool maskInterrupts) {
+   unsigned long int regValue;
+   if (maskInterrupts) {
+      USBDM_ReadReg(ARM_RegMISC, &regValue);
+      USBDM_WriteReg(ARM_RegMISC, regValue|1);
+   }
+   else {
+      USBDM_ReadReg(ARM_RegMISC, &regValue);
+      USBDM_WriteReg(ARM_RegMISC, regValue&~1);
+   }
+   return regValue&0x01;
+}
+
+// returns true if the instruction modifies the interrupt flag
+//
+bool modifiesInterrupt(const unsigned char instruction[2]) {
+
+   if (instruction[1] != 0xB6) {
+      return false;
+   }
+   //              cpsid i                      cpsid f                    cpsie i                 cpsie f
+   return (instruction[0] == 0x61) || (instruction[0] == 0x62) || (instruction[0] == 0x71) || (instruction[0] == 0x72);
+}
+
+void stepTarget(void) {
+   bool originalValue;
+   unsigned long currentPC;
+   unsigned char currentInstruction[2];
+   USBDM_ReadPC(&currentPC);
+   USBDM_ReadMemory(MS_Word, 2, currentPC, currentInstruction);
+
+   originalValue = maskInterrupts(true);
+   USBDM_TargetStep();
+   if (!modifiesInterrupt(currentInstruction)) {
+      // only restore when safe
+      maskInterrupts(originalValue);
+   }
+}
+
+bool streq(const char *s1, const char *s2) {
+   return strcmp(s1,s2) == 0;
+}
+bool strneq(const char *s1, const char *s2, int length) {
+   return strncmp(s1,s2,length) == 0;
+}
+
+static USBDM_ErrorCode doMonitorCommand(const char *cmd) {
+   LOGGING_Q;
+   char command[200], *bPtr = command;
+   for (const char *cp=cmd+sizeof("qRcmd,")-1; *cp != '\0'; cp += 2) {
+      unsigned long value;
+      if (!hexToInt8(cp, &value)) {
+         break;
+      }
+      *bPtr++ = (char)value;
+   }
+   *bPtr = '\0';
+   Logging::print("%s\n", command);
+   if (strneq(command, "reset", sizeof("reset")-1)) {
+      // ignore any parameters
+      USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
+      gdbOutput->sendGdbHexString("O", "Done", -1);
+      gdbOutput->sendGdbString("OK");
+   }
+   else if (strneq(command, "halt", sizeof("halt")-1)) {
+      // ignore any parameters
+      USBDM_TargetHalt();
+      gdbOutput->sendGdbHexString("O", "Done", -1);
+      gdbOutput->sendGdbString("OK");
+   }
+   else if (strneq(command, "maskisr", sizeof("maskisr")-1)) {
+//      fprintf(stderr, "command: %s\n", command);
+      char *ptr = command+sizeof("maskisr")-1;
+      while (isspace(*ptr)) {
+         ptr++;
+      }
+//      fprintf(stderr, "operands = %s\n", ptr);
+      if (strneq(ptr, "1",  sizeof("1")-1) ||
+            strneq(ptr, "on", sizeof("on")-1) ||
+            strneq(ptr, "t",  sizeof("t")-1)) {
+         maskInterrupts(true);
+//         fprintf(stderr, "maskisr %s\n", maskInterruptsWhenStepping?"True":"False");
+//         fflush(stderr);
+      }
+      else if (strneq(ptr, "0",   sizeof("1")-1) ||
+            strneq(ptr, "off", sizeof("off")-1) ||
+            strneq(ptr, "f",   sizeof("f")-1)) {
+         maskInterrupts(false);
+//         fprintf(stderr, "maskisr %s\n", maskInterruptsWhenStepping?"True":"False");
+//         fflush(stderr);
+      }
+//         fprintf(stderr, "maskisr %s\n", maskInterruptsWhenStepping?"True":"False");
+//      char buff[100];
+//      sprintf(buff, "maskisr = %s\n", maskInterrupts?"on":"off");
+//      gdbOutput->sendGdbHexString("O", buff, -1);
+      gdbOutput->sendGdbString("OK");
+   }
+   else {
+      Logging::print("Unrecognised command:\'%s\'\n", cmd);
+      gdbOutput->sendGdbHexString("O", "Unrecognized command", -1);
+      gdbOutput->sendGdbString("OK"); // = Opps!
+   }
+   return BDM_RC_OK;
+}
+
 static USBDM_ErrorCode doQCommands(const GdbPacket *pkt) {
    LOGGING_Q;
    int offset, size;
@@ -1030,12 +1158,8 @@ static USBDM_ErrorCode doQCommands(const GdbPacket *pkt) {
 //   }
    else if (strncmp(cmd, "qOffsets", sizeof("qOffsets")-1) == 0) {
       Logging::print("qOffsets\n");
-//      gdbOutput->sendGdbString("TextSeg=08000000;DataSeg=20000000");
-#if (TARGET == CFV1) || (TARGET == CFVx)
+      // No relocation done
       gdbOutput->sendGdbString("Text=0;Data=0;Bss=0");
-#elif (TARGET == ARM)
-      gdbOutput->sendGdbString("TextSeg=0000000;DataSeg=00000000");
-#endif
    }
    else if (strncmp(cmd, "qXfer:memory-map:read::", sizeof("qXfer:memory-map:read::")-1) == 0) {
       if (sscanf(cmd,"qXfer:memory-map:read::%X,%X",&offset, &size) != 2) {
@@ -1070,6 +1194,14 @@ static USBDM_ErrorCode doQCommands(const GdbPacket *pkt) {
          sendXML(size, offset, targetRegsXML, sizeof(targetRegsXML));
       }
    }
+   else if (strncmp(cmd, "qTStatus,", sizeof("qRcmd,")-1) == 0) {
+      // No trace experiment running right now
+      gdbOutput->sendGdbString("T0;tnotrun:0");
+   }
+   else if (strncmp(cmd, "qRcmd,", sizeof("qRcmd,")-1) == 0) {
+      // Monitor command
+      doMonitorCommand(cmd);
+   }
    else {
       Logging::print("Unrecognized command:\'%s\'\n", cmd);
       gdbOutput->sendGdbString("");
@@ -1082,7 +1214,16 @@ static USBDM_ErrorCode programImage(FlashImage *flashImage) {
    USBDM_ErrorCode rc;
    FlashProgrammer flashProgrammer;
 
+#if TARGET==CFV1
    deviceData.setEraseOption(DeviceData::eraseMass);
+#elif TARGET==CFVx
+   deviceData.setEraseOption(DeviceData::eraseAll);
+#elif TARGET==ARM
+   deviceData.setEraseOption(DeviceData::eraseMass);
+#else
+   #error "Unhandled case"
+#endif
+
    deviceData.setSecurity(SEC_SMART);
    deviceData.setClockTrimFreq(0);
    deviceData.setClockTrimNVAddress(0);
@@ -1313,7 +1454,7 @@ static USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
       if (atMemoryBreakpoint()) {
          // Do 1 step before installing memory breakpoints
          Logging::print("Continue - stepping one instruction...\n");
-         USBDM_TargetStep();
+         stepTarget();
       }
       activateBreakpoints();
       Logging::print("Continue - executing...\n");
@@ -1333,7 +1474,7 @@ static USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
       }
       runState = stepping;
       pollInterval = 1; // Poll fast
-      USBDM_TargetStep();
+      stepTarget();
 //      addr is the address at which to resume. If addr is omitted, resume at same address.
 //      Reply: See [Stop Reply Packets], page for the reply specifications.
       break;
@@ -1404,14 +1545,21 @@ static USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
 //   case 'H' : // 'Hc num' Set thread
 //      gdbOutput->sendGdbString("OK");
 //      break;
-   case '?' : // '?' Indicate the reason the target runState.
+   case '?' : // '?' Indicate the reason the target stopped.
 //      The reply is the same as for step and continue. This packet has a special interpretation
 //      when the target is in non-stop mode;
       if (!targetConnected) {
          USBDM_ErrorCode rc = usbdmInit(TARGET_TYPE);
          Logging::print("Initial connect to target = %f\n", progressTimer->elapsedTime());
+
          if (rc != BDM_RC_OK) {
             gdbOutput->sendErrorMessage(gdbOutput->E_Fatal, "Target connection failed");
+            reportErrorAndQuit(rc);
+            return rc;
+         }
+         initBreakpoints();
+         if (rc != BDM_RC_OK) {
+            gdbOutput->sendErrorMessage(gdbOutput->E_Fatal, "Failed to read target Breakpoint information");
             reportErrorAndQuit(rc);
             return rc;
          }
@@ -1455,13 +1603,17 @@ static USBDM_ErrorCode gdbLoop(void) {
          packet = gdbInput->getGdbPacket();
          if (packet != NULL) {
    //         Logging::print("After getGdbPacket, Time = %f\n", progressTimer->elapsedTime());
-            pendingCommand = false;
+            pendingMultiMessageCommand = false;
             if (ackMode) {
                gdbOutput->sendAck();
             }
             rc = doGdbCommand(packet);
             if (rc != BDM_RC_OK) {
                return rc;
+            }
+            if (packet->isBreak()) {
+               // exit message loop to check for run status change
+               break;
             }
          }
          else {
@@ -1472,14 +1624,15 @@ static USBDM_ErrorCode gdbLoop(void) {
       } while (packet != NULL);
 //      Logging::print("gdbLoop() - polling\n");
       milliSleep(1);
-      if (targetConnected && !pendingCommand && (pollCount++ >= pollInterval)) {
+      if (targetConnected && ((!pendingMultiMessageCommand && (pollCount++ >= pollInterval)) ||
+                             (packet->isBreak()))) {
          pollCount = 0;
-         static int lastTargetStatus = -1;
+//         static int lastTargetStatus = -1;
          int targetStatus = getTargetStatus();
          if (targetStatus == T_HALT) {
 //            Logging::print("Polling - runState\n");
             switch(runState) {
-            case halted :  // ??? -> halted
+            case halted :  // halted -> halted
                break;
             case breaking : // user break -> halted
                Logging::print("Target has halted (breaking)\n");
@@ -1527,10 +1680,11 @@ static USBDM_ErrorCode gdbLoop(void) {
 //            }
             pollInterval = 10; // Poll fast
          }
-         lastTargetStatus = targetStatus;
+//         lastTargetStatus = targetStatus;
       }
    } while (true);
    Logging::print("gdbLoop() - Exiting GDB Loop\n");
+   return BDM_RC_OK;
 }
 
 //! Handle GDB communication

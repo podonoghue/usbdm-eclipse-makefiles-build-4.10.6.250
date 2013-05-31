@@ -38,6 +38,9 @@
 #include <fcntl.h>
 #endif
 
+#include <pthread.h>
+#include <unistd.h>
+
 #include "GdbOutput.h"
 #include "Log.h"
 
@@ -54,7 +57,7 @@ GdbOutput::GdbOutput(FILE *out) :
    setmode( _fileno( pipeOut ), _O_BINARY );
    setvbuf ( pipeOut,  NULL, _IONBF , 0 );
 #else
-   setvbuf ( pipein,  NULL, _IONBF , 0 );
+   setvbuf ( pipeOut,  NULL, _IONBF , 0 );
 #endif
 }
 

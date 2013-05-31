@@ -26,26 +26,39 @@
             Registry searches
       =======================================================-->
       
-      <!-- None -->
+      <!-- Check for presence of CW for MCU V10.x -->
+      <Property Id="P.CODESOURCERY_CF">
+         <RegistrySearch Id="Rs.CODESOURCERY_CF"
+                    Root="HKLM"
+                    Win64="no"
+                    Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Sourcery CodeBench Lite for ColdFire ELF"
+                    Name="InstallLocation"
+                    Type="directory" />
+      </Property>
+
+      <!-- Modify default install path for CodeWarrior Development Studio for MCU V10.x -->
+      <Property Id="D.CODESOURCERY_CF">
+         <RegistrySearchRef Id="Rs.CODESOURCERY_CF" />
+      </Property>
       
       <!--======================================================
             Directory searches
       =======================================================-->
-      
+
       <!-- Check for presence of CodeSourcery -->
-      <Property Id="P.CODESOURCERY_CF">
+      <!-- Property Id="P.CODESOURCERY_CF">
          <DirectorySearchRef Id="Ds.CODESOURCERY" Parent="Ds.ProgramFilesFolder" Path="CodeSourcery">
             <DirectorySearch Id="Ds.CODESOURCERY_CF"
                      AssignToProperty="yes"
                      Depth="2"
                      Path="$(var.ApplicationFolderName)" />
          </DirectorySearchRef>
-      </Property>
-      
-      <!-- Modify default install path for CodeWarrior Development Studio for MCU V10.x -->
-      <Property Id="D.CODESOURCERY_CF">
+      </Property -->
+
+      <!-- Modify default install path for Codesourcery -->
+      <!-- Property Id="D.CODESOURCERY_CF">
          <DirectorySearchRef Id="Ds.CODESOURCERY_CF" Parent="Ds.CODESOURCERY" Path="$(var.ApplicationFolderName)"/>
-      </Property>
+      </Property -->
       
       <!--======================================================
             Actions
@@ -78,8 +91,8 @@
 
 <!--            <File Id='CODESOURCERY_CF_Files14'  DiskId='1' Source='bin\libusb-1.0.dll' /> -->
             <File Id='CODESOURCERY_CF_Files15'  DiskId='1' Source='bin\libxerces-c-3-1.dll' />
-            <File Id='CODESOURCERY_CF_Files16'  DiskId='1' Source='bin\tcl85.dll' />
-            <File Id='CODESOURCERY_CF_Files17'  DiskId='1' Source='bin\wxPlugin.dll' />
+            <File Id='CODESOURCERY_CF_Files16'  DiskId='1' Source='bin\tcl86.dll' />
+            <File Id='CODESOURCERY_CF_Files17'  DiskId='1' Source='bin\usbdm-wxPlugin.dll' />
      
             <File Id='CODESOURCERY_CF_Files21'  DiskId='1' Source='bin\usbdm.4.dll'/>
             <File Id='CODESOURCERY_CF_Files22'  DiskId='1' Source='bin\usbdmTCL.4.dll' />
@@ -90,6 +103,9 @@
             <File Id='CODESOURCERY_CF_Files32'  DiskId='1' Source='bin\usbdmTCL-debug.4.dll' />
             <File Id='CODESOURCERY_CF_Files33'  DiskId='1' Source='bin\usbdm-arm-debug.4.dll' />
             <File Id='CODESOURCERY_CF_Files34'  DiskId='1' Source='bin\usbdm-dsc-debug.4.dll' />
+
+            <File Id='CODESOURCERY_CF_Files35'  DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
+            <File Id='CODESOURCERY_CF_Files36'  DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
          </Component>
       </DirectoryRef>
 
@@ -108,6 +124,7 @@
          <ComponentRef Id='C.CODESOURCERY_CF.Marker' />
          <ComponentRef Id='C.CODESOURCERY_CF.Files' />
          <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
+         <ComponentGroupRef Id='Cg.StationeryInstall'/>
       </Feature>
    </Fragment>
 </Wix>

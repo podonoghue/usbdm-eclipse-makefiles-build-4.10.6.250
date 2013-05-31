@@ -316,7 +316,7 @@ USBDM_ErrorCode resetDebugInterface(void) {
 //      milliSleep(50);
    } while(((pollValue & CDBGSTACK) != 0)  && (--timeout >0));
 
-   return BDM_RC_OK;
+   return rc;
 }
 
 //!
@@ -354,7 +354,7 @@ USBDM_ErrorCode resetARM(TargetMode_t targetMode) {
    if (resetMode==RESET_SPECIAL) {
       Logging::print("Doing +Special reset\n");
       // Set catch on reset vector fetch
-      demcrValue = demcrBaseValue|DEMCR_VC_CORERESET;
+      demcrValue = demcrBaseValue|DEMCR_VC_CORERESET|DEMCR_TRCENA;
    }
    else {
       // Disable catch on reset vector fetch

@@ -210,13 +210,14 @@ void FlashPanel::setDeviceindex(int newDeviceIndex) {
    Logging log("FlashPanel::setDeviceindex()");
 
    Logging::print("newDeviceIndex = %d\n", newDeviceIndex);
+   Logging::print("Trim Freq (before change)= %f kHz\n", currentDevice->getClockTrimFreq()/1000.0);
 
    // Save non-device-specific settings.
    DeviceData savedDevice = *currentDevice;
    if (newDeviceIndex<0) {
       currentDevice->shallowCopy(*deviceDatabase->getDefaultDevice());
    }
-   else {
+   else if (newDeviceIndex != currentDeviceIndex) {
       currentDevice->shallowCopy((*deviceDatabase)[newDeviceIndex]);
       if (currentDevice->isAlias()) {
          // Keep device name & SDIDs but update device details from real device
@@ -229,6 +230,7 @@ void FlashPanel::setDeviceindex(int newDeviceIndex) {
          currentDevice->setTargetSDIDs(targetSDIDs);
       }
    }
+   Logging::print("Trim Freq (after change)= %f kHz\n", currentDevice->getClockTrimFreq()/1000.0);
    currentDeviceIndex = newDeviceIndex;
 
    // Restore non-device-specific settings.
@@ -504,9 +506,10 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
 
 FlashPanel::FlashPanel( wxWindow* parent, Shared *shared, TargetType_t targetType, HardwareCapabilities_t bdmCapabilities) :
       shared(shared),
-      deviceDatabase(shared->getDeviceDataBase()),
-      currentDevice(shared->getCurrentDevice()),
       bdmOptions(shared->getBdmOptions()),
+      currentDevice(shared->getCurrentDevice()),
+      currentDeviceIndex(-1),
+      deviceDatabase(shared->getDeviceDataBase()),
       targetType(targetType),
       bdmCapabilities(bdmCapabilities),
       flashprogrammer(NULL),
@@ -872,6 +875,7 @@ bool FlashPanel::TransferDataToWindow() {
       case SEC_SECURED:   securityRadioBoxControl->SetSelection(1);  break;
       case SEC_UNSECURED: securityRadioBoxControl->SetSelection(2);  break;
       case SEC_SMART:     securityRadioBoxControl->SetSelection(3);  break;
+      case SEC_CUSTOM:    break;
    }
    enableSoundsCheckBoxControl->SetValue(sound);
    if (!eraseChoiceControl->SetStringSelection(wxString(DeviceData::getEraseOptionName(currentDevice->getEraseOption()),wxConvUTF7))) {
@@ -1186,6 +1190,7 @@ void FlashPanel::OnTrimFrequencyTextTextUpdated( wxCommandEvent& event ) {
    double value;
    event.GetString().ToDouble(&value);
    currentDevice->setClockTrimFreq((unsigned long int)trunc(value*1000));
+   Logging::print("FlashPanel::OnTrimFrequencyTextTextUpdated(), Trim Freq = %f kHz\n", currentDevice->getClockTrimFreq()/1000.0);
 }
 
 /*

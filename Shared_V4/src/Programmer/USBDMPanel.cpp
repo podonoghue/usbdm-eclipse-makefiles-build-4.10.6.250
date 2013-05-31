@@ -196,11 +196,11 @@ void USBDMPanel::saveSettings(AppSettings &settings) {
 //}
 
 USBDMPanel::USBDMPanel( wxWindow* parent, Shared *shared, TargetType_t targetType) :
-            shared(shared),
 #ifdef FLASH_PROGRAMMER
             currentDevice(shared->getCurrentDevice()),
 #endif
             bdmOptions(shared->getBdmOptions()),
+            shared(shared),
             targetType(targetType) {
    Logging Log("USBDMPanel::USBDMPanel");
    Init();
@@ -208,11 +208,11 @@ USBDMPanel::USBDMPanel( wxWindow* parent, Shared *shared, TargetType_t targetTyp
 }
 
 USBDMPanel::USBDMPanel(Shared *shared, TargetType_t targetType) :
-            shared(shared),
 #ifdef FLASH_PROGRAMMER
             currentDevice(shared->getCurrentDevice()),
 #endif
             bdmOptions(shared->getBdmOptions()),
+            shared(shared),
             targetType(targetType) {
    Logging Log("USBDMPanel::USBDMPanel");
    Init();
@@ -259,9 +259,10 @@ void USBDMPanel::Init() {
 USBDM_ErrorCode USBDMPanel::Create(wxWindow* parent) {
    Logging Log("USBDMPanel::Create");
 
-   if (!wxPanelBase::Create(parent, ID_COMMUNICATION, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))
+   //   if (!wxPanelBase::Create(parent, ID_COMMUNICATION, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)) {
+   if (!wxPanel::Create(parent, ID_COMMUNICATION, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)) {
       return BDM_RC_FAIL;
-
+   }
    CreateControls();
    if (GetSizer()) {
        GetSizer()->SetSizeHints(this);

@@ -47,8 +47,12 @@ using namespace std;
 static string emptyString("");
 
 static void strUpper(char *s) {
+   if (s == NULL) {
+	   return;
+   }
    while (*s != '\0') {
-      *s++ = ::toupper(*s);
+      int ch = ::toupper(*s);
+      *s++ = ch;
    }
 }
 
@@ -760,7 +764,6 @@ static inline char tohex(uint8_t value) {
 }
 
 void SecurityInfo::setData(unsigned size, uint8_t *data) {
-   unsigned       cSub = 0;
    securityInfo.clear();
    for (unsigned sub=0; sub<size; sub++) {
       char value[2];

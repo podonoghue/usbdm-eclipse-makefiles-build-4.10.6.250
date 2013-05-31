@@ -1,0 +1,41 @@
+/*!
+ \page freedomSetup Setting Up the FRDM-KL25Z
+ 
+ 
+ \section FreedomHardwareModifications Hardware Modifications to FRDM-KL25Z
+ 
+  - Cut the PCB trace on the <b>bottom</b> of the board under J11.  This trace connects the SWD hardware to the MKL25Z128M4 device on the board.  
+    It must be opened to allow an external target to be connected without interference from the on-board chip.\n
+    Connection to the on-board target may be restored by adding pins and a jumper at J11.\n\n
+    \image html "J11-Cut.png"
+    \n\n
+  - Add a 10-pin connector at location J6 which is also marked SWD.  Do not confuse this with the similar connector at J8 marked SDA/SWD.\n
+    A suitable connector would be Element-14 #681-1184.  This is an unprotected header.\n\n
+<table border="0">
+   <tr>
+    <td>\image html "SWD-Connector.png" </td>
+    <td>\image html "J6-Target-SWD.png" </td>
+   </tr>
+</table>
+    \n\n
+  - Procure a 10-pin to 10-pin programming cable to connect to the target.  The cheapest I've found has been from Element14 #2144328.\n\n
+   \image html "FRDM-Cable.png"
+   FRDM-KL25 with SWD connector, J11 jumper pins and debug cable\n \n
+   \n\n
+ 
+\section FreedomFirmwareInstallation Installing USBDM firmware on FRDM-KL25Z
+   Install the USBDM software and USBDM drivers before doing the following:  \n
+   
+   The installation of the USBDM firmware uses the usual FRDM-KL25 bootloader process.\n
+   - Locate the USBDM_OpenSDA.sx file in the USBDM firmware directory. This is an OpenSDA application.
+   - Unplug the FRDM-KL25 board.
+   - Whilst holding the reset switch depressed plug in the FRDM-KL25 board.  The green LED should start blinking at a rate of about 1Hz.  
+   - Open a file explorer and locate the USB drive that has now appeared.  It will have the drive name "BOOTLOADER".
+   - Drag the file USBDM_OpenSDA.sx to the USB drive and wait a short while.  The OpenSDA firmware on the FRDM-KL25 board will 
+     program the USBDM firmware into the MK20 debugger chip on the board.
+   - Remove and re-plug the FRDM-KL25 board.  The board will now appear as a USBDM device.
+   
+   You can test the interface by trying the stand-alone ARM flash programmer that is part of the USBDM installation. Placing a jumper on J-11
+   will allow the programming of the MKL25Z128M4 chip on the FRDM board.  It is necessary to open J-11 and use the cable for external targets.
+   
+*/

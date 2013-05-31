@@ -3,11 +3,13 @@
 
 This page provides brief instructions on how to set up CodeSourcery Lite for use with 
 Eclipse IDE and USBDM BDM hardware for Kinetis and Coldfire targets on a MS-Windows platform.
+A similar setup works on Linux with obvious changes.
 
 \section requiredSoftware Required Software
 The following software needs to be installed:\n
 -  <b>Eclipse Juno</b> \n
-   I do java programming as well as C so I usually download the Java version and add CDT plugins from scratch (in the next step). 
+   I do java programming as well as C so I usually download the Java version and add CDT plugins from scratch 
+   (in the next step). 
    Alternatively, if only doing C programming then the CDT version can be downloaded.\n
    Download from: http://www.eclipse.org/downloads/\n
    Download either\n
@@ -35,6 +37,22 @@ The following software needs to be installed:\n
    \image html Install_CDT_Plugin_Selection.png 
    \n
    Click next and accept the various prompt to complete installation.  Reboot if prompted.\n \n
+-  <b>Codesourcery Lite</b> \n
+   Download from: http://www.mentor.com/embedded-software/codesourcery \n
+   Choose the software for the appropriate target.\n 
+   Run the installer to install to the default location "C:\Program Files\CodeSourcery\Sourcery_CodeBench_Lite_for_...."
+   Allow the installer to modify the PATHs  . \n \n
+-  <b>USBDM Eclipse plugin</b> \n
+   This plugin makes it very easy to create USBDM based projects for Coldfire & Kinetis devices. \n
+   Under windows it is installed as part of the USBDM installation in the following step.  Note that it will be 
+   necessary to manually select this item for installation and browse to the appropriate directory as Eclipse 
+   installations do not have a standard installation location. \n  
+   Under linux it is necessary to manually copy the plugin files to the Eclipse <b>dropins</b> directory.  
+-  <b>Install USBDM</b> \n
+   This must be done <b>after</b> installing Codesourcery and Eclipse since it adds various files to the Codesourcery 
+   installation and adds Eclipse plugins.\n
+*/
+
 -  <b>ARM for Eclipse plugin (Not all BDMs support ARM)</b> \n
    In theory it's possible to set up Eclipse for a ARM target from scratch using the GCC Cross Compiler Support plugin.  
    In practice the ARM for Eclipse plugin makes setting up a project much easier.
@@ -42,18 +60,24 @@ The following software needs to be installed:\n
    This plugin can be installed in the same way as the CDT plugin above.  Just add the following repository:
    \verbatim
    ARM Plugin
-   http://gnuarmeclipse.sourceforge.net/updates	
+   http://gnuarmeclipse.sourceforge.net/updates 
    \endverbatim
    Select the added item at the top of the dialogue and then select the following item (version may vary):\n
    \verbatim
    GNU ARM C/C++ Development Support    0.5.4.201202210114
    \endverbatim
    Complete the process and reboot if prompted. \n \n
--  <b>Codesourcery Lite</b> \n
-   Download from: http://www.mentor.com/embedded-software/codesourcery \n
-   Choose the software for the appropriate target.\n 
-   Run the installer to install to the default location "C:\Program Files\CodeSourcery\Sourcery_CodeBench_Lite_for_...."
-   Allow the installer to modify the PATHs  . \n \n
--  <b>Install USBDM</b> \n
-   This must be done after installing Codesourcery since it adds various files to the Codesourcery installation.
-*/
+-  <b>USBDM Eclipse plugin</b> \n
+   This plugin makes it very easy to create GDB based launch configurations for Coldfire and ARM targets using the
+   USBDM interface.  
+   This plugin can be installed in the same way as the CDT plugin above.  Just add the following repository:
+   \verbatim
+   USBDM Plugin
+   http://usbdm.sourceforge.net/EclipseUpdates
+   \endverbatim
+   Select the added item at the top of the dialogue and then select the following item (version may vary):\n
+   \verbatim
+   USBDM Plugin for Eclipse CDT 4.10.5.xxxx
+   \endverbatim
+   Complete the process and reboot if prompted. \n \n
+

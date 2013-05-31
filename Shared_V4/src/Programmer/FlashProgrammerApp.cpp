@@ -430,7 +430,7 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
          }
          else {
             deviceSecurity      = SEC_CUSTOM;
-            customSecurityValue = std::string(sValue);
+            customSecurityValue = std::string(sValue.ToAscii());
          }
       }
       verify   = parser.Found(_("verify"));

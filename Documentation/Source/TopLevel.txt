@@ -244,6 +244,20 @@ The table below shows the support provided by each version and provides links to
   <td valign=top >  <p  align=center >X   </p>  </td>
   <td valign=top >  <p  align=center >X   </p>  </td>
  </tr>
+ <tr>
+  <td valign=top >  <p  ><b>USBDM_FRDM_SWD</b><br>
+                         Custom OpenSDA (FRDM-KL25Z).
+                    </p>  
+  </td>
+  <td valign=top >  <p  align=center >Yes </p>  </td>
+  <td valign=top >  <p  align=center >    </p>  </td>
+  <td valign=top >  <p  align=center >    </p>  </td>
+  <td valign=top >  <p  align=center >SWD </p>  </td>
+  <td valign=top >  <p  align=center >    </p>  </td>
+  <td valign=top >  <p  align=center >    </p>  </td>
+  <td valign=top >  <p  align=center >    </p>  </td>
+  <td valign=top >  <p  align=center >    </p>  </td>
+ </tr>
 </table>
 <br>* DSC support is limited in Codewarrior 10
 <br>* CFV2,3,4 support is limited in programmer

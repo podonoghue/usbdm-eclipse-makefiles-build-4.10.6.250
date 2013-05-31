@@ -99,7 +99,22 @@ $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
 	@echo -- Linking Target $@
+ifeq ($(UNAME_S),Windows)
 	$(CC) -Wl,--kill-at -shared $(STATIC_GCC_OPTION) -o $@  $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
+else	
+	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
+endif
+
+# How to copy a LIBRARY to the shared directory
+#==============================================
+$(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
+	@echo --
+	@echo -- Copying $? to $(SHARED_LIBDIRS)
+	$(CP) $? $@
+ifneq ($(UNAME_S),Windows)
+	$(LN) -f ./$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
+	$(LN) -f ./$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
+endif
 
 $(BUILDDIR) : $(BUILDDIR)/timestamp
 	
@@ -111,7 +126,7 @@ clean:
 	-$(RM) $(BUILDDIR)/*.*
 	-$(RMDIR) $(BUILDDIR)
 
-dll: $(BUILDDIR) $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
+dll: $(BUILDDIR) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
 #	@echo SRC          = $(SRC)
 #	@echo OBJ          = $(OBJ)
 #	@echo RESOURCE_OBJ = $(RESOURCE_OBJ)

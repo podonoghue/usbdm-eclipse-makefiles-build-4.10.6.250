@@ -36,9 +36,10 @@ LIBDIRS += $(TCL_LIBDIRS)
 LIBS += -l$(LIB_USBDM) 
 LIBS += -l$(LIB_USBDM_DSC)
 LIBS += $(TCL_LIBS)
+LIBS += -l$(LIB_WX_PLUGIN)
 
-EXELIBS := -l$(LIB_WX_PLUGIN)
-EXELIBS += ${WXWIDGETS_SHARED_LIBS}
+# Extra libraries for EXE only
+EXELIBS += $(WXWIDGETS_SHARED_LIBS)
 
 # Each module will add to this
 SRC :=
@@ -105,6 +106,17 @@ $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo -- Linking Target $@
 	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) ${EXELIBS}
 
+# How to copy a LIBRARY to the shared directory
+#==============================================
+$(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
+	@echo --
+	@echo -- Copying $? to $(SHARED_LIBDIRS)
+	$(CP) $? $@
+ifneq ($(UNAME_S),Windows)
+	$(LN) -f ./$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
+	$(LN) -f ./$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
+endif
+
 $(BUILDDIR) : $(BUILDDIR)/timestamp
 	
 $(BUILDDIR)/timestamp :
@@ -115,7 +127,7 @@ clean:
 	-$(RM) $(BUILDDIR)/*.*
 	-$(RMDIR) $(BUILDDIR)
 
-dll: $(BUILDDIR) $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
+dll: $(BUILDDIR) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
 #	@echo SRC          = $(SRC)
 #	@echo OBJ          = $(OBJ)
 #	@echo RESOURCE_OBJ = $(RESOURCE_OBJ)

@@ -2,25 +2,32 @@ include ../Common.mk
 
 EXE_DEFS = "-DUSE_ICON -DINTERACTIVE"
 
+ifeq ($(UNAME_S),Windows)
+USBDM_TCL = UsbdmTCL
+VER_SUFFIX = .4
+else
+USBDM_TCL = usbdm-tcl
+VER_SUFFIX = 
+endif
 UsbdmScript:
 	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS=$(EXE_DEFS)
 
 UsbdmScript-debug:
 	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS=$(EXE_DEFS) DEBUG="Y"
 
-UsbdmTCL:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@.4 CDEFS="-DUSBDM_TCL_DLL_EXPORTS"
+$(USBDM_TCL):
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@$(VER_SUFFIX) CDEFS="-DUSBDM_TCL_DLL_EXPORTS"
 
-UsbdmTCL-debug:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@.4 CDEFS="-DUSBDM_TCL_DLL_EXPORTS" DEBUG="Y"
+$(USBDM_TCL)-debug:
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@$(VER_SUFFIX) CDEFS="-DUSBDM_TCL_DLL_EXPORTS" DEBUG="Y"
 
-all: UsbdmScript UsbdmScript-debug UsbdmTCL UsbdmTCL-debug
+all: UsbdmScript UsbdmScript-debug $(USBDM_TCL) $(USBDM_TCL)-debug
 
 clean:
 	${RMDIR} UsbdmScript
 	${RMDIR} UsbdmScript-debug
-	${RMDIR} UsbdmTCL
-	${RMDIR} UsbdmTCL-debug
+	${RMDIR} $(USBDM_TCL)
+	${RMDIR} $(USBDM_TCL)-debug
 
 .PHONY: all clean
-.PHONY: UsbdmScript UsbdmScript-debug UsbdmTCL UsbdmTCL-debug
+.PHONY: UsbdmScript UsbdmScript-debug $(USBDM_TCL) $(USBDM_TCL)-debug

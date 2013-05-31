@@ -12,11 +12,12 @@
 <!ENTITY Custom-Devices                    SYSTEM "Custom/custom-arm.xml">
 ]>
 <!-- 
+      V4.10.5 - Added GNU C information
       V4.10.4 - Changed how security information is expressed
       V4.10.4 - Added Kinetis I/O space 
  -->
 <root version="4.10.4">
-   <description>ARM device characteristics 1/7/2012</description>
+   <description>ARM device characteristics 4/5/2013</description>
    <sharedInformation>
       <flashProgram id="STM32F100xx-default-FlashProgram">
       &STM32F100xx-default-flashProgram;
@@ -63,6 +64,36 @@
          <partitionEntry description="DFlash=16, EEPROM=16"   eeSize="16K"    value="0x0A" />
          <partitionEntry description="DFlash=8, EEPROM=24"    eeSize="24K"    value="0x09" />
          <partitionEntry description="No DFlash, EEPROM=32"   eeSize="32K"    value="0x08" />
+      </flexNVMInfo>
+      <flexNVMInfo id="kinetis64K_FlexPartitionInfo" backingRatio="16">
+         <eeepromEntry   description="Unchanged/None"         eeeSize="0"     value="0xFF" />
+         <eeepromEntry   description="A=4, B=28"              eeeSize="32"    value="0x09" />
+         <eeepromEntry   description="A=8, B=24"              eeeSize="32"    value="0x19" />
+         <eeepromEntry   description="A=16, B=16"             eeeSize="32"    value="0x29" />
+         <eeepromEntry   description="A=8, B=56"              eeeSize="64"    value="0x08" />
+         <eeepromEntry   description="A=16, B=48"             eeeSize="64"    value="0x18" />
+         <eeepromEntry   description="A=32, B=32"             eeeSize="64"    value="0x28" />
+         <eeepromEntry   description="A=16, B=112"            eeeSize="128"   value="0x07" />
+         <eeepromEntry   description="A=32, B=96"             eeeSize="128"   value="0x17" />
+         <eeepromEntry   description="A=64, B=64"             eeeSize="128"   value="0x27" />
+         <eeepromEntry   description="A=32, B=224"            eeeSize="256"   value="0x06" />
+         <eeepromEntry   description="A=64, B=192"            eeeSize="256"   value="0x16" />
+         <eeepromEntry   description="A=128, B=128"           eeeSize="256"   value="0x26" />
+         <eeepromEntry   description="A=64, B=448"            eeeSize="512"   value="0x05" />
+         <eeepromEntry   description="A=128, B=384"           eeeSize="512"   value="0x15" />
+         <eeepromEntry   description="A=256, B=256"           eeeSize="512"   value="0x25" />
+         <eeepromEntry   description="A=128, B=896"           eeeSize="1024"  value="0x04" />
+         <eeepromEntry   description="A=256, B=768"           eeeSize="1024"  value="0x14" />
+         <eeepromEntry   description="A=512, B=512"           eeeSize="1024"  value="0x24" />
+         <eeepromEntry   description="A=256, B=1792"          eeeSize="2048"  value="0x03" />
+         <eeepromEntry   description="A=512, B=1536"          eeeSize="2048"  value="0x13" />
+         <eeepromEntry   description="A=1024, B=1024"         eeeSize="2048"  value="0x23" />
+         <eeepromEntry   description="A=512, B=3584"          eeeSize="4096"  value="0x02" />
+         <eeepromEntry   description="A=1024, B=3072"         eeeSize="4096"  value="0x12" />
+         <eeepromEntry   description="A=2048, B=2048"         eeeSize="4096"  value="0x22" />
+         <partitionEntry description="DFlash=64, No EEPROM"   eeSize="0K"     value="0xFF" />
+         <partitionEntry description="DFlash=32, EEPROM=32"   eeSize="32K"    value="0x03" />
+         <partitionEntry description="No DFlash, EEPROM=64"   eeSize="64K"    value="0x04" />
       </flexNVMInfo>
       <flexNVMInfo id="kinetis128K_FlexPartitionInfo" backingRatio="16">
          <eeepromEntry   description="Unchanged/None"         eeeSize="0"     value="0xFF" />
@@ -237,6 +268,19 @@
          <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="512K" />
       </memory>
+      <!-- 2K Block size -->
+      <memory id="kinetis128K_2KS_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-default-security" />
+         <memoryRange start="0x00000000" size="128K" />
+      </memory>
+      <memory id="kinetis256K_2KS_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-default-security" />
+         <memoryRange start="0x00000000" size="256K" />
+      </memory>
+      <memory id="kinetis512K_2KS_Flash_B0" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-default-security" />
+         <memoryRange start="0x00000000" size="512K" />
+      </memory>
       <!--  Flash Block 1-->
       <memory id="kinetis16K_Flash_B1" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" >
          <memoryRange start="0x00004000" size="16K" />
@@ -256,10 +300,18 @@
       <memory id="kinetis512K_Flash_B1" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" >
          <memoryRange start="0x00080000" size="512K" />
       </memory>
+      <!-- 2K Block size -->
+      <memory id="kinetis256K_2KS_Flash_B1" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4">
+         <memoryRange start="0x00040000" size="256K" />
+      </memory>
       <!--  flexNVM memory that may be used as EEEPROM backing store or dFlash -->
       <memory id="kinetis32K_FlexNVM" type="flexNVM" registerAddress="0x40020000"  sectorSize="1024" alignment="4">
          <flexNVMInfoRef ref="kinetis32K_FlexPartitionInfo" />
          <memoryRange start="0x10000000" size="32K" />
+      </memory>
+      <memory id="kinetis64Kx2KS_FlexNVM" type="flexNVM" registerAddress="0x40020000"  sectorSize="2024" alignment="4">
+         <flexNVMInfoRef ref="kinetis64K_FlexPartitionInfo" />
+         <memoryRange start="0x10000000" size="64K" />
       </memory>
       <memory id="kinetis128K_FlexNVM" type="flexNVM" registerAddress="0x40020000"  sectorSize="1024" alignment="4">
          <flexNVMInfoRef ref="kinetis128K_FlexPartitionInfo" />
@@ -290,10 +342,24 @@
          <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
          <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
       </memory>         
+      <!-- GNU Build options MKL devices -->
+      <gnuInfoList id="gnuSettings.mkl">
+         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"
+            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.cortexM0" 
+            command="-mcpu=cortex-m0" name="Cortex M0"/>
+         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mthumb" value="true" />
+      </gnuInfoList>
+      <!-- GNU Build options MK devices -->
+      <gnuInfoList id="gnuSettings.mk">
+         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"   
+            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.cortexM4" 
+            command="-mcpu=cortex-m4" name="Cortex M4"/>
+         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mthumb" value="true" />
+      </gnuInfoList>
    </sharedInformation>
    <deviceList>
 <!-- Default -->
-      <device name="_Default" family="ARM" isDefault="true">
+      <device name="_Default" family="CortexM4" isDefault="true">
          <!-- Regular flash or pFlash memory -->
          <memory type="flash" registerAddress="0x40020000" securityAddress="0x0400" sectorSize="1024" alignment="4">
             <memoryRange start="0x00000000" size="256K" />
@@ -309,6 +375,26 @@
             <memoryRange start="0x1FFFC000" end="0x20003FFF" />
          </memory>
          <sdidAddress value="0x40048024" />
+         <!-- 
+         // KL series
+         SDID[3..0]   = Pin ID         0,1,2,4,5,6,8 => 16,24,32,48,64,80,100p
+         SDID[6..4]   = "000"
+         SDID[11..7]  = Die ID      
+         SDID[15..12] = Rev ID
+         SDID[19..16] = RAM Size       0..7 => .5,1,2,4,8,16,32,64 KB
+         SDID[23..20] = Series ID      1 => Cortex M0+
+         SDID[27..24] = Sub-family ID  4..5 => KLx4..KLx5
+         SDID[31..28] = Family ID      0..4 => KL0x..KL4x
+         mask 0xFFFF0000
+
+         // K series
+         SDID[3..0]   = Pin ID         0,1,2,4,5,6,8 => 16,24,32,48,64,80,100p
+         SDID[6..4]   = Family ID      0=K10/12,1=K20/K22,2=K30/K11/K61,3=K40/K21,4=K60/K62,5=K70,6=KW24
+         SDID[11..7]  = DIEID "00010"/"00000"
+         SDID[15..12] = Rev ID
+         SDID[31..16] = 0
+         mask 0x0xFFFF0FF0
+         -->
          <sdidMask value="0xFFFF0FF0" />
          <sdid value="0x00000000" />
          <tclScriptRef ref="Kinetis-default-Scripts" />
@@ -316,548 +402,662 @@
          <note>Default ARM Device</note>
       </device>
 <!-- KL04 -->
-      <device name="MKL04Z8M4" family="ARM" subfamily="KL04">
+      <device name="MKL04Z8M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="kinetis8K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x04110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL04Z16M4" family="ARM" subfamily="KL04">
+      <device name="MKL04Z16M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="kinetis16K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x04120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL04Z32M4" family="ARM" subfamily="KL04">
+      <device name="MKL04Z32M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x04130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
 <!-- KL05 -->
-      <device name="MKL05Z8M4" family="ARM" subfamily="KL05">
+      <device name="MKL05Z8M4" family="CortexM0" subfamily="KL05">
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="kinetis8K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x05110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL05Z16M4" family="ARM" subfamily="KL05">
+      <device name="MKL05Z16M4" family="CortexM0" subfamily="KL05">
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="kinetis16K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x05120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL05Z32M4" family="ARM" subfamily="KL05">
+      <device name="MKL05Z32M4" family="CortexM0" subfamily="KL05">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x05130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
 <!-- KL14 -->
-      <device name="MKL14Z32M4" family="ARM" subfamily="KL14">
+      <device name="MKL14Z32M4" family="CortexM0" subfamily="KL14">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x14130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL14Z64M4" family="ARM" subfamily="KL14">
+      <device name="MKL14Z64M4" family="CortexM0" subfamily="KL14">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x14140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
 <!-- KL15 -->
-      <device name="MKL15Z32M4" family="ARM" subfamily="KL15">
+      <device name="MKL15Z32M4" family="CortexM0" subfamily="KL15">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x15130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL15Z64M4" family="ARM" subfamily="KL15">
+      <device name="MKL15Z64M4" family="CortexM0" subfamily="KL15">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x15140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL15Z128M4" family="ARM" subfamily="KL15">
+      <device name="MKL15Z128M4" family="CortexM0" subfamily="KL15">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x15150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
 <!-- KL24 -->
-      <device name="MKL24Z32M4" family="ARM" subfamily="KL24">
+      <device name="MKL24Z32M4" family="CortexM0" subfamily="KL24">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x24130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL24Z64M4" family="ARM" subfamily="KL24">
+      <device name="MKL24Z64M4" family="CortexM0" subfamily="KL24">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x24140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
 <!-- KL25 -->
-      <device name="MKL25Z32M4" family="ARM" subfamily="KL25">
+      <device name="MKL25Z32M4" family="CortexM0" subfamily="KL25">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x25130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL25Z64M4" family="ARM" subfamily="KL25">
+      <device name="MKL25Z64M4" family="CortexM0" subfamily="KL25">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x25140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
-      <device name="MKL25Z128M4" family="ARM" subfamily="KL25">
+      <device name="MKL25Z128M4" family="CortexM0" subfamily="KL25">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
          <sdid value="0x25150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-KLxx-FlashProgram" />
+         <gnuInfoListRef  ref="gnuSettings.mkl" />
       </device>
 <!-- MK10 -->
-      <device name="MK10DN128" family="ARM" subfamily="K10">
+      <device name="MK10DN128" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetis64K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DN32" family="ARM" subfamily="K10">
+      <device name="MK10DN32" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="kinetis16K_Flash_B0" />
          <memoryRef ref="kinetis16K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DN512" family="ARM" subfamily="K10">
+      <device name="MK10DN512" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DN64" family="ARM" subfamily="K10">
+      <device name="MK10DN64" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetis32K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DX128M10" family="ARM" subfamily="K10">
+      <device name="MK10DX128M10" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis128K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DX128M5" family="ARM" subfamily="K10">
+      <device name="MK10DX128M5" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DX128M7" family="ARM" subfamily="K10">
+      <device name="MK10DX128M7" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DX256M10" family="ARM" subfamily="K10">
+      <device name="MK10DX256M10" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DX256M7" family="ARM" subfamily="K10">
+      <device name="MK10DX256M7" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DX32" family="ARM" subfamily="K10">
+      <device name="MK10DX32" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK10DX64" family="ARM" subfamily="K10">
+      <device name="MK10DX64" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK20 -->
-      <device name="MK20DN128" family="ARM" subfamily="K20">
-         <memoryRef ref="kinetis16K_Ram" />
-         <memoryRef ref="kinetis64K_Flash_B0" />
-         <memoryRef ref="kinetis64K_Flash_B1" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-      </device>
-      <device name="MK20DN32" family="ARM" subfamily="K20">
+      <device name="MK20DN32" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="kinetis16K_Flash_B0" />
          <memoryRef ref="kinetis16K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20DN512" family="ARM" subfamily="K20">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="kinetis256K_Flash_B0" />
-         <memoryRef ref="kinetis256K_Flash_B1" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-      </device>
-      <device name="MK20DN64" family="ARM" subfamily="K20">
+      <device name="MK20DN64" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetis32K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20DX128M10" family="ARM" subfamily="K20">
+      <device name="MK20DN128" family="CortexM4" subfamily="K20">
+         <memoryRef ref="kinetis16K_Ram" />
+         <memoryRef ref="kinetis64K_Flash_B0" />
+         <memoryRef ref="kinetis64K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
+      </device>
+      <device name="MK20DN512" family="CortexM4" subfamily="K20">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="kinetis256K_Flash_B0" />
+         <memoryRef ref="kinetis256K_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
+      </device>
+      <device name="MK20DX128M10" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis128K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20DX128M5" family="ARM" subfamily="K20">
+      <device name="MK20DX128M5" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00001015" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20DX128M7" family="ARM" subfamily="K20">
+      <device name="MK20DX128M7" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20DX256M10" family="ARM" subfamily="K20">
+      <device name="MK20DX256M10" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20DX256M7" family="ARM" subfamily="K20">
+      <device name="MK20DX256M7" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20DX32" family="ARM" subfamily="K20">
+      <device name="MK20DX32" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis32K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20DX64" family="ARM" subfamily="K20">
+      <device name="MK20DX64" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20FN1M0" family="ARM" subfamily="K20">
+      <device name="MK20FN1M0" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetis512K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK20FX512" family="ARM" subfamily="K20">
+      <device name="MK20FX512" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_FlexNVM" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
+      </device>
+<!-- MK22 -->
+      <device name="MK22DX128M5" family="CortexM4" subfamily="K22">
+         <memoryRef ref="kinetis32K_Ram" />
+         <memoryRef ref="kinetis64Kx2KS_FlexNVM" />
+         <memoryRef ref="kinetis128K_2KS_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
+      </device>
+      <device name="MK22DX256M5" family="CortexM4" subfamily="K22">
+         <memoryRef ref="kinetis32K_Ram" />
+         <memoryRef ref="kinetis64Kx2KS_FlexNVM" />
+         <memoryRef ref="kinetis256K_2KS_Flash_B0" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
+      </device>
+      <device name="MK22DN512M5" family="CortexM4" subfamily="K22">
+         <memoryRef ref="kinetis64K_Ram" />
+         <memoryRef ref="kinetis256K_2KS_Flash_B0" />
+         <memoryRef ref="kinetis256K_2KS_Flash_B1" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00001215" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK30 -->
-      <device name="MK30DN512Z" family="ARM" subfamily="K30">
+      <device name="MK30DN512Z" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK30DX128" family="ARM" subfamily="K30">
+      <device name="MK30DX128" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK30DX128Z" family="ARM" subfamily="K30">
+      <device name="MK30DX128Z" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis128K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK30DX256" family="ARM" subfamily="K30">
+      <device name="MK30DX256" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK30DX256Z" family="ARM" subfamily="K30">
+      <device name="MK30DX256Z" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK30DX64" family="ARM" subfamily="K30">
+      <device name="MK30DX64" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK40 -->
-      <device name="MK40DN512Z" family="ARM" subfamily="K40">
+      <device name="MK40DN512Z" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK40DX128" family="ARM" subfamily="K40">
+      <device name="MK40DX128" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK40DX128Z" family="ARM" subfamily="K40">
+      <device name="MK40DX128Z" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis128K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK40DX256" family="ARM" subfamily="K40">
+      <device name="MK40DX256" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK40DX256Z" family="ARM" subfamily="K40">
+      <device name="MK40DX256Z" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK40DX64" family="ARM" subfamily="K40">
+      <device name="MK40DX64" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis64K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK50 -->
-      <device name="MK50DN512Z" family="ARM" subfamily="K50">
+      <device name="MK50DN512Z" family="CortexM4" subfamily="K50">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK50DX128" family="ARM" subfamily="K50">
+      <device name="MK50DX128" family="CortexM4" subfamily="K50">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK50DX256" family="ARM" subfamily="K50">
+      <device name="MK50DX256" family="CortexM4" subfamily="K50">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK50DX256Z" family="ARM" subfamily="K50">
+      <device name="MK50DX256Z" family="CortexM4" subfamily="K50">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK51 -->
-      <device name="MK51DN256Z" family="ARM" subfamily="K51">
+      <device name="MK51DN256Z" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetis128K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK51DN512Z" family="ARM" subfamily="K51">
+      <device name="MK51DN512Z" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK51DX128" family="ARM" subfamily="K51">
+      <device name="MK51DX128" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK51DX256" family="ARM" subfamily="K51">
+      <device name="MK51DX256" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis32K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK51DX256Z" family="ARM" subfamily="K51">
+      <device name="MK51DX256Z" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK52 -->
-      <device name="MK52DN512Z" family="ARM" subfamily="K53">
+      <device name="MK52DN512Z" family="CortexM4" subfamily="K53">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK53 -->
-      <device name="MK53DN512Z" family="ARM" subfamily="K53">
+      <device name="MK53DN512Z" family="CortexM4" subfamily="K53">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK53DX256Z" family="ARM" subfamily="K53">
+      <device name="MK53DX256Z" family="CortexM4" subfamily="K53">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK60 -->
-      <device name="MK60DN256Z" family="ARM" subfamily="K60">
+      <device name="MK60DN256Z" family="CortexM4" subfamily="K60">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis128K_Flash_B0" />
          <memoryRef ref="kinetis128K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK60DN512Z" family="ARM" subfamily="K60">
+      <device name="MK60DN512Z" family="CortexM4" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetis256K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK60DX256Z" family="ARM" subfamily="K60">
+      <device name="MK60DX256Z" family="CortexM4" subfamily="K60">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="kinetis256K_FlexNVM" />
          <memoryRef ref="kinetis256K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK60FN1M0" family="ARM" subfamily="K60">
+      <device name="MK60FN1M0" family="CortexM4" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetis512K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK60FX512" family="ARM" subfamily="K60">
+      <device name="MK60FX512" family="CortexM4" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_FlexNVM" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK61 -->
-      <device name="MK61FN1M0" family="ARM" subfamily="K61">
+      <device name="MK61FN1M0" family="CortexM4" subfamily="K61">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetis512K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK61FX512" family="ARM" subfamily="K61">
+      <device name="MK61FX512" family="CortexM4" subfamily="K61">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_FlexNVM" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- MK70 -->
-      <device name="MK70FN1M0" family="ARM" subfamily="K70">
+      <device name="MK70FN1M0" family="CortexM4" subfamily="K70">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetis512K_Flash_B1" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
-      <device name="MK70FX512" family="ARM" subfamily="K70">
+      <device name="MK70FX512" family="CortexM4" subfamily="K70">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="kinetis512K_FlexNVM" />
          <memoryRef ref="kinetis512K_Flash_B0" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
+         <gnuInfoListRef  ref="gnuSettings.mk" />
       </device>
 <!-- Aliases -->     
       <device name="PK10N512"      alias="MK10DN512"/>
@@ -975,9 +1175,9 @@
       <device name="KL15Z128M4"    alias="MKL15Z128M4"    hidden="true"/>
       <device name="KL24Z32M4"     alias="MKL24Z32M4"     hidden="true"/>
       <device name="KL24Z64M4"     alias="MKL24Z64M4"     hidden="true"/>
-      <device name="KL25Z32M4"     alias="MKL25Z32M4"      hidden="true"/>
-      <device name="KL25Z64M4"     alias="MKL25Z64M4"      hidden="true"/>
-      <device name="KL25Z128M4"    alias="MKL25Z128M4"     hidden="true"/>
+      <device name="KL25Z32M4"     alias="MKL25Z32M4"     hidden="true"/>
+      <device name="KL25Z64M4"     alias="MKL25Z64M4"     hidden="true"/>
+      <device name="KL25Z128M4"    alias="MKL25Z128M4"    hidden="true"/>
       &Custom-Devices;
 &Old-Kinetis-Devices;
 &STM-Devices;

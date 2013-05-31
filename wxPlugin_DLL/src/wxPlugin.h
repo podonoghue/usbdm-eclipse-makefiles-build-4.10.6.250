@@ -4,7 +4,6 @@
  *  Created on: 28/04/2011
  *      Author: PODonoghue
  */
-
 #ifndef WXPLUGIN_H_
 #define WXPLUGIN_H_
 
@@ -15,11 +14,14 @@
 #define EXTERN_C
 #endif
 
+//=========================================================
+// Linking against wxPlugin or building DLL
+
 #if defined(_WIN32) && !defined (WINAPI)
    #define WINAPI __attribute__((__stdcall__))
 #endif
 
-#if defined(_WIN32) && !defined(DLL_LOCAL)
+#if defined(_WIN32)
    // Functions exported from a library
    #define DLL_EXPORT WINAPI __declspec(dllexport)
 
@@ -28,11 +30,10 @@
 
    // Functions local to a library
    #define DLL_LOCAL
-#endif
-
-#if !defined(DLL_LOCAL)
+#else
    // Functions exported from a library
    #define DLL_EXPORT __attribute__ ((visibility ("default")))
+
    // Functions imported from a library
    #define DLL_IMPORT __attribute__ ((visibility ("default")))
 
@@ -43,6 +44,7 @@
 #ifdef WXPLUGIN_DLL_EXPORTS
    //! These definitions are used when USBDM_API is being exported (creating DLL)
    #define WXPLUGIN_API      EXTERN_C DLL_EXPORT
+   #define WXPLUGIN_LOCAL             DLL_LOCAL
 #else
    //! These definitions are used when USBDM_API is being imported (linking against DLL)
    #define WXPLUGIN_API      EXTERN_C DLL_IMPORT
@@ -52,7 +54,7 @@
 #include <wx/defs.h>
 
 #if defined __cplusplus
-    extern "C" {
+   extern "C" {
 #endif
 
 // Opaque type

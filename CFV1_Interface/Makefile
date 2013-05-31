@@ -21,33 +21,28 @@ usbdm-$(target)-gdbServer:
 usbdm-$(target)-gdbServer-debug:
 	$(MAKE) exe -f ../GdbTarget.mk        BUILDDIR=$@ MODULE=gdb        CDEFS="$(GDB_DEFS)" DEBUG='Y'
 
-allCommon: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug usbdm-$(target)-gdi usbdm-$(target)-gdi-debug
+allCommon: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug 
+allCommon: usbdm-$(target)-gdi usbdm-$(target)-gdi-debug
+allCommon: usbdm-$(target)-gdbServer usbdm-$(target)-gdbServer-debug
 
 cleanCommon:
 	${RMDIR} $(TARGET)_FlashProgrammer
 	${RMDIR} $(TARGET)_FlashProgrammer-debug
 	${RMDIR} usbdm-$(target)-gdi
 	${RMDIR} usbdm-$(target)-gdi-debug
-
-ifeq ($(UNAME_S),Windows)
-allWindows: usbdm-$(target)-gdbServer usbdm-$(target)-gdbServer-debug
-
-cleanWindows:
 	${RMDIR} usbdm-$(target)-gdbServer
 	${RMDIR} usbdm-$(target)-gdbServer-debug
-else
-allWindows:
-cleanWindows:
-endif
 
-all: allCommon allWindows
+all: allCommon
+
+# used for quick test builds
 #Test: $(TARGET)_FlashProgrammer-debug
 Test: usbdm-$(target)-gdi-debug
 #Test: usbdm-$(target)-gdbServer-debug
 
-clean: cleanCommon cleanWindows
+clean: cleanCommon
 
-.PHONY: all clean 
+.PHONY: all clean test
 .PHONY: allCommon allWindows cleanCommon cleanWIndows
 .PHONY: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug 
 .PHONY: usbdm-$(target)-gdi       usbdm-$(target)-gdi-debug 

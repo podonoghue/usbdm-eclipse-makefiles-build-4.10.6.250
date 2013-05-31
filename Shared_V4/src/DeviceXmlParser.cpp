@@ -24,12 +24,13 @@
 
     \verbatim
    Change History
-   -==============================================================================
-   |  6 Oct 2012 | 4.10.2 Fixed default SDID etc                            - pgo
+   -=====================================================================================
+   |        2013 | Added GNU information parsing                            - pgo 4.10.4?
+   |  6 Oct 2012 | Fixed default SDID etc                                   - pgo 4.10.2
    |    Aug 2011 | Added I/O memory type                                    - pgo
    |    Aug 2011 | Removed Boost                                            - pgo
    |    Apr 2011 | Added TCL scripts etc                                    - pgo
-   +==============================================================================
+   +======================================================================================
    \endverbatim
 */
 
@@ -62,13 +63,17 @@ XERCES_CPP_NAMESPACE_USE
 #include "Names.h"
 
 #include "Log.h"
-#include "utils.h"
+#include "Utils.h"
 
 char DeviceXmlParser::currentDeviceName[] = "Doing preamble";
 
 static void strUpper(char *s) {
+   if (s == NULL) {
+	   return;
+   }
    while (*s != '\0') {
-      *s++ = ::toupper(*s);
+      int ch = ::toupper(*s);
+      *s++ = ch;
    }
 }
 
@@ -180,19 +185,19 @@ bool strToULong(const char *start, char **end, long *value) {
 //   while (isspace(*start)) {
 //      start++;
 //   }
-//   errno = 0;
+   errno = 0;
    unsigned long value_t = strtoul(start, &end_t, 0);
 
 //   Logging::print("strToULong() - s=\'%s\', e='%s', val=%ld(0x%lX)\n", start, end_t, value_t, value_t);
    if (errno != 0) { // no String found
-//      Logging::print("strToLong() - No number found\n");
+      Logging::print("strToULong() - errno != 0 - No number found\n");
       return false;
    }
    if (end_t == start) { // no String found
-//      Logging::print("strToLong() - No number found\n");
+      Logging::print("strToULong() - end_t == start - No number found\n");
       return false;
    }
-   if ((ULONG_MAX == value_t) && ERANGE == errno) { // too large
+   if ((ULONG_MAX == value_t) && (ERANGE == errno)) { // too large
      Logging::print("strToULong() - Number too large\n");
      return false;
    }
@@ -375,6 +380,9 @@ DeviceXmlParser::DeviceXmlParser(DeviceDataBase *deviceDataBase)
    tag_flexNvmInfoRef("flexNVMInfoRef"),
    tag_eeepromEntry("eeepromEntry"),
    tag_partitionEntry("partitionEntry"),
+   tag_gnuInfoList("gnuInfoList"),
+   tag_gnuInfoListRef("gnuInfoListRef"),
+   tag_gnuInfo("gnuInfo"),
 
    attr_name("name"),
    attr_isDefault("isDefault"),
@@ -406,6 +414,7 @@ DeviceXmlParser::DeviceXmlParser(DeviceDataBase *deviceDataBase)
    attr_eeeSize("eeeSize"),
    attr_eeSize("eeSize"),
    attr_alignment("alignment"),
+   attr_path("path"),
 
    isDefault(false),
    deviceDataBase(deviceDataBase),
@@ -493,12 +502,12 @@ SecurityInfoPtr DeviceXmlParser::parseSecurityInfo(DOMElement *currentProperty) 
    // Type of node (must be a flashProgram)
    DualString sTag (currentProperty->getTagName());
    if (!XMLString::equals(sTag.asXMLString(), tag_securityInfo.asXMLString())) {
-      throw MyException(string("DeviceXmlParser::parseSecurity() - Unexpected tag = ")+sTag.asCString());
+      throw MyException(string("DeviceXmlParser::parseSecurityInfo() - Unexpected tag = ")+sTag.asCString());
    }
    long size = 0;
    DualString sSize(currentProperty->getAttribute(attr_size.asXMLString()));
    if (!strToULong(sSize.asCString(), NULL, &size)) {
-      throw MyException(string("DeviceXmlParser::parseSecurity() - Illegal size in securityInfo = ")+sSize.asCString());
+      throw MyException(string("DeviceXmlParser::parseSecurityInfo() - Illegal size in securityInfo = ")+sSize.asCString());
    }
    SecurityInfo::SecType type;
    DualString sType(currentProperty->getAttribute(attr_type.asXMLString()));
@@ -512,11 +521,11 @@ SecurityInfoPtr DeviceXmlParser::parseSecurityInfo(DOMElement *currentProperty) 
       type = SecurityInfo::custom;
    }
    else {
-      throw MyException(string("DeviceXmlParser::parseSecurity() - Illegal type in securityInfo = ")+sType.asCString());
+      throw MyException(string("DeviceXmlParser::parseSecurityInfo() - Illegal type in securityInfo = ")+sType.asCString());
    }
    DualString text(currentProperty->getTextContent());
    SecurityInfoPtr securityInfoPtr(new SecurityInfo(size, type, filter(text.asCString(), "0123456789abcdefABCDEF")));
-//   Logging::print("DeviceXmlParser::parseSecurity():\n");
+//   Logging::print("DeviceXmlParser::parseSecurityInfo():\n");
 //   Logging::print(securityInfo->toString().c_str());
    if (currentProperty->hasAttribute(attr_id.asXMLString())) {
       DualString sId(currentProperty->getAttribute(attr_id.asXMLString()));
@@ -681,6 +690,10 @@ void DeviceXmlParser::parseSharedXML(void) {
          else if (XMLString::equals(sTag.asXMLString(), tag_memory.asXMLString())) {
             // Parse <memory>
             deviceDataBase->addSharedData(string(sId.asCString()), parseMemory(sharedInformationElement));
+         }
+         else if (XMLString::equals(sTag.asXMLString(), tag_gnuInfoList.asXMLString())) {
+            // Parse <memory>
+//            deviceDataBase->addSharedData(string(sId.asCString()), parseGnuInfoList(sharedInformationElement));
          }
          else {
             throw MyException(string("DeviceXmlParser::parseSharedXML() - Unexpected Tag = ")+sTag.asCString());
@@ -990,10 +1003,10 @@ MemoryRegionPtr DeviceXmlParser::parseMemory(DOMElement *currentProperty) {
       DualString sMemoryEndAddress(memoryRangeIt.getCurrentElement()->getAttribute(attr_end.asXMLString()));
       DualString sMemorySize(memoryRangeIt.getCurrentElement()->getAttribute(attr_size.asXMLString()));
 
-      long memoryStartAddress;
-      long memoryMiddleAddress;
-      long memoryEndAddress;
-      long memorySize;
+      long memoryStartAddress  = 0;
+      long memoryMiddleAddress = 0;
+      long memoryEndAddress    = 0;
+      long memorySize          = 0;
 
       bool addressOK = true;
       if (startGiven && endGiven) {
@@ -1042,10 +1055,10 @@ MemoryRegionPtr DeviceXmlParser::parseMemory(DOMElement *currentProperty) {
       DualString sPageEnd(memoryRangeIt.getCurrentElement()->getAttribute(attr_pageEnd.asXMLString()));
       DualString sPages(memoryRangeIt.getCurrentElement()->getAttribute(attr_pages.asXMLString()));
 
-      long pageStart;
-      long pageEnd;
-      long pages;
-      bool pageOK = true;
+      long pageStart = 0;
+      long pageEnd   = 0;
+      long pages     = 0;
+      bool pageOK    = true;
       // If paged, assume page size is memory range
       const long pageSize = memoryEndAddress - memoryStartAddress +1;
 
@@ -1133,6 +1146,38 @@ MemoryRegionPtr DeviceXmlParser::parseMemory(DOMElement *currentProperty) {
       //      Logging::print("DeviceXmlParser::parseMemory((): Current device = %s, 0x%02X:[0x%06X, 0x%06X]\n", currentDeviceName, pageNo, memoryStartAddress, memoryEndAddress);
    }
    return memoryRegionPtr;
+}
+
+//! Create memory description from node
+//!
+//! @param currentProperty - Present position in XML parse
+//!
+//! @return == 0 - success\n
+//!         != 0 - fail
+//!
+GnuInfoPtr DeviceXmlParser::parseGnuInfo(DOMElement *currentProperty) {
+
+//   <!ELEMENT gnuInfo (#PCDATA)>
+//        <!ATTLIST gnuInfo id    CDATA #REQUIRED>
+//        <!ATTLIST gnuInfo value CDATA #IMPLIED>
+//        <!ATTLIST gnuInfo path  CDATA #IMPLIED>
+   GnuInfoPtr gnuInfoPtr(new GnuInfo());
+   return gnuInfoPtr;
+}
+
+//! Create memory description from node
+//!
+//! @param currentProperty - Present position in XML parse
+//!
+//! @return == 0 - success\n
+//!         != 0 - fail
+//!
+GnuInfoListPtr DeviceXmlParser::parseGnuInfoList(DOMElement *currentProperty) {
+
+//   <!ELEMENT gnuInfoList (gnuInfo)+>
+//        <!ATTLIST gnuInfoList id ID #IMPLIED>
+   GnuInfoListPtr gnuInfoListPtr(new GnuInfoList());
+   return gnuInfoListPtr;
 }
 
 //! Create device description from node
@@ -1357,6 +1402,13 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
             defFlashProgram = itDev->getFlashProgram();
          }
       }
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_gnuInfoList.asXMLString())) {
+         // <gnuInfoList>
+         parseGnuInfoList(currentProperty);
+      }
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_gnuInfoListRef.asXMLString())) {
+         // <gnuInfoListRef>
+      }
       else {
          throw MyException(string("DeviceXmlParser::parseDevice() - Unknown tag - ")+propertyTag.asCString());
       }
@@ -1480,7 +1532,7 @@ void DeviceXmlParser::parseDeviceXML(void) {
 //!
 void DeviceXmlParser::loadDeviceData(const std::string &deviceFilePath, DeviceDataBase *deviceDataBase) {
    Logging log("DeviceXmlParser::loadDeviceData");
-   Logging::setLoggingLevel(0); // Don't log below this level
+   Logging::setLoggingLevel(100); // Don't log below this level
    try {
       xercesc::XMLPlatformUtils::Initialize();
    }

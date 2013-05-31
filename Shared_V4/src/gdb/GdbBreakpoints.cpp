@@ -3,6 +3,13 @@
  *
  *  Created on: 28/07/2011
  *      Author: podonoghue
+\verbatim
+Change History
+-==================================================================================
+| 31 Mar 2013 | Query Kinetis devices for number of breakpoints.              - pgo
+| 23 Apr 2012 | Created                                                       - pgo
++==================================================================================
+\endverbatim
  */
 #include <stddef.h>
 #include "Common.h"
@@ -43,12 +50,15 @@
 #if (TARGET == CFV1) || (TARGET == CFVx)
 #define MAX_MEMORY_BREAKPOINTS   (10)
 #define MAX_HARDWARE_BREAKPOINTS (4)
-#define MAX_DATA_WATCHES     (1)   // Not implemented
+#define MAX_DATA_WATCHES         (1)   // Not implemented
 #elif (TARGET == ARM) || (TARGET == ARM_SWD)
 #define MAX_MEMORY_BREAKPOINTS   (10)
-#define MAX_HARDWARE_BREAKPOINTS (6)
-#define MAX_DATA_WATCHES         (4)
+#define MAX_HARDWARE_BREAKPOINTS (10)
+#define MAX_DATA_WATCHES         (16)
 #endif
+
+static int maxNumHardwareBreakPoints = 0;
+static int maxNumDataWatches         = 0;
 
 const char *getBreakpointName(breakType type) {
 static const char *names[] = {
@@ -110,6 +120,7 @@ static memoryBreakInfo *findMemoryBreakpoint(uint32_t address) {
       if (bpPtr->inUse && (bpPtr->address == address))
          return bpPtr;
    }
+   Logging::print("findMemoryBreakpoint() - not found\n");
    return NULL;
 }
 
@@ -127,6 +138,7 @@ static memoryBreakInfo *findFreeMemoryBreakpoint(void) {
       if (!bpPtr->inUse)
          return bpPtr;
    }
+   Logging::print("findFreeMemoryBreakpoint() - no free breakpoints\n");
    return NULL;
 }
 
@@ -156,7 +168,7 @@ static void clearAllHardwareBreakpoints(void) {
 static hardwareBreakInfo *findHardwareBreakpoint(uint32_t address) {
    hardwareBreakInfo *bpPtr;
    for (bpPtr = hardwareBreakpoints;
-        bpPtr < hardwareBreakpoints+MAX_HARDWARE_BREAKPOINTS;
+        bpPtr < hardwareBreakpoints+maxNumHardwareBreakPoints;
         bpPtr++) {
 //      if (bpPtr->inUse)
 //         Logging::print("findHardwareBreakpoint() - checking PC=0x%08X against 0x%08X\n",
@@ -164,17 +176,19 @@ static hardwareBreakInfo *findHardwareBreakpoint(uint32_t address) {
       if (bpPtr->inUse && (bpPtr->address == address))
          return bpPtr;
    }
+   Logging::print("findHardwareBreakpoint() - not found\n");
    return NULL;
 }
 
 static hardwareBreakInfo *findFreeHardwareBreakpoint(void) {
    hardwareBreakInfo *bpPtr;
    for (bpPtr = hardwareBreakpoints;
-        bpPtr < hardwareBreakpoints+MAX_HARDWARE_BREAKPOINTS;
+        bpPtr < hardwareBreakpoints+maxNumHardwareBreakPoints;
         bpPtr++) {
       if (!bpPtr->inUse)
          return bpPtr;
    }
+   Logging::print("findFreeHardwareBreakpoint() - no free breakpoints\n");
    return NULL;
 }
 
@@ -206,7 +220,7 @@ static void clearAllDataWatchPoints(void) {
 static dataBreakInfo *findDataWatchPoint(uint32_t address) {
    dataBreakInfo *bpPtr;
    for (bpPtr = dataWatchPoints;
-        bpPtr < dataWatchPoints+MAX_DATA_WATCHES;
+        bpPtr < dataWatchPoints+maxNumDataWatches;
         bpPtr++) {
       if (bpPtr->inUse && (bpPtr->address == address))
          return bpPtr;
@@ -217,7 +231,7 @@ static dataBreakInfo *findDataWatchPoint(uint32_t address) {
 static dataBreakInfo *findFreeDataWatchPoint(void) {
    dataBreakInfo *bpPtr;
    for (bpPtr = dataWatchPoints;
-        bpPtr < dataWatchPoints+MAX_DATA_WATCHES;
+        bpPtr < dataWatchPoints+maxNumDataWatches;
         bpPtr++) {
       if (!bpPtr->inUse)
          return bpPtr;
@@ -231,7 +245,7 @@ static dataBreakInfo *findFreeDataWatchPoint(void) {
 //! @param address  address for breakpoint/watchpoint
 //! @param size     range to watch (watchpoint only)
 //!
-//! @return true => OK\n
+//! @return true  => OK\n
 //!         false => error
 //!
 //! @note writeWatch, readWatch, accessWatch not currently working
@@ -486,7 +500,7 @@ void activateBreakpoints(void) {
    }
    // Hardware breakpoints
    uint32_t fp_ctrl = FP_CTRL_DISABLE;
-   for (int breakPtNum=0; breakPtNum<MAX_HARDWARE_BREAKPOINTS; breakPtNum++) {
+   for (int breakPtNum=0; breakPtNum<maxNumHardwareBreakPoints; breakPtNum++) {
       if (hardwareBreakpoints[breakPtNum].inUse) {
          Logging::print("activateBreakpoints(%s@%08X)\n", getBreakpointName(hardBreak),
                                                  hardwareBreakpoints[breakPtNum].address&~0x1);
@@ -500,7 +514,7 @@ void activateBreakpoints(void) {
    }
    USBDM_WriteMemory(4, 4, FP_CTRL, getData4x8Le(fp_ctrl));
    // Hardware watches
-   for (int watchPtNum=0; watchPtNum<MAX_DATA_WATCHES; watchPtNum++) {
+   for (int watchPtNum=0; watchPtNum<maxNumDataWatches; watchPtNum++) {
       if (dataWatchPoints[watchPtNum].inUse) {
          unsigned size       = dataWatchPoints[watchPtNum].size;
          unsigned bpSize     = 1;
@@ -558,6 +572,15 @@ void deactivateBreakpoints(void) {
 //! No adjustment needed for memory breakpoints
 //!
 void checkAndAdjustBreakpointHalt(void) {
+   unsigned long pcValue;
+   unsigned char currentInstruction[2];
+   USBDM_ReadPC(&pcValue);
+   USBDM_ReadMemory(MS_Word, 2, pcValue, currentInstruction);
+   if ((currentInstruction[0] == 0xAB) && (currentInstruction[1] == 0xBE)) {
+      // Adjust location for hosted BKPT #0xAB
+      pcValue += 2;
+      USBDM_WritePC(pcValue);
+   }
 }
 
 #else
@@ -569,3 +592,49 @@ void clearAllBreakpoints(void) {
    clearAllHardwareBreakpoints();
    clearAllDataWatchPoints();
 }
+
+#if (TARGET == CFV1) || (TARGET == CFVx)
+
+// Initialise Breakpoint before first use
+USBDM_ErrorCode initBreakpoints() {
+   maxNumHardwareBreakPoints = MAX_HARDWARE_BREAKPOINTS;
+   maxNumDataWatches         = MAX_DATA_WATCHES;
+   Logging::print("initBreakpoints() - Number of Hardware breakpoints = %d\n", maxNumHardwareBreakPoints);
+   return BDM_RC_OK;
+};
+#elif (TARGET == ARM) || (TARGET == ARM_SWD)
+
+uint32_t getU32Le(uint8_t data[]) {
+   return data[0]+(data[1]<<8)+(data[2]<<16)+(data[3]<<24);
+}
+
+// Initialise Breakpoint before first use
+//
+USBDM_ErrorCode initBreakpoints() {
+   uint8_t readDataBuff[4];
+   maxNumHardwareBreakPoints = 0;
+   maxNumDataWatches         = 0;
+
+   USBDM_ErrorCode rc = USBDM_ReadMemory(4, 4, FP_CTRL, readDataBuff);
+   if (rc != BDM_RC_OK) {
+      return rc;
+   }
+   uint32_t fp_ctrl_value = getU32Le(readDataBuff);
+   maxNumHardwareBreakPoints = (((fp_ctrl_value>>(12-4)))&(0x7<<4))+(((fp_ctrl_value>>(4-0)))&(0xF<<0));
+   if (maxNumHardwareBreakPoints>MAX_HARDWARE_BREAKPOINTS) {
+      maxNumHardwareBreakPoints = MAX_HARDWARE_BREAKPOINTS;
+   }
+   Logging::print("initBreakpoints() - FP_CTRL = 0x%08X, Number of Hardware breakpoints = %d\n", fp_ctrl_value, maxNumHardwareBreakPoints);
+   rc = USBDM_ReadMemory(4, 4, DWT_CTRL, readDataBuff);
+   if (rc != BDM_RC_OK) {
+      return rc;
+   }
+   uint32_t dwt_ctrl_value = getU32Le(readDataBuff);
+   maxNumDataWatches = (((dwt_ctrl_value>>28))&0xF);
+   if (maxNumDataWatches>MAX_DATA_WATCHES) {
+      maxNumDataWatches = MAX_DATA_WATCHES;
+   }
+   Logging::print("initBreakpoints() - DWT_CTRL = 0x%08X, Number of Data watchpoints = %d\n", dwt_ctrl_value, maxNumDataWatches);
+   return BDM_RC_OK;
+}
+#endif

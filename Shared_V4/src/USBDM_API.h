@@ -721,7 +721,7 @@ typedef enum {
    SI_DISABLE        = -1,                //!< Release control (or use CMD_SET_TARGET)
 } InterfaceLevelMasks_t ;
 
-//! Control signal masks for CMD_USBDM_CONTROL_PIN
+//! Control signal masks for CMD_USBDM_CONTROL_PIN (USBDM_ControlPins())
 typedef enum {
    PIN_BKGD_OFFS      = (0),
    PIN_BKGD           = (3<<PIN_BKGD_OFFS),  //!< Mask for BKGD values (PIN_BKGD_LOW, PIN_BKGD_HIGH & PIN_BKGD_3STATE)

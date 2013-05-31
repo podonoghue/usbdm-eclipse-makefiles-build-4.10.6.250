@@ -12,6 +12,11 @@ typedef int bool;
 #include <errno.h>
 #include <ctype.h>
 
+#ifdef __unix__
+#include <dlfcn.h>
+#define WXSTUB_DLL_NAME "libusbdm-wxStub.so"
+#endif
+
 #include "USBDM_API.h"
 #include "USBDM_DSC_API.h"
 #include "USBDM_API_Private.h"
@@ -29,9 +34,7 @@ typedef int bool;
 #include "Names.h"
 #include "Common.h"
 #include "Names.h"
-//#ifdef INTERACTIVE
 #include "wxPlugin.h"
-//#endif
 #include "TargetDefines.h"
 
 #ifndef _WIN32
@@ -441,22 +444,6 @@ static int setTargetType(TargetType_t target) {
       pUSBDM_ReadCReg      = errorHandler;
       pUSBDM_WriteCReg     = errorHandler;
    }
-   else if (targetType == T_ARM) {
-      bigEndian = FALSE;
-      pUSBDM_Connect       = USBDM_Connect;
-      pUSBDM_TargetGo      = USBDM_TargetGo;
-      pUSBDM_TargetHalt    = USBDM_TargetHalt;
-      pUSBDM_TargetReset   = USBDM_TargetReset;
-      pUSBDM_TargetStep    = USBDM_TargetStep;
-      pUSBDM_ReadMemory    = USBDM_ReadMemory;
-      pUSBDM_WriteMemory   = USBDM_WriteMemory;
-      pUSBDM_ReadCReg      = USBDM_ReadCReg;
-      pUSBDM_WriteCReg     = USBDM_WriteCReg;
-      pUSBDM_ReadDReg      = USBDM_ReadDReg;
-      pUSBDM_WriteDReg     = USBDM_WriteDReg;
-      pUSBDM_ReadReg       = USBDM_ReadReg;
-      pUSBDM_WriteReg      = USBDM_WriteReg;
-   }
    else if (targetType == T_MC56F80xx) {
       bigEndian = FALSE;
       pUSBDM_Connect       = DSC_Connect;
@@ -472,6 +459,22 @@ static int setTargetType(TargetType_t target) {
       pUSBDM_WriteDReg     = errorHandler;
       pUSBDM_ReadReg       = DSC_ReadRegister;
       pUSBDM_WriteReg      = DSC_WriteRegister;
+   }
+   else if (targetType == T_ARM) {
+      bigEndian = FALSE;
+      pUSBDM_Connect       = USBDM_Connect;
+      pUSBDM_TargetGo      = USBDM_TargetGo;
+      pUSBDM_TargetHalt    = USBDM_TargetHalt;
+      pUSBDM_TargetReset   = USBDM_TargetReset;
+      pUSBDM_TargetStep    = USBDM_TargetStep;
+      pUSBDM_ReadMemory    = USBDM_ReadMemory;
+      pUSBDM_WriteMemory   = USBDM_WriteMemory;
+      pUSBDM_ReadCReg      = USBDM_ReadCReg;
+      pUSBDM_WriteCReg     = USBDM_WriteCReg;
+      pUSBDM_ReadDReg      = USBDM_ReadDReg;
+      pUSBDM_WriteDReg     = USBDM_WriteDReg;
+      pUSBDM_ReadReg       = USBDM_ReadReg;
+      pUSBDM_WriteReg      = USBDM_WriteReg;
    }
    else {
       bigEndian = TRUE;
@@ -850,14 +853,32 @@ static int stepCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, T
 
    case T_CFV1 :
       while (count-->0) {
-         USBDM_ReadCReg(0xF, &oldPC);
+         USBDM_ReadCReg(CFV1_CRegPC, &oldPC);
          pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction);
          swapEndian32(&oldInstruction);
          if (checkUsbdmRC(interp,  pUSBDM_TargetStep()) != 0) {
             printf(":step - Failed\n");
             return TCL_ERROR;
          }
-         USBDM_ReadCReg(0xF, &nextPC);
+         USBDM_ReadCReg(CFV1_CRegPC, &nextPC);
+         pUSBDM_ReadMemory(1,4,nextPC,(uint8_t*)&nextInstruction);
+         swapEndian32(&nextInstruction);
+         printf(":step, from PC = 0x%8.8X : 0x%4.4X 0x%4.4X, to PC = 0x%8.8X : 0x%4.4X 0x%4.4X, \n",
+               (int)oldPC,  oldInstruction>>16,  oldInstruction&0xFFFF,
+               (int)nextPC, nextInstruction>>16, nextInstruction&0xFFFF);
+      }
+      break;
+
+   case T_CFVx :
+      while (count-->0) {
+         USBDM_ReadCReg(CFVx_CRegPC, &oldPC);
+         pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction);
+         swapEndian32(&oldInstruction);
+         if (checkUsbdmRC(interp,  pUSBDM_TargetStep()) != 0) {
+            printf(":step - Failed\n");
+            return TCL_ERROR;
+         }
+         USBDM_ReadCReg(CFVx_CRegPC, &nextPC);
          pUSBDM_ReadMemory(1,4,nextPC,(uint8_t*)&nextInstruction);
          swapEndian32(&nextInstruction);
          printf(":step, from PC = 0x%8.8X : 0x%4.4X 0x%4.4X, to PC = 0x%8.8X : 0x%4.4X 0x%4.4X, \n",
@@ -1600,7 +1621,6 @@ static int wRegCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, T
 // wreg <addr> <data>
    int  data;
    int  regNo;
-   int  rc;
 
    if (argc != 3) {
       Tcl_WrongNumArgs(interp, 1, argv, "<address> <value>");
@@ -2571,7 +2591,7 @@ static int syncCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, T
 static int debugCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
 // debug <control_value>
    const char *currentToken;
-   int command, arg1;
+   int command, arg1 = 0;
    unsigned char usb_data[20] = {0};
    unsigned temp;
 
@@ -2611,17 +2631,30 @@ static int debugCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, 
          printf(":debug %10s => Vdd = %2.1f V\n", getDebugCommandName(command), 5.0*usb_data[1]/255);
          break;
       case BDM_DBG_SWD:
-         printf(":debug %10s => "
+         printf(":debug %10s =>\n "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
+               "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
+               "\n"
+               "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
+               "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
+               "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
+               "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
+               "\n"
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "\n",
                 getDebugCommandName(command),
-                usb_data[1], usb_data[1], usb_data[2], usb_data[2],
-                usb_data[3], usb_data[3], usb_data[4], usb_data[4],
-                usb_data[5], usb_data[5], usb_data[6], usb_data[6],
-                usb_data[7], usb_data[7], usb_data[8], usb_data[8]);
+                usb_data[1],  usb_data[1],  usb_data[2],  usb_data[2],
+                usb_data[3],  usb_data[3],  usb_data[4],  usb_data[4],
+                usb_data[5],  usb_data[5],  usb_data[6],  usb_data[6],
+                usb_data[7],  usb_data[7],  usb_data[8],  usb_data[8],
+                usb_data[9],  usb_data[9],  usb_data[10], usb_data[10],
+                usb_data[11], usb_data[11], usb_data[12], usb_data[12],
+                usb_data[13], usb_data[13], usb_data[14], usb_data[14],
+                usb_data[15], usb_data[15], usb_data[16], usb_data[16],
+                usb_data[17], usb_data[17], usb_data[18], usb_data[18]
+                );
          return BDM_RC_OK;
       default :
          printf(":debug %10s => "
@@ -2882,6 +2915,7 @@ static int setLogCommand(ClientData notneededhere, Tcl_Interp *interp, int argc,
 }
 
 static int guiDialogue(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
+#ifdef WIN32
    static HWND hwnd = 0;
 
    if (hwnd == 0) {
@@ -2889,6 +2923,8 @@ static int guiDialogue(ClientData notneededhere, Tcl_Interp *interp, int argc, T
 //      fprintf(stderr, "HWND=%p\n", hwnd);
       setDefaultWindowParent(hwnd);
    }
+#endif
+
    // dialogue title message options
    if (argc <= 3) {
        Tcl_WrongNumArgs(interp, 1, argv, "title message style");
@@ -3101,6 +3137,7 @@ const char *name;
       { setTargetVppCommand,    "settargetvpp" },
       { setTargetVddCommand,    "settargetvcc" },
       { setTargetVddCommand,    "settargetvdd" },
+      { guiDialogue,            "dialogue"},
 #ifdef INTERACTIVE
       { openBDM,                "openbdm" },
       { closeBDM,               "closebdm" },
@@ -3109,7 +3146,6 @@ const char *name;
       { helpCommand,            "help"},
       { helpCommand,            "?"},
 #endif
-      { guiDialogue,            "dialogue"},
       { NULL, NULL } 
 };
 
@@ -3135,6 +3171,7 @@ static void registerUSBDMCommands(Tcl_Interp *interp) {
    }
 }
 
+#ifdef INTERACTIVE
 static int appInitProc(Tcl_Interp *interp) {
    // Add usbdm commands
    registerUSBDMCommands(interp);
@@ -3144,8 +3181,12 @@ static int appInitProc(Tcl_Interp *interp) {
    return TCL_OK;
 }
 
-#ifdef INTERACTIVE
 int main(int argc, char *argv[]) {
+#ifdef __unix__
+   // Load wxWindows Stub
+   (void)dlopen(WXSTUB_DLL_NAME, RTLD_NOW|RTLD_NODELETE);
+#endif
+
    Tcl_Main(argc, argv, appInitProc);
    return 0;
 }

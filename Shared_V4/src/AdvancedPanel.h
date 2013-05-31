@@ -94,7 +94,7 @@ private:
    wxStaticText*                 securityMemoryRegionSecurityAddress;
    wxTextCtrl*                   securityValuesTextControl;
 
-   int                           securityMemoryRegionIndex;
+   unsigned                      securityMemoryRegionIndex;
    static const int              maxSecurityNum = 4;
 
 #if defined(FLASH_PROGRAMMER)

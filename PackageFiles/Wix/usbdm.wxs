@@ -58,6 +58,7 @@
 
             <Directory Id='MANUFACTURER_FOLDER' Name="$(var.Manufacturer)">
                <Directory Id='INSTALLDIR' Name="$(var.ProductName) $(var.ProductVersion)">
+                  <Directory Id="D.Stationery"       Name='Stationery' />
                   <Directory Id="D.DeviceData"       Name='DeviceData' />
                   <Directory Id="D.WizardPatchData"  Name='WizardPatches' />
                   <Directory Id="D.FlashImages"      Name='FlashImages' />
@@ -372,8 +373,8 @@
          <Component Id='C.CommonFiles' Guid='7c988e6d-bf01-439a-9829-43e9cfeff9f9'>
 <!--            <File Id='ComonFiles1'       DiskId='1' Source='bin\libusb-1.0.dll' /> -->
             <File Id='ComonFiles2'       DiskId='1' Source='bin\libxerces-c-3-1.dll' />
-            <File Id='ComonFiles3'       DiskId='1' Source='bin\tcl85.dll' />
-            <File Id='ComonFiles4'       DiskId='1' Source='bin\wxPlugin.dll' />
+            <File Id='ComonFiles3'       DiskId='1' Source='bin\tcl86.dll' />
+            <File Id='ComonFiles4'       DiskId='1' Source='bin\usbdm-wxPlugin.dll' />
                                          
             <File Id='ComonFiles5'       DiskId='1' Source='bin\usbdm.4.dll' KeyPath='yes' />
             <File Id='ComonFiles6'       DiskId='1' Source='bin\usbdm-arm.4.dll' />
@@ -405,6 +406,12 @@
       <!-- Device data -->
       <ComponentGroup Id='Cg.DeviceDataInstall'>
          <ComponentGroupRef Id='Cg.DeviceData' /> <!-- Generated elsewhere -->
+         <ComponentRef Id='C.ApplicationDirectoryKey'/>
+      </ComponentGroup>
+
+      <!-- Device data -->
+      <ComponentGroup Id='Cg.StationeryInstall'>
+         <ComponentGroupRef Id='Cg.Stationery' /> <!-- Generated elsewhere -->
          <ComponentRef Id='C.ApplicationDirectoryKey'/>
       </ComponentGroup>
 
@@ -446,6 +453,12 @@
                   WorkingDirectory='INSTALLDIR' Advertise="yes"/>
             </File>
          </Component>
+         <Component Id='C.Manual7' Guid='*' >
+            <File Id='F.FRDMCHM'           DiskId='1' Source='..\Documentation\USBDM_Freedom.chm' KeyPath="yes">
+               <Shortcut Id="startmenuUSBDM_116" Directory="D.ProgramMenuHelpDir" Name="FRDM-KL25Z Manual"
+                  WorkingDirectory='INSTALLDIR' Advertise="yes"/>
+            </File>
+         </Component>
       </DirectoryRef>
 
       <ComponentGroup Id='Cg.Documentation'>
@@ -456,6 +469,7 @@
          <ComponentRef Id='C.Manual4'/>
          <ComponentRef Id='C.Manual5'/>
          <ComponentRef Id='C.Manual6'/>
+         <ComponentRef Id='C.Manual7'/>
       </ComponentGroup>
 
       <!--=================================================================================
@@ -478,9 +492,10 @@
                Level='1'>
             <FeatureRef Id='F.CODEWARRIOR_COLDFIRE_V7_2' />
             <FeatureRef Id='F.CODEWARRIOR_DSC_V8_3' />
-            <FeatureRef Id='F.CW_FOR_MCU_V10_1'/>
-            <FeatureRef Id='F.CW_FOR_MCU_V10_2'/>
-            <FeatureRef Id='F.CW_FOR_MCU_V10_3'/>
+            <FeatureRef Id='F.CW_FOR_MCU_V10.1'/>
+            <FeatureRef Id='F.CW_FOR_MCU_V10.2'/>
+            <FeatureRef Id='F.CW_FOR_MCU_V10.3'/>
+            <FeatureRef Id='F.CW_FOR_MCU_V10.4'/>
             <FeatureRef Id='F.CW_FOR_MICROCONTROLLERS_V6_3' />
             <FeatureRef Id='F.CWS12_X_V5_1' />
          </Feature>
@@ -491,6 +506,13 @@
                Level='1'>
             <FeatureRef Id='F.CODESOURCERY_CF' />
             <FeatureRef Id='F.CODESOURCERY_ARM' />
+         </Feature>
+         <Feature Id='F.EclipseCDT_JUNO_Support'
+               Title='Eclipse CDT interfaces'
+               Description='Add USBDM CDT support to Eclipse:&#10;  - C/C++ New Project wizards&#10;  - GDB Debug interfaces&#10;This requires Codesourcery.'
+               AllowAdvertise="no"
+               Level='1'>
+            <FeatureRef Id='F.ECLIPSE_CDT_JUNO' />
          </Feature>
          <FeatureRef Id='F.FREEMASTER_V1_3' />
          <FeatureRef Id='F.CFFLASHER_V3_1' />

@@ -96,8 +96,8 @@
 #define MC_SRSH (0x4007E000) // System Reset Status Register High
 #define MC_SRSL (0x4007E001) // System Reset Status Register Low
 
-#define DHCSR_DBGKEY       (0xA05F<<16)
-#define DHCSR_DBGKEY_MASK  (0xFFFF<<16)
+#define DHCSR_DBGKEY       (0xA05FUL<<16)
+#define DHCSR_DBGKEY_MASK  (0xFFFFUL<<16)
 #define DHCSR_S_RESET_ST   (1<<25)
 #define DHCSR_S_RETIRE_ST  (1<<24)
 #define DHCSR_S_LOCKUP     (1<<19)

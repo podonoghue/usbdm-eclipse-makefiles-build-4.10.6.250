@@ -813,8 +813,10 @@ DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
          USBDM_VERSION_STRING);
 
 #if !defined(useWxWidgets)
+#ifdef _WIN32
    // Set up handle on Eclipse Window once only
    setDefaultWindowParent(FindEclipseWindowHwnd());
+#endif
 #endif
 
 #if TARGET == MC56F80xx

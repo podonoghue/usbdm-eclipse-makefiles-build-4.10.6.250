@@ -16,6 +16,11 @@
 #include <unistd.h>
 #include <signal.h>
 
+#ifdef __unix__
+#include <dlfcn.h>
+#define WXSTUB_DLL_NAME "libusbdm-wxStub.so"
+#endif
+
 #include "Common.h"
 #include "Log.h"
 
@@ -58,8 +63,8 @@ void usage(void) {
          "Usage: \n"
          "usbdm-gdbServer args...\n"
          "Args = device  - device to load (use -d to obtain device names)\n"
-         "       -noload - Suppress loading of code to flash memory\n"
          "       -d      - list devices in database\n");
+//   "       -noload - Suppress loading of code to flash memory\n"
 }
 
 //! Process command line args
@@ -71,15 +76,16 @@ void usage(void) {
 //!
 USBDM_ErrorCode doArgs(int argc, char **argv) {
    LOGGING;
-   bool noLoad = false;
+//   bool noLoad = false;
    bool listDevices = false;
    const char *deviceName = NULL;
 
    while (argc-- > 1) {
-      if (stricmp(argv[argc], "-noload")==0) {
-         noLoad = true;
-      }
-      else if (stricmp(argv[argc], "-D")==0) {
+//      if (stricmp(argv[argc], "-noload")==0) {
+//         noLoad = true;
+//      }
+//      else
+    	  if (stricmp(argv[argc], "-D")==0) {
          // List targets
          listDevices = true;
       }
@@ -142,6 +148,11 @@ void ex_program(int sig) {
 // main
 //
 int main(int argc, char **argv) {
+#ifdef __unix__
+   // Load wxWindows Stub (for pop-up dialogues)
+   (void)dlopen(WXSTUB_DLL_NAME, RTLD_NOW|RTLD_NODELETE);
+#endif
+
 #ifdef LOG
    char buff[1000];
    if (getUserDataDir(buff, sizeof(buff)) != 0) {

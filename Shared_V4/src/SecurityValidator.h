@@ -3,6 +3,11 @@
  *
  *  Created on: 13/12/2012
  *      Author: podonoghue
+ *
+ * History
+ * =================================================================================================
+ * 14/01/2013 - Changed to only require wxWidgets 2.8                                         4.10.4
+ * =================================================================================================
  */
 
 #ifndef SECURITYVALIDATOR_H_
@@ -11,29 +16,13 @@
 #include <string.h>
 #include <wx/validate.h>
 //#include <wx/richtext/richtextctrl.h>
+//SecurityValidator::acceptedCharacters;
 
 class SecurityValidator : public wxTextValidator {
    const char *            name;                   //! Name used to report validation errors
    bool                    enabled;                //! Controls if validation is done
    SecurityInfoPtr         securityInfoPtr;        //! Security information to maintain & use
-
-private:
-//   char tohex(uint8_t value) {
-//      const char table[] = "0123456789ABCDEF";
-//      return table[value&0x0F];
-//   }
-//   int todec(char ch) {
-//      if ((ch>='a')&&(ch<='f')) {
-//         return ch - 'a' + 10;
-//      }
-//      if ((ch>='A')&&(ch<='F')) {
-//         return ch - 'A' + 10;
-//      }
-//      if ((ch>='0')&&(ch<='9')) {
-//         return ch - '0';
-//      }
-//      return -1;
-//   }
+   wxArrayString    acceptedCharacters;
 
 public:
    SecurityValidator(const char *name, SecurityInfoPtr securityInfoPtr) :
@@ -42,7 +31,8 @@ public:
       enabled(false),
       securityInfoPtr(securityInfoPtr){
       Logging::print("SecurityValidator::SecurityValidator(%s, SecurityInfoPtr)\n", name);
-      SetCharIncludes(_("0123456789ABCDEFabcdef"));
+      init();
+      SetIncludes(acceptedCharacters);
    }
    SecurityValidator(const SecurityValidator &other) :
       wxTextValidator(wxFILTER_INCLUDE_CHAR_LIST, NULL),
@@ -50,7 +40,36 @@ public:
       enabled(other.enabled),
       securityInfoPtr(other.securityInfoPtr) {
       Logging::print("SecurityValidator::SecurityValidator(const SecurityValidator &other)\n");
-      SetCharIncludes(_("0123456789ABCDEFabcdef"));
+      init();
+      SetIncludes(acceptedCharacters);
+   }
+
+private:
+   void init(void) {
+      if (acceptedCharacters.IsEmpty()) {
+         acceptedCharacters.Add(_("0"));
+         acceptedCharacters.Add(_("1"));
+         acceptedCharacters.Add(_("2"));
+         acceptedCharacters.Add(_("3"));
+         acceptedCharacters.Add(_("4"));
+         acceptedCharacters.Add(_("5"));
+         acceptedCharacters.Add(_("6"));
+         acceptedCharacters.Add(_("7"));
+         acceptedCharacters.Add(_("8"));
+         acceptedCharacters.Add(_("9"));
+         acceptedCharacters.Add(_("A"));
+         acceptedCharacters.Add(_("B"));
+         acceptedCharacters.Add(_("C"));
+         acceptedCharacters.Add(_("D"));
+         acceptedCharacters.Add(_("E"));
+         acceptedCharacters.Add(_("F"));
+         acceptedCharacters.Add(_("a"));
+         acceptedCharacters.Add(_("b"));
+         acceptedCharacters.Add(_("c"));
+         acceptedCharacters.Add(_("d"));
+         acceptedCharacters.Add(_("e"));
+         acceptedCharacters.Add(_("f"));
+      }
    }
 
 public:

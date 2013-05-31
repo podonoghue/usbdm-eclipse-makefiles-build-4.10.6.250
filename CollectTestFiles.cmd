@@ -10,7 +10,7 @@ rem Where DLLs to link against are kept
 set SHARED_LIB=%ECLIPSE_HOME%\Shared_V4\lib
 set DEVICE_DATA=%ECLIPSE_HOME%\PackageFiles\DeviceData
 
-mkdir %TEST_DIR%
+if not exist "%TEST_DIR%" mkdir "%TEST_DIR%"
 
 rem External DLLs
 copy "%SHARED_LIB%\*.*"                                                                                       "%TEST_DIR%"

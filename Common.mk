@@ -3,6 +3,11 @@
 
 #.SILENT :
 
+MAJOR_VERSION := 4
+MINOR_VERSION := 10
+MICRO_VERSION := 5
+USBDM_VERSION := $(MAJOR_VERSION).$(MINOR_VERSION)
+
 ifeq ($(OS),Windows_NT)
     UNAME_S := Windows
 else
@@ -14,23 +19,29 @@ ifeq ($(UNAME_S),Windows)
    LIB_PREFIX = 
    LIB_SUFFIX = .dll
    EXE_SUFFIX = .exe
+#   MINGWBIN := c:/Apps/TDM-MinGW32/bin
+#   MINGWBIN := c:/Apps/MinGW-4.6.2/bin
+#   MINGWBIN := c:/Apps/MinGW/bin
    MINGWBIN := c:/Apps/MinGW/bin
    MSYSBIN  := c:/Apps/MinGW/msys/1.0/bin
    RM       := $(MSYSBIN)/rm
    RMDIR    := $(MSYSBIN)/rm -R -f
    TOUCH    := $(MSYSBIN)/touch
    MKDIR    := $(MSYSBIN)/mkdir
+   CP       := $(MSYSBIN)/cp
    MAKE     := $(MINGWBIN)/mingw32-make
    GCC      := $(MINGWBIN)/gcc
    GPP      := $(MINGWBIN)/g++
    WINDRES  := $(MINGWBIN)/windres
-   PROGRAM_DIR = C:/"Program Files"
-   #PROGRAM_DIR = C:/"Program Files (x86)"
+   #PROGRAM_DIR = C:/"Program Files"
+   PROGRAM_DIR = C:/"Program Files (x86)"
 else
    .SUFFIXES : .d
-   LIB_PREFIX = lib
-   LIB_SUFFIX = .so.4.10
-   EXE_SUFFIX = 
+   LIB_PREFIX 			:= lib
+   LIB_SUFFIX 			:= .so.$(MAJOR_VERSION).$(MINOR_VERSION)
+   LIB_MAJOR_SUFFIX 	:= .so.$(MAJOR_VERSION)
+   LIB_NO_SUFFIX 		:= .so
+   EXE_SUFFIX 			:= 
 
    MINGWBIN := 
    MSYSBIN  := 
@@ -38,6 +49,8 @@ else
    RMDIR    := rm -R -f
    TOUCH    := touch
    MKDIR    := mkdir
+   CP       := cp
+   LN       := ln -s -f
    MAKE     := make
    GCC      := gcc
    GPP      := g++
@@ -75,7 +88,7 @@ WDI_LIBS       := -lwdi-static -lsetupapi -lole32  -lcomctl32
 TCL_LIBDIRS    := 
 ifeq ($(UNAME_S),Windows)
    TCL_INC        := -IC:/Apps/Tcl/include
-   TCL_LIBS       := -ltcl85
+   TCL_LIBS       := -ltcl86
 else
    TCL_INC        :=
    TCL_LIBS       := -ltcl8.5
@@ -93,9 +106,10 @@ ifeq ($(UNAME_S),Windows)
    -lwxmsw294u_core_gcc_custom       \
    -lwxbase294u_gcc_custom           \
    -lwxmsw294u_adv_gcc_custom        
+   
 #   -lwxmsw294u_richtext_gcc_custom   \
-   -lwxbase294u_xml_gcc_custom       \
-   -lwxmsw294u_html_gcc_custom
+#   -lwxbase294u_xml_gcc_custom       \
+#   -lwxmsw294u_html_gcc_custom
    #-lwxbase294u_net_gcc_custom            \
    #-lwxmsw294u_aui_gcc_custom             \
    #-lwxmsw294u_gl_gcc_custom              \
@@ -106,12 +120,26 @@ ifeq ($(UNAME_S),Windows)
 
    WXWIDGETS_STATIC_LIBDIRS := -LC:/Apps/wxWidgets-2.9.4/lib/gcc_lib
    WXWIDGETS_STATIC_LIBS    := \
-   -lwxmsw29u_richtext -lwxmsw29u_aui -lwxmsw29u_html -lwxmsw29u_xrc -lwxmsw29u_adv \
-   -lwxmsw29u_core -lwxbase29u -lwxbase29u_net -lwxbase29u_xml -lwxtiff -lwxjpeg \
-   -lwxpng -lwxzlib -lwxregexu -lwxexpat \
-   -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool -lwinmm -lshell32 -lcomctl32 -lole32 \
-   -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32
-
+   -lwxmsw29u_core \
+   -lwxpng \
+   -lwxzlib \
+   -lwxbase29u \
+   -lgdi32 -lcomdlg32 -lwinspool -lcomctl32 -lole32 -loleaut32 -luuid 
+   
+   #-luser32 -lshell32 -lwinmm -lkernel32 -ladvapi32 -lwsock32
+   #-lwxjpeg \
+   #-lwxbase29u_xml \
+   #-lwxbase29u_net \
+   #-lwxmsw29u_xrc  \
+   #-lwxmsw29u_html \
+   #-lwxmsw29u_aui \
+   #-lwxbase29u \
+   #-lwxmsw29u_adv \
+   #-lwxtiff \
+   #-lwxmsw29u_richtext \
+   #-lwxzlib -lwxregexu  \
+   #-lwxexpat
+   #-lrpcrt4 
    #-lwxmsw29u_gl -lwxmsw29u_media -lwxmsw29u_propgrid -lwxmsw29u_ribbon \
    #-lwxmsw29u_stc -lwxmsw29u_webview \
    #-lwxscintilla           
@@ -173,8 +201,8 @@ WIN_XML_INSTALLER_LIBS    := -lMsi
 #===========================================================
 # Java for JNI
 ifeq ($(UNAME_S),Windows)
-   JAVA_INC := -I$(PROGRAM_DIR)/Java/jdk1.7.0_07/include
-   JAVA_INC += -I$(PROGRAM_DIR)/Java/jdk1.7.0_07/include/win32
+   JAVA_INC := -I$(PROGRAM_DIR)/Java/jdk1.7.0_21/include
+   JAVA_INC += -I$(PROGRAM_DIR)/Java/jdk1.7.0_21/include/win32
 else
    JAVA_INC := -I/usr/lib/jvm/default-java/include
 endif
@@ -186,11 +214,7 @@ SHARED_LIBDIRS := ../Shared_V4/lib
 
 #=============================================================
 # Common USBDM DLLs in debug and non-debug versions as needed
-ifeq ($(UNAME_S),Windows)
-   LIB_WX_PLUGIN = wxPlugin
-else
-   LIB_WX_PLUGIN = usbdm-wx
-endif
+LIB_WX_PLUGIN = usbdm-wxPlugin
 
 LIB_USB_SHARED  = usb-1.0
 LIB_USB_STATIC  = usb-static-1.0
@@ -223,21 +247,23 @@ endif
 # Debug flags
 ifeq ($(UNAME_S),Windows)
 GCC_VISIBILITY_DEFS=
+THREADS = -mthreads
 else
 GCC_VISIBILITY_DEFS=-fvisibility=hidden -fvisibility-inlines-hidden
+THREADS = 
 endif
 ifdef DEBUG
    # Compiler flags
-   CFLAGS := -mthreads -O0 -g3 ${GCC_VISIBILITY_DEFS}
+   CFLAGS := ${THREADS} -Wall -O0 -g3 ${GCC_VISIBILITY_DEFS}
    # Compiler flags (Linking)
-   LDFLAGS = -mthreads 
+   LDFLAGS = ${THREADS} 
    # C Definitions
    DEFS   := -DLOG
 else
    # Compiler flags
-   CFLAGS := -mthreads -O3 -g0 ${GCC_VISIBILITY_DEFS}
+   CFLAGS := ${THREADS} -Wall -O3 -g0 ${GCC_VISIBILITY_DEFS}
    # Compiler flags (Linking)
-   LDFLAGS = -mthreads -s
+   LDFLAGS = ${THREADS}  -s
 endif
 #CFLAGS += -Wshadow -DWINVER=0x500 -D_WIN32_IE=0x500 -std=gnu99 -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign
 

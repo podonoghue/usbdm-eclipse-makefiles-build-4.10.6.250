@@ -1,6 +1,7 @@
 include Common.mk
 
 # Built on both Windows and Linux
+# Note - order is important
 COMMON_DIRS = \
   wxPlugin_DLL         \
   USBDM_DLL            \
@@ -17,7 +18,7 @@ COMMON_DIRS = \
   FirmwareChanger      \
   JS16_Bootloader      \
   MergeXML             \
-  UsbdmJniWrapper_dll  \
+  UsbdmJniWrapper_DLL  \
   CopyFlash            \
   CreateFlashTestImage \
   CreateCTestImage     \

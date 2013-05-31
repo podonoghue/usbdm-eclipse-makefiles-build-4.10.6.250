@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'
+     xmlns:difx='http://schemas.microsoft.com/wix/DifxAppExtension'>
+
+   <?define Manufacturer="pgo" ?>
+   <?define ProductName="USBDM Drivers" ?>
+   <!--?define ProductVersion="1.0.0" ?-->                        <!-- Defined on command line -->
+   <?define ProductCode="cbca3e94-f093-41a7-a216-bb3baa3a4d18" ?> <!-- Don't change        -->
+   <?define UpgradeCode="8aad5b13-b89a-4793-9f3f-d29e53e79673" ?> <!-- Don't change        -->
+   <?define InfoURL="http://usbdm.sourceforge.net" ?>
+   <!--?define TargetArchCondition="NOT Msix64" ?-->             <!-- Defined on command line -->
+   
+   <?define DriverDir="XPDrivers" ?>
+   <?define WdfCoInstaller="WdfCoInstaller01009" ?>
+   <?define WinusbCoinstaller="winusbcoinstaller2" ?>
+   
+   <Product
+      Name="$(var.ProductName)"
+      Id="$(var.ProductCode)"
+      UpgradeCode="$(var.UpgradeCode)"
+      Version="$(var.ProductVersion)"
+      Manufacturer="$(var.Manufacturer)"
+      Language='1033'
+      Codepage='1252' >
+
+      <Package
+         Id='*'
+         Keywords='USBDMDriver' 
+         Description="$(var.ProductName) Installer"
+         Comments="$(var.ProductName) Package"
+         Manufacturer="$(var.Manufacturer)"
+         InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+         
+      <Condition Message="You are attempting to run the wrong version of the installer for this version of Windows.">
+        <![CDATA[$(var.TargetArchCondition)]]>
+      </Condition>
+      
+      <Media Id='1' Cabinet="disk1.cab" EmbedCab='yes' DiskPrompt="$(var.ProductCode) Media" />
+      
+      <Property Id='ARPCOMMENTS'>BDM Drivers for USBDM</Property>
+      <Property Id='ARPURLINFOABOUT'>$(var.InfoURL)</Property>
+      <Property Id='DiskPrompt' Value="$(var.ProductName) $(var.ProductVersion) Installation" />
+      <!--====================================================== -->
+      <!--           Directory structure                         -->
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+         <Directory Id='ProgramFilesFolder' Name='PFiles'>
+            <Directory Id='MANUFACTURER_FOLDER' Name="$(var.Manufacturer)">
+               <Directory Id='INSTALLDIR' Name="$(var.ProductName) $(var.ProductVersion)">
+                    <Directory Id='D.USBDMDriverDir' Name='Drivers'>
+                    </Directory>
+               </Directory>
+            </Directory>
+         </Directory>
+
+         <!-- Desktop Folder -->
+         <Directory Id="DesktopFolder" Name="Desktop" />
+      </Directory>
+
+      <!-- ========================================================================== -->
+      <!-- Driver Components -->      
+      <DirectoryRef Id='D.USBDMDriverDir'>
+         <Component Id='C.USBDMSerial' Guid='e146ad98-e634-4de8-94af-52a7863124e4' >
+            <File Id='F.USBDMSerialCAT' Name='USBDMSerial.cat' DiskId='1' Source='$(var.DriverDir)/USBDMSerial.cat' KeyPath='yes'/>
+            <File Id='F.USBDMSerialINF' Name='USBDMSerial.inf' DiskId='1' Source='$(var.DriverDir)/USBDMSerial.inf'/>
+            <difx:Driver Legacy='yes' />
+         </Component>
+      </DirectoryRef>
+
+      <DirectoryRef Id='D.USBDMDriverDir'>
+         <Directory Id="D.USBDM_BDM_DRIVER" Name="BDM_driver">
+            <Directory Id="D.USBDM_BDM_DRIVER.amd64" Name="amd64">
+               <Component Id='C.USBDM_BDM_DRIVER.amd64.WinUSB' Guid='8e0f95fc-6454-4835-a0c5-2f4d879a7c07' >
+                  <File Id='F.USBDM_BDM_DRIVER.amd64.WdfCoInstallerDLL'    Name='$(var.WdfCoInstaller).dll'    DiskId='1' Source='$(var.DriverDir)/amd64/$(var.WdfCoInstaller).dll'/>
+                  <File Id='F.USBDM_BDM_DRIVER.amd64.winusbcoinstallerDLL' Name='$(var.WinusbCoinstaller).dll' DiskId='1' Source='$(var.DriverDir)/amd64/$(var.WinusbCoinstaller).dll'/>
+               </Component>
+            </Directory>
+            <Directory Id="D.USBDM_BDM_DRIVER.x86" Name="x86">
+               <Component Id='C.USBDM_BDM_DRIVER.x86.WinUSB' Guid='7d6aad85-818a-412d-b872-d0cabdfa74dc' >
+                  <File Id='F.USBDM_BDM_DRIVER.x86.WdfCoInstallerDLL'    Name='$(var.WdfCoInstaller).dll'    DiskId='1' Source='$(var.DriverDir)/x86/$(var.WdfCoInstaller).dll'/>
+                  <File Id='F.USBDM_BDM_DRIVER.x86.winusbcoinstallerDLL' Name='$(var.WinusbCoinstaller).dll' DiskId='1' Source='$(var.DriverDir)/x86/$(var.WinusbCoinstaller).dll'/>
+               </Component>
+            </Directory>
+            <Component Id='C.USBDM_BDM_DRIVER.drivers' Guid='dde50811-f12f-440a-bbca-516dc731fb10' >
+               <File Id='F.USBDM_BDM_DRIVER.USBDM_BDM_InterfaceCAT' Name='USBDM_BDM_Interface.cat' DiskId='1' Source='$(var.DriverDir)/USBDM_BDM_Interface.cat' KeyPath='yes'/>
+               <File Id='F.USBDM_BDM_DRIVER.USBDM_BDM_InterfaceINF' Name='USBDM_BDM_Interface.inf' DiskId='1' Source='$(var.DriverDir)/USBDM_BDM_Interface.inf'/>
+               <difx:Driver Legacy='yes' />
+            </Component>
+         </Directory>
+      </DirectoryRef>
+      <ComponentGroup Id='CG.USBDM_BDM_DRIVER'>
+          <ComponentRef Id='C.USBDM_BDM_DRIVER.x86.WinUSB'   />
+          <ComponentRef Id='C.USBDM_BDM_DRIVER.amd64.WinUSB' />
+          <ComponentRef Id='C.USBDM_BDM_DRIVER.drivers'    />
+      </ComponentGroup>
+      
+      <!-- License file -->
+      <WixVariable Id="WixUILicenseRtf" Value="Drivers\license.rtf" />
+         
+      <!--
+      <DirectoryRef Id='D.USBDMDriverDir'>
+         <Directory Id="D.JB16_BOOT_DRIVER" Name="JB16_driver">
+            <Directory Id="D.JB16_BOOT_DRIVER.amd64" Name="amd64">
+               <Component Id='C.JB16_BOOT_DRIVER.amd64.WinUSB' Guid='f8dd2d8e-b0af-4f4f-87bf-022079b254c0' >
+                  <File Id='F.JB16_BOOT_DRIVER.amd64.WdfCoInstallerDLL' Name='$(var.WdfCoInstaller).dll' DiskId='1' Source='$(var.DriverDir)/amd64/$(var.WdfCoInstaller).dll'/>
+                  <File Id='F.JB16_BOOT_DRIVER.amd64.winusbcoinstallerDLL'  Name='$(var.WinusbCoinstaller).dll'  DiskId='1' Source='$(var.DriverDir)/amd64/$(var.WinusbCoinstaller).dll'/>
+               </Component>
+            </Directory>
+            <Directory Id="D.JB16_BOOT_DRIVER.x86" Name="x86">
+               <Component Id='C.JB16_BOOT_DRIVER.x86.WinUSB' Guid='0f782129-b4d8-4609-a044-bbc6cf503744' >
+                  <File Id='F.JB16_BOOT_DRIVER.x86.WdfCoInstallerDLL' Name='$(var.WdfCoInstaller).dll' DiskId='1' Source='$(var.DriverDir)/x86/$(var.WdfCoInstaller).dll'/>
+                  <File Id='F.JB16_BOOT_DRIVER.x86.winusbcoinstallerDLL'  Name='$(var.WinusbCoinstaller).dll'  DiskId='1' Source='$(var.DriverDir)/x86/$(var.WinusbCoinstaller).dll'/>
+               </Component>
+            </Directory>
+            <Component Id='C.JB16_BOOT_DRIVER.drivers' Guid='ddab4334-1e09-4d74-9546-b9415abaa15f' >
+               <File Id='F.JB16_BOOT_DRIVER.USBDM_BDM_InterfaceCAT' Name='USBDM_BDM_Interface.cat' DiskId='1' Source='$(var.DriverDir)/JB16_Bootloader.cat' KeyPath='yes'/>
+               <File Id='F.JB16_BOOT_DRIVER.USBDM_BDM_InterfaceINF' Name='USBDM_BDM_Interface.inf' DiskId='1' Source='$(var.DriverDir)/JB16_Bootloader.inf'/>
+               <difx:Driver Legacy='yes' />
+            </Component>
+         </Directory>
+      </DirectoryRef>
+      
+      <ComponentGroup Id='CG.JB16_BOOT_DRIVER'>
+          <ComponentRef Id='C.JB16_BOOT_DRIVER.x86.WinUSB'   />
+          <ComponentRef Id='C.JB16_BOOT_DRIVER.amd64.WinUSB' />
+          <ComponentRef Id='C.JB16_BOOT_DRIVER.drivers'    />
+      </ComponentGroup>
+      -->
+      
+      <DirectoryRef Id='D.USBDMDriverDir'>
+         <Directory Id="D.JS16_BOOT_DRIVER" Name="JS16_driver">
+            <Directory Id="D.JS16_BOOT_DRIVER.amd64" Name="amd64">
+               <Component Id='C.JS16_BOOT_DRIVER.amd64.WinUSB' Guid='78f69c09-e4c8-4d50-aedd-4817d8e688ea' >
+                  <File Id='F.JS16_BOOT_DRIVER.amd64.WdfCoInstallerDLL'    Name='$(var.WdfCoInstaller).dll'    DiskId='1' Source='$(var.DriverDir)/amd64/$(var.WdfCoInstaller).dll'/>
+                  <File Id='F.JS16_BOOT_DRIVER.amd64.winusbcoinstallerDLL' Name='$(var.WinusbCoinstaller).dll' DiskId='1' Source='$(var.DriverDir)/amd64/$(var.WinusbCoinstaller).dll'/>
+               </Component>
+            </Directory>
+            <Directory Id="D.JS16_BOOT_DRIVER.x86" Name="x86">
+               <Component Id='C.JS16_BOOT_DRIVER.x86.WinUSB' Guid='df8f3806-b5ff-4131-a3e0-8aadf30cdb35' >
+                  <File Id='F.JS16_BOOT_DRIVER.x86.WdfCoInstallerDLL'    Name='$(var.WdfCoInstaller).dll'    DiskId='1' Source='$(var.DriverDir)/x86/$(var.WdfCoInstaller).dll'/>
+                  <File Id='F.JS16_BOOT_DRIVER.x86.winusbcoinstallerDLL' Name='$(var.WinusbCoinstaller).dll' DiskId='1' Source='$(var.DriverDir)/x86/$(var.WinusbCoinstaller).dll'/>
+               </Component>
+            </Directory>
+            <Component Id='C.JS16_BOOT_DRIVER.drivers' Guid='78fb0d7c-9aa8-4baf-ada0-b8dd0d77604c' >
+               <File Id='F.JS16_BOOT_DRIVER.USBDM_BDM_InterfaceCAT' Name='USBDM_BDM_Interface.cat' DiskId='1' Source='$(var.DriverDir)/JS16_Bootloader.cat' KeyPath='yes'/>
+               <File Id='F.JS16_BOOT_DRIVER.USBDM_BDM_InterfaceINF' Name='USBDM_BDM_Interface.inf' DiskId='1' Source='$(var.DriverDir)/JS16_Bootloader.inf'/>
+               <difx:Driver Legacy='yes' />
+            </Component>
+         </Directory>
+      </DirectoryRef>
+      <ComponentGroup Id='CG.JS16_BOOT_DRIVER'>
+          <ComponentRef Id='C.JS16_BOOT_DRIVER.x86.WinUSB'   />
+          <ComponentRef Id='C.JS16_BOOT_DRIVER.amd64.WinUSB' />
+          <ComponentRef Id='C.JS16_BOOT_DRIVER.drivers'    />
+      </ComponentGroup>
+      
+      <Feature Id='Complete' Level='1'>
+         <ComponentGroupRef Id='CG.JS16_BOOT_DRIVER' />
+         <!-- <ComponentGroupRef Id='CG.JB16_BOOT_DRIVER' /> -->
+         <ComponentGroupRef Id='CG.USBDM_BDM_DRIVER' />
+         <ComponentRef      Id='C.USBDMSerial' />
+      </Feature>
+      <UIRef Id="WixUI_Minimal" />
+   </Product>
+</Wix>

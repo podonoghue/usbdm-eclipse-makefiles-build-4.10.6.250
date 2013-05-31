@@ -215,11 +215,11 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
    
    USBDMStatus_t status;
    rc = getBDMStatus(&status);
-   Logging::print("getBDMStatus()\n");
    if (usbdmStatus != NULL) {
       *usbdmStatus = status;
    }
    if (rc != BDM_RC_OK) {
+      Logging::print("getBDMStatus() failed\n");
       return rc; // Fatal error
    }
    //=========================================================
@@ -299,6 +299,8 @@ USBDM_ErrorCode USBDM_TargetConnectWithRetry(USBDMStatus_t *usbdmStatus, RetryMo
 
    // Inform user of error and prompt for retry
    if (extendedRetry) {
+      // Update target status
+      getBDMStatus(&status);
       // Connection failure - retry
       int getYesNo;
       do {

@@ -175,6 +175,40 @@ public:
 typedef std::tr1::shared_ptr<SecurityDescription> SecurityDescriptionPtr;
 typedef std::tr1::shared_ptr<const SecurityDescription> SecurityDescriptionConstPtr;
 
+class GnuInfoList: public SharedInformationItem {
+
+public:
+   GnuInfoList() {
+//        print("SecurityInfo()\n");
+    }
+    ~GnuInfoList() {
+//        print("~SecurityInfo()\n");
+    }
+    const std::string toString() const {
+       return std::string("GnuInfoList");
+    }
+};
+
+typedef std::tr1::shared_ptr<GnuInfoList> GnuInfoListPtr;
+typedef std::tr1::shared_ptr<const GnuInfoList> GnuInfoListConstPtr;
+
+class GnuInfo {
+
+public:
+   GnuInfo() {
+//        print("SecurityInfo()\n");
+    }
+    ~GnuInfo() {
+//        print("~SecurityInfo()\n");
+    }
+    const std::string toString() const {
+       return std::string("GnuInfo");
+    }
+};
+
+typedef std::tr1::shared_ptr<GnuInfo> GnuInfoPtr;
+typedef std::tr1::shared_ptr<const GnuInfo> GnuInfoConstPtr;
+
 class SecurityInfo: public SharedInformationItem {
 public:
    enum SecType {unsecure, secure, custom};

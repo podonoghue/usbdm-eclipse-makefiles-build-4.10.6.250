@@ -84,7 +84,7 @@ public:
    //!
    void getDeviceOptions( DeviceData &deviceData );
 #endif
-   bool Create( wxWindow* parent, long style = wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX);
+   bool Create( wxWindow* parent, long style = wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX|wxRESIZE_BORDER);
    bool setDialogueValuesToDefault();
    bool TransferDataToWindow();
    bool TransferDataFromWindow();

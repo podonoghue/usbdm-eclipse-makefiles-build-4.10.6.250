@@ -70,9 +70,33 @@
          <securityEntryRef ref="CFV2-default-security" />
          <memoryRange start="0x000000" size="512K" />
       </memory>
+      <!-- GNU Build options -->
+      <gnuInfoList id="gnuSettings.mcf52213">
+         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"
+            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.52213" 
+            command="-mcpu=52213" name="MCF52213 family"/>
+      </gnuInfoList>
+      <!-- GNU Build options -->
+      <gnuInfoList id="gnuSettings.mcf52223">
+         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"   
+            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.52223" 
+            command="-mcpu=52223" name="MCF52223 family"/>
+      </gnuInfoList>
+      <!-- GNU Build options -->
+      <gnuInfoList id="gnuSettings.mcf52235">
+         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"   
+            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.52235" 
+            command="-mcpu=52235" name="MCF52235 family"/>
+      </gnuInfoList>
+      <!-- GNU Build options -->
+      <gnuInfoList id="gnuSettings.mcf52259">
+         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"   
+            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.52259"
+            command="-mcpu=52259" name="MCF52259 family"/>
+      </gnuInfoList>
    </sharedInformation>
    <deviceList>
-      <device family="CFVx" name="_Default" isDefault="true">
+      <device family="CFV2" name="_Default" isDefault="true">
          <clock type="External" registerAddress="0" />
          <memory type="ram">
             <memoryRange start="0x20000000" size="4K" />
@@ -89,88 +113,98 @@
          <note>Default CFV1 Device</note>
       </device>
       &Custom-Devices;
-      <device family="CFVx" name="MCF52221">
+      <device family="CFV2" name="MCF52221">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x1400" />
+         <gnuInfoListRef ref="gnuSettings.mcf52223" />
       </device>
-      <device family="CFVx" name="MCF52223">
+      <device family="CFV2" name="MCF52223">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x14C0" />
+         <gnuInfoListRef ref="gnuSettings.mcf52223" />
       </device>
-      <device family="CFVx" name="MCF52230">
+      <device family="CFV2" name="MCF52230">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x1200" />
+         <gnuInfoListRef ref="gnuSettings.mcf52235" />
       </device>
-      <device family="CFVx" name="MCF52231">
+      <device family="CFV2" name="MCF52231">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x1240" />
+         <gnuInfoListRef ref="gnuSettings.mcf52235" />
       </device>
-      <device family="CFVx" name="MCF52232">
+      <device family="CFV2" name="MCF52232">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x0000" />
+         <gnuInfoListRef ref="gnuSettings.mcf52235" />
       </device>
-      <device family="CFVx" name="MCF52233">
+      <device family="CFV2" name="MCF52233">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire256K_Flash" />
          <sdid value="0x1280" />
+         <gnuInfoListRef ref="gnuSettings.mcf52235" />
       </device>
-      <device family="CFVx" name="MCF52234">
+      <device family="CFV2" name="MCF52234">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire256K_Flash" />
          <sdid value="0x12C0" />
+         <gnuInfoListRef ref="gnuSettings.mcf52235" />
       </device>
-      <device family="CFVx" name="MCF52235">
+      <device family="CFV2" name="MCF52235">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire256K_Flash" />
          <sdid value="0x1300" />
+         <gnuInfoListRef ref="gnuSettings.mcf52235" />
       </device>
-      <device family="CFVx" name="MCF52236">
+      <device family="CFV2" name="MCF52236">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire256K_Flash" />
          <sdid value="0x1280" />
+         <gnuInfoListRef ref="gnuSettings.mcf52235" />
       </device>
-      <device family="CFVx" name="MCF52210">
+      <device family="CFV2" name="MCF52210">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire64K_Flash" />
          <sdid value="0x0" />
       </device>
-      <device family="CFVx" name="MCF52211">
+      <device family="CFV2" name="MCF52211">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x0" />
       </device>
-      <device family="CFVx" name="MCF52212">
+      <device family="CFV2" name="MCF52212">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire64K_Flash" />
          <sdid value="0x0" />
       </device>
-      <device family="CFVx" name="MCF52213">
+      <device family="CFV2" name="MCF52213">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x1580" />
+         <gnuInfoListRef ref="gnuSettings.mcf52213" />
       </device>
       <!--
          =======================================================================
       -->
-      <device family="CFVx" name="MCF52259">
+      <device family="CFV2" name="MCF52259">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire64K_Ram" />
          <memory type="io">
@@ -178,6 +212,7 @@
          </memory>
          <memoryRef ref="coldfire512K_Flash" />
          <sdid value="0x2481" />
+         <gnuInfoListRef ref="gnuSettings.mcf52259" />
       </device>
    </deviceList>
 </root>
