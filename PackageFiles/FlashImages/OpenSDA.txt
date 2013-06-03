@@ -1,0 +1,15 @@
+The USBDM_OpenSDA.sx is a version of USDBM for the FRDM-KL25 board.
+
+It is an OpenSDA application and is loaded by the following actions:
+
+(Before doing the following install the USBDM drivers).
+
+*  Unplug FRDM-KL25 board
+*  Whilst holding the reset switch depressed plug in the FRDM-KL25 board.  The
+   green LED should start blinking at about 1Hz.  
+*  Open a file explorer and locate the USB drive that has now appeared.  It will have
+   the drive name "BOOTLOADER"
+*  Drag the USBDM_OpenSDA.sx to the USB drive and wait a short while.  The OpenSDA firmware
+   on the FRDM-KL25 board will program the USBDM firmware into the MK20 debugger chip on the
+   board.
+*  Remove and re-plug the FRDM-KL25 board.  The board will now appear as a USBDM device.

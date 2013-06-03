@@ -141,6 +141,8 @@ bool AdvancedPanel::CreateControls() {
    wxGridBagSizer* gridBagSizer = new wxGridBagSizer(0,0);
    itemStaticBoxSizer->Add(gridBagSizer, 0, wxGROW|wxALL, 5);
 
+   const int borderWidth = 3;
+
    wxStaticText* itemStaticText;
    int row = 0;
 
@@ -149,81 +151,81 @@ bool AdvancedPanel::CreateControls() {
 
    //===
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Power Off duration"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
 
    timeIntervalValidator.setMin(100);
    timeIntervalValidator.setMax(10000);
    timeIntervalValidator.setObject("Power Off Duration", &bdmOptions.powerOffDuration);
    powerOffDurationTextControl = new NumberTextEditCtrl( panel, ID_POWER_OFF_DURATION_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0, timeIntervalValidator );
-   gridBagSizer->Add(powerOffDurationTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(powerOffDurationTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
    powerOffDurationTextControl->SetToolTip(_("Duration to power off when cycling target power"));
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("ms"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
 
    row++;
 
    //===
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Power On Recovery interval"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    timeIntervalValidator.setMin(100);
    timeIntervalValidator.setMax(10000);
    timeIntervalValidator.setObject("Power On Recovery interval", &bdmOptions.powerOnRecoveryInterval);
    powerOnRecoveryIntervalTextControl = new NumberTextEditCtrl( panel, ID_POWER_RECOVERY_INTERVAL_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0, timeIntervalValidator );
-   gridBagSizer->Add(powerOnRecoveryIntervalTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(powerOnRecoveryIntervalTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
    powerOnRecoveryIntervalTextControl->SetToolTip(_("Interval to wait after power on of target"));
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("ms"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    row++;
 
    //===
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Reset duration"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    timeIntervalValidator.setMin(100);
    timeIntervalValidator.setMax(10000);
    timeIntervalValidator.setObject("Reset duration", &bdmOptions.resetDuration);
    resetDurationTextControl = new NumberTextEditCtrl( panel, ID_RESET_DURATION_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0, timeIntervalValidator );
-   gridBagSizer->Add(resetDurationTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(resetDurationTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
    resetDurationTextControl->SetToolTip(_("Duration to apply reset to target"));
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("ms"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    row++;
 
    //===
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Reset Release interval"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    timeIntervalValidator.setMin(10);
    timeIntervalValidator.setMax(10000);
    timeIntervalValidator.setObject("Reset Release interval", &bdmOptions.resetReleaseInterval);
    resetReleaseIntervalTextControl = new NumberTextEditCtrl( panel, ID_RESET_RELEASE_INTERVAL_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0, timeIntervalValidator );
-   gridBagSizer->Add(resetReleaseIntervalTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(resetReleaseIntervalTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
    resetReleaseIntervalTextControl->SetToolTip(_("Interval to hold other target signals after reset release"));
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("ms"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    row++;
 
    //===
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Reset Recovery interval"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    timeIntervalValidator.setMin(10);
    timeIntervalValidator.setMax(10000);
    timeIntervalValidator.setObject("Reset Recovery interval", &bdmOptions.resetRecoveryInterval);
    resetRecoveryIntervalTextControl = new NumberTextEditCtrl( panel, ID_RESET_RECOVERY_INTERVAL_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0, timeIntervalValidator );
-   gridBagSizer->Add(resetRecoveryIntervalTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(resetRecoveryIntervalTextControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
    resetRecoveryIntervalTextControl->SetToolTip(_("Interval to wait after target reset"));
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("ms"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,3), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    row++;
 
@@ -231,33 +233,33 @@ bool AdvancedPanel::CreateControls() {
    //================================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("FlexNVM Parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    gridBagSizer = new wxGridBagSizer(0,0);
-   itemStaticBoxSizer->Add(gridBagSizer, 0, wxGROW|wxALL, 5);
+   itemStaticBoxSizer->Add(gridBagSizer, 0, wxGROW|wxALL, borderWidth);
    row = 0;
 
    //===
    eeepromSizeStaticText = new wxStaticText( panel, wxID_STATIC, _("EEEPROM Size (FF)"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(eeepromSizeStaticText, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
+   gridBagSizer->Add(eeepromSizeStaticText, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT, borderWidth);
    eeepromSizeChoiceControl = new wxChoice( panel, ID_EEPROM_SIZE_CHOICE, wxDefaultPosition , wxSize(150, -1));
-   gridBagSizer->Add(eeepromSizeChoiceControl, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxEXPAND, 5);
+   gridBagSizer->Add(eeepromSizeChoiceControl, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxEXPAND, borderWidth);
    eeepromSizeChoiceControl->SetToolTip(_("Controls size of emulated EEPROM region(s) in FlexRAM"));
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("bytes"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
    row++;
 
    //===
    flexNvmPartitionStaticText = new wxStaticText( panel, wxID_STATIC, _("FlexNVM Partition (FF)"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(flexNvmPartitionStaticText, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
+   gridBagSizer->Add(flexNvmPartitionStaticText, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT, borderWidth);
    flexNvmPartitionChoiceControl = new wxChoice( panel, ID_FLEXNVM_PARTITION_CHOICE, wxDefaultPosition , wxSize(150, -1));
-   gridBagSizer->Add(flexNvmPartitionChoiceControl, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP, 5);
+   gridBagSizer->Add(flexNvmPartitionChoiceControl, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP, borderWidth);
    flexNvmPartitionChoiceControl->SetToolTip(_("Controls how FlexNVM is divided between Data Flash and EEPROM backing store\n"
                                                "EEPROM backing store size >= 16 x EEEPROM size - affects flash lifetime"));
 //   flexNvmPartitionChoiceControl->SetMinSize(wxSize(100,0));
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Kbytes"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    wxSize sz(flexNvmPartitionChoiceControl->GetMinSize());
    sz.x += 10;
@@ -265,7 +267,7 @@ bool AdvancedPanel::CreateControls() {
    row++;
    //===
    flexNvmDescriptionStaticControl = new wxStaticText( panel, wxID_STATIC, _("Estimated 16-bit write cycles (based on JU128 specs) = ----------"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(flexNvmDescriptionStaticControl, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(flexNvmDescriptionStaticControl, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
    row++;
 
    populateEeepromControl();
@@ -276,37 +278,37 @@ bool AdvancedPanel::CreateControls() {
    //================================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Custom Security Parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    gridBagSizer = new wxGridBagSizer(0,0);
-   itemStaticBoxSizer->Add(gridBagSizer, 0, wxGROW|wxALL, 5);
+   itemStaticBoxSizer->Add(gridBagSizer, 0, wxGROW|wxALL, borderWidth);
    row = 0;
 
    //===
    customSecurityCheckbox = new wxCheckBox( panel, ID_ENABLE_CUSTOM_SECURITY_CHECKBOX, _("Enable"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(customSecurityCheckbox, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(customSecurityCheckbox, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
 
 //   itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Region"), wxDefaultPosition, wxDefaultSize, 0 );
-//   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+//   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
    securityMemoryRegionChoice = new wxChoice( panel, ID_SECURITY_REGION_CHOICE, wxDefaultPosition , wxSize(130, -1));
-   gridBagSizer->Add(securityMemoryRegionChoice, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(securityMemoryRegionChoice, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
    securityMemoryRegionChoice->SetToolTip(_("Security information applies to this memory region"));
    resetCustomButtonControl = new wxButton( panel, ID_RESET_CUSTOM_VALUES_BUTTON, _("&Reset Values"), wxDefaultPosition, wxDefaultSize, 0 );
    resetCustomButtonControl->SetToolTip(_("Reset custom values to unsecured default"));
-   gridBagSizer->Add(resetCustomButtonControl, wxGBPosition(row,2), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(resetCustomButtonControl, wxGBPosition(row,2), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
    row++;
 
    //===
 
    securityValuesTextControl = new wxTextCtrl( panel, ID_SECURITY_TEXT_ENTRY, _(""), wxDefaultPosition , wxSize(300, 20), 0);
-   gridBagSizer->Add(securityValuesTextControl, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(securityValuesTextControl, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
    securityValuesTextControl->SetToolTip(_("Security value used for device"));
    securityValuesTextControl->SetValidator(SecurityValidator("Security value", SecurityInfoPtr()));
    row++;
 
    //===
    securityMemoryRegionSecurityAddress = new wxStaticText( panel, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(securityMemoryRegionSecurityAddress, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(securityMemoryRegionSecurityAddress, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
    row++;
 
    //===
@@ -316,7 +318,7 @@ bool AdvancedPanel::CreateControls() {
 #define CONTROL_WIDTH (380)
 #endif
    securityDescriptionStaticText = new wxStaticText( panel, wxID_STATIC, _("...Status..."), wxDefaultPosition, wxSize(CONTROL_WIDTH, 75), wxALIGN_LEFT|wxST_NO_AUTORESIZE );
-   gridBagSizer->Add(securityDescriptionStaticText, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(securityDescriptionStaticText, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
    securityDescriptionStaticText->SetToolTip(_("See Target tab to change how these value are used"));
    row++;
    #endif

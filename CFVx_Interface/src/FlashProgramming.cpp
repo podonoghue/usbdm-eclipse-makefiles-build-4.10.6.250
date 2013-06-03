@@ -1970,7 +1970,7 @@ struct SecurityDataCache {
    uint32_t size;                      //!< size of area
    uint8_t  data[MaxSecurityAreaSize]; //!< security area data
 };
-int securityAreaCount = 0;
+unsigned securityAreaCount = 0;
 SecurityDataCache securityData[2];
 
 //===========================================================================================================
@@ -2010,7 +2010,7 @@ USBDM_ErrorCode FlashProgrammer::recordSecurityArea(const uint32_t address, cons
 //!
 void FlashProgrammer::restoreSecurityAreas(FlashImage &flashImage) {
    LOGGING_Q;
-   for (int index=0; index<securityAreaCount; index++) {
+   for (unsigned index=0; index<securityAreaCount; index++) {
       Logging::print("Restoring security area in image [0x%06X...0x%06X]\n",
             securityData[index].address, securityData[index].address+securityData[index].size-1);
       flashImage.loadDataBytes(securityData[index].size, securityData[index].address, securityData[index].data);

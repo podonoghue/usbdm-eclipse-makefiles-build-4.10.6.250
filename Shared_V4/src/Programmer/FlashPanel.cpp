@@ -543,7 +543,9 @@ bool FlashPanel::Create(wxWindow* parent) {
    securityRadioBoxControl->SetSelection(0);
    incrementalFileLoadCheckBoxControl->Set3StateValue(wxCHK_UNCHECKED);
 #endif
+#if TARGET != HCS12
    populateClockDropDown();
+#endif
    populateDeviceDropDown();
    return true;
 }
@@ -579,30 +581,32 @@ bool FlashPanel::CreateControls() {
    wxBoxSizer* panelBoxSizerV = new wxBoxSizer(wxVERTICAL);
    panel->SetSizer(panelBoxSizerV);
 
+   const int borderWidth = 3;
+
    //======================================================================
 #ifdef FLASH_PROGRAMMER
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Flash Image Buffer"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxVERTICAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    //------------------------------------------------------------------------
    itemBoxSizer = new wxBoxSizer(wxHORIZONTAL);
    itemStaticBoxSizer->Add(itemBoxSizer, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0);
 
    loadFileButtonControl = new wxButton( panel, ID_LOAD_FILE_BUTTON, _("&Load Hex Files"), wxDefaultPosition, wxDefaultSize, 0 );
-   itemBoxSizer->Add(loadFileButtonControl, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+   itemBoxSizer->Add(loadFileButtonControl, 0, wxALIGN_CENTER_VERTICAL|wxALL, borderWidth);
 
    incrementalFileLoadCheckBoxControl = new wxCheckBox( panel, ID_INCREMENTAL_FILE_LOAD_CHECKBOX, _("Incremental Load"), wxDefaultPosition, wxDefaultSize, 0 );
    incrementalFileLoadCheckBoxControl->SetValue(false);
    incrementalFileLoadCheckBoxControl->SetToolTip(_("Load new file without clearing buffer"));
-   itemBoxSizer->Add(incrementalFileLoadCheckBoxControl, 0, wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   itemBoxSizer->Add(incrementalFileLoadCheckBoxControl, 0, wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
 
    autoFileReloadCheckBoxControl = new wxCheckBox( panel, ID_AUTO_FILE_RELOAD_CHECKBOX, _("Auto Reload"), wxDefaultPosition, wxDefaultSize, 0 );
    autoFileReloadCheckBoxControl->SetToolTip(_("Reload changed file quietly."));
    autoFileReloadCheckBoxControl->SetValue(false);
    autoFileReloadCheckBoxControl->SetToolTip(_("Reload file before programming if it has changed."));
-   itemBoxSizer->Add(autoFileReloadCheckBoxControl, 0, wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5);
+   itemBoxSizer->Add(autoFileReloadCheckBoxControl, 0, wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    loadedFilenameStaticControl = new wxStaticText( panel, wxID_STATIC, _("No File Loaded"), wxDefaultPosition, wxDefaultSize, 0 );
    itemStaticBoxSizer->Add(loadedFilenameStaticControl, 0, wxALIGN_LEFT|wxLEFT|wxRIGHT, 10);
@@ -612,7 +616,7 @@ bool FlashPanel::CreateControls() {
 
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Device Selection"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    //------------------------------------------------------------------------
    wxFlexGridSizer *flexGridSizer = new wxFlexGridSizer(0,2,0,0);
@@ -620,20 +624,20 @@ bool FlashPanel::CreateControls() {
 //   flexGridSizer->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_NONE);
    itemStaticBoxSizer->Add(flexGridSizer, 1, wxALIGN_CENTER_VERTICAL|wxALL, 0);
 
-   deviceTypeChoiceControl = new wxChoice(panel, ID_DEVICE_TYPE_CHOICE, wxDefaultPosition, wxSize(180,-1), 0, NULL, 0); //wxDefaultSize);
+   deviceTypeChoiceControl = new wxChoice(panel, ID_DEVICE_TYPE_CHOICE, wxDefaultPosition, wxSize(220,-1), 0, NULL, 0); //wxDefaultSize);
 //   deviceTypeChoiceControl = new wxComboBox(panel, ID_DEVICE_TYPE_CHOICE, _("Select Device"), wxDefaultPosition, wxSize(180,-1), 0, NULL, wxCB_READONLY); //wxDefaultSize);
-   flexGridSizer->Add(deviceTypeChoiceControl, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALL, 5);
+   flexGridSizer->Add(deviceTypeChoiceControl, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALL, borderWidth);
 
 #ifdef FLASH_PROGRAMMER
    detectChipButtonControl = new wxButton( panel, ID_DETECT_CHIP_ID_BUTTON, _("&Detect Chip"), wxDefaultPosition, wxDefaultSize, 0 );
    detectChipButtonControl->SetToolTip(_("Query target chip ID."));
-   flexGridSizer->Add(detectChipButtonControl, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALL, 5);
+   flexGridSizer->Add(detectChipButtonControl, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALL, borderWidth);
 
    filterByChipIdCheckBoxControl = new wxCheckBox( panel, ID_FILTER_BY_CHIP_ID_CHECKBOX, _("Filter by chip ID"), wxDefaultPosition, wxDefaultSize, 0 );
    filterByChipIdCheckBoxControl->SetToolTip(_("Restrict displayed chips to those matching chip ID."));
    filterByChipIdCheckBoxControl->SetValue(false);
    filterByChipIdCheckBoxControl->Enable(false);
-   flexGridSizer->Add(filterByChipIdCheckBoxControl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+   flexGridSizer->Add(filterByChipIdCheckBoxControl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 #endif
 
 #if TARGET == HCS12
@@ -641,25 +645,26 @@ bool FlashPanel::CreateControls() {
 
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Options for secured devices without SYNC"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    //------------------------------------------------------------------------
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Bus Frequency (Crystal/2)"), wxDefaultPosition, wxDefaultSize, 0 );
-   itemStaticBoxSizer->Add(itemStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT|wxALL, 5);
+   itemStaticBoxSizer->Add(itemStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT|wxALL, borderWidth);
 
    busFrequencyTextControl = new NumberTextEditCtrl( panel, ID_BUS_FREQ_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0 );
-   itemStaticBoxSizer->Add(busFrequencyTextControl, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+   itemStaticBoxSizer->Add(busFrequencyTextControl, 0, wxALIGN_CENTER_VERTICAL|wxALL, borderWidth);
    busFrequencyTextControl->Enable(false);
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("kHz"), wxDefaultPosition, wxDefaultSize, 0 );
-   itemStaticBoxSizer->Add(itemStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+   itemStaticBoxSizer->Add(itemStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, borderWidth);
 #endif
 
+#if TARGET != HCS12
    //====================================================================
 
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Clock type and parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    //------------------------------------------------------------------------
    gridBagSizer = new wxGridBagSizer(0,0);
@@ -667,46 +672,47 @@ bool FlashPanel::CreateControls() {
 
    //------------------------------------------------------------------------
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Clock Module"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(0,0), wxGBSpan(1,2), wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(0,0), wxGBSpan(1,2), wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    clockModuleTypeChoiceControl = new wxChoice( panel, ID_CLOCK_MODULE_TYPE_CHOICE, wxDefaultPosition, wxSize(150, -1));
-   gridBagSizer->Add(clockModuleTypeChoiceControl, wxGBPosition(1,0), wxGBSpan(1,2), wxLEFT|wxTOP, 5);
+   gridBagSizer->Add(clockModuleTypeChoiceControl, wxGBPosition(1,0), wxGBSpan(1,2), wxLEFT|wxTOP, borderWidth);
    clockModuleTypeChoiceControl->Enable(false);
 
    clockModuleAddressStaticControl = new wxStaticText( panel, wxID_STATIC, _("&Clock Module Address"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(clockModuleAddressStaticControl, wxGBPosition(2,0), wxGBSpan(1,3),  wxLEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(clockModuleAddressStaticControl, wxGBPosition(2,0), wxGBSpan(1,3),  wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    clockModuleAddressTextControl = new NumberTextEditCtrl( panel, ID_CLOCK_MODULE_ADDRESS_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0 );
-   gridBagSizer->Add(clockModuleAddressTextControl, wxGBPosition(3,0), wxGBSpan(1,1), wxLEFT|wxTOP, 5);
+   gridBagSizer->Add(clockModuleAddressTextControl, wxGBPosition(3,0), wxGBSpan(1,1), wxLEFT|wxTOP, borderWidth);
    clockModuleAddressTextControl->Enable(false);
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("(hex)"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(3,1), wxGBSpan(1,1), wxLEFT|wxTOP|wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(3,1), wxGBSpan(1,1), wxLEFT|wxTOP|wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL, borderWidth);
 
    //------------------------------------------------------------------------
    trimFrequencyStaticControl = new wxStaticText( panel, wxID_STATIC, _("&Trim Frequency"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(trimFrequencyStaticControl, wxGBPosition(0,4), wxGBSpan(1,2), wxALIGN_LEFT|wxRIGHT|wxTOP, 5);
+   gridBagSizer->Add(trimFrequencyStaticControl, wxGBPosition(0,4), wxGBSpan(1,2), wxALIGN_LEFT|wxRIGHT|wxTOP, borderWidth);
 
    trimFrequencyCheckBoxControl = new wxCheckBox( panel, ID_TRIM_FREQUENCY_CHECKBOX, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT|wxCHK_2STATE );
    trimFrequencyCheckBoxControl->SetValue(false);
-   gridBagSizer->Add(trimFrequencyCheckBoxControl, wxGBPosition(1,2), wxGBSpan(1,2), wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL, 5);
+   gridBagSizer->Add(trimFrequencyCheckBoxControl, wxGBPosition(1,2), wxGBSpan(1,2), wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL, borderWidth);
 
    trimFrequencyTextControl = new NumberTextEditCtrl( panel, ID_TRIM_FREQUENCY_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0 );
    trimFrequencyTextControl->SetToolTip(_("Frequency to trim the internal clock to\nNot the bus frequency"));
-   gridBagSizer->Add(trimFrequencyTextControl, wxGBPosition(1,4), wxGBSpan(1,1), wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_LEFT, 5);
+   gridBagSizer->Add(trimFrequencyTextControl, wxGBPosition(1,4), wxGBSpan(1,1), wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_LEFT, borderWidth);
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("kHz"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(1,5), wxGBSpan(1,1), wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(1,5), wxGBSpan(1,1), wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL, borderWidth);
 
    trimAddressStaticControl = new wxStaticText( panel, wxID_STATIC, _("&NVTRIM Address"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(trimAddressStaticControl, wxGBPosition(2,4), wxGBSpan(1,2), wxRIGHT|wxTOP|wxALIGN_LEFT, 5);
+   gridBagSizer->Add(trimAddressStaticControl, wxGBPosition(2,4), wxGBSpan(1,2), wxRIGHT|wxTOP|wxALIGN_LEFT, borderWidth);
 
    trimAddressTextControl = new NumberTextEditCtrl( panel, ID_NONVOLATILE_ADDRESS_TEXT, wxEmptyString, wxDefaultPosition, wxSize(80, -1), 0 );
    trimAddressTextControl->SetToolTip(_("Flash address to program trim values to."));
-   gridBagSizer->Add(trimAddressTextControl, wxGBPosition(3,4), wxGBSpan(1,1), wxRIGHT|wxTOP|wxALIGN_LEFT, 5);
+   gridBagSizer->Add(trimAddressTextControl, wxGBPosition(3,4), wxGBSpan(1,1), wxRIGHT|wxTOP|wxALIGN_LEFT, borderWidth);
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("(hex)"), wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(itemStaticText, wxGBPosition(3,5), wxGBSpan(1,1), wxTOP|wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL, 5);
+   gridBagSizer->Add(itemStaticText, wxGBPosition(3,5), wxGBSpan(1,1), wxTOP|wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL, borderWidth);
+#endif
 
 #ifdef FLASH_PROGRAMMER
    //====================================================================
@@ -723,15 +729,15 @@ bool FlashPanel::CreateControls() {
                                          "Unsecure\t- the device will be unsecured\n"
                                          "Smart   \t\t- set unsecured if security area in image is unprogrammed\n"
                                          "Disabled\t-value is set on Advanced tab"));
-   panelBoxSizerV->Add(securityRadioBoxControl, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(securityRadioBoxControl, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    //====================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Device Operations"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    //------------------------------------------------------------------------
-   gridBagSizer = new wxGridBagSizer(5,0);
+   gridBagSizer = new wxGridBagSizer(borderWidth,0);
    itemStaticBoxSizer->Add(gridBagSizer, wxEXPAND|wxALL);
 
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Erase Options"));
@@ -756,15 +762,15 @@ bool FlashPanel::CreateControls() {
    eraseChoiceControl->Append(wxString(DeviceData::getEraseOptionName(DeviceData::eraseNone),wxConvUTF7),      (void*)DeviceData::eraseNone);
    eraseChoiceControl->Append(wxString(DeviceData::getEraseOptionName(DeviceData::eraseMass),wxConvUTF7),      (void*)DeviceData::eraseMass);
 #endif
-   gridBagSizer->Add(eraseChoiceControl, wxGBPosition(1,0), wxGBSpan(1,1), wxALIGN_CENTRE|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(eraseChoiceControl, wxGBPosition(1,0), wxGBSpan(1,1), wxALIGN_CENTRE|wxLEFT|wxRIGHT, borderWidth);
 
    enableSoundsCheckBoxControl = new wxCheckBox( panel, ID_SOUND, _("Enable Sounds"));
    enableSoundsCheckBoxControl->SetValue(false);
-   gridBagSizer->Add(enableSoundsCheckBoxControl, wxGBPosition(1,1), wxGBSpan(1,1), wxALIGN_CENTER|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(enableSoundsCheckBoxControl, wxGBPosition(1,1), wxGBSpan(1,1), wxALIGN_CENTER|wxLEFT|wxRIGHT, borderWidth);
 
    trimValueStaticControl = new wxStaticText( panel, wxID_STATIC, _("Trim Value: - 0x??.?"));
    trimValueStaticControl->SetToolTip(_("Calculated Trim value (8/9 bit)"));
-   gridBagSizer->Add(trimValueStaticControl, wxGBPosition(1,2), wxGBSpan(1,1), wxALIGN_CENTER|wxLEFT|wxRIGHT, 5);
+   gridBagSizer->Add(trimValueStaticControl, wxGBPosition(1,2), wxGBSpan(1,1), wxALIGN_CENTER|wxLEFT|wxRIGHT, borderWidth);
 
 #if (TARGET == HCS12) || (TARGET == CFVx) || (TARGET == ARM) || (TARGET == MC56F80xx)
    trimValueStaticControl->Enable(false);
@@ -773,16 +779,16 @@ bool FlashPanel::CreateControls() {
    //--------
    programFlashButtonControl = new wxButton( panel, ID_PROGRAM_FLASH_BUTTON, _("&Program Flash") );
    programFlashButtonControl->Enable(false);
-   gridBagSizer->Add(programFlashButtonControl, wxGBPosition(2,0), wxGBSpan(1,1), wxEXPAND|wxALL, 5);
+   gridBagSizer->Add(programFlashButtonControl, wxGBPosition(2,0), wxGBSpan(1,1), wxEXPAND|wxALL, borderWidth);
 
    verifyFlashButtonControl = new wxButton( panel, ID_VERIFY_FLASH_BUTTON, _("&Verify Flash") );
    verifyFlashButtonControl->Enable(false);
-   gridBagSizer->Add(verifyFlashButtonControl, wxGBPosition(2,1), wxGBSpan(1,1), wxEXPAND|wxALL, 5);
+   gridBagSizer->Add(verifyFlashButtonControl, wxGBPosition(2,1), wxGBSpan(1,1), wxEXPAND|wxALL, borderWidth);
 
    loadAndGoButtonControl = new wxButton( panel, ID_LOAD_AND_GO_BUTTON, _("Load and &Go") );
    loadAndGoButtonControl->SetToolTip(_("Program Target, Reset and start execution."));
    loadAndGoButtonControl->Enable(false);
-   gridBagSizer->Add(loadAndGoButtonControl, wxGBPosition(2,2), wxGBSpan(1,1), wxEXPAND|wxALL, 5);
+   gridBagSizer->Add(loadAndGoButtonControl, wxGBPosition(2,2), wxGBSpan(1,1), wxEXPAND|wxALL, borderWidth);
 #endif //FLASH_PROGRAMMER
 
    return true;
@@ -815,6 +821,7 @@ bool FlashPanel::TransferDataToWindow() {
       }
       setDeviceindex(deviceIndex);
    }
+#if TARGET != HCS12
    bool usingClock = (currentDevice->getClockType() != CLKEXT) &&
                      (currentDevice->getClockType() != CLKINVALID);
 //   Logging::print("FlashPanel::TransferDataToWindow() - usingClock=%s, getClockType()=%d\n",
@@ -839,6 +846,7 @@ bool FlashPanel::TransferDataToWindow() {
 
    trimFrequencyTextControl->SetDoubleValue(currentDevice->getClockTrimFreq()/1000.0);
    trimAddressTextControl->SetHexValue(currentDevice->getClockTrimNVAddress());
+#endif
 
 #ifdef FLASH_PROGRAMMER
    if (filterChipIds.empty()) {

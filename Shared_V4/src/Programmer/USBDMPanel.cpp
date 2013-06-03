@@ -318,6 +318,8 @@ USBDM_ErrorCode USBDMPanel::CreateControls(void) {
    wxBoxSizer* panelSizer = new wxBoxSizer(wxVERTICAL);
    panel->SetSizer(panelSizer);
 
+   const int borderWidth = 3;
+
    wxStaticBox      *staticTextBox;
    wxStaticBoxSizer *staticBoxSizer;
    wxBoxSizer       *itemBoxSizer;
@@ -325,29 +327,29 @@ USBDM_ErrorCode USBDMPanel::CreateControls(void) {
    //-----------------------------------------------
    staticTextBox = new wxStaticBox(panel, wxID_ANY, _("Select BDM"));
    staticBoxSizer = new wxStaticBoxSizer(staticTextBox, wxVERTICAL);
-   panelSizer->Add(staticBoxSizer, 0, wxGROW|wxALL, 5);
+   panelSizer->Add(staticBoxSizer, 0, wxGROW|wxALL, borderWidth);
 
    itemBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-   staticBoxSizer->Add(itemBoxSizer, 0, wxGROW|wxALL, 5);
+   staticBoxSizer->Add(itemBoxSizer, 0, wxGROW|wxALL, borderWidth);
 
    bdmSelectChoiceControl = new wxChoice( panel, ID_BDM_SELECT_CHOICE, wxDefaultPosition, wxDefaultSize);
-   itemBoxSizer->Add(bdmSelectChoiceControl, 1, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+   itemBoxSizer->Add(bdmSelectChoiceControl, 1, wxALIGN_CENTER_HORIZONTAL|wxALL, borderWidth);
    populateBDMChoices();
 
    bdmRefreshButtonControl = new wxButton( panel, ID_REFRESH_BDM_BUTTON, _("&Detect"), wxDefaultPosition, wxDefaultSize, 0 );
    bdmRefreshButtonControl->SetToolTip(_("Refresh list of connected BDMs"));
-   itemBoxSizer->Add(bdmRefreshButtonControl, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+   itemBoxSizer->Add(bdmRefreshButtonControl, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, borderWidth);
 
    bdmDescriptionStaticControl = new wxStaticText( panel, ID_BDM_DESCRIPTION_STRING, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-   staticBoxSizer->Add(bdmDescriptionStaticControl, 0, wxGROW|wxALL, 5);
+   staticBoxSizer->Add(bdmDescriptionStaticControl, 0, wxGROW|wxALL, borderWidth);
 
    //-----------------------------------------------
    staticTextBox = new wxStaticBox(panel, wxID_ANY, _("Target Vdd Control"));
    staticBoxSizer = new wxStaticBoxSizer(staticTextBox, wxVERTICAL);
-   panelSizer->Add(staticBoxSizer, 0, wxGROW|wxALL, 5);
+   panelSizer->Add(staticBoxSizer, 0, wxGROW|wxALL, borderWidth);
 
    itemBoxSizer = new wxBoxSizer(wxVERTICAL);
-   staticBoxSizer->Add(itemBoxSizer, 0, wxGROW|wxALL, 5);
+   staticBoxSizer->Add(itemBoxSizer, 0, wxGROW|wxALL, borderWidth);
 
    wxArrayString targetVddControlStrings;
    targetVddControlStrings.Add(_("&Off"));
@@ -355,7 +357,7 @@ USBDM_ErrorCode USBDMPanel::CreateControls(void) {
    targetVddControlStrings.Add(_("&5V"));
    targetVddControl = new wxRadioBox( panel, ID_VDD_SELECT_BOX, wxEmptyString, wxDefaultPosition, wxDefaultSize, targetVddControlStrings, 1, wxRA_SPECIFY_ROWS );
    targetVddControl->SetSelection(0);
-   itemBoxSizer->Add(targetVddControl, 0, wxGROW|wxALL, 5);
+   itemBoxSizer->Add(targetVddControl, 0, wxGROW|wxALL, borderWidth);
 
    cycleVddOnResetControl = new wxCheckBox( panel, ID_CYCLE_VDD_ON_RESET_CHECKBOX, _("&Cycle target Vdd on reset"), wxDefaultPosition, wxDefaultSize, 0 );
    cycleVddOnResetControl->SetValue(false);
@@ -371,16 +373,16 @@ USBDM_ErrorCode USBDMPanel::CreateControls(void) {
 
 //   promptToManualCycleVddControl = new wxCheckBox( panel, ID_MANUALLY_CYCLE_VDD_CHECKBOX, _("&Prompt to manually cycle target Vdd"), wxDefaultPosition, wxDefaultSize, 0 );
 //   promptToManualCycleVddControl->SetValue(false);
-//   itemBoxSizer->Add(promptToManualCycleVddControl, 0, wxALL, 5);
+//   itemBoxSizer->Add(promptToManualCycleVddControl, 0, wxALL, borderWidth);
 
    //-----------------------------------------------
    staticTextBox = new wxStaticBox(panel, wxID_ANY, _("Connection control"));
    staticBoxSizer = new wxStaticBoxSizer(staticTextBox, wxVERTICAL);
-   panelSizer->Add(staticBoxSizer, 0, wxGROW|wxALL, 5);
+   panelSizer->Add(staticBoxSizer, 0, wxGROW|wxALL, borderWidth);
    automaticallyReconnectControl = new wxCheckBox( panel, ID_RECONNECT_CHECKBOX, _("&Automatically re-connect"), wxDefaultPosition, wxDefaultSize, 0 );
    automaticallyReconnectControl->SetToolTip(_("Re-synchronise with target before each operation."));
    automaticallyReconnectControl->SetValue(false);
-   staticBoxSizer->Add(automaticallyReconnectControl, 0, wxALL, 5);
+   staticBoxSizer->Add(automaticallyReconnectControl, 0, wxALL, borderWidth);
 
    if (targetProperties & HAS_CLK_SW) {
       wxArrayString bdmClockSelectControlStrings;
@@ -390,30 +392,30 @@ USBDM_ErrorCode USBDMPanel::CreateControls(void) {
       bdmClockSelectControl = new wxRadioBox( panel, ID_BDM_CLOCK_SELECT_RADIOBOX, _("BDM Clock Select"), wxDefaultPosition, wxDefaultSize, bdmClockSelectControlStrings, 1, wxRA_SPECIFY_ROWS );
       bdmClockSelectControl->SetToolTip(_("Drive RESET signal when resetting the target."));
       bdmClockSelectControl->SetSelection(0);
-      staticBoxSizer->Add(bdmClockSelectControl, 0, wxGROW|wxALL, 5);
+      staticBoxSizer->Add(bdmClockSelectControl, 0, wxGROW|wxALL, borderWidth);
    }
    if (targetProperties & HAS_GUESS_SPEED) {
       guessTargetSpeedControl = new wxCheckBox( panel, ID_GUESS_SPEED_CHECKBOX, _("&Guess speed if no sync"), wxDefaultPosition, wxDefaultSize, 0 );
       guessTargetSpeedControl->SetValue(false);
-      staticBoxSizer->Add(guessTargetSpeedControl, 0, wxGROW|wxALL, 5);
+      staticBoxSizer->Add(guessTargetSpeedControl, 0, wxGROW|wxALL, borderWidth);
    }
    if (targetProperties & HAS_USE_RESET) {
       useResetSignalControl = new wxCheckBox( panel, ID_USE_RESET_CHECKBOX, _("Use &RESET signal"), wxDefaultPosition, wxDefaultSize, 0 );
       useResetSignalControl->SetValue(false);
-      staticBoxSizer->Add(useResetSignalControl, 0, wxLEFT|wxALL, 5);
+      staticBoxSizer->Add(useResetSignalControl, 0, wxLEFT|wxALL, borderWidth);
    }
    if (targetType == T_CFVx) {
       usePstSignalControl = new wxCheckBox( panel, ID_USE_PST_SIGNAL_CHECKBOX, _("Monitor &PST signals"), wxDefaultPosition, wxDefaultSize, 0 );
       usePstSignalControl->SetValue(false);
-      staticBoxSizer->Add(usePstSignalControl, 0, wxLEFT|wxALL, 5);
+      staticBoxSizer->Add(usePstSignalControl, 0, wxLEFT|wxALL, borderWidth);
    }
    if (targetProperties & HAS_SELECT_SPEED) {
       wxBoxSizer* itemBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-      staticBoxSizer->Add(itemBoxSizer, 0, wxGROW|wxRIGHT|wxTOP|wxBOTTOM, 5);
-      itemBoxSizer->Add(5, 5, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+      staticBoxSizer->Add(itemBoxSizer, 0, wxGROW|wxRIGHT|wxTOP|wxBOTTOM, borderWidth);
+      itemBoxSizer->Add(5, 5, 0, wxALIGN_CENTER_VERTICAL|wxALL, borderWidth);
 
       wxStaticText* itemStaticText22 = new wxStaticText( panel, wxID_STATIC, _("Connection &Speed"), wxDefaultPosition, wxDefaultSize, 0 );
-      itemBoxSizer->Add(itemStaticText22, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+      itemBoxSizer->Add(itemStaticText22, 0, wxALIGN_CENTER_VERTICAL|wxALL, borderWidth);
 
       int maxSpeed;
       switch(targetType) {
@@ -430,18 +432,18 @@ USBDM_ErrorCode USBDMPanel::CreateControls(void) {
          connectionSpeedControlStrings.Add(CFVx_Speeds[sub].name);
       }
       connectionSpeedControl = new wxChoice( panel, ID_SPEED_SELECT_CHOICE, wxDefaultPosition, wxSize(100, -1), connectionSpeedControlStrings, 0 );
-      itemBoxSizer->Add(connectionSpeedControl, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+      itemBoxSizer->Add(connectionSpeedControl, 0, wxALIGN_CENTER_VERTICAL|wxALL, borderWidth);
 
       if (targetType == T_CFVx) {
          wxStaticText* staticText = new wxStaticText( panel, ID_SPEED_REMINDER_STATIC, _("Speed < Target Clock Frequency/5"), wxDefaultPosition, wxDefaultSize, 0 );
-         staticBoxSizer->Add(staticText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+         staticBoxSizer->Add(staticText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, borderWidth);
       }
    }
 #ifdef GDI
    if (targetProperties & HAS_MASK_INTERRUPTS) {
       maskInterruptWhenSteppingControl = new wxCheckBox( panel, ID_MASK_INTERRUPTS_WHEN_STEPPING, _("Mask interrupts when stepping"), wxDefaultPosition, wxDefaultSize, 0 );
       maskInterruptWhenSteppingControl->SetValue(false);
-      staticBoxSizer->Add(maskInterruptWhenSteppingControl, 0, wxLEFT|wxALL, 5);
+      staticBoxSizer->Add(maskInterruptWhenSteppingControl, 0, wxLEFT|wxALL, borderWidth);
    }
 #endif
    //------------------------------------------------
@@ -449,12 +451,12 @@ USBDM_ErrorCode USBDMPanel::CreateControls(void) {
    panelSizer->Add(versionBoxSizerH, 0, wxGROW|wxALL, 0);
 
    firmwareStaticControl = new wxStaticText( panel, ID_BDM_VERSION_STRING, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-   versionBoxSizerH->Add(firmwareStaticControl, 0, wxGROW|wxALL, 5);
+   versionBoxSizerH->Add(firmwareStaticControl, 0, wxGROW|wxALL, borderWidth);
 
-   versionBoxSizerH->Add(5, 5, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+   versionBoxSizerH->Add(5, 5, 1, wxALIGN_CENTER_VERTICAL|wxALL, borderWidth);
 
    wxStaticText *dllVersionstaticControl = new wxStaticText( panel, ID_DLL_VERSION_STRING, bdmGetDllVersion(), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-   versionBoxSizerH->Add(dllVersionstaticControl, 0, wxGROW|wxALL, 5);
+   versionBoxSizerH->Add(dllVersionstaticControl, 0, wxGROW|wxALL, borderWidth);
 
    return BDM_RC_OK;
 }
