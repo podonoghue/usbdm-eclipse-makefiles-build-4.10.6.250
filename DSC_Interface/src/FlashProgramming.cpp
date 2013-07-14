@@ -23,38 +23,39 @@
 
 \verbatim
  Change History
-+==============================================================================
++================================================================================
 | Revision History
-+==============================================================================
-| 28 Dec 12 | 4.10.4 Changed handling of security area (& erasing)        - pgo
-| 28 Dec 12 | 4.10.4 Changed TCL interface error handling                 - pgo
-| 16 Dec 12 | 4.10.4 Moved Check of SDID to before Mass erase (HCS08)     - pgo
-| 14 Dec 12 | 4.10.4 Added custom security                                - pgo
-| 30 Nov 12 | 4.10.4 Changed logging                                      - pgo
-| 30 Oct 12 | 4.10.4 Added MS_FAST option for HCS12/HCS12                 - pgo
-| 30 Sep 12 | 4.10.2 RAM write added                                      - pgo
-| 26 Aug 12 | 4.10.0 JTAG/SWD combined code                               - pgo
-|  1 Jun 12 | 4.9.5 Now handles arbitrary number of memory regions        - pgo
-| 30 May 12 | 4.9.5 Re-write of DSC programming                           - pgo
-| 12 Apr 12 | 4.9.4 Changed handling of empty images                      - pgo
-| 30 Mar 12 | 4.9.4 Added Intelligent security option                     - pgo
-| 25 Feb 12 | 4.9.1 Fixed alignment rounding problem on partial phrases   - pgo
-| 10 Feb 12 | 4.9.0 Major changes for HCS12 (Generalised code)            - pgo
-| 20 Nov 11 | 4.8.0 Major changes for Coldfire+ (Generalised code)        - pgo
-|  4 Oct 11 | 4.7.0 Added progress dialogues                              - pgo
-| 23 Apr 11 | 4.6.0 Major changes for CFVx programming                    - pgo
-|  6 Apr 11 | 4.6.0 Major changes for ARM programming                     - pgo
-|  3 Jan 11 | 4.4.0 Major changes for XML device files etc                - pgo
-| 17 Sep 10 | 4.0.0 Fixed minor bug in isTrimLocation()                   - pgo
-| 30 Jan 10 | 2.0.0 Changed to C++                                        - pgo
-|           |       Added paged memory support                            - pgo
-| 15 Dec 09 | 1.1.1 setFlashSecurity() was modifying image unnecessarily  - pgo
-| 14 Dec 09 | 1.1.0 Changed Trim to use linear curve fitting              - pgo
-|           |       FTRIM now combined with image value                   - pgo
-|  7 Dec 09 | 1.0.3 Changed SOPT value to disable RESET pin               - pgo
-| 29 Nov 09 | 1.0.2 Bug fixes after trim testing                          - pgo
-| 17 Nov 09 | 1.0.0 Created                                               - pgo
-+==============================================================================
++================================================================================
+|  4 Jun 13 | 4.10.5.20 Set controller address in partitionFlexNVM()        - pgo
+| 28 Dec 12 | 4.10.4 Changed handling of security area (& erasing)          - pgo
+| 28 Dec 12 | 4.10.4 Changed TCL interface error handling                   - pgo
+| 16 Dec 12 | 4.10.4 Moved Check of SDID to before Mass erase (HCS08)       - pgo
+| 14 Dec 12 | 4.10.4 Added custom security                                  - pgo
+| 30 Nov 12 | 4.10.4 Changed logging                                        - pgo
+| 30 Oct 12 | 4.10.4 Added MS_FAST option for HCS12/HCS12                   - pgo
+| 30 Sep 12 | 4.10.2 RAM write added                                        - pgo
+| 26 Aug 12 | 4.10.0 JTAG/SWD combined code                                 - pgo
+|  1 Jun 12 | 4.9.5 Now handles arbitrary number of memory regions          - pgo
+| 30 May 12 | 4.9.5 Re-write of DSC programming                             - pgo
+| 12 Apr 12 | 4.9.4 Changed handling of empty images                        - pgo
+| 30 Mar 12 | 4.9.4 Added Intelligent security option                       - pgo
+| 25 Feb 12 | 4.9.1 Fixed alignment rounding problem on partial phrases     - pgo
+| 10 Feb 12 | 4.9.0 Major changes for HCS12 (Generalised code)              - pgo
+| 20 Nov 11 | 4.8.0 Major changes for Coldfire+ (Generalised code)          - pgo
+|  4 Oct 11 | 4.7.0 Added progress dialogues                                - pgo
+| 23 Apr 11 | 4.6.0 Major changes for CFVx programming                      - pgo
+|  6 Apr 11 | 4.6.0 Major changes for ARM programming                       - pgo
+|  3 Jan 11 | 4.4.0 Major changes for XML device files etc                  - pgo
+| 17 Sep 10 | 4.0.0 Fixed minor bug in isTrimLocation()                     - pgo
+| 30 Jan 10 | 2.0.0 Changed to C++                                          - pgo
+|           |       Added paged memory support                              - pgo
+| 15 Dec 09 | 1.1.1 setFlashSecurity() was modifying image unnecessarily    - pgo
+| 14 Dec 09 | 1.1.0 Changed Trim to use linear curve fitting                - pgo
+|           |       FTRIM now combined with image value                     - pgo
+|  7 Dec 09 | 1.0.3 Changed SOPT value to disable RESET pin                 - pgo
+| 29 Nov 09 | 1.0.2 Bug fixes after trim testing                            - pgo
+| 17 Nov 09 | 1.0.0 Created                                                 - pgo
++================================================================================
 \endverbatim
 */
 #define _WIN32_IE 0x0500 //!< Required for common controls?
@@ -414,9 +415,6 @@ USBDM_ErrorCode FlashProgrammer::resetAndConnectTarget(void) {
       Logging::error( "... Failed Connect, rc = %s!\n", USBDM_GetErrorString(rc));
       return rc; //PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
-#if (TARGET == ARM)
-   TargetHalt();
-#endif
    // Use TCL script to set up target
    USBDM_ErrorCode rc2 = initialiseTarget();
    if (rc2 != PROGRAMMING_RC_OK) {
@@ -1850,6 +1848,7 @@ USBDM_ErrorCode FlashProgrammer::partitionFlexNVM() {
       return rc;
    }
    flashOperationInfo.flexNVMPartition  = (eeepromSize<<24UL)|(partionValue<<16UL);
+   flashOperationInfo.controller = memoryRegionPtr->getRegisterAddress();
    rc = executeTargetProgram();
    if (rc == PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND) {
       // This usually means this error - more useful message
@@ -2176,16 +2175,16 @@ USBDM_ErrorCode FlashProgrammer::runTCLScript(TclScriptConstPtr script) {
    }
    int rc = evalTclScript(tclInterpreter, script->getScript().c_str());
    const char *result = getTclResult(tclInterpreter);
+   if ((result != NULL) && (*result != '\0')) {
+      // Error return
+      Logging::error("Result = \'%s\'\n", result);
+      return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
+   }
    if (rc != 0) {
       // Unexpected failure!
       Logging::error("Failed\n");
       Logging::error(script->toString().c_str());
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
-   }
-   if ((result != NULL) && (*result != '\0')) {
-      // Error return
-      Logging::error("Result = \'%s\'\n", result);
-      return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
    }
    return PROGRAMMING_RC_OK;
 }
@@ -2202,15 +2201,15 @@ USBDM_ErrorCode FlashProgrammer::runTCLCommand(const char *command) {
    }
    int rc = evalTclScript(tclInterpreter, command);
    const char *result = getTclResult(tclInterpreter);
-   if (rc != 0) {
-      // Unexpected failure!
-      Logging::error("TCL Command '%s' failed\n", command);
-      return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
-   }
    if ((result != NULL) && (*result != '\0')) {
       // Error return
       Logging::error("Result = \'%s\'\n", result);
       return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
+   }
+   if (rc != 0) {
+      // Unexpected failure!
+      Logging::error("TCL Command '%s' failed\n", command);
+      return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    return PROGRAMMING_RC_OK;
 }

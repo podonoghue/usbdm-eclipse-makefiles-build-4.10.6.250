@@ -13,6 +13,7 @@
 using namespace std;
 
 class AppSettings {
+
 private:
    enum ValueType {intType, stringType};
    //! Class to encapsulate the attribute & type
@@ -65,11 +66,14 @@ private:
             return type;
          }
    };
-   //! Container for key/attribute pairs
-   map<string,Value *> mymap;
+
+   map<string,Value *>  mymap;    //!< Container for key/attribute pairs
+   string               fileName; //!< Path to load/save settings from
 
    void loadFromFile(FILE *fp);
    void writeToFile(FILE *fp, const string &comment) const;
+
+   static string getSettingsFilename(const string &rootFilename, TargetType_t targetType);
 
 public:
    //! Add a integer attribute
@@ -117,15 +121,20 @@ public:
       else
          return defValue;
    }
-   static string getSettingsFilename(const string &rootFilename, TargetType_t targetType);
 
-   bool loadFromFile(const string &fileName);
-   bool writeToFile( const string &fileName, string const &comment = string()) const;
+//   bool loadFromFile();
+//   bool writeToFile(string const &comment = string()) const;
 
-   bool loadFromAppDirFile(const string &fileName);
-   bool writeToAppDirFile( const string &fileName, const string &comment) const;
+   bool loadFromAppDirFile();
+   bool writeToAppDirFile(const string &comment = string()) const;
 
    void printToLog() const;
+
+   AppSettings(string baseFilename, TargetType_t targetType) :
+      fileName(getSettingsFilename(baseFilename, targetType)) {
+
+   }
+
 };
 
 #endif /* APPSETTINGS_HPP_ */

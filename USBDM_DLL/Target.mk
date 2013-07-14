@@ -13,7 +13,7 @@ TARGET ?= $(BUILDDIR)
 include ../Common.mk
 
 VPATH      := src $(BUILDDIR) 
-SOURCEDIRS := src $(SHARED_SRC)
+SOURCEDIRS := src
 
 # Use C++ Compiler
 CC = $(GPP)
@@ -34,6 +34,7 @@ LIBDIRS +=
 
 # Extra libraries
 LIBS += -l$(LIB_USB)
+LIBS += 
 
 # Each module will add to this
 SRC :=
@@ -60,16 +61,6 @@ endif
 # Include the C dependency files (if they exist)
 -include $(OBJ:.o=.d)
 
-# Rules to build dependency (.d) files
-#==============================================
-$(BUILDDIR)/%.d : %.c $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
-
-$(BUILDDIR)/%.d : %.cpp $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
-
 # Rules to build object (.o) files
 #==============================================
 ifeq ($(UNAME_S),Windows)
@@ -80,36 +71,25 @@ endif
 
 $(BUILDDIR)/%.o : %.c $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 $(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 # How to link an EXE
 #==============================================
 $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
 	@echo -- Linking Target $@
-	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
+	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) $(LINK_OPTS)
 
 # How to link a LIBRARY
 #==============================================
 $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
 	@echo -- Linking Target $@
-	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
-
-# How to link a DLL
-#==============================================
-#$(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
-#	@echo --
-#	@echo -- Linking Target $@
-#ifeq ($(UNAME_S),Windows)
-#	$(CC) -shared $(STATIC_GCC_OPTION) -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
-#else	
-#	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
-#endif
+	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) $(LINK_OPTS)
 
 # How to copy a LIBRARY to the shared directory
 #==============================================

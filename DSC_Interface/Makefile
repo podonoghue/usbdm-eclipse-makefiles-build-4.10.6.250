@@ -31,7 +31,8 @@ usbdm-$(target)-gdi-legacy:
 usbdm-$(target)-gdi-legacy-debug:
 	$(MAKE) dll -f ../GdiLegacyTarget.mk BUILDDIR=$@  MODULE=gdi-legacy CDEFS="$(GDI_LEGACY_DEFS)" DEBUG='Y'
 
-allCommon: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug usbdm-$(target)-gdi usbdm-$(target)-gdi-debug
+allCommon: $(TARGET)_FlashProgrammer        $(TARGET)_FlashProgrammer-debug 
+allCommon: usbdm-$(target)-gdi              usbdm-$(target)-gdi-debug
 
 cleanCommon:
 	${RMDIR} $(TARGET)_FlashProgrammer
@@ -39,7 +40,7 @@ cleanCommon:
 	${RMDIR} usbdm-$(target)-gdi
 	${RMDIR} usbdm-$(target)-gdi-debug
 
-ifeq ($(OS),Windows_NT)
+ifeq ($(UNAME_S),Windows)
 allWindows: usbdm-$(target)-gdi-legacy usbdm-$(target)-gdi-legacy-debug
 
 cleanWindows:
@@ -54,7 +55,7 @@ all: allCommon allWindows
 
 clean: cleanCommon cleanWindows
 
-.PHONY: all clean 
+.PHONY: all clean test
 .PHONY: allCommon allWindows cleanCommon cleanWIndows
 .PHONY: $(TARGET)_FlashProgrammer $(TARGET)_FlashProgrammer-debug 
 .PHONY: usbdm-$(target)-gdi       usbdm-$(target)-gdi-debug 

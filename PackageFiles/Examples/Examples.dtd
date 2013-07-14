@@ -18,10 +18,13 @@
    <!ATTLIST example path        CDATA              #REQUIRED>
    <!-- Device family the example if applicatble to -->
    <!ATTLIST example family     (ARM|COLDFIRE|NONE) #REQUIRED>
+   <!-- Build tool ID -->
+   <!ATTLIST example buildTool   CDATA              #REQUIRED>
 
 <!-- List of variables -->
 <!ELEMENT variable (#PCDATA)>
    <!-- Name of the variable, body text is the value -->
    <!ATTLIST variable name       CDATA              #REQUIRED>
  
-  
+
+ 

@@ -96,6 +96,8 @@ static const char *const errorMessages[] = {
    /* 51 */ "ARM Data Parity error",
    /* 52 */ "ARM transaction Fault",
    /* 53 */ "Unexpected/invalid response from BDM",
+   /* 54 */ "Memory access failed due to target in stop or wait state",
+   /* 55 */ "Selected BDM not found (removed?)",
 };
 
 //! Error code returned by the various routines

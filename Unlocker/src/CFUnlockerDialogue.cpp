@@ -38,17 +38,14 @@
 #endif
 
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
+#include <wx/wx.h>
 #endif
 
-////@begin includes
-#include "wx/imaglist.h"
-////@end includes
-
-#include "CFUnlockerDialogue.h"
+#include <wx/imaglist.h>
 
 #include "USBDM_API.h"
-#include "USBDMPanel.h"
+#include "CFUnlockerDialogue.h"
+#include "InterfacePanel.h"
 
 //===================================================================
 //===================================================================
@@ -60,7 +57,7 @@
 //! @note: It is necessary to call Create()
 //!
 CFUnlockerDialogue::CFUnlockerDialogue(TargetType_t targetType, const wxString &caption) :
-                  Shared(targetType),
+                  shared(SharedPtr(new Shared(targetType))),
                   targetType(targetType),
                   caption(caption) {
    Logging::setLoggingLevel(100);
@@ -79,10 +76,6 @@ bool CFUnlockerDialogue::Init()
    usbdmPanel = NULL;
    cfUnlockerPanel = NULL;
 
-   // Set options to default
-   bdmOptions.size       = sizeof(USBDM_ExtendedOptions_t);
-   bdmOptions.targetType = targetType;
-   USBDM_GetDefaultExtendedOptions(&bdmOptions);
    return true;
 }
 
@@ -124,10 +117,10 @@ void CFUnlockerDialogue::CreateControls() {
    noteBook = new wxNotebook( frame, ID_NOTEBOOK, wxDefaultPosition, wxDefaultSize, wxBK_DEFAULT );
    itemBoxSizer2->Add(noteBook, 0, wxGROW|wxALL, 5);
 
-   usbdmPanel = new USBDMPanel(noteBook, this, targetType);
+   usbdmPanel = new InterfacePanel(noteBook, shared);
    noteBook->AddPage(usbdmPanel, _("Connection"));
 
-   cfUnlockerPanel = new ColdfireUnlockerPanel(noteBook, this);
+   cfUnlockerPanel = new ColdfireUnlockerPanel(noteBook, shared);
 
    noteBook->AddPage(cfUnlockerPanel, _("Unlocker"));
 
@@ -244,7 +237,7 @@ void CFUnlockerDialogue::OnSelChanging( wxNotebookEvent& event ) {
    if (panel == usbdmPanel) {
       // Leaving Communication page - Try to open BDM
       Logging::print("Opening BDM\n");
-      USBDM_ErrorCode rc = usbdmPanel->openBdm();
+      USBDM_ErrorCode rc = shared->initBdm();
       if (rc != BDM_RC_OK) {
          Logging::print("CFUnlockerDialogue::OnNotebookPageChanging() - openBdm() failed\n");
          wxMessageBox(_("Failed to open BDM.\n\n"

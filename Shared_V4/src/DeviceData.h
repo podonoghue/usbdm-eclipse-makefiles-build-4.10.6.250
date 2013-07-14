@@ -132,6 +132,36 @@ public:
 typedef std::tr1::shared_ptr<TclScript>   TclScriptPtr;
 typedef std::tr1::shared_ptr<const TclScript>   TclScriptConstPtr;
 
+class RegisterDescription: public SharedInformationItem {
+private:
+   std::string description;
+   unsigned    lastRegisterIndex;
+public:
+   RegisterDescription(std::string description, unsigned lastRegisterIndex) :
+      description(description),
+      lastRegisterIndex(lastRegisterIndex) {
+   }
+   const std::string toString() const {
+      return std::string(
+            "Register Description\n"
+            "============================================================================" +
+            description +
+            "============================================================================\n");
+   }
+   const std::string getDescription() const {
+      return description;
+   }
+
+   unsigned getLastRegisterIndex() const {
+      return lastRegisterIndex;
+   }
+   ~RegisterDescription() {
+//      print("~RegisterDescription()\n");
+   }
+};
+typedef std::tr1::shared_ptr<RegisterDescription>   RegisterDescriptionPtr;
+typedef std::tr1::shared_ptr<const RegisterDescription>   RegisterDescriptionConstPtr;
+
 class FlashProgram: public SharedInformationItem {
 public:
    std::string flashProgram;
@@ -401,7 +431,7 @@ public:
    mutable uint32_t         lastIndexUsed;          //!< Last used memoryRanges index
    FlashProgramConstPtr     flashProgram;           //!< Region-specific flash algorithm
    SecurityEntryPtr         securityInformation;    //!< Region-specific security data
-   FlexNVMInfoConstPtr  flexNVMInfo;
+   FlexNVMInfoConstPtr      flexNVMInfo;
 
 private:
    //! Find the index of the memory range containing the given address
@@ -622,7 +652,7 @@ class DeviceData;
 typedef std::tr1::shared_ptr<DeviceData> DeviceDataPtr;
 typedef std::tr1::shared_ptr<const DeviceData> DeviceDataConstPtr;
 
-//! Information required to program a target
+//! Information about a target device
 //!
 class DeviceData {
 public:
@@ -681,6 +711,7 @@ private:
    FlexNVMParameters             flexNVMParameters;      //!< FlexNVM partitioning values
    FlexNVMInfoConstPtr           flexNVMInfo;            //!< Table describing FlexNVM partitioning
    std::vector<uint32_t>         targetSDIDs;            //!< System Device Identification Register values (0=> don't know/care)
+   RegisterDescriptionConstPtr   registerDescription;    //!< Register description
 
 public:
    static const DeviceData    defaultDevice;
@@ -689,6 +720,7 @@ public:
 public:
    const std::string              getTargetName()              const { return targetName; }
    const std::string              getAliasName()               const { return aliasName; }
+   const TargetType_t             getTargetType()              const { return T_ARM; }
    bool                           isHidden()                   const { return hidden; }
    uint32_t                       getRamStart()                const { return ramStart; }
    uint32_t                       getRamEnd()                  const { return ramEnd; }
@@ -714,6 +746,7 @@ public:
    FlexNVMParameters              getFlexNVMParameters()       const { return flexNVMParameters; }
    const std::vector<uint32_t>&   getTargetSDIDs()             const { return targetSDIDs; }
    bool                           isAlias(void)                const { return !aliasName.empty();}
+   RegisterDescriptionConstPtr    getRegisterDescription()     const { return registerDescription; }
 
    MemoryRegionConstPtr getMemoryRegion(unsigned index) const {
       if (index >= memoryRegions.size()) {
@@ -796,6 +829,7 @@ public:
    void setflexNVMInfo(FlexNVMInfoConstPtr info)                  { flexNVMInfo = info; }
    void setFlexNVMParameters(const FlexNVMParameters &param)      { flexNVMParameters = param;}
    void setTargetSDIDs(const std::vector<uint32_t> &list)         { targetSDIDs = list; }
+   void setRegisterDescription(RegisterDescriptionConstPtr desc)  { registerDescription = desc; }
 
    DeviceData( const std::string    &targetName,
                uint32_t             ramStart,
@@ -867,7 +901,7 @@ public:
 //   DeviceData &operator=(const DeviceData &);
 };
 
-//! Information required to program a Device
+//! Database of device information
 //!
 class DeviceDataBase {
 
@@ -959,6 +993,13 @@ public:
       }
       return ptr;
    }
+   RegisterDescriptionConstPtr getRegisterDescription(std::string key) const {
+      RegisterDescriptionConstPtr ptr(std::tr1::dynamic_pointer_cast<RegisterDescription>(getSharedData(key)));
+      if (ptr == NULL) {
+         throw MyException(std::string("DeviceDataBase::getRegisterDescription() - Reference has wrong type - ")+key);
+      }
+      return ptr;
+   }
    FlashProgramConstPtr getFlashProgram(std::string key) const {
       FlashProgramPtr ptr(std::tr1::dynamic_pointer_cast<FlashProgram>(getSharedData(key)));
       if (ptr == NULL) {
@@ -974,7 +1015,7 @@ public:
       return ptr;
    }
    DeviceDataBase() {
-//      print("DeviceDataBase::DeviceDataBase()\n");
+      Logging log("DeviceDataBase::DeviceDataBase()");
    };
    ~DeviceDataBase();
 };

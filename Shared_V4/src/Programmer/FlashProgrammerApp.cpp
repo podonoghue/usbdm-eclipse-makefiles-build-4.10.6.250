@@ -25,6 +25,7 @@
 \verbatim
 Change History
 -=================================================================================
+|   9 Jul 2013 | Re-factor for GDB Server                              4.9.6 - pgo
 |   7 Apr 2012 | Added -reset, -power  options                         4.9.4 - pgo
 |    Feb  2012 | Added -execute option                                 4.9.3 - pgo
 |   5 May 2011 | Fixed Vdd options                                     4.4.3 - pgo
@@ -40,7 +41,6 @@ Change History
 #include "Common.h"
 #include "USBDM_API.h"
 #include "DeviceData.h"
-//#include "USBDM_API_Private.h"
 #include "Log.h"
 #include "USBDMDialogue.h"
 #include "AppSettings.h"
@@ -81,11 +81,7 @@ class FlashProgrammerApp : public wxApp {
    DECLARE_EVENT_TABLE()
 
 private:
-   DeviceData::EraseOptions         eraseOptions;
-   DeviceData::FlexNVMParameters    flexParameters;
-   SecurityOptions_t                deviceSecurity;
    std::string                      customSecurityValue;
-   USBDMDialogue*                   dialogue;
    bool                             commandLine;
    bool                             verify;
    bool                             program;
@@ -93,12 +89,11 @@ private:
    wxString                         hexFileName;
    double                           trimFrequency;
    long                             trimNVAddress;
-   wxString                         deviceName;
 
-   USBDM_ExtendedOptions_t          bdmOptions; // Used by command line only
    void doCommandLineProgram();
 
    int                              returnValue;
+   SharedPtr                        shared;
 
 public:
    // Called on application startup
@@ -108,6 +103,10 @@ public:
    virtual void OnInitCmdLine(wxCmdLineParser& parser);
    virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
    virtual ~FlashProgrammerApp();
+
+private:
+   AppSettings                   *appSettings;
+
 };
 
 // Implements FlashProgrammerApp & GetApp()
@@ -130,76 +129,28 @@ USBDM_ErrorCode callBack(USBDM_ErrorCode status, int percent, const char *messag
 void FlashProgrammerApp::doCommandLineProgram() {
    Logging log("FlashProgrammerApp::doCommandLineProgram");
    FlashImage flashImage;
-   unsigned int deviceCount;
    FlashProgrammer flashProgrammer;
 
-   // Assumes one and only 1 device
-   USBDM_FindDevices(&deviceCount);
-   if ((deviceCount == 0) || (USBDM_Open(0) != BDM_RC_OK)) {
-      Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to open BDM\n");
-#ifdef _UNIX_
-      fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to open BDM\n");
-#endif
-      returnValue = 1;
-      return;
-   }
    do {
-      // Modify some options for programming
-      if ((USBDM_SetExtendedOptions(&bdmOptions) != BDM_RC_OK) || (USBDM_SetTargetType(targetType) != BDM_RC_OK)) {
-         Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to set BDM Option/Target type\n");
-#ifdef _UNIX_
-         fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to set BDM Option/Target type\n");
-#endif
+      // Initialise the BDM
+      if (shared->initBdm() != BDM_RC_OK) {
          returnValue = 1;
          break;
       }
       if (!hexFileName.IsEmpty() &&
          (flashImage.loadFile((const char *)hexFileName.ToAscii()) != BDM_RC_OK)) {
-         Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to load Hex file\n");
-#ifdef _UNIX_
-         fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to load Hex file\n");
-#endif
+         Logging::print("Failed to load Hex file\n");
          returnValue = 1;
          break;
       }
-      // Find device details from database
-      DeviceDataBase *deviceDatabase = new DeviceDataBase;
-      try {
-         deviceDatabase->loadDeviceData();
-      } catch (MyException &exception) {
-         Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to load device database\nReason\n");
-#ifdef _UNIX_
-         fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to load device database\nReason\n");
-#endif
+      if (shared->loadDeviceDatabase() != BDM_RC_OK) {
          returnValue = 1;
          break;
       }
-      DeviceDataConstPtr devicePtr = deviceDatabase->findDeviceFromName((const char *)deviceName.ToAscii());
-      if (devicePtr == NULL) {
-         Logging::print("FlashProgrammerApp::doCommandLineProgram() - Failed to find device\n");
-#ifdef _UNIX_
-         fprintf(stderr, "FlashProgrammerApp::doCommandLineProgram() - Failed to find device\n");
-#endif
-         returnValue = 1;
-         break;
-      }
-      DeviceData deviceData = *devicePtr;
-      deviceData.setClockTrimFreq(trimFrequency);
-      deviceData.setEraseOption(eraseOptions);
-      deviceData.setSecurity(deviceSecurity);
-      if (deviceSecurity == SEC_CUSTOM) {
-         deviceData.setCustomSecurity(customSecurityValue);
-      }
-//      SecurityInfoPtr securityInfoPtr = deviceData.getCustomSecurity();
-//      Logging::print("getCustomSecureInformation = %p, size = %d, securityInfo = %s\n", &*getCustomSecureInformation, getCustomSecureInformation->getSize(), (const char *)getCustomSecureInformation->toString().c_str());
-      Logging::print("customSecurityValue = %s\n", (const char *)customSecurityValue.c_str());
-      deviceData.setFlexNVMParameters(flexParameters);
-      if (trimNVAddress != 0) {
-         deviceData.setClockTrimNVAddress(trimNVAddress);
-      }
-      if (flashProgrammer.setDeviceData(deviceData) != PROGRAMMING_RC_OK) {
-         returnValue = 1;
-         break;
+      // Copy device description and change mutable settings
+      DeviceDataPtr &deviceData = shared->getCurrentDevice();
+      if (deviceData->getSecurity() == SEC_CUSTOM) {
+         deviceData->setCustomSecurity(customSecurityValue);
       }
       USBDM_ErrorCode rc;
       if (program) {
@@ -218,7 +169,6 @@ void FlashProgrammerApp::doCommandLineProgram() {
             rc = flashProgrammer.verifyFlash(&flashImage);
          }
       }
-      delete deviceDatabase;
       if (rc != PROGRAMMING_RC_OK) {
          Logging::print("FlashProgrammerApp::doCommandLineProgram() - failed, rc = %s\n", USBDM_GetErrorString(rc));
 #ifdef _UNIX_
@@ -228,8 +178,9 @@ void FlashProgrammerApp::doCommandLineProgram() {
          break;
       }
    } while (false);
-   Logging::print("FlashProgrammerApp::doCommandLineProgram() - Closing BDM\n");
-   if (bdmOptions.leaveTargetPowered) {
+
+   Logging::print(" Closing BDM\n");
+   if (shared->getBdmOptions().leaveTargetPowered) {
 #if (TARGET==HCS08) || (TARGET==RS08) || (TARGET==CFV1)
       USBDM_TargetReset((TargetMode_t)(RESET_SOFTWARE|RESET_NORMAL));
 #elif (TARGET==HCS12) || (TARGET==CFVx) || (TARGET == ARM) ||(TARGET==MC56F80xx)
@@ -250,63 +201,62 @@ void FlashProgrammerApp::doCommandLineProgram() {
 
 // Initialize the application
 bool FlashProgrammerApp::OnInit(void) {
-
-//   fprintf(stderr, "Starting\n");
    returnValue = 0;
+
+   SetAppName(_("usbdm")); // So application files are kept in the correct directory
+
+   Logging::openLogFile(logFilename);
+   Logging::setLoggingLevel(100);
+   LOGGING;
+
+   shared = SharedPtr(new Shared(targetType));
+
+   // Create empty app settings
+   appSettings = new AppSettings("GDBServer_", targetType);
 
    // call for default command parsing behaviour
    if (!wxApp::OnInit()) {
       return false;
    }
+
+   if (!commandLine) {
+      // Not using command line options so load saved settings
+      appSettings->loadFromAppDirFile();
+   }
    const wxString settingsFilename(_("FlashProgrammer_"));
    const wxString title(_("Flash Programmer"));
-
-   SetAppName(_("usbdm")); // So app files are kept in the correct directory
-
-   Logging::openLogFile(logFilename);
-   Logging::setLoggingLevel(100);
-   Logging log("FlashProgrammerApp::OnInit");
-
-//   Logging::print("Original GetUserDataDir = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetUserDataDir().ToAscii())).c_str());
-//   Logging::print("Original GetDataDir     = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetDataDir().    ToAscii())).c_str());
 
 #ifndef _WIN32
    ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_("/usr/local"));
 #endif
 
-//   Logging::print("Modified GetUserDataDir = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetUserDataDir().ToAscii())).c_str());
-//   Logging::print("Modified GetDataDir     = %s\n", (char *)string((((wxStandardPaths&)wxStandardPaths::Get()).GetDataDir().    ToAscii())).c_str());
-
 #if TARGET == MC56F80xx
    DSC_SetLogFile(Logging::getLogFileHandle());
 #endif
-
-   Logging::print("Initializing USBDM\n");
-   USBDM_Init();
 
    if (commandLine) {
       doCommandLineProgram();
 //      fprintf(stderr, "Programming Complete - rc = %d\n", returnValue);
    }
    else {
+      SharedPtr shared(SharedPtr(new Shared(targetType)));
+
       // Create the main application window
-      dialogue = new USBDMDialogue(targetType, title);
-      dialogue->Create(NULL);
+      UsbdmDialogue *dialogue = new UsbdmDialogue(shared, *appSettings);
       SetTopWindow(dialogue);
-      dialogue->execute(settingsFilename, hexFileName);
+      dialogue->execute(hexFileName);
       dialogue->Destroy();
    }
-   USBDM_Exit();
-
    return true;
 }
 
 int FlashProgrammerApp::OnRun(void) {
-   Logging::print("FlashProgrammerApp::OnRun()\n");
+   LOGGING;
    if (!commandLine) {
       int exitcode = wxApp::OnRun();
-      if (exitcode != 0)
+      if (exitcode != 0) {
          return exitcode;
+      }
    }
    // Everything is done in OnInit()!
    Logging::print("FlashProgrammerApp::OnRun() - return value = %d\n", returnValue);
@@ -316,12 +266,20 @@ int FlashProgrammerApp::OnRun(void) {
 int FlashProgrammerApp::OnExit(void) {
 
 //   Logging::print("FlashProgrammerApp::OnExit()\n");
+   USBDM_Exit();
+
+   if (!commandLine) {
+      // Not using command line so save changed settings
+      appSettings->writeToAppDirFile();
+   }
+   if (appSettings != NULL) {
+      delete appSettings;
+      appSettings = NULL;
+   }
    return wxApp::OnExit();
 }
 
 FlashProgrammerApp::~FlashProgrammerApp() {
-//   Logging::print("FlashProgrammerApp::~FlashProgrammerApp()\n");
-//   fprintf(stderr, "FlashProgrammerApp::~FlashProgrammerApp()\n");
    Logging::closeLogFile();
 }
 
@@ -380,6 +338,7 @@ void FlashProgrammerApp::OnInitCmdLine(wxCmdLineParser& parser)
 //! Process command line arguments
 //!
 bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
+   Logging log("FlashProgrammerApp::OnCmdLineParsed");
    wxString  sValue;
    bool      success = true;
 
@@ -391,45 +350,57 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
    }
    if (parser.Found(_("verify")) || parser.Found(_("program"))) {
       commandLine           = true;
-      bdmOptions.size       = sizeof(USBDM_ExtendedOptions_t);
-      bdmOptions.targetType = targetType;
-      if (USBDM_GetDefaultExtendedOptions(&bdmOptions) != BDM_RC_OK) {
-         success = false;
-      }
-#if (TARGET==HCS08) || (TARGET==RS08) || (TARGET==ARM)
-      eraseOptions = DeviceData::eraseMass;
-#elif (TARGET==HCS12) || (TARGET==CFV1) || (TARGET==CFVx) || (TARGET==MC56F80xx)
-      eraseOptions = DeviceData::eraseAll;
-#else
-#error "TARGET must be set"
-#endif
+      USBDM_ExtendedOptions_t &bdmOptions = shared->getBdmOptions();
+      DeviceDataPtr            deviceData = shared->getCurrentDevice();
+
 #ifdef _UNIX_
       if (parser.Found(_("verbose"))) {
          verbose = true;
       }
 #endif
+
+   // Command line requires at least a device name
+      if (parser.Found(_("device"), &sValue)) {
+         USBDM_ErrorCode rc = shared->setCurrentDeviceByName((const char *)sValue.ToAscii());
+         if (rc != BDM_RC_OK) {
+            log.print("Failed to set device to \'%s\'\n", (const char *)sValue.ToAscii());
+            parser.AddUsageText("***** Error: Failed to find device.\n");
+            success = false;
+         }
+         else {
+            success = false;
+         }
+      }
+
+#if (TARGET==HCS08) || (TARGET==RS08) || (TARGET==ARM)
+      deviceData->setEraseOption(DeviceData::eraseMass);
+#elif (TARGET==HCS12) || (TARGET==CFV1) || (TARGET==CFVx) || (TARGET==MC56F80xx)
+      deviceData->setEraseOption(DeviceData::eraseAll);
+#else
+#error "TARGET must be set"
+#endif
       if (parser.Found(_("masserase"))) {
-         eraseOptions = DeviceData::eraseMass;
+         deviceData->setEraseOption(DeviceData::eraseMass);
       }
       if (parser.Found(_("noerase"))) {
-         eraseOptions = DeviceData::eraseNone;
+         deviceData->setEraseOption(DeviceData::eraseNone);
       }
       if (parser.Found(_("secure"))) {
-         deviceSecurity = SEC_SECURED;
+         deviceData->setSecurity(SEC_SECURED);
       }
       else if (parser.Found(_("unsecure"))) {
-         deviceSecurity = SEC_UNSECURED;
+         deviceData->setSecurity(SEC_UNSECURED);
       }
       else {
-         deviceSecurity = SEC_DEFAULT;
+         deviceData->setSecurity(SEC_DEFAULT);
       }
       if (parser.Found(_("security"), &sValue)) {
-         if (deviceSecurity != SEC_DEFAULT) {
+         if (deviceData->getSecurity() != SEC_DEFAULT) {
             // Can't use this option with secure/unsecure
             success = false;
          }
          else {
-            deviceSecurity      = SEC_CUSTOM;
+            deviceData->setSecurity(SEC_CUSTOM);
             customSecurityValue = std::string(sValue.ToAscii());
          }
       }
@@ -439,27 +410,26 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       if (parser.Found(_("nvloc"), &sValue)) {
          unsigned long uValue;
          if (!sValue.ToULong(&uValue, 16)) {
+            parser.AddUsageText("***** Error: Illegal nvloc value.\n");
             success = false;
          }
-         trimNVAddress = uValue;
-      }
-      else {
-         trimNVAddress = 0;
+         deviceData->setClockTrimNVAddress(uValue);
       }
       if (parser.Found(_("erase"), &sValue)) {
          if (sValue.CmpNoCase(_("Mass")) == 0) {
-            eraseOptions = DeviceData::eraseMass;
+            deviceData->setEraseOption(DeviceData::eraseMass);
          }
          else if (sValue.CmpNoCase(_("All")) == 0) {
-            eraseOptions = DeviceData::eraseAll;
+            deviceData->setEraseOption(DeviceData::eraseAll);
          }
          else if (sValue.CmpNoCase(_("Selective")) == 0) {
-            eraseOptions = DeviceData::eraseSelective;
+            deviceData->setEraseOption(DeviceData::eraseSelective);
          }
          else if (sValue.CmpNoCase(_("None")) == 0) {
-            eraseOptions = DeviceData::eraseNone;
+            deviceData->setEraseOption(DeviceData::eraseNone);
          }
          else {
+            parser.AddUsageText("***** Error: Illegal erase value.\n");
             success = false;
          }
       }
@@ -471,34 +441,31 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
             bdmOptions.targetVdd = BDM_TARGET_VDD_5V;
          }
          else {
+            parser.AddUsageText("***** Error: Illegal vdd value.\n");
             success = false;
          }
       }
       if (parser.Found(_("trim"), &sValue)) {
          double    dValue;
          if (!sValue.ToDouble(&dValue)) {
+            parser.AddUsageText("***** Error: Illegal trim value.\n");
             success = false;
          }
-         trimFrequency = dValue * 1000;
+         deviceData->setClockTrimFreq(dValue * 1000);
       }
       else {
          trimFrequency = 0;
       }
-      // Must specify device
-      if (parser.Found(_("device"), &sValue)) {
-         deviceName = sValue;
-      }
-      else {
-         success = false;
-      }
       // flexNVM options
       if (parser.Found(_("flexNVM"), &sValue)) {
+         DeviceData::FlexNVMParameters    flexParameters;
          unsigned long uValue;
-
+ 
          int index1 = 0;
          int index2 = sValue.find(',');
          wxString t = sValue.substr(index1, index2-index1);
          if (!t.ToULong(&uValue, 16)) {
+            parser.AddUsageText("***** Error: Illegal flexNVM value.\n");
             success = false;
          }
          else {
@@ -510,6 +477,7 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
          index2 = sValue.find(',', index1);
          t = sValue.substr(index1, index2-index1);
          if (!t.ToULong(&uValue, 16)) {
+            parser.AddUsageText("***** Error: Illegal flexNVM value.\n");
             success = false;
          }
          else {
@@ -518,31 +486,35 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
             success = success && (flexParameters.partionValue == uValue);
          }
          flexParameters.partionValue = (uint8_t)uValue;
+         deviceData->setFlexNVMParameters(flexParameters);
       }
       // Reset options
       if (parser.Found(_("reset"), &sValue)) {
          unsigned long uValue=100000; // invalid so faults later
-
+  
          int index1 = 0;
          int index2 = sValue.find(',');
          wxString t = sValue.substr(index1, index2-index1);
          if (!t.ToULong(&uValue, 10)) {
+            parser.AddUsageText("***** Error: Illegal reset value.\n");
             success = false;
          }
          bdmOptions.resetDuration = uValue;
-
+ 
          index1 = index2+1;
          index2 = sValue.find(',', index1);
          t = sValue.substr(index1, index2-index1);
          if (!t.ToULong(&uValue, 10)) {
+            parser.AddUsageText("***** Error: Illegal reset value.\n");
             success = false;
          }
          bdmOptions.resetReleaseInterval = uValue;
-
+ 
          index1 = index2+1;
          index2 = sValue.length();
          t = sValue.substr(index1, index2-index1);
          if (!t.ToULong(&uValue, 10)) {
+            parser.AddUsageText("***** Error: Illegal reset value.\n");
             success = false;
          }
          bdmOptions.resetRecoveryInterval = uValue;
@@ -550,19 +522,21 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       // Power options
       if (parser.Found(_("power"), &sValue)) {
          unsigned long uValue=100000; // invalid so faults later
-
+ 
          int index1 = 0;
          int index2 = sValue.find(',');
          wxString t = sValue.substr(index1, index2-index1);
          if (!t.ToULong(&uValue, 10)) {
+            parser.AddUsageText("***** Error: Illegal power value.\n");
             success = false;
          }
          bdmOptions.powerOffDuration = uValue;
-
+ 
          index1 = index2+1;
          index2 = sValue.length();
          t = sValue.substr(index1, index2-index1);
          if (!t.ToULong(&uValue, 10)) {
+            parser.AddUsageText("***** Error: Illegal power value.\n");
             success = false;
          }
          bdmOptions.powerOnRecoveryInterval = uValue;
@@ -570,6 +544,7 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       if (parser.Found(_("speed"), &sValue)) {
          unsigned long uValue;
          if (sValue.ToULong(&uValue, 10)) {
+            parser.AddUsageText("***** Error: Illegal speed value.\n");
             success = false;
          }
          bdmOptions.interfaceFrequency = uValue;
@@ -585,3 +560,4 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
    }
    return success;
 }
+

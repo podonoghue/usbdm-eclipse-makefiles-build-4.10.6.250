@@ -40,6 +40,7 @@ LIBS += -l$(LIB_USBDM)
 LIBS += -l$(LIB_USBDM_TCL)
 LIBS += -l$(LIB_WX_PLUGIN)
 LIBS += $(XERCES_LIBS)
+LIBS += $(LIB_SOCKETS)
 
 # Each module will add to this
 SRC :=
@@ -68,13 +69,6 @@ endif
 
 # Rules to build dependency (.d) files
 #==============================================
-$(BUILDDIR)/%.d : %.c $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
-
-$(BUILDDIR)/%.d : %.cpp $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
 
 # Rules to build object (.o) files
 #==============================================
@@ -86,11 +80,11 @@ endif
 
 $(BUILDDIR)/%.o : %.c $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 $(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 # How to link an EXE
 #==============================================
@@ -127,3 +121,4 @@ exe: $(BUILDDIR) $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX)
 #	@echo RESOURCE_OBJ = $(RESOURCE_OBJ)
    
 .PHONY: clean dll exe $(BUILDDIR)
+

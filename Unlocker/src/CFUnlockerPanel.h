@@ -12,7 +12,8 @@
  * Includes
  */
 
-#include "wx/spinctrl.h"
+#include <wx/spinctrl.h>
+
 #include "KnownDevices.h"
 #include "FlashEraseMethods.h"
 #include "NumberTextEditCtrl.h"
@@ -55,7 +56,7 @@ private:
 
 public:
     /// Constructors
-    ColdfireUnlockerPanel( wxWindow* parent, Shared *shared);
+    ColdfireUnlockerPanel( wxWindow* parent, SharedPtr shared);
 
     /// Creation
     bool Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style);

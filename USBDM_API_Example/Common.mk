@@ -102,23 +102,21 @@ endif
 # Debug flags
 ifeq ($(UNAME_S),Windows)
 GCC_VISIBILITY_DEFS=
-THREADS = -mthreads
 else
 GCC_VISIBILITY_DEFS=-fvisibility=hidden -fvisibility-inlines-hidden
-THREADS = 
 endif
 ifdef DEBUG
    # Compiler flags
-   CFLAGS := ${THREADS} -O0 -g3 ${GCC_VISIBILITY_DEFS}
+   CFLAGS := -mthreads -O0 -g3 ${GCC_VISIBILITY_DEFS}
    # Compiler flags (Linking)
-   LDFLAGS = ${THREADS} 
+   LDFLAGS = -mthreads 
    # C Definitions
    DEFS   := -DLOG
 else
    # Compiler flags
-   CFLAGS := ${THREADS}  -O3 -g0 ${GCC_VISIBILITY_DEFS}
+   CFLAGS := -mthreads -O3 -g0 ${GCC_VISIBILITY_DEFS}
    # Compiler flags (Linking)
-   LDFLAGS = ${THREADS}  -s
+   LDFLAGS = -mthreads -s
 endif
 #CFLAGS += -Wshadow -DWINVER=0x500 -D_WIN32_IE=0x500 -std=gnu99 -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign
 

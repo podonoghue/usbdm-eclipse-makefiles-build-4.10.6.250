@@ -97,7 +97,8 @@ typedef enum  {
  BDM_RC_ARM_PARITY_ERROR                       = 51,    //!< ARM PARITY error
  BDM_RC_ARM_FAULT_ERROR                        = 52,    //!< ARM FAULT response error
  BDM_RC_UNEXPECTED_RESPONSE                    = 53,    //!< Unexpected/inconsistent response from BDM
- BDM_RC_HCS_ACCESS_ERROR                       = 54,    //!< - Memory access failed due to target in stop or wait state
+ BDM_RC_HCS_ACCESS_ERROR                       = 54,    //!< Memory access failed due to target in stop or wait state
+ BDM_RC_SELECTED_BDM_NOT_FOUND                 = 55,    //!< Selected BDM not found (removed)
 
  // Used by programmer
  PROGRAMMING_RC_OK                             = 0,     //!<  0 Success

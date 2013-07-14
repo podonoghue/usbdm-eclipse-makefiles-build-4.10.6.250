@@ -25,6 +25,7 @@
     \verbatim
    Change History
    -============================================================================
+   |  5 Jul 2013 | Corrected printing of %b format in security             - pgo v4.10.6
    | 16 Dec 2012 | Security description added                              - pgo v4.10.4
    | ?? ??? 2012 | FlexNVM description added                               - pgo v4.10.?
    |  1 Jul 2010 | wxWidgets version created                               - pgo
@@ -56,25 +57,59 @@
 
 const string settingsKey("AdvancedPanel");
 
+enum {
+   ID_POWER_OFF_DURATION_TEXT,
+   ID_POWER_RECOVERY_INTERVAL_TEXT,
+   ID_RESET_DURATION_TEXT,
+   ID_RESET_RELEASE_INTERVAL_TEXT,
+   ID_RESET_RECOVERY_INTERVAL_TEXT,
+   ID_EEPROM_SIZE_CHOICE,
+   ID_FLEXNVM_PARTITION_CHOICE,
+   ID_SECURITY_REGION_CHOICE,
+   ID_SECURITY_TEXT_ENTRY,
+   ID_RESET_CUSTOM_VALUES_BUTTON,
+   ID_ENABLE_CUSTOM_SECURITY_CHECKBOX,
+};
+
+/*
+ * AdvancedPanel type definition
+ */
+IMPLEMENT_CLASS( AdvancedPanel, wxPanel )
+
+/*
+ * AdvancedPanel event table definition
+ */
+BEGIN_EVENT_TABLE( AdvancedPanel, wxPanel )
+#if ((TARGET==CFV1) || (TARGET==ARM)) && !defined(GDB_SERVER)
+EVT_CHOICE( ID_EEPROM_SIZE_CHOICE,                   AdvancedPanel::OnEeepromSizeChoiceSelected )
+EVT_CHOICE( ID_FLEXNVM_PARTITION_CHOICE,             AdvancedPanel::OnFlexNvmPartionChoiceSelected )
+#endif
+#if !defined(LEGACY)
+EVT_CHECKBOX( ID_ENABLE_CUSTOM_SECURITY_CHECKBOX,    AdvancedPanel::OnSecurityCheckboxClick )
+EVT_CHOICE(   ID_SECURITY_REGION_CHOICE,             AdvancedPanel::OnSecurityMemoryRegionChoiceSelected )
+EVT_BUTTON(   ID_RESET_CUSTOM_VALUES_BUTTON,         AdvancedPanel::OnResetCustomValueClick )
+EVT_TEXT(     ID_SECURITY_TEXT_ENTRY,                AdvancedPanel::OnSecurityEditUpdate)
+#endif
+END_EVENT_TABLE()
+
+#define settingsKey "AdvancedPanel"
+const string eeepromSizeKey(             settingsKey ".eeepromSize");
+const string flexNvmPartitionSizeKey(    settingsKey ".flexNvmPartitionSize");
+const string customSecurityValueKey(     settingsKey ".customSecurityValue");
+
 //========================================================================================================================
 // AdvancedPanel
 
-AdvancedPanel::AdvancedPanel( wxWindow* parent, Shared *shared, TargetType_t targetType, HardwareCapabilities_t bdmCapabilities):
-      bdmOptions(shared->getBdmOptions()),
-      targetType(targetType)
-#if defined(FLASH_PROGRAMMER)
-      ,currentDevice(shared->getCurrentDevice())
+AdvancedPanel::AdvancedPanel( wxWindow* parent, SharedPtr shared, HardwareCapabilities_t bdmCapabilities) :
+#if defined(FLASH_PROGRAMMER) || defined(GDB_SERVER)
+      currentDevice(shared->getCurrentDevice()),
 #endif
-{
+      bdmOptions(shared->getBdmOptions()) {
    Logging log("AdvancedPanel::AdvancedPanel");
    Init();
    Create(parent);
 }
 
-//AdvancedPanel::AdvancedPanel(TargetType_t targetType, HardwareCapabilities_t bdmCapabilities) {
-//   Init();
-//}
-//
 bool AdvancedPanel::Create(wxWindow* parent) {
    Logging::print("AdvancedPanel::Create()\n");
    if (!wxPanel::Create(parent) || !CreateControls()) {
@@ -91,39 +126,13 @@ void AdvancedPanel::Init() {
 
    // Set options to default
    // TransferDataToWindow() will validate these for the particular dialog/BDM being used.
-   USBDM_ExtendedOptions_t tempOptions;
-   tempOptions.size       = sizeof(USBDM_ExtendedOptions_t);
-   tempOptions.targetType = targetType;
-   USBDM_GetDefaultExtendedOptions(&tempOptions);
-
-   bdmOptions.size                     = sizeof(USBDM_ExtendedOptions_t);
-   bdmOptions.targetType               = targetType;
-   bdmOptions.powerOffDuration         = tempOptions.powerOffDuration;
-   bdmOptions.powerOnRecoveryInterval  = tempOptions.powerOnRecoveryInterval;
-   bdmOptions.resetDuration            = tempOptions.resetDuration;
-   bdmOptions.resetReleaseInterval     = tempOptions.resetReleaseInterval;
-   bdmOptions.resetRecoveryInterval    = tempOptions.resetRecoveryInterval;
 
    securityMemoryRegionIndex      = 0;
 
-#if defined(FLASH_PROGRAMMER)
+#if defined(FLASH_PROGRAMMER) || defined(GDB_SERVER)
    lastSecurityOption             = SEC_UNSECURED;
 #endif
 }
-
-enum {
-   ID_POWER_OFF_DURATION_TEXT,
-   ID_POWER_RECOVERY_INTERVAL_TEXT,
-   ID_RESET_DURATION_TEXT,
-   ID_RESET_RELEASE_INTERVAL_TEXT,
-   ID_RESET_RECOVERY_INTERVAL_TEXT,
-   ID_EEPROM_SIZE_CHOICE,
-   ID_FLEXNVM_PARTITION_CHOICE,
-   ID_SECURITY_REGION_CHOICE,
-   ID_SECURITY_TEXT_ENTRY,
-   ID_RESET_CUSTOM_VALUES_BUTTON,
-   ID_ENABLE_CUSTOM_SECURITY_CHECKBOX,
-};
 
 //! Control creation for USBDM Flash programming settings
 //!
@@ -147,7 +156,7 @@ bool AdvancedPanel::CreateControls() {
    int row = 0;
 
    // Note: copies are used so original is shared!
-   TimeIntervalValidator timeIntervalValidator(NULL, NULL, 100, 10000);
+   TimeIntervalValidator timeIntervalValidator(NULL, NULL, 10, 10000);
 
    //===
    itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Power Off duration"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -229,7 +238,7 @@ bool AdvancedPanel::CreateControls() {
 
    row++;
 
-#if (TARGET==CFV1) || (TARGET==ARM)
+#if ((TARGET==CFV1) || (TARGET==ARM)) && !defined(GDB_SERVER)
    //================================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("FlexNVM Parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
@@ -274,7 +283,7 @@ bool AdvancedPanel::CreateControls() {
    populatePartitionControl();
 #endif
 
-#if !defined(LEGACY)
+#if !defined(LEGACY) && !defined(GDB_SERVER)
    //================================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Custom Security Parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
@@ -292,7 +301,7 @@ bool AdvancedPanel::CreateControls() {
 //   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
    securityMemoryRegionChoice = new wxChoice( panel, ID_SECURITY_REGION_CHOICE, wxDefaultPosition , wxSize(130, -1));
    gridBagSizer->Add(securityMemoryRegionChoice, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
-   securityMemoryRegionChoice->SetToolTip(_("Security information applies to this memory region"));
+   securityMemoryRegionChoice->SetToolTip(_("Security information is programmed to this memory region"));
    resetCustomButtonControl = new wxButton( panel, ID_RESET_CUSTOM_VALUES_BUTTON, _("&Reset Values"), wxDefaultPosition, wxDefaultSize, 0 );
    resetCustomButtonControl->SetToolTip(_("Reset custom values to unsecured default"));
    gridBagSizer->Add(resetCustomButtonControl, wxGBPosition(row,2), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
@@ -326,11 +335,12 @@ bool AdvancedPanel::CreateControls() {
    return true;
 }
 
-#if (TARGET==CFV1) || (TARGET==ARM)
+#if ((TARGET==CFV1) || (TARGET==ARM)) && !defined(GDB_SERVER)
 //! Populates eeepromSizeChoiceControl with EEEPROM sizes
 //! Selects 1st entry if reload is necessary (device changed)
 //!
 void AdvancedPanel::populateEeepromControl() {
+
    static FlexNVMInfoConstPtr lastFlexNVMInfo;
    if (currentDevice == NULL) {
       Logging::print("AdvancedPanel::populateEeepromControl() - currentDevice not set\n");
@@ -521,7 +531,7 @@ void AdvancedPanel::OnFlexNvmPartionChoiceSelected( wxCommandEvent& event ) {
 //! @note values are validated
 //!
 void AdvancedPanel::updateFlashNVM() {
-#if (TARGET==CFV1) || (TARGET==ARM)
+#if ((TARGET==CFV1) || (TARGET==ARM)) && !defined(GDB_SERVER)
    static const double writeEfficiency = 0.5;     // Assume 16/32-bit writes
    static const double endurance       = 10000.0; // From JU128 specification sheet
    Logging log("AdvancedPanel::updateFlashNVM");
@@ -575,6 +585,7 @@ void AdvancedPanel::updateFlashNVM() {
 //! Populates securityMemoryRegionChoice with memory regions
 //!
 void AdvancedPanel::populateSecurityControl() {
+#if !defined(GDB_SERVER)
    Logging log("AdvancedPanel::populateSecurityControl");
    securityMemoryRegionChoice->Clear();
    if (currentDevice == NULL) {
@@ -636,6 +647,7 @@ void AdvancedPanel::populateSecurityControl() {
       customSecurityCheckbox->Enable(false);
       resetCustomButtonControl->Enable(false);
    }
+#endif
 }
 
 //! Parse current value
@@ -718,7 +730,6 @@ wxString AdvancedPanel::parseSecurityValue() {
                      width = 1;
                   }
                   state = s_text;
-                  unsigned value = 0;
                   switch(s[index]) {
                      case 'x':
                      case 'X':
@@ -805,6 +816,7 @@ void AdvancedPanel::updateSecurityDescription() {
 }
 
 void AdvancedPanel::updateSecurity() {
+#if !defined(GDB_SERVER)
    Logging log("AdvancedPanel::updateSecurity");
    populateSecurityControl();
    Logging::print("securityMemoryRegionIndex = %d\n", securityMemoryRegionIndex);
@@ -815,6 +827,8 @@ void AdvancedPanel::updateSecurity() {
 
    securityInfoPtr        = SecurityInfoPtr((SecurityInfo *)0);
    securityDescriptionPtr = SecurityDescriptionPtr((SecurityDescription *)0);
+
+   wxString sDescription("");
 
    SecurityValidator *validator = dynamic_cast<SecurityValidator*>(securityValuesTextControl->GetValidator());
    if (memoryRegionPtr == NULL) {
@@ -834,6 +848,7 @@ void AdvancedPanel::updateSecurity() {
                Logging::print("SEC_DEFAULT\n");
                securityValuesTextControl->SetValue(_("[Using values from flash image]"));
                securityInfoPtr = SecurityInfoPtr();
+               sDescription = ", determined by Flash image";
                break;
             case SEC_SECURED:
                Logging::print("SEC_SECURED\n");
@@ -842,6 +857,7 @@ void AdvancedPanel::updateSecurity() {
                }
                *securedInfoPtr  = *securityEntry->getSecureInformation();
                securityInfoPtr  = securedInfoPtr;
+               sDescription = ", using default secured value";
                break;
             case SEC_UNSECURED:
             case SEC_SMART:
@@ -851,6 +867,7 @@ void AdvancedPanel::updateSecurity() {
                }
                *unsecuredInfoPtr = *securityEntry->getUnsecureInformation();
                securityInfoPtr   = unsecuredInfoPtr;
+               sDescription = ", using default unsecured value";
                break;
             case SEC_CUSTOM:
                Logging::print("SEC_CUSTOM\n");
@@ -861,6 +878,7 @@ void AdvancedPanel::updateSecurity() {
                }
                securityInfoPtr = customSecurityInfoPtr[securityMemoryRegionIndex];
                Logging::print("Setting to Custom %s\n", (const char *)customSecurityInfoPtr[securityMemoryRegionIndex]->toString().c_str());
+               sDescription = ", using custom security value";
                break;
          }
       }
@@ -875,23 +893,25 @@ void AdvancedPanel::updateSecurity() {
    else {
       wxString sAddress;
       sAddress.Printf(_("security @ %08X"), memoryRegionPtr->getSecurityAddress());
+      sAddress += sDescription;
       securityMemoryRegionSecurityAddress->SetLabel(sAddress);
       validator->enable(true);
       securityValuesTextControl->Enable(currentDevice->getSecurity() == SEC_CUSTOM);
    }
    customSecurityCheckbox->SetValue(currentDevice->getSecurity() == SEC_CUSTOM);
+#endif
 }
 
 void AdvancedPanel::OnSecurityMemoryRegionChoiceSelected( wxCommandEvent& event ) {
    LOGGING_Q;
    int index = event.GetSelection();
    // Save date for currently selected security memory region choice
-   Logging::print("OnSecurityMemoryRegionChoiceSelected() from = %d\n", securityMemoryRegionIndex);
+   Logging::print("From = %d\n", securityMemoryRegionIndex);
    TransferDataFromWindow();
    // Change memory region
    securityMemoryRegionIndex = index;
    TransferDataToWindow();
-   Logging::print("OnSecurityMemoryRegionChoiceSelected() to   = %d\n", securityMemoryRegionIndex);
+   Logging::print("To   = %d\n", securityMemoryRegionIndex);
 }
 
 //! wxEVT_COMMAND_BUTTON_CLICKED event handler
@@ -913,13 +933,18 @@ void AdvancedPanel::OnResetCustomValueClick( wxCommandEvent& event ) {
 void AdvancedPanel::OnSecurityCheckboxClick( wxCommandEvent& event ) {
    Logging::print("AdvancedPanel::OnSecurityCheckboxClick()\n");
    if (event.IsChecked()) {
+      // Enabling custom values
+
+      // Save current value to return to if disabled
       lastSecurityOption = currentDevice->getSecurity();
       if (lastSecurityOption == SEC_CUSTOM) {
          lastSecurityOption = SEC_UNSECURED;
       }
+      // Set custom values
       currentDevice->setSecurity(SEC_CUSTOM);
    }
    else {
+      // Restore last non-custom value
       currentDevice->setSecurity(lastSecurityOption);
    }
    TransferDataToWindow();
@@ -935,52 +960,13 @@ void AdvancedPanel::updateSecurity() {
 }
 #endif
 
-/*
- * AdvancedPanel type definition
- */
-IMPLEMENT_CLASS( AdvancedPanel, wxPanel )
-
-/*
- * AdvancedPanel event table definition
- */
-BEGIN_EVENT_TABLE( AdvancedPanel, wxPanel )
-#if (TARGET==CFV1) || (TARGET==ARM)
-EVT_CHOICE( ID_EEPROM_SIZE_CHOICE,                  AdvancedPanel::OnEeepromSizeChoiceSelected )
-EVT_CHOICE( ID_FLEXNVM_PARTITION_CHOICE,            AdvancedPanel::OnFlexNvmPartionChoiceSelected )
-#endif
-#if !defined(LEGACY)
-EVT_CHOICE(   ID_SECURITY_REGION_CHOICE,             AdvancedPanel::OnSecurityMemoryRegionChoiceSelected )
-EVT_TEXT(     ID_SECURITY_TEXT_ENTRY,                AdvancedPanel::OnSecurityEditUpdate)
-EVT_BUTTON(   ID_RESET_CUSTOM_VALUES_BUTTON,         AdvancedPanel::OnResetCustomValueClick )
-EVT_CHECKBOX( ID_ENABLE_CUSTOM_SECURITY_CHECKBOX,    AdvancedPanel::OnSecurityCheckboxClick )
-#endif
-END_EVENT_TABLE()
-
-#define settingsKey "AdvancedPanel"
-const string powerOffDurationKey(        settingsKey ".powerOffDuration");
-const string powerOnRecoveryIntervalKey( settingsKey ".powerOnRecoveryInterval");
-const string resetDurationKey(           settingsKey ".resetDuration");
-const string resetReleaseIntervalKey(    settingsKey ".resetReleaseInterval");
-const string resetRecoveryIntervalKey(   settingsKey ".resetRecoveryInterval");
-const string eeepromSizeKey(             settingsKey ".eeepromSize");
-const string flexNvmPartitionSizeKey(    settingsKey ".flexNvmPartitionSize");
-const string customSecurityValueKey(     settingsKey ".customSecurityValue");
-
 //!
 //! @param settings - Object to load settings from
 //!
 void AdvancedPanel::loadSettings(const AppSettings &settings) {
    Logging log("AdvancedPanel::loadSettings");
 
-//   Init();
-
-   bdmOptions.powerOffDuration         = settings.getValue(powerOffDurationKey,        bdmOptions.powerOffDuration);
-   bdmOptions.powerOnRecoveryInterval  = settings.getValue(powerOnRecoveryIntervalKey, bdmOptions.powerOnRecoveryInterval);
-   bdmOptions.resetDuration            = settings.getValue(resetDurationKey,           bdmOptions.resetDuration);
-   bdmOptions.resetReleaseInterval     = settings.getValue(resetReleaseIntervalKey,    bdmOptions.resetReleaseInterval);
-   bdmOptions.resetRecoveryInterval    = settings.getValue(resetRecoveryIntervalKey,   bdmOptions.resetRecoveryInterval);
-
-#if (TARGET==CFV1) || (TARGET==ARM)
+#if defined(PROGRAMMER) && ((TARGET==CFV1) || (TARGET==ARM))
    int eepromSize = settings.getValue(eeepromSizeKey,             0);
    eeepromSizeChoice = findEeepromSizeIndex(eepromSize);
    if (eeepromSizeChoice == 0) {
@@ -1009,13 +995,7 @@ void AdvancedPanel::loadSettings(const AppSettings &settings) {
 void AdvancedPanel::saveSettings(AppSettings &settings) {
    Logging log("AdvancedPanel::saveSettings");
 
-   settings.addValue(powerOffDurationKey,          bdmOptions.powerOffDuration);
-   settings.addValue(powerOnRecoveryIntervalKey,   bdmOptions.powerOnRecoveryInterval);
-   settings.addValue(resetDurationKey,             bdmOptions.resetDuration);
-   settings.addValue(resetReleaseIntervalKey,      bdmOptions.resetReleaseInterval);
-   settings.addValue(resetRecoveryIntervalKey,     bdmOptions.resetRecoveryInterval);
-
-#if (TARGET==CFV1) || (TARGET==ARM)
+#if defined(PROGRAMMER) && ((TARGET==CFV1) || (TARGET==ARM))
    FlexNVMInfoConstPtr flexNVMInfo = currentDevice->getflexNVMInfo();
    if (flexNVMInfo != NULL) {
       const vector<FlexNVMInfo::EeepromSizeValue>        &eeepromSizeValues(flexNVMInfo->getEeepromSizeValues());
@@ -1036,21 +1016,6 @@ void AdvancedPanel::saveSettings(AppSettings &settings) {
 #endif
 }
 
-////! Get bdm options from dialogue
-////!
-////! @param _bdmOptions  Options structure to modify
-////!
-////! @note - _bdmOptions should be set to default values beforehand
-////!
-//void AdvancedPanel::getBdmOptions(USBDM_ExtendedOptions_t *_bdmOptions) {
-//   Logging log("AdvancedPanel::getBdmOptions");
-//
-//   _bdmOptions->powerOffDuration          = bdmOptions.powerOffDuration;
-//   _bdmOptions->powerOnRecoveryInterval   = bdmOptions.powerOnRecoveryInterval;
-//   _bdmOptions->resetDuration             = bdmOptions.resetDuration;
-//   _bdmOptions->resetReleaseInterval      = bdmOptions.resetReleaseInterval;
-//   _bdmOptions->resetRecoveryInterval     = bdmOptions.resetRecoveryInterval;
-//}
 //
 //! Make device consistent with internal state
 //!
@@ -1100,14 +1065,14 @@ bool AdvancedPanel::updateState() {
 }
 
 bool AdvancedPanel::TransferDataToWindow() {
-   Logging log("AdvancedPanel::TransferDataToWindow");
+   LOGGING;
    updateFlashNVM();
    updateSecurity();
    return wxPanel::TransferDataToWindow();
 }
 
 bool AdvancedPanel::TransferDataFromWindow() {
-   Logging log("AdvancedPanel::TransferDataFromWindow");
+   LOGGING;
    bool ok = wxPanel::TransferDataFromWindow();
 
 #if defined(FLASH_PROGRAMMER)

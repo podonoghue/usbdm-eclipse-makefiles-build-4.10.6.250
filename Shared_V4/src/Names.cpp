@@ -19,7 +19,9 @@
 #include "Names.h"
 #include "ARM_Definitions.h"
 #include "Log.h"
+#ifdef USBDM_DLL_EXPORTS
 #include "DeviceData.h"
+#endif
 
 //! Obtain a description of the hardware version
 //!
@@ -256,7 +258,7 @@ static const char *const newCommandTable[]= {
    "CMD_USBDM_WRITE_MEM"                     , // 32
    "CMD_USBDM_READ_MEM"                      , // 33
 
-   "CMD_USBDM_TRIM_CLOCK - removed"          , // 34
+   "CMD_USBDM_READ_ALL_CORE_REGS"            , // 34
    "CMD_USBDM_RS08_FLASH_ENABLE - removed"   , // 35
    "CMD_USBDM_RS08_FLASH_STATUS - removed"   , // 36
    "CMD_USBDM_RS08_FLASH_DISABLE - removed"  , // 37
@@ -368,6 +370,19 @@ char const *getConnectionRetryName(RetryMode mode) {
    return buff;
 }
 
+//!  Creates dummy register name in static buffer
+//!
+//! @param regAddr number indicating the register
+//!
+//! @return ptr to static buffer
+//!
+static const char *getUnknownReg(unsigned int regAddr) {
+   static char buffer[20];
+   memset(buffer, 0, sizeof(buffer));
+   snprintf(buffer, sizeof(buffer)-1, "UnknowReg#%X", regAddr);
+   return buffer;
+}
+
 //! \brief Maps a Coldfire V1 Control register # to a string
 //! (As used by WRITE_CREG/READ_CREG)
 //!
@@ -388,9 +403,7 @@ char const *getCFV1ControlRegName( unsigned int regAddr ){
    regAddr &= 0x1F; // CRN field is only 5 bits
    regName = names[regAddr];
    if (regName == NULL) {
-      static char buff[100];
-      snprintf(buff, sizeof(buff), "unknown CFV1 Control Reg (0x%X)", regAddr);
-      regName = buff;
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -431,9 +444,7 @@ const char *regName = NULL;
       regName = "RAMBAR";
    }
    if (regName == NULL) {
-      static char buff[100];
-      snprintf(buff, sizeof(buff), "unknown CFVx Control Reg (0x%X)", regAddr);
-      regName = buff;
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -511,7 +522,7 @@ char const *getCFV1DebugRegName( unsigned int regAddr ){
       }
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -539,7 +550,7 @@ char const *getCFVxDebugRegName( unsigned int regAddr ){
        regName = names[regAddr];
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -591,7 +602,7 @@ char const *getHCS12DebugRegName( unsigned int regAddr ) {
    if (regAddr == 0xFF08) {
       return "BDMGPR";
    }
-   return "Unknown";
+   return getUnknownReg(regAddr);
 }
 
 //! \brief Maps a HCS12 register # to a string
@@ -611,7 +622,7 @@ char const *getHCS12RegName( unsigned int regAddr ) {
        regName = names[regAddr];
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -634,7 +645,7 @@ char const *getHCS08RegName( unsigned int regAddr ) {
        regName = names[regAddr];
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -657,7 +668,7 @@ char const *getRS08RegName( unsigned int regAddr ) {
        regName = names[regAddr];
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -683,7 +694,7 @@ char const *getCFV1RegName( unsigned int regAddr ){
        regName = names[regAddr];
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -707,7 +718,7 @@ char const *getCFVxRegName( unsigned int regAddr ) {
        regName = names[regAddr];
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -718,7 +729,7 @@ char const *getCFVxRegName( unsigned int regAddr ) {
 //!
 //! @return pointer to static string describing the register
 //!
-char const *getDSCRegName( unsigned int regNum) {
+char const *getDSCRegName( unsigned int regAddr) {
    static const char *const regNames[] =  {
       // Core registers
       "DSC_RegX0",
@@ -782,11 +793,11 @@ char const *getDSCRegName( unsigned int regNum) {
       "DSC_RegOB0CNTR",                             // Breakpoint Unit 0 Counter
    } ;
    const char *regName = NULL;
-   if (regNum < sizeof(regNames)/sizeof(regNames[0])) {
-       regName = regNames[regNum];
+   if (regAddr < sizeof(regNames)/sizeof(regNames[0])) {
+       regName = regNames[regAddr];
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -1248,12 +1259,11 @@ void printBdmOptions(const USBDM_ExtendedOptions_t *options) {
 //!
 //! @return pointer to static string describing the register
 //!
-
 char const *getARMRegName( unsigned int regAddr ) {
    static const char *regs[] = {"R0","R1","R2","R3","R4","R5","R6","R7",
                                 "R8","R9","R10","R11","R12","SP","LR","PC",
-                                "PSR","MSP","PSP",
-                                "MISC/PRIMASK", "FAULTMASK", "BASEPRI", "CONTROL"};
+                                "PSR","MSP","PSP", NULL,
+                                "CONTROL/FAULTMASK/BASEPRI/PRIMASK"};
    const char *regName = NULL;
    if (regAddr < sizeof(regs)/sizeof(regs[0]))
       regName = regs[regAddr];
@@ -1261,14 +1271,21 @@ char const *getARMRegName( unsigned int regAddr ) {
       regName = "FPSCR";
    }
    else if ((regAddr>=ARM_RegFPS0) && (regAddr<=ARM_RegFPS0+31)) {
-      regName = "FPSn";
+      static char fpName[20] = "S00";
+      int index = 0;
+      fpName[index++] = 'S';
+      if (((regAddr-ARM_RegFPS0)/10) > 0) {
+         fpName[index++] = '0' + (regAddr-ARM_RegFPS0)/10;
+      }
+      fpName[index++] = '0' + (regAddr-ARM_RegFPS0)%10;
+      fpName[index++] = '\0';
+      regName = fpName;
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
-
 
 const char *getDpRegName(int reg) {
    static const char *names[] = {"Reserved","CTRL/STAT","SELECT","RDBUFF",

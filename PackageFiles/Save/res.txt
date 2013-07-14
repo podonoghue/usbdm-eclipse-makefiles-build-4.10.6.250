@@ -1,0 +1,294 @@
+Opening source: 'C:\Program Files\Freescale\CW MCU v10.3\eclipse\plugins\com.freescale.mcu.mqxlite.projectwizard_1.0.0.FSL_b04004\plugin.xml.original'
+Opening patch: '..\WizardPatches\PatchMQXLiteNewProjectWizard_3.xml'
+Parsing XML file
+Comparing Tag 'plugin' to 'plugin' - equal
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'point' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'point' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'point' - Present' - Equal (com.freescale.core.ide.newprojectwizard.newProjectWizard)
+Comparing Tag 'wizard' to 'wizard' - equal
+Checking for attribute 'uiExtensionID' - Present' - Equal (com.freescale.mcu.mqxlite.projectwizard.ui)
+Checking for attribute 'wizardExtensionID' - Present' - Equal (com.freescale.mcu.mqxlite.projectwizard.wizard1)
+Comparing Tag 'variables' to 'projectGeneration' - false
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'projectGeneration' to 'projectGeneration' - equal
+Checking for attribute 'baseProjectType' - Present' - Equal (com.freescale.mcu.mqxlite.projectwizard.projecttype1)
+Checking for attribute 'ccNatureConditionId' - Present' - Equal (mcu.projectwizard.condition.projectGeneration.ccNature)
+Comparing Tag 'projectFiles' to 'configurations' - false
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'configurations' to 'configurations' - equal
+Comparing Tag 'configuration' to 'configuration' - equal
+Checking for attribute 'configurationId' - Present' - Equal (com.freescale.arm.cdt.toolchain.config.arm.release)
+Checking for attribute 'projectType' - Present' - Equal (com.freescale.arm.cdt.toolchain.project.arm)
+Comparing Tag 'configurationBuildSettings' to 'configurationLaunchSettings' - false
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'configurationLaunchSettings' to 'configurationLaunchSettings' - equal
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+mergeNodes() - Appending node <launchSettingsRef>
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+Comparing Tag 'configuration' to 'configuration' - equal
+Checking for attribute 'configurationId' - Present' - Equal (com.freescale.arm.cdt.toolchain.config.arm.release)
+Checking for attribute 'projectType' - Present' - Equal (com.freescale.arm.cdt.toolchain.project.arm)
+Comparing Tag 'configurationBuildSettings' to 'configurationLaunchSettings' - false
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'configurationLaunchSettings' to 'configurationLaunchSettings' - equal
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+mergeNodes() - Appending node <launchSettingsRef>
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+Comparing Tag 'configuration' to 'configuration' - equal
+Checking for attribute 'configurationId' - Present' - Equal (org.eclipse.cdt.cross.arm.gnu.sourcery.windows.elf.debug)
+Checking for attribute 'projectType' - Present' - Equal (org.eclipse.cdt.cross.arm.gnu.sourcery.windows.elf)
+Comparing Tag 'configurationBuildSettings' to 'configurationLaunchSettings' - false
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'configurationLaunchSettings' to 'configurationLaunchSettings' - equal
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+mergeNodes() - Appending node <launchSettingsRef>
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+Comparing Tag 'configuration' to 'configuration' - equal
+Checking for attribute 'configurationId' - Present' - Equal (org.eclipse.cdt.cross.arm.gnu.sourcery.windows.elf.debug)
+Checking for attribute 'projectType' - Present' - Equal (org.eclipse.cdt.cross.arm.gnu.sourcery.windows.elf)
+Comparing Tag 'configurationBuildSettings' to 'configurationLaunchSettings' - false
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'configurationLaunchSettings' to 'configurationLaunchSettings' - equal
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'launchSettingsRef' to 'launchSettingsRef' - equal
+Checking for attribute 'conditionId' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+mergeNodes() - Appending node <launchSettingsRef>
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+mergeNodes() - Patch list end
+mergeNodes() - Advancing patch
+mergeNodes() - Advancing merge
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'id' - Present' - Equal (com.freescale.mcu.mqxlite.projectwizard.ui)
+Checking for attribute 'point' - Present' - Equal (com.freescale.core.ide.wizard.ui.wizardUI)
+Comparing Tag 'externalElementsLocations' to 'pages' - false
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'pages' to 'pages' - equal
+Comparing Tag 'page' to 'page' - equal
+Checking for attribute 'enablementCondition' - Not present
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'page' to 'page' - equal
+Checking for attribute 'enablementCondition' - Present' - Equal (mcu.projectwizard.condition.isArmFamily)
+Checking for attribute 'id' - Present' - Equal (mcu.projectwizard.page.connections.arm)
+Checking for attribute 'pageOkCondition' - Present' - Equal (mcu.projectwizard.condition.connection.arm.pageok)
+Comparing Tag 'uiElement' to 'uiElement' - equal
+Checking for attribute 'id' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'uiElement' to 'uiElement' - equal
+Checking for attribute 'id' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+mergeNodes() - Advancing merge
+Comparing Tag 'page' to 'page' - equal
+Checking for attribute 'enablementCondition' - Present' - Equal (mcu.projectwizard.condition.isArmFamily)
+Checking for attribute 'id' - Present' - Not equal
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+mergeNodes() - Advancing merge
+Comparing Tag 'conditions' to 'pages' - false
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+mergeNodes() - Advancing merge
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'id' - Not present
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'id' - Not present
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'id' - Not present
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'id' - Not present
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Comparing Tag 'extension' to 'extension' - equal
+Checking for attribute 'id' - Not present
+mergeNodes() - nodes don't match
+mergeNodes() - Advancing merge
+Saving result: 'C:\Program Files\Freescale\CW MCU v10.3\eclipse\plugins\com.freescale.mcu.mqxlite.projectwizard_1.0.0.FSL_b04004\plugin.xml'

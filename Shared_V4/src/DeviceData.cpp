@@ -516,7 +516,7 @@ void DeviceDataBase::loadDeviceData(void) {
    catch (MyException &exception) {
       // Create dummy default device
 //      defaultDevice = *aDevice.insert(aDevice.end(), new DeviceData()).base();
-      Logging::print("DeviceDataBase::loadDeviceData() - Exception \'%s\'\n", exception.what());
+      Logging::print(" - Exception \'%s\'\n", exception.what());
       deviceData.clear();
       DeviceDataPtr aDevice = DeviceDataPtr(new DeviceData());
       aDevice->setTargetName("Invalid Database");
@@ -525,7 +525,7 @@ void DeviceDataBase::loadDeviceData(void) {
       throw exception;
    }
    catch (...) {
-      Logging::print("DeviceDataBase::loadDeviceData() - Unknown exception\n");
+      Logging::print(" - Unknown exception\n");
       deviceData.clear();
       DeviceDataPtr aDevice = DeviceDataPtr(new DeviceData());
       aDevice->setTargetName("Invalid Database");
@@ -536,7 +536,7 @@ void DeviceDataBase::loadDeviceData(void) {
 #if defined(LOG) && 0
    listDevices();
 #endif
-   Logging::print("DeviceDataBase::loadDeviceData() - %d devices loaded\n", deviceData.size());
+   Logging::print(" - %d devices loaded\n", deviceData.size());
 }
 
 void DeviceDataBase::listDevices() const {

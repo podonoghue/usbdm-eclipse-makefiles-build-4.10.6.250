@@ -25,7 +25,8 @@
     \verbatim
    Change History
    -=====================================================================================
-   |        2013 | Added GNU information parsing                            - pgo 4.10.4?
+   |  6 Jul 2013 | Added Register description parsing                       - pgo 4.10.6
+   |        2013 | Added GNU information parsing (incomplete)               - pgo 4.10.4?
    |  6 Oct 2012 | Fixed default SDID etc                                   - pgo 4.10.2
    |    Aug 2011 | Added I/O memory type                                    - pgo
    |    Aug 2011 | Removed Boost                                            - pgo
@@ -383,6 +384,8 @@ DeviceXmlParser::DeviceXmlParser(DeviceDataBase *deviceDataBase)
    tag_gnuInfoList("gnuInfoList"),
    tag_gnuInfoListRef("gnuInfoListRef"),
    tag_gnuInfo("gnuInfo"),
+   tag_registerDescription("registerDescription"),
+   tag_registerDescriptionRef("registerDescriptionRef"),
 
    attr_name("name"),
    attr_isDefault("isDefault"),
@@ -415,6 +418,7 @@ DeviceXmlParser::DeviceXmlParser(DeviceDataBase *deviceDataBase)
    attr_eeSize("eeSize"),
    attr_alignment("alignment"),
    attr_path("path"),
+   attr_count("count"),
 
    isDefault(false),
    deviceDataBase(deviceDataBase),
@@ -476,6 +480,33 @@ TclScriptPtr DeviceXmlParser::parseTCLScript(DOMElement *xmlTclScript) {
       Logging::print("Inserted shared TclScript item ID=%s\n", sId.asCString());
    }
    return tclScriptPtr;
+}
+
+// Create a Register description from an XML element
+RegisterDescriptionPtr DeviceXmlParser::parseRegisterDescription(DOMElement *xmlRegisterDescription) {
+
+   // Type of node (must be a RegisterDescription node)
+   DualString sTag (xmlRegisterDescription->getTagName());
+   if (!XMLString::equals(sTag.asXMLString(), tag_registerDescription.asXMLString())) {
+      throw MyException(string("DeviceXmlParser::parseRegisterDescription() - Unexpected tag = ")+sTag.asCString());
+   }
+
+   long count = 0;
+   DualString sCount(xmlRegisterDescription->getAttribute(attr_count.asXMLString()));
+   if (!strToULong(sCount.asCString(), NULL, &count)) {
+      throw MyException(string("DeviceXmlParser::parseRegisterDescription() - Illegal register count = ")+sCount.asCString());
+   }
+
+   DualString text(xmlRegisterDescription->getTextContent());
+
+   RegisterDescriptionPtr registerDescriptionPtr(new RegisterDescription(text.asCString(), count-1));
+
+   if (xmlRegisterDescription->hasAttribute(attr_id.asXMLString())) {
+      DualString sId(xmlRegisterDescription->getAttribute(attr_id.asXMLString()));
+      deviceDataBase->addSharedData(string(sId.asCString()), registerDescriptionPtr);
+      Logging::print("Inserted shared RegisterDescription item ID=%s\n", sId.asCString());
+   }
+   return registerDescriptionPtr;
 }
 
 // Create a flashProgram from XML element
@@ -667,6 +698,10 @@ void DeviceXmlParser::parseSharedXML(void) {
             // Parse <tclScript>
             parseTCLScript(sharedInformationElement);
          }
+         else if (XMLString::equals(sTag.asXMLString(), tag_registerDescription.asXMLString())) {
+            // Parse <registerDescription>
+            parseRegisterDescription(sharedInformationElement);
+         }
          else if (XMLString::equals(sTag.asXMLString(), tag_flashProgram.asXMLString())) {
             // Parse <flashProgram>
             parseFlashProgram(sharedInformationElement);
@@ -692,7 +727,7 @@ void DeviceXmlParser::parseSharedXML(void) {
             deviceDataBase->addSharedData(string(sId.asCString()), parseMemory(sharedInformationElement));
          }
          else if (XMLString::equals(sTag.asXMLString(), tag_gnuInfoList.asXMLString())) {
-            // Parse <memory>
+            // Parse <gnuInfoList>
 //            deviceDataBase->addSharedData(string(sId.asCString()), parseGnuInfoList(sharedInformationElement));
          }
          else {
@@ -1200,9 +1235,10 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
 
    // Default device characteristics
    // These are initialized from the default device (if any) in the XML
-   static TclScriptConstPtr      defaultTCLScript;
-   static FlashProgramConstPtr   defFlashProgram;
-   static FlexNVMInfoConstPtr    defaultFlexNVMInfo;
+   static TclScriptConstPtr            defaultTCLScript;
+   static RegisterDescriptionConstPtr  defaultRegisterDescription;
+   static FlashProgramConstPtr         defFlashProgram;
+   static FlexNVMInfoConstPtr          defaultFlexNVMInfo;
 
 #if TARGET == HCS08
    static uint32_t         defSOPTAddress = 0x1802;
@@ -1245,6 +1281,7 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
 #endif
 
    itDev->setFlashScripts(defaultTCLScript);
+   itDev->setRegisterDescription(defaultRegisterDescription);
    itDev->setFlashProgram(defFlashProgram);
    itDev->setSDIDAddress(defSDIDAddress);
    itDev->setSDIDMask(defSDIDMask);
@@ -1358,6 +1395,22 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          if (isDefault) {
             Logging::print("Setting default flash script \"%s\" \n", sRef.asCString());
             defaultTCLScript = itDev->getFlashScripts();
+         }
+      }
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_registerDescription.asXMLString())) {
+         // <RegisterDescription>
+         itDev->setRegisterDescription(parseRegisterDescription(currentProperty));
+         if (isDefault) {
+            defaultRegisterDescription = itDev->getRegisterDescription();
+         }
+      }
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_registerDescriptionRef.asXMLString())) {
+         // <RegisterDescriptionRef>
+         DualString sRef(currentProperty->getAttribute(attr_ref.asXMLString()));
+         itDev->setRegisterDescription(deviceDataBase->getRegisterDescription(sRef.asCString()));
+         if (isDefault) {
+            Logging::print("Setting default register description \"%s\" \n", sRef.asCString());
+            defaultRegisterDescription = itDev->getRegisterDescription();
          }
       }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_flashScripts.asXMLString())) {
@@ -1532,7 +1585,7 @@ void DeviceXmlParser::parseDeviceXML(void) {
 //!
 void DeviceXmlParser::loadDeviceData(const std::string &deviceFilePath, DeviceDataBase *deviceDataBase) {
    Logging log("DeviceXmlParser::loadDeviceData");
-   Logging::setLoggingLevel(100); // Don't log below this level
+   Logging::setLoggingLevel(0); // Don't log below this level
    try {
       xercesc::XMLPlatformUtils::Initialize();
    }

@@ -13,4 +13,5 @@ SRC += osbdm_base.cpp
 
 # Shared files $(SHARED_SRC)
 VPATH := $(VPATH) $(SHARED_SRC)
+INCS += -I$(SHARED_SRC)
 SRC += Names.cpp

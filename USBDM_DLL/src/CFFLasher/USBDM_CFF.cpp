@@ -44,9 +44,9 @@
 #include "USBDM_CFF.h"
 #include "low_level_usb.h"
 
-extern USBDM_ExtendedOptions_t bdmOptions;
-
 static bool initDone = false;
+
+extern USBDM_ExtendedOptions_t bdmOptions;
 
 CFF_API int bdm_close_device(void) {
    Logging::print("CFF-bdm_close_device()\n");
@@ -58,17 +58,21 @@ CFF_API int bdm_close_device(void) {
 CFF_API int bdm_configure(void) {
    unsigned deviceCount;
    Logging::print("CFF-bdm_configure()\n");
-   if (USBDM_Init() != BDM_RC_OK)
+   if (USBDM_Init() != BDM_RC_OK) {
       return 1;
-   if (USBDM_FindDevices(&deviceCount) != BDM_RC_OK)
+   }
+   if (USBDM_FindDevices(&deviceCount) != BDM_RC_OK) {
       return 1;
-   if (USBDM_Open(0) != BDM_RC_OK)
+   }
+   if (USBDM_Open(0) != BDM_RC_OK) {
       return 1;
+   }
    initDone = true;
    return 0;
 }
 
 CFF_API int bdm_init_device(void) {
+   LOGGING;
    TargetType_t targetType = T_CFVx;
 
    if (!initDone) {
@@ -77,7 +81,10 @@ CFF_API int bdm_init_device(void) {
    Logging::print("CFF-bdm_init_device()\n");
 
    // Set up sensible defaults since we can't change this
-   bdmOptions.targetVdd          = BDM_TARGET_VDD_3V3;//BDM_TARGET_VDD_NONE;
+   USBDM_ExtendedOptions_t bdmOptions = {sizeof(USBDM_ExtendedOptions_t)};
+   bdmOptions.targetType         = targetType;
+   USBDM_GetDefaultExtendedOptions(&bdmOptions);
+   bdmOptions.targetVdd          = BDM_TARGET_VDD_3V3;
    bdmOptions.autoReconnect      = AUTOCONNECT_STATUS;
    bdmOptions.guessSpeed         = FALSE;
    bdmOptions.cycleVddOnConnect  = FALSE;
@@ -87,40 +94,43 @@ CFF_API int bdm_init_device(void) {
    bdmOptions.useResetSignal     = TRUE;
    bdmOptions.usePSTSignals      = FALSE;
 
-   if (USBDM_SetExtendedOptions(&bdmOptions) != BDM_RC_OK)
+   if (USBDM_SetExtendedOptions(&bdmOptions) != BDM_RC_OK) {
       return 0;
-
-   if (USBDM_SetTargetType(targetType) != BDM_RC_OK)
+   }
+   if (USBDM_SetTargetType(targetType) != BDM_RC_OK) {
       return 0;
-
-   // Set conservative speed
-   USBDM_SetSpeed(5000);
-
-   if (USBDM_Connect() != BDM_RC_OK)
+   }
+   if (USBDM_Connect() != BDM_RC_OK) {
       return 0;
-
+   }
    return 1;
 }
+
 CFF_API int bdm_reset(void) {
    Logging::print("CFF-bdm_reset()\n");
-   if (USBDM_TargetReset((TargetMode_t)(RESET_SPECIAL|RESET_HARDWARE)) != BDM_RC_OK)
+   if (USBDM_TargetReset((TargetMode_t)(RESET_SPECIAL|RESET_HARDWARE)) != BDM_RC_OK) {
       return 0;
-   if (USBDM_Connect() != BDM_RC_OK)
+   }
+   if (USBDM_Connect() != BDM_RC_OK) {
       return 0;
+   }
    return 1;
 }
 CFF_API int bdm_force_bdm(void) {
    Logging::print("CFF-bdm_force_bdm()\n");
-   if (USBDM_TargetReset((TargetMode_t)(RESET_SPECIAL|RESET_HARDWARE)) != BDM_RC_OK)
+   if (USBDM_TargetReset((TargetMode_t)(RESET_SPECIAL|RESET_HARDWARE)) != BDM_RC_OK) {
       return 0;
-   if (USBDM_TargetHalt() != BDM_RC_OK)
+   }
+   if (USBDM_TargetHalt() != BDM_RC_OK) {
       return 0;
+   }
    return 1;
 }
 CFF_API int bdm_go(void) {
    Logging::print("CFF-bdm_go()\n");
-   if (USBDM_TargetGo() != BDM_RC_OK)
+   if (USBDM_TargetGo() != BDM_RC_OK) {
       return 0;
+   }
    return 1;
 }
 CFF_API int bdm_test_for_halt(void) {
@@ -131,18 +141,22 @@ CFF_API int bdm_test_for_halt(void) {
 
    if (bdmOptions.usePSTSignals) {
       // Check processor state using PST signals
-      if (USBDMStatus.halt_state == TARGET_HALTED)
+      if (USBDMStatus.halt_state == TARGET_HALTED) {
          return 1;
-      else
+      }
+      else {
          return 0;
+      }
    }
    else {
       // Probe D0 register - if fail assume processor running!
       unsigned long int dummy;
-      if (USBDM_ReadReg(CFVx_RegD0, &dummy) == BDM_RC_OK)
+      if (USBDM_ReadReg(CFVx_RegD0, &dummy) == BDM_RC_OK) {
          return 1;
-      else
+      }
+      else {
          return 0;
+      }
    }
 }
 CFF_API int bdm_write_dreg(int regNo, unsigned long value) {
@@ -151,6 +165,7 @@ CFF_API int bdm_write_dreg(int regNo, unsigned long value) {
    return 1;
 }
 CFF_API int bdm_read_dreg(int regNo) {
+   LOGGING;
    unsigned long temp;
 
    USBDM_ReadReg(CFVx_RegD0+regNo, &temp);
@@ -158,10 +173,11 @@ CFF_API int bdm_read_dreg(int regNo) {
    return temp;
 }
 CFF_API int bdm_read_areg(int regNo) {
+   LOGGING;
    unsigned long temp;
 
-   Logging::print("CFF-bdm_read_areg()\n");
    USBDM_ReadReg(CFVx_RegA0+regNo, &temp);
+   Logging::print("CFF-bdm_read_dreg(%d) => 0x%08X\n", regNo, temp);
    return temp;
 }
 CFF_API int bdm_write_areg(int regNo, unsigned long value) {
@@ -175,12 +191,14 @@ CFF_API int bdm_wcreg(int regNo, unsigned long value) {
    return 0;
 }
 CFF_API int bdm_rcreg(int regNo) {
+   LOGGING;
    unsigned long temp;
    USBDM_ReadCReg(CFVx_RegD0+regNo, &temp);
    Logging::print("CFF-bdm_rcreg(%04X) => 0x%08X\n", regNo, temp);
    return temp;
 }
 CFF_API int bdm_rdmreg(int regNo) {
+   LOGGING;
    unsigned long temp = 0;
    USBDM_ReadDReg(HCS08_DRegBKPT+regNo, &temp);
    Logging::print("CFF-bdm_rdmreg(%04X) => 0x%08X - dummy\n", regNo, temp);
@@ -267,12 +285,14 @@ CFF_API int bdm_write_long(unsigned long address, unsigned long value) {
    return 0;
 }
 CFF_API int bdm_read_byte(unsigned long address) {
+   LOGGING;
    uint8_t data;
    USBDM_ReadMemory(1, 1, address, &data);
    Logging::print("CFF-bdm_read_byte()\n");
    return data;
 }
 CFF_API int bdm_read_word(unsigned long address) {
+   LOGGING;
    uint8_t data[2];
    unsigned long value;
    USBDM_ReadMemory(2, 2, address, data);
@@ -281,6 +301,7 @@ CFF_API int bdm_read_word(unsigned long address) {
    return value;
 }
 CFF_API int bdm_read_long(unsigned long address) {
+   LOGGING;
    uint8_t data[4];
    unsigned long value;
    USBDM_ReadMemory(4, 4, address, data);

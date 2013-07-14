@@ -73,7 +73,6 @@
 #else
    //! This definition is used when USBDM_API is being imported (linking against DLL)
    #define USBDM_API      EXTERN_C DLL_IMPORT
-   //! This definition is used when OSBDM_API is being imported (linking against DLL)
    #define OSBDM_API_JM60 EXTERN_C DLL_IMPORT
 #endif
 //==================================================

@@ -33,21 +33,21 @@ IMPLEMENT_CLASS( ColdfireUnlockerPanel, wxPanel)
 /*
  * ColdfireUnlockerDialogue event table definition
  */
-BEGIN_EVENT_TABLE( ColdfireUnlockerPanel, wxPanel ) EVT_BUTTON( ID_INIT_CHAIN_BUTTON, ColdfireUnlockerPanel::OnInitChainButtonClick )
-   EVT_CHOICE( ID_JTAG_DEVICE_CHOICE, ColdfireUnlockerPanel::OnJtagDeviceChoiceSelected )
-   EVT_SPINCTRL( ID_IR_LENGTH_SPINCTRL, ColdfireUnlockerPanel::OnIrLengthSpinctrlUpdated )
-   //    EVT_UPDATE_UI( wxID_PIN_STATIC, ColdfireUnlockerDialogue::OnPinStaticUpdate )
-   EVT_CHOICE( ID_TARGET_DEVICE_CHOICE, ColdfireUnlockerPanel::OnTargetDeviceChoiceSelected )
-   EVT_TEXT( ID_SPEED_TEXTCTRL, ColdfireUnlockerPanel::OnSpeedTextctrlTextUpdated )
-   EVT_TEXT( ID_MIN_FREQ_TEXTCTRL, ColdfireUnlockerPanel::OnMinFreqTextctrlTextUpdated )
-   EVT_TEXT( ID_MAX_FREQ_TEXTCTRL, ColdfireUnlockerPanel::OnMaxFreqTextctrlTextUpdated )
-   EVT_CHOICE( ID_EQUATION_CHOICE, ColdfireUnlockerPanel::OnEquationChoiceSelected )
-   EVT_TEXT( ID_UNLOCK_VALUE_TEXTCTRL, ColdfireUnlockerPanel::OnUnlockValueTextctrlTextUpdated )
-   EVT_TEXT( ID_CLOCK_DIVIDER_VALUE_TEXTCTRL, ColdfireUnlockerPanel::OnClockDividerValueTextctrlTextUpdated )
-   EVT_BUTTON( ID_UNLOCK_BUTTON, ColdfireUnlockerPanel::OnUnlockButtonClick )
+BEGIN_EVENT_TABLE( ColdfireUnlockerPanel, wxPanel )
+   EVT_BUTTON(    ID_INIT_CHAIN_BUTTON,            ColdfireUnlockerPanel::OnInitChainButtonClick )
+   EVT_CHOICE(    ID_JTAG_DEVICE_CHOICE,           ColdfireUnlockerPanel::OnJtagDeviceChoiceSelected )
+   EVT_SPINCTRL(  ID_IR_LENGTH_SPINCTRL,           ColdfireUnlockerPanel::OnIrLengthSpinctrlUpdated )
+   EVT_CHOICE(    ID_TARGET_DEVICE_CHOICE,         ColdfireUnlockerPanel::OnTargetDeviceChoiceSelected )
+   EVT_TEXT(      ID_SPEED_TEXTCTRL,               ColdfireUnlockerPanel::OnSpeedTextctrlTextUpdated )
+   EVT_TEXT(      ID_MIN_FREQ_TEXTCTRL,            ColdfireUnlockerPanel::OnMinFreqTextctrlTextUpdated )
+   EVT_TEXT(      ID_MAX_FREQ_TEXTCTRL,            ColdfireUnlockerPanel::OnMaxFreqTextctrlTextUpdated )
+   EVT_CHOICE(    ID_EQUATION_CHOICE,              ColdfireUnlockerPanel::OnEquationChoiceSelected )
+   EVT_TEXT(      ID_UNLOCK_VALUE_TEXTCTRL,        ColdfireUnlockerPanel::OnUnlockValueTextctrlTextUpdated )
+   EVT_TEXT(      ID_CLOCK_DIVIDER_VALUE_TEXTCTRL, ColdfireUnlockerPanel::OnClockDividerValueTextctrlTextUpdated )
+   EVT_BUTTON(    ID_UNLOCK_BUTTON,                ColdfireUnlockerPanel::OnUnlockButtonClick )
 END_EVENT_TABLE()
 
-ColdfireUnlockerPanel::ColdfireUnlockerPanel(wxWindow* parent, Shared *shared) :
+ColdfireUnlockerPanel::ColdfireUnlockerPanel(wxWindow* parent, SharedPtr shared) :
       bdmOptions(shared->getBdmOptions()) {
    Init();
    Create(parent, SYMBOL_COLDFIREUNLOCKERPANEL_IDNAME, wxDefaultPosition,

@@ -69,6 +69,7 @@ string AppSettings::getSettingsFilename(const string &rootFilename, TargetType_t
       case T_ARM_JTAG:     filename += "ARM_JTAg.cfg";  break;
       case T_ARM_SWD:      filename += "ARM_SWD.cfg";   break;
       case T_ARM:          filename += "ARM.cfg";       break;
+      case T_NONE:         filename += ".cfg";          break;
       default:             filename += "generic.cfg";   break;
    }
    return filename;
@@ -97,30 +98,33 @@ void AppSettings::writeToFile(FILE *fp, const string &comment) const {
    }
 }
 
-//! Write settings to file
-//!
-//! @param fileName - name of file to write to (may have path)
-//! @param comment  - string to add as comment line in file.
-//!
-bool AppSettings::writeToFile(const string &fileName, string const &comment) const {
-
-   FILE *fp = fopen(fileName.c_str(), "wt");
-   if (fp== NULL) {
-      Logging::print("AppSettings::writeToFile() - Failed to open Settings File for writing: File = \'%s\'\n",
-            fileName.c_str());
-      return false;
-   }
-   writeToFile(fp, comment.c_str());
-   fclose(fp);
-   return true;
-}
+////! Write settings to file
+////!
+////! @param fileName - name of file to write to (may have path)
+////! @param comment  - string to add as comment line in file.
+////!
+//bool AppSettings::writeToFile(string const &comment) const {
+//
+//   FILE *fp = fopen(fileName.c_str(), "wt");
+//   if (fp== NULL) {
+//      Logging::print("AppSettings::writeToFile() - Failed to open Settings File for writing: File = \'%s\'\n",
+//            fileName.c_str());
+//      return false;
+//   }
+//   writeToFile(fp, comment.c_str());
+//   fclose(fp);
+//   return true;
+//}
 
 //! Write settings to file in %APPDATA% system directory
 //!
-//! @param fileName - name of file to write to (no path)
 //! @param comment  - string to add as comment line in file.
 //!
-bool AppSettings::writeToAppDirFile(const string &fileName, const string &comment) const {
+bool AppSettings::writeToAppDirFile(const string &comment) const {
+   LOGGING;
+
+   printToLog();
+
    FILE *fp = openApplicationFile(fileName.c_str(), "wt");
    if (fp== NULL) {
       Logging::print("AppSettings::writeToAppDirFile() - Failed to open Settings File for writing: File = \'%s\'\n",
@@ -136,6 +140,7 @@ bool AppSettings::writeToAppDirFile(const string &fileName, const string &commen
 //!
 void AppSettings::printToLog() const {
    Logging::print("=============================================================\n");
+   Logging::print("filename = \'%s\'\n", fileName.c_str());
    map<string,Value*>::const_iterator it;
    for (it=mymap.begin(); it != mymap.end(); it++ )
       switch (it->second->getType()) {
@@ -206,30 +211,27 @@ void AppSettings::loadFromFile(FILE *fp) {
    }
 }
 
-//! Load settings from file
-//!
-//! @param fileName - name of file to read from (may include path)
-//!
-bool AppSettings::loadFromFile(const string &fileName) {
-
-   Logging::print("AppSettings::loadFromFile(%s)\n", fileName.c_str());
-
-   FILE *fp = fopen(fileName.c_str(), "rt");
-   if (fp== NULL) {
-      Logging::print("AppSettings::loadFromFile() - Failed to open Settings File for reading: File = \'%s\'\n",
-            fileName.c_str());
-     return false;
-   }
-   loadFromFile(fp);
-   fclose(fp);
-   return true;
-}
+////! Load settings from file
+////!
+//bool AppSettings::loadFromFile() {
+//
+//   Logging::print("AppSettings::loadFromFile(%s)\n", fileName.c_str());
+//
+//   FILE *fp = fopen(fileName.c_str(), "rt");
+//   if (fp== NULL) {
+//      Logging::print("AppSettings::loadFromFile() - Failed to open Settings File for reading: File = \'%s\'\n",
+//            fileName.c_str());
+//     return false;
+//   }
+//   loadFromFile(fp);
+//   fclose(fp);
+//   return true;
+//}
 
 //! Load settings from file in %APPDATA% system directory
 //!
-//! @param fileName - name of file to read from (no path)
-//!
-bool AppSettings::loadFromAppDirFile(const string &fileName) {
+bool AppSettings::loadFromAppDirFile() {
+   LOGGING;
    string fn(fileName.c_str());
    FILE *fp = openApplicationFile(fn, "rt");
    if (fp== NULL) {
@@ -239,5 +241,7 @@ bool AppSettings::loadFromAppDirFile(const string &fileName) {
    }
    loadFromFile(fp);
    fclose(fp);
+
+   printToLog();
    return true;
 }

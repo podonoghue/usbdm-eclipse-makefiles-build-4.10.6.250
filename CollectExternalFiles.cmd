@@ -29,7 +29,7 @@ set WXWIDGETS_LIB_LIST= wxmsw294u_adv_gcc_custom wxmsw294u_core_gcc_custom wxbas
 rem set WXWIDGETS_LIB_LIST= %WXWIDGETS_LIB_LIST% wxmsw294u_richtext_gcc_custom wxbase294u_xml_gcc_custom wxmsw294u_html_gcc_custom.dll
 
 set TCL_LIB=C:\Apps\tcl\bin
-set TCL_LIB_LIST= tcl86
+set TCL_LIB_LIST= tcl85
 
 if not exist "%EXTERNAL_LIB%" mkdir "%EXTERNAL_LIB%"
 

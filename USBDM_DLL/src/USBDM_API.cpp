@@ -112,7 +112,7 @@ static const USBDM_ExtendedOptions_t defaultBdmOptions = {
       false,               // cycleVddOnReset;        - Cycle target Power  when resetting
       false,               // cycleVddOnConnect;      - Cycle target Power if connection problems)
       false,               // leaveTargetPowered;     - Leave target power on exit
-      AUTOCONNECT_STATUS,  // autoReconnect;          - Automatically re-connect to target (for speed change)
+      AUTOCONNECT_ALWAYS,  // autoReconnect;          - Automatically re-connect to target (for speed change)
       true,                // guessSpeed;             - Guess speed for target w/o ACKN
       CS_DEFAULT,          // bdmClockSource;         - Use alternative BDM clock source in target
       false,               // useResetSignal;         - Whether to use RESET signal on BDM interface
@@ -121,9 +121,9 @@ static const USBDM_ExtendedOptions_t defaultBdmOptions = {
       false,               // usePSTSignals           - CFVx only
       1000,                // powerOffDuration        - How long to remove power
       1000,                // powerOnRecoveryInterval - How long to wait after power enabled
-      500,                 // resetDuration           - How long to assert reset
-      500,                 // resetReleaseInterval    - How long to wait after reset release to release other signals
-      500,                 // resetRecoveryInterval   - How long to wait after reset sequence complete
+      100,                 // resetDuration           - How long to assert reset
+      100,                 // resetReleaseInterval    - How long to wait after reset release to release other signals
+      100,                 // resetRecoveryInterval   - How long to wait after reset sequence complete
 };
 DLL_LOCAL
 USBDM_ExtendedOptions_t bdmOptions = defaultBdmOptions;
@@ -1969,6 +1969,49 @@ USBDM_ErrorCode USBDM_ReadReg(unsigned int regNo, unsigned long *regValue) {
 #ifdef LOG
    Logging::print("reg=%s => 0x%X\n",
          getRegName( bdmState.targetType, regNo ), *regValue);
+#endif
+
+return rc;
+}
+
+//! Read Multiple Core registers
+//!
+//! @param regValueBuffer Values in Target byte order??
+//! @param startRegIndex     Register index (inclusive) to start reading at
+//! @param endRegIndex       Register index (inclusive) to stop reading at
+//!
+//! @return error code \n
+//!     BDM_RC_OK    => OK \n
+//!     other        => Error code - see \ref USBDM_ErrorCode
+//!
+//! @note The indexes mentioned above are magic numbers indexing an arbitrary table.\n
+//!       Use only the predefined values provided in the USBDM_API.h
+//!
+USBDM_API
+USBDM_ErrorCode USBDM_ReadMultipleRegs(unsigned char regValueBuffer[], unsigned int startRegIndex, unsigned int endRegIndex) {
+   LOGGING;
+   USBDM_ErrorCode rc;
+
+   usb_data[0] = 0;
+   usb_data[1] = CMD_USBDM_READ_ALL_REGS;
+   usb_data[2] = 0;
+   usb_data[3] = (uint8_t)startRegIndex;
+   usb_data[4] = (uint8_t)endRegIndex;
+
+   int size = 4*(endRegIndex-startRegIndex+1); // # of data bytes to receive
+
+   rc = bdm_usb_transaction(5, size+1, usb_data, 100);
+   if (rc != BDM_RC_OK) {
+      Logging::print("Failed - ID#=%X\n", size);
+      memset(regValueBuffer, 0xAA, size);
+   }
+   else {
+      memcpy(regValueBuffer, usb_data+1, size);
+   }
+#ifdef LOG
+//   Logging::print("reg=%s => 0x%X\n",
+//         getRegName( bdmState.targetType, regNo ), *regValue);
+   Logging::printDump(regValueBuffer, size);
 #endif
 
 return rc;

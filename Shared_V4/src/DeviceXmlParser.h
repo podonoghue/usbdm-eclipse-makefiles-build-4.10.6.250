@@ -54,6 +54,8 @@ private:
    DualString   tag_gnuInfoList;
    DualString   tag_gnuInfoListRef;
    DualString   tag_gnuInfo;
+   DualString   tag_registerDescription;
+   DualString   tag_registerDescriptionRef;
 
    DualString   attr_name;
    DualString   attr_isDefault;
@@ -86,6 +88,7 @@ private:
    DualString   attr_eeSize;
    DualString   attr_alignment;
    DualString   attr_path;
+   DualString   attr_count;
 
    static char  currentDeviceName[100];
 
@@ -99,6 +102,7 @@ private:
 
 
 private:
+   RegisterDescriptionPtr             parseRegisterDescription(xercesc::DOMElement *xmlRegisterDescription);
    TclScriptPtr                       parseTCLScript(xercesc::DOMElement *xmlTclScript);
    FlashProgramPtr                    parseFlashProgram(xercesc::DOMElement *xmlFlashProgram);
    void                               parseSharedXML(void);

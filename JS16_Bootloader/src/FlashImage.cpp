@@ -194,7 +194,7 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
    uint32_t  size;
    FILE *fp;
    uint8_t checkSum;
-   uint8_t paged;
+//   uint8_t paged;
    int lineNum;
 
    if (clearBuffer) {
@@ -212,7 +212,7 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
    Logging::print("Loading input file \"%s\"\n", fileName.c_str()); fflush(stderr);
 
    lineNum  = 0;
-   paged    = false; // Assume
+//   paged    = false; // Assume
    while (fgets(buffer, sizeof(buffer)-1, fp) != NULL) {
       lineNum++;
       //Logging::print("Input: %s",buffer);

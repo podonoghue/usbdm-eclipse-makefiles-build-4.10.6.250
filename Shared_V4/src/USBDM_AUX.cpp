@@ -553,7 +553,7 @@ USBDM_ErrorCode USBDM_GetBDMDescription(string &description) {
    return BDM_RC_OK;
 }
 
-//! Update the list of connected BDMs
+//! Create a list of connected BDMs
 //!
 USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &bdmInformation) {
    LOGGING;
@@ -593,28 +593,30 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &
          USBDM_ErrorCode bdmRc = USBDM_Open(index);
          if (bdmRc != BDM_RC_OK) {
             Logging::print("USBDM_Open(BDM #%d) failed\n", index);
-            bdmInfo.suitable = bdmRc;
+            bdmInfo.setSuitable(bdmRc);
             break;
          }
          USBDM_bdmInformation_t theBdmInfo = {sizeof(theBdmInfo)};
          bdmRc = USBDM_GetBdmInformation(&theBdmInfo);
          if (bdmRc != BDM_RC_OK) {
             Logging::print("USBDM_GetBdmInformation(BDM #%d) failed \n", index);
-            bdmInfo.suitable = bdmRc;
+            bdmInfo.setSuitable(bdmRc);
             break;
          }
-         bdmInfo.info = theBdmInfo;
-         bdmRc = USBDM_GetBDMDescription(bdmInfo.description);
+         bdmInfo.setInfo(theBdmInfo);
+         string tempString;
+         bdmRc = USBDM_GetBDMDescription(tempString);
          if (bdmRc != BDM_RC_OK) {
             Logging::print("USBDM_GetBDMDescription(BDM #%d) failed \n", index);
-            bdmInfo.suitable = bdmRc;
+            bdmInfo.setSuitable(bdmRc);
             break;
          }
+         bdmInfo.setDescription(tempString);
          // Check capabilities against target needs
          if ((theBdmInfo.capabilities & targetCapabilityMask) == 0) {
             Logging::print("BDM #%d is not suitable for target\n", index);
-            bdmInfo.serialNumber = "BDM Doesn't support target";
-            bdmInfo.suitable = BDM_RC_UNKNOWN_TARGET;
+            bdmInfo.setSerialNumber("BDM Doesn't support target");
+            bdmInfo.setSuitable(BDM_RC_UNKNOWN_TARGET);
             break;
          }
          Logging::print("USBDM_GetCapabilities(BDM #%d) =>  0x%4.4X \n", index, theBdmInfo.capabilities);
@@ -627,18 +629,19 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &
          if (bdmRc != BDM_RC_OK) {
             Logging::print("USBDM_GetCapabilities(BDM #%d) failed \n", index);
             if (bdmRc == BDM_RC_WRONG_BDM_REVISION) {
-               bdmInfo.serialNumber = "Wrong Firmware Version";
+               bdmInfo.setSerialNumber("Wrong Firmware Version");
             }
-            bdmInfo.suitable = bdmRc;
+            bdmInfo.setSuitable(bdmRc);
             break;
          }
-         bdmInfo.suitable = BDM_RC_OK;
+         bdmInfo.setSuitable(BDM_RC_OK);
          // At least one suitable device
          rc = BDM_RC_OK;
-         if (USBDM_GetBDMSerialNumber(bdmInfo.serialNumber) != BDM_RC_OK) {
+         if (USBDM_GetBDMSerialNumber(tempString) != BDM_RC_OK) {
             Logging::print("USBDM_GetBDMSerialNumber(BDM #%d) failed \n", index);
             break;
          }
+         bdmInfo.setSerialNumber(tempString);
       } while (false);
       USBDM_Close();
       bdmInformation.push_back(bdmInfo);
@@ -653,59 +656,86 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &
  *
  * @param targetType    BDM are filtered by support for this target
  * @param serialnumber  Serial number of BDM to open preferentially
+ * @param mustMatch     Forces requirement that the serial number match
  *
  * @note - Will open the first suitable BDM if the specified one is not located.
  *
  */
-USBDM_ErrorCode USBDM_OpenBySerialNumber(TargetType_t targetType, const string &serialnumber) {
+USBDM_ErrorCode USBDM_OpenBySerialNumber(TargetType_t targetType, const string &serialnumber, bool mustMatch) {
    LOGGING;
-	Logging::print("(%s, %s)\n", getTargetTypeName(targetType), serialnumber.c_str());
+	Logging::print("(Type=%s, SN=%s, mustMatch=%s)\n", getTargetTypeName(targetType), serialnumber.c_str(), mustMatch?"T":"F");
 
 	// Enumerate all attached BDMs
 	vector<BdmInformation> bdmInformation;
 	USBDM_FindBDMs(targetType, bdmInformation);
 
-	// Search for preferred BDM
+   if (bdmInformation.empty()) {
+      // No devices at all found
+      Logging::print("No devices found\n");
+      return BDM_RC_NO_USBDM_DEVICE;
+   }
+
+	// Search for preferred and/or suitable BDM
 	vector<BdmInformation>::iterator it 				     = bdmInformation.begin();
 	vector<BdmInformation>::iterator firstSuitableDevice = bdmInformation.end();
 
    USBDM_ErrorCode rc = BDM_RC_NO_USBDM_DEVICE;
 	while (it != bdmInformation.end()) {
-		if (it->suitable == BDM_RC_OK) {
-			if (it->serialNumber.compare(serialnumber) == 0) {
-				Logging::print("Opening preferred device #%d\n", it->deviceNumber);
-				return USBDM_Open(it->deviceNumber);
-			}
+      if (it->getSerialNumber().compare(serialnumber) == 0) {
+         // Found preferred device
+         Logging::print("Found preferred BDM #%d, Desc=\'%s\', SN=\'%s\'\n",
+                        it->getDeviceNumber(), it->getDescription().c_str(), it->getSerialNumber().c_str());
+         if (it->isSuitable()) {
+            // OK, use this one
+            Logging::print("Opening preferred BDM #%d, Desc=\'%s\', SN=\'%s\'\n",
+                           it->getDeviceNumber(), it->getDescription().c_str(), it->getSerialNumber().c_str());
+            return USBDM_Open(it->getDeviceNumber());
+         }
+         if (mustMatch) {
+            // Required BDM is not suitable - return reason
+            Logging::print("Rejecting preferred BDM #%d, Desc=\'%s\', SN=\'%s\' as unsuitable, rc = %s\n",
+                           it->getDeviceNumber(), it->getDescription().c_str(), it->getSerialNumber().c_str(),
+                           USBDM_GetErrorString(it->getSuitable()));
+            return it->getSuitable();
+         }
+         // Keep looking
+      }
+	   if (it->isSuitable()) {
+         Logging::print("First suitable but not preferred BDM found = #%d, Desc=\'%s\', SN=\'%s\'\n",
+                        it->getDeviceNumber(), it->getDescription().c_str(), it->getSerialNumber().c_str());
 			if (firstSuitableDevice == bdmInformation.end())
+			   // Remember first suitable device found
 				firstSuitableDevice = it;
 			}
   	   it++;
    }
-	if (firstSuitableDevice != bdmInformation.end()) {
-		Logging::print("Opening first suitable BDM #%s\n",
-		      firstSuitableDevice->serialNumber.c_str());
-		rc = USBDM_Open(firstSuitableDevice->deviceNumber);
+	if (mustMatch) {
+      // Required BDM not found
+      Logging::print("No matching BDM found\n");
+	   return BDM_RC_SELECTED_BDM_NOT_FOUND;
 	}
-	else if (bdmInformation.begin() != bdmInformation.end()) {
-	   // Return error code from first/only device found
+   if (firstSuitableDevice == bdmInformation.end()) {
       Logging::print("No suitable BDM found, first/only found = %s\n",
-            bdmInformation.begin()->serialNumber.c_str());
-	   rc = bdmInformation.begin()->suitable;
-	}
-	else {
-	   Logging::print("No BDMs found\n");
-	   rc = BDM_RC_NO_USBDM_DEVICE;
-	}
+                     bdmInformation.begin()->getSerialNumber().c_str());
+      // Return reason why first device is unsuitable
+      return bdmInformation.begin()->getSuitable();
+   }
+	// Suitable but not preferred device found
+   Logging::print("Opening first suitable BDM #%d, Desc=\'%s\', SN=\'%s\'\n",
+                  firstSuitableDevice->getDeviceNumber(),
+                  firstSuitableDevice->getDescription().c_str(),
+                  firstSuitableDevice->getSerialNumber().c_str());
+   rc = USBDM_Open(firstSuitableDevice->getDeviceNumber());
    Logging::print("rc = %s\n", USBDM_GetErrorString(rc));
 	return rc;
 }
 
-USBDM_ErrorCode USBDM_OpenBySerialNumberWithRetry(TargetType_t targetType, const string &serialnumber) {
+USBDM_ErrorCode USBDM_OpenBySerialNumberWithRetry(TargetType_t targetType, const string &serialnumber, bool mustMatch) {
    LOGGING;
    USBDM_ErrorCode rc;
    int getYesNo = wxNO;
    do {
-      rc = USBDM_OpenBySerialNumber(targetType, serialnumber);
+      rc = USBDM_OpenBySerialNumber(targetType, serialnumber, mustMatch);
       if (rc != BDM_RC_OK) {
          getYesNo = handleError(rc);
       }

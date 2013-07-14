@@ -1,7 +1,7 @@
 @echo off
 cls
-set VERSION=4_10_5c
-set VERSIONn=4.10.5
+set VERSION=4_10_6
+set VERSIONn=4.10.6
 
 set WIX_DIR="C:\Program Files (x86)\WiX Toolset v3.7\bin"
 if not exist %WIX_DIR% set WIX_DIR="C:\Program Files\WiX Toolset v3.7\bin"

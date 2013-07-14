@@ -16,6 +16,19 @@ rem External DLLs
 copy "%SHARED_LIB%\*.*"                                                                                       "%TEST_DIR%"
 
 rem EXEs that are produced as part of USBDM
+set SERVER_TARGETS=ARM CFV1 CFVx
+echo $$f_GDBServer
+for %%f in (%SERVER_TARGETS%) do copy "%ECLIPSE_HOME%\%%f_Interface\%%f_GDBServer\*.exe"                      "%TEST_DIR%"
+echo $$f_GDBServer-debug
+for %%f in (%SERVER_TARGETS%) do copy "%ECLIPSE_HOME%\%%f_Interface\%%f_GDBServer-debug\*.exe"                "%TEST_DIR%"
+echo usbdm-$$f-gdbPipeServer
+for %%f in (%SERVER_TARGETS%) do copy "%ECLIPSE_HOME%\%%f_Interface\usbdm-%%f-gdbPipeServer\*.exe"            "%TEST_DIR%"
+echo usbdm-$$f-gdbPipeServer-debug
+for %%f in (%SERVER_TARGETS%) do copy "%ECLIPSE_HOME%\%%f_Interface\usbdm-%%f-gdbPipeServer-debug\*.exe"      "%TEST_DIR%"
+echo usbdm-$$f-gdbSocketServer
+for %%f in (%SERVER_TARGETS%) do copy "%ECLIPSE_HOME%\%%f_Interface\usbdm-%%f-gdbSocketServer\*.exe"          "%TEST_DIR%"
+echo usbdm-$$f-gdbSocketServer-debug
+for %%f in (%SERVER_TARGETS%) do copy "%ECLIPSE_HOME%\%%f_Interface\usbdm-%%f-gdbSocketServer-debug\*.exe"    "%TEST_DIR%"
 set PROGRAMMER_TARGETS=ARM HCS12 HCS08 RS08 CFV1 CFVx DSC
 for %%f in (%PROGRAMMER_TARGETS%) do copy "%ECLIPSE_HOME%\%%f_Interface\%%f_FlashProgrammer\*.exe"            "%TEST_DIR%"
 for %%f in (%PROGRAMMER_TARGETS%) do copy "%ECLIPSE_HOME%\%%f_Interface\%%f_FlashProgrammer-debug\*.exe"      "%TEST_DIR%"
@@ -24,6 +37,9 @@ for %%f in (%UTILTITIES_PROGS%) do copy "%ECLIPSE_HOME%\%%f\%%f\*.exe"          
 for %%f in (%UTILTITIES_PROGS%) do copy "%ECLIPSE_HOME%\%%f\%%f-debug\*.exe"                                  "%TEST_DIR%"
 set TCL=UsbdmScript UsbdmScript-debug
 for %%f in (%TCL%) do copy "%ECLIPSE_HOME%\Usbdm_TCL\%%f\*.exe"                                               "%TEST_DIR%"
+set UNLOCKER_PROGS=CFVx_Unlocker DSC_Unlocker
+for %%f in (%UNLOCKER_PROGS%) do copy "%ECLIPSE_HOME%\Unlocker\%%f\*.exe"                                        "%TEST_DIR%"
+for %%f in (%UNLOCKER_PROGS%) do copy "%ECLIPSE_HOME%\Unlocker\%%f-debug\*.exe"                                  "%TEST_DIR%"
 
 :doit
 xcopy /S /Y /I "%DEVICE_DATA%"                                                                     "%TEST_DIR%\DeviceData"

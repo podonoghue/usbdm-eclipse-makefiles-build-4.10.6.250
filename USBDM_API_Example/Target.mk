@@ -23,7 +23,7 @@ CFLAGS +=
 
 # Extra C Definitions
 DEFS += $(CDEFS)  # From command line
-DEFS +=
+DEFS += 
 
 # Look for include files in each of the modules
 INCS := $(patsubst %,-I%,$(SOURCEDIRS))
@@ -33,7 +33,8 @@ INCS +=
 LIBDIRS += 
 
 # Extra libraries
-LIBS += -l$(LIB_USBDM)
+LIBS += -l$(LIB_USBDM) 
+LIBS += 
 
 # Each module will add to this
 SRC :=
@@ -60,15 +61,6 @@ endif
 # Include the C dependency files (if they exist)
 -include $(OBJ:.o=.d)
 
-# Rules to build dependency (.d) files
-#==============================================
-$(BUILDDIR)/%.d : %.c $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
-
-$(BUILDDIR)/%.d : %.cpp $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
 
 # Rules to build object (.o) files
 #==============================================
@@ -80,11 +72,11 @@ endif
 
 $(BUILDDIR)/%.o : %.c $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 $(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 # How to link an EXE
 #==============================================

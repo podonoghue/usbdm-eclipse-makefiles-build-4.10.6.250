@@ -192,7 +192,11 @@ void Logging::openLogFile(const char *description){
    indent = 0;
    currentName = NULL;
    if (logFile != NULL) {
-      fclose(logFile);
+      loggingEnabled   = true;
+      fprintf(logFile, "Log re-opened on: %s"
+            "==============================================\n\n", ctime(&time_now));
+      return;
+//      fclose(logFile);
    }
    logFile = openApplicationFile("usbdm.log");
    if (logFile == NULL) {

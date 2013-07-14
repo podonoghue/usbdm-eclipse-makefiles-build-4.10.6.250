@@ -24,7 +24,7 @@ typedef struct {
     uint8_t  fdprot;
 } SecurityInfo;
 
-__attribute__ ((section(".cs3.security_information")))
+__attribute__ ((section(".security_information")))
 const SecurityInfo securityInfo = {
     /* backdoor */ {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},
     /* fprot    */ 0xFFFFFFFF,
@@ -149,8 +149,8 @@ void _HardFault_Handler(volatile ExceptionFrame *exceptionFrame) {
    }
 }
 
-void __cs3_reset(void) __attribute__((__interrupt__));
-extern uint32_t __cs3_stack;
+void __HardReset(void) __attribute__((__interrupt__));
+extern uint32_t __StackTop;
 
 /*
  * Each vector is assigned an unique name.  This is then 'weakly' assigned to the
@@ -192,11 +192,11 @@ typedef struct {
    intfunc  handlers[];
 } VectorTable;
 
-__attribute__ ((section(".cs3.interrupt_vector")))
-VectorTable const __cs3_interrupt_vector_arm = {
-    &__cs3_stack,                   /* Vec #0   Initial stack pointer                        */
+__attribute__ ((section(".interrupt_vectors")))
+VectorTable const __vector_table = {
+    &__StackTop,                   /* Vec #0   Initial stack pointer                        */
     {
-          __cs3_reset,              /* Vec #1   Reset Handler                                */
+          __HardReset,              /* Vec #1   Reset Handler                                */
           NMI_Handler,              /* Vec #2   NMI Handler                                  */
 (intfunc) HardFault_Handler,        /* Vec #3   Hard Fault Handler                           */
           Default_Handler,          /* Vec #4   Reserved                                     */

@@ -9,6 +9,8 @@
 
 #if defined(useWxWidgets) && !defined(WXPLUGIN_DLL_EXPORTS)
 
+#include <wx/wx.h>
+
 //=========================================================
 // Linking against wxWidgets libraries
    #define displayDialogue(message, caption, style)          \
@@ -82,6 +84,10 @@
 #define wxICON_INFORMATION      0x00000800
 #define wxICON_STOP             wxICON_HAND
 #define wxICON_ASTERISK         wxICON_INFORMATION
+
+#define wxSTAY_ON_TOP           0x8000
+#define wxCENTER                0x0001
+
 // Opaque type
 typedef void WindowHandle;
 

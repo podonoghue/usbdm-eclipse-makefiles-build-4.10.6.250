@@ -1,0 +1,2 @@
+rem MergeXML-debug.exe -p "C:\Program Files\Freescale\CW MCU v10.3\eclipse\plugins\com.freescale.mcu.projectwizard_1.*.*.*\\"         "plugin.xml" "..\WizardPatches\PatchNewWizardPlugin_3.xml" 2> res.txt
+rem MergeXML-debug.exe -p "C:\Program Files\Freescale\CW MCU v10.3\eclipse\plugins\com.freescale.mcu.mqxlite.projectwizard_1.*.*.*\\" "plugin.xml" "..\WizardPatches\PatchMQXLiteNewProjectWizard_3.xml" 2> res.txt

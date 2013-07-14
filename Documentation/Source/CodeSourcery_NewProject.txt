@@ -1,5 +1,5 @@
 /*!
-\page codeSourceryNewProject Codesourcery New Project Wizard
+\page codeSourceryNewProject Eclipse Juno - New Project Wizard
 
 This page provides brief instructions on how to create a C or C++ project for a Coldfire or Kinetis
 target using Eclipse and Codesourcery Lite tools.  
@@ -35,6 +35,7 @@ The following example is for a Coldfire target but a similar process is followed
    <tr>
       <td>
          - USBDM Parameters
+         	- Select the Build Tools being used (choice only for Kinetis devices)
             - Select the device to be used.  
          - Linker Parameters
             - Auto-generate linker script - The USBDM Wizard will automatically create a linker script based upon the device's
@@ -42,32 +43,41 @@ The following example is for a Coldfire target but a similar process is followed
             - Linker Script is used to use a pre-existing linker script instead of automatically generating one.  Codesourcery
               provides various linker scripts that may be used.  This linker script will be <b>copied</b> into the project 
               directory.   
-         - GCC Cross-compiler Parameters
-            These values are used to update system-level settings and affect all existing and new projects.  It is usually
-            only necessary to set these value once for a Eclipse Workspace.
-            - The Eclipse tools need to know the target-specific tool prefix.  The usual Codesourcery value is automatically
-              provided but may be changed if needed.\n
-              The prefix <b>m68k-elf-</b> is for CodeSourcery for a M68K (Coldfire etc) target.\n
-              The prefix <b>arm-eabi-</b> is for CodeSourcery for a ARM target.\n
-            - Eclipse needs to know where to find the GCC Tools.  This path is also used to locate the USBDM GDB Sprites which 
-              should have been copied to the Codesourcery directory during installation of USBDM.  
-          
          - Click <i>Next</i> 
       </td>
       <td colspan=2>
          \image html CrossCompileOptions.png
       </td>
    </tr>
+   
    <tr>
       <td>
-         - The Debug and release builds are usually suitable.\n
-
-         - Click <i>Finish</i>
+         These values are used to update system-level settings and affect all existing and new projects.  It is usually
+         only necessary to set these value once for Eclipse.\n
+         These values may also be accessed from the USBDM menu.
+         - ARM Ltd GNU Tools
+         - Codesourcery Tools for ARM
+         - Codesourcery Tools for Coldfire
+	         - The Eclipse tools need to know the target-specific tool prefix.\n
+	           The prefix <b>m68k-elf-</b> is usual for M68K (Coldfire etc) targets.\n
+	           The prefix <b>arm-eabi-</b> is usual for ARM targets.\n
+	         - Eclipse needs to know where to find the GCC Tools.  
+	         These two options can be conveniently set by using the Browse Button to browse to the 
+	         installation location of the XXXXXgcc.exe program included with the tools e.g. arm-eabi-gcc.exe.\n
+	         If a particular toolchain is not being used then the entries should be cleared.  
+         - Make command \n
+	        Under windows it is necessary to provide a GNU make tool to use in project builds.  
+	        USBDM includes a copy of the GNU make utility renamed as usbdm-make.  This is a convenient choice.
+         - Rm (delete) command \n
+	        Under windows it is necessary to provide a usable delete command to use in project builds.  
+	        USBDM includes a copy of the GNU rm utility renamed as usbdm-rm.  This is a convenient choice.
+         - Click <i>Next</i> 
       </td>
       <td colspan=2>
-         \image html SelectConfigurations.png
+         \image html USBDMConfigure.png
       </td>
    </tr>
+   
    <tr>
       <td>
          The Wizard will create a basic project with a brief demonstration mainline.\n
@@ -118,17 +128,20 @@ by the USBDM Wizard.\n
  Debugging item in the left-hand panel.
   
 - <b>Debugger Tab</b> in the dialogue.\n
-    - GDB Setup
-       - GDB Command - This should be <b>m68k-elf-gdb</b> for a M68K (Coldfire etc) target and <b>arm-eabi-gdb</b> for a ARM target.\n
-       - Command Set - Standard
-       - Protocol Version mi
-       - Verbose console mode - selecting this will generate messages indicating the GDB communication.
     - USBDM Parameters
       - Interface - This indicates the target-specific USBDM debugging interface being used.
       - Target Device - Indicates the device being debugged.
       - Debug - Select the debug version of the USBDM Sprite.  Used for testing USBDM.
+    - GDB Setup
+       - Build tool: - Select the build tool being used.  This controls the next two options.  If a build tools 
+         is selected the next two options will be automatically set.   
+	       - GDB Command: - The GDB command to be used.
+	       - GDB Bin Path: - Where to look for the above command. 
+       - Command Set - Standard 
+       - Protocol Version mi
+       - Verbose console mode - selecting this will generate messages indicating the GDB communication.
 
-\image html DebuggerTabColdfire.png
+\image html DebuggerTabKinetis.png
 
 - Startup Tab\n
   <b>Startup Tab</b> in the dialogue. Check the following settings:

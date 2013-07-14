@@ -12,7 +12,7 @@
 #ifndef _CFUNLOCKERAPP_H_
 #define _CFUNLOCKERAPP_H_
 
-#include "wx/image.h"
+#include <wx/image.h>
 #include "CFUnlockerPanel.h"
 
 /*!

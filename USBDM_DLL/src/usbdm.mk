@@ -7,7 +7,8 @@ SRC += Log.cpp
 SRC += USBDM_API.cpp
 SRC += USBDM_ErrorMessages.cpp
 SRC += Version.rc
-SRC += Names.cpp
 
 # Shared files $(SHARED_SRC)/Programmer
-#VPATH := $(VPATH) $(SHARED_SRC)
+VPATH := $(VPATH) $(SHARED_SRC)
+INCS += -I$(SHARED_SRC)
+SRC += Names.cpp

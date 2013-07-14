@@ -6,6 +6,7 @@
 <!ENTITY Custom-Devices                 SYSTEM "Custom/custom-cfvx.xml">
 ]>
 <!-- 
+      V4.10.6 - Updated GNU Information
       V4.10.4 - Changed how security information is expressed
  -->
 <root version="4.10.4">
@@ -72,26 +73,23 @@
       </memory>
       <!-- GNU Build options -->
       <gnuInfoList id="gnuSettings.mcf52213">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"
-            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.52213" 
+         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"
+            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52213" 
             command="-mcpu=52213" name="MCF52213 family"/>
       </gnuInfoList>
-      <!-- GNU Build options -->
       <gnuInfoList id="gnuSettings.mcf52223">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"   
-            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.52223" 
+         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"   
+            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52223" 
             command="-mcpu=52223" name="MCF52223 family"/>
       </gnuInfoList>
-      <!-- GNU Build options -->
       <gnuInfoList id="gnuSettings.mcf52235">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"   
-            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.52235" 
+         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"   
+            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52235" 
             command="-mcpu=52235" name="MCF52235 family"/>
       </gnuInfoList>
-      <!-- GNU Build options -->
       <gnuInfoList id="gnuSettings.mcf52259">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"   
-            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.52259"
+         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"   
+            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52259"
             command="-mcpu=52259" name="MCF52259 family"/>
       </gnuInfoList>
    </sharedInformation>

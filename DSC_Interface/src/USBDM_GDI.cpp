@@ -72,7 +72,9 @@ Change History
 #include "FindWindow.h"
 #ifdef LEGACY
 #include "USBDMDialogue.h"
+#include "AppSettings.h"
 #endif
+
 #if (TARGET != CFVx) && !defined(LEGACY)
 // Flash programming is not supported on above targets
 #define FLASH_PROGRAMMING 1
@@ -404,34 +406,39 @@ static DiReturnT closeBDM(void) {
 //!     DI_ERR_FATAL       => Error see \ref currentErrorString
 //!
 static USBDM_ErrorCode initialiseBDMInterface(void) {
-   Logging::print("initialiseBDMInterface()\n");
+   LOGGING;
 
-   USBDM_ErrorCode bdmRC;
+   USBDM_ErrorCode rc;
 
    programmingSupported = false; // Default to no programming available
 
-   bdmRC = USBDM_Init();
-   if (bdmRC != BDM_RC_OK) {
+   rc = USBDM_Init();
+   if (rc != BDM_RC_OK) {
       USBDM_Exit();
-      Logging::print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(bdmRC));
-      return bdmRC;
+      Logging::print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(rc));
+      return rc;
    }
    // Close any existing connection
    closeBDM();
 
 #if defined(GDI) && defined(LEGACY)
+   // Create empty app settings
+   AppSettings appSettings("GDI_", targetType);
+   appSettings.loadFromAppDirFile();
+
    // Display dialogue to obtain BDM settings
    string deviceName;
    string projectName;
    loadNames(deviceName, projectName);
    // Create the USBDM Dialogue
-   USBDMDialogue dialogue(targetType, _("USBDM Configure"));
+   UsbdmDialogue dialogue(SharedPtr(new Shared(targetType)), appSettings);
 
    //   SetTopWindow(dialogue);
    dialogue.Create(NULL);
-   bdmRC = dialogue.execute(deviceName, projectName);
+   rc = dialogue.execute(deviceName, projectName);
 
-   if (bdmRC == BDM_RC_OK) {
+   if (rc == BDM_RC_OK) {
+      appSettings.writeToAppDirFile();
 		dialogue.getBdmOptions(bdmOptions);
 #if (TARGET != CFVx) && (TARGET != MC56F80xx)
 		dialogue.getDeviceOptions(deviceOptions);
@@ -440,8 +447,8 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
 #else
    // Load the settings from the Eclipse environment
    string preferredBdm;
-   if (bdmRC == BDM_RC_OK) {
-      bdmRC = loadSettings(targetType, bdmOptions, preferredBdm);
+   if (rc == BDM_RC_OK) {
+      rc = loadSettings(targetType, bdmOptions, preferredBdm);
    }
    // Cycle Vdd on connect is done by GDI instead of BDM H/W
    if ((bdmOptions.targetVdd != BDM_TARGET_VDD_OFF) && bdmOptions.cycleVddOnConnect) {
@@ -454,11 +461,11 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    }
    bdmOptions.cycleVddOnConnect = FALSE;
 
-   if (bdmRC == BDM_RC_OK) {
-   	bdmRC = USBDM_OpenBySerialNumberWithRetry(targetType, preferredBdm);
+   if (rc == BDM_RC_OK) {
+   	rc = USBDM_OpenBySerialNumberWithRetry(targetType, preferredBdm);
    }
 #if TARGET == CFVx
-   if (bdmRC == BDM_RC_OK) {
+   if (rc == BDM_RC_OK) {
       HardwareCapabilities_t capabilities;
       if ((USBDM_GetCapabilities(&capabilities)==BDM_RC_OK) &&
             (capabilities&BDM_CAP_PST) == 0) {
@@ -467,18 +474,18 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
       }
    }
 #endif
-   if (bdmRC == BDM_RC_OK) {
-   	bdmRC = USBDM_SetOptionsWithRetry(&bdmOptions);
+   if (rc == BDM_RC_OK) {
+   	rc = USBDM_SetOptionsWithRetry(&bdmOptions);
    }
 #endif
    // Set Target
-   if (bdmRC == BDM_RC_OK) {
-      bdmRC = USBDM_SetTargetTypeWithRetry(targetType);
+   if (rc == BDM_RC_OK) {
+      rc = USBDM_SetTargetTypeWithRetry(targetType);
    }
-   if (bdmRC != BDM_RC_OK) {
+   if (rc != BDM_RC_OK) {
       USBDM_Exit();
-      Logging::print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(bdmRC));
-      return bdmRC;
+      Logging::print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(rc));
+      return rc;
    }
 #ifdef FLASH_PROGRAMMING
    // Set up flash programmer for target
@@ -486,10 +493,10 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
       delete flashProgrammer;
    }
    // Load description of device
-   bdmRC = getDeviceData(deviceOptions);
-   if (bdmRC != BDM_RC_OK) {
+   rc = getDeviceData(deviceOptions);
+   if (rc != BDM_RC_OK) {
       deviceOptions.setTargetName("Unknown");
-      return bdmRC;
+      return rc;
    }
 #if (TARGET == RS08)
    DeviceData::EraseOptions eraseOptions = deviceOptions.getEraseOption();
@@ -502,8 +509,8 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    
    // Copy required options for Flash programming.
    // Other options are reset to default.
-   bdmProgrammingOptions.size       = sizeof(USBDM_ExtendedOptions_t);
-   bdmProgrammingOptions.targetType = targetType;
+   bdmProgrammingOptions.size                = sizeof(USBDM_ExtendedOptions_t);
+   bdmProgrammingOptions.targetType          = targetType;
    USBDM_GetDefaultExtendedOptions(&bdmProgrammingOptions);
    bdmProgrammingOptions.targetVdd           = bdmOptions.targetVdd;
    bdmProgrammingOptions.interfaceFrequency  = bdmOptions.interfaceFrequency;
@@ -512,7 +519,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    programmingSupported = true;
 #endif
 
-   return bdmRC;
+   return rc;
 }
 
 //===================================================================
@@ -534,11 +541,10 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
 //!     BDM_RC_OK          => OK \n
 //!     other              => Error see \ref USBDM_ErrorCode
 //!
-static USBDM_ErrorCode targetConnect(RetryMode retryMode) {
+USBDM_ErrorCode targetConnect(RetryMode retryMode) {
 USBDM_ErrorCode rc;
-
-   Logging::print( "   targetConnect(%s)\n", getConnectionRetryName(retryMode) );
-
+   LOGGING;
+   Logging::print("- %s\n", getConnectionRetryName(retryMode) );
    do {
       rc = getBDMStatus(&USBDMStatus);
       if (rc != BDM_RC_OK) {
@@ -575,6 +581,7 @@ USBDM_ErrorCode rc;
       rc = USBDM_TargetConnectWithRetry(retryMode);
 #endif
    } while (0);
+   Logging::print("rc = %s\n", USBDM_GetErrorString(rc));
    return rc;
 }
 
@@ -719,67 +726,59 @@ DiReturnT DiGdiSetConfig ( DiConstStringT szConfig ) {
 //!
 USBDM_ErrorCode initialConnect(void) {
    LOGGING;
-
-   USBDM_ErrorCode bdmRc;
+   USBDM_ErrorCode rc;
 
    Logging::print("initialConnect()\n");
-   // Initial connect using all strategies
-   bdmRc = targetConnect(initialConnectOptions);
+
    forceMassErase = false;
    pcWritten      = false;
 
+   // Initial connect using all strategies
+   rc = targetConnect(initialConnectOptions);
 #if (TARGET == MC56F80xx)
    Logging::print("Doing DSC_TargetHalt()\n");
-   bdmRc = DSC_TargetHalt();
-   if (bdmRc != BDM_RC_OK) {
+   rc = DSC_TargetHalt();
+   if (rc != BDM_RC_OK) {
       if (initialConnectOptions&retryByReset) {
          DSC_TargetReset((TargetMode_t)(RESET_SPECIAL|RESET_DEFAULT));
       }
-      bdmRc = DSC_TargetHalt(); // retry
+      rc = DSC_TargetHalt(); // retry
    }
 #endif
 
 #ifdef FLASH_PROGRAMMING
 
 #if (TARGET == HCS08) || (TARGET == CFV1) || (TARGET == RS08)
-    if (bdmRc == BDM_RC_OK) {
-       if (flashProgrammer->checkTargetUnSecured() == PROGRAMMING_RC_ERROR_SECURED) {
-          bdmRc = BDM_RC_SECURED;
-       }
-    }
-#endif
-
-   if ((bdmRc == BDM_RC_SECURED) &&
-       (flashProgrammer->getDeviceData()->getEraseOption() != DeviceData::eraseMass)){
-      // Prompt user to change erase option to 'mass erase' if not already so
-      mtwksDisplayLine("targetConnect(): Target is secured\n");
-      int getOkCancel = displayDialogue(
-         "Device appears to be secure and may \n"
-         "only be programmed after a mass erase \n"
-         "which completely erases the device.\n\n"
-         "Enable Mass erase?",
-         "Device is secured",
-         wxYES_NO|wxYES_DEFAULT|wxICON_INFORMATION);
-      if (getOkCancel == wxYES) {
-         Logging::print("Setting forceMassErase\n");
-         forceMassErase = true;
-         flashProgrammer->getDeviceData()->setEraseOption(DeviceData::eraseMass);
-         // Ignore secured error
-         bdmRc = BDM_RC_OK;
+   if (rc == BDM_RC_OK) {
+      if (flashProgrammer->checkTargetUnSecured() == PROGRAMMING_RC_ERROR_SECURED) {
+         rc = BDM_RC_SECURED;
       }
-//      if (getOkCancel == wxOK) {
-//         if (flashProgrammer->massEraseTarget() != PROGRAMMING_RC_OK) {
-//            mtwksDisplayLine("targetConnect(): Target mass erase failed\n");
-//         }
-//         else {
-//            mtwksDisplayLine("targetConnect(): Target mass erase done\n");
-//            bdmRc = BDM_RC_OK;
-//         }
-//      }
    }
 #endif
 
-   return bdmRc;
+   if ((rc == BDM_RC_SECURED) &&
+       (flashProgrammer->getDeviceData()->getEraseOption() != DeviceData::eraseMass)){
+         // Prompt user to change erase option to 'mass erase'
+         mtwksDisplayLine("targetConnect(): Target is secured\n");
+         int getYesNo = displayDialogue(
+               "Device appears to be secure and may \n"
+               "only be programmed after a mass erase \n"
+               "which completely erases the device.\n\n"
+               "Temporarily enable Mass erase?",
+               "Device is secured",
+               wxYES_NO|wxYES_DEFAULT|wxICON_INFORMATION);
+         Logging::print("Setting forceMassErase = %s\n", (getYesNo == wxYES)?"True":"False");
+         if (getYesNo == wxYES) {
+         Logging::print("Setting forceMassErase\n");
+            forceMassErase = true; // Force mass erase & ignore ignore any error before done
+            flashProgrammer->getDeviceData()->setEraseOption(DeviceData::eraseMass);
+            // Ignore secured error
+            rc = BDM_RC_OK;
+         }
+   }
+#endif
+
+   return rc;
 }
 
 //! Configure I/O System
@@ -793,6 +792,7 @@ USBDM_ErrorCode initialConnect(void) {
 USBDM_GDI_API
 DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
    LOGGING;
+   Logging::setLoggingLevel(100);
    USBDM_ErrorCode bdmRc;
 
    Logging::print("pdcCommSetup = %p\n", pdcCommSetup);
@@ -968,6 +968,7 @@ void setDirectCommandString(const char *format, ...) {
    va_end(list);
 }
 
+#if TARGET != RS08
 //! 2.2.2.2 Send Native Command to DI
 //!
 //! @param pszCommand
@@ -983,6 +984,7 @@ DiReturnT DiDirectCommand ( DiConstStringT  pszCommand,
    Logging::print("DiDirectCommand(%s, %p)\n", pszCommand, pduiUserInfo);
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
+#endif
 
 //! 2.2.2.3 Read String from DI
 //!
@@ -998,7 +1000,7 @@ DiReturnT DiDirectReadNoWait ( DiUInt32T  dnNrToRead,
                                char        *pcBuffer,
                                DiUInt32T   *dnNrRead ) {
 
-   Logging::print("DiDirectReadNoWait() - not implemented\n");
+   Logging::print("() - not implemented\n");
    *pcBuffer = '\0';
    *dnNrRead = 0;
    return setErrorState(DI_ERR_NOTSUPPORTED);
@@ -1086,30 +1088,15 @@ DiReturnT DiMemoryGetCpuMap ( DiMemoryToCpuT *pdmtcMap ) {
 #ifdef FLASH_PROGRAMMING
 
 DiReturnT programTargetFlash(void) {
-
+   LOGGING;
    USBDM_ErrorCode rc;
-
-   Logging::print("programTargetFlash() - Commencing\n");
 
    // Set BDM options for programming
    USBDM_SetExtendedOptions(&bdmProgrammingOptions);
 
-#if TARGET == ARM
-   rc = USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-#elif TARGET == MC56F80xx
+#if TARGET == MC56F80xx
    DSC_Initialise();
    rc = DSC_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-#else
-   rc = USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-#endif
-   if (rc != BDM_RC_OK) {
-      return setErrorState(DI_ERR_FATAL, rc);
-   }
-#if (TARGET != ARM) && (TARGET != MC56F80xx)
-   rc = USBDM_Connect();
-   if (rc != BDM_RC_OK) {
-      return setErrorState(DI_ERR_FATAL, rc);
-   }
 #endif
 
    if (flashProgrammer == NULL) {
@@ -1137,9 +1124,9 @@ DiReturnT programTargetFlash(void) {
 //         return setErrorState(DI_ERR_FATAL, flashRC);
 //   }
    // Program target
-   USBDM_ErrorCode flashRC = flashProgrammer->programFlash(flashImage, NULL, true);
-   if (flashRC != PROGRAMMING_RC_OK) {
-      return setErrorState(DI_ERR_FATAL, flashRC);
+   rc = flashProgrammer->programFlash(flashImage, NULL, true);
+   if (rc != PROGRAMMING_RC_OK) {
+      return setErrorState(DI_ERR_FATAL, rc);
    }
    return DI_OK;
 }
@@ -1168,6 +1155,7 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
                              DiDownloadCommandT ddcDownloadCommand,
                              DiDownloadFormatT  ddfDownloadFormat,
                              char               *pchBuffer ) {
+   LOGGING;
    const char *command[] = {"DI_DNLD_INIT","DI_DNLD_WRITE","DI_DNLD_TERMINATE","DI_DNLD_ABORT"};
    U32c address(ddfDownloadFormat.daAddress);
    DiReturnT rc;
@@ -1440,6 +1428,7 @@ uint32_t        endAddress;                      // End address
          // Write data directly to memory
          USBDM_ErrorCode rc = BDM_RC_OK;
 #if TARGET == ARM
+         // ARM is special case - ignore write size and use longs!
          rc = ARM_WriteMemory(memorySpace, sub, writeAddress, memoryReadWriteBuffer);
 #elif TARGET == MC56F80xx
          rc = DSC_WriteMemory(memorySpace, sub, writeAddress, memoryReadWriteBuffer);
@@ -1576,10 +1565,10 @@ uint32_t        numBytes;                        // Number of bytes to transfer
          endAddress);
 
    CHECK_ERROR_STATE();
-
+   (void)organization;
    unsigned offset = 0;
    while (dnBufferItems>0) {
-      int blockSize = numBytes;
+      uint32_t blockSize = numBytes;
       if (blockSize > sizeof(memoryReadWriteBuffer)) {
          blockSize = sizeof(memoryReadWriteBuffer);
       }
@@ -1599,7 +1588,7 @@ USBDM_ErrorCode rc = BDM_RC_OK;
 //      Logging::printDump(memoryBuffer, blockSize, address);
 
       // Copy until buffer full or complete
-      unsigned sub = 0;
+      uint32_t sub = 0;
       while (sub<blockSize) {
          uint8_t v1=0,v2=0,v3=0,v4=0;
          switch (memorySpace&MS_SIZE) {
@@ -2464,24 +2453,25 @@ bool usbdm_gdi_dll_open(void) {
    }
 #endif
 #if TARGET == HCS08
-   Logging::openLogFile("usbdm_HCS08_gdi.log");
+   Logging::openLogFile("GDI_HCS08.log");
 #elif TARGET == RS08
-   Logging::openLogFile("usbdm_RS08_gdi.log");
+   Logging::openLogFile("GDI_RS08.log");
 #elif TARGET == HCS12
-   Logging::openLogFile("usbdm_HCS12_gdi.log");
+   Logging::openLogFile("GDI_HCS12.log");
 #elif TARGET == CFV1
-   Logging::openLogFile("usbdm_CFV1_gdi.log");
+   Logging::openLogFile("GDI_CFV1.log");
 #elif TARGET == CFVx
-   Logging::openLogFile("usbdm_CFVx_gdi.log");
+   Logging::openLogFile("GDI_CFVx.log");
 #elif TARGET == MC56F80xx
-   Logging::openLogFile("usbdm_DSC_gdi.log");
+   Logging::openLogFile("GDI_DSC.log");
 #elif TARGET == JTAG
-   Logging::openLogFile("usbdm_JTAG_gdi.log");
+   Logging::openLogFile("GDI_JTAG.log");
 #elif TARGET == ARM
-   Logging::openLogFile("usbdm_ARM_gdi.log");
+   Logging::openLogFile("GDI_ARM.log");
 #else
    #error Unexpected Target
 #endif
+   Logging::setLoggingLevel(100);
    Logging::print("usbdm_gdi_dll_open() - wxEntryStart() successful\n");
 #ifdef LEGACY
    Logging::print("usbdm_gdi_dll_open() - savewxApp = %p\n", savewxApp);

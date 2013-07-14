@@ -154,8 +154,8 @@ Java_net_sourceforge_usbdm_jni_Usbdm_usbdmGetBDMInformation(JNIEnv *env, jclass 
    jint values[] = {bdmInfo.BDMsoftwareVersion,bdmInfo.BDMhardwareVersion,
                     bdmInfo.ICPsoftwareVersion,bdmInfo.ICPhardwareVersion,
                     bdmInfo.capabilities,
-                    bdmInfo.commandBufferSize,
-                    bdmInfo.jtagBufferSize};
+              (jint)bdmInfo.commandBufferSize,
+              (jint)bdmInfo.jtagBufferSize};
    if (rc == BDM_RC_OK) {
       for (unsigned indx=0; indx < sizeof(bdmInformationNames)/sizeof(bdmInformationNames[0]); indx++) {
 //         fprintf(stderr, "Java_net_sourceforge_usbdm_jni_Usbdm_usbdmGetBDMInformation() indx = %d\n", indx);
@@ -333,13 +333,13 @@ Java_net_sourceforge_usbdm_jni_Usbdm_usbdmGetDefaultExtendedOptions(JNIEnv *env,
                     bdmOptions.bdmClockSource,
                     bdmOptions.useResetSignal,
                     bdmOptions.maskInterrupts,
-                    bdmOptions.interfaceFrequency,
+              (jint)bdmOptions.interfaceFrequency,
                     bdmOptions.usePSTSignals,
-                    bdmOptions.powerOffDuration,
-                    bdmOptions.powerOnRecoveryInterval,
-                    bdmOptions.resetDuration,
-                    bdmOptions.resetReleaseInterval,
-                    bdmOptions.resetRecoveryInterval,
+              (jint)bdmOptions.powerOffDuration,
+              (jint)bdmOptions.powerOnRecoveryInterval,
+              (jint)bdmOptions.resetDuration,
+              (jint)bdmOptions.resetReleaseInterval,
+              (jint)bdmOptions.resetRecoveryInterval,
    };
    if (rc == BDM_RC_OK) {
       for (unsigned indx=0; indx < sizeof(bdmOptionNames)/sizeof(bdmOptionNames[0]); indx++) {
@@ -432,13 +432,13 @@ Java_net_sourceforge_usbdm_jni_Usbdm_usbdmGetExtendedOptions(JNIEnv *env, jclass
                     bdmOptions.bdmClockSource,
                     bdmOptions.useResetSignal,
                     bdmOptions.maskInterrupts,
-                    bdmOptions.interfaceFrequency,
+              (jint)bdmOptions.interfaceFrequency,
                     bdmOptions.usePSTSignals,
-                    bdmOptions.powerOffDuration,
-                    bdmOptions.powerOnRecoveryInterval,
-                    bdmOptions.resetDuration,
-                    bdmOptions.resetReleaseInterval,
-                    bdmOptions.resetRecoveryInterval,
+              (jint)bdmOptions.powerOffDuration,
+              (jint)bdmOptions.powerOnRecoveryInterval,
+              (jint)bdmOptions.resetDuration,
+              (jint)bdmOptions.resetReleaseInterval,
+              (jint)bdmOptions.resetRecoveryInterval,
    };
    if (rc == BDM_RC_OK) {
       for (unsigned indx=0; indx < sizeof(bdmOptionNames)/sizeof(bdmOptionNames[0]); indx++) {

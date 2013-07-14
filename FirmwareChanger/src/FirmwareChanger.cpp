@@ -225,7 +225,7 @@ bool bootloaderDialogue::consistencyCheck(unsigned int protectAddress) {
    unsigned addr;
 
    // Copy ICP data from flash image
-   ICP_data = *(ICP_dataType*)(flashImageDescription.flashImage+ICP_Address);
+   memcpy(&ICP_data, flashImageDescription.flashImage+ICP_Address, sizeof(ICP_data));
 
    // Swap Endian
    ICP_data.flashStart        = (ICP_data.flashStart<<8)        +
@@ -1408,9 +1408,8 @@ bool BootloaderApp::OnInit() {
    if (USBDM_Init() != BDM_RC_OK)
       return false;
 
-   const char *settingsFilename = "Bootloader.cfg";
-   AppSettings settings;
-   settings.loadFromAppDirFile(settingsFilename);
+   AppSettings settings("Bootloader", T_NONE);
+   settings.loadFromAppDirFile();
 
    bootloaderDialogue *dialogue = new bootloaderDialogue();
    dialogue->loadSettings(settings);
@@ -1420,7 +1419,7 @@ bool BootloaderApp::OnInit() {
    dialogue->saveSettings(settings);
    dialogue->Destroy();
 
-   settings.writeToAppDirFile(settingsFilename, "Bootloader settings");
+   settings.writeToAppDirFile("Bootloader settings");
    Logging::closeLogFile();
    return true;
 }

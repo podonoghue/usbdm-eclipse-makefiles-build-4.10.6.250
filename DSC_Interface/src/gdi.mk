@@ -1,3 +1,5 @@
+# Build list for Codewarrior GDI interface
+
 # List source file to include from current directory
 SRC += DSC_Utilities.cpp
 SRC += FlashProgramming.cpp
@@ -6,6 +8,7 @@ SRC += Version.rc
 
 # Shared files $(SHARED_SRC)
 VPATH := $(SHARED_SRC) $(VPATH)
+INCS  += -I$(SHARED_SRC)
 SRC += ApplicationFiles.cpp
 SRC += AppSettings.cpp
 SRC += DeviceData.cpp
@@ -22,7 +25,8 @@ ifeq ($(UNAME_S),Windows)
 SRC += FindWindow.c
 endif
 
-# Shared files $(SHARED_SRC)/Programmer
+# Shared files $(SHARED_SRC)/gdi
 VPATH := $(SHARED_SRC)/gdi $(VPATH)
+INCS  += -I$(SHARED_SRC)/gdi
 SRC += GDI_Aux.cpp
 SRC += MetrowerksInterface.cpp

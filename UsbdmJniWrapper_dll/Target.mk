@@ -27,7 +27,10 @@ DEFS +=
 
 # Look for include files in each of the modules
 INCS := $(patsubst %,-I%,$(SOURCEDIRS))
-INCS += 
+INCS += $(JAVA_INC) 
+
+# Look for include files in each of the modules (don't include JAVA dirs)
+WINDRES_INCS := $(patsubst %,-I%,$(SOURCEDIRS))
 
 # Extra Library dirs
 LIBDIRS += 
@@ -61,31 +64,22 @@ endif
 # Include the C dependency files (if they exist)
 -include $(OBJ:.o=.d)
 
-# Rules to build dependency (.d) files
-#==============================================
-$(BUILDDIR)/%.d : %.c $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
-
-$(BUILDDIR)/%.d : %.cpp $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
 
 # Rules to build object (.o) files
 #==============================================
 ifeq ($(UNAME_S),Windows)
 $(BUILDDIR)/%.o : %.rc $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(WINDRES) $< $(DEFS) $(INCS) -o $@
+	$(WINDRES) $< $(DEFS) $(WINDRES_INCS) -o $@
 endif
 
 $(BUILDDIR)/%.o : %.c $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) $(JAVA_INC) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 $(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) $(JAVA_INC) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 # How to link an EXE
 #==============================================

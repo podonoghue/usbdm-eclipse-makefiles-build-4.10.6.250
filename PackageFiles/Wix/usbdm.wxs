@@ -373,7 +373,7 @@
          <Component Id='C.CommonFiles' Guid='7c988e6d-bf01-439a-9829-43e9cfeff9f9'>
 <!--            <File Id='ComonFiles1'       DiskId='1' Source='bin\libusb-1.0.dll' /> -->
             <File Id='ComonFiles2'       DiskId='1' Source='bin\libxerces-c-3-1.dll' />
-            <File Id='ComonFiles3'       DiskId='1' Source='bin\tcl86.dll' />
+            <File Id='ComonFiles3'       DiskId='1' Source='bin\tcl85.dll' />
             <File Id='ComonFiles4'       DiskId='1' Source='bin\usbdm-wxPlugin.dll' />
                                          
             <File Id='ComonFiles5'       DiskId='1' Source='bin\usbdm.4.dll' KeyPath='yes' />
@@ -394,8 +394,31 @@
             <File Id='ComonFiles17'      DiskId='1' Source='bin\pthreadGC2.dll' />
             
             <File Id='wxComonFiles1'     DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
-            <File Id='wxComonFiles2'     DiskId='1' Source='bin\wxmsw294u_adv_gcc_custom.dll' />
-            <File Id='wxComonFiles3'     DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+            <File Id='wxComonFiles2'     DiskId='1' Source='bin\wxbase294u_net_gcc_custom.dll' />
+            <File Id='wxComonFiles3'     DiskId='1' Source='bin\wxmsw294u_adv_gcc_custom.dll' />
+            <File Id='wxComonFiles4'     DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+
+            <File Id='gdbComonFiles1'    DiskId='1' Source='bin\usbdm-arm-gdbPipeServer.exe' />
+            <File Id='gdbComonFiles2'    DiskId='1' Source='bin\usbdm-arm-gdbPipeServer-debug.exe' />
+            <File Id='gdbComonFiles3'    DiskId='1' Source='bin\usbdm-cfv1-gdbPipeServer.exe' />
+            <File Id='gdbComonFiles4'    DiskId='1' Source='bin\usbdm-cfv1-gdbPipeServer-debug.exe' />
+            <File Id='gdbComonFiles5'    DiskId='1' Source='bin\usbdm-cfvx-gdbPipeServer.exe' />
+            <File Id='gdbComonFiles6'    DiskId='1' Source='bin\usbdm-cfvx-gdbPipeServer-debug.exe' />
+
+            <File Id='gdbComonFiles7'    DiskId='1' Source='bin\ARM_GDBServer.exe' />
+            <File Id='gdbComonFiles8'    DiskId='1' Source='bin\ARM_GDBServer-debug.exe' />
+            <File Id='gdbComonFiles9'    DiskId='1' Source='bin\CFV1_GDBServer.exe' />
+            <File Id='gdbComonFiles10'   DiskId='1' Source='bin\CFV1_GDBServer-debug.exe' />
+            <File Id='gdbComonFiles11'   DiskId='1' Source='bin\CFVx_GDBServer.exe' />
+            <File Id='gdbComonFiles12'   DiskId='1' Source='bin\CFVx_GDBServer-debug.exe' />
+	    
+            <File Id='gdbComonFiles13'   DiskId='1' Source='bin\usbdm-make.exe' />
+            <File Id='gdbComonFiles14'   DiskId='1' Source='bin\usbdm-rm.exe' />
+            <File Id='gdbComonFiles15'   DiskId='1' Source='bin\libiconv2.dll' />
+            <File Id='gdbComonFiles16'   DiskId='1' Source='bin\libiconv-2.dll' />
+            <File Id='gdbComonFiles17'   DiskId='1' Source='bin\libintl3.dll' />
+            <File Id='gdbComonFiles18'   DiskId='1' Source='bin\libintl-8.dll' />
+	    
          </Component>
       </DirectoryRef>
 
@@ -499,14 +522,14 @@
             <FeatureRef Id='F.CW_FOR_MICROCONTROLLERS_V6_3' />
             <FeatureRef Id='F.CWS12_X_V5_1' />
          </Feature>
-         <Feature Id='F.CodeSourcerySupport'
+         <!--Feature Id='F.CodeSourcerySupport'
                Title='CodeSourcery Interfaces '
                Description='Add USBDM support to various versions of CodeSourcery software.'
                AllowAdvertise="no"
                Level='1'>
             <FeatureRef Id='F.CODESOURCERY_CF' />
             <FeatureRef Id='F.CODESOURCERY_ARM' />
-         </Feature>
+         </Feature -->
          <Feature Id='F.EclipseCDT_JUNO_Support'
                Title='Eclipse CDT interfaces'
                Description='Add USBDM CDT support to Eclipse:&#10;  - C/C++ New Project wizards&#10;  - GDB Debug interfaces&#10;This requires Codesourcery.'

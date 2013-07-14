@@ -1,7 +1,7 @@
 @echo off
 cls
-set VERSION=1_1_0
-set VERSIONn=1.1.0
+set VERSION=1_2_0
+set VERSIONn=1.2.0
 
 set WIX_DIR="C:\Program Files (x86)\WiX Toolset v3.7\bin"
 if not exist %WIX_DIR% set WIX_DIR="C:\Program Files\WiX Toolset v3.7\bin"
@@ -25,9 +25,7 @@ set MSI_FILE_X32=%MSI_FILE%_x32
 set MSI_FILE_X64=%MSI_FILE%_x64
 set MSI_FILE_XP_X32=%MSI_FILE%XP_x32
 set MSI_FILE_XP_X64=%MSI_FILE%XP_x64
-set PATCH=patch_1_1
 
-if "%1"=="patch" goto doPatch
 if "%1"=="clean" goto doMake
 if "%1"==""      goto doMake
 echo "Unknown option %1"

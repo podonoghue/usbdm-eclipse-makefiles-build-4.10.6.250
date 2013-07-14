@@ -15,6 +15,10 @@ Change History
 #include "Common.h"
 #include "Log.h"
 
+#ifndef TARGET
+#define TARGET ARM
+#endif
+
 #include "USBDM_API.h"
 #if (TARGET == ARM)
 #include "ARM_Definitions.h"
@@ -120,7 +124,6 @@ static memoryBreakInfo *findMemoryBreakpoint(uint32_t address) {
       if (bpPtr->inUse && (bpPtr->address == address))
          return bpPtr;
    }
-   Logging::print("findMemoryBreakpoint() - not found\n");
    return NULL;
 }
 
@@ -256,6 +259,7 @@ int insertBreakpoint(breakType type, uint32_t address, unsigned size) {
    switch (type) {
    case memoryBreak: {
       if (findMemoryBreakpoint(address)) {
+         Logging::print("insertBreakpoint() - already set - ignored\n");
          return true; // Already set - ignore
       }
       memoryBreakInfo *bpPtr = findFreeMemoryBreakpoint();
@@ -611,6 +615,9 @@ uint32_t getU32Le(uint8_t data[]) {
 // Initialise Breakpoint before first use
 //
 USBDM_ErrorCode initBreakpoints() {
+
+   clearAllBreakpoints();
+
    uint8_t readDataBuff[4];
    maxNumHardwareBreakPoints = 0;
    maxNumDataWatches         = 0;

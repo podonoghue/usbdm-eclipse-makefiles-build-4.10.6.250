@@ -4,7 +4,8 @@
  \section introSection Introduction
    USBDM is a debugger hardware interface for a range of Freescale microcontrollers.  
    It is designed to work with Freescale's Codewarrior software under Windows and Linux.  More recently 
-   basic support for Coldfire and Kinetis with the Codesourcery Tool chain has been added. 
+   basic support for Coldfire and Kinetis with the Codesourcery Tool chain or ARM Ltd GNU Tools for ARM
+   has been added. 
    A set of stand-alone programmers are also provided.
        
    The attached files provide a port of a combined TBDML/OSBDM/TBLCF code to various processors.  
@@ -30,7 +31,7 @@
 
    - @htmlonly <a href="http://sourceforge.net/projects/usbdm/"><b>Release versions of the software for the various BDMs are available on Sourceforge.</b></a> @endhtmlonly
    - @htmlonly <a href="USBDM_V4.10/USBDM_FlashProgrammers/html/index.html"><b>Various stand-alone programmers are provided to support the USBDM hardware.</b></a> @endhtmlonly 
-   - @htmlonly <b>Source code is available on </b><a href="https://github.com/podonoghue"><b>GitHub</b></a><b> and Zipped on </b><a href="http://sourceforge.net/projects/usbdm/"><b>Sourceforge</b>.</a>@endhtmlonly 
+   - @htmlonly <a href="https://github.com/podonoghue"><b>Source code is available on GitHub</b></a>@endhtmlonly 
    
    
 <hr>
@@ -74,6 +75,21 @@
          and Linux.  \n
          This means they may be used with standard serial programs such as Hyperterminal and within a Terminal window 
          in Codewarrior Eclipse. 
+       
+<hr>
+ \subsection KLxxDesigns MK20DX128 based versions (Current designs)
+   The following design use the <b>MK20DX128</b> present on various Freescale FREEDOM boards (Arduino form factor).\n
+   This chip is USB2 Full speed and the chips on the Freedom boards include a pre-rogrammer bootloader (OpenSDA) that allows installation of USBDM without a programmer.
+
+   <b>USBDM_OpenSDA - Supports various Freescale Freedom boards </b>
+       - This supports the OpenSDA hardware as used in various  @htmlonly <a href="http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=FRDM-K20D50M"><b>Freescale Freedom systems</b></a>@endhtmlonly.  
+       - Allows use of the stand-alone USBDM programmers with FRDM boards.
+       - The Freedom board may be used to Open source tool chains such as Codesourcery or ARM Ltd GNU tools.
+       - The Freedom board may be used as a programmer for external devices (with the addition of a cable and header).
+       - Serial port support uses the standard USB CDC interface and so serial ports appear as the usual COM devices under Windows
+         and Linux.  \n
+         This means they may be used with standard serial programs such as Hyperterminal and within a Terminal window 
+         in Codewarrior Eclipse or Eclipse Juno (with suitable plugin). 
        
 <hr>
  \subsection JB16Designs JB16 based versions (These design are longer recommended)
@@ -245,7 +261,7 @@ The table below shows the support provided by each version and provides links to
   <td valign=top >  <p  align=center >X   </p>  </td>
  </tr>
  <tr>
-  <td valign=top >  <p  ><b>USBDM_FRDM_SWD</b><br>
+  <td valign=top >  <p  ><a href="USBDM_V4.10/Freedom/html/index.html"><b>USBDM_OpenSDA</b></a><br>
                          Custom OpenSDA (FRDM-KL25Z).
                     </p>  
   </td>

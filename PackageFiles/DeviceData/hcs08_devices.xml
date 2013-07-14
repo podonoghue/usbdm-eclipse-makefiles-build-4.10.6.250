@@ -11,6 +11,7 @@
 <!ENTITY HCS08-alt-load-flash-program     SYSTEM "HCS08/HCS08-default-0xB0-flash-program.abs.s19">
 ]>
 <!-- 
+      V4.10.6 - Added MC9S08PA4
       V4.10.4 - Changed how security information is expressed
  -->
 <root version="4.10.4">
@@ -1181,6 +1182,27 @@
          </memory>
          <sdid value="0x027" />
          <flashProgramRef ref="HCS08-alt-load-flash-program" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PA4">
+         <clock registerAddress="0x3038" type="S08ICSV4" />
+         <memory type="ram">
+            <memoryRange start="0x0040" end="0x023F" />
+         </memory>
+         <memory registerAddress="0x3020" type="eeprom" sectorSize="2" alignment="1">
+            <memoryRange start="0x003100" end="0x00317F" />
+         </memory>
+         <memory registerAddress="0x3020" type="flash" securityAddress="0xFF70" sectorSize="512" alignment="4">
+            <securityEntryRef ref="HCS08-default-security" />
+            <memoryRange start="0x00F000" end="0x00FFFF" />
+         </memory>
+         <soptAddress value="0x3030" />
+         <sdidAddress value="0x3002" />
+         <sdidMask value="0x00FFFF" />
+         <sdid value="0x0043" />
+         <flashScripts>
+            <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
+         </flashScripts>
+         <flashProgramRef ref="HCS08-PTxx-flash-program" />
       </device>
       <device family="HCS08Plus" name="MC9S08PA8" alias="MC9S08PT8">
          <sdid value="0x0000" />

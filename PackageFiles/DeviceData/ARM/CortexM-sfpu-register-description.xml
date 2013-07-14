@@ -1,0 +1,63 @@
+<![CDATA[<?xml version="1.0"?>
+<!DOCTYPE feature SYSTEM "gdb-target.dtd">
+<feature name="org.gnu.gdb.arm.m-profile" >
+   <struct id="misc.type" >
+      <field name="primask"   type = "uint8"    />
+      <field name="basepri"   type = "uint8"    />
+      <field name="faultmask" type = "uint8"    />
+      <field name="control"   type = "uint8"    />
+   </struct>
+   <reg name="r0"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r1"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r2"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r3"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r4"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r5"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r6"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r7"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r8"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r9"    bitsize="32" type="uint32"      group="general" />
+   <reg name="r10"   bitsize="32" type="uint32"      group="general" />
+   <reg name="r11"   bitsize="32" type="uint32"      group="general" />
+   <reg name="r12"   bitsize="32" type="uint32"      group="general" />
+   <reg name="sp"    bitsize="32" type="data_ptr"    group="general" />
+   <reg name="lr"    bitsize="32" type="uint32"      group="general" />
+   <reg name="pc"    bitsize="32" type="code_ptr"    group="general" />
+   <reg name="xpsr"  bitsize="32" type="uint32"      group="general" />
+   <reg name="msp"   bitsize="32" type="data_ptr"    group="general" />
+   <reg name="psp"   bitsize="32" type="data_ptr"    group="general" />
+   <reg name="misc"  bitsize="32" type="misc.type"   group="general" />
+   <reg name="fpscr" bitsize="32" type="int"         group="float" />
+   <reg name="s0"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s1"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s2"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s3"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s4"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s5"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s6"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s7"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s8"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s9"    bitsize="32" type="ieee_single" group="float" />
+   <reg name="s10"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s11"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s12"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s13"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s14"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s15"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s16"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s17"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s18"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s19"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s20"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s21"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s22"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s23"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s24"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s25"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s26"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s27"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s28"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s29"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s30"   bitsize="32" type="ieee_single" group="float" />
+   <reg name="s31"   bitsize="32" type="ieee_single" group="float" />
+</feature>]]>

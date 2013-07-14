@@ -153,9 +153,8 @@ const int deviceNumber = 0; // USBDM device to open, devices enumerated from 0..
 
    USBDM_bdmInformation_t bdmInformation = {sizeof(bdmInformation)};
    USBDM_GetBdmInformation(&bdmInformation);
-   CHECK((bdmInformation.BDMsoftwareVersion < 40905)?BDM_RC_WRONG_BDM_REVISION:BDM_RC_OK);
+   CHECK((bdmInformation.BDMsoftwareVersion < 0x40905)?BDM_RC_WRONG_BDM_REVISION:BDM_RC_OK);
 
-#if 1
    // Change any options here (>V4.9.4)
    USBDM_ExtendedOptions_t options = {sizeof(USBDM_ExtendedOptions_t), T_CFV1};
    CHECK(USBDM_GetDefaultExtendedOptions(&options));
@@ -166,9 +165,7 @@ const int deviceNumber = 0; // USBDM device to open, devices enumerated from 0..
    options.autoReconnect         = AUTOCONNECT_STATUS;
    CHECK(USBDM_SetExtendedOptions(&options));
    CHECK(USBDM_SetTargetVdd(BDM_TARGET_VDD_ENABLE));
-#else
-   CHECK(USBDM_SetTargetVdd(BDM_TARGET_VDD_3V3));
-#endif
+
    CHECK(USBDM_SetTargetType(T_CFV1));
    CHECK(USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL)));
    CHECK(USBDM_Connect());

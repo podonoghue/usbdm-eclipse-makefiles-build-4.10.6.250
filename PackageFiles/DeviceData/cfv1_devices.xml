@@ -10,9 +10,10 @@
 <!ENTITY Custom-Devices                 SYSTEM "Custom/custom-cfv1.xml">
 ]>
 <!--  Notes
-
-      V4.10.4 - Changed how security information is expressed
-      V4.10.4 - Added I/O spaces
+      V4.10.5d - Changed GNU C information
+      V4.10.5  - Added GNU C information
+      V4.10.4  - Changed how security information is expressed
+      V4.10.4  - Added I/O spaces
 
 Coldfire
   Memory types should be either
@@ -145,8 +146,8 @@ Coldfire+
       </memory>         
       <!-- GNU Build options -->
       <gnuInfoList id="gnuSettings.mcf51">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu"   
-            value="net.sourceforge.usbdm.cdt.toolchain.processor.mcpu.51" 
+         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"   
+            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.51" 
             command="-mcpu=51" name="MCF51 family"/>
       </gnuInfoList>
    </sharedInformation>
@@ -278,7 +279,6 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
-         <gnuInfoListRef ref="gnuSettings.mcf51" />
       </device>
       <device family="CFV1" name="MCF51EM128">
          <clock registerAddress="0xFF8220" type="S08ICSV3" />
@@ -403,8 +403,8 @@ Coldfire+
          <sdidAddress value="0xFF80D0" />
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D02" />
-         <gnuInfoListRef ref="gnuSettings.mcf51" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
+         <gnuInfoListRef ref="gnuSettings.mcf51" />
       </device>
       <device family="CFV1Plus" name="MCF51JU64">
          <clock type="External" />
@@ -416,8 +416,8 @@ Coldfire+
          <sdidAddress value="0xFF80D0" />
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D02" />
-         <gnuInfoListRef ref="gnuSettings.mcf51" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
+         <gnuInfoListRef ref="gnuSettings.mcf51" />
       </device>
       <device family="CFV1Plus" name="MCF51JU128">
          <clock type="External" />

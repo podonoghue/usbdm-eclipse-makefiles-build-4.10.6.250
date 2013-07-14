@@ -28,6 +28,7 @@ struct LargeTargetTimingDataHeader {
    uint32_t         res2;
    uint32_t         timingCount;       //!< Timing count
 };
+
 //! Header at the start of flash programming buffer (controls program action)
 struct LargeTargetFlashDataHeader {
    uint32_t         flags;             //!< Controls actions of routine

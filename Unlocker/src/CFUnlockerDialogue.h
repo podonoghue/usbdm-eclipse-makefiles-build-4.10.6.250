@@ -12,7 +12,7 @@
 #include "wx/notebook.h"
 #include "Shared.h"
 #include "CFUnlockerPanel.h"
-#include "USBDMPanel.h"
+#include "InterfacePanel.h"
 
 #define SYMBOL_CFUNLOCKERDIALOGUE_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxTAB_TRAVERSAL
 #if TARGET == MC56F80xx
@@ -28,17 +28,18 @@
 /*!
  * CFUnlockerDialogue class declaration
  */
-class CFUnlockerDialogue: public wxDialog, Shared {
+class CFUnlockerDialogue: public wxDialog {
 
     DECLARE_CLASS( CFUnlockerDialogue )
     DECLARE_EVENT_TABLE()
 
 private:
+   SharedPtr               shared;
    TargetType_t            targetType;
    wxString                caption;
-   USBDMPanel*             usbdmPanel;
+   InterfacePanel*         usbdmPanel;
    ColdfireUnlockerPanel*  cfUnlockerPanel;
-   wxNotebook*     noteBook;
+   wxNotebook*             noteBook;
 
    void OnSelChanging( wxNotebookEvent& event );
    void OnSelChanged( wxNotebookEvent& event );

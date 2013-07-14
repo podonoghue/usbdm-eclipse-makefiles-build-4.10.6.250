@@ -178,22 +178,22 @@
          <Component Id='C.CW_FOR_MCU_$(var.CW_VER_UC).HCSFiles' Guid='4efab0f7-0025-4648-ae6d-235bb773806b'>
 <!--            <File Id='EclipseHCSFiles1_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libusb-1.0.dll' /> -->
             <File Id='EclipseHCSFiles2_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libxerces-c-3-1.dll' />
-            <File Id='EclipseHCSFiles3_$(var.CW_VER_UC)'  DiskId='1' Source='bin\tcl86.dll' />
+            <File Id='EclipseHCSFiles3_$(var.CW_VER_UC)'  DiskId='1' Source='bin\tcl85.dll' />
             <File Id='EclipseHCSFiles4_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-wxPlugin.dll' />
                                       
             <File Id='EclipseHCSFiles5_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm.4.dll'/>
             <File Id='EclipseHCSFiles6_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdmTCL.4.dll' />
             <File Id='EclipseHCSFiles7_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-arm.4.dll' />
             <File Id='EclipseHCSFiles8_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-dsc.4.dll' />
-            <File Id='EclipseHCSFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_1\usbdm-hcs08-gdi.dll' />
-            <File Id='EclipseHCSFiles10_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_1\usbdm-rs08-gdi.dll' KeyPath='yes' />
+            <File Id='EclipseHCSFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-hcs08-gdi.dll' />
+            <File Id='EclipseHCSFiles10_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_x\usbdm-rs08-gdi.dll' KeyPath='yes' />
 
             <File Id='EclipseHCSFiles11_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-debug.4.dll' />
             <File Id='EclipseHCSFiles12_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdmTCL-debug.4.dll' />
             <File Id='EclipseHCSFiles13_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-arm-debug.4.dll' />
             <File Id='EclipseHCSFiles14_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-dsc-debug.4.dll' />
-            <File Id='EclipseHCSFiles15_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_1\usbdm-hcs08-gdi-debug.dll' />
-            <File Id='EclipseHCSFiles16_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_1\usbdm-rs08-gdi-debug.dll'/>
+            <File Id='EclipseHCSFiles15_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_x\usbdm-hcs08-gdi-debug.dll' />
+            <File Id='EclipseHCSFiles16_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_x\usbdm-rs08-gdi-debug.dll'/>
 
             <File Id='EclipseHCSFiles17_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseHCSFiles18_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />
@@ -208,22 +208,22 @@
          <Component Id='C.CW_FOR_MCU_$(var.CW_VER_UC).CFFiles' Guid='8c0d01d8-cc8e-485d-bfdc-e6a86ef256ba' >
 <!--            <File Id='EclipseCFFiles1_$(var.CW_VER_UC)'   DiskId='1' Source='bin\libusb-1.0.dll' /> -->
             <File Id='EclipseCFFiles2_$(var.CW_VER_UC)'   DiskId='1' Source='bin\libxerces-c-3-1.dll' />
-            <File Id='EclipseCFFiles3_$(var.CW_VER_UC)'   DiskId='1' Source='bin\tcl86.dll' />
+            <File Id='EclipseCFFiles3_$(var.CW_VER_UC)'   DiskId='1' Source='bin\tcl85.dll' />
             <File Id='EclipseCFFiles4_$(var.CW_VER_UC)'   DiskId='1' Source='bin\usbdm-wxPlugin.dll' />
     
             <File Id='EclipseCFFiles5_$(var.CW_VER_UC)'   DiskId='1' Source='bin\usbdm.4.dll'/>
             <File Id='EclipseCFFiles6_$(var.CW_VER_UC)'   DiskId='1' Source='bin\usbdmTCL.4.dll' />
             <File Id='EclipseCFFiles7_$(var.CW_VER_UC)'   DiskId='1' Source='bin\usbdm-arm.4.dll' />
             <File Id='EclipseCFFiles8_$(var.CW_VER_UC)'   DiskId='1' Source='bin\usbdm-dsc.4.dll' />
-            <File Id='EclipseCFFiles9_$(var.CW_VER_UC)'   DiskId='1' Source='Install\CW_10_1\usbdm-cfv1-gdi.dll' KeyPath='yes' />
-            <File Id='EclipseCFFiles10_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_1\usbdm-cfvx-gdi.dll'/>
+            <File Id='EclipseCFFiles9_$(var.CW_VER_UC)'   DiskId='1' Source='Install\CW_10_x\usbdm-cfv1-gdi.dll' KeyPath='yes' />
+            <File Id='EclipseCFFiles10_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-cfvx-gdi.dll'/>
 
             <File Id='EclipseCFFiles11_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-debug.4.dll' />
             <File Id='EclipseCFFiles12_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdmTCL-debug.4.dll' />
             <File Id='EclipseCFFiles13_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-arm-debug.4.dll' />
             <File Id='EclipseCFFiles14_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-dsc-debug.4.dll' />
-            <File Id='EclipseCFFiles15_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_1\usbdm-cfv1-gdi-debug.dll'/>
-            <File Id='EclipseCFFiles16_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_1\usbdm-cfvx-gdi-debug.dll'/>
+            <File Id='EclipseCFFiles15_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-cfv1-gdi-debug.dll'/>
+            <File Id='EclipseCFFiles16_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-cfvx-gdi-debug.dll'/>
 
             <File Id='EclipseCFFiles17_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseCFFiles18_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libstdc++-6.dll' />
@@ -238,20 +238,20 @@
          <Component Id='C.CW_FOR_MCU_$(var.CW_VER_UC).ArmFiles' Guid='5ea8730f-0e60-4246-a817-d0e75e44898d' >
 <!--            <File Id='EclipseArmFiles1_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libusb-1.0.dll' /> -->
             <File Id='EclipseArmFiles2_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libxerces-c-3-1.dll' />
-            <File Id='EclipseArmFiles3_$(var.CW_VER_UC)'  DiskId='1' Source='bin\tcl86.dll' />
+            <File Id='EclipseArmFiles3_$(var.CW_VER_UC)'  DiskId='1' Source='bin\tcl85.dll' />
             <File Id='EclipseArmFiles4_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-wxPlugin.dll' />
 
             <File Id='EclipseArmFiles5_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm.4.dll'/>
             <File Id='EclipseArmFiles6_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdmTCL.4.dll' />
             <File Id='EclipseArmFiles7_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-arm.4.dll' />
             <File Id='EclipseArmFiles8_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-dsc.4.dll' />
-            <File Id='EclipseArmFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_1\usbdm-arm-gdi.dll' KeyPath='yes' />
+            <File Id='EclipseArmFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-arm-gdi.dll' KeyPath='yes' />
 
             <File Id='EclipseArmFiles10_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-debug.4.dll'/>
             <File Id='EclipseArmFiles11_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdmTCL-debug.4.dll' />
             <File Id='EclipseArmFiles12_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-arm-debug.4.dll' />
             <File Id='EclipseArmFiles13_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-dsc-debug.4.dll' />
-            <File Id='EclipseArmFiles14_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_1\usbdm-arm-gdi-debug.dll'/>
+            <File Id='EclipseArmFiles14_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_x\usbdm-arm-gdi-debug.dll'/>
 
             <File Id='EclipseArmFiles15_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseArmFiles16_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />
@@ -266,20 +266,20 @@
          <Component Id='C.CW_FOR_MCU_$(var.CW_VER_UC).DscFiles' Guid='d82e95b6-c2de-4c4b-8e2d-a3019e96780d' >
 <!--            <File Id='EclipseDscFiles1_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libusb-1.0.dll' /> -->
             <File Id='EclipseDscFiles2_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libxerces-c-3-1.dll' />
-            <File Id='EclipseDscFiles3_$(var.CW_VER_UC)'  DiskId='1' Source='bin\tcl86.dll' />
+            <File Id='EclipseDscFiles3_$(var.CW_VER_UC)'  DiskId='1' Source='bin\tcl85.dll' />
             <File Id='EclipseDscFiles4_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-wxPlugin.dll' />
 
             <File Id='EclipseDscFiles5_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm.4.dll'/>
             <File Id='EclipseDscFiles6_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdmTCL.4.dll' />
             <File Id='EclipseDscFiles7_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-dsc.4.dll' />
             <File Id='EclipseDscFiles8_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-arm.4.dll' />
-            <File Id='EclipseDscFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_1\usbdm-dsc-gdi.dll' KeyPath='yes' />
+            <File Id='EclipseDscFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-dsc-gdi.dll' KeyPath='yes' />
 
             <File Id='EclipseDscFiles10_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-debug.4.dll'/>
             <File Id='EclipseDscFiles11_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdmTCL-debug.4.dll' />
             <File Id='EclipseDscFiles12_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-dsc-debug.4.dll' />
             <File Id='EclipseDscFiles13_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-arm-debug.4.dll' />
-            <File Id='EclipseDscFiles14_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_1\usbdm-dsc-gdi-debug.dll'/>
+            <File Id='EclipseDscFiles14_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_x\usbdm-dsc-gdi-debug.dll'/>
 
             <File Id='EclipseDscFiles15_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseDscFiles16_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />
@@ -294,20 +294,20 @@
          <Component Id='C.CW_FOR_MCU_$(var.CW_VER_UC).HCS12Files' Guid='50a9722c-40ab-4014-b412-49be24fbcdb3' >
 <!--            <File Id='EclipseS12ZFiles1_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libusb-1.0.dll' /> -->
             <File Id='EclipseS12ZFiles2_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libxerces-c-3-1.dll' />
-            <File Id='EclipseS12ZFiles3_$(var.CW_VER_UC)'  DiskId='1' Source='bin\tcl86.dll' />
+            <File Id='EclipseS12ZFiles3_$(var.CW_VER_UC)'  DiskId='1' Source='bin\tcl85.dll' />
             <File Id='EclipseS12ZFiles4_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-wxPlugin.dll' />
 
             <File Id='EclipseS12ZFiles5_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm.4.dll'/>
             <File Id='EclipseS12ZFiles6_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdmTCL.4.dll' />
             <File Id='EclipseS12ZFiles7_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-dsc.4.dll' />
             <File Id='EclipseS12ZFiles8_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-arm.4.dll' />
-            <File Id='EclipseS12ZFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_1\usbdm-hcs12-gdi.dll' KeyPath='yes' />
+            <File Id='EclipseS12ZFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-hcs12-gdi.dll' KeyPath='yes' />
 
             <File Id='EclipseS12ZFiles10_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-debug.4.dll'/>
             <File Id='EclipseS12ZFiles11_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdmTCL-debug.4.dll' />
             <File Id='EclipseS12ZFiles12_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-dsc-debug.4.dll' />
             <File Id='EclipseS12ZFiles13_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-arm-debug.4.dll' />
-            <File Id='EclipseS12ZFiles14_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_1\usbdm-hcs12-gdi-debug.dll'/>
+            <File Id='EclipseS12ZFiles14_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_x\usbdm-hcs12-gdi-debug.dll'/>
 
             <File Id='EclipseS12ZFiles15_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseS12ZFiles16_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />

@@ -29,6 +29,7 @@ static inline char const *getCFVxDebugRegName( unsigned int regAddr )           
 static inline char const *getSWDDebugRegName( unsigned int regAddr )                    { return ""; }
 static inline char const *getCFV1ControlRegName( unsigned int regAddr )                 { return ""; }
 static inline char const *getCFVxControlRegName( unsigned int regAddr )                 { return ""; }
+static inline char const *getARMControlRegName( unsigned int regAddr )                  { return ""; }
 static inline char const *getSWDControlRegName( unsigned int regAddr )                  { return ""; }
 static inline char const *getRS08_BDCSCR_Name( unsigned int BDCSCR)                     { return ""; }
 static inline char const *getHCS08_BDCSCR_Name( unsigned int BDCSCR)                    { return ""; }

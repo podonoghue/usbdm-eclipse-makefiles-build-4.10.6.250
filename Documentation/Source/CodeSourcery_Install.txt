@@ -1,5 +1,5 @@
 /*!
-\page codeSourceryInstallPage CodeSourcery Install
+\page codeSourceryInstallPage Eclipse Juno - Install (Codesourcery, GNU tools)
 
 This page provides brief instructions on how to set up CodeSourcery Lite for use with 
 Eclipse IDE and USBDM BDM hardware for Kinetis and Coldfire targets on a MS-Windows platform.
@@ -40,8 +40,15 @@ The following software needs to be installed:\n
 -  <b>Codesourcery Lite</b> \n
    Download from: http://www.mentor.com/embedded-software/codesourcery \n
    Choose the software for the appropriate target.\n 
-   Run the installer to install to the default location "C:\Program Files\CodeSourcery\Sourcery_CodeBench_Lite_for_...."
-   Allow the installer to modify the PATHs  . \n \n
+   Run the installer to install to the default location.
+   There is no need to allow the installer to modify the PATHs  . \n \n
+-  <b>ARM Ltd GNU Tools for Arm</b> \n
+   This is an alternative to the Codesourcery tools for ARM.  A significant advantage is the inclusion of
+   floating point libraries supporting the single-precision FPU on some chips.\n
+   Download from: https://launchpad.net/gcc-arm-embedded \n
+   Choose the software for the appropriate target.\n 
+   Run the installer to install to the default location.
+   The is no need to allow the installer to modify the PATHs. \n \n
 -  <b>USBDM Eclipse plugin</b> \n
    This plugin makes it very easy to create USBDM based projects for Coldfire & Kinetis devices. \n
    Under windows it is installed as part of the USBDM installation in the following step.  Note that it will be 
@@ -49,8 +56,7 @@ The following software needs to be installed:\n
    installations do not have a standard installation location. \n  
    Under linux it is necessary to manually copy the plugin files to the Eclipse <b>dropins</b> directory.  
 -  <b>Install USBDM</b> \n
-   This must be done <b>after</b> installing Codesourcery and Eclipse since it adds various files to the Codesourcery 
-   installation and adds Eclipse plugins.\n
+   This must be done <b>after</b> installing Eclipse since it adds Eclipse plugins.\n
 */
 
 -  <b>ARM for Eclipse plugin (Not all BDMs support ARM)</b> \n

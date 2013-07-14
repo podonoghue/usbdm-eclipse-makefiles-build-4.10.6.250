@@ -141,8 +141,8 @@
                </Component>
             </Directory>
             <Component Id='C.JS16_BOOT_DRIVER.drivers' Guid='78fb0d7c-9aa8-4baf-ada0-b8dd0d77604c' >
-               <File Id='F.JS16_BOOT_DRIVER.USBDM_BDM_InterfaceCAT' Name='USBDM_BDM_Interface.cat' DiskId='1' Source='$(var.DriverDir)/JS16_Bootloader.cat' KeyPath='yes'/>
-               <File Id='F.JS16_BOOT_DRIVER.USBDM_BDM_InterfaceINF' Name='USBDM_BDM_Interface.inf' DiskId='1' Source='$(var.DriverDir)/JS16_Bootloader.inf'/>
+               <File Id='F.JS16_BOOT_DRIVER.USBDM_BDM_InterfaceCAT' Name='JS16_Bootloader.cat' DiskId='1' Source='$(var.DriverDir)/JS16_Bootloader.cat' KeyPath='yes'/>
+               <File Id='F.JS16_BOOT_DRIVER.USBDM_BDM_InterfaceINF' Name='JS16_Bootloader.inf' DiskId='1' Source='$(var.DriverDir)/JS16_Bootloader.inf'/>
                <difx:Driver Legacy='yes' />
             </Component>
          </Directory>
@@ -153,8 +153,36 @@
           <ComponentRef Id='C.JS16_BOOT_DRIVER.drivers'    />
       </ComponentGroup>
       
+      <DirectoryRef Id='D.USBDMDriverDir'>
+         <Directory Id="D.OLD_BOOT_DRIVER" Name="OLD_driver">
+            <Directory Id="D.OLD_BOOT_DRIVER.amd64" Name="amd64">
+               <Component Id='C.OLD_BOOT_DRIVER.amd64.WinUSB' Guid='2467d524-46e7-43e5-8edb-bebee2958d7a' >
+                  <File Id='F.OLD_BOOT_DRIVER.amd64.WdfCoInstallerDLL'    Name='$(var.WdfCoInstaller).dll'    DiskId='1' Source='$(var.DriverDir)/amd64/$(var.WdfCoInstaller).dll'/>
+                  <File Id='F.OLD_BOOT_DRIVER.amd64.winusbcoinstallerDLL' Name='$(var.WinusbCoinstaller).dll' DiskId='1' Source='$(var.DriverDir)/amd64/$(var.WinusbCoinstaller).dll'/>
+               </Component>
+            </Directory>
+            <Directory Id="D.OLD_BOOT_DRIVER.x86" Name="x86">
+               <Component Id='C.OLD_BOOT_DRIVER.x86.WinUSB' Guid='e7c859bf-8ad6-49ee-8449-6bb187e57411' >
+                  <File Id='F.OLD_BOOT_DRIVER.x86.WdfCoInstallerDLL'    Name='$(var.WdfCoInstaller).dll'    DiskId='1' Source='$(var.DriverDir)/x86/$(var.WdfCoInstaller).dll'/>
+                  <File Id='F.OLD_BOOT_DRIVER.x86.winusbcoinstallerDLL' Name='$(var.WinusbCoinstaller).dll' DiskId='1' Source='$(var.DriverDir)/x86/$(var.WinusbCoinstaller).dll'/>
+               </Component>
+            </Directory>
+            <Component Id='C.OLD_BOOT_DRIVER.drivers' Guid='cbf44a72-84d2-4e99-a86f-8a53a3571c17' >
+               <File Id='F.OLD_BOOT_DRIVER.USBDM_BDM_InterfaceCAT' Name='Old_Bootloader.cat' DiskId='1' Source='$(var.DriverDir)/OLD_Bootloader.cat' KeyPath='yes'/>
+               <File Id='F.OLD_BOOT_DRIVER.USBDM_BDM_InterfaceINF' Name='Old_Bootloader.inf' DiskId='1' Source='$(var.DriverDir)/OLD_Bootloader.inf'/>
+               <difx:Driver Legacy='yes' />
+            </Component>
+         </Directory>
+      </DirectoryRef>
+      <ComponentGroup Id='CG.OLD_BOOT_DRIVER'>
+          <ComponentRef Id='C.OLD_BOOT_DRIVER.x86.WinUSB'   />
+          <ComponentRef Id='C.OLD_BOOT_DRIVER.amd64.WinUSB' />
+          <ComponentRef Id='C.OLD_BOOT_DRIVER.drivers'    />
+      </ComponentGroup>
+      
       <Feature Id='Complete' Level='1'>
          <ComponentGroupRef Id='CG.JS16_BOOT_DRIVER' />
+         <ComponentGroupRef Id='CG.OLD_BOOT_DRIVER' />
          <!-- <ComponentGroupRef Id='CG.JB16_BOOT_DRIVER' /> -->
          <ComponentGroupRef Id='CG.USBDM_BDM_DRIVER' />
          <ComponentRef      Id='C.USBDMSerial' />

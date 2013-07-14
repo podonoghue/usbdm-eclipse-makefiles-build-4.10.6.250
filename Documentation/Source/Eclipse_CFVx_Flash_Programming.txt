@@ -1,5 +1,5 @@
 /*!
- \page eclipseFlashProgrammingPage Setting up Coldfire V2-V4 Flash programming for Codewarrior Eclipse
+ \page eclipseFlashProgrammingPage Codewarrior - Coldfire V2-V4 Flash programming
 
 USBDM does not support the automatic programming of Coldfire V2 - V4 devices as the programming algorithms
 required are too varied between different devices.  This situation is no different from the arrangement 

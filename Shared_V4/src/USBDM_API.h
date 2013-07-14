@@ -156,8 +156,9 @@ typedef enum {
    T_ARM_SWD   = 9,       //!< ARM target using SWD
    T_ARM       = 10,      //!< ARM target using either SWD (preferred) or JTAG as supported
    T_LAST      = T_ARM,
-   T_ILLEGAL   = 0xFE,  //!< - Used to indicate error in selecting target
+   T_ILLEGAL   = 0xFE,    //!< Used to indicate error in selecting target
    T_OFF       = 0xFF,    //!< Turn off interface (no target)
+   T_NONE      = 0xFF,
 } TargetType_t;
 
 //! Memory space indicator - includes element size
@@ -368,31 +369,40 @@ typedef enum {
 //! regNo Parameter for ARM_ReadReg() with ARM (Kinetis) target
 //!
 typedef enum {
-   ARM_RegR0     = 0,  //!< R0
-   ARM_RegR1     = 1,  //!< R1
-   ARM_RegR2     = 2,  //!< R2
-   ARM_RegR3     = 3,  //!< R3
-   ARM_RegR4     = 4,  //!< R4
-   ARM_RegR5     = 5,  //!< R5
-   ARM_RegR6     = 6,  //!< R6
-   ARM_RegR7     = 7,  //!< R7
-   ARM_RegR8     = 8,  //!< R8
-   ARM_RegR9     = 9,  //!< R9
-   ARM_RegR10    = 10, //!< R10
-   ARM_RegR11    = 11, //!< R11
-   ARM_RegR12    = 12, //!< R12
-   ARM_RegSP     = 13, //!< SP
-   ARM_RegLR     = 14, //!< LR
-   ARM_RegPC     = 15, //!< PC (Debug return address)
-   ARM_RegxPSR   = 16, //!< xPSR
-   ARM_RegMSP    = 17, //!< Main Stack Ptr
-   ARM_RegPSP    = 18, //!< Process Stack Ptr
-   ARM_RegMISC   = 20, // [31:24]=CONTROL,[23:16]=FAULTMASK,[15:8]=BASEPRI,[7:0]=PRIMASK.
+   ARM_RegR0     = 0,    //!< R0
+   ARM_RegR1     = 1,    //!< R1
+   ARM_RegR2     = 2,    //!< R2
+   ARM_RegR3     = 3,    //!< R3
+   ARM_RegR4     = 4,    //!< R4
+   ARM_RegR5     = 5,    //!< R5
+   ARM_RegR6     = 6,    //!< R6
+   ARM_RegR7     = 7,    //!< R7
+   ARM_RegR8     = 8,    //!< R8
+   ARM_RegR9     = 9,    //!< R9
+   ARM_RegR10    = 10,   //!< R10
+   ARM_RegR11    = 11,   //!< R11
+   ARM_RegR12    = 12,   //!< R12
+   ARM_RegSP     = 13,   //!< SP
+   ARM_RegLR     = 14,   //!< LR
+   ARM_RegPC     = 15,   //!< PC (Debug return address)
+   ARM_RegxPSR   = 16,   //!< xPSR
+   ARM_RegMSP    = 17,   //!< Main Stack pointer
+   ARM_RegPSP    = 18,   //!< Process Stack pointer
+   ARM_RegMISC   = 20,   //!< [31:24]=CONTROL,[23:16]=FAULTMASK,[15:8]=BASEPRI,[7:0]=PRIMASK.
    //
-   ARM_RegFPSCR  = 0x21, //!<
-   ARM_RegFPS0   = 0x40, //!<
+   ARM_RegFPSCR  = 0x21, //!< Floating point control register
+   ARM_RegFPS0   = 0x40, //!< Floating point +0..+31
 
 } ARM_Registers_t;
+
+//! startRegIndex, endRegIndex Parameters for USBDM_ReadMultipleRegs() with ARM (Kinetis) target
+//!
+typedef enum {
+   ARM_RegIndexFirstCore  = 0,                          //!< First code reg
+   ARM_RegIndexLastCore   = ARM_RegIndexFirstCore+19,   //!< Last core reg (20 regs R0..R12,SP,LR,PC,XPSR,MSP,PSP,MISC)
+   ARM_RegIndexFirstFloat = 20,                         //!< First float register
+   ARM_RegIndexLastFloat  = ARM_RegIndexFirstFloat+32,  //!< Last float reg (33 regs FPSCR, FPS0..FPS32)
+} ARM_RegisterIndex_t;
 
 //! regNo Parameter for DSC_ReadReg() with DSC target
 //! DSC Core registers
@@ -587,7 +597,7 @@ typedef enum {
    CFV1_DRegPBR2       = 0x1A,   //!< PBR2
    CFV1_DRegPBR3       = 0x1B,   //!< PBR3
 
-   CFV1_ByteRegs       = 0x1000, // Special access to msb
+   CFV1_ByteRegs       = 0x1000, //!< Special access to msb
    CFV1_DRegXCSRbyte   = CFV1_ByteRegs+CFV1_DRegXCSR, //!< XCSR.msb
    CFV1_DRegCSR2byte   = CFV1_ByteRegs+CFV1_DRegCSR2, //!< CSR2.msb
    CFV1_DRegCSR3byte   = CFV1_ByteRegs+CFV1_DRegCSR3, //!< CSR3.msb
@@ -655,18 +665,18 @@ typedef struct {
 //! Options used with JTAG commands
 //!
 typedef enum {
-   JTAG_STAY_SHIFT    = 0,     //!< Remain in SHIFT-DR or SHIFT-IR
-   JTAG_EXIT_IDLE     = 1,     //!< Exit SHIFT-XX to RUN-TEST/IDLE
-   JTAG_EXIT_SHIFT_DR = 2,     //!< Exit SHIFT-XX & enter SHIFT-DR w/o crossing RUN-TEST/IDLE
-   JTAG_EXIT_SHIFT_IR = 3,     //!< Exit SHIFT-XX & enter SHIFT-IR w/o crossing RUN-TEST/IDLE
-   JTAG_EXIT_ACTION_MASK = 0x3,
+   JTAG_STAY_SHIFT       = 0,     //!< Remain in SHIFT-DR or SHIFT-IR
+   JTAG_EXIT_IDLE        = 1,     //!< Exit SHIFT-XX to RUN-TEST/IDLE
+   JTAG_EXIT_SHIFT_DR    = 2,     //!< Exit SHIFT-XX & enter SHIFT-DR w/o crossing RUN-TEST/IDLE
+   JTAG_EXIT_SHIFT_IR    = 3,     //!< Exit SHIFT-XX & enter SHIFT-IR w/o crossing RUN-TEST/IDLE
+   JTAG_EXIT_ACTION_MASK = 0x3,   //!< Mask for Exit actions
 
-   JTAG_WRITE_0       = 0x00,  //!< Write 0's when reading - combined with above
-   JTAG_WRITE_1       = 0x80,  //!< Write 1's when reading - combined with above
-   JTAG_WRITE_MASK    = 0x80,
+   JTAG_WRITE_0          = 0x00,  //!< Write 0's when reading - combined with above
+   JTAG_WRITE_1          = 0x80,  //!< Write 1's when reading - combined with above
+   JTAG_WRITE_MASK       = 0x80,  //!< Mask for Write actions
 
-   JTAG_SHIFT_DR      = 0,     //!< Enter SHIFT-DR (from TEST-LOGIC-RESET or RUN-TEST/IDLE)
-   JTAG_SHIFT_IR      = 1,     //!< Enter SHIFT-IR (from TEST-LOGIC-RESET or RUN-TEST/IDLE)
+   JTAG_SHIFT_DR         = 0,     //!< Enter SHIFT-DR (from TEST-LOGIC-RESET or RUN-TEST/IDLE)
+   JTAG_SHIFT_IR         = 1,     //!< Enter SHIFT-IR (from TEST-LOGIC-RESET or RUN-TEST/IDLE)
 } JTAG_ExitActions_t;
 
 //=======================================================================
@@ -710,7 +720,7 @@ typedef enum {
    SI_TA             = (3<<SI_TA_OFF),    //!< Mask for TA signal (not implemented)
    SI_TA_LOW         = (0<<SI_TA_OFF),    //!< Set TA low
    SI_TA_3STATE      = (2<<SI_TA_OFF),    //!< Set TA 3-state
-   SI_TC_NONE        = (3<<SI_TA_OFF),
+   SI_TA_NONE        = (3<<SI_TA_OFF),
 
    SI_TRST_OFF       = (6),
    SI_TRST           = (3<<SI_TRST_OFF),  //!< Mask for TRST signal (not implemented)
@@ -1375,6 +1385,22 @@ USBDM_ErrorCode USBDM_WriteReg(unsigned int regNo, unsigned long regValue);
 //!
 USBDM_API
 USBDM_ErrorCode USBDM_ReadReg(unsigned int regNo, unsigned long *regValue);
+
+//! Read Multiple Core registers
+//!
+//! @param regValueBuffer Values in Target byte order??
+//! @param startRegIndex     Register index (inclusive) to start reading at
+//! @param endRegIndex       Register index (inclusive) to stop reading at
+//!
+//! @return error code \n
+//!     BDM_RC_OK    => OK \n
+//!     other        => Error code - see \ref USBDM_ErrorCode
+//!
+//! @note The indexes mentioned above are magic numbers indexing an arbitrary table.\n
+//!       Use only the predefined values provided in the USBDM_API.h
+//!
+USBDM_API
+USBDM_ErrorCode USBDM_ReadMultipleRegs(unsigned char regValueBuffer[], unsigned int startRegIndex, unsigned int endRegIndex);
 
 //! Write Target Control register
 //!

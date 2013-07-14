@@ -88,7 +88,7 @@ WDI_LIBS       := -lwdi-static -lsetupapi -lole32  -lcomctl32
 TCL_LIBDIRS    := 
 ifeq ($(UNAME_S),Windows)
    TCL_INC        := -IC:/Apps/Tcl/include
-   TCL_LIBS       := -ltcl86
+   TCL_LIBS       := -ltcl85
 else
    TCL_INC        :=
    TCL_LIBS       := -ltcl8.5
@@ -268,6 +268,10 @@ endif
 #CFLAGS += -Wshadow -DWINVER=0x500 -D_WIN32_IE=0x500 -std=gnu99 -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign
 
 #===========================================================
+# Extra libraries for WINSOCK
+LIB_SOCKETS = -lws2_32
+
+#===========================================================
 # Look in shared Library dir first
 LIBDIRS := -L$(SHARED_LIBDIRS)
 
@@ -276,7 +280,8 @@ LIBDIRS := -L$(SHARED_LIBDIRS)
 PROGRAMMER_DEFS = -DTARGET=$(TARGET) -DFLASH_PROGRAMMER -DUSE_ICON
 GDI_DEFS        = -DTARGET=$(TARGET) -DGDI
 GDI_LEGACY_DEFS = -DTARGET=$(TARGET) -DGDI -DLEGACY
-GDB_DEFS        = -DTARGET=$(TARGET) -DGDB
+GDB_DEFS        = -DTARGET=$(TARGET) -DGDB -DGDB_SERVER
+GDB_SERVER_DEFS = -DTARGET=$(TARGET) -DUSE_ICON -DGDB -DGDB_SERVER
 
 ifeq ($(UNAME_S),Windows)
 # Windows version of Codewarrior packs structs

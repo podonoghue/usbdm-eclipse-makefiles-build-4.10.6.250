@@ -75,7 +75,9 @@ Change History
 #include "USBDM_GDI.h"
 #ifdef LEGACY
 #include "USBDMDialogue.h"
+#include "AppSettings.h"
 #endif
+
 #if (TARGET != CFVx) && !defined(LEGACY)
 // Flash programming is not supported on above targets
 #define FLASH_PROGRAMMING 1
@@ -265,18 +267,23 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    closeBDM();
 
 #if defined(GDI) && defined(LEGACY)
+   // Create empty app settings
+   AppSettings appSettings("GDI_", targetType);
+   appSettings.loadFromAppDirFile();
+
    // Display dialogue to obtain BDM settings
    string deviceName;
    string projectName;
    loadNames(deviceName, projectName);
    // Create the USBDM Dialogue
-   USBDMDialogue dialogue(targetType, _("USBDM Configure"));
+   UsbdmDialogue dialogue(SharedPtr(new Shared(targetType)), appSettings);
 
    //   SetTopWindow(dialogue);
    dialogue.Create(NULL);
    rc = dialogue.execute(deviceName, projectName);
 
    if (rc == BDM_RC_OK) {
+      appSettings.writeToAppDirFile();
 		dialogue.getBdmOptions(bdmOptions);
 #if (TARGET != CFVx) && (TARGET != MC56F80xx)
 		dialogue.getDeviceOptions(deviceOptions);
@@ -605,7 +612,7 @@ USBDM_ErrorCode initialConnect(void) {
          rc = BDM_RC_OK;
       }
       else {
-         // Prompt user to change temporarily change erase option to 'mass erase'
+         // Prompt user to change erase option to 'mass erase'
          mtwksDisplayLine("targetConnect(): Target is secured\n");
          int getYesNo = displayDialogue(
                "Device appears to be secure and may \n"
@@ -616,6 +623,7 @@ USBDM_ErrorCode initialConnect(void) {
                wxYES_NO|wxYES_DEFAULT|wxICON_INFORMATION);
          Logging::print("Setting forceMassErase = %s\n", (getYesNo == wxYES)?"True":"False");
          if (getYesNo == wxYES) {
+         Logging::print("Setting forceMassErase\n");
             forceMassErase = true; // Force mass erase & ignore ignore any error before done
             flashProgrammer->getDeviceData()->setEraseOption(DeviceData::eraseMass);
             // Ignore secured error
@@ -862,7 +870,7 @@ void DiErrorGetMessage ( DiConstStringT *pszErrorMsg ) {
 
    *pszErrorMsg = getGDIErrorMessage();
 
-   if (*pszErrorMsg == NULL) {
+   if (pszErrorMsg == NULL) {
       Logging::print("DiErrorGetMessage() => not set\n");
    }
    else {
@@ -941,23 +949,10 @@ DiReturnT programTargetFlash(void) {
    // Set BDM options for programming
    USBDM_SetExtendedOptions(&bdmProgrammingOptions);
 
-//#if TARGET == ARM
-//   rc = USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-//#elif TARGET == MC56F80xx
-//   DSC_Initialise();
-//   rc = DSC_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-//#else
-//   rc = USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-//#endif
-//   if (rc != BDM_RC_OK) {
-//      return setErrorState(DI_ERR_FATAL, rc);
-//   }
-//#if (TARGET != ARM) && (TARGET != MC56F80xx)
-//   rc = USBDM_Connect();
-//   if (rc != BDM_RC_OK) {
-//      return setErrorState(DI_ERR_FATAL, rc);
-//   }
-//#endif
+#if TARGET == MC56F80xx
+   DSC_Initialise();
+   rc = DSC_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
+#endif
 
    if (flashProgrammer == NULL) {
       mtwksDisplayLine("programTargetFlash() - flashProgrammer NULL\n");

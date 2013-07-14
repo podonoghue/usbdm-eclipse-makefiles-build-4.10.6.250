@@ -59,15 +59,6 @@ endif
 # Include the C dependency files (if they exist)
 -include $(OBJ:.o=.d)
 
-# Rules to build dependency (.d) files
-#==============================================
-$(BUILDDIR)/%.d : %.c $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
-
-$(BUILDDIR)/%.d : %.cpp $(BUILDDIR)/timestamp
-	@echo -- Building $@ from $<
-	$(CC) -MM -MG -MQ $(patsubst %.d,%.o, $@) $(CFLAGS) $(DEFS) $(INCS) $< >$@ 
 
 # Rules to build object (.o) files
 #==============================================
@@ -79,11 +70,11 @@ endif
 
 $(BUILDDIR)/%.o : %.c $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 $(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/timestamp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
 # How to link an EXE
 #==============================================
@@ -92,7 +83,7 @@ $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo -- Linking Target $@
 	$(CC) -o $@  $(WIN32_GUI_OPTS) $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 
-# How to link a LIBRARY
+# How to link a DLL
 #==============================================
 $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
