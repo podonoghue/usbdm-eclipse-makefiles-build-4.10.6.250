@@ -11,6 +11,7 @@
 <!ENTITY HCS08-alt-load-flash-program     SYSTEM "HCS08/HCS08-default-0xB0-flash-program.abs.s19">
 ]>
 <!-- 
+      V4.10.6 - Added SDID for MC9S08PT32
       V4.10.6 - Added MC9S08PA4
       V4.10.4 - Changed how security information is expressed
  -->
@@ -1285,7 +1286,7 @@
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
          <sdidMask value="0x00FFFF" />
-         <sdid value="0x0000" />
+         <sdid value="0x4040" />
          <flashScripts>
             <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
          </flashScripts>

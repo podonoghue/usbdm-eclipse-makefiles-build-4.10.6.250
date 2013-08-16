@@ -28,9 +28,14 @@ enum GdbMessageLevel {
 typedef USBDM_ErrorCode (*GdbCallback)(const char *msg, GdbMessageLevel level, USBDM_ErrorCode rc);
 
 USBDM_ErrorCode gdbHandlerInit(GdbInOut *gdbInOut, DeviceData &deviceData, GdbCallback callback = NULL);
-void gdbReportError(USBDM_ErrorCode rc);
 USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt);
-GdbTargetStatus getTargetStatus();
+
+USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, USBDM_ErrorCode rc, const char *format, ...);
+USBDM_ErrorCode reportGdbPrintf(const char *format, ...);
+USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, const char *format, ...);
+
+//GdbTargetStatus getTargetStatus();
 GdbTargetStatus gdbPollTarget(void);
+GdbTargetStatus getGdbTargetStatus(void);
 
 #endif /* GDBHANDLER_H_ */

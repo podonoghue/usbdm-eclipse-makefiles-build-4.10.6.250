@@ -1,5 +1,5 @@
 /*!
- \page tipsPage Tips for USBDM
+ \page tipsPage Troubleshooting USBDM
 
 \section TroubleshootingSection1 Troubleshooting USBDM installation #1
    - <b>The USBDM option does not appear in the Codewarrior new project wizard</b> \n

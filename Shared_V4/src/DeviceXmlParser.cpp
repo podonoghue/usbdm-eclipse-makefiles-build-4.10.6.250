@@ -70,12 +70,18 @@ char DeviceXmlParser::currentDeviceName[] = "Doing preamble";
 
 static void strUpper(char *s) {
    if (s == NULL) {
-	   return;
+      return;
    }
    while (*s != '\0') {
       int ch = ::toupper(*s);
       *s++ = ch;
    }
+}
+
+void DeviceXmlParser::setCurrentName(const char *name) {
+   strncpy(currentDeviceName, name, sizeof(currentDeviceName));
+   currentDeviceName[sizeof(currentDeviceName)-1] = '\0';
+   strUpper(currentDeviceName);
 }
 
 #if 0
@@ -360,8 +366,6 @@ DeviceXmlParser::DeviceXmlParser(DeviceDataBase *deviceDataBase)
    tag_soptAddress("soptAddress"),
    tag_securityAddress("securityAddress"),
    tag_copctlAddress("copctlAddress"),
-//   tag_foptAddress("foptAddress"),
-//   tag_fsecAddress("fsecAddress"),
    tag_note("note"),
    tag_tclScriptRef("tclScriptRef"),
    tag_sharedInformation("sharedInformation"),
@@ -386,6 +390,8 @@ DeviceXmlParser::DeviceXmlParser(DeviceDataBase *deviceDataBase)
    tag_gnuInfo("gnuInfo"),
    tag_registerDescription("registerDescription"),
    tag_registerDescriptionRef("registerDescriptionRef"),
+   tag_fileList("fileList"),
+   tag_fileListRef("fileListRef"),
 
    attr_name("name"),
    attr_isDefault("isDefault"),
@@ -667,7 +673,7 @@ SecurityDescriptionPtr DeviceXmlParser::parseSecurityDescription(DOMElement *cur
 void DeviceXmlParser::parseSharedXML(void) {
    Logging log("DeviceXmlParser::parseSharedXML");
 
-   strncpy(currentDeviceName, "Shared Data", sizeof(currentDeviceName));
+   setCurrentName("Shared Data");
 
    // Iterator for all the <sharedInformation> sections
    DOMChildIterator sharedIt(document, tag_sharedInformation.asCString());
@@ -729,6 +735,11 @@ void DeviceXmlParser::parseSharedXML(void) {
          else if (XMLString::equals(sTag.asXMLString(), tag_gnuInfoList.asXMLString())) {
             // Parse <gnuInfoList>
 //            deviceDataBase->addSharedData(string(sId.asCString()), parseGnuInfoList(sharedInformationElement));
+         }
+         else if (XMLString::equals(sTag.asXMLString(), tag_fileList.asXMLString())) {
+            // Parse <fileList>
+            // Ignored
+//            deviceDataBase->addSharedData(string(sId.asCString()), parseFileList(sharedInformationElement));
          }
          else {
             throw MyException(string("DeviceXmlParser::parseSharedXML() - Unexpected Tag = ")+sTag.asCString());
@@ -1180,6 +1191,9 @@ MemoryRegionPtr DeviceXmlParser::parseMemory(DOMElement *currentProperty) {
       }
       //      Logging::print("DeviceXmlParser::parseMemory((): Current device = %s, 0x%02X:[0x%06X, 0x%06X]\n", currentDeviceName, pageNo, memoryStartAddress, memoryEndAddress);
    }
+   if ((memoryRegionPtr->getSecurityAddress() != 0) && (memoryRegionPtr->getSecurityEntry() == NULL)) {
+      throw MyException("memoryRangeIt() - Security address without security region in memory region list");
+   }
    return memoryRegionPtr;
 }
 
@@ -1459,6 +1473,16 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          // <gnuInfoList>
          parseGnuInfoList(currentProperty);
       }
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_fileList.asXMLString())) {
+         // <fileList>
+         // Ignored
+         //parseGnuInfoList(currentProperty);
+      }
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_fileListRef.asXMLString())) {
+         // <fileListRef>
+         // Ignored
+         //parseGnuInfoList(currentProperty);
+      }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_gnuInfoListRef.asXMLString())) {
          // <gnuInfoListRef>
       }
@@ -1520,9 +1544,7 @@ void DeviceXmlParser::parseDeviceXML(void) {
 
       // Get device name. Note - Assumes ASCII string
       DualString targetName(deviceEl->getAttribute(attr_name.asXMLString()));
-      strncpy(currentDeviceName, targetName.asCString(), sizeof(currentDeviceName));
-      currentDeviceName[sizeof(currentDeviceName)-1] = '\0';
-      strUpper(currentDeviceName);
+      setCurrentName(targetName.asCString());
       if (strlen(currentDeviceName) == 0) {
          throw MyException(string("DeviceXmlParser::parseDeviceXML() - Device name missing or invalid"));
       }

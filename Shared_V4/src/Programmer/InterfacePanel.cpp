@@ -431,7 +431,7 @@ bool InterfacePanel::TransferDataToWindow() {
       // Failed - select first BDM
       bdmSelectChoiceControl->Select(0);
    }
-   // Make BDM # & string consistent with display
+   // Make BDM serial number string consistent with display
    int choice = bdmSelectChoiceControl->GetSelection();
    bdmDeviceNum = (int)bdmSelectChoiceControl->GetClientData(choice);
    bdmIdentification = bdmSelectChoiceControl->GetStringSelection();
@@ -751,8 +751,8 @@ void InterfacePanel::OnBDMSelectComboSelected( wxCommandEvent& event ) {
    Logging::print("event.GetSelection() = %d\n", event.GetSelection());
    bdmDeviceNum = (int)bdmSelectChoiceControl->GetClientData(event.GetSelection());
    Logging::print("bdmDeviceNum = %d\n", bdmDeviceNum);
-   ;
-   shared->setBdmSerialNumber(connectedBDMs[bdmDeviceNum].getSerialNumber());
+
+   shared->setBdmSerialNumber(connectedBDMs[bdmDeviceNum].getSerialNumber(), true);
    Logging::print("event.getBdmSerialNumber() = \'%s\'\n", shared->getBdmSerialNumber().c_str());
    TransferDataToWindow();
 }

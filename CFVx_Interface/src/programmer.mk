@@ -27,4 +27,4 @@ SRC += FlashProgrammerApp.cpp
 SRC += InterfacePanel.cpp
 SRC += Shared.cpp
 SRC += TargetPanel.cpp
-SRC += UsbdmDialogue.cpp
+SRC += USBDMDialogue.cpp

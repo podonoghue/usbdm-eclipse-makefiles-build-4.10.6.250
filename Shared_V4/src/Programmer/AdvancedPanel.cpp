@@ -238,7 +238,7 @@ bool AdvancedPanel::CreateControls() {
 
    row++;
 
-#if ((TARGET==CFV1) || (TARGET==ARM)) && !defined(GDB_SERVER)
+#if ((TARGET==CFV1) || (TARGET==ARM)) && defined(FLASH_PROGRAMMER)
    //================================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("FlexNVM Parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
@@ -283,7 +283,7 @@ bool AdvancedPanel::CreateControls() {
    populatePartitionControl();
 #endif
 
-#if !defined(LEGACY) && !defined(GDB_SERVER)
+#if !defined(LEGACY) && defined(FLASH_PROGRAMMER)
    //================================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Custom Security Parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
@@ -335,7 +335,7 @@ bool AdvancedPanel::CreateControls() {
    return true;
 }
 
-#if ((TARGET==CFV1) || (TARGET==ARM)) && !defined(GDB_SERVER)
+#if ((TARGET==CFV1) || (TARGET==ARM)) && defined(FLASH_PROGRAMMER)
 //! Populates eeepromSizeChoiceControl with EEEPROM sizes
 //! Selects 1st entry if reload is necessary (device changed)
 //!
@@ -531,7 +531,7 @@ void AdvancedPanel::OnFlexNvmPartionChoiceSelected( wxCommandEvent& event ) {
 //! @note values are validated
 //!
 void AdvancedPanel::updateFlashNVM() {
-#if ((TARGET==CFV1) || (TARGET==ARM)) && !defined(GDB_SERVER)
+#if ((TARGET==CFV1) || (TARGET==ARM)) && defined(FLASH_PROGRAMMER)
    static const double writeEfficiency = 0.5;     // Assume 16/32-bit writes
    static const double endurance       = 10000.0; // From JU128 specification sheet
    Logging log("AdvancedPanel::updateFlashNVM");
@@ -583,9 +583,9 @@ void AdvancedPanel::updateFlashNVM() {
 #if !defined(LEGACY)
 //! Populates customSecurityInfoPtr[] with suitable starting values if not already present
 //! Populates securityMemoryRegionChoice with memory regions
-//!
+//! The above are based on the current device
 void AdvancedPanel::populateSecurityControl() {
-#if !defined(GDB_SERVER)
+#if defined(FLASH_PROGRAMMER)
    Logging log("AdvancedPanel::populateSecurityControl");
    securityMemoryRegionChoice->Clear();
    if (currentDevice == NULL) {
@@ -602,7 +602,7 @@ void AdvancedPanel::populateSecurityControl() {
    }
    int index = 0;
    MemoryRegionConstPtr memoryRegionPtr = currentDevice->getMemoryRegion(index);
-   bool securityRegionFound = false;
+   int  securityRegionFounds = 0;
    while (memoryRegionPtr != NULL) {
       const MemoryRegion::MemoryRange *memoryRange = memoryRegionPtr->getMemoryRange(0);
       if (memoryRange == NULL) {
@@ -612,7 +612,7 @@ void AdvancedPanel::populateSecurityControl() {
       if (securityEntry != NULL) {
 //         Logging::print("securityEntry => %s\n", (const char *)securityEntry->toString().c_str());
          // Add memory to list as has security area
-         securityRegionFound = true;
+         securityRegionFounds++;
          wxString memName(memoryRegionPtr->getMemoryTypeName(), wxConvUTF8);
          wxString descr;
          descr.Printf(_("%s @ %X"), (const char *)memName.c_str(), memoryRange->start);
@@ -620,15 +620,22 @@ void AdvancedPanel::populateSecurityControl() {
          int itemIndex = securityMemoryRegionChoice->Append(descr);
          securityMemoryRegionChoice->SetClientData(itemIndex, (void*)index);
          if (customSecurityInfoPtr[itemIndex] == NULL) {
+            // Add default setting memory security area
             customSecurityInfoPtr[itemIndex] = SecurityInfoPtr(new SecurityInfo(*securityEntry->getUnsecureInformation()));
+            customSecurityInfoPtr[itemIndex]->setMode(SecurityInfo::custom);
             Logging::print("Created customSecurityInfo[%d] = %s\n",
                            itemIndex, (const char *)customSecurityInfoPtr[itemIndex]->toString().c_str());
          }
       }
       memoryRegionPtr = currentDevice->getMemoryRegion(++index);
    }
-   if (securityRegionFound) {
-      securityMemoryRegionChoice->Enable(true);
+   if (securityRegionFounds >= 1) {
+      if (securityRegionFounds >= 2) {
+         securityMemoryRegionChoice->Enable(true);
+      }
+      else {
+         securityMemoryRegionChoice->Enable(false);
+      }
       customSecurityCheckbox->Enable(true);
       resetCustomButtonControl->Enable(currentDevice->getSecurity() == SEC_CUSTOM);
       if (securityMemoryRegionIndex > securityMemoryRegionChoice->GetCount()) {
@@ -815,10 +822,11 @@ void AdvancedPanel::updateSecurityDescription() {
    securityDescriptionStaticText->SetLabel(parseSecurityValue());
 }
 
+//! Updates the security information display
+//!
 void AdvancedPanel::updateSecurity() {
-#if !defined(GDB_SERVER)
+#if defined(FLASH_PROGRAMMER)
    Logging log("AdvancedPanel::updateSecurity");
-   populateSecurityControl();
    Logging::print("securityMemoryRegionIndex = %d\n", securityMemoryRegionIndex);
    int memoryIndex = (int)securityMemoryRegionChoice->GetClientData(securityMemoryRegionIndex);
    Logging::print("memoryIndex = %d\n", memoryIndex);
@@ -828,7 +836,7 @@ void AdvancedPanel::updateSecurity() {
    securityInfoPtr        = SecurityInfoPtr((SecurityInfo *)0);
    securityDescriptionPtr = SecurityDescriptionPtr((SecurityDescription *)0);
 
-   wxString sDescription("");
+   wxString sDescription(_(""));
 
    SecurityValidator *validator = dynamic_cast<SecurityValidator*>(securityValuesTextControl->GetValidator());
    if (memoryRegionPtr == NULL) {
@@ -848,7 +856,7 @@ void AdvancedPanel::updateSecurity() {
                Logging::print("SEC_DEFAULT\n");
                securityValuesTextControl->SetValue(_("[Using values from flash image]"));
                securityInfoPtr = SecurityInfoPtr();
-               sDescription = ", determined by Flash image";
+               sDescription = _(", determined by Flash image");
                break;
             case SEC_SECURED:
                Logging::print("SEC_SECURED\n");
@@ -857,7 +865,7 @@ void AdvancedPanel::updateSecurity() {
                }
                *securedInfoPtr  = *securityEntry->getSecureInformation();
                securityInfoPtr  = securedInfoPtr;
-               sDescription = ", using default secured value";
+               sDescription = _(", using default secured value");
                break;
             case SEC_UNSECURED:
             case SEC_SMART:
@@ -867,18 +875,21 @@ void AdvancedPanel::updateSecurity() {
                }
                *unsecuredInfoPtr = *securityEntry->getUnsecureInformation();
                securityInfoPtr   = unsecuredInfoPtr;
-               sDescription = ", using default unsecured value";
+               sDescription = _(", using default unsecured value");
                break;
             case SEC_CUSTOM:
                Logging::print("SEC_CUSTOM\n");
                if (customSecurityInfoPtr[securityMemoryRegionIndex] == NULL) {
-                  Logging::print("Creating customSecurityInfo\n");
-                  customSecurityInfoPtr[securityMemoryRegionIndex] = SecurityInfoPtr(new SecurityInfo(*securityEntry->getUnsecureInformation()));
+                  // Entries should already be populated
+                  throw MyException("AdvancedPanel::updateSecurity()- Unexpected NULL security entry");
+//                  Logging::print("Creating customSecurityInfo\n");
+//                  customSecurityInfoPtr[securityMemoryRegionIndex] = SecurityInfoPtr(new SecurityInfo(*securityEntry->getUnsecureInformation()));
+//                  customSecurityInfoPtr[securityMemoryRegionIndex]->setMode(SecurityInfo::custom);
 //                  securityEntry->setCustomSecureInformation(customSecurityInfoPtr[securityMemoryRegionIndex]);
                }
                securityInfoPtr = customSecurityInfoPtr[securityMemoryRegionIndex];
                Logging::print("Setting to Custom %s\n", (const char *)customSecurityInfoPtr[securityMemoryRegionIndex]->toString().c_str());
-               sDescription = ", using custom security value";
+               sDescription = _(", using custom security value");
                break;
          }
       }
@@ -955,9 +966,6 @@ void AdvancedPanel::OnSecurityEditUpdate(wxCommandEvent& event) {
    updateSecurityDescription();
 }
 
-#else
-void AdvancedPanel::updateSecurity() {
-}
 #endif
 
 //!
@@ -1028,6 +1036,35 @@ bool AdvancedPanel::updateState() {
    if (!ok) {
       return false;
    }
+   return true;
+}
+
+bool AdvancedPanel::TransferDataToWindow() {
+   LOGGING;
+   updateFlashNVM();
+#if !defined(LEGACY)
+   populateSecurityControl();
+   updateSecurity();
+#endif
+   return wxPanel::TransferDataToWindow();
+}
+
+bool AdvancedPanel::TransferDataFromWindow() {
+   LOGGING;
+   bool ok = wxPanel::TransferDataFromWindow();
+
+#if defined(FLASH_PROGRAMMER)
+   DeviceData::FlexNVMParameters flexParameters; // Default value for no parameters
+   FlexNVMInfoConstPtr flexNVMInfo = currentDevice->getflexNVMInfo();
+   if (flexNVMInfo != NULL) {
+      const vector<FlexNVMInfo::EeepromSizeValue>      &eeepromSizeValues(flexNVMInfo->getEeepromSizeValues());
+      const vector<FlexNVMInfo::FlexNvmPartitionValue> &flexNvmPartitionValues(flexNVMInfo->getFlexNvmPartitionValues());
+      flexParameters.eeepromSize  = eeepromSizeValues[eeepromSizeChoice].value;
+      flexParameters.partionValue = flexNvmPartitionValues[flexNvmPartitionIndex].value;
+   }
+   currentDevice->setFlexNVMParameters(flexParameters);
+#endif
+
 #if !defined(LEGACY)
    if (currentDevice->getSecurity() == SEC_CUSTOM) {
       Logging::print("SEC_CUSTOM\n");
@@ -1049,7 +1086,7 @@ bool AdvancedPanel::updateState() {
             // No Custom data for memory region!
             // Need to update this page
             wxMessageBox(
-                        _("Inconsistent setting on  Advanced page\n"
+                        _("Inconsistent settings on  Advanced page\n"
                           "Please check before proceeding."),
                         _("Parameter Error"),
                         wxOK,
@@ -1061,33 +1098,8 @@ bool AdvancedPanel::updateState() {
       }
    }
 #endif
-   return true;
-}
 
-bool AdvancedPanel::TransferDataToWindow() {
-   LOGGING;
-   updateFlashNVM();
-   updateSecurity();
-   return wxPanel::TransferDataToWindow();
-}
-
-bool AdvancedPanel::TransferDataFromWindow() {
-   LOGGING;
-   bool ok = wxPanel::TransferDataFromWindow();
-
-#if defined(FLASH_PROGRAMMER)
-   DeviceData::FlexNVMParameters flexParameters; // Default value for no parameters
-   FlexNVMInfoConstPtr flexNVMInfo = currentDevice->getflexNVMInfo();
-   if (flexNVMInfo != NULL) {
-      const vector<FlexNVMInfo::EeepromSizeValue>      &eeepromSizeValues(flexNVMInfo->getEeepromSizeValues());
-      const vector<FlexNVMInfo::FlexNvmPartitionValue> &flexNvmPartitionValues(flexNVMInfo->getFlexNvmPartitionValues());
-      flexParameters.eeepromSize  = eeepromSizeValues[eeepromSizeChoice].value;
-      flexParameters.partionValue = flexNvmPartitionValues[flexNvmPartitionIndex].value;
-   }
-   currentDevice->setFlexNVMParameters(flexParameters);
-#endif
-
-   // Internal state is maintained by validators
+   // Other internal state is maintained by validators
 
    return ok;
 }

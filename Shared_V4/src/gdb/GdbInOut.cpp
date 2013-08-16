@@ -42,6 +42,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include <stdlib.h>
 #include "GdbInOut.h"
 #include "Log.h"
 

@@ -48,10 +48,7 @@ typedef enum  {
  BDM_RC_USB_DEVICE_REMOVED                     = 11,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
  BDM_RC_USB_RETRY_OK                           = 12,    //!< USB Debug use only
  BDM_RC_UNEXPECTED_RESET                       = 13,    //!< Target reset was detected
- // BDM_RC_USB_TOGGLE_ERROR                       = 12,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
-// BDM_RC_USB_TX_ERROR                           = 13,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
-// BDM_RC_USB_RX_ERROR                           = 14,    //!< BDM Open Failed - LIBUSB_ERROR_NO_DEVICE - enumerated device has been removed
- //
+ BDM_RC_CF_NOT_READY                           = 14,    //!< Coldfire 2,3,4 Not ready response (running?)
  BDM_RC_UNKNOWN_TARGET                         = 15,    //!< Target unknown or not supported by this BDM
  BDM_RC_NO_TX_ROUTINE                          = 16,    //!< No Tx routine available at measured BDM communication speed
  BDM_RC_NO_RX_ROUTINE                          = 17,    //!< No Rx routine available at measured BDM communication speed

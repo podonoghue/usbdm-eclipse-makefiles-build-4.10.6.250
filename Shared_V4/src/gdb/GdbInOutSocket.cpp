@@ -38,10 +38,16 @@
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/ip.h>
+#include <unistd.h>
+#include <errno.h>
+#include <memory.h>
+#include <netdb.h>
 #define closesocket close
+#define SOCKET int
 #endif
 #include <stdio.h>
-
 
 #include "GdbInOutSocket.h"
 #include "Log.h"
@@ -77,7 +83,7 @@ GdbInOutSocket::GdbInOutSocket() :
    activeSocket(-1) {
 
    // Create socket to listen on
-   listenSocket = createSocket(GDB_PORT_NUM, TRUE);
+   listenSocket = createSocket(GDB_PORT_NUM, true);
 }
 
 /*
@@ -207,6 +213,7 @@ int GdbInOutSocket::createSocket(int portNumber, bool nonBlocking) {
         ... handle the error ...
 #endif
 
+#ifdef _WIN32
    unsigned long option3 = 1;
    int rc = setsockopt(newSocket, IPPROTO_TCP, TCP_NODELAY, (char *) &option3, sizeof(option3));
    if (rc == SOCKET_ERROR) {
@@ -221,6 +228,7 @@ int GdbInOutSocket::createSocket(int portNumber, bool nonBlocking) {
    if (rc == SOCKET_ERROR) {
       fprintf(stderr, "getsockopt for SOL_SOCKET.SO_ERROR failed with error: %u\n", NET_ERROR_NUM);
    }
+#endif
 
    //  Get information about the host
    struct sockaddr_in addr;
@@ -268,10 +276,10 @@ int GdbInOutSocket::waitForConnection(int listenSocket) {
 
    // Clear existing errors on socket
    int socketErrorValue = 0;
-   int socketErrorValueLength = sizeof(socketErrorValue);
+   unsigned socketErrorValueLength = sizeof(socketErrorValue);
 
    int rc = getsockopt(listenSocket, SOL_SOCKET, SO_ERROR, (char *) &socketErrorValue, &socketErrorValueLength);
-   if (rc == SOCKET_ERROR) {
+   if (rc != 0) {
       fprintf(stderr, "getsockopt for SOL_SOCKET.SO_ERROR failed with error: %u\n", NET_ERROR_NUM);
    }
 

@@ -1,5 +1,5 @@
 /*!
-\page codeSourceryNewProject Eclipse Juno - New Project Wizard
+\page codeSourceryNewProject Eclipse - New Project Wizard
 
 This page provides brief instructions on how to create a C or C++ project for a Coldfire or Kinetis
 target using Eclipse and Codesourcery Lite tools.  
@@ -131,17 +131,39 @@ by the USBDM Wizard.\n
     - USBDM Parameters
       - Interface - This indicates the target-specific USBDM debugging interface being used.
       - Target Device - Indicates the device being debugged.
-      - Debug - Select the debug version of the USBDM Sprite.  Used for testing USBDM.
     - GDB Setup
-       - Build tool: - Select the build tool being used.  This controls the next two options.  If a build tools 
-         is selected the next two options will be automatically set.   
+       - Build tool: - Selects the build tool being used.  This controls the next two options.  If a build tool
+         is selected the next two options will be automatically set.  Alternatively you may manually select a 
+         GDB debugger command.   
 	       - GDB Command: - The GDB command to be used.
 	       - GDB Bin Path: - Where to look for the above command. 
        - Command Set - Standard 
-       - Protocol Version mi
-       - Verbose console mode - selecting this will generate messages indicating the GDB communication.
+       - Protocol Version - mi
+       - Verbose console mode - selecting this will generate console messages indicating the GDB communication.
+    - BDM Selection
+		 - Allows selection of a preferred or required BDM interface to use.  A brief description of the BDM will appear below.
+		 - Refresh - Updates the above selection dialogue with a list of the currently connected BDMs.
+		 - Exact - Require use of the selected BDM.  If not checked then the BDM selection is treated as a preferred BDM only.
+    - GDB Server Control
+		 - Port number to use if Socket-based server is used (port will be localhost:<B>portNumber</B>).
+		 - Debug - Use the debug version of the server.  This will create a log of the server actions for debugging USBDM.
+		 - Exit on Close - Causes the Socket server to close when the debug session ends.  Otherwise the the server can be re-used 
+	 	   which will reduce the startup time. This is only possible when using the same device & settings.
+		 - Pipe/Socket - choose Pipe-based or Socket-based server.  The Socket based server is preferred.  This will open as a separate
+	 	   window showing the interaction with the BDM.
+    - Connection Control
+		 - Interface speed (ARM & Coldfire Vx only)
+		 - Auto reconnect - leave selected
+		 - Drive RESET pin - leave unselected 
+		 - Use PST signal - Some CFVx devices have PST signals that allow more reliable monitoring of target run state.
+    - Erase Options
+		 - Erase options - USBDM supports several erase methods.  MASS erase is preferred for ARM & Coldfire V1.  ALL is preferred for Coldfire Vx. 
+    - Target Vdd
+		 - Some versions of BDM support suppling power to the target through the BDM cable.  This select the voltage level if controllable.
+    - Internal Clock Trim
+		 - Allows trimming of internal clock if supported.  See programmer manual for more detail.
 
-\image html DebuggerTabKinetis.png
+\image html DebuggerTabColdfire.png
 
 - Startup Tab\n
   <b>Startup Tab</b> in the dialogue. Check the following settings:

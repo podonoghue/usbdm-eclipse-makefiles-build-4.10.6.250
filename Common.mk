@@ -34,7 +34,7 @@ ifeq ($(UNAME_S),Windows)
    GPP      := $(MINGWBIN)/g++
    WINDRES  := $(MINGWBIN)/windres
    #PROGRAM_DIR = C:/"Program Files"
-   PROGRAM_DIR = C:/"Program Files (x86)"
+   PROGRAM_DIR = C:/'Program Files (x86)'
 else
    .SUFFIXES : .d
    LIB_PREFIX 			:= lib
@@ -194,8 +194,8 @@ endif
 #===========================================================
 # Windows Installer XML v3.5 & Windows Installer v4.5 SDK
 
-WIN_XML_INSTALLER_INC     := -I$(PROGRAM_DIR)/"Windows Installer 4.5 SDK"/INCLUDE
-WIN_XML_INSTALLER_LIBDIRS := -L$(PROGRAM_DIR)/"Windows Installer 4.5 SDK"/LIB/x86
+WIN_XML_INSTALLER_INC     := -I$(PROGRAM_DIR)/'Windows Installer 4.5 SDK'/INCLUDE
+WIN_XML_INSTALLER_LIBDIRS := -L$(PROGRAM_DIR)/'Windows Installer 4.5 SDK'/LIB/x86
 WIN_XML_INSTALLER_LIBS    := -lMsi
 
 #===========================================================
@@ -269,7 +269,11 @@ endif
 
 #===========================================================
 # Extra libraries for WINSOCK
-LIB_SOCKETS = -lws2_32
+ifeq ($(UNAME_S),Windows)
+   LIB_SOCKETS = -lws2_32
+else
+   LIB_SOCKETS = 
+endif
 
 #===========================================================
 # Look in shared Library dir first

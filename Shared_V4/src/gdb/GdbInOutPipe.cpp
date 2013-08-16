@@ -36,11 +36,11 @@
 #include <windows.h>
 #include <io.h>
 #include <fcntl.h>
+#include <io.h>
 #endif
 #include <stdio.h>
-
+#include <memory.h>
 #include <pthread.h>
-#include <io.h>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -55,10 +55,12 @@ GdbInOutPipe::GdbInOutPipe() :
    readyPacket(NULL) {
 
    fdIn   = dup(fileno(stdin));
-   setmode( fdIn, _O_BINARY );
-
    fdOut = dup(fileno(stdout));
+
+   #ifdef _WIN32
+   setmode( fdIn, _O_BINARY );
    setmode( fdOut, _O_BINARY );
+#endif
 
    connectionActive = true;
 }
@@ -182,7 +184,7 @@ int GdbInOutPipe::getData(unsigned char buff[], int size) {
    }
    int rc = read(fdIn, buff, size);
    if (rc < 0) {
-      fprintf(stderr, " read() failed. Error = %d\n", errno);
+//      fprintf(stderr, " read() failed. Error = %d\n", errno);
       return -GDB_FATAL_ERROR;
    }
    if (rc > 0) {
@@ -210,7 +212,7 @@ void GdbInOutPipe::writeBuffer(unsigned char *buffer, int size) {
       bytesWritten += rc;
    } while ((bytesWritten < size) && (rc > 0));
    if (rc <0) {
-      fprintf(stderr, "  write() failed. Error = %d\n", errno);
+//      fprintf(stderr, "  write() failed. Error = %d\n", errno);
       connectionActive = false;
    }
 }

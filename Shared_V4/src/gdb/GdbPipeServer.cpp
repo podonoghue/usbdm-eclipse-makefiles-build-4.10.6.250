@@ -133,9 +133,17 @@ static bool error_in_progress = false;
    error_in_progress = false;
 }
 
-static const int pollIntervalFast = 100;      // ms
-static const int pollIntervalSlow = 1000;     // ms
-static unsigned  pollInterval     = pollIntervalFast;
+USBDM_ErrorCode serverError;
+
+static USBDM_ErrorCode callBack(const char *msg, GdbMessageLevel level, USBDM_ErrorCode rc) {
+   if (level >= M_ERROR) {
+      displayDialogue(USBDM_GetErrorString(rc), msg, wxOK|wxICON_ERROR);
+      serverError = rc;
+   }
+   return rc;
+}
+
+static const unsigned  POLL_INTERVAL = 10; // ms
 
 static USBDM_ErrorCode gdbLoop(GdbInOut *gdbInOut) {
    LOGGING;
@@ -144,6 +152,8 @@ static USBDM_ErrorCode gdbLoop(GdbInOut *gdbInOut) {
    const GdbPacket *packet;
    unsigned pollCount = 0;
    GdbTargetStatus targetStatus = T_UNKNOWN;
+
+   serverError = BDM_RC_OK;
 
    do {
       do {
@@ -154,25 +164,31 @@ static USBDM_ErrorCode gdbLoop(GdbInOut *gdbInOut) {
             if (rc != BDM_RC_OK) {
                return rc;
             }
-         pollInterval = pollIntervalFast;
          }
       } while (packet != NULL);
 
-      if (pollCount++ == pollInterval) {
-         pollCount = 0;
-         targetStatus = gdbPollTarget();
-         if (targetStatus == T_RUNNING) {
-            pollInterval = pollIntervalFast;
-         }
-         else {
-            pollInterval = pollIntervalSlow;
-         }
+      // Get current target status (w/o polling)
+      targetStatus = getGdbTargetStatus();
+      switch (targetStatus) {
+         case T_RUNNING:
+         case T_SLEEPING:
+            if (pollCount++ >= POLL_INTERVAL) {
+               // Actually poll the target
+               pollCount = 0;
+               targetStatus = gdbPollTarget();
+            }
+            break;
+         case T_NOCONNECTION:
+            break;
+         case T_UNKNOWN:
+         case T_HALT:
+            // Don't poll while not running
+            milliSleep(1 /* ms */);
+            break;
       }
 
-      milliSleep(1 /* ms */);
-
    // Keep going until loose target or GDB
-   } while ((targetStatus != T_NOCONNECTION) && (!gdbInOut->isEOF()));
+   } while ((targetStatus != T_NOCONNECTION) && (serverError == BDM_RC_OK) && (!gdbInOut->isEOF()));
 
    Logging::print("gdbLoop() - Exiting GDB Loop\n");
    return BDM_RC_OK;
@@ -210,18 +226,18 @@ int main(int argc, char **argv) {
       (void)signal(SIGINT, SIG_IGN);
    }
 
+   shared = SharedPtr(new Shared(TARGET_TYPE));
+
    USBDM_ErrorCode rc = doArgs(argc, argv);
    if (rc != BDM_RC_OK) {
-      gdbReportError(rc);
+      Logging::print("Error %s\n", USBDM_GetErrorString(rc));
       exit (-1);
    }
    Logging::print("After doArgs\n");
 
-   shared = SharedPtr(new Shared(TARGET_TYPE));
-
    rc = shared->initBdm();
    if (rc != BDM_RC_OK) {
-      gdbReportError(rc);
+      Logging::print("Error %s\n", USBDM_GetErrorString(rc));
       exit (-1);
    }
    Logging::print("After shared->initBdm()\n");
@@ -234,15 +250,17 @@ int main(int argc, char **argv) {
    dup2(2,1);
 
    if (gdbInOut == NULL) {
-      // Quit immediately as we have no way to convey error to gdb
-      gdbReportError(BDM_RC_FAIL);
+      Logging::print("Error gdbInOut() creation failed\n");
       exit (-1);
    }
    Logging::print("After gdbInOut()\n");
 
    // Now do the actual processing of GDB messages
-   gdbHandlerInit(gdbInOut, *shared->getCurrentDevice());
+   gdbHandlerInit(gdbInOut, *shared->getCurrentDevice(), callBack);
    gdbLoop(gdbInOut);
+
+   gdbInOut->finish();
+   delete gdbInOut;
 
    return 0;
 }

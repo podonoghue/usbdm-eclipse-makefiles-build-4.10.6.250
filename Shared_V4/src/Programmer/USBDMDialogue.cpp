@@ -48,7 +48,7 @@
 #include "ApplicationFiles.h"
 #include "Log.h"
 #include "AppSettings.h"
-#include "UsbdmDialogue.h"
+#include "USBDMDialogue.h"
 #include "InterfacePanel.h"
 #include "TargetPanel.h"
 #include "AdvancedPanel.h"
@@ -371,9 +371,10 @@ UsbdmDialogue::UsbdmDialogue(SharedPtr shared, AppSettings &appSettings, const w
                              appSettings(appSettings),
                              caption(caption),
                              bdmCapabilities(BDM_CAP_NONE),
-                             errorSet(BDM_RC_OK) {
+                             errorSet(BDM_RC_OK),
+                             settingsAreNotPersistent(false) {
    Logging::setLoggingLevel(100);
-   Logging log("AdvancedPanel::AdvancedPanel");
+   Logging log("UsbdmDialogue::UsbdmDialogue");
    Init();
    Create(NULL);
 }
@@ -487,19 +488,23 @@ void UsbdmDialogue::CreateControls() {
 #if defined(FLASH_PROGRAMMER)
    wxButton* okButton = new wxButton( frame, wxID_OK, _("C&lose"), wxDefaultPosition, wxDefaultSize, 0 );
 #elif defined(GDB_SERVER)
-   wxButton* okButton = new wxButton( frame, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+   wxButton* okButton = new wxButton( frame, wxID_OK, _("&Keep Changes"), wxDefaultPosition, wxDefaultSize, 0 );
 #else
    wxButton* okButton = new wxButton( frame, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 #endif
    buttonSizer->Add(okButton, 0, wxGROW|wxALL, 5);
 
 #if defined(GDB_SERVER)
-   wxButton* cancelButton = new wxButton( frame, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+   wxButton* cancelButton = new wxButton( frame, wxID_CANCEL, _("&Discard Changes"), wxDefaultPosition, wxDefaultSize, 0 );
    buttonSizer->Add(cancelButton, 0, wxGROW|wxALL, 5);
 #endif
 
    okButton->SetDefault();
 
+   if (settingsAreNotPersistent) {
+      wxStaticText *st = new wxStaticText( frame, wxID_ANY, _("Note: Changes apply only to this session."));
+      frameBoxSizerV->Add(st, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP, 5);
+   }
 #if !(defined(FLASH_PROGRAMMER) || defined(GDB_SERVER))
    dontShowAgainControl = new wxCheckBox( frame, ID_DONT_SHOW_AGAIN_CHECKBOX, _("Don't show this dialogue in future"), wxDefaultPosition, wxDefaultSize, 0 );
    dontShowAgainControl->SetValue(false);
@@ -519,7 +524,7 @@ bool UsbdmDialogue::TransferDataToWindow() {
 
    bool ok = wxDialog::TransferDataToWindow();
 #if defined(FLASH_PROGRAMMER) || defined(GDB_SERVER)
-   ok = flashParametersPanel->TransferDataToWindow();
+   ok = ok && flashParametersPanel->TransferDataToWindow();
 #endif
    ok = ok && interfacePanel->TransferDataToWindow();
    ok = ok && advancedPanel->TransferDataToWindow();

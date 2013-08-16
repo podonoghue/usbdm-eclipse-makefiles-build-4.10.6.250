@@ -157,6 +157,7 @@ Coldfire+
          <memoryRef ref="coldfire16K_Ram" />
          <!-- Regular flash or pFlash memory -->
          <memory registerAddress="0xFF9820" type="flash" securityAddress="0x0400" sectorSize="1024" alignment="4" >
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x000000" size="128K" />
          </memory>
          <!-- Data flash -->
@@ -165,6 +166,7 @@ Coldfire+
          </memory>
          <!-- flexNVM memory that may be used as EEEPROM backing store or dFlash -->
          <memory registerAddress="0xFF9820" type="flexNVM" sectorSize="1024" alignment="4">
+            <securityEntryRef ref="CFV1-default-security" />
             <memoryRange start="0x20000" size="32K" />
          </memory>
          <soptAddress value="0xFF9802" />

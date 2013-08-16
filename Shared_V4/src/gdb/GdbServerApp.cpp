@@ -25,11 +25,7 @@
 \verbatim
 Change History
 -=================================================================================
-|   9 Jul 2013 | Re-factor for GDB Server                              4.9.6 - pgo
-|   7 Apr 2012 | Added -reset, -power  options                         4.9.4 - pgo
-|    Feb  2012 | Added -execute option                                 4.9.3 - pgo
-|   5 May 2011 | Fixed Vdd options                                     4.4.3 - pgo
-|  31 Jan 2011 | Added command line options (finally)                  4.4.1 - pgo
+|   9 Jul 2013 | Created                                               4.9.6 - pgo
 +=================================================================================
 \endverbatim
 */
@@ -42,7 +38,7 @@ Change History
 #include "USBDM_API.h"
 #include "DeviceData.h"
 #include "Log.h"
-#include "UsbdmDialogue.h"
+#include "USBDMDialogue.h"
 #include "AppSettings.h"
 #include "Common.h"
 #include "Version.h"
@@ -135,7 +131,7 @@ bool GDBServerApp::OnInit(void) {
 
    Logging::openLogFile(logFilename);
    Logging::setLoggingLevel(100);
-   LOGGING;
+   Logging log("GDBServerApp::OnInit");
 
    shared = SharedPtr(new Shared(targetType));
 
@@ -197,7 +193,8 @@ GDBServerApp::~GDBServerApp() {
 }
 
 static const wxCmdLineEntryDesc g_cmdLineDesc[] = {
-      { wxCMD_LINE_OPTION, _("bdm"),         NULL, _("Serial number of BDM to use (exact)"),                  wxCMD_LINE_VAL_STRING },
+      { wxCMD_LINE_OPTION, _("bdm"),         NULL, _("Serial number of preferred BDM to use"),                wxCMD_LINE_VAL_STRING },
+      { wxCMD_LINE_OPTION, _("requiredBdm"), NULL, _("Serial number of required BDM to use"),                 wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("device"),      NULL, _("Target device e.g. MCF51CN128"),                        wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("erase"),       NULL, _("Erase method (Mass, All, Selective, None)"),            wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_SWITCH, _("exitOnClose"), NULL, _("Exit Server when connection closed"),                   wxCMD_LINE_VAL_NONE   },
@@ -220,9 +217,10 @@ void GDBServerApp::OnInitCmdLine(wxCmdLineParser& parser) {
 
 #if (wxCHECK_VERSION(2, 9, 0))
     parser.AddUsageText(_("\n"
-          "Notes: If any option is given then the device option must be present.\n"
-          "       If options are given then the opening dialogue is skipped and the server is started immediately.\n"
-          "\nExamples:\n"
+          "Notes: \n"
+          "  - If any options are given then the opening dialogue is skipped and the server is started immediately.\n"
+          "    Also in this case changes to settings are discarded on exit."
+          "\nExample:\n"
           "Start server:\n"
           "  GDBServer -port=1234 -device=MCF51CN128 -trim=243\n"
           "This will start the server on localhost:1234 for a MCF51CN128 device and\n"
@@ -241,22 +239,30 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
    skipOpeningDialogue  = false;
    verbose              = false;
 
-   USBDM_ExtendedOptions_t &bdmOptions = shared->getBdmOptions();
-   DeviceDataPtr            deviceData = shared->getCurrentDevice();
-   // Command line requires at least a device name
+
    if (parser.Found(_("device"), &sValue)) {
+      log.print("Setting device to \'%s\'\n", (const char *)sValue.ToAscii());
       skipOpeningDialogue = true;
       USBDM_ErrorCode rc = shared->setCurrentDeviceByName((const char *)sValue.ToAscii());
       if (rc != BDM_RC_OK) {
          log.print("Failed to set device to \'%s\'\n", (const char *)sValue.ToAscii());
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Failed to find device.\n");
+#endif
          success = false;
       }
    }
+
+   USBDM_ExtendedOptions_t &bdmOptions = shared->getBdmOptions();
+   DeviceDataPtr            deviceData = shared->getCurrentDevice();
+
    if (parser.Found(_("nvloc"), &sValue)) {
+      skipOpeningDialogue = true;
       unsigned long uValue;
       if (!sValue.ToULong(&uValue, 16)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal nvloc value.\n");
+#endif
          success = false;
       }
       deviceData->setClockTrimNVAddress(uValue);
@@ -265,6 +271,7 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
    shared->setExitOnClose(parser.Found(_("exitOnClose")));
 
    if (parser.Found(_("erase"), &sValue)) {
+      skipOpeningDialogue = true;
       if (sValue.CmpNoCase(_("Mass")) == 0) {
          deviceData->setEraseOption(DeviceData::eraseMass);
       }
@@ -278,11 +285,14 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
          deviceData->setEraseOption(DeviceData::eraseNone);
       }
       else {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal erase value.\n");
+#endif
          success = false;
       }
    }
    if (parser.Found(_("vdd"), &sValue)) {
+      skipOpeningDialogue = true;
       if (sValue.CmpNoCase(_("3V3")) == 0) {
          bdmOptions.targetVdd = BDM_TARGET_VDD_3V3;
       }
@@ -290,14 +300,19 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
          bdmOptions.targetVdd = BDM_TARGET_VDD_5V;
       }
       else {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal vdd value.\n");
+#endif
          success = false;
       }
    }
    if (parser.Found(_("trim"), &sValue)) {
+      skipOpeningDialogue = true;
       double    dValue;
       if (!sValue.ToDouble(&dValue)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal trim value.\n");
+#endif
          success = false;
       }
       deviceData->setClockTrimFreq(dValue * 1000);
@@ -339,13 +354,16 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
 //   }
    // Reset options
    if (parser.Found(_("reset"), &sValue)) {
+      skipOpeningDialogue = true;
       unsigned long uValue=100000; // invalid so faults later
 
       int index1 = 0;
       int index2 = sValue.find(',');
       wxString t = sValue.substr(index1, index2-index1);
       if (!t.ToULong(&uValue, 10)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal reset value.\n");
+#endif
          success = false;
       }
       bdmOptions.resetDuration = uValue;
@@ -354,7 +372,9 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       index2 = sValue.find(',', index1);
       t = sValue.substr(index1, index2-index1);
       if (!t.ToULong(&uValue, 10)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal reset value.\n");
+#endif
          success = false;
       }
       bdmOptions.resetReleaseInterval = uValue;
@@ -363,20 +383,25 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       index2 = sValue.length();
       t = sValue.substr(index1, index2-index1);
       if (!t.ToULong(&uValue, 10)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal reset value.\n");
+#endif
          success = false;
       }
       bdmOptions.resetRecoveryInterval = uValue;
    }
    // Power options
    if (parser.Found(_("power"), &sValue)) {
+      skipOpeningDialogue = true;
       unsigned long uValue=100000; // invalid so faults later
 
       int index1 = 0;
       int index2 = sValue.find(',');
       wxString t = sValue.substr(index1, index2-index1);
       if (!t.ToULong(&uValue, 10)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal power value.\n");
+#endif
          success = false;
       }
       bdmOptions.powerOffDuration = uValue;
@@ -385,28 +410,41 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       index2 = sValue.length();
       t = sValue.substr(index1, index2-index1);
       if (!t.ToULong(&uValue, 10)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal power value.\n");
+#endif
          success = false;
       }
       bdmOptions.powerOnRecoveryInterval = uValue;
    }
    if (parser.Found(_("speed"), &sValue)) {
+      skipOpeningDialogue = true;
       unsigned long uValue;
       if (!sValue.ToULong(&uValue, 10)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal speed value.\n");
+#endif
          success = false;
       }
       bdmOptions.interfaceFrequency = uValue;
    }
    if (parser.Found(_("port"), &sValue)) {
+      skipOpeningDialogue = true;
       unsigned long uValue;
       if (!sValue.ToULong(&uValue, 10)) {
+#if (wxCHECK_VERSION(2, 9, 0))
          parser.AddUsageText("***** Error: Illegal port value.\n");
+#endif
          success = false;
       }
       shared->setGdbServerPort(uValue);
    }
    if (parser.Found(_("bdm"), &sValue)) {
+      skipOpeningDialogue = true;
+      shared->setBdmSerialNumber((const char *)sValue.ToAscii(), false);
+   }
+   if (parser.Found(_("requiredBdm"), &sValue)) {
+      skipOpeningDialogue = true;
       shared->setBdmSerialNumber((const char *)sValue.ToAscii(), true);
    }
    if (!success) {

@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <?define Eclipse_Ver="Kepler" ?> 
+   <?define Eclipse_Ver_UC="KEPLER" ?> 
+
+   <?define Manufacturer="pgo" ?>
+   <?define ProductName="USBDM" ?>
+   <!--?define ProductVersion="4.9.0" ?-->                        <!-- Defined on command line -->
+   <?define ProductCode="17b2306b-6310-4c23-8e96-fdac4c922b3d" ?> <!-- Don't change        -->
+   <?define UpgradeCode="9bd8ce56-449a-4787-9c20-feb701416411" ?> <!-- Don't change        -->
+   <?define InfoURL="http://usbdm.sourceforge.net" ?>
+   
+   <?define DescSRecord="Freescale S-Record binary file" ?>
+   <?define ExplorerMenuOpen="Open" ?>
+
+   <Fragment>
+      <!--======================================================
+               Directory structure
+      =======================================================-->
+      <DirectoryRef Id='TARGETDIR'>
+         <Directory Id='APPS_$(var.Eclipse_Ver_UC)' Name="Apps">
+            <!-- Eclipse directory structure-->
+            <Directory Id="D.ECLIPSE_CDT_$(var.Eclipse_Ver_UC)" Name="Eclipse$(var.Eclipse_Ver_UC)">
+               <Directory Id="D.Eclipse$(var.Eclipse_Ver)Dropins" Name="dropins"/>
+            </Directory>
+         </Directory>
+      </DirectoryRef>
+     
+      <!--======================================================
+               Components
+      =======================================================-->
+     <!-- 
+           CW Eclipse support 
+     -->
+      <DirectoryRef Id="D.ECLIPSE_CDT_$(var.Eclipse_Ver_UC)">
+         <Component Id='C.ECLIPSE_CDT_$(var.Eclipse_Ver_UC).Marker' Guid='b9ce25ad-254b-4c05-bc89-de8afde8745c' >
+            <File Id='ECLIPSE_CDT_$(var.Eclipse_Ver_UC)_Marker' DiskId='1' Source='USBDM_Installed.txt' KeyPath='yes' />
+         </Component>
+      </DirectoryRef>
+      
+      <Feature Id='F.ECLIPSE_CDT_$(var.Eclipse_Ver_UC)'
+            Title='Elipse $(var.Eclipse_Ver) Plugin'
+            Description="USBDM support for Eclipse $(var.Eclipse_Ver_UC)."
+            ConfigurableDirectory="D.ECLIPSE_CDT_$(var.Eclipse_Ver_UC)"
+            AllowAdvertise="no"
+            Level='100'>
+         <Condition Level='1'>
+            <![CDATA[Installed]]>
+         </Condition>
+         <ComponentRef Id='C.ProgramMenuFolder' />
+         <ComponentRef Id='C.ECLIPSE_CDT_$(var.Eclipse_Ver_UC).Marker' />
+         <ComponentGroupRef Id='Cg.Eclipse$(var.Eclipse_Ver)Plugin' />
+         <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
+         <ComponentGroupRef Id='Cg.StationeryInstall'/>
+         <ComponentGroupRef Id='Cg.GDBServers' />
+      </Feature>
+   </Fragment>
+</Wix>

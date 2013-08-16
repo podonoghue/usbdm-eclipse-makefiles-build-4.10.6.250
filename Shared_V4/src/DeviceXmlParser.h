@@ -30,8 +30,6 @@ private:
    DualString   tag_soptAddress;
    DualString   tag_securityAddress; // NVOPT, NVSEC
    DualString   tag_copctlAddress;
-//   DualString   tag_foptAddress;
-//   DualString   tag_fsecAddress;
    DualString   tag_note;
    DualString   tag_tclScriptRef;
    DualString   tag_sharedInformation;
@@ -56,6 +54,8 @@ private:
    DualString   tag_gnuInfo;
    DualString   tag_registerDescription;
    DualString   tag_registerDescriptionRef;
+   DualString   tag_fileList;
+   DualString   tag_fileListRef;
 
    DualString   attr_name;
    DualString   attr_isDefault;
@@ -125,6 +125,7 @@ private:
 
    DeviceXmlParser(DeviceDataBase *deviceDataBase);
    ~DeviceXmlParser(void);
+   void setCurrentName(const char *name);
 
 public:
    static void loadDeviceData(const std::string &deviceFilePath, DeviceDataBase *deviceDataBase);

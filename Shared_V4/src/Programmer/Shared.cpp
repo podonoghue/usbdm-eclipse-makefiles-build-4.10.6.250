@@ -144,8 +144,9 @@ const string usePSTSignalsKey(           settingsKey ".usePSTSignals");
  *           false => index out of range, device is set to the 1st device (index 0)
  */
 USBDM_ErrorCode Shared::setCurrentDeviceByIndex(int newDeviceIndex) {
-   LOGGING;
+   Logging log("Shared::setCurrentDeviceByIndex()");
 
+   log.print("newDeviceIndex = %d\n", newDeviceIndex);
    USBDM_ErrorCode rc = BDM_RC_OK;
    if ((newDeviceIndex < 0) || ((unsigned)newDeviceIndex >= deviceDatabase->getNumDevice())) {
       Logging::print("Index out of range (%d)\n", newDeviceIndex);
@@ -175,8 +176,9 @@ USBDM_ErrorCode Shared::setCurrentDeviceByIndex(int newDeviceIndex) {
  *           false => device not found, device is set to the default device
  */
 USBDM_ErrorCode Shared::setCurrentDeviceByName(string deviceName) {
-   LOGGING;
+   Logging log("Shared::setCurrentDeviceByName()");
 
+   Logging::print("Device = \'%s\'\n", deviceName.c_str());
    int newDeviceIndex = deviceDatabase->findDeviceIndexFromName(deviceName);
    if (newDeviceIndex < 0) {
       Logging::print("Device not found (%s)\n", deviceName.c_str());
@@ -219,7 +221,6 @@ Shared::~Shared() {
 #endif
 }
 
-
 /*!  Load settings from object
  *
  *  @param  settings Settings object
@@ -237,7 +238,11 @@ void Shared::loadSettings(const AppSettings &settings) {
    // Load the trim information (mutable device data)
    currentDevice->setClockTrimFreq(                          settings.getValue(setClockTrimFreqKey,    0));
    currentDevice->setClockTrimNVAddress(                     settings.getValue(clockTrimNVAddressKey,  currentDevice->getClockTrimNVAddress()));
-   currentDevice->setSecurity(           (SecurityOptions_t) settings.getValue(securityKey,            currentDevice->getSecurity()));
+   SecurityOptions_t securityOption =  (SecurityOptions_t)   settings.getValue(securityKey,            currentDevice->getSecurity());
+   if (securityOption == SEC_CUSTOM) {
+      securityOption = SEC_UNSECURED;
+   }
+   currentDevice->setSecurity(securityOption);
    currentDevice->setEraseOption( (DeviceData::EraseOptions) settings.getValue(eraseOptionKey,    (int)currentDevice->getEraseOption()));
    currentDevice->setConnectionFreq(                         settings.getValue(targetBusFrequencyKey,  0));
 #endif
@@ -281,7 +286,11 @@ void Shared::saveSettings(AppSettings &settings) {
       settings.addValue(setClockTrimFreqKey,       currentDevice->getClockTrimFreq());
       settings.addValue(clockTrimNVAddressKey,     currentDevice->getClockTrimNVAddress());
    }
-   settings.addValue(securityKey,                  currentDevice->getSecurity());
+   SecurityOptions_t securityOption = currentDevice->getSecurity();
+   if (securityOption == SEC_CUSTOM) {
+      securityOption = SEC_UNSECURED;
+   }
+   settings.addValue(securityKey,                  securityOption);
    settings.addValue(eraseOptionKey,          (int)currentDevice->getEraseOption());
    settings.addValue(targetBusFrequencyKey,        currentDevice->getConnectionFreq());
 #endif

@@ -343,6 +343,13 @@ typedef enum {
    CFV1_RegA6     = 14, //!< A6
    CFV1_RegA7     = 15, //!< A7
    CFV1_PSTBASE   = 16, //!< Start of PST registers, access as CFV1_PSTBASE+n
+   // The following are used internally by the BDM and only available
+   // externally from firmware version 4.10.6
+   CFV1_RegOTHER_A7  = 0xC0|0,  //!< Other A7 (not active in target)
+   CFV1_RegVBR       = 0xC0|1,  //!< Vector Base register
+   CFV1_RegCPUCR     = 0xC0|2,  //!< CPUCR
+   CFV1_RegSR        = 0xC0|14, //!< Status register
+   CFV1_RegPC        = 0xC0|15, //!< Program Counter
 } CFV1_Registers_t;
 
 //! regNo Parameter for USBDM_ReadReg() with CFVx target
@@ -403,6 +410,20 @@ typedef enum {
    ARM_RegIndexFirstFloat = 20,                         //!< First float register
    ARM_RegIndexLastFloat  = ARM_RegIndexFirstFloat+32,  //!< Last float reg (33 regs FPSCR, FPS0..FPS32)
 } ARM_RegisterIndex_t;
+
+//! startRegIndex, endRegIndex Parameters for USBDM_ReadMultipleRegs() with Coldfire V1 target
+//!
+typedef enum {
+   CFV1_RegIndexFirstCore  = 0,                          //!< First code reg
+   CFV1_RegIndexLastCore   = CFV1_RegIndexFirstCore+17,  //!< Last core reg (18 regs D0..D7,A0..A7,SR,PC)
+} CFV1_RegisterIndex_t;
+
+//! startRegIndex, endRegIndex Parameters for USBDM_ReadMultipleRegs() with Coldfire Vx target
+//!
+typedef enum {
+   CFVx_RegIndexFirstCore  = 0,                          //!< First code reg
+   CFVx_RegIndexLastCore   = CFV1_RegIndexFirstCore+17,  //!< Last core reg (18 regs D0..D7,A0..A7,SR,PC)
+} CFVx_RegisterIndex_t;
 
 //! regNo Parameter for DSC_ReadReg() with DSC target
 //! DSC Core registers
@@ -1397,7 +1418,7 @@ USBDM_ErrorCode USBDM_ReadReg(unsigned int regNo, unsigned long *regValue);
 //!     other        => Error code - see \ref USBDM_ErrorCode
 //!
 //! @note The indexes mentioned above are magic numbers indexing an arbitrary table.\n
-//!       Use only the predefined values provided in the USBDM_API.h
+//!       Use only the predefined values provided - \ref ARM_RegisterIndex_t, \ref CFV1_RegisterIndex_t, \ref CFVx_RegisterIndex_t
 //!
 USBDM_API
 USBDM_ErrorCode USBDM_ReadMultipleRegs(unsigned char regValueBuffer[], unsigned int startRegIndex, unsigned int endRegIndex);

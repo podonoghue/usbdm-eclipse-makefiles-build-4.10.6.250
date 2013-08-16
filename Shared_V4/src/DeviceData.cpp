@@ -46,15 +46,15 @@ using namespace std;
 
 static string emptyString("");
 
-static void strUpper(char *s) {
-   if (s == NULL) {
-	   return;
-   }
-   while (*s != '\0') {
-      int ch = ::toupper(*s);
-      *s++ = ch;
-   }
-}
+//static void strUpper(char *s) {
+//   if (s == NULL) {
+//	   return;
+//   }
+//   while (*s != '\0') {
+//      int ch = ::toupper(*s);
+//      *s++ = ch;
+//   }
+//}
 
 //! Allows meaningful printing of memory ranges
 //!
@@ -439,19 +439,19 @@ DeviceDataConstPtr DeviceDataBase::findDeviceFromName(const string &targetName) 
    if (recursionCheck++>5) {
       throw MyException("Recursion limit in DeviceDataBase::findDeviceFromName");
    }
-   // Note - Assumes ASCII string
-   char buff[50];
-   strncpy(buff, targetName.c_str(), sizeof(buff));
-   buff[sizeof(buff)-1] = '\0';
-   strUpper(buff);
+//   // Note - Assumes ASCII string
+//   char buff[50];
+//   strncpy(buff, targetName.c_str(), sizeof(buff));
+//   buff[sizeof(buff)-1] = '\0';
+//   strUpper(buff);
 
    DeviceDataConstPtr theDevice;
    vector<DeviceDataPtr>::const_iterator it;
    for (it = deviceData.begin(); it != deviceData.end(); it++) {
-      if (strcmp((*it)->getTargetName().c_str(), buff) == 0) {
+      if (strcasecmp((*it)->getTargetName().c_str(), targetName.c_str()) == 0) {
          theDevice = static_cast<DeviceDataConstPtr>(*it);
          Logging::print("findDeviceFromName(%s) found %s%s\n",
-               buff, (const char *)(theDevice->getTargetName().c_str()), theDevice->isAlias()?"(alias)":"");
+                        (const char *)targetName.c_str(), (const char *)(theDevice->getTargetName().c_str()), theDevice->isAlias()?"(alias)":"");
          if (theDevice->isAlias()) {
             theDevice = findDeviceFromName(theDevice->getAliasName());
          }
@@ -475,10 +475,11 @@ int DeviceDataBase::findDeviceIndexFromName(const string &targetName) const {
 
    vector<DeviceDataPtr>::const_iterator it;
    for (it = deviceData.begin(); it != deviceData.end(); it++) {
-      if ((*it)->getTargetName().compare(targetName) == 0)
+      if (strcasecmp((*it)->getTargetName().c_str(), targetName.c_str()) == 0) {
          return it - deviceData.begin();
+      }
    }
-   Logging::print("findDeviceFromName(%s) => Device not found\n", targetName.c_str());
+   Logging::print("findDeviceIndexFromName(%s) => Device not found\n", targetName.c_str());
    return -1;
 }
 

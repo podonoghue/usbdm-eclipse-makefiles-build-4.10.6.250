@@ -213,9 +213,9 @@ public:
 //============================================================================================
 // The following quick commands take a fixed operand (N=1-31,0=>32) as part of the opcode
                                                                    // Operand
-#define JTAG_SHIFT_IN_Q(N)       ((3<<5)|((N)&JTAG_NUM_BITS_MASK)) // #5=N     Shift in N(<32) bits (fill with TDI=0/1)
-#define JTAG_SHIFT_OUT_Q(N)      ((4<<5)|((N)&JTAG_NUM_BITS_MASK)) // #5=N     Shift out N(<32) bits (data taken in-line)
-#define JTAG_SHIFT_IN_OUT_Q(N)   ((5<<5)|((N)&JTAG_NUM_BITS_MASK)) // #5=N     Shift out & in N(<32) bits (data taken in-line)
+#define JTAG_SHIFT_IN_Q(N)       ((uint8_t)((3<<5)|((N)&JTAG_NUM_BITS_MASK))) // #5=N     Shift in N(<32) bits (fill with TDI=0/1)
+#define JTAG_SHIFT_OUT_Q(N)      ((uint8_t)((4<<5)|((N)&JTAG_NUM_BITS_MASK))) // #5=N     Shift out N(<32) bits (data taken in-line)
+#define JTAG_SHIFT_IN_OUT_Q(N)   ((uint8_t)((5<<5)|((N)&JTAG_NUM_BITS_MASK))) // #5=N     Shift out & in N(<32) bits (data taken in-line)
 #define JTAG_NUM_BITS_MASK       (0x1F)   // Mask for number of bits (N) within above opcodes
 
 //============================================================================================
@@ -242,7 +242,7 @@ public:
 #define JTAG_READ_MEM       (68) // Set DSC instruction to execute (from DP)
 #define JTAG_WRITE_MEM      (69) // Execute DSC instruction previously set
 
-#define JTAG_DATA_16(x)     (((x)>>8)&0xFF), (x&0xFF)
+#define JTAG_DATA_16(x)     ((uint8_t)(((x)>>8)&0xFF)), ((uint8_t)(x&0xFF))
 
 //! Calculate number of bytes required to hold N bits
 #define BITS_TO_BYTES(N) (((N)+7)>>3)

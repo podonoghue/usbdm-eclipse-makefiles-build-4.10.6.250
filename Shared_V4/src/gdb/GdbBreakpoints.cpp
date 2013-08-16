@@ -179,7 +179,7 @@ static hardwareBreakInfo *findHardwareBreakpoint(uint32_t address) {
       if (bpPtr->inUse && (bpPtr->address == address))
          return bpPtr;
    }
-   Logging::print("findHardwareBreakpoint() - not found\n");
+//   Logging::print("findHardwareBreakpoint() - not found\n");
    return NULL;
 }
 
@@ -273,6 +273,7 @@ int insertBreakpoint(breakType type, uint32_t address, unsigned size) {
       break;
    case hardBreak: {
       if (findHardwareBreakpoint(address)) {
+         Logging::print("insertBreakpoint() - already set - ignored\n");
          return true; // Already set - ignore
       }
       hardwareBreakInfo *bpPtr = findFreeHardwareBreakpoint();

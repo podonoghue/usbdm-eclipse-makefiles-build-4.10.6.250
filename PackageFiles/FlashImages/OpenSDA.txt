@@ -1,6 +1,17 @@
-The USBDM_OpenSDA.sx is a version of USDBM for the FRDM-KL25 board.
+The USBDM_OpenSDAxxx.sx flash images are USBDM firmware for FRDM-xxxx boards.  This can
+be used as cheap Kinetis programmers.
 
-It is an OpenSDA application and is loaded by the following actions:
+Versions:
+USBDM_OpenSDA.sx              Firmware with serial number 0001
+USBDM_OpenSDA_Unique_ID.sx    Firmware with device specific serial number, i.e. each BDM has an unique ID
+
+The first is useful if you are using BDMs as a 'class set' as it means that each BDM should end up appearing 
+as the same serial port e.g. COM8.
+The second version is useful if you wish to use two BDMs on the same machine at the same time as the COM port
+used will be tied to the BDM i.e. each BDM will end up with a board specific COM port even if plugged into 
+another USB port.
+
+These are OpenSDA application and is loaded by the following actions:
 
 (Before doing the following install the USBDM drivers).
 

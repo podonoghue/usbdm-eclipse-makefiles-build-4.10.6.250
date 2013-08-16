@@ -28,7 +28,7 @@
 #endif
 
 //! Maximum size of a S-record, should be power of 2
-const int maxSrecSize = (1<<4);
+const int maxSrecSize = (1<<5);
 
 //! A region of flash to dump
 //!
@@ -98,6 +98,13 @@ DeviceDescription deviceDescriptions[] = {
       12000,
       1,
       {{0x000000, 0x00FFFF},}
+},
+{
+      "MKL05Z32M4",
+      T_ARM,
+      12000,
+      1,
+      {{0x000000, 0x7FFF},}
 },
 };
 

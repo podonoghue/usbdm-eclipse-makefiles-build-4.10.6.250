@@ -119,8 +119,8 @@ static const USBDM_ExtendedOptions_t defaultBdmOptions = {
       false,               // maskInterrupts;         - Whether to mask interrupts when  stepping
       0,                   // interfaceSpeed;         - JTAG/CFVx/DSC only (kHz), 0 => selected by connection type
       false,               // usePSTSignals           - CFVx only
-      1000,                // powerOffDuration        - How long to remove power
-      1000,                // powerOnRecoveryInterval - How long to wait after power enabled
+      500,                 // powerOffDuration        - How long to remove power
+      200,                 // powerOnRecoveryInterval - How long to wait after power enabled
       100,                 // resetDuration           - How long to assert reset
       100,                 // resetReleaseInterval    - How long to wait after reset release to release other signals
       100,                 // resetRecoveryInterval   - How long to wait after reset sequence complete
@@ -1985,7 +1985,7 @@ return rc;
 //!     other        => Error code - see \ref USBDM_ErrorCode
 //!
 //! @note The indexes mentioned above are magic numbers indexing an arbitrary table.\n
-//!       Use only the predefined values provided in the USBDM_API.h
+//!       Use only the predefined values provided in the USBDM_API.h  /ref ARM_RegisterIndex_t, /ref CFV1_RegisterIndex_t, /ref CFVx_RegisterIndex_t
 //!
 USBDM_API
 USBDM_ErrorCode USBDM_ReadMultipleRegs(unsigned char regValueBuffer[], unsigned int startRegIndex, unsigned int endRegIndex) {
@@ -2011,6 +2011,7 @@ USBDM_ErrorCode USBDM_ReadMultipleRegs(unsigned char regValueBuffer[], unsigned 
 #ifdef LOG
 //   Logging::print("reg=%s => 0x%X\n",
 //         getRegName( bdmState.targetType, regNo ), *regValue);
+   Logging::print("reg=[#%d..#%d] =>\n", startRegIndex, endRegIndex);
    Logging::printDump(regValueBuffer, size);
 #endif
 

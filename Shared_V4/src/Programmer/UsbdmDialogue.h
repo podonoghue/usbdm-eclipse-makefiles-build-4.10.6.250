@@ -41,6 +41,8 @@ private:
    bool                    disableDialogueDisplay;
    USBDM_ErrorCode         errorSet;
 
+   bool                    settingsAreNotPersistent;
+
    // Control Identifiers
    enum {
       ID_FLASH_PROGRAMMER_DIALOGUE 	= 10000,
@@ -66,6 +68,10 @@ public:
 
    //! Destructor
    ~UsbdmDialogue();
+
+   void enableSettingsAreNotPersistent(bool value = true) {
+      settingsAreNotPersistent = value;
+   }
 
    //! Returns the BDM options from the internal state
    //!

@@ -19,19 +19,28 @@
                     flashProgramData?,
                     (flexNVMInfo|flexNVMInfoRef)?,
                     (gnuInfoList|gnuInfoListRef)?,
-                    (registerDescription|registerDescriptionRef)?
+                    (registerDescription|registerDescriptionRef)?,
+                    (fileList|fileListRef)?
                     )
                    ),
                   note*)>
      <!ATTLIST device name ID #REQUIRED>
      <!ATTLIST device alias IDREF #IMPLIED>
-     <!ATTLIST device family (RS08|HCS08|HCS08Plus|HCS12|CFV1|CFV1Plus|CFV2|CFV3|CFV4|ARM|DSC|CortexM0|CortexM4|CortexM4F) #IMPLIED>
+     <!ATTLIST device family (RS08|HCS08|HCS08Plus|HCS12|CFV1|CFV1Plus|CFV2|CFV3|CFV4|ARM|DSC|CortexM0|CortexM3|CortexM3F|CortexM4|CortexM4F) #IMPLIED>
      <!ATTLIST device isDefault (true) #IMPLIED>
      <!ATTLIST device speed CDATA #IMPLIED>
      <!ATTLIST device subfamily CDATA #IMPLIED>
      <!ATTLIST device hidden (true) #IMPLIED>
 
+  <!-- List of files to add to project -->
+<!ELEMENT fileList (file*)>
+     <!ATTLIST fileList id    ID    #IMPLIED>
+<!ELEMENT file EMPTY >
+     <!ATTLIST file source  CDATA #REQUIRED>
+     <!ATTLIST file target  CDATA #IMPLIED>
   <!-- Register description for GDB -->
+<!ELEMENT fileListRef EMPTY>
+     <!ATTLIST fileListRef ref IDREF #REQUIRED>
 <!ELEMENT registerDescription (#PCDATA)>
      <!ATTLIST registerDescription id    ID    #IMPLIED>
      <!ATTLIST registerDescription count CDATA #REQUIRED>
@@ -142,7 +151,8 @@
   <!-- Note on device entry -->
 <!ELEMENT note (#PCDATA)>
   <!-- Information shared between devices -->
-<!ELEMENT sharedInformation (memory|tclScript|flashProgram|securityEntry|securityDescription|securityInfo|flexNVMInfo|gnuInfoList|registerDescription)*>
+<!ELEMENT sharedInformation 
+	(memory|tclScript|flashProgram|securityEntry|securityDescription|securityInfo|flexNVMInfo|gnuInfoList|registerDescription|fileList)*>
   <!--TCL Script-->
 <!ELEMENT tclScript (#PCDATA)>
      <!ATTLIST tclScript id ID #IMPLIED>

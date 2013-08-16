@@ -87,6 +87,7 @@ extern "C" UINT __stdcall CheckCodewarriorPaths(MSIHANDLE hInstall) {
          {"D.CODESOURCERY_KINETIS",          "F.CODESOURCERY_KINETIS",          "bin",          "Sourcery Interfaces\n     +Codebench Lite for Kinetis EABI"},
          {"D.CODESOURCERY_ARM",              "F.CODESOURCERY_ARM",              "bin",          "Sourcery Interfaces\n     +Codebench Lite for ARM EABI"},
          {"D.ECLIPSE_CDT_JUNO",              "F.ECLIPSE_CDT_JUNO",              "dropins",      "Eclipse CDT Interfaces\n     +Eclipse Juno Plugin"},
+         {"D.ECLIPSE_CDT_KEPLER",            "F.ECLIPSE_CDT_KEPLER",            "dropins",      "Eclipse CDT Interfaces\n     +Eclipse Kepler Plugin"},
          {NULL,                              NULL,                              NULL,      NULL}
    };
    ::hInstall = hInstall;

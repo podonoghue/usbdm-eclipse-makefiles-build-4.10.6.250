@@ -48,7 +48,7 @@ public:
     *   @param serialNumber  BDM serial number to look for
     *   @param matchRequired If true then are particular BDM is required
     *
-    *   @note If matchRequired=false then serialNumberis only a preferred BDM.
+    *   @note If matchRequired=false then serialNumber is only a preferred BDM.
     */
    void setBdmSerialNumber(std::string serialNumber, bool matchRequired = false) {
       bdmSerialNumber  = serialNumber;

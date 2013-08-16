@@ -3,7 +3,7 @@
 
 \section sectionHistory Revision History
 V4.10.6 (July 2013) - This mainly concentrates on Eclipse support 
-   - Eclipse Juno:
+   - Eclipse Juno and Kepler:
       - Installation no longer adds files to Codesourcery directories
       - Support for other ARM GCC toolchains with Kinetis 
       - GDB server (sprite) bug fixes (GDB no longer dies if R0/D0 contains Exxxxxxx!).
@@ -13,7 +13,8 @@ V4.10.6 (July 2013) - This mainly concentrates on Eclipse support
       - Support for Floating point options with ARM Ltd toolchain
       - Newlib support (stdio using serial port)
       - Added USBDM menu items (Examples, Configuration)
-      - USBDM now includes make tools from GNU to conveniently support Builds on windows 
+      - USBDM now includes make tools from GNU to conveniently support Builds on windows
+      - Added a range of programming options to GDB server e.g. trimming of target clock. 
    - Programmer dialogues slightly smaller
    - Linux CDC devices (serial ports) appear as ttyUsbdm devices so they are easier to locate
    - Multiple Linux install scripts (Base, Codewarrior and Eclipse Juno installation)
@@ -264,6 +265,25 @@ V1.0 (Dec 2009) Initial Release
      EEEPROM (simulated EEPROM) is not supported.  Any region of FlexNVM not allocated to EEEPROM backing store may ben programmed
      as conventional Flash.
        
+\section ExpectedErrrors Unusual Errors
+   The following error indicates that the memory image being programmed contains data outside of the Flash memory of the target.  This
+   includes the target RAM.\n
+   The USBDM stand-alone programmer produces an error because it doesn't make sense to 'program' something to, for example, RAM.  If 
+   your program image contains data destined to RAM then it would (usually) indicate that there is a mistake in the memory map 
+   since such data would be lost when the target is reset.  It seems sensible to flag this as an error.
+   
+   \image html "ImageOutsideFlashError.png"
+	
+   - Common Reason\n
+   When using the trace function in Codewarrior with KL targets it creates a buffer in RAM to store the trace information.  It also 
+   includes	an zeroed region in the binary file image to initialise the buffer to zero when the image is loaded into the target.  This
+   situation is accepted by USBDM when working within Codewarrior since it makes some sense to download 'stuff' to RAM when debugging
+   a target.  For example, during development you might want to run a program entirely in RAM.\n\n   
+   Solution - You should turn off the trace function when producing a final image for production.  This is sensible in any case
+   since tracing should not (normally) be in use in the production target.\n\n
+   When I have time I will consider adding an option to the programmer to ignore writes to RAM but I really think this is of little value
+   since it is better to alert you to what is likely an error or at least an oversight.
+
  \section sectionKnownIssues Known Issues
 
    - Codewarrior Legacy

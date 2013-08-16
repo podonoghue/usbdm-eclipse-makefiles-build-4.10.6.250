@@ -69,6 +69,10 @@ Makes use of NewLib library.
 Example project for Generic MCF52233 device
 Includes example port operations.
       </example>
+      <example description="STM32F103 SPL Example"      family="COLDFIRE"   path="stm32f-example.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
+Example project for STM32F103
+Includes pre-compiled Standard Peripheral Library (SPL)
+      </example>
       <example description="USBDM API"                   family="NONE"       path="USBDM_API_Example.zip">
 Example project using USBDM API to read data from the Flash memory of a 
 target device using a USBDM interface.

@@ -285,6 +285,7 @@ public:
     SecType        getMode() const;
     const uint8_t *getData() const;
     void           setData(unsigned size, uint8_t *data);
+    void           setMode(SecType mode) { this->mode = mode; }
 };
 typedef std::tr1::shared_ptr<SecurityInfo> SecurityInfoPtr;
 typedef std::tr1::shared_ptr<const SecurityInfo> SecurityInfoConstPtr;
@@ -733,7 +734,7 @@ public:
    SecurityOptions_t              getSecurity()                const { return security; }
    EraseOptions                   getEraseOption()             const { return eraseOption; }
 #if (TARGET == HC12)||(TARGET == MC56F80xx)
-   uint32_t              getCOPCTLAddress()           const { return COPCTLAddress; }
+   uint32_t                       getCOPCTLAddress()           const { return COPCTLAddress; }
 #else
    uint32_t                       getSOPTAddress()             const { return SOPTAddress; }
 #endif

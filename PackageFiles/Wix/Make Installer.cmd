@@ -22,7 +22,7 @@ for %%f in (%ECLIPSE_PLUGIN_SOURCE%\usbdm\artifacts.jar %ECLIPSE_PLUGIN_SOURCE%\
 for %%f in (%CODEWARRIOR_PLUGIN_SOURCE%\usbdm\artifacts.jar %CODEWARRIOR_PLUGIN_SOURCE%\usbdm\content.jar) do if exist %%f del /Q %%f
 
 rem .wxs regenerated Files 
-set REBUILT_WXS=DeviceData.wxs Stationery.wxs FlashImages.wxs WizardPatchData.wxs Examples.wxs EclipsePlugin_1.wxs EclipsePlugin_2.wxs EclipsePlugin_2.wxs Eclipse_Juno.wxs
+set REBUILT_WXS=DeviceData.wxs Stationery.wxs FlashImages.wxs WizardPatchData.wxs Examples.wxs EclipsePlugin_1.wxs EclipsePlugin_2.wxs EclipsePlugin_2.wxs Eclipse_Juno.wxs Eclipse_Kepler.wxs
 
 set LIGHT_OPTIONS=-ext WixUIExtension -ext WixUtilExtension -sw0204
 set LIGHT_DIRS=-b bin\DeviceData -b bin\Stationery -b bin\FlashImages -b WizardPatches -b Examples -b %CODEWARRIOR_PLUGIN_SOURCE% -b %ECLIPSE_PLUGIN_SOURCE%
@@ -55,6 +55,7 @@ mkdir %WIX_BUILD_DIR%
 %HEAT% dir .\plugins\codewarrior            %HEAT_OPTIONS% -cg Cg.EclipsePlugin_V10.3  -dr D.CW_V10.3_EclipseDropins   -out %WIX_BUILD_DIR%\EclipsePlugin_3.wxs
 %HEAT% dir .\plugins\codewarrior            %HEAT_OPTIONS% -cg Cg.EclipsePlugin_V10.4  -dr D.CW_V10.4_EclipseDropins   -out %WIX_BUILD_DIR%\EclipsePlugin_4.wxs
 %HEAT% dir .\plugins\eclipse                %HEAT_OPTIONS% -cg Cg.EclipseJunoPlugin    -dr D.EclipseJunoDropins        -out %WIX_BUILD_DIR%\EclipseJunoPluginCDT.wxs
+%HEAT% dir .\plugins\eclipse                %HEAT_OPTIONS% -cg Cg.EclipseKeplerPlugin  -dr D.EclipseKeplerDropins      -out %WIX_BUILD_DIR%\EclipseKeplerPluginCDT.wxs
 %CANDLE% -dProductVersion=%VERSIONn% -o %WIX_BUILD_DIR%\ *.wxs %WIX_BUILD_DIR%\*.wxs
 %LIGHT% %LIGHT_OPTIONS% %LIGHT_DIRS% -out %MSI_FILE% %WIX_BUILD_DIR%\*.wixobj
 

@@ -3,6 +3,15 @@
  *
  *  Created on: 06/03/2011
  *      Author: podonoghue
+
+\verbatim
+Change History
+-==================================================================================
+| 16 Jul 2013 | Updated & refactored to use new I/O class                     - pgo
+|        ???? | Created                                                       - pgo
++==================================================================================
+\endverbatim
+
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -202,6 +211,13 @@ static USBDM_ErrorCode gdbLoop(GdbInOut *gdbInOut) {
    return BDM_RC_OK;
 }
 
+static USBDM_ErrorCode callBack(const char *msg, GdbMessageLevel level, USBDM_ErrorCode rc) {
+   if (level >= M_ERROR) {
+      displayDialogue(USBDM_GetErrorString(rc), msg, wxOK|wxICON_ERROR);
+   }
+   return rc;
+}
+
 //
 // main
 //
@@ -246,8 +262,6 @@ int main(int argc, char **argv) {
 
    GdbInOutSocket  *gdbInOut  = GdbInOutSocket::getGdbInOut();
    if (gdbInOut == NULL) {
-      // Quit immediately as we have no way to convey error to gdb
-      gdbReportError(BDM_RC_FAIL);
       exit (-1);
    }
    Logging::print("After gdbInOut()\n");
@@ -267,7 +281,7 @@ int main(int argc, char **argv) {
          break;
       }
       // Now do the actual processing of GDB messages
-      gdbHandlerInit(gdbInOut, deviceData);
+      gdbHandlerInit(gdbInOut, deviceData, callBack);
       gdbLoop(gdbInOut);
       gdbInOut->finish();
    } while (1);

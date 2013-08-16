@@ -1303,7 +1303,7 @@ USBDM_ErrorCode getRunStatus(void) {
 }
 #endif
 
-#if 0 && defined(LOG) && (TARGET==ARM)
+#if defined(LOG) && (TARGET==ARM) && 0
 //! Report ARM status
 //!
 //! @param msg - message to print
@@ -1471,24 +1471,18 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    }
 #if defined(LOG) && 0
    for (int num=0; num<1000; num++) {
-      USBDM_ErrorCode rc = USBDM_TargetStep();
-      if (rc != BDM_RC_OK) {
-         Logging::error("TargetStep() Failed, rc=%s\n",
-               USBDM_GetErrorString(rc));
-         return rc;
-      }
       unsigned long currentPC;
       rc = ReadPC(&currentPC);
       if (rc != BDM_RC_OK) {
          Logging::error("ReadPC() Failed, rc=%s\n",
                USBDM_GetErrorString(rc));
-         report("FlashProgrammer::executeTargetProgram()");
+//         report("FlashProgrammer::executeTargetProgram()");
          return rc;
       }
       if ((currentPC<(targetRegPC-0x1000))||(currentPC>(targetRegPC+0x1000))) {
          Logging::error("Read PC out of range, PC=0x%08X\n",
                currentPC);
-         report("FlashProgrammer::executeTargetProgram()");
+//         report("FlashProgrammer::executeTargetProgram()");
          return PROGRAMMING_RC_ERROR_BDM;
       }
       uint8_t  iBuffer[8];
@@ -1496,11 +1490,18 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
       if (rc != BDM_RC_OK) {
          Logging::error("ReadMemory() Failed, rc=%s\n",
                USBDM_GetErrorString(rc));
-         report("FlashProgrammer::executeTargetProgram()");
+//         report("FlashProgrammer::executeTargetProgram()");
          return rc;
       }
       Logging::print("Step: PC=0x%06X => %02X %02X %02X %02X\n",
              currentPC, iBuffer[3], iBuffer[2], iBuffer[1], iBuffer[0]);
+
+      USBDM_ErrorCode rc = USBDM_TargetStep();
+      if (rc != BDM_RC_OK) {
+         Logging::error("TargetStep() Failed, rc=%s\n",
+               USBDM_GetErrorString(rc));
+         return rc;
+      }
    }
 #endif
    // Execute the Flash program on target
@@ -1568,6 +1569,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    }
    rc = convertTargetErrorCode((FlashDriverError_t)errorCode);
    if (rc != BDM_RC_OK) {
+      Logging::error("Raw error code - %d\n", errorCode);
       Logging::error("Error - %s\n", USBDM_GetErrorString(rc));
 #if (TARGET == MC56F80xx) && 0
       executionResult.data = targetToNative16(executionResult.data);

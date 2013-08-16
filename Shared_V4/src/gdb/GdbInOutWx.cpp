@@ -76,7 +76,7 @@ void GdbInOutWx::finish(void) {
 const GdbPacket *GdbInOutWx::getGdbPacket(void) {
    LOGGING_Q;
    if (!connectionActive) {
-      logScreen->AppendText("Connection lost\n");
+      logScreen->AppendText(_("Connection lost\n"));
       return NULL;
    }
    const GdbPacket *packet;

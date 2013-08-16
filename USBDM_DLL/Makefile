@@ -7,22 +7,22 @@ VSUFFIX=
 endif
 
 usbdm:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@${VSUFFIX}     MODULE=usbdm      CDEFS="-DUSBDM_DLL_EXPORTS"
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@${VSUFFIX}     MODULE=usbdm      CDEFS='-DUSBDM_DLL_EXPORTS'
 
 usbdm-debug:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@${VSUFFIX}     MODULE=usbdm      CDEFS="-DUSBDM_DLL_EXPORTS"  DEBUG='Y'
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@${VSUFFIX}     MODULE=usbdm      CDEFS='-DUSBDM_DLL_EXPORTS'  DEBUG='Y'
 
 osbdm:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=osbdm-jm60       MODULE=osbdm      CDEFS="-DUSBDM_DLL_EXPORTS"
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=osbdm-jm60       MODULE=osbdm      CDEFS='-DUSBDM_DLL_EXPORTS'
 
 osbdm-debug:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=osbdm-jm60-debug MODULE=osbdm      CDEFS="-DUSBDM_DLL_EXPORTS"  DEBUG='Y'
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=osbdm-jm60-debug MODULE=osbdm      CDEFS='-DUSBDM_DLL_EXPORTS'  DEBUG='Y'
 
 usbdm-cff:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@               MODULE=cfflasher  CDEFS="-DUSBDM_DLL_EXPORTS"  LINK_OPTS="-Wl,--kill-at" 
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@               MODULE=cfflasher  CDEFS='-DUSBDM_DLL_EXPORTS'  LINK_OPTS='-Wl,--kill-at' 
 
 usbdm-cff-debug:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@               MODULE=cfflasher  CDEFS="-DUSBDM_DLL_EXPORTS"  LINK_OPTS="-Wl,--kill-at"  DEBUG='Y'
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@               MODULE=cfflasher  CDEFS='-DUSBDM_DLL_EXPORTS'  LINK_OPTS='-Wl,--kill-at'  DEBUG='Y'
 
 allCommon: usbdm usbdm-debug
 

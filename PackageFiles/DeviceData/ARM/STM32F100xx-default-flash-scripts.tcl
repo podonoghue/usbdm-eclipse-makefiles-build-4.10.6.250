@@ -210,6 +210,8 @@ proc massEraseTarget { } {
    checkFlashError
    wl $::FLASH_CR 0
    
+   reset
+   
    return
 }
 

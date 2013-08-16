@@ -199,12 +199,13 @@
       <!--====================================================== -->
       <!--         Application Components & shortcuts            -->
       <DirectoryRef Id='INSTALLDIR'>
-         <Component Id='C.HCS12Programmer' Guid='*'>
+         <Component Id='C.HCS12Programmer' Guid='67513fca-471b-4f11-9987-b7c0cc38ab9f'>
             <File Id='HCS12_FlashProgrammerEXE' DiskId='1'
                Source='bin\HCS12_FlashProgrammer.exe' KeyPath='yes'>
                <Shortcut Id="startmenuUSBDM_1" Directory="D.UsbdmProgramMenuDir" Name="HCS12 Programmer"
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id='HCS12_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\HCS12_FlashProgrammer-debug.exe' />
          </Component>
          <!--
          <Component Id='C.SRecord.Support' Guid='81c6fbea-67c4-41d5-b455-2c7d26a6f9d7'>
@@ -217,12 +218,13 @@
             </Extension>
          </Component>
          -->
-         <Component Id='C.HCS08Programmer' Guid='*'>
+         <Component Id='C.HCS08Programmer' Guid='c2b5671c-fbcc-4179-aa33-516f1d9e0910'>
             <File Id='HCS08_FlashProgrammerEXE' DiskId='1'
                Source='bin\HCS08_FlashProgrammer.exe' KeyPath='yes'>
                <Shortcut Id="startmenuUSBDM_2" Directory="D.UsbdmProgramMenuDir" Name="HCS08 Programmer"
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id='HCS08_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\HCS08_FlashProgrammer-debug.exe' />
             <ProgId Id="USBDM.HCS08Programmer" Description="USBDM HCS08 Programmer" Icon="ChipIcon.ico" Advertise="yes">
                <Extension Id="sx">
                   <Verb Id="open.hcs08" Sequence="1" Command="Open HCS08 Programmer" Argument="&quot;%1&quot;" />
@@ -233,12 +235,13 @@
             </ProgId>         
          </Component>
          
-         <Component Id='C.RS08Programmer' Guid='*'>
+         <Component Id='C.RS08Programmer' Guid='ad047fa8-fa37-483a-863d-c05b100efa24'>
             <File Id='RS08_FlashProgrammerEXE' DiskId='1'
                Source='bin\RS08_FlashProgrammer.exe' KeyPath='yes'>
                <Shortcut Id="startmenuUSBDM_3" Directory="D.UsbdmProgramMenuDir" Name="RS08 Programmer"
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id='RS08_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\RS08_FlashProgrammer-debug.exe' />
             <!--
             <ProgId Id="USBDM.RS08Programmer" Description="USBDM RS08 Programmer" Icon="ChipIcon.ico" Advertise="yes">
                <Extension Id="sx">
@@ -251,12 +254,13 @@
             -->
          </Component>
          
-         <Component Id='C.CFV1Programmer' Guid='*'>
+         <Component Id='C.CFV1Programmer' Guid='a7bb220f-7e80-4933-940b-d24038e87596'>
             <File Id='CFV1_FlashProgrammerEXE' DiskId='1'
                Source='bin\CFV1_FlashProgrammer.exe' KeyPath='yes'>
                <Shortcut Id="startmenuUSBDM_4" Directory="D.UsbdmProgramMenuDir" Name="Coldfire V1 Programmer"
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id='CFV1_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\CFV1_FlashProgrammer-debug.exe' />
             <!--
             <ProgId Id="USBDM.CFV1Programmer" Description="USBDM CFV1 Programmer" Icon="ChipIcon.ico" Advertise="yes">
                <Extension Id="sx">
@@ -268,12 +272,13 @@
             </ProgId>         
             -->
          </Component>
-         <Component Id='C.CFVxProgrammer' Guid='*'>
+         <Component Id='C.CFVxProgrammer' Guid='85ff92ba-b42e-4925-923f-f8096207ecb9'>
             <File Id='CFVx_FlashProgrammerEXE' DiskId='1'
                Source='bin\CFVx_FlashProgrammer.exe' KeyPath='yes'>
                <Shortcut Id="startmenuUSBDM_5" Directory="D.UsbdmProgramMenuDir" Name="ColdFire V2,3,4 Programmer"
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id='CFVx_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\CFVx_FlashProgrammer-debug.exe' />
             <!--
             <ProgId Id="USBDM.CFVxProgrammer" Description="USBDM CFV1,2,3 Programmer" Icon="ChipIcon.ico" Advertise="yes">
                <Extension Id="sx">
@@ -285,12 +290,13 @@
             </ProgId>         
             -->
          </Component>
-         <Component Id='C.DSCProgrammer' Guid='*'>
+         <Component Id='C.DSCProgrammer' Guid='e4343520-b2c3-487e-9a1e-8b1cdce727df'>
             <File Id='DSC_FlashProgrammerEXE' DiskId='1'
                Source='bin\DSC_FlashProgrammer.exe' KeyPath='yes'>
                <Shortcut Id="startmenuUSBDM_5a" Directory="D.UsbdmProgramMenuDir" Name="MC56F80xx Programmer"
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id='DSC_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\DSC_FlashProgrammer-debug.exe' />
             <!--
             <ProgId Id="USBDM.DSCProgrammer" Description="USBDM MC56F80xx Programmer" Icon="ChipIcon.ico" Advertise="yes">
                <Extension Id="sx">
@@ -302,12 +308,13 @@
             </ProgId>         
             -->
          </Component>
-         <Component Id='C.ARMProgrammer' Guid='*'>
+         <Component Id='C.ARMProgrammer' Guid='a7510d33-187e-4c7a-a63e-efe23a53b910'>
             <File Id='ARM_FlashProgrammerEXE' DiskId='1'
                Source='bin\ARM_FlashProgrammer.exe' KeyPath='yes'>
                <Shortcut Id="startmenuUSBDM_6" Directory="D.UsbdmProgramMenuDir" Name="ARM Programmer"
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
+            <File Id='ARM_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\ARM_FlashProgrammer-debug.exe' />
             <!--
             <ProgId Id="USBDM.ARMProgrammer" Description="USBDM ARM Programmer" Icon="ChipIcon.ico" Advertise="yes">
                <Extension Id="sx">
@@ -362,7 +369,65 @@
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
          </Component>
+
+         <Component Id='C.ARMGdbServer' Guid='ea658088-dbaa-4878-a4b9-3a8eb4cbe418'>
+            <File Id='ARM_GDBServerEXE' DiskId='1'
+               Source='bin\ARM_GDBServer.exe' KeyPath='yes'>
+               <Shortcut Id="SC.ARMGdbServer" Directory="D.UsbdmProgramMenuDir" Name="ARM GDB Server"
+                  WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
+            </File>
+            <File Id='ARM_GDBServerDebugEXE'       DiskId='1' Source='bin\ARM_GDBServer-debug.exe' />
+            <File Id='ARM_GDBServerPipeEXE'        DiskId='1' Source='bin\usbdm-arm-gdbPipeServer.exe' />
+            <File Id='ARM_GDBServerPipeDebugEXE'   DiskId='1' Source='bin\usbdm-arm-gdbPipeServer-debug.exe' />
+         </Component>
+         <Component Id='C.CFV1GdbServer' Guid='158f1c7d-cb4c-44e0-8946-43aa89f5dafb'>
+            <File Id='CFV1_GDBServerEXE' DiskId='1'
+               Source='bin\CFV1_GDBServer.exe' KeyPath='yes'>
+               <Shortcut Id="SC.CFV1GdbServer" Directory="D.UsbdmProgramMenuDir" Name="Coldfire V1 GDB Server"
+                  WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
+            </File>
+            <File Id='CFV1_GDBServerDebugEXE'      DiskId='1' Source='bin\CFV1_GDBServer-debug.exe' />
+            <File Id='CFV1_GDBServerPipeEXE'       DiskId='1' Source='bin\usbdm-cfv1-gdbPipeServer.exe' />
+            <File Id='CFV1_GDBServerPipeDebugEXE'  DiskId='1' Source='bin\usbdm-cfv1-gdbPipeServer-debug.exe' />
+         </Component>
+         <Component Id='C.CFVxGdbServer' Guid='3031ca64-f18d-432f-94be-6da1605f63f4'>
+            <File Id='CFVx_GDBServerEXE' DiskId='1'
+               Source='bin\CFVx_GDBServer.exe' KeyPath='yes'>
+               <Shortcut Id="SC.CFVxGdbServer" Directory="D.UsbdmProgramMenuDir" Name="Coldfire V2,3,4 GDB Server"
+                  WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
+            </File>
+            <File Id='CFVx_GDBServerDebugEXE'      DiskId='1' Source='bin\CFVx_GDBServer-debug.exe' />
+            <File Id='CFVx_GDBServerPipeEXE'       DiskId='1' Source='bin\usbdm-cfvx-gdbPipeServer.exe' />
+            <File Id='CFVx_GDBServerPipeDebugEXE'  DiskId='1' Source='bin\usbdm-cfvx-gdbPipeServer-debug.exe' />
+         </Component>
       </DirectoryRef>
+
+      <ComponentGroup Id='Cg.ARMGdbServer'>
+         <ComponentRef Id='C.ProgramMenuFolder'/>
+         <ComponentRef Id='C.ARMGdbServer'/>
+         <ComponentRef Id='C.CommonFiles'/>
+         <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
+      </ComponentGroup>
+
+      <ComponentGroup Id='Cg.CFV1GdbServer'>
+         <ComponentRef Id='C.ProgramMenuFolder'/>
+         <ComponentRef Id='C.CFV1GdbServer'/>
+         <ComponentRef Id='C.CommonFiles'/>
+         <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
+      </ComponentGroup>
+
+      <ComponentGroup Id='Cg.CFVxGdbServer'>
+         <ComponentRef Id='C.ProgramMenuFolder'/>
+         <ComponentRef Id='C.CFVxGdbServer'/>
+         <ComponentRef Id='C.CommonFiles'/>
+         <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
+      </ComponentGroup>
+
+      <ComponentGroup Id='Cg.GDBServers'>
+         <ComponentGroupRef Id='Cg.ARMGdbServer'/>
+         <ComponentGroupRef Id='Cg.CFV1GdbServer'/>
+         <ComponentGroupRef Id='Cg.CFVxGdbServer'/>
+      </ComponentGroup>
 
       <!--======================================================
                Components
@@ -398,20 +463,6 @@
             <File Id='wxComonFiles3'     DiskId='1' Source='bin\wxmsw294u_adv_gcc_custom.dll' />
             <File Id='wxComonFiles4'     DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
 
-            <File Id='gdbComonFiles1'    DiskId='1' Source='bin\usbdm-arm-gdbPipeServer.exe' />
-            <File Id='gdbComonFiles2'    DiskId='1' Source='bin\usbdm-arm-gdbPipeServer-debug.exe' />
-            <File Id='gdbComonFiles3'    DiskId='1' Source='bin\usbdm-cfv1-gdbPipeServer.exe' />
-            <File Id='gdbComonFiles4'    DiskId='1' Source='bin\usbdm-cfv1-gdbPipeServer-debug.exe' />
-            <File Id='gdbComonFiles5'    DiskId='1' Source='bin\usbdm-cfvx-gdbPipeServer.exe' />
-            <File Id='gdbComonFiles6'    DiskId='1' Source='bin\usbdm-cfvx-gdbPipeServer-debug.exe' />
-
-            <File Id='gdbComonFiles7'    DiskId='1' Source='bin\ARM_GDBServer.exe' />
-            <File Id='gdbComonFiles8'    DiskId='1' Source='bin\ARM_GDBServer-debug.exe' />
-            <File Id='gdbComonFiles9'    DiskId='1' Source='bin\CFV1_GDBServer.exe' />
-            <File Id='gdbComonFiles10'   DiskId='1' Source='bin\CFV1_GDBServer-debug.exe' />
-            <File Id='gdbComonFiles11'   DiskId='1' Source='bin\CFVx_GDBServer.exe' />
-            <File Id='gdbComonFiles12'   DiskId='1' Source='bin\CFVx_GDBServer-debug.exe' />
-	    
             <File Id='gdbComonFiles13'   DiskId='1' Source='bin\usbdm-make.exe' />
             <File Id='gdbComonFiles14'   DiskId='1' Source='bin\usbdm-rm.exe' />
             <File Id='gdbComonFiles15'   DiskId='1' Source='bin\libiconv2.dll' />
@@ -530,12 +581,13 @@
             <FeatureRef Id='F.CODESOURCERY_CF' />
             <FeatureRef Id='F.CODESOURCERY_ARM' />
          </Feature -->
-         <Feature Id='F.EclipseCDT_JUNO_Support'
+         <Feature Id='F.EclipseCDT_Support'
                Title='Eclipse CDT interfaces'
-               Description='Add USBDM CDT support to Eclipse:&#10;  - C/C++ New Project wizards&#10;  - GDB Debug interfaces&#10;This requires Codesourcery.'
+               Description='Add USBDM CDT support to Eclipse:&#10;  - C/C++ New Project wizards&#10;  - GDB Debug interfaces.'
                AllowAdvertise="no"
                Level='1'>
             <FeatureRef Id='F.ECLIPSE_CDT_JUNO' />
+            <FeatureRef Id='F.ECLIPSE_CDT_KEPLER' />
          </Feature>
          <FeatureRef Id='F.FREEMASTER_V1_3' />
          <FeatureRef Id='F.CFFLASHER_V3_1' />
@@ -608,6 +660,33 @@
                <ComponentRef Id='C.RS08Programmer' />
                <ComponentRef Id='C.CommonFiles' />
                <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
+            </Feature>
+         </Feature>
+         <Feature Id='F.GDBServers'
+               Title='GDB Servers'
+               Description='USBDM GDB Servers. &#10;&#10;Socket based server for use with GNU Project Debugger (GDB).'
+               AllowAdvertise="no"
+               Level='1'>
+            <Feature Id='F.ARMGdbServer'
+                  Title='ARM GDB Server'
+                  Description='ARM Socket based server for use with GNU Project Debugger (GDB).'
+                  AllowAdvertise="no"
+                  Level='1'>
+               <ComponentGroupRef Id='Cg.ARMGdbServer' />
+            </Feature>
+            <Feature Id='F.CFV1GdbServer'
+                  Title='Coldfire V1 GDB Server'
+                  Description='Coldfire V1 Socket based server for use with GNU Project Debugger (GDB).'
+                  AllowAdvertise="no"
+                  Level='1'>
+               <ComponentGroupRef Id='Cg.CFV1GdbServer' />
+            </Feature>
+            <Feature Id='F.CFVxGdbServer'
+                  Title='Coldfire V2,3,4 GDB Server'
+                  Description='Coldfire V2,3,4 Socket based server for use with GNU Project Debugger (GDB).'
+                  AllowAdvertise="no"
+                  Level='1'>
+               <ComponentGroupRef Id='Cg.CFVxGdbServer' />
             </Feature>
          </Feature>
          <Feature Id='F.USBDMBootloader'

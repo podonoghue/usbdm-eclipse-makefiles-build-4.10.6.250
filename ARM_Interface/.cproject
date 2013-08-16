@@ -37,6 +37,8 @@
 									<listOptionValue builtIn="false" value="__GNUWIN32__=1"/>
 									<listOptionValue builtIn="false" value="UNICODE=1"/>
 									<listOptionValue builtIn="false" value="GDB_SERVER=1"/>
+									<listOptionValue builtIn="false" value="FLASH_PROGRAMMER=1"/>
+									<listOptionValue builtIn="false" value="TARGET=ARM"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.89430030" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\Apps\wxWidgets-2.9.4\include&quot;"/>
@@ -50,6 +52,8 @@
 									<listOptionValue builtIn="false" value="__GNUWIN32__=1"/>
 									<listOptionValue builtIn="false" value="UNICODE=1"/>
 									<listOptionValue builtIn="false" value="GDB_SERVER=1"/>
+									<listOptionValue builtIn="false" value="FLASH_PROGRAMMER=1"/>
+									<listOptionValue builtIn="false" value="TARGET=ARM"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.1678318763" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\Apps\wxWidgets-2.9.4\include&quot;"/>
@@ -109,6 +113,8 @@
 									<listOptionValue builtIn="false" value="__GNUWIN32__=1"/>
 									<listOptionValue builtIn="false" value="UNICODE=1"/>
 									<listOptionValue builtIn="false" value="GDB_SERVER=1"/>
+									<listOptionValue builtIn="false" value="FLASH_PROGRAMMER=1"/>
+									<listOptionValue builtIn="false" value="TARGET=ARM"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.1575900527" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="C:/Apps/wxWidgets-2.9.4/include"/>
@@ -122,6 +128,8 @@
 									<listOptionValue builtIn="false" value="__GNUWIN32__=1"/>
 									<listOptionValue builtIn="false" value="UNICODE=1"/>
 									<listOptionValue builtIn="false" value="GDB_SERVER=1"/>
+									<listOptionValue builtIn="false" value="FLASH_PROGRAMMER=1"/>
+									<listOptionValue builtIn="false" value="TARGET=ARM"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.1748451440" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="C:/Apps/wxWidgets-2.9.4/include"/>

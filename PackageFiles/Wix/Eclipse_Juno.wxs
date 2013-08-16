@@ -18,9 +18,11 @@
                Directory structure
       =======================================================-->
       <DirectoryRef Id='TARGETDIR'>
-         <!-- Eclipse directory structure-->
-         <Directory Id="D.ECLIPSE_CDT_$(var.Eclipse_Ver_UC)" Name="Eclipse$(var.Eclipse_Ver_UC)">
-            <Directory Id="D.Eclipse$(var.Eclipse_Ver)Dropins" Name="dropins"/>
+         <Directory Id='APPS_$(var.Eclipse_Ver_UC)' Name="Apps">
+            <!-- Eclipse directory structure-->
+            <Directory Id="D.ECLIPSE_CDT_$(var.Eclipse_Ver_UC)" Name="Eclipse$(var.Eclipse_Ver_UC)">
+               <Directory Id="D.Eclipse$(var.Eclipse_Ver)Dropins" Name="dropins"/>
+            </Directory>
          </Directory>
       </DirectoryRef>
      
@@ -45,10 +47,12 @@
          <Condition Level='1'>
             <![CDATA[Installed]]>
          </Condition>
-         <ComponentGroupRef Id='Cg.Eclipse$(var.Eclipse_Ver)Plugin' />
+         <ComponentRef Id='C.ProgramMenuFolder' />
          <ComponentRef Id='C.ECLIPSE_CDT_$(var.Eclipse_Ver_UC).Marker' />
+         <ComponentGroupRef Id='Cg.Eclipse$(var.Eclipse_Ver)Plugin' />
          <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
          <ComponentGroupRef Id='Cg.StationeryInstall'/>
+         <ComponentGroupRef Id='Cg.GDBServers' />
       </Feature>
    </Fragment>
 </Wix>

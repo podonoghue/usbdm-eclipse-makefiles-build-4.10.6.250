@@ -332,8 +332,9 @@ extern "C"
 USBDM_ErrorCode TargetPanel::progressCallBack(USBDM_ErrorCode status, int percent, const char *message) {
    if (progressDialogue == NULL)
       return status;
-   if (percent >= 100)
+   if (percent >= 100) {
       percent = 99;
+   }
    if (message != NULL) {
       wxString msg(message, wxConvUTF8);
       if (percent < 0) {
@@ -362,8 +363,6 @@ USBDM_ErrorCode TargetPanel::progressCallBack(USBDM_ErrorCode status, int percen
 //!
 USBDM_ErrorCode TargetPanel::autoDetectTargetDevice(void) {
 uint32_t targetChipId;
-USBDM_ErrorCode flashRc;
-USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
 
    Logging::print("TargetPanel::autoDetectTargetDevice()\n");
 
@@ -371,24 +370,23 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
       flashprogrammer = new FlashProgrammer;
    }
    filterChipIds.clear();
-//   Logging::print("TargetPanel::autoDetectTargetDevice()#A\n");
    Logging::print("TargetPanel::autoDetectTargetDevice() =>\n");
    printBdmOptions(&bdmOptions);
 
-   USBDM_ErrorCode rc = shared->initBdm();
-   if (rc != BDM_RC_OK) {
-      return rc;
+   USBDM_ErrorCode flashRc = shared->initBdm();
+   if (flashRc != BDM_RC_OK) {
+      return flashRc;
    }
 //   Logging::print("TargetPanel::autoDetectTargetDevice()\n");
 #if TARGET == HCS12
    // HCS12 has problems if the target is secured and doesn't support SYNC
-   rc = hcs12Check();
+   flashRc = hcs12Check();
 //   Logging::print("TargetPanel::autoDetectTargetDevice()#D\n");
-   if (rc != BDM_RC_OK) {
+   if (flashRc != BDM_RC_OK) {
       wxMessageBox(
             _("Failed to connect to target\n\n"
               "Reason: ") +
-              wxString(USBDM_GetErrorString(rc), wxConvUTF8),
+              wxString(USBDM_GetErrorString(flashRc), wxConvUTF8),
             _("Programming Error"),
             wxOK|wxICON_ERROR|wxSTAY_ON_TOP|wxCENTER,
             this);
@@ -403,10 +401,10 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
    }
 //   Logging::print("TargetPanel::autoDetectTargetDevice()\n");
 #elif TARGET == ARM
-   rc = USBDM_TargetConnectWithRetry((RetryMode)(retryByReset|retryNotPartial));
-   if ((rc != BDM_RC_OK) && (rc != BDM_RC_SECURED)) {
+   flashRc = USBDM_TargetConnectWithRetry((RetryMode)(retryByReset|retryNotPartial));
+   if ((flashRc != BDM_RC_OK) && (flashRc != BDM_RC_SECURED)) {
       shared->closeBdm();
-      return rc;
+      return flashRc;
    }
 #else
    if (USBDM_TargetConnectWithRetry((RetryMode)(retryAlways|retryByReset)) != BDM_RC_OK) {
@@ -423,7 +421,7 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
       Logging::print("TargetPanel::autoDetectTargetDevice() - setDeviceData() failed\n");
       return flashRc;
    }
-   // CFV1 is a bit unusual in that you can't determine the device type of a secured device.
+   // CFV1/Kinetis is a bit unusual in that you can't determine the device type of a secured device.
    flashRc = flashprogrammer->checkTargetUnSecured();
    if (flashRc == PROGRAMMING_RC_ERROR_SECURED) {
       int getYesNo = wxMessageBox(_("It is not possible to determine the device type \n"
@@ -456,12 +454,27 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
       return flashRc;
    }
 #endif
-//   Logging::print("TargetPanel::autoDetectTargetDevice(): Here #1\n");
    // To reduce time keep a history of probed locations for re-use
+
+   double totalDeviceCount = deviceDatabase->getNumDevice();
+   int deviceCount = 0;
+   wxProgressDialog pd(_("Accessing Target"),
+                       _("Probing device..."),
+                       totalDeviceCount,
+                       this,
+                       wxPD_APP_MODAL|wxPD_ELAPSED_TIME|wxPD_CAN_ABORT
+                       );
+
+   USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
    vector<DeviceDataPtr>::const_iterator deviceIterator;
    for ( deviceIterator = deviceDatabase->begin();
          deviceIterator < deviceDatabase->end();
-         deviceIterator++ ) {
+         deviceIterator++, deviceCount++ ) {
+
+      if (!pd.Update(deviceCount)) {
+         break;
+      }
+
 //      Logging::print("TargetPanel::autoDetectTargetDevice(): Considering %s\n", (*deviceIterator)->getTargetName().c_str());
 //      Logging::print("TargetPanel::autoDetectTargetDevice() Checking device %s\n", (*deviceIterator)->getTargetName().c_str());
 //      Logging::print("TargetPanel::autoDetectTargetDevice() Checking device Chip ID=0x%X, IDAddress=0x%X\n",
@@ -475,53 +488,57 @@ USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
       chipIdEntry = filterChipIds.find((*deviceIterator)->getSDIDAddress());
       if (chipIdEntry == filterChipIds.end()) {
          // Add new entry - if successfully probed
-         flashRc = flashprogrammer->setDeviceData(**deviceIterator);
-         if (flashRc == PROGRAMMING_RC_OK) {
+         USBDM_ErrorCode probeRc = flashprogrammer->setDeviceData(**deviceIterator);
+         if (probeRc == PROGRAMMING_RC_OK) {
 #if (TARGET == ARM)
-            flashRc = flashprogrammer->readTargetChipId(&targetChipId, true);
+            probeRc = flashprogrammer->readTargetChipId(&targetChipId, true);
 #else
-            flashRc = flashprogrammer->readTargetChipId(&targetChipId, false);
+            probeRc = flashprogrammer->readTargetChipId(&targetChipId, false);
 #endif
          }
-         if (flashRc != PROGRAMMING_RC_OK) {
+         if (probeRc != PROGRAMMING_RC_OK) {
             // Ignore errors as may be accessing illegal memory
-            lastRc = flashRc;
+            lastRc = probeRc;
             Logging::print("TargetPanel::autoDetectTargetDevice() - Failed to read chip ID from target, Reason: %s\n",
-                   USBDM_GetErrorString(flashRc));
-            continue;
+                   USBDM_GetErrorString(probeRc));
+            // Add dummy entry to prevent re-probe
+            filterChipIds.insert ( pair<uint32_t,uint32_t>((*deviceIterator)->getSDIDAddress(), (uint32_t)-1) );
          }
-         filterChipIds.insert ( pair<uint32_t,uint32_t>((*deviceIterator)->getSDIDAddress(), targetChipId) );
+         else {
+            filterChipIds.insert ( pair<uint32_t,uint32_t>((*deviceIterator)->getSDIDAddress(), targetChipId) );
+         }
 //         Logging::print("TargetPanel::autoDetectTargetDevice() - Added chip ID entry (A=0x%6.6X, V=0x%8.8X)\n",
 //               (*deviceIterator)->getSDIDAddress(),
 //               targetChipId);
       }
    }
+   if (deviceCount != totalDeviceCount) {
+      // Just in case - to close dialogue
+      pd.Update(totalDeviceCount);
+   }
 //   Logging::print("TargetPanel::autoDetectTargetDevice(): Here #2\n");
    shared->closeBdm();
 
+   // Delete dummy and unlikely entries from map (0 and 0xFFFFFFFF)
+   for (map<uint32_t,uint32_t>::iterator it = filterChipIds.begin(); it != filterChipIds.end(); ++it) {
+      if ((it->second == (uint32_t)-1) || (it->second == 0)) {
+         filterChipIds.erase(it);
+      }
+   }
    if (filterChipIds.empty()) {
       Logging::print("TargetPanel::autoDetectTargetDevice() - Failed to read any chip IDs from target\n");
-      if (lastRc != PROGRAMMING_RC_OK) {
-       wxMessageBox(
-             _("Failed to read any ChipIds from target\n"
-               "Reason: ") +
-               wxString(USBDM_GetErrorString(lastRc), wxConvUTF8),
-                 _("Error"),
-                 wxOK|wxSTAY_ON_TOP|wxCENTER,
-                 this);
-      }
-      else {
-       wxMessageBox(
-             _("Failed to read any Chip IDs from target"),
-                  _("Error"),
-                  wxOK|wxSTAY_ON_TOP|wxCENTER,
-                  this);
+      if (lastRc == PROGRAMMING_RC_OK) {
+         // No device IDs found but no error?
+          wxMessageBox(_("Failed to read any Chip IDs from target"),
+                       _("Error"),
+                       wxOK|wxSTAY_ON_TOP|wxCENTER,
+                       this);
       }
    }
    else {
       Logging::print("TargetPanel::autoDetectTargetDevice() - Found %d chips\n", filterChipIds.size());
    }
-   return PROGRAMMING_RC_OK;
+   return flashRc;
 }
 
 //========================================================================================================================
@@ -536,7 +553,7 @@ TargetPanel::TargetPanel( wxWindow* parent, SharedPtr shared, HardwareCapabiliti
       flashprogrammer(NULL),
       beep(0)   {
    Logging log("TargetPanel::TargetPanel");
-   logWindow = new wxLogWindow(this, "Log Window", false, false);
+   logWindow = new wxLogWindow(this, _("Log Window"), false, false);
    logWindow->SetTimestamp(wxEmptyString);
    Init();
    Create(parent);
@@ -544,7 +561,7 @@ TargetPanel::TargetPanel( wxWindow* parent, SharedPtr shared, HardwareCapabiliti
 
 bool TargetPanel::Create(wxWindow* parent) {
    Logging log("TargetPanel::Create");
-   wxLogMessage("TargetPanel::Create");
+   wxLogMessage(_("TargetPanel::Create"));
 
    if (!wxPanel::Create(parent) || !CreateControls()) {
       return false;
@@ -1137,14 +1154,14 @@ void TargetPanel::OnDeviceTypeChoiceSelected( wxCommandEvent& event ) {
 }
 
 #if defined(FLASH_PROGRAMMER) || defined(GDB_SERVER)
-static int displayDialogue(const char *message, const char *caption, int style, USBDM_ErrorCode rc) {
-   return wxMessageBox(
-         wxString(message, wxConvUTF8), /* message */
-         wxString(caption, wxConvUTF8), /* caption */
-         style,                         /* style   */
-         NULL                           /* parent  */
-         );
-}
+//static int displayDialogue(const char *message, const char *caption, int style, USBDM_ErrorCode rc) {
+//   return wxMessageBox(
+//         wxString(message, wxConvUTF8), /* message */
+//         wxString(caption, wxConvUTF8), /* caption */
+//         style,                         /* style   */
+//         NULL                           /* parent  */
+//         );
+//}
 
 /*
  * wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_FILTER_BY_CHIP_ID_CHECKBOX
@@ -1166,8 +1183,14 @@ void TargetPanel::OnFilterByChipIdCheckboxClick( wxCommandEvent& event ) {
 void TargetPanel::OnDetectChipButtonClick( wxCommandEvent& event ) {
 
    USBDM_ErrorCode rc = autoDetectTargetDevice();
-   if (rc != PROGRAMMING_RC_OK) {
-      displayDialogue("Failed to detect devices", "Detection failure", wxOK|wxICON_INFORMATION, rc);
+   if (rc != BDM_RC_OK) {
+      wxMessageBox(
+            _("Failed to detect chips\n\n"
+              "Reason: ") +
+              wxString(USBDM_GetErrorString(rc), wxConvUTF8),
+            _("Detection error"),
+            wxOK|wxICON_ERROR|wxSTAY_ON_TOP|wxCENTER,
+            this);
    }
    // Default to filtered display if valid CHIP_ID
    doFilterByChipId = !filterChipIds.empty();
@@ -1300,9 +1323,6 @@ USBDM_ErrorCode TargetPanel::programFlash(bool loadAndGo) {
    Logging log("TargetPanel::programFlash");
    USBDM_ErrorCode rc = PROGRAMMING_RC_OK;
 
-   if (!shared->updateState()) {
-      return BDM_RC_ILLEGAL_PARAMS;
-   }
    wxProgressDialog pd(_("Accessing Target"),
                        _("Initialising..."),
                        100,

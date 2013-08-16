@@ -8,14 +8,16 @@
 <!ENTITY Kinetis-FTFE-flash-program        SYSTEM "ARM/Kinetis-FTFE-flash-program-gcc.hex">
 <!ENTITY Kinetis-default-flashScripts      SYSTEM "ARM/Kinetis-default-flash-scripts.tcl">
 <!ENTITY Kinetis-KLxx-flashScripts         SYSTEM "ARM/Kinetis-KLxx-flash-scripts.tcl">
-<!ENTITY Old-Kinetis-Devices               SYSTEM "ARM/Old-Kinetis-Devices.xml">
-<!ENTITY STM-Devices                       SYSTEM "ARM/STM-Devices.xml">
+<!ENTITY Old-Kinetis-Devices               SYSTEM "arm_old_kinetis_devices.xml">
+<!ENTITY STM-Devices                       SYSTEM "arm_stm_devices.xml">
+<!ENTITY NXP-Devices                       SYSTEM "arm_nxp_devices.xml">
 <!ENTITY Custom-Devices                    SYSTEM "Custom/custom-arm.xml">
 <!ENTITY CortexM-base-register-description SYSTEM "ARM/CortexM-base-register-description.xml">
 <!ENTITY CortexM-sfpu-register-description SYSTEM "ARM/CortexM-sfpu-register-description.xml">
 ]>
 <!-- 
 ToDo - review flash block sizes for MK20-MK70
+      V4.10.6  - Added MKL02Z32M4
       V4.10.6  - Added GDB register descriptions 
       V4.10.5d - Changed GNU C information
       V4.10.5  - Added GNU C information
@@ -298,7 +300,7 @@ ToDo - review flash block sizes for MK20-MK70
          <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="256K" />
       </memory>
-      <memory id="FTFL_PFlash1_256K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+      <memory id="FTFL_PFlash1_256K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4">
          <memoryRange start="0x00040000" size="256K" />
       </memory>
       <memory id="FTFL_PFlash0_SEC_512K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
@@ -345,13 +347,13 @@ ToDo - review flash block sizes for MK20-MK70
          <securityEntryRef ref="Kinetis-default-security" />
          <memoryRange start="0x00000000" size="1M" />
       </memory>
-      <memory id="FTFE_PFlash1_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8" securityAddress="0x0400">
+      <memory id="FTFE_PFlash1_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8">
          <memoryRange start="0x00040000" size="256K" />
       </memory>
-      <memory id="FTFE_PFlash2_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8" securityAddress="0x0400">
+      <memory id="FTFE_PFlash2_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8">
          <memoryRange start="0x00080000" size="256K" />
       </memory>
-      <memory id="FTFE_PFlash3_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8" securityAddress="0x0400">
+      <memory id="FTFE_PFlash3_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8">
          <memoryRange start="0x000C0000" size="256K" />
       </memory>
       <!--  flexNVM - FTFE 4K sector size -->
@@ -381,32 +383,69 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
          <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
       </memory>         
-      <!-- GNU Build options MKL devices -->
-      <gnuInfoList id="gnuSettings.mkl">
+      <!-- GNU Build options Cortex M0 (e.g. MKL) devices -->
+      <gnuInfoList id="gnuSettings.cortex.m0">
          <gnuInfo id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"
             value="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM0" 
             command="-mcpu=cortex-m0" name="Cortex M0"/>
          <gnuInfo id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb" value="true" />
       </gnuInfoList>
-      <!-- GNU Build options MK devices -->
-      <gnuInfoList id="gnuSettings.mk">
+      <!-- GNU Build options Cortex M3 (e.g. lpc, stm) devices -->
+      <gnuInfoList id="gnuSettings.cortex.m3">
+         <gnuInfo id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"
+            value="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM3" 
+            command="-mcpu=cortex-m3" name="Cortex M3"/>
+         <gnuInfo id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb" value="true" />
+      </gnuInfoList>
+      <!-- GNU Build options Cortex M4 (e.g. MK) devices -->
+      <gnuInfoList id="gnuSettings.cortex.m4">
          <gnuInfo id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"   
             value="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM4" 
             command="-mcpu=cortex-m4" name="Cortex M4"/>
          <gnuInfo id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb" value="true" />
       </gnuInfoList>
-		<registerDescription id="CortexM0-register-description"  count="20" >
-			&CortexM-base-register-description;
-		</registerDescription>
-		<registerDescription id="CortexM3-register-description"  count="20" >
-			&CortexM-base-register-description;
-		</registerDescription>
-		<registerDescription id="CortexM4-register-description"  count="20" >
-			&CortexM-base-register-description;
-		</registerDescription>
-		<registerDescription id="CortexM4F-register-description" count="53" >
-			&CortexM-sfpu-register-description;
-		</registerDescription>
+      <!--  Register sets -->
+      <registerDescription id="CortexM0-register-description"  count="20" >
+         &CortexM-base-register-description;
+      </registerDescription>
+      <registerDescription id="CortexM3-register-description"  count="20" >
+         &CortexM-base-register-description;
+      </registerDescription>
+      <registerDescription id="CortexM3F-register-description"  count="53" >
+         &CortexM-sfpu-register-description;
+      </registerDescription>
+      <registerDescription id="CortexM4-register-description"  count="20" >
+         &CortexM-base-register-description;
+      </registerDescription>
+      <registerDescription id="CortexM4F-register-description" count="53" >
+         &CortexM-sfpu-register-description;
+      </registerDescription>
+      <fileList id="Kinetis-MK-file-list">
+         <file source="Startup_Code/sysinit-mk.c"                 target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-mk.c"                 target="Startup_Code/vectors.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-mk.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
+      </fileList>
+      <fileList id="Kinetis-MKL-file-list">
+         <file source="Startup_Code/sysinit-mkl.c"                target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-mkl.c"                target="Startup_Code/vectors.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-mk.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
+      </fileList>
+      <fileList id="NXP-LPC-file-list">
+         <file source="Startup_Code/sysinit-lpc.c"                target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-lpc.c"                target="Startup_Code/vectors.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-lpc.ld"    target="Project_Settings/ARMLtd_GCC-rom.ld" />
+      </fileList>
+      <fileList id="Kinetis-MK-F-file-list">
+         <file source="Startup_Code/sysinit-mk.c"                 target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-mk.c"                 target="Startup_Code/vectors.c" />
+         <file source="Startup_Code/fp_init.c"                    target="Startup_Code/fp_init.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-mk.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
+      </fileList>
+      <fileList id="STM32-file-list">
+         <file source="Startup_Code/sysinit-stm32.c"              target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-stm32.c"              target="Startup_Code/vectors.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-stm32.ld"  target="Project_Settings/ARMLtd_GCC-rom.ld" />
+      </fileList>
    </sharedInformation>
    <deviceList>
    <!-- Default -->
@@ -452,9 +491,23 @@ ToDo - review flash block sizes for MK20-MK70
          <tclScriptRef ref="Kinetis-default-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
          <note>Default ARM Device</note>
       </device>
 	  
+<!-- KL02 -->
+      <device name="MKL02Z32M4" family="CortexM0" subfamily="KL02">
+         <memoryRef ref="kinetisL4K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
+         <memoryRef ref="kinetisIO_KL" />
+         <sdidMask value="0xFFFF0000" />
+         <sdid value="0x02130602" />
+         <tclScriptRef ref="Kinetis-KLxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
+      </device>
 <!-- KL04 -->
       <device name="MKL04Z8M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL1K_Ram" />
@@ -464,8 +517,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x04110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL04Z16M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL2K_Ram" />
@@ -475,8 +529,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x04120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL04Z32M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL4K_Ram" />
@@ -486,8 +541,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x04130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
 <!-- KL05 -->
       <device name="MKL05Z8M4" family="CortexM0" subfamily="KL05">
@@ -498,8 +554,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x05110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL05Z16M4" family="CortexM0" subfamily="KL05">
          <memoryRef ref="kinetisL2K_Ram" />
@@ -509,8 +566,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x05120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL05Z32M4" family="CortexM0" subfamily="KL05">
          <memoryRef ref="kinetisL4K_Ram" />
@@ -520,8 +578,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x05130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
 <!-- KL14 -->
       <device name="MKL14Z32M4" family="CortexM0" subfamily="KL14">
@@ -532,8 +591,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x14130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL14Z64M4" family="CortexM0" subfamily="KL14">
          <memoryRef ref="kinetisL8K_Ram" />
@@ -543,8 +603,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x14140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
 <!-- KL15 -->
       <device name="MKL15Z32M4" family="CortexM0" subfamily="KL15">
@@ -555,8 +616,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x15130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL15Z64M4" family="CortexM0" subfamily="KL15">
          <memoryRef ref="kinetisL8K_Ram" />
@@ -566,8 +628,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x15140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL15Z128M4" family="CortexM0" subfamily="KL15">
          <memoryRef ref="kinetisL16K_Ram" />
@@ -577,8 +640,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x15150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
 <!-- KL24 -->
       <device name="MKL24Z32M4" family="CortexM0" subfamily="KL24">
@@ -589,8 +653,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x24130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL24Z64M4" family="CortexM0" subfamily="KL24">
          <memoryRef ref="kinetisL8K_Ram" />
@@ -600,8 +665,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x24140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
 <!-- KL25 -->
       <device name="MKL25Z32M4" family="CortexM0" subfamily="KL25">
@@ -612,8 +678,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x25130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL25Z64M4" family="CortexM0" subfamily="KL25">
          <memoryRef ref="kinetisL8K_Ram" />
@@ -623,8 +690,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x25140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
       <device name="MKL25Z128M4" family="CortexM0" subfamily="KL25">
          <memoryRef ref="kinetisL16K_Ram" />
@@ -634,8 +702,9 @@ ToDo - review flash block sizes for MK20-MK70
          <sdid value="0x25150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mkl" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
          <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
       </device>
 <!-- MK10-M5-->
       <device name="MK10DN32M5" family="CortexM4" subfamily="K10">
@@ -643,24 +712,27 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DN64M5" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DN128M5" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX32M5" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis8K_Ram" />
@@ -668,8 +740,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX64M5" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
@@ -677,8 +750,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX128M5" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis16K_Ram" />
@@ -686,8 +760,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK10-M7-->
       <device name="MK10DX64M7" family="CortexM4" subfamily="K10">
@@ -696,8 +771,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX128M7" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis32K_Ram" />
@@ -705,8 +781,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX256M7" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis64K_Ram" />
@@ -714,8 +791,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK10-M10-->
       <device name="MK10DN512M10" family="CortexM4" subfamily="K10">
@@ -724,8 +802,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash1_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DN512ZM10" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis128K_Ram" />
@@ -733,8 +812,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash1_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX128M10" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis32K_Ram" />
@@ -742,8 +822,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX128ZM10" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis32K_Ram" />
@@ -751,8 +832,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_128K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX256M10" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis64K_Ram" />
@@ -760,8 +842,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10DX256ZM10" family="CortexM4" subfamily="K10">
          <memoryRef ref="kinetis64K_Ram" />
@@ -770,8 +853,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK10-M12-->
       <device name="MK10FX512M12" family="CortexM4F" subfamily="K10">
@@ -782,8 +866,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x318A" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK10FN1M0M12" family="CortexM4F" subfamily="K10">
          <memoryRef ref="kinetis128K_Ram" />
@@ -794,8 +879,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x318A" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-F-file-list" />
       </device>
 <!-- MK20 -->
       <device name="MK20DN32" family="CortexM4" subfamily="K20">
@@ -803,8 +889,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DX32" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis8K_Ram" />
@@ -812,16 +899,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DN64" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DX64" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
@@ -829,16 +918,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DN128" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DX128M5" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis16K_Ram" />
@@ -846,8 +937,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00001015" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DX128M7" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis32K_Ram" />
@@ -855,8 +947,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DX128M10" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis32K_Ram" />
@@ -864,8 +957,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DX256M7" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis64K_Ram" />
@@ -873,8 +967,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DX256M10" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis64K_Ram" />
@@ -882,16 +977,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20DN512" family="CortexM4" subfamily="K20">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20FX512" family="CortexM4F" subfamily="K20">
          <memoryRef ref="kinetis128K_Ram" />
@@ -900,8 +997,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK20FN1M0" family="CortexM4F" subfamily="K20">
          <memoryRef ref="kinetis128K_Ram" />
@@ -912,8 +1010,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-F-file-list" />
       </device>
 <!-- MK22 -->
       <device name="MK22DX128M5" family="CortexM4" subfamily="K22">
@@ -922,8 +1021,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK22DX256M5" family="CortexM4" subfamily="K22">
          <memoryRef ref="kinetis32K_Ram" />
@@ -931,16 +1031,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK22DN512M5" family="CortexM4" subfamily="K22">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00001215" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK30 -->
       <device name="MK30DX64" family="CortexM4" subfamily="K30">
@@ -949,8 +1051,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK30DX128" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
@@ -958,8 +1061,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK30DX128Z" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
@@ -967,8 +1071,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK30DX256" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis32K_Ram" />
@@ -976,8 +1081,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK30DX256Z" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis64K_Ram" />
@@ -985,16 +1091,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK30DN512Z" family="CortexM4" subfamily="K30">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK40 -->
       <device name="MK40DX64" family="CortexM4" subfamily="K40">
@@ -1003,8 +1111,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK40DX128" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis32K_Ram" />
@@ -1012,8 +1121,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK40DX128Z" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis32K_Ram" />
@@ -1021,8 +1131,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK40DX256" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis64K_Ram" />
@@ -1030,8 +1141,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK40DX256Z" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis64K_Ram" />
@@ -1039,16 +1151,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK40DN512Z" family="CortexM4" subfamily="K40">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK50 -->
       <device name="MK50DX128" family="CortexM4" subfamily="K50">
@@ -1057,8 +1171,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK50DX256" family="CortexM4" subfamily="K50">
          <memoryRef ref="kinetis64K_Ram" />
@@ -1066,8 +1181,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK50DX256Z" family="CortexM4" subfamily="K50">
          <memoryRef ref="kinetis64K_Ram" />
@@ -1075,16 +1191,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK50DN512Z" family="CortexM4" subfamily="K50">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK51 -->
       <device name="MK51DX128" family="CortexM4" subfamily="K51">
@@ -1093,16 +1211,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK51DN256Z" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK51DX256" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis64K_Ram" />
@@ -1110,8 +1230,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK51DX256Z" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis64K_Ram" />
@@ -1119,16 +1240,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK51DN512Z" family="CortexM4" subfamily="K51">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK52 -->
       <device name="MK52DN512Z" family="CortexM4" subfamily="K53">
@@ -1136,8 +1259,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK53 -->
       <device name="MK53DX256Z" family="CortexM4" subfamily="K53">
@@ -1146,16 +1270,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK53DN512Z" family="CortexM4" subfamily="K53">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
 <!-- MK60 -->
       <device name="MK60DN256Z" family="CortexM4" subfamily="K60">
@@ -1163,8 +1289,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK60DX256Z" family="CortexM4" subfamily="K60">
          <memoryRef ref="kinetis64K_Ram" />
@@ -1172,16 +1299,18 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK60DN512Z" family="CortexM4" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK60FX512" family="CortexM4F" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
@@ -1190,8 +1319,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK60FN1M0" family="CortexM4F" subfamily="K60">
          <memoryRef ref="kinetis128K_Ram" />
@@ -1202,8 +1332,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x000031CA" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-F-file-list" />
       </device>
 <!-- MK61 -->
       <device name="MK61FX512" family="CortexM4F" subfamily="K61">
@@ -1213,8 +1344,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK61FN1M0" family="CortexM4F" subfamily="K61">
          <memoryRef ref="kinetis128K_Ram" />
@@ -1225,8 +1357,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-F-file-list" />
       </device>
 <!-- MK70 -->
       <device name="MK70FX512" family="CortexM4F" subfamily="K70">
@@ -1236,8 +1369,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-file-list" />
       </device>
       <device name="MK70FN1M0" family="CortexM4F" subfamily="K70">
          <memoryRef ref="kinetis128K_Ram" />
@@ -1248,8 +1382,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <gnuInfoListRef  ref="gnuSettings.mk" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m4" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <fileListRef ref="Kinetis-MK-F-file-list" />
       </device>
 <!-- Aliases -->     
       <device name="PK20N512"      alias="MK20DN512"/>
@@ -1269,18 +1404,18 @@ ToDo - review flash block sizes for MK20-MK70
       </device>
       <device name="PK60X256"      alias="MK60DX256Z"/>
 
-		<!-- K10-M5  -->
+      <!-- K10-M5  -->
       <device name="K10DN32"       alias="MK10DN32M5"       hidden="true"/>
       <device name="K10DN64"       alias="MK10DN64M5"       hidden="true"/>
       <device name="K10DN128"      alias="MK10DN128M5"      hidden="true"/>
       <device name="K10DX32"       alias="MK10DX32M5"       hidden="true"/>
       <device name="K10DX64"       alias="MK10DX64M5"       hidden="true"/>
       <device name="K10DX128"      alias="MK10DX128M5"      hidden="true"/>
-		<!-- K10-M5  -->
+      <!-- K10-M5  -->
       <device name="K10DX64M7"     alias="MK10DX64M7"       hidden="true"/>
       <device name="K10DX128M7"    alias="MK10DX128M7"      hidden="true"/>
       <device name="K10DX256M7"    alias="MK10DX256M7"      hidden="true"/>
-		<!-- K10-M10  -->
+      <!-- K10-M10  -->
       <device name="K10DN512M10"   alias="MK10DN512M10"     hidden="true"/>
       <device name="K10DN512Z"     alias="MK10DN512ZM10"    hidden="true"/>
       <device name="PK10N512"      alias="MK10DN512ZM10" />
@@ -1290,10 +1425,10 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="K10DX256M10"   alias="MK10DX256M10"     hidden="true"/>
       <device name="K10DX256Z"     alias="MK10DX256ZM10"    hidden="true"/>
       <device name="PK10X256"      alias="MK10DX256ZM10" />
-		<!-- K10-M12  -->
+      <!-- K10-M12  -->
       <device name="K10FX512"      alias="MK10FX512M12"     hidden="true"/>
       <device name="K10FN1M0"      alias="MK10FN1M0M12"     hidden="true"/>
-		<!-- K20  -->
+      <!-- K20  -->
       <device name="K20DX128M7"    alias="MK20DX128M7"    hidden="true"/>
       <device name="K20DN128"      alias="MK20DN128"      hidden="true"/>
       <device name="K20DN32"       alias="MK20DN32"       hidden="true"/>
@@ -1362,6 +1497,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="K70FN1M0"      alias="MK70FN1M0"      hidden="true"/>
       <device name="K70FX512"      alias="MK70FX512"      hidden="true"/>
 
+      <device name="KL02Z32M4"     alias="MKL02Z32M4"     hidden="true"/>
       <device name="KL04Z8M4"      alias="MKL04Z8M4"      hidden="true"/>
       <device name="KL04Z16M4"     alias="MKL04Z16M4"     hidden="true"/>
       <device name="KL04Z32M4"     alias="MKL04Z32M4"     hidden="true"/>
@@ -1381,5 +1517,6 @@ ToDo - review flash block sizes for MK20-MK70
       &Custom-Devices;
 &Old-Kinetis-Devices;
 &STM-Devices;
+&NXP-Devices;
    </deviceList>
 </root>

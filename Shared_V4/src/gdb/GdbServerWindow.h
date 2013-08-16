@@ -1,8 +1,15 @@
-/*
+/*!
  * GdbServerWindow.h
  *
  *  Created on: 30/06/2013
  *      Author: Peter
+ \verbatim
+Change History
+-==================================================================================
+| 30 Jun 2013 | Created                                                       - pgo
++==================================================================================
+\endverbatim
+
  */
 
 #ifndef GDBSERVERWINDOW_H_
@@ -48,6 +55,8 @@ public:
    void OnCloseWindow(wxCloseEvent& event);
 
    void OnClearLog(wxCommandEvent& event);
+   void OnDisableLog(wxCommandEvent& event);
+   void OnModerateLog(wxCommandEvent& event);
    void OnVerboseLog(wxCommandEvent& event);
    void OnShowLogWindow(wxCommandEvent& event);
 
@@ -72,11 +81,15 @@ public:
    void UpdateStatusBar();
    void pollTarget();
 
-   bool getVeboseLog() {
-      return verboseLog;
+   GdbMessageLevel getLoggingLevel() {
+      return loggingLevel;
    }
 
-   void reportError(const char *msg, USBDM_ErrorCode rc = BDM_RC_OK);
+    void setLoggingLevel(GdbMessageLevel level) {
+      loggingLevel = level;
+   }
+
+   USBDM_ErrorCode reportError(const char *msg, GdbMessageLevel level, USBDM_ErrorCode rc);
 
 private:
    static wxString getAddr(IPaddress addr);
@@ -88,8 +101,6 @@ private:
    wxPanel                 *mainPanel;
    wxTextCtrl              *statusTextControl;
    wxMenuBar               *menuBar;
-//   wxButton                *resetTargetButton;
-//   wxButton                *setTargetSpeedButton;
 
    wxString                 serverAddr;         // Current server address as string
    wxString                 clientAddr;         // Current client address as string
@@ -99,7 +110,7 @@ private:
    SharedPtr                shared;
    AppSettings             &appSettings;
 
-   bool                     verboseLog;
+   GdbMessageLevel          loggingLevel;
    GdbTargetStatus          targetStatus;
 
    typedef enum {idle, listening, connected, abort} ServerState;
@@ -110,6 +121,7 @@ private:
    wxTimer                 *statusTimer;
 
    bool                     deferredFail;
+   bool                     deferredOpen;
 
    static const int pollIntervalFast = 100;      // ms
    static const int pollIntervalSlow = 1000;     // ms

@@ -1,3 +1,15 @@
+/*
+ *
+
+\verbatim
+Change History
+-==================================================================================
+| 16 Jul 2013 | Added creation of a parent window                             - pgo
+|        ???? | Created                                                       - pgo
++==================================================================================
+\endverbatim
+
+*/
 #include <wx/wx.h>
 #include <wx/window.h>
 #include <wx/stdpaths.h>
@@ -24,7 +36,7 @@
 #include "wxPlugin.h"
 #include "myDialog.h"
 
-static wxWindow *topLevelWindow = NULL;
+static wxTopLevelWindow *topLevelWindow = NULL;
 
 DLL_LOCAL wxApp& getUsbdmWxApp();
 
@@ -70,6 +82,7 @@ static void runGuiEventLoop(void) {
 WXPLUGIN_API
 int displayDialogue(const char *message, const char *caption, long style) {
    getUsbdmWxApp();
+
 //   fprintf(logFile, "displayDialogue() before\n");
 //   fflush(logFile);
 //   MyDialog dialog(topLevelWindow, wxID_ANY, caption, wxDefaultPosition, wxDefaultSize, style);
@@ -77,12 +90,38 @@ int displayDialogue(const char *message, const char *caption, long style) {
 //   if (topLevelWindow != NULL) {
 //      topLevelWindow->Enable(false);
 //   }
+#if 0
    int rc =  wxMessageBox(
                wxString(message, wxConvUTF8), // message
                wxString(caption, wxConvUTF8), // caption
                style|wxCENTRE,                // style
                topLevelWindow                 // parent
                );
+#else
+   wxTopLevelWindow *tlw;
+   tlw = topLevelWindow;
+   if (tlw == NULL) {
+      // Make a minimal window to use
+      tlw = new wxFrame(NULL, wxID_ANY, _("Dummy window"), wxDefaultPosition, wxSize(10,10));
+   }
+   getUsbdmWxApp().SetTopWindow(tlw);
+   tlw->Centre(wxBOTH);
+   tlw->Show(true);              // show the window
+   ((wxFrame*)tlw)->Iconize(false);          // restore the window if minimized
+   tlw->SetFocus();              // focus on my window
+   tlw->Raise();                 // bring window to front
+   wxMessageDialog dialogue(tlw,
+                     wxString(message, wxConvUTF8), // message
+                     wxString(caption, wxConvUTF8), // caption
+                     style|wxCENTRE                 // style
+                     );
+   int rc = dialogue.ShowModal();         // show the window
+   if (tlw != topLevelWindow) {
+      // If we made the window, destroy it
+      tlw->Destroy();
+   }
+   tlw = NULL;
+#endif
 //   fprintf(logFile, "displayDialogue() after\n");
 //   fflush(logFile);
 //   if (topLevelWindow != NULL) {
@@ -159,7 +198,7 @@ int setDefaultWindowParent(WindowHandle *windowHandle) {
 //   fflush(logFile);
 #ifdef WIN32
    wxApp& wxApplication = getUsbdmWxApp();
-   topLevelWindow = new wxWindow();
+   topLevelWindow = new wxTopLevelWindow();
    topLevelWindow->SetHWND((WXHWND)windowHandle);
    topLevelWindow->AdoptAttributesFromHWND();
    wxApplication.SetTopWindow(topLevelWindow);

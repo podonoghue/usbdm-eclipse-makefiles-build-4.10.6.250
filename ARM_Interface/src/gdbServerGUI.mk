@@ -26,7 +26,7 @@ SRC += AdvancedPanel.cpp
 SRC += InterfacePanel.cpp
 SRC += Shared.cpp
 SRC += TargetPanel.cpp
-SRC += UsbdmDialogue.cpp
+SRC += USBDMDialogue.cpp
 
 # Shared files $(SHARED_SRC)/gdb
 VPATH := $(SHARED_SRC)/gdb $(VPATH)

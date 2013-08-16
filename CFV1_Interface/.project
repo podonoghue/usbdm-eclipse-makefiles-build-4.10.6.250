@@ -3,6 +3,7 @@
 	<name>CFV1_Interface</name>
 	<comment></comment>
 	<projects>
+		<project>Shared_V4</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
