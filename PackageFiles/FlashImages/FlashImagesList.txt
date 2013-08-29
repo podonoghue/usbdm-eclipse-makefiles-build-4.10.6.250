@@ -26,3 +26,4 @@
     25, -                                                  // "USBDM_SWD (FRDM-KL25)"    // 25
     26, -                                                  // "USBDM - (MKL25Z)"         // 26
     27, -                                                  // "USBDM - (MK20DX5)"        // 27
+    28, FlashImages/Tower/USBDM_TWR_HCS12_V4.sx            // "USBDM_TWR_HCS12"          // 28

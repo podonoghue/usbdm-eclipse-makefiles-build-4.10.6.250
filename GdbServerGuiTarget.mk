@@ -48,6 +48,7 @@ LIBS += $(LIB_SOCKETS)
 ifeq ($(UNAME_S),Windows)
 LIBS += -lwxbase294u_net_gcc_custom
 endif
+LIBS += -l$(LIB_WX_PLUGIN) #Needed for 64-bit, Why?
 
 # Each module will add to this
 SRC :=

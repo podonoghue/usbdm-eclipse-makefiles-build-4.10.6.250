@@ -6,7 +6,9 @@
 <!ENTITY Kinetis-FTFL-flash-program        SYSTEM "ARM/Kinetis-FTFL-flash-program-gcc.hex">
 <!ENTITY Kinetis-FTFA-flash-program        SYSTEM "ARM/Kinetis-FTFA-flash-program-gcc.hex">
 <!ENTITY Kinetis-FTFE-flash-program        SYSTEM "ARM/Kinetis-FTFE-flash-program-gcc.hex">
-<!ENTITY Kinetis-default-flashScripts      SYSTEM "ARM/Kinetis-default-flash-scripts.tcl">
+<!ENTITY Kinetis-FTMRH-flash-program       SYSTEM "ARM/Kinetis-FTMRH-flash-program-gcc.hex">
+<!ENTITY Kinetis-Kxx-flashScripts          SYSTEM "ARM/Kinetis-Kxx-flash-scripts.tcl">
+<!ENTITY Kinetis-KExx-flashScripts         SYSTEM "ARM/Kinetis-KExx-flash-scripts.tcl">
 <!ENTITY Kinetis-KLxx-flashScripts         SYSTEM "ARM/Kinetis-KLxx-flash-scripts.tcl">
 <!ENTITY Old-Kinetis-Devices               SYSTEM "arm_old_kinetis_devices.xml">
 <!ENTITY STM-Devices                       SYSTEM "arm_stm_devices.xml">
@@ -17,6 +19,8 @@
 ]>
 <!-- 
 ToDo - review flash block sizes for MK20-MK70
+      V4.10.7  - Added MKL46 devices
+      V4.10.6  - Added MKE devices & related
       V4.10.6  - Added MKL02Z32M4
       V4.10.6  - Added GDB register descriptions 
       V4.10.5d - Changed GNU C information
@@ -33,12 +37,18 @@ ToDo - review flash block sizes for MK20-MK70
       <tclScript id="STM32F100xx-default-Scripts">
       &STM32F100xx-default-flashScripts;
       </tclScript>
-      <tclScript id="Kinetis-default-Scripts">
-      &Kinetis-default-flashScripts;
+      <tclScript id="Kinetis-Kxx-Scripts">
+      &Kinetis-Kxx-flashScripts;
+      </tclScript>
+      <tclScript id="Kinetis-KExx-Scripts">
+      &Kinetis-KExx-flashScripts;
       </tclScript>
       <tclScript id="Kinetis-KLxx-Scripts">
       &Kinetis-KLxx-flashScripts;
       </tclScript>
+      <flashProgram id="Kinetis-FTMRH-flash-program">
+      &Kinetis-FTMRH-flash-program;
+      </flashProgram>
       <flashProgram id="Kinetis-FTFL-flash-program">
       &Kinetis-FTFL-flash-program;
       </flashProgram>
@@ -48,16 +58,42 @@ ToDo - review flash block sizes for MK20-MK70
       <flashProgram id="Kinetis-FTFE-flash-program">
       &Kinetis-FTFE-flash-program;
       </flashProgram>
-      <securityEntry id="Kinetis-default-security">
-         <securityDescription id="Kinetis-default-security-description">
-            BACKDOOR\t= 0x%8X\nFPROT\t\t= 0x%4X\nFSEC\t\t= [KEYEN=%2b, MEEN=%2b, FSLACC=%2b, SEC=%2b]\nFOPT\t\t= [RES=%6b, EZPORT_DIS=%b, LPBOOT=%b]\nFEPROT\t\t= 0x%X\t\tFDPROT\t= 0x%X
+      <securityEntry id="Kinetis-KE-security">
+         <securityDescription id="Kinetis-KE-security-description">
+            BACKDOOR\t= 0x%8X\n*\t\t= 0x%4X\nEEPROT\t\t= [DPOPEN=%b, *=%4b, DPS=%3b]\tFPROT\t\t= [OP=%b,*=%b,HDIS=%b,HS=%2b,LDIS=%b,LS=%2b]\nFSEC\t\t= [KEYEN=%2b, *=%4b, SEC=%2b]\nFOPT\t\t= [-=%6b, EZPORT_DIS=%b, LPBOOT=%b]\n\t
          </securityDescription>
          <!-- Kinetis Unsecured value -->
-         <securityInfo size="16" type="unsecure" id="Kinetis-default-security-off">
+         <securityInfo size="16" type="unsecure" id="Kinetis-KE-security-off">
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFF
+         </securityInfo>
+         <!-- Kinetis Secured value -->
+         <securityInfo size="16" type="secure" id="Kinetis-KE-security-on">
+            0123456789ABCDEFFFFFFFFFFFFFBDFF
+         </securityInfo>  
+      </securityEntry>
+      <securityEntry id="Kinetis-KL-security">
+         <securityDescription id="Kinetis-KL-security-description">
+            BACKDOOR\t= 0x%8X\nFPROT\t\t= 0x%4X\nFSEC\t\t= [KEYEN=%2b, MEEN=%2b, FSLACC=%2b, SEC=%2b]\nFOPT\t\t= [-=%2b, FAST_INIT=%b, RESET=%b, NMI=%b]\n-\t\t= 0x%2X
+         </securityDescription>
+         <!-- Kinetis Unsecured value -->
+         <securityInfo size="16" type="unsecure" id="Kinetis-KL-security-off">
             FFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFF
          </securityInfo>
          <!-- Kinetis Secured value -->
-         <securityInfo size="16" type="secure" id="Kinetis-default-security-on">
+         <securityInfo size="16" type="secure" id="Kinetis-KL-security-on">
+            0123456789ABCDEFFFFFFFFFBFFFFFFF
+         </securityInfo>  
+      </securityEntry>
+      <securityEntry id="Kinetis-K-security">
+         <securityDescription id="Kinetis-K-security-description">
+            BACKDOOR\t= 0x%8X\nFPROT\t\t= 0x%4X\nFSEC\t\t= [KEYEN=%2b, MEEN=%2b, FSLACC=%2b, SEC=%2b]\nFOPT\t\t= [-=%6b, EZPORT_DIS=%b, LPBOOT=%b]\nFEPROT\t\t= 0x%X\t\tFDPROT\t= 0x%X
+         </securityDescription>
+         <!-- Kinetis Unsecured value -->
+         <securityInfo size="16" type="unsecure" id="Kinetis-K-security-off">
+            FFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFF
+         </securityInfo>
+         <!-- Kinetis Secured value -->
+         <securityInfo size="16" type="secure" id="Kinetis-K-security-on">
             0123456789ABCDEFFFFFFFFFBFFFFFFF
          </securityInfo>  
       </securityEntry>
@@ -213,6 +249,23 @@ ToDo - review flash block sizes for MK20-MK70
          <partitionEntry description="No DFlash, EEPROM=512"  eeSize="512K"   value="0x08" />
       </flexNVMInfo>      
       <!--  Ram -->
+      <!-- KE -->
+      <memory id="kinetisE1K_Ram" type="ram">
+         <memoryRange start="0x1FFFFF00" size="1K" />
+      </memory>
+      <memory id="kinetisE2K_Ram" type="ram">
+         <memoryRange start="0x1FFFFE00" size="2K" />
+      </memory>
+      <memory id="kinetisE4K_Ram" type="ram">
+         <memoryRange start="0x1FFFFC00" size="4K" />
+      </memory>
+      <memory id="kinetisE8K_Ram" type="ram">
+         <memoryRange start="0x1FFFF800" size="8K" />
+      </memory>
+      <memory id="kinetisE16K_Ram" type="ram">
+         <memoryRange start="0x1FFFF000" size="16K" />
+      </memory>
+      <!-- KL -->
       <memory id="kinetisL1K_Ram" type="ram">
          <memoryRange start="0x1FFFFF00" size="1K" />
       </memory>
@@ -228,6 +281,10 @@ ToDo - review flash block sizes for MK20-MK70
       <memory id="kinetisL16K_Ram" type="ram">
          <memoryRange start="0x1FFFF000" size="16K" />
       </memory>
+      <memory id="kinetisL32K_Ram" type="ram">
+         <memoryRange start="0x1FFFE000" size="16K" />
+      </memory>
+      <!-- K -->
       <memory id="kinetis8K_Ram" type="ram">
          <memoryRange middle="0x20000000" size="8K" />
       </memory>
@@ -246,65 +303,91 @@ ToDo - review flash block sizes for MK20-MK70
       <memory id="kinetis256K_Ram" type="ram">
          <memoryRange middle="0x20000000" size="256K" />
       </memory>
+      <!--  Flash Block (Kinetis-E) - 512 byte sector size -->
+      <!--  A Single Block containing  the security info -->	  
+      <memory id="FTMRH_PFlash0_SEC_8K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="8K" />
+      </memory>
+      <memory id="FTMRH_PFlash0_SEC_16K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="16K" />
+      </memory>
+      <memory id="FTMRH_PFlash0_SEC_32K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="32K" />
+      </memory>
+      <memory id="FTMRH_PFlash0_SEC_64K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="64K" />
+      </memory>
+      <memory id="FTMRH_PFlash0_SEC_128K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="128K" />
+      </memory>
+      <memory id="FTMRH_PFlash0_SEC_256K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="256K" />
+      </memory>
       <!--  Flash Block (Kinetis-L) - 1K sector size -->
       <!--  A Single Block containing  the security info -->	  
       <memory id="FTFA_PFlash0_SEC_8K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-KL-security" />
          <memoryRange start="0x00000000" size="8K" />
       </memory>
       <memory id="FTFA_PFlash0_SEC_16K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-KL-security" />
          <memoryRange start="0x00000000" size="16K" />
       </memory>
       <memory id="FTFA_PFlash0_SEC_32K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-KL-security" />
          <memoryRange start="0x00000000" size="32K" />
       </memory>
       <memory id="FTFA_PFlash0_SEC_64K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-KL-security" />
          <memoryRange start="0x00000000" size="64K" />
       </memory>
       <memory id="FTFA_PFlash0_SEC_128K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-KL-security" />
          <memoryRange start="0x00000000" size="128K" />
       </memory>
       <memory id="FTFA_PFlash0_SEC_256K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-KL-security" />
          <memoryRange start="0x00000000" size="256K" />
       </memory>
       <!--  Flash Block - FTFL 1K sector size -->
       <!--  It appears that only the lowest block determines the security - ignoring flash swap -->	  
       <memory id="FTFL_PFlash0_SEC_32K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="32K" />
       </memory>
       <memory id="FTFL_PFlash0_SEC_64K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="64K" />
       </memory>
       <memory id="FTFL_PFlash0_SEC_128K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="128K" />
       </memory>
       <memory id="FTFL_PFlash0_SEC_1M_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="1M" />
       </memory>
       <!--  Flash Block - FTFL 2K sector size -->
       <!--  It appears that only the lowest block determines the security - ignoring flash swap -->	  
       <memory id="FTFL_PFlash0_SEC_128K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="128K" />
       </memory>
       <memory id="FTFL_PFlash0_SEC_256K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="256K" />
       </memory>
       <memory id="FTFL_PFlash1_256K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4">
          <memoryRange start="0x00040000" size="256K" />
       </memory>
       <memory id="FTFL_PFlash0_SEC_512K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="512K" />
       </memory>
       <!--  flexNVM - FTFL 1K sector size -->
@@ -336,15 +419,15 @@ ToDo - review flash block sizes for MK20-MK70
       <!--  Flash Block - FTFE 4K sector size -->
       <!--  It appears that only the lowest block determines the security - ignoring flash swap -->	  
       <memory id="FTFE_PFlash0_SEC_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="256K" />
       </memory>
       <memory id="FTFE_PFlash0_SEC_512K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="512K" />
       </memory>
       <memory id="FTFE_PFlash0_SEC_1M_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8" securityAddress="0x0400">
-         <securityEntryRef ref="Kinetis-default-security" />
+         <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="1M" />
       </memory>
       <memory id="FTFE_PFlash1_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8">
@@ -367,7 +450,15 @@ ToDo - review flash block sizes for MK20-MK70
       </memory>
 
       <!-- Kinetis I/O space -->
-      <memory id="kinetisIO_KL" type="io">
+      <memory id="kinetisIO_MKE" type="io">
+         <memoryRange start="0x40000000" end="0x4007FFFF" />  <!-- AIPS Peripherals -->
+         <memoryRange start="0x400FF000" end="0x400FFFFF" />  <!-- General purpose input/output (GPIO) -->
+         <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
+         <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
+         <memoryRange start="0xF0003000" end="0xF0003FFF" />  <!-- Miscellaneous Control Module (MCM) -->
+         <memoryRange start="0xF8000000" end="0xFFFFFFFF" />  <!-- IOPORT: GPIO (single cycle) -->
+      </memory>         
+      <memory id="kinetisIO_MKL" type="io">
          <memoryRange start="0x40000000" end="0x4007FFFF" />  <!-- AIPS Peripherals -->
          <memoryRange start="0x400FF000" end="0x400FFFFF" />  <!-- General purpose input/output (GPIO) -->
          <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
@@ -383,7 +474,7 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
          <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
       </memory>         
-      <!-- GNU Build options Cortex M0 (e.g. MKL) devices -->
+      <!-- GNU Build options Cortex M0 (e.g. MKL, MKE) devices -->
       <gnuInfoList id="gnuSettings.cortex.m0">
          <gnuInfo id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"
             value="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM0" 
@@ -424,27 +515,38 @@ ToDo - review flash block sizes for MK20-MK70
          <file source="Startup_Code/sysinit-mk.c"                 target="Startup_Code/sysinit.c" />
          <file source="Startup_Code/vectors-mk.c"                 target="Startup_Code/vectors.c" />
          <file source="Project_Settings/ARMLtd_GCC-rom-mk.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
-      </fileList>
-      <fileList id="Kinetis-MKL-file-list">
-         <file source="Startup_Code/sysinit-mkl.c"                target="Startup_Code/sysinit.c" />
-         <file source="Startup_Code/vectors-mkl.c"                target="Startup_Code/vectors.c" />
-         <file source="Project_Settings/ARMLtd_GCC-rom-mk.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
-      </fileList>
-      <fileList id="NXP-LPC-file-list">
-         <file source="Startup_Code/sysinit-lpc.c"                target="Startup_Code/sysinit.c" />
-         <file source="Startup_Code/vectors-lpc.c"                target="Startup_Code/vectors.c" />
-         <file source="Project_Settings/ARMLtd_GCC-rom-lpc.ld"    target="Project_Settings/ARMLtd_GCC-rom.ld" />
+         <file source="Project_Settings/Codesourcery-rom.ld"      target="Project_Settings/Codesourcery-rom.ld" />
       </fileList>
       <fileList id="Kinetis-MK-F-file-list">
          <file source="Startup_Code/sysinit-mk.c"                 target="Startup_Code/sysinit.c" />
          <file source="Startup_Code/vectors-mk.c"                 target="Startup_Code/vectors.c" />
          <file source="Startup_Code/fp_init.c"                    target="Startup_Code/fp_init.c" />
          <file source="Project_Settings/ARMLtd_GCC-rom-mk.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
+         <file source="Project_Settings/Codesourcery-rom-mk.ld"   target="Project_Settings/Codesourcery-rom.ld" />
+      </fileList>
+      <fileList id="Kinetis-MKE-file-list">
+         <file source="Startup_Code/sysinit-mke.c"                target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-mke.c"                target="Startup_Code/vectors.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-mk.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
+         <file source="Project_Settings/Codesourcery-rom-mk.ld"   target="Project_Settings/Codesourcery-rom.ld" />
+      </fileList>
+      <fileList id="Kinetis-MKL-file-list">
+         <file source="Startup_Code/sysinit-mkl.c"                target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-mkl.c"                target="Startup_Code/vectors.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-mk.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
+         <file source="Project_Settings/Codesourcery-rom-mk.ld"   target="Project_Settings/Codesourcery-rom.ld" />
+      </fileList>
+      <fileList id="NXP-LPC-file-list">
+         <file source="Startup_Code/sysinit-lpc.c"                target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-lpc.c"                target="Startup_Code/vectors.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-lpc.ld"    target="Project_Settings/ARMLtd_GCC-rom.ld" />
+         <file source="Project_Settings/Codesourcery-rom-lpc.ld"  target="Project_Settings/Codesourcery-rom.ld" />
       </fileList>
       <fileList id="STM32-file-list">
-         <file source="Startup_Code/sysinit-stm32.c"              target="Startup_Code/sysinit.c" />
-         <file source="Startup_Code/vectors-stm32.c"              target="Startup_Code/vectors.c" />
-         <file source="Project_Settings/ARMLtd_GCC-rom-stm32.ld"  target="Project_Settings/ARMLtd_GCC-rom.ld" />
+         <file source="Startup_Code/sysinit-stm32.c"                 target="Startup_Code/sysinit.c" />
+         <file source="Startup_Code/vectors-stm32.c"                 target="Startup_Code/vectors.c" />
+         <file source="Project_Settings/ARMLtd_GCC-rom-stm32.ld"     target="Project_Settings/ARMLtd_GCC-rom.ld" />
+         <file source="Project_Settings/Codesourcery-rom-stm32.ld"   target="Project_Settings/Codesourcery-rom.ld" />
       </fileList>
    </sharedInformation>
    <deviceList>
@@ -452,7 +554,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="_Default" family="CortexM4" isDefault="true">
          <!-- Regular flash or pFlash memory -->
          <memory type="flash" registerAddress="0x40020000" securityAddress="0x0400" sectorSize="1024" alignment="4">
-            <securityEntryRef ref="Kinetis-default-security" />
+            <securityEntryRef ref="Kinetis-K-security" />
             <memoryRange start="0x00000000" size="256K" />
          </memory>
          <!-- flexNVM memory that may be used as EEEPROM backing store or dFlash -->
@@ -488,18 +590,58 @@ ToDo - review flash block sizes for MK20-MK70
          -->
          <sdidMask value="0xFFFF0FF0" />
          <sdid value="0x00000000" />
-         <tclScriptRef ref="Kinetis-default-Scripts" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <fileListRef ref="Kinetis-MK-file-list" />
          <note>Default ARM Device</note>
       </device>
 	  
+<!-- KE02 -->
+      <device name="MKE02Z16M2" family="CortexM0" subfamily="KE02">
+         <memoryRef ref="kinetisE2K_Ram" />
+         <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
+         <memoryRef ref="kinetisIO_MKE" />
+         <sdidAddress value="0x40048000" />
+         <sdidMask value="0xFFFF0000" />
+         <sdid value="0x02070000" />
+         <tclScriptRef ref="Kinetis-KExx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKE-file-list" />
+      </device>
+      <device name="MKE02Z32M2" family="CortexM0" subfamily="KE02">
+         <memoryRef ref="kinetisE4K_Ram" />
+         <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
+         <memoryRef ref="kinetisIO_MKE" />
+         <sdidAddress value="0x40048000" />
+         <sdidMask value="0xFFFF0000" />
+         <sdid value="0x02070000" />
+         <tclScriptRef ref="Kinetis-KExx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKE-file-list" />
+      </device>
+      <device name="MKE02Z64M2" family="CortexM0" subfamily="KE02">
+         <memoryRef ref="kinetisE4K_Ram" />
+         <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
+         <memoryRef ref="kinetisIO_MKE" />
+         <sdidAddress value="0x40048000" />
+         <sdidMask value="0xFFFF0000" />
+         <sdid value="0x02070000" />
+         <tclScriptRef ref="Kinetis-KExx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKE-file-list" />
+      </device>
 <!-- KL02 -->
       <device name="MKL02Z32M4" family="CortexM0" subfamily="KL02">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x02130602" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -512,7 +654,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL04Z8M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_8K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x04110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -524,7 +666,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL04Z16M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_16K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x04120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -536,7 +678,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL04Z32M4" family="CortexM0" subfamily="KL04">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x04130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -549,7 +691,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL05Z8M4" family="CortexM0" subfamily="KL05">
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_8K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x05110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -561,7 +703,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL05Z16M4" family="CortexM0" subfamily="KL05">
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_16K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x05120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -573,7 +715,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL05Z32M4" family="CortexM0" subfamily="KL05">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x05130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -586,7 +728,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL14Z32M4" family="CortexM0" subfamily="KL14">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x14130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -598,7 +740,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL14Z64M4" family="CortexM0" subfamily="KL14">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x14140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -611,7 +753,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL15Z32M4" family="CortexM0" subfamily="KL15">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x15130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -623,7 +765,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL15Z64M4" family="CortexM0" subfamily="KL15">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x15140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -635,7 +777,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL15Z128M4" family="CortexM0" subfamily="KL15">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x15150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -648,7 +790,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL24Z32M4" family="CortexM0" subfamily="KL24">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x24130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -660,7 +802,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL24Z64M4" family="CortexM0" subfamily="KL24">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x24140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -673,7 +815,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL25Z32M4" family="CortexM0" subfamily="KL25">
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x25130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -685,7 +827,7 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL25Z64M4" family="CortexM0" subfamily="KL25">
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x25140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
@@ -697,9 +839,34 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MKL25Z128M4" family="CortexM0" subfamily="KL25">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
-         <memoryRef ref="kinetisIO_KL" />
+         <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x25150480" />
+         <tclScriptRef ref="Kinetis-KLxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
+      </device>
+<!-- KL46 -->
+      <device name="MKL46Z128M4" family="CortexM0" subfamily="KL46">
+         <memoryRef ref="kinetisL16K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdidMask value="0xFFFF0000" />
+         <sdid value="0x46150588" />
+         <tclScriptRef ref="Kinetis-KLxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <fileListRef ref="Kinetis-MKL-file-list" />
+      </device>
+      <device name="MKL46Z256M4" family="CortexM0" subfamily="KL46">
+         <memoryRef ref="kinetisL32K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_256K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdidMask value="0xFFFF0000" />
+         <sdid value="0x46160588" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFA-flash-program" />
          <gnuInfoListRef  ref="gnuSettings.cortex.m0" />
@@ -1501,19 +1668,27 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="KL04Z8M4"      alias="MKL04Z8M4"      hidden="true"/>
       <device name="KL04Z16M4"     alias="MKL04Z16M4"     hidden="true"/>
       <device name="KL04Z32M4"     alias="MKL04Z32M4"     hidden="true"/>
+
       <device name="KL05Z8M4"      alias="MKL05Z8M4"      hidden="true"/>
       <device name="KL05Z16M4"     alias="MKL05Z16M4"     hidden="true"/>
       <device name="KL05Z32M4"     alias="MKL05Z32M4"     hidden="true"/>
+
       <device name="KL14Z32M4"     alias="MKL14Z32M4"     hidden="true"/>
       <device name="KL14Z64M4"     alias="MKL14Z64M4"     hidden="true"/>
+
       <device name="KL15Z32M4"     alias="MKL15Z32M4"     hidden="true"/>
       <device name="KL15Z64M4"     alias="MKL15Z64M4"     hidden="true"/>
       <device name="KL15Z128M4"    alias="MKL15Z128M4"    hidden="true"/>
+
       <device name="KL24Z32M4"     alias="MKL24Z32M4"     hidden="true"/>
       <device name="KL24Z64M4"     alias="MKL24Z64M4"     hidden="true"/>
       <device name="KL25Z32M4"     alias="MKL25Z32M4"     hidden="true"/>
       <device name="KL25Z64M4"     alias="MKL25Z64M4"     hidden="true"/>
       <device name="KL25Z128M4"    alias="MKL25Z128M4"    hidden="true"/>
+
+      <device name="KL46Z128M4"    alias="MKL46Z128M4"    hidden="true"/>
+      <device name="KL46Z256M4"    alias="MKL46Z256M4"    hidden="true"/>
+
       &Custom-Devices;
 &Old-Kinetis-Devices;
 &STM-Devices;

@@ -42,6 +42,7 @@
 #include "Log.h"
 #include "Common.h"
 #include "FlashImage.h"
+#include "ApplicationFiles.h"
 
 //! Error code returned by the various routines
 static const char *errorMessages[] = {
@@ -202,7 +203,7 @@ FlashImage::ErrorCode FlashImage::MemorySpace::loadS1S9File(const string   &file
    }
    Logging::print("Filepath = %s\n", fileName.c_str()); fflush(stderr);
 
-   fp = fopen(fileName.c_str(), "rb");
+   fp = openApplicationFile(fileName.c_str(), "rb");
 
    if (fp == NULL) {
       Logging::print("Failed to open input file \"%s\"\n", fileName.c_str());

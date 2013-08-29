@@ -181,8 +181,8 @@ if [[ -e ${CW_DROPIN_DIRECTORY}/"usbdm" ]]; then
 fi
 
 mkdir ${CW_DROPIN_DIRECTORY}/"usbdm"
-echo cp -r $CP_OPTIONS "plugins/Codewarrior/"* ${CW_DROPIN_DIRECTORY}/usbdm
-cp      -r $CP_OPTIONS "plugins/Codewarrior/"* ${CW_DROPIN_DIRECTORY}/usbdm
+echo cp -r $CP_OPTIONS "plugins/Codewarrior/plugins"* ${CW_DROPIN_DIRECTORY}/usbdm
+cp      -r $CP_OPTIONS "plugins/Codewarrior/plugins"* ${CW_DROPIN_DIRECTORY}/usbdm
 echo chmod a+rwx ${CW_DROPIN_DIRECTORY}/usbdm
 chmod a+rwx ${CW_DROPIN_DIRECTORY}/usbdm
  

@@ -65,6 +65,9 @@ using namespace std;
 #include "Common.h"
 #include "Utils.h"
 
+const char *logFilename("FirmwareChanger.log");
+const char *configFileName("FirmwareChanger");
+
 #ifdef LOG
 // Define to cause flash verification to run multiple times in loop
 // This only reboots the BDM once and does multiple verifies in ICP mode
@@ -193,7 +196,7 @@ void bootloaderDialogue::setSerialNumber(const wxString &serialNumber) {
 
    uint8_t  ICP_Offset             = flashImageDescription.flashImage[flashImageDescription.protectAddr-2]; // Offset to end of ICP block
    uint16_t ICP_Address            = flashImageDescription.protectAddr-ICP_Offset-sizeof(ICP_dataType);     // Address of ICP block
-   uint16_t SN_Address             = ICP_Address + (int)&ICP_data.serialNumber-(int)&ICP_data;
+   uint16_t SN_Address             = ICP_Address + (intptr_t)&ICP_data.serialNumber - (intptr_t)&ICP_data;
    uint16_t Checksum_Address       = flashImageDescription.protectAddr-1;
    int maxSerialNumberLength  = sizeof(ICP_data.serialNumber);
 
@@ -1393,22 +1396,22 @@ bool BootloaderApp::OnInit() {
    wxImage::AddHandler(new wxGIFHandler);
 #endif
 
-   // call default behaviour (mandatory)
-   if (!wxApp::OnInit())
-       return false;
-
-   //   Logging::print("BootloaderApp::OnInit()\n");
-   SetAppName(_("usbdm"));
-   Logging::openLogFile("bootloader.log");
-
 #ifndef _WIN32
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_("/usr/local"));
+   // Otherwise wxWidgets doesn't look in the correct location
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
 #endif
 
-   if (USBDM_Init() != BDM_RC_OK)
-      return false;
+   SetAppName(_("usbdm")); // So application files are kept in the correct directory
+   Logging::openLogFile(logFilename);
 
-   AppSettings settings("Bootloader", T_NONE);
+   // call default behaviour (mandatory)
+   if (!wxApp::OnInit()) {
+       return false;
+   }
+   if (USBDM_Init() != BDM_RC_OK) {
+      return false;
+   }
+   AppSettings settings(configFileName, T_NONE);
    settings.loadFromAppDirFile();
 
    bootloaderDialogue *dialogue = new bootloaderDialogue();

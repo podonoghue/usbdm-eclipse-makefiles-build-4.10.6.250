@@ -429,6 +429,8 @@ void AdvancedPanel::OnEeepromSizeChoiceSelected( wxCommandEvent& event ) {
 //! @note flexNvmPartitionIndex is used to select entry if valid or 1st entry is used
 //!
 void AdvancedPanel::populatePartitionControl() {
+   assert(sizeof(int) <= sizeof(intptr_t));
+
    int flexNvmPartitionChoice = 0;      // Default to select 1st entry in populated control
 
    Logging::print("AdvancedPanel::populatePartitionControl()\n");
@@ -462,13 +464,13 @@ void AdvancedPanel::populatePartitionControl() {
 
       // Minimum required backing store for currently selected EEEPROM size
       unsigned minimumBackingStore = flexNVMInfo->getBackingRatio()*eeepromSizeValues[eeepromSizeChoice].size;
-      int      newIndex            = 0;                                            // Default No EEPROM
+      int newIndex            = 0;                                            // Default No EEPROM
       int index;
       for ( it=flexNvmPartitionValues.begin(), index = 0; it < flexNvmPartitionValues.end(); it++, index++) {
          if (it->backingStore >= minimumBackingStore) {
             int controlIndex = flexNvmPartitionChoiceControl->Append(wxString(it->description.c_str(), wxConvUTF8));
             // Save index as client data as not all entries may be present in control
-            flexNvmPartitionChoiceControl->SetClientData(controlIndex, (void*)index);
+            flexNvmPartitionChoiceControl->SetClientData(controlIndex, (void*)(intptr_t)index);
             if (newIndex==0) {
                // Use 1st added choice entry as default
                newIndex = index;
@@ -520,7 +522,7 @@ int AdvancedPanel::findPartitionControlIndex(unsigned backingStoreSize) {
  */
 void AdvancedPanel::OnFlexNvmPartionChoiceSelected( wxCommandEvent& event ) {
    // Get currently selected FlexNVM partition choice
-   flexNvmPartitionIndex = (int) event.GetClientData();
+   flexNvmPartitionIndex = (int)(intptr_t) event.GetClientData();
    Logging::print("AdvancedPanel::OnFlexNvmPartionChoiceSelected(): Partition value =0x%02X\n", flexNvmPartitionIndex);
    TransferDataToWindow();
 }
@@ -618,7 +620,7 @@ void AdvancedPanel::populateSecurityControl() {
          descr.Printf(_("%s @ %X"), (const char *)memName.c_str(), memoryRange->start);
 //         descr.Printf(_("%s @ %X"), memoryRange->start);
          int itemIndex = securityMemoryRegionChoice->Append(descr);
-         securityMemoryRegionChoice->SetClientData(itemIndex, (void*)index);
+         securityMemoryRegionChoice->SetClientData(itemIndex, (void*)(intptr_t)index);
          if (customSecurityInfoPtr[itemIndex] == NULL) {
             // Add default setting memory security area
             customSecurityInfoPtr[itemIndex] = SecurityInfoPtr(new SecurityInfo(*securityEntry->getUnsecureInformation()));
@@ -828,7 +830,7 @@ void AdvancedPanel::updateSecurity() {
 #if defined(FLASH_PROGRAMMER)
    Logging log("AdvancedPanel::updateSecurity");
    Logging::print("securityMemoryRegionIndex = %d\n", securityMemoryRegionIndex);
-   int memoryIndex = (int)securityMemoryRegionChoice->GetClientData(securityMemoryRegionIndex);
+   int memoryIndex = (int)(intptr_t)securityMemoryRegionChoice->GetClientData(securityMemoryRegionIndex);
    Logging::print("memoryIndex = %d\n", memoryIndex);
    MemoryRegionConstPtr   memoryRegionPtr = currentDevice->getMemoryRegion(memoryIndex);
    SecurityEntryConstPtr  securityEntry;
@@ -1070,7 +1072,7 @@ bool AdvancedPanel::TransferDataFromWindow() {
       Logging::print("SEC_CUSTOM\n");
       // Transfer custom security setting to device
       for(unsigned index=0; index<securityMemoryRegionChoice->GetCount(); index++) {
-         int memoryIndex = (int)securityMemoryRegionChoice->GetClientData(index);
+         int memoryIndex = (int)(intptr_t)securityMemoryRegionChoice->GetClientData(index);
          Logging::print("memoryIndex = %d\n", memoryIndex);
          MemoryRegionPtr memoryRegionPtr = currentDevice->getMemoryRegion(memoryIndex);
          if (memoryRegionPtr == NULL) {

@@ -71,20 +71,18 @@ bool JS16_BootloaderApp::OnInit(void) {
 
    returnValue = 0;
 
-   // call for default command parsing behaviour
-   if (!wxApp::OnInit())
-      return false;
-
-//   const wxString settingsFilename(_("JS16_Bootloader_"));
-//   const wxString title(_("JS16 Bootloader"));
-
    SetAppName(_("usbdm")); // So app files are kept in the correct directory
-
    Logging::openLogFile("JS16_Bootloader.log");
 
 #ifndef _WIN32
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_("/usr/local"));
+   // Otherwise wxWidgets doesn't look in the correct location
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
 #endif
+
+   // call for default command parsing behaviour
+   if (!wxApp::OnInit()) {
+      return false;
+   }
 
    // Create the main application window
    dialogue = new MainDialogue(NULL);

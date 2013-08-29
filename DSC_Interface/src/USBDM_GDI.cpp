@@ -2371,33 +2371,33 @@ DiReturnT DiCpuCurrent ( DiUInt32T *dnCpuId ) {
 //!
 USBDM_GDI_API
 DiReturnT DiProcess ( void *information ) {
+#if 0
    uint8_t  *info8  = (uint8_t*) information;
    uint32_t *info32 = (uint32_t*)information;
 
    uint32_t *dataPtr = (uint32_t *)info32[1];
 
    Logging::print("DiProcess() - &information = %p \n"
-         "               information = %p \n"
-         "              &DiProcess() = %p \n",
-         &information, information, &DiProcess);
+                  "               information = %p \n"
+                  "              &DiProcess() = %p \n",
+                  &information, information, &DiProcess);
 
    Logging::print("information[0] = %p \n"
-         "information[1] = %p \n"
-         "information[2] = %p \n",
-         info32[0],info32[1],info32[2]);
+                  "information[1] = %p \n"
+                  "information[2] = %p \n",
+                  info32[0],info32[1],info32[2]);
 
    Logging::print("DiProcess() - not implemented, data = \n"
-         "=================================================================\n");
+                  "=================================================================\n");
    Logging::printDump(info8, 0x100, (uint32_t)info8);
    Logging::print("=================================================================\n");
 
    Logging::print("DiProcess() - data = \n"
-         "=================================================================\n");
+                  "=================================================================\n");
    Logging::printDump((uint8_t*)dataPtr, 0x100, (uint32_t)dataPtr);
    Logging::print("=================================================================\n");
-
-//   return setErrorState(DI_ERR_NOTSUPPORTED);
-   return DI_OK;
+#endif
+   return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 
 #ifdef LEGACY

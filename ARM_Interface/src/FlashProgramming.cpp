@@ -970,11 +970,11 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType    *bu
 
    // RS08, HCS08, HCS12 are byte aligned
    // MC56F80xx deals with word addresses which are always aligned
-   if ((codeLoadAddress & procAlignmentMask) != 0){
+   if ((codeLoadAddress & procAlignmentMask) != 0) {
       Logging::error("CodeLoadAddress is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-   if (((targetProgramInfo.headerAddress+targetProgramInfo.dataOffset) & procAlignmentMask) != 0){
+   if (((targetProgramInfo.headerAddress+targetProgramInfo.dataOffset) & procAlignmentMask) != 0) {
       Logging::error("FlashProgramHeader.dataOffset is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
@@ -1024,6 +1024,7 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType    *bu
       Logging::print("Reloading due to change in flash code\n");
       // Write the flash programming code to target memory
       if (WriteMemory(memorySpace, codeLoadSize, codeLoadAddress, (uint8_t *)buffer) != BDM_RC_OK) {
+         Logging::print("WriteMemory() Failed, rc = %d\n");
          return PROGRAMMING_RC_ERROR_BDM_WRITE;
       }
    }
@@ -1713,7 +1714,7 @@ USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
          addressFlag |= 0x83000000;
       }
 #endif      
-#if (TARGET == CFV1) || (TARGET == ARM)
+#if (TARGET == CFV1)
       if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
          // Flag needed for DFLASH/flexNVM access
          addressFlag  |= (1<<23);
@@ -1808,7 +1809,7 @@ USBDM_ErrorCode FlashProgrammer::selectiveEraseFlashSecurity(void) {
          addressFlag |= 0x83000000;
       }
 #endif
-#if (TARGET == CFV1) || (TARGET == ARM)
+#if (TARGET == CFV1) 
       MemType_t memoryType = memoryRegionPtr->getMemoryType();
       if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
          // Flag need for DFLASH/flexNVM access
@@ -2474,7 +2475,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
          addressFlag = 0x83000000;
       }
 #endif
-#if (TARGET == CFV1) || (TARGET==ARM)
+#if (TARGET == CFV1)
       if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
          // Flag needed for DFLASH/flexNVM access
          addressFlag |= (1<<23);
@@ -2622,8 +2623,11 @@ USBDM_ErrorCode FlashProgrammer::doProgram(FlashImage *flashImage) {
    Logging log("FlashProgrammer::doProgram");
    // Load target flash code to check programming options
    flashOperationInfo.alignment = 2;
-   loadTargetProgram(OpBlankCheck);
    USBDM_ErrorCode rc;
+   rc = loadTargetProgram(OpBlankCheck);
+   if (rc != PROGRAMMING_RC_OK) {
+      return rc;
+   }
    if ((targetProgramInfo.programOperation&DO_BLANK_CHECK_RANGE) == 0) {
       // Do separate blank check if not done by program operation
       rc = doBlankCheck(flashImage);

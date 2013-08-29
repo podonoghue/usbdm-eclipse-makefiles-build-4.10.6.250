@@ -2,7 +2,7 @@
 \page pageHistory History & Issues
 
 \section sectionHistory Revision History
-V4.10.6 (July 2013) - This mainly concentrates on Eclipse support 
+V4.10.6 (August 2013) - This mainly concentrates on Eclipse support 
    - Eclipse Juno and Kepler:
       - Installation no longer adds files to Codesourcery directories
       - Support for other ARM GCC toolchains with Kinetis 
@@ -19,6 +19,7 @@ V4.10.6 (July 2013) - This mainly concentrates on Eclipse support
    - Linux CDC devices (serial ports) appear as ttyUsbdm devices so they are easier to locate
    - Multiple Linux install scripts (Base, Codewarrior and Eclipse Juno installation)
    - Added MC9S08PA4
+   - Added additional Kinetis devices (KE02 family)
 
 V4.10.5 (May 2013) -
    - Added support for Codewarrior 10.4 Release

@@ -3,10 +3,10 @@ include ../Common.mk
 TARGET = MyCustomAction
 
 $(TARGET):
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ CDEFS=""
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ CDEFS=
 
 $(TARGET)-debug:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ CDEFS="" DEBUG="Y"
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ CDEFS= DEBUG="Y"
 
 all: $(TARGET) $(TARGET)-debug
 

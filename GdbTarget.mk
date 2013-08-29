@@ -35,12 +35,16 @@ LIBDIRS += $(XERCES_LIBDIRS)
 # Extra libraries
 ifeq ($(UNAME_S),Windows)
 LIBS += -lpthreadGC2
+else
+LIBS += -lpthread
 endif
 LIBS += -l$(LIB_USBDM) 
 LIBS += -l$(LIB_USBDM_TCL)
 LIBS += -l$(LIB_WX_PLUGIN)
 LIBS += $(XERCES_LIBS)
 LIBS += $(LIB_SOCKETS)
+LIBS += -l$(LIB_USBDM_DSC) #Needed for 64-bit, Why?
+LIBS += -ldl #Needed for 64-bit, Why?
 
 # Each module will add to this
 SRC :=

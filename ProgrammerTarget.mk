@@ -43,7 +43,7 @@ LIBS += -l$(LIB_USBDM_DSC)
 endif
 LIBS += $(WXWIDGETS_LIBS)
 LIBS += $(XERCES_LIBS)
-#LIBS += -l$(LIB_WX_PLUGIN)
+LIBS += -l$(LIB_WX_PLUGIN) # Needed for 64-bit, Why?
 
 # Each module will add to this
 SRC :=

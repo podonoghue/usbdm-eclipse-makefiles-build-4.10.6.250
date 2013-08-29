@@ -203,9 +203,14 @@ void FlashProgrammerApp::doCommandLineProgram() {
 bool FlashProgrammerApp::OnInit(void) {
    returnValue = 0;
 
-   SetAppName(_("usbdm")); // So application files are kept in the correct directory
+#ifndef _WIN32
+   // Otherwise wxWidgets doesn't look in the correct location
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
+#endif
 
+   SetAppName(_("usbdm")); // So application files are kept in the correct directory
    Logging::openLogFile(logFilename);
+
    Logging::setLoggingLevel(100);
    LOGGING;
 
@@ -227,7 +232,7 @@ bool FlashProgrammerApp::OnInit(void) {
    const wxString title(_("Flash Programmer"));
 
 #ifndef _WIN32
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_("/usr/local"));
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
 #endif
 
 #if TARGET == MC56F80xx

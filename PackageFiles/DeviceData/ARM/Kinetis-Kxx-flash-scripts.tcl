@@ -284,7 +284,11 @@ proc massEraseTarget { } {
    wcreg $::MDM_AP_Control $mdmApControl
    after 50
 
+   ;# Release hardware reset
+   pinSet
+
    ;# Release reset (core stays reset)
+   set mdmApControl [rcreg  $::MDM_AP_Control]
    set mdmApControl [expr $mdmApControl & ~$::MDM_AP_C_SYSTEM_RESET]
    wcreg $::MDM_AP_Control $mdmApControl
 

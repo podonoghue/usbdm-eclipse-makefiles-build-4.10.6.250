@@ -23,7 +23,7 @@ bool getUsbdmApplicationPath(std::string &path) {
 bool getUsbdmDataPath(std::string &path) {
 
    std::string home = getEnvVar("HOME");
-   path = home + "/.usbdm";
+   path = home + "/.usbdm/";
    return true;
 }
 

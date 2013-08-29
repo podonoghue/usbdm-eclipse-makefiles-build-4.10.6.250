@@ -254,17 +254,25 @@ THREADS =
 endif
 ifdef DEBUG
    # Compiler flags
-   CFLAGS := ${THREADS} -Wall -O0 -g3 ${GCC_VISIBILITY_DEFS}
+   CFLAGS := -O0 -g3
    # Compiler flags (Linking)
-   LDFLAGS = ${THREADS} 
+   LDFLAGS = 
    # C Definitions
    DEFS   := -DLOG
 else
    # Compiler flags
-   CFLAGS := ${THREADS} -Wall -O3 -g0 ${GCC_VISIBILITY_DEFS}
+   CFLAGS := -O3 -g0
    # Compiler flags (Linking)
-   LDFLAGS = ${THREADS}  -s
+   LDFLAGS = -s
 endif
+
+CFLAGS  += ${THREADS} -Wall -shared ${GCC_VISIBILITY_DEFS}
+LDFLAGS += ${THREADS}
+
+ifneq ($(UNAME_S),Windows)
+   CFLAGS += -fPIC
+endif
+
 #CFLAGS += -Wshadow -DWINVER=0x500 -D_WIN32_IE=0x500 -std=gnu99 -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign
 
 #===========================================================

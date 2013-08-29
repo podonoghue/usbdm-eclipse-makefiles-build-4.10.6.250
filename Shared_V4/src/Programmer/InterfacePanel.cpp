@@ -419,6 +419,8 @@ bool InterfacePanel::setDialogueValuesToDefault() {
 //! Update the dialogue from internal state
 //!
 bool InterfacePanel::TransferDataToWindow() {
+   assert(sizeof(int) <= sizeof(intptr_t));
+
    Logging Log("InterfacePanel::TransferDataToWindow");
 
    bdmIdentification = wxString(shared->getBdmSerialNumber().c_str(), wxConvUTF8);
@@ -433,7 +435,7 @@ bool InterfacePanel::TransferDataToWindow() {
    }
    // Make BDM serial number string consistent with display
    int choice = bdmSelectChoiceControl->GetSelection();
-   bdmDeviceNum = (int)bdmSelectChoiceControl->GetClientData(choice);
+   bdmDeviceNum = (int)(intptr_t)bdmSelectChoiceControl->GetClientData(choice);
    bdmIdentification = bdmSelectChoiceControl->GetStringSelection();
 
    Logging::print("Device# = %d, BDM = \'%s\'\n", bdmDeviceNum, (const char *)bdmIdentification.ToAscii());
@@ -717,14 +719,14 @@ void InterfacePanel::populateBDMChoices(void) {
    vector<BdmInformation>::iterator it;
    for ( it=connectedBDMs.begin(); it < connectedBDMs.end(); it++ ) {
       int index = bdmSelectChoiceControl->Append(wxString::FromUTF8(it->getSerialNumber().c_str()));
-      bdmSelectChoiceControl->SetClientData(index, (void*)it->getDeviceNumber());
+      bdmSelectChoiceControl->SetClientData(index, (void*)(intptr_t)it->getDeviceNumber());
    }
    // Try to select previous device
    if (bdmIdentification.empty() || !bdmSelectChoiceControl->SetStringSelection(bdmIdentification)) {
       // Select 1st device by default
       bdmSelectChoiceControl->Select(0);
    }
-   bdmDeviceNum      = (int)bdmSelectChoiceControl->GetClientData();
+   bdmDeviceNum      = (int)(intptr_t)bdmSelectChoiceControl->GetClientData();
    bdmIdentification = bdmSelectChoiceControl->GetStringSelection();
 
    bdmSelectChoiceControl->Enable(deviceCount>1);
@@ -749,7 +751,7 @@ void InterfacePanel::OnBDMSelectComboSelected( wxCommandEvent& event ) {
    Logging log("InterfacePanel::OnBDMSelectComboSelected");
 
    Logging::print("event.GetSelection() = %d\n", event.GetSelection());
-   bdmDeviceNum = (int)bdmSelectChoiceControl->GetClientData(event.GetSelection());
+   bdmDeviceNum = (int)(intptr_t)bdmSelectChoiceControl->GetClientData(event.GetSelection());
    Logging::print("bdmDeviceNum = %d\n", bdmDeviceNum);
 
    shared->setBdmSerialNumber(connectedBDMs[bdmDeviceNum].getSerialNumber(), true);

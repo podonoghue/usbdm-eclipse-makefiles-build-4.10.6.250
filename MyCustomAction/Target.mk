@@ -89,7 +89,7 @@ $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
 	@echo -- Linking Target $@
-	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
+	$(CC) -shared -o $@ $(LDFLAGS) ${STATIC_GCC_OPTION} $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 
 $(BUILDDIR) : $(BUILDDIR)/timestamp
 	

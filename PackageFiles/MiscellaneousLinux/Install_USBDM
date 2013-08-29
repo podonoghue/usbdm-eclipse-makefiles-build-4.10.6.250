@@ -149,12 +149,18 @@ echo "cp    -r  bin/FlashImages             "${USBDM_CONFIG_DIRECTORY}""
 cp    -r  bin/FlashImages             "${USBDM_CONFIG_DIRECTORY}"
 echo
 
+echo "Copying Executables"
+echo "cp    -r  bin/*             "${USBDM_CONFIG_DIRECTORY}""
+cp    bin/*             "${USBDM_CONFIG_DIRECTORY}"
+echo
+
 echo "Setting ownership and permissions"
 echo "chown -R "$SUDO_UID":"$SUDO_GID"                    "${USBDM_CONFIG_DIRECTORY}""
 chown -R "$SUDO_UID":"$SUDO_GID"      "${USBDM_CONFIG_DIRECTORY}"
 echo "chmod -R a+r                          "${USBDM_CONFIG_DIRECTORY}""
 chmod -R a+r                          "${USBDM_CONFIG_DIRECTORY}"
 echo
+
 
 echo ==================================================================
 echo

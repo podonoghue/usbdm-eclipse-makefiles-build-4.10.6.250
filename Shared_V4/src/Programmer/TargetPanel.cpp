@@ -165,13 +165,15 @@ void TargetPanel::populateClockDropDown(void) {
    int sub;
    int index;
 
+   assert(sizeof(int) <= sizeof(intptr_t));
+
    // Logging::print("TargetPanel::populateClockDropDown()\n");
 
    // Populate the list
    for (sub=0; ClockTypes::getClockName((ClockTypes_t)sub) != ""; sub++) {
       index = clockModuleTypeChoiceControl->Append(wxString(ClockTypes::getClockName((ClockTypes_t)sub).c_str(), wxConvUTF8));
       if (index>=0) {
-         clockModuleTypeChoiceControl->SetClientData(index, (void *)sub);
+         clockModuleTypeChoiceControl->SetClientData(index, (void *)(intptr_t)sub);
       }
    }
    // Select 1st item
@@ -202,7 +204,7 @@ void TargetPanel::populateDeviceDropDown() {
          int controlIndex = deviceTypeChoiceControl->Append(makeDeviceName(wxString((*it)->getTargetName().c_str(), wxConvUTF8)));
          if (controlIndex>=0) {
             // Associate index value with item
-            deviceTypeChoiceControl->SetClientData(controlIndex, (void *) deviceIndex);
+            deviceTypeChoiceControl->SetClientData(controlIndex, (void *)(intptr_t) deviceIndex);
 //            Logging::print("TargetPanel::populateDeviceDropDown() - Add device %s @%d, devIndex=%d\n", (*it)->getTargetName().c_str(), controlIndex, deviceIndex);
             if (firstAddedDeviceIndex == -1) {
                firstAddedDeviceIndex = deviceIndex;
@@ -936,7 +938,7 @@ bool TargetPanel::TransferDataToWindow() {
    if (!eraseChoiceControl->SetStringSelection(wxString(DeviceData::getEraseOptionName(currentDevice->getEraseOption()),wxConvUTF7))) {
       // Current erase option not supported - default to 1st item
       eraseChoiceControl->SetSelection(0);
-      DeviceData::EraseOptions eraseOption = (DeviceData::EraseOptions)(int)eraseChoiceControl->GetClientData(0);
+      DeviceData::EraseOptions eraseOption = (DeviceData::EraseOptions)(int)(intptr_t)eraseChoiceControl->GetClientData(0);
       currentDevice->setEraseOption(eraseOption);
    }
 #if defined(FLASH_PROGRAMMER)
@@ -1147,7 +1149,7 @@ void TargetPanel::OnAutoFileReloadCheckboxClick( wxCommandEvent& event ) {
  */
 void TargetPanel::OnDeviceTypeChoiceSelected( wxCommandEvent& event ) {
    // Get currently selected device type
-   int deviceIndex = (int) event.GetClientData();
+   int deviceIndex = (int)(intptr_t) event.GetClientData();
    Logging::print("TargetPanel::OnDeviceTypeChoiceSelected(): devIndex=%d\n", deviceIndex);
    setDeviceIndex(deviceIndex);
    TransferDataToWindow();
@@ -1659,7 +1661,7 @@ void TargetPanel::OnSoundCheckboxClick( wxCommandEvent& event ) {
 //!
 void TargetPanel::OnEraseChoiceSelect( wxCommandEvent& event ) {
    int selIndex = event.GetSelection();
-   DeviceData::EraseOptions eraseOption = (DeviceData::EraseOptions)(int)eraseChoiceControl->GetClientData(selIndex);
+   DeviceData::EraseOptions eraseOption = (DeviceData::EraseOptions)(int)(intptr_t)eraseChoiceControl->GetClientData(selIndex);
    currentDevice->setEraseOption(eraseOption);
 #if defined (FLASH_PROGRAMMER)
    updateProgrammingState();

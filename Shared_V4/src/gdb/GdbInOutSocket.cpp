@@ -276,7 +276,11 @@ int GdbInOutSocket::waitForConnection(int listenSocket) {
 
    // Clear existing errors on socket
    int socketErrorValue = 0;
+#ifdef _WIN32
+   int socketErrorValueLength = sizeof(socketErrorValue);
+#else
    unsigned socketErrorValueLength = sizeof(socketErrorValue);
+#endif
 
    int rc = getsockopt(listenSocket, SOL_SOCKET, SO_ERROR, (char *) &socketErrorValue, &socketErrorValueLength);
    if (rc != 0) {

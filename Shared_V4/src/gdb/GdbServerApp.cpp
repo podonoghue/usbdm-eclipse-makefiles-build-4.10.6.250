@@ -127,9 +127,14 @@ USBDM_ErrorCode callBack(USBDM_ErrorCode status, int percent, const char *messag
 bool GDBServerApp::OnInit(void) {
    returnValue = 0;
 
-   SetAppName(_("usbdm")); // So application files are kept in the correct directory
+#ifndef _WIN32
+   // Otherwise wxWidgets doesn't look in the correct location
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
+#endif
 
+   SetAppName(_("usbdm")); // So application files are kept in the correct directory
    Logging::openLogFile(logFilename);
+
    Logging::setLoggingLevel(100);
    Logging log("GDBServerApp::OnInit");
 
@@ -147,10 +152,6 @@ bool GDBServerApp::OnInit(void) {
       // Not using command line options so load saved settings
       appSettings->loadFromAppDirFile();
    }
-
-#ifndef _WIN32
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_("/usr/local"));
-#endif
 
 #if TARGET == MC56F80xx
    DSC_SetLogFile(Logging::getLogFileHandle());
@@ -239,7 +240,6 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
    skipOpeningDialogue  = false;
    verbose              = false;
 
-
    if (parser.Found(_("device"), &sValue)) {
       log.print("Setting device to \'%s\'\n", (const char *)sValue.ToAscii());
       skipOpeningDialogue = true;
@@ -252,7 +252,6 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
          success = false;
       }
    }
-
    USBDM_ExtendedOptions_t &bdmOptions = shared->getBdmOptions();
    DeviceDataPtr            deviceData = shared->getCurrentDevice();
 
@@ -267,7 +266,6 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
       }
       deviceData->setClockTrimNVAddress(uValue);
    }
-
    shared->setExitOnClose(parser.Found(_("exitOnClose")));
 
    if (parser.Found(_("erase"), &sValue)) {
@@ -320,38 +318,6 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
    else {
       trimFrequency = 0;
    }
-   // flexNVM options
-//   if (parser.Found(_("flexNVM"), &sValue)) {
-//      DeviceData::FlexNVMParameters    flexParameters;
-//      unsigned long uValue;
-//
-//      int index1 = 0;
-//      int index2 = sValue.find(',');
-//      wxString t = sValue.substr(index1, index2-index1);
-//      if (!t.ToULong(&uValue, 16)) {
-//         parser.AddUsageText("***** Error: Illegal flexNVM value.\n");
-//         success = false;
-//      }
-//      else {
-//         flexParameters.eeepromSize = (uint8_t)uValue;
-//         // Check for truncation
-//         success = success && (flexParameters.eeepromSize == uValue);
-//      }
-//      index1 = index2+1;
-//      index2 = sValue.find(',', index1);
-//      t = sValue.substr(index1, index2-index1);
-//      if (!t.ToULong(&uValue, 16)) {
-//         parser.AddUsageText("***** Error: Illegal flexNVM value.\n");
-//         success = false;
-//      }
-//      else {
-//         flexParameters.partionValue = (uint8_t)uValue;
-//         // Check for truncation
-//         success = success && (flexParameters.partionValue == uValue);
-//      }
-//      flexParameters.partionValue = (uint8_t)uValue;
-//      deviceData->setFlexNVMParameters(flexParameters);
-//   }
    // Reset options
    if (parser.Found(_("reset"), &sValue)) {
       skipOpeningDialogue = true;
