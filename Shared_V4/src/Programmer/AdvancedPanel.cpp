@@ -25,6 +25,7 @@
     \verbatim
    Change History
    -============================================================================
+   |  5 Sep 2013 | Corrected layout resizing                               - pgo v4.10.6.10
    |  5 Jul 2013 | Corrected printing of %b format in security             - pgo v4.10.6
    | 16 Dec 2012 | Security description added                              - pgo v4.10.4
    | ?? ??? 2012 | FlexNVM description added                               - pgo v4.10.?
@@ -145,10 +146,10 @@ bool AdvancedPanel::CreateControls() {
 
    wxStaticBox* itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("BDM Parameters"));
    wxStaticBoxSizer* itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, 5);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
 
    wxGridBagSizer* gridBagSizer = new wxGridBagSizer(0,0);
-   itemStaticBoxSizer->Add(gridBagSizer, 0, wxGROW|wxALL, 5);
+   itemStaticBoxSizer->Add(gridBagSizer, 0, wxEXPAND|wxALL, 5);
 
    const int borderWidth = 3;
 
@@ -242,10 +243,10 @@ bool AdvancedPanel::CreateControls() {
    //================================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("FlexNVM Parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, borderWidth);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, borderWidth);
 
    gridBagSizer = new wxGridBagSizer(0,0);
-   itemStaticBoxSizer->Add(gridBagSizer, 0, wxGROW|wxALL, borderWidth);
+   itemStaticBoxSizer->Add(gridBagSizer, 0, wxEXPAND|wxALL, borderWidth);
    row = 0;
 
    //===
@@ -287,10 +288,10 @@ bool AdvancedPanel::CreateControls() {
    //================================================================================
    itemStaticBox = new wxStaticBox(panel, wxID_ANY, _("Custom Security Parameters"));
    itemStaticBoxSizer = new wxStaticBoxSizer(itemStaticBox, wxHORIZONTAL);
-   panelBoxSizerV->Add(itemStaticBoxSizer, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, borderWidth);
+   panelBoxSizerV->Add(itemStaticBoxSizer, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, borderWidth);
 
    gridBagSizer = new wxGridBagSizer(0,0);
-   itemStaticBoxSizer->Add(gridBagSizer, 0, wxGROW|wxALL, borderWidth);
+   itemStaticBoxSizer->Add(gridBagSizer, 0, wxEXPAND|wxALL, borderWidth);
    row = 0;
 
    //===
@@ -299,25 +300,25 @@ bool AdvancedPanel::CreateControls() {
 
 //   itemStaticText = new wxStaticText( panel, wxID_STATIC, _("Region"), wxDefaultPosition, wxDefaultSize, 0 );
 //   gridBagSizer->Add(itemStaticText, wxGBPosition(row,0), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
-   securityMemoryRegionChoice = new wxChoice( panel, ID_SECURITY_REGION_CHOICE, wxDefaultPosition , wxSize(130, -1));
-   gridBagSizer->Add(securityMemoryRegionChoice, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
+   securityMemoryRegionChoice = new wxChoice( panel, ID_SECURITY_REGION_CHOICE, wxDefaultPosition , wxSize(140, -1));
+   gridBagSizer->Add(securityMemoryRegionChoice, wxGBPosition(row,1), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxEXPAND, borderWidth);
    securityMemoryRegionChoice->SetToolTip(_("Security information is programmed to this memory region"));
    resetCustomButtonControl = new wxButton( panel, ID_RESET_CUSTOM_VALUES_BUTTON, _("&Reset Values"), wxDefaultPosition, wxDefaultSize, 0 );
    resetCustomButtonControl->SetToolTip(_("Reset custom values to unsecured default"));
-   gridBagSizer->Add(resetCustomButtonControl, wxGBPosition(row,2), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
+   gridBagSizer->Add(resetCustomButtonControl, wxGBPosition(row,2), wxGBSpan(1,1), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
    row++;
 
    //===
 
    securityValuesTextControl = new wxTextCtrl( panel, ID_SECURITY_TEXT_ENTRY, _(""), wxDefaultPosition , wxSize(300, 20), 0);
-   gridBagSizer->Add(securityValuesTextControl, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
+   gridBagSizer->Add(securityValuesTextControl, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP|wxEXPAND, borderWidth);
    securityValuesTextControl->SetToolTip(_("Security value used for device"));
    securityValuesTextControl->SetValidator(SecurityValidator("Security value", SecurityInfoPtr()));
    row++;
 
    //===
    securityMemoryRegionSecurityAddress = new wxStaticText( panel, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-   gridBagSizer->Add(securityMemoryRegionSecurityAddress, wxGBPosition(row,0), wxGBSpan(1,2), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, borderWidth);
+   gridBagSizer->Add(securityMemoryRegionSecurityAddress, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP|wxEXPAND, borderWidth);
    row++;
 
    //===
@@ -327,8 +328,9 @@ bool AdvancedPanel::CreateControls() {
 #define CONTROL_WIDTH (380)
 #endif
    securityDescriptionStaticText = new wxStaticText( panel, wxID_STATIC, _("...Status..."), wxDefaultPosition, wxSize(CONTROL_WIDTH, 75), wxALIGN_LEFT|wxST_NO_AUTORESIZE );
-   gridBagSizer->Add(securityDescriptionStaticText, wxGBPosition(row,0), wxGBSpan(1,3), wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, borderWidth);
+   gridBagSizer->Add(securityDescriptionStaticText, wxGBPosition(row,0), wxGBSpan(1,3), wxEXPAND|wxLEFT|wxRIGHT, borderWidth);
    securityDescriptionStaticText->SetToolTip(_("See Target tab to change how these value are used"));
+   gridBagSizer->AddGrowableRow(row,1);
    row++;
    #endif
 

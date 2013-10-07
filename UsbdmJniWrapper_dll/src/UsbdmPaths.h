@@ -8,6 +8,7 @@
 #ifndef USBDMPATHS_H
 #define USBDMPATHS_H
 
+bool getUsbdmResourcePath(std::string &path);
 bool getUsbdmApplicationPath(std::string &path);
 bool getUsbdmDataPath(std::string &path);
 

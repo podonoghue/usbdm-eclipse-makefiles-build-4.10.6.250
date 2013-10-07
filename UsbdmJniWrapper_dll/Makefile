@@ -3,10 +3,10 @@ include ../Common.mk
 target = UsbdmJniWrapper
 
 $(target):
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ CDEFS=""
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ CDEFS=
 
 $(target)-debug:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ CDEFS="" DEBUG="Y"
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ CDEFS= DEBUG="Y"
 
 all: $(target) $(target)-debug
 

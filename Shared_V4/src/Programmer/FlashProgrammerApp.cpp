@@ -49,6 +49,7 @@ Change History
 #include "FlashProgramming.h"
 #include "FlashImage.h"
 
+#define CONFIG_FILE_NAME "FlashProgrammer_"
 #if TARGET==HCS08
 const TargetType_t targetType = T_HCS08;
 const char *logFilename("FlashProgrammer_HCS08.log");
@@ -125,7 +126,6 @@ USBDM_ErrorCode callBack(USBDM_ErrorCode status, int percent, const char *messag
    return PROGRAMMING_RC_OK;
 }
 
-#if 1
 void FlashProgrammerApp::doCommandLineProgram() {
    Logging log("FlashProgrammerApp::doCommandLineProgram");
    FlashImage flashImage;
@@ -143,15 +143,12 @@ void FlashProgrammerApp::doCommandLineProgram() {
          returnValue = 1;
          break;
       }
-      if (shared->loadDeviceDatabase() != BDM_RC_OK) {
-         returnValue = 1;
-         break;
-      }
       // Copy device description and change mutable settings
       DeviceDataPtr &deviceData = shared->getCurrentDevice();
       if (deviceData->getSecurity() == SEC_CUSTOM) {
          deviceData->setCustomSecurity(customSecurityValue);
       }
+      flashProgrammer.setDeviceData(*deviceData);
       USBDM_ErrorCode rc;
       if (program) {
          if (verbose) {
@@ -197,7 +194,6 @@ void FlashProgrammerApp::doCommandLineProgram() {
    }
 #endif
 }
-#endif
 
 // Initialize the application
 bool FlashProgrammerApp::OnInit(void) {
@@ -205,19 +201,19 @@ bool FlashProgrammerApp::OnInit(void) {
 
 #ifndef _WIN32
    // Otherwise wxWidgets doesn't look in the correct location
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_(USBDM_INSTALL_DIRECTORY));
 #endif
 
    SetAppName(_("usbdm")); // So application files are kept in the correct directory
    Logging::openLogFile(logFilename);
 
    Logging::setLoggingLevel(100);
-   LOGGING;
+   Logging log("FlashProgrammerApp::OnInit");
 
    shared = SharedPtr(new Shared(targetType));
 
    // Create empty app settings
-   appSettings = new AppSettings("GDBServer_", targetType);
+   appSettings = new AppSettings(CONFIG_FILE_NAME, targetType);
 
    // call for default command parsing behaviour
    if (!wxApp::OnInit()) {
@@ -228,12 +224,7 @@ bool FlashProgrammerApp::OnInit(void) {
       // Not using command line options so load saved settings
       appSettings->loadFromAppDirFile();
    }
-   const wxString settingsFilename(_("FlashProgrammer_"));
    const wxString title(_("Flash Programmer"));
-
-#ifndef _WIN32
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
-#endif
 
 #if TARGET == MC56F80xx
    DSC_SetLogFile(Logging::getLogFileHandle());
@@ -244,8 +235,6 @@ bool FlashProgrammerApp::OnInit(void) {
 //      fprintf(stderr, "Programming Complete - rc = %d\n", returnValue);
    }
    else {
-      SharedPtr shared(SharedPtr(new Shared(targetType)));
-
       // Create the main application window
       UsbdmDialogue *dialogue = new UsbdmDialogue(shared, *appSettings);
       dialogue->SetTitle(title);
@@ -301,16 +290,16 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] = {
       { wxCMD_LINE_OPTION, _("power"),     NULL, _("Power timing (off,recovery) 100-10000 ms"),             wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_SWITCH, _("program"),   NULL, _("Program and verify flash contents"), },
       { wxCMD_LINE_OPTION, _("reset"),     NULL, _("Reset timing (active,release,recovery) 100-10000 ms"),  wxCMD_LINE_VAL_STRING },
-      { wxCMD_LINE_OPTION, _("speed"),     NULL, _("Interface speed (CFVx/Kinetis/DSC) kHz"),               wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("security"),  NULL, _("Explicit security value to use (as hex string)"),       wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_SWITCH, _("secure"),    NULL, _("Leave device secure after programming") },
+      { wxCMD_LINE_OPTION, _("speed"),     NULL, _("Interface speed (CFVx/Kinetis/DSC) kHz"),               wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("trim"),      NULL, _("Trim internal clock to frequency (in kHz) e.g. 32.7"),  wxCMD_LINE_VAL_STRING },
 #ifdef _UNIX_
       { wxCMD_LINE_SWITCH, _("verbose"),   NULL, _("Print progress messages to stdout") },
 #endif
       { wxCMD_LINE_SWITCH, _("unsecure"),  NULL, _("Leave device unsecure after programming") },
-      { wxCMD_LINE_SWITCH, _("verify"),    NULL, _("Verify flash contents") },
       { wxCMD_LINE_OPTION, _("vdd"),       NULL, _("Supply Vdd to target (3V3 or 5V)"),                     wxCMD_LINE_VAL_STRING },
+      { wxCMD_LINE_SWITCH, _("verify"),    NULL, _("Verify flash contents") },
       { wxCMD_LINE_NONE }
 };
 
@@ -374,12 +363,11 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
 #endif
             success = false;
          }
-         else {
-            success = false;
-         }
       }
 
    DeviceDataPtr deviceData = shared->getCurrentDevice();
+   // Disable clock trim by default
+   deviceData->setClockTrimFreq(0);
 
 #if (TARGET==HCS08) || (TARGET==RS08) || (TARGET==ARM)
       deviceData->setEraseOption(DeviceData::eraseMass);
@@ -407,6 +395,9 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
          if (deviceData->getSecurity() != SEC_DEFAULT) {
             // Can't use this option with secure/unsecure
             success = false;
+#if (wxCHECK_VERSION(2, 9, 0))
+            parser.AddUsageText(_("***** Error: Conflicting security values.\n"));
+#endif
          }
          else {
             deviceData->setSecurity(SEC_CUSTOM);

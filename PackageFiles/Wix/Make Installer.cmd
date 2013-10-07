@@ -1,7 +1,9 @@
 @echo off
 cls
-set VERSION=4_10_6
-set VERSIONn=4.10.6
+set VERSION=4_10_6b
+set VERSIONn=4.10.6.10
+
+set WXWIDGETS_VERSION=295u
 
 set WIX_DIR="C:\Program Files (x86)\WiX Toolset v3.7\bin"
 if not exist %WIX_DIR% set WIX_DIR="C:\Program Files\WiX Toolset v3.7\bin"
@@ -56,7 +58,7 @@ mkdir %WIX_BUILD_DIR%
 %HEAT% dir .\plugins\codewarrior            %HEAT_OPTIONS% -cg Cg.EclipsePlugin_V10.4  -dr D.CW_V10.4_EclipseDropins   -out %WIX_BUILD_DIR%\EclipsePlugin_4.wxs
 %HEAT% dir .\plugins\eclipse                %HEAT_OPTIONS% -cg Cg.EclipseJunoPlugin    -dr D.EclipseJunoDropins        -out %WIX_BUILD_DIR%\EclipseJunoPluginCDT.wxs
 %HEAT% dir .\plugins\eclipse                %HEAT_OPTIONS% -cg Cg.EclipseKeplerPlugin  -dr D.EclipseKeplerDropins      -out %WIX_BUILD_DIR%\EclipseKeplerPluginCDT.wxs
-%CANDLE% -dProductVersion=%VERSIONn% -o %WIX_BUILD_DIR%\ *.wxs %WIX_BUILD_DIR%\*.wxs
+%CANDLE% -dProductVersion=%VERSIONn% -dWxWidgetsVer=%WXWIDGETS_VERSION% -o %WIX_BUILD_DIR%\ *.wxs %WIX_BUILD_DIR%\*.wxs
 %LIGHT% %LIGHT_OPTIONS% %LIGHT_DIRS% -out %MSI_FILE% %WIX_BUILD_DIR%\*.wixobj
 
 rem del *.wixpdb

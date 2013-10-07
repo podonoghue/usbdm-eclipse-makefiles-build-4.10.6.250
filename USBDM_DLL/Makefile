@@ -19,10 +19,10 @@ osbdm-debug:
 	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=osbdm-jm60-debug MODULE=osbdm      CDEFS='-DUSBDM_DLL_EXPORTS'  DEBUG='Y'
 
 usbdm-cff:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@               MODULE=cfflasher  CDEFS='-DUSBDM_DLL_EXPORTS'  LINK_OPTS='-Wl,--kill-at' 
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@               MODULE=cfflasher  CDEFS='-DUSBDM_DLL_EXPORTS'  EXTRA_LINK_OPTS='-Wl,--kill-at' 
 
 usbdm-cff-debug:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@               MODULE=cfflasher  CDEFS='-DUSBDM_DLL_EXPORTS'  LINK_OPTS='-Wl,--kill-at'  DEBUG='Y'
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@               MODULE=cfflasher  CDEFS='-DUSBDM_DLL_EXPORTS'  EXTRA_LINK_OPTS='-Wl,--kill-at'  DEBUG='Y'
 
 allCommon: usbdm usbdm-debug
 

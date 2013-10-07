@@ -11,6 +11,8 @@
    <?define DescSRecord="Freescale S-Record binary file" ?>
    <?define ExplorerMenuOpen="Open" ?>
 
+   <!-- ?define WxWidgetsVer="295u" ?-->
+   
    <Product
       Name="$(var.ProductName)"
       Id="$(var.ProductCode)"
@@ -458,10 +460,10 @@
             <File Id='ComonFiles16'      DiskId='1' Source='bin\libstdc++-6.dll' />
             <File Id='ComonFiles17'      DiskId='1' Source='bin\pthreadGC2.dll' />
             
-            <File Id='wxComonFiles1'     DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
-            <File Id='wxComonFiles2'     DiskId='1' Source='bin\wxbase294u_net_gcc_custom.dll' />
-            <File Id='wxComonFiles3'     DiskId='1' Source='bin\wxmsw294u_adv_gcc_custom.dll' />
-            <File Id='wxComonFiles4'     DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+            <File Id='wxComonFiles1'     DiskId='1' Source='bin\wxbase$(var.WxWidgetsVer)_gcc_custom.dll' />
+            <File Id='wxComonFiles2'     DiskId='1' Source='bin\wxbase$(var.WxWidgetsVer)_net_gcc_custom.dll' />
+            <File Id='wxComonFiles3'     DiskId='1' Source='bin\wxmsw$(var.WxWidgetsVer)_adv_gcc_custom.dll' />
+            <File Id='wxComonFiles4'     DiskId='1' Source='bin\wxmsw$(var.WxWidgetsVer)_core_gcc_custom.dll' />
 
             <File Id='gdbComonFiles13'   DiskId='1' Source='bin\usbdm-make.exe' />
             <File Id='gdbComonFiles14'   DiskId='1' Source='bin\usbdm-rm.exe' />

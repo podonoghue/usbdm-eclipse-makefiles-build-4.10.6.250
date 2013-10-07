@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=CFVx_FlashProgrammer
+Comment=Flash programmer for CFVx devices
+Keywords=CFVx;Programmer;
+Exec=/usr/lib/usbdm/CFVx_FlashProgrammer
+Icon=Hardware-Chip
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Development;
+Name[en_AU]=CFVx Programmer
+GenericName[en_AU]=CFVx Programmer
+Comment[en_AU]=USBDM Flash programmer for CFVx

@@ -1,0 +1,50 @@
+#!/bin/sh
+set -e
+# Automatically added by dh_installdocs
+if [ \( "$1" = "upgrade" -o "$1" = "remove" \) -a -L /usr/doc/parted ]; then
+  rm -f /usr/doc/parted
+fi
+# End automatically added section
+
+#================================
+# USBDM Version
+#
+MAJOR=4
+MINOR=10
+
+CP_OPTIONS=
+
+# Where to find files (relative to /)
+DUMMY_ROOT=""
+USBDM_SHARED_DIR="${DUMMY_ROOT}/usr/share/usbdm"
+USBDM_LIB_DIR="${DUMMY_ROOT}/usr/lib/usbdm"
+
+# System directories
+LIB_DIR="/usr/lib"
+BIN_DIR="/usr/bin"
+RULES_DIR=/etc/udev/rules.d
+
+echo
+echo "Removing rules file from ${RULES_DIR}"
+echo ==================================================================
+echo rm -f ${RULES_DIR}/*usbdm.rules
+rm -f ${RULES_DIR}/*usbdm.rules
+
+echo
+echo "Cleaning up linked usbdm libraries"
+echo ==================================================================
+rm -f ${LIB_DIR}/libusbdm*
+rm -f ${LIB_DIR}/libUsbdm*
+
+# Executables to unlink
+EXECUTABLES="ARM_FlashProgrammer CFV1_FlashProgrammer CFVx_FlashProgrammer"
+EXECUTABLES="${EXECUTABLES} HCS08_FlashProgrammer HCS12_FlashProgrammer RS08_FlashProgrammer"
+
+echo "Create symbolic links to executables"
+echo ==================================================================
+for FILE in ${EXECUTABLES}; do
+   echo "  Unlinking ${FILE}"
+   rm -f ${BIN_DIR}/`echo ${FILE}|tr '[:upper:]' '[:lower:]'`
+done
+
+

@@ -3,10 +3,10 @@ include ../Common.mk
 TARGET = MergeXML
 
 $(TARGET):
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON"
+	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS='-DUSE_ICON'
 
 $(TARGET)-debug:
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON -DDEBUG" DEBUG="Y"
+	$(MAKE) exe -f Target.mk BUILDDIR=$@  DEBUG='Y' CDEFS='-DUSE_ICON -DDEBUG'
 
 all: $(TARGET) $(TARGET)-debug
 

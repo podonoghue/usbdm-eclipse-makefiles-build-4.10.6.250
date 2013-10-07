@@ -13,7 +13,7 @@ TARGET ?= $(BUILDDIR)
 include ../Common.mk
 
 VPATH      := src $(BUILDDIR) 
-SOURCEDIRS := src $(SHARED_SRC)
+SOURCEDIRS := src
 
 # Use C++ Compiler
 CC = $(GPP)
@@ -27,7 +27,7 @@ DEFS +=
 
 # Look for include files in each of the modules
 INCS := $(patsubst %,-I%,$(SOURCEDIRS))
-INCS += $(JAVA_INC) 
+#INCS += $(JAVA_INC) 
 
 # Look for include files in each of the modules (don't include JAVA dirs)
 WINDRES_INCS := $(patsubst %,-I%,$(SOURCEDIRS))
@@ -64,22 +64,21 @@ endif
 # Include the C dependency files (if they exist)
 -include $(OBJ:.o=.d)
 
-
 # Rules to build object (.o) files
 #==============================================
 ifeq ($(UNAME_S),Windows)
-$(BUILDDIR)/%.o : %.rc $(BUILDDIR)/timestamp
+$(BUILDDIR)/%.o : %.rc
 	@echo -- Building $@ from $<
-	$(WINDRES) $< $(DEFS) $(WINDRES_INCS) -o $@
+	$(WINDRES) $< $(DEFS) $(INCS) -o $@
 endif
 
-$(BUILDDIR)/%.o : %.c $(BUILDDIR)/timestamp
+$(BUILDDIR)/%.o : %.c
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) $(JAVA_INC) -MD -c $< -o $@
 	
-$(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/timestamp
+$(BUILDDIR)/%.o : %.cpp
 	@echo -- Building $@ from $<
-	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
+	$(CC) $(CFLAGS) $(DEFS) $(INCS) $(JAVA_INC) -MD -c $< -o $@
 	
 # How to link an EXE
 #==============================================
@@ -88,7 +87,7 @@ $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo -- Linking Target $@
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 
-# How to link a DLL
+# How to link a LIBRARY
 #==============================================
 $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
@@ -99,36 +98,37 @@ else
 	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 endif
 
-# How to copy a LIBRARY to the shared directory
-#==============================================
-$(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
-	@echo --
-	@echo -- Copying $? to $(SHARED_LIBDIRS)
-	$(CP) $? $@
-ifneq ($(UNAME_S),Windows)
-	$(LN) -f ./$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
-	$(LN) -f ./$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
-endif
+DLL_TARGET=$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
+EXE_TARGET=$(TARGET)$(EXE_SUFFIX)
 
-$(BUILDDIR) : $(BUILDDIR)/timestamp
-	
-$(BUILDDIR)/timestamp :
-	-$(MKDIR) $(BUILDDIR)
-	-$(TOUCH) $(BUILDDIR)/timestamp
+# How to copy LIBRARY to target directory
+#==============================================
+$(TARGET_DIR)/$(DLL_TARGET): $(BUILDDIR)/$(DLL_TARGET)
+	@echo --
+	@echo -- Copying $? to $(TARGET_DIR)
+	$(CP) $? $@
+#ifneq ($(UNAME_S),Windows)
+#	$(LN) ./$(DLL_TARGET) $(TARGET_DIR)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
+#	$(LN) ./$(DLL_TARGET) $(TARGET_DIR)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
+#endif
+
+# How to copy EXE to target directory
+#==============================================
+$(TARGET_DIR)/$(EXE_TARGET): $(BUILDDIR)/$(EXE_TARGET)
+	@echo --
+	@echo -- Copying $? to $(TARGET_DIR)
+	$(CP) $? $@
+
+# Create required directories
+#==============================================
+directories : 
+	-$(MKDIR) $(BUILDDIR) $(TARGET_DIR)
     
 clean:
-	-$(RM) $(BUILDDIR)/*.*
 	-$(RMDIR) $(BUILDDIR)
 
-dll: $(BUILDDIR) $(SHARED_LIBDIRS)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
-#	@echo SRC          = $(SRC)
-#	@echo OBJ          = $(OBJ)
-#	@echo RESOURCE_OBJ = $(RESOURCE_OBJ)
-
-exe: $(BUILDDIR) $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX)
-#	@echo SRC          = $(SRC)
-#	@echo OBJ          = $(OBJ)
-#	@echo RESOURCE_OBJ = $(RESOURCE_OBJ)
+dll: directories $(TARGET_DIR)/$(DLL_TARGET)
+exe: directories $(TARGET_DIR)/$(EXE_TARGET)
    
-.PHONY: clean dll exe $(BUILDDIR)
+.PHONY: directories clean dll exe 
 

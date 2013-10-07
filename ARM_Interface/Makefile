@@ -63,9 +63,9 @@ all: allCommon allWindows
 #Test: usbdm-$(target)-gdbPipeServer-debug
 #Test: usbdm-$(target)-gdbSocketServer-debug
 #Test: usbdm-$(target)-gdbPipeServer-debug usbdm-$(target)-gdbSocketServer
-Test: $(TARGET)_FlashProgrammer-debug
+#Test: $(TARGET)_FlashProgrammer-debug
 #Test: $(TARGET)_GDBServer-debug 
-#Test: $(TARGET)_GDBServer-debug $(TARGET)_FlashProgrammer-debug
+Test: $(TARGET)_GDBServer-debug $(TARGET)_FlashProgrammer-debug
 
 clean: cleanCommon
 

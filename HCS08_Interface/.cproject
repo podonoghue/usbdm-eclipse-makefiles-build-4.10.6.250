@@ -22,6 +22,8 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.800391615" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
 								<option id="gnu.both.asm.option.include.paths.42072187" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="C:/Apps/wxWidgets-2.9.4/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src/Programmer}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1610553579" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -29,13 +31,19 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.648622780" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base">
 								<option id="gnu.cpp.compiler.option.include.paths.1415229877" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="C:/Apps/wxWidgets-2.9.4/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src/Programmer}&quot;"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.138328521" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.646056026" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1619465964" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base">
 								<option id="gnu.c.compiler.option.include.paths.578514862" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="C:/Apps/wxWidgets-2.9.4/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src/Programmer}&quot;"/>
 								</option>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1035399166" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.599457173" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1003316701" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base"/>
@@ -70,16 +78,43 @@
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.1310498990" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
 							<builder command="mingw32-make" id="org.eclipse.cdt.build.core.settings.default.builder.1219285956" incrementalBuildTarget="test" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.1274025774" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
-								<option id="gnu.both.asm.option.include.paths.236646893" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath"/>
+								<option id="gnu.both.asm.option.include.paths.236646893" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src/Programmer}&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.909642100" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.mingw.base.1149972423" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1128799869" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base">
-								<option id="gnu.cpp.compiler.option.include.paths.401437910" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath"/>
+								<option id="gnu.cpp.compiler.option.include.paths.401437910" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src/Programmer}&quot;"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.1565456615" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="_GNUWIN32_=1"/>
+									<listOptionValue builtIn="false" value="_WXMSW_=1"/>
+									<listOptionValue builtIn="false" value="FLASH_PROGRAMMER=1"/>
+									<listOptionValue builtIn="false" value="TARGET=HCS08"/>
+									<listOptionValue builtIn="false" value="LOG=1"/>
+									<listOptionValue builtIn="false" value="UNICODE=1"/>
+									<listOptionValue builtIn="false" value="GDB_SERVER=1"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1690620617" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.2026331965" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base">
-								<option id="gnu.c.compiler.option.include.paths.1135950551" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath"/>
+								<option id="gnu.c.compiler.option.include.paths.1135950551" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Shared_V4/src/Programmer}&quot;"/>
+								</option>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1745038697" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="_GNUWIN32_=1"/>
+									<listOptionValue builtIn="false" value="_WXMSW_=1"/>
+									<listOptionValue builtIn="false" value="FLASH_PROGRAMMER=1"/>
+									<listOptionValue builtIn="false" value="TARGET=HCS08"/>
+									<listOptionValue builtIn="false" value="LOG=1"/>
+									<listOptionValue builtIn="false" value="UNICODE=1"/>
+									<listOptionValue builtIn="false" value="GDB_SERVER=1"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.779583126" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1903866728" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base"/>

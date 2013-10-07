@@ -38,7 +38,9 @@
 #define EXTERN_C  extern "C"
 #else
 //! Usual C interface for C++
+#ifndef EXTERN_C
 #define EXTERN_C
+#endif
 #endif
 
 #if defined(_WIN32) && !defined (WINAPI)

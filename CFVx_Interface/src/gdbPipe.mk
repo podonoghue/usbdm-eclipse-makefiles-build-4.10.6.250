@@ -1,4 +1,4 @@
-# Build list for pipe-based command-line GDB server
+# Build list for Pipe-based command-line GDB server
 
 # List source file to include from current directory
 SRC += FlashProgramming.cpp

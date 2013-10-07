@@ -30,8 +30,8 @@ cleanWindows:
 
 all: allCommon allWindows
 
-Test: usbdm-$(target)-gdi-debug
-#Test: $(TARGET)_FlashProgrammer-debug
+#Test: usbdm-$(target)-gdi-debug
+Test: $(TARGET)_FlashProgrammer-debug
 
 clean: cleanCommon cleanWindows
 

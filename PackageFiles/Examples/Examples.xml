@@ -30,7 +30,7 @@ Example project for Freedom KE02Z (MKE02Z64M4) board
 Includes example code demonstrating use of printf() with on-chip UART.
 Makes use of NewLib library. 
       </example>
-      <example description="Freedom K20D50M Basic"       family="ARM"        path="MK20DX128M5_FRDM.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.codesourceryARM">
+      <example description="Freedom K20D50M Basic"       family="ARM"        path="MK20DX128M5_FRDM.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom KL20D50M board
 Includes example clock initialisation and port operations.
       </example>
@@ -39,9 +39,13 @@ Example project for Freedom KL20D50M board
 Includes example code demonstrating use of printf() with on-chip UART.
 Makes use of NewLib library. 
       </example>
-      <example description="Freedom K20D50M Colour LCD driver"  family="ARM" path="MK20DX128M5_FRDM_ColourLCD.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.codesourceryARM">
+      <example description="Freedom K20D50M Colour LCD driver"  family="ARM" path="MK20DX128M5_FRDM_ColourLCD.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom KL20D50M board
 Includes driver for colour LCD (Spark Fun LCD-09363 or ElecFreaks SHD-CLS).
+      </example>
+      <example description="Freedom K20D50M CMSIS RTOS"  family="ARM" path="MK20DX128M5_cmsis_rtos.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
+Example project for Freedom KL20D50M board
+Includes CMSIS-RTOS examples
       </example>
       <example description="Tower MCF51JF128 Basic"      family="COLDFIRE"   path="MCF51JF128_Tower.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.codesourceryColdfire">
 Example project for Tower MCF51JF128 board
@@ -74,9 +78,9 @@ Makes use of NewLib library.
 Example project for Generic MCF52233 device
 Includes example port operations.
       </example>
-      <example description="STM32F103 SPL Example"      family="ARM"   path="stm32f-example.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
-Example project for STM32F103
-Includes pre-compiled Standard Peripheral Library (SPL)
+      <example description="STM32F103 SPL Example"      family="ARM"   path="STM32_cmsis_rtos.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
+Example project for STM32F103 (OLIMEXINO-STM32 Board)
+Includes STM32 Standard Peripheral Library (SPL) and CMSIS-RTOS 
       </example>
       <example description="USBDM API"                   family="NONE"       path="USBDM_API_Example.zip">
 Example project using USBDM API to read data from the Flash memory of a 

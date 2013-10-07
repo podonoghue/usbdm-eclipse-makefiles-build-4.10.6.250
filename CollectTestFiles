@@ -1,36 +1,22 @@
 #!/bin/sh
+# Where Eclipse files are
+ECLIPSE_HOME=.
 
 # Where to place test files
-TEST_DIR=Tests
+TEST_DIR=${ECLIPSE_HOME}/Tests
 
 # Where DLLs to link against are kept
-DEVICE_DATA=PackageFiles/DeviceData
+DEVICE_DATA=${ECLIPSE_HOME}/PackageFiles/DeviceData
 
-if [ ! -e ${TEST_DIR} ]; then
-   mkdir ${TEST_DIR}
-fi
+mkdir -p ${TEST_DIR}
 
 # Executables that are produced as part of USBDM
-PROGRAMMER_TARGETS="ARM HCS12 HCS08 RS08 CFV1 CFVx DSC"
-for f in ${PROGRAMMER_TARGETS}; do
-   cp "${f}_Interface/${f}_FlashProgrammer/"*FlashProgrammer        "${TEST_DIR}"
-done
-for f in ${PROGRAMMER_TARGETS}; do
-   cp "${f}_Interface/${f}_FlashProgrammer-debug/"*FlashProgrammer-*  "${TEST_DIR}"
-done   
-UTILTITIES_PROGS="FirmwareChanger MergeXML JS16_Bootloader USBDM_API_Example CopyFlash"
-for f in ${UTILTITIES_PROGS}; do
-   cp "${f}/${f}/${f}"                                  "${TEST_DIR}"
-done
-UTILTITIES_PROGS="FirmwareChanger MergeXML JS16_Bootloader USBDM_API_Example"
-for f in ${UTILTITIES_PROGS}; do
-   cp "${f}/${f}-debug/${f}-debug"                            "${TEST_DIR}"
-done
-TCL="UsbdmScript UsbdmScript-debug"
-for f in ${TCL}; do
-   cp "Usbdm_TCL/${f}/"${f}                             "${TEST_DIR}"
-done
+cp "${ECLIPSE_HOME}/PackageFiles/bin/"*                "${TEST_DIR}"
 
-cp -r ${DEVICE_DATA}                                     "${TEST_DIR}/DeviceData"
+# Misc commands
+cp "${ECLIPSE_HOME}/PackageFiles/Miscellaneous/"*.tcl  "${TEST_DIR}"
+
+# Device Data
+cp -P -r "${ECLIPSE_HOME}/${DEVICE_DATA}"              "${TEST_DIR}/DeviceData"
 
 

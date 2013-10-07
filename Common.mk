@@ -8,6 +8,14 @@ MINOR_VERSION := 10
 MICRO_VERSION := 5
 USBDM_VERSION := $(MAJOR_VERSION).$(MINOR_VERSION)
 
+#===========================================================
+# Shared directories - Relative to child directory
+SHARED_SRC     := ../Shared_V4/src
+SHARED_LIBDIRS := ../Shared_V4/lib
+TARGET_DIR     := ../PackageFiles/bin
+# Used as prefix with the above when in build directory $(DUMMY_CHILD)/$(SHARED_SRC ) = PackageFiles/src
+DUMMY_CHILD    := PackageFiles
+
 ifeq ($(OS),Windows_NT)
     UNAME_S := Windows
 else
@@ -24,10 +32,10 @@ ifeq ($(UNAME_S),Windows)
 #   MINGWBIN := c:/Apps/MinGW/bin
    MINGWBIN := c:/Apps/MinGW/bin
    MSYSBIN  := c:/Apps/MinGW/msys/1.0/bin
-   RM       := $(MSYSBIN)/rm
+   RM       := $(MSYSBIN)/rm -f
    RMDIR    := $(MSYSBIN)/rm -R -f
    TOUCH    := $(MSYSBIN)/touch
-   MKDIR    := $(MSYSBIN)/mkdir
+   MKDIR    := $(MSYSBIN)/mkdir -p
    CP       := $(MSYSBIN)/cp
    MAKE     := $(MINGWBIN)/mingw32-make
    GCC      := $(MINGWBIN)/gcc
@@ -45,10 +53,10 @@ else
 
    MINGWBIN := 
    MSYSBIN  := 
-   RM       := rm
+   RM       := rm -f
    RMDIR    := rm -R -f
    TOUCH    := touch
-   MKDIR    := mkdir
+   MKDIR    := mkdir -p
    CP       := cp
    LN       := ln -s -f
    MAKE     := make
@@ -97,28 +105,30 @@ endif
 #===========================================================
 # WXWIDGETS
 ifeq ($(UNAME_S),Windows)
-   WXWIDGETS_INC     := -IC:/Apps/wxWidgets-2.9.4/lib/gcc_lib/mswu -IC:/Apps/wxWidgets-2.9.4/include
+   WXWIDGETS_INSTALL_DIR=C:/Apps/wxWidgets-2.9.5
+   WXWIDGETS_VERSION_NUM=295
+   WXWIDGETS_INC     := -I$(WXWIDGETS_INSTALL_DIR)/lib/gcc_lib/mswu -I$(WXWIDGETS_INSTALL_DIR)/include -IC:\Apps\wxWidgets-2.9.5\lib\gcc_dll\mswu
    WXWIDGETS_DEFS    := -DuseWxWidgets -D__WXMSW__ -D__GNUWIN32__ -DUNICODE
 
    # Pick up shared DLLs from Shared_V4/lib
    WXWIDGETS_SHARED_LIBDIRS :=
    WXWIDGETS_SHARED_LIBS    := \
-   -lwxmsw294u_core_gcc_custom       \
-   -lwxbase294u_gcc_custom           \
-   -lwxmsw294u_adv_gcc_custom        
+   -lwxmsw$(WXWIDGETS_VERSION_NUM)u_core_gcc_custom       \
+   -lwxbase$(WXWIDGETS_VERSION_NUM)u_gcc_custom           \
+   -lwxmsw$(WXWIDGETS_VERSION_NUM)u_adv_gcc_custom        
    
-#   -lwxmsw294u_richtext_gcc_custom   \
-#   -lwxbase294u_xml_gcc_custom       \
-#   -lwxmsw294u_html_gcc_custom
-   #-lwxbase294u_net_gcc_custom            \
-   #-lwxmsw294u_aui_gcc_custom             \
-   #-lwxmsw294u_gl_gcc_custom              \
-   #-lwxmsw294u_media_gcc_custom      -lwxmsw294u_propgrid_gcc_custom \
-   #-lwxmsw294u_ribbon_gcc_custom     -lwxmsw294u_richtext_gcc_custom \
-   #-lwxmsw294u_stc_gcc_custom        -lwxmsw294u_webview_gcc_custom  \
-   #-lwxmsw294u_xrc_gcc_custom   
+#   -lwxmsw$(WXWIDGETS_VERSION_NUM)u_richtext_gcc_custom   \
+#   -lwxbase$(WXWIDGETS_VERSION_NUM)u_xml_gcc_custom       \
+#   -lwxmsw$(WXWIDGETS_VERSION_NUM)u_html_gcc_custom
+   #-lwxbase$(WXWIDGETS_VERSION_NUM)u_net_gcc_custom            \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_aui_gcc_custom             \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_gl_gcc_custom              \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_media_gcc_custom      -lwxmsw$(WXWIDGETS_VERSION_NUM)u_propgrid_gcc_custom \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_ribbon_gcc_custom     -lwxmsw$(WXWIDGETS_VERSION_NUM)u_richtext_gcc_custom \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_stc_gcc_custom        -lwxmsw$(WXWIDGETS_VERSION_NUM)u_webview_gcc_custom  \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_xrc_gcc_custom   
 
-   WXWIDGETS_STATIC_LIBDIRS := -LC:/Apps/wxWidgets-2.9.4/lib/gcc_lib
+   WXWIDGETS_STATIC_LIBDIRS := -L$(WXWIDGETS_INSTALL_DIR)/lib/gcc_lib
    WXWIDGETS_STATIC_LIBS    := \
    -lwxmsw29u_core \
    -lwxpng \
@@ -145,11 +155,13 @@ ifeq ($(UNAME_S),Windows)
    #-lwxscintilla           
 
 else
-   WXWIDGETS_INC     := `wx-config --cppflags`
+#   WXWIDGETS_INC     := `wx-config --cppflags`
+   WXWIDGETS_INC     := $(shell wx-config --cppflags)
    WXWIDGETS_DEFS    := -DuseWxWidgets
 
    WXWIDGETS_SHARED_LIBDIRS :=
-   WXWIDGETS_SHARED_LIBS    := `wx-config --libs`
+#   WXWIDGETS_SHARED_LIBS    := `wx-config --libs`
+   WXWIDGETS_SHARED_LIBS    := $(shell wx-config --libs)
 
    WXWIDGETS_STATIC_LIBDIRS := 
    WXWIDGETS_STATIC_LIBS    := 
@@ -201,67 +213,69 @@ WIN_XML_INSTALLER_LIBS    := -lMsi
 #===========================================================
 # Java for JNI
 ifeq ($(UNAME_S),Windows)
-   JAVA_INC := -I$(PROGRAM_DIR)/Java/jdk1.7.0_21/include
-   JAVA_INC += -I$(PROGRAM_DIR)/Java/jdk1.7.0_21/include/win32
+   JAVA_INC := -I$(PROGRAM_DIR)/Java/jdk1.7.0_40/include
+   JAVA_INC += -I$(PROGRAM_DIR)/Java/jdk1.7.0_40/include/win32
 else
    JAVA_INC := -I/usr/lib/jvm/default-java/include
 endif
 
-#===========================================================
-# Shared directory - Relative to child directory
-SHARED_SRC     := ../Shared_V4/src
-SHARED_LIBDIRS := ../Shared_V4/lib
-
 #=============================================================
 # Common USBDM DLLs in debug and non-debug versions as needed
-LIB_WX_PLUGIN = usbdm-wxPlugin
+ifeq ($(UNAME_S),Windows)
+   LIB_WX_PLUGIN := usbdm-wxPlugin
+else
+   LIB_WX_PLUGIN := usbdm-wx
+endif
 
-LIB_USB_SHARED  = usb-1.0
-LIB_USB_STATIC  = usb-static-1.0
+LIB_USB_SHARED  := usb-1.0
+LIB_USB_STATIC  := usb-static-1.0
 
 ifeq ($(UNAME_S),Windows)
    LIB_USB = $(LIB_USB_STATIC)
    ifdef DEBUG
-      LIB_USBDM     = usbdm-debug.4 
-      LIB_USBDM_TCL = usbdmTCL-debug.4 
-      LIB_USBDM_DSC = usbdm-dsc-debug.4 
+      LIB_USBDM     := usbdm-debug.4 
+      LIB_USBDM_TCL := usbdmTCL-debug.4 
+      LIB_USBDM_DSC := usbdm-dsc-debug.4 
    else
-      LIB_USBDM     = usbdm.4 
-      LIB_USBDM_TCL = usbdmTCL.4 
-      LIB_USBDM_DSC = usbdm-dsc.4 
+      LIB_USBDM     := usbdm.4 
+      LIB_USBDM_TCL := usbdmTCL.4 
+      LIB_USBDM_DSC := usbdm-dsc.4 
    endif
 else
    LIB_USB = $(LIB_USB_SHARED)
    ifdef DEBUG
-      LIB_USBDM     = usbdm-debug
-      LIB_USBDM_TCL = usbdm-tcl-debug 
-      LIB_USBDM_DSC = usbdm-dsc-debug 
+      LIB_USBDM     := usbdm-debug
+      LIB_USBDM_TCL := usbdm-tcl-debug 
+      LIB_USBDM_DSC := usbdm-dsc-debug 
    else
-      LIB_USBDM     = usbdm
-      LIB_USBDM_TCL = usbdm-tcl 
-      LIB_USBDM_DSC = usbdm-dsc 
+      LIB_USBDM     := usbdm
+      LIB_USBDM_TCL := usbdm-tcl 
+      LIB_USBDM_DSC := usbdm-dsc 
    endif
 endif
 
 #===========================================================
 # Debug flags
 ifeq ($(UNAME_S),Windows)
-GCC_VISIBILITY_DEFS=
-THREADS = -mthreads
+   GCC_VISIBILITY_DEFS :=
+   THREADS := -mthreads
+   CFLAGS :=
 else
-GCC_VISIBILITY_DEFS=-fvisibility=hidden -fvisibility-inlines-hidden
-THREADS = 
+   GCC_VISIBILITY_DEFS :=-fvisibility=hidden -fvisibility-inlines-hidden
+   THREADS := 
+   CFLAGS := -fPIC
 endif
+
 ifdef DEBUG
    # Compiler flags
-   CFLAGS := -O0 -g3
+   CFLAGS += -O0 -g3
    # Compiler flags (Linking)
    LDFLAGS = 
    # C Definitions
    DEFS   := -DLOG
 else
    # Compiler flags
-   CFLAGS := -O3 -g0
+   CFLAGS += -O3 -g0 
    # Compiler flags (Linking)
    LDFLAGS = -s
 endif
@@ -269,23 +283,19 @@ endif
 CFLAGS  += ${THREADS} -Wall -shared ${GCC_VISIBILITY_DEFS}
 LDFLAGS += ${THREADS}
 
-ifneq ($(UNAME_S),Windows)
-   CFLAGS += -fPIC
-endif
-
 #CFLAGS += -Wshadow -DWINVER=0x500 -D_WIN32_IE=0x500 -std=gnu99 -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign
 
 #===========================================================
 # Extra libraries for WINSOCK
 ifeq ($(UNAME_S),Windows)
-   LIB_SOCKETS = -lws2_32
+   LIB_SOCKETS := -lws2_32
 else
-   LIB_SOCKETS = 
+   LIB_SOCKETS := 
 endif
 
 #===========================================================
 # Look in shared Library dir first
-LIBDIRS := -L$(SHARED_LIBDIRS)
+LIBDIRS := -L$(SHARED_LIBDIRS) -L$(TARGET_DIR)
 
 #===========================================================
 # Common Definitions for building Programmer, GDI & GDB

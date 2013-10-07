@@ -244,7 +244,7 @@ int GdbInOutSocket::createSocket(int portNumber, bool nonBlocking) {
 
    if (portNumber > 0) {
       //  Bind the socket to an address and port
-      memcpy(&addr.sin_addr, host->h_addr_list[0], sizeof(host->h_addr_list[0]));
+      memcpy(&addr.sin_addr, host->h_addr_list[0], sizeof(addr.sin_addr));
       addr.sin_family      = AF_INET;
       addr.sin_addr.s_addr = htonl(INADDR_ANY);
       addr.sin_port        = htons(portNumber);

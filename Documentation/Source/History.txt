@@ -358,17 +358,19 @@ V1.0 (Dec 2009) Initial Release
    The drivers and programmers have been tested with the following devices where supported by the particular programmer version
     (basic programming, debugging and clock trim where applicable):
    - RS08KA1, -KA2, -KA8, -LA8, -LE4 (<em>only with the Eclipse version of Codewarrior</em>)
-   - MC9S08AC128, -DN16, -DZ128, -EL16, -FL16, -GB60A, -GT16A, -GT32, -JM16, -JM60, -JS16, -LG32, -LL64, \n
+   - MC9S08AC60, -AC128, -DN16, -DZ128, -EL16, -FL16, -GB60A, -GT16A, -GT32, -JM16, -JM60, -LC36, -JS16, -LG32, -LL64, \n
                   -LM26, -PT60, -QA4, -QB8, -QD4, -QE8, -QE16, -QE128, -QG8, -RD16, -SE8, -SF4, -SH8, -SV16, \n
    - MC13213 \n
    - MC9S12A64, -C32, -C128, -DP256B, -DG128, -DT256, -G128, -HY64, -NE64, -P128, -XEP100, -XD256, -XDT512, -XS128,\n
                 -UF32(check hardware errata on this chip!) 
    - MM912H634, MM912G634
-   - MCF51AC256, -CN128, -EM256, -JF128, -JM128, -JU128, -QE96,  \n
-   - MCF52233, MCF52210 and some other ones that I can't recall at the moment.  These are all V2 chips - I don't have any V3/4 to test with.
+   - MCF51AC256, -CN128, -EM256, -JE256, -JF64, -JF128, -JM128, -JU128, -MM256, -QE96, -QE128, -QM128, -QU128 \n
+   - MCF52233, MCF52210, MCF52259 and some other ones that I can't recall at the moment.  These are all V2 chips - I don't have any V3/4 to test with.
    - MC56F8006, MC56F8013, MC56F8014, MC56F8023, MC56F8245, MC56F8323, 
-   - Kinetis KL25Z128, MK20DX256M7, PK20X128M5, K40X256, K60X256
-   - Complete systems - Axiom MC56F8006 Demo board, TWR-K40, TWR-K60, TWR-CFV1 and TWR-RS08/HCS08. \n
+   - MKE02Z, MKL02Z, MKL05Z, MKL25Z128, MKL46Z256
+   - MK10DX256VLH7, MK10DX64VLH5, MK10FX512VLQ12, MK20DN512VLK10, MK20DX128VFM5, MK20DX128VLH5, MK20DX256VLH7, MK20X128VLH5, 
+            MK22DN512VLH5, MK20DX128M5, MK20DX256M7, PK20X128M5, PK40X256, PK60N512
+   - Complete systems - Axiom MC56F8006 Demo board, TWR-K40, TWR-K60, TWR-CFV1, TWR-RS08/HCS08 and FRDMxxxx \n
 
    Please advise of any problems with particular chips.  
 

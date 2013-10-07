@@ -76,7 +76,7 @@ bool JS16_BootloaderApp::OnInit(void) {
 
 #ifndef _WIN32
    // Otherwise wxWidgets doesn't look in the correct location
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_(USBDM_INSTALL_DIRECTORY));
 #endif
 
    // call for default command parsing behaviour

@@ -72,7 +72,7 @@ static FILE *openApplicationFile(const char *fileName) {
 
 #ifdef WIN32
 #define _WIN32_IE 0x0500      //!< Required for later system calls.
-#define _WIN32_WINNT 0x0500   //!< Required for later system calls.
+//#define _WIN32_WINNT 0x0500   //!< Required for later system calls.
 #include <shlobj.h>
 //! Obtain the path of the configuration directory or file
 //!

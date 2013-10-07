@@ -474,6 +474,10 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
          <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
       </memory>         
+      <memory id="STM32_IO" type="io">
+         <memoryRange start="0x40000000" end="0x43FFFFFF" />  <!-- Bit-band Peripheral -->
+         <memoryRange start="0xE0000000" end="0xE03FFFFF" />  <!-- Private Peripherals -->
+      </memory>         
       <!-- GNU Build options Cortex M0 (e.g. MKL, MKE) devices -->
       <gnuInfoList id="gnuSettings.cortex.m0">
          <gnuInfo id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"

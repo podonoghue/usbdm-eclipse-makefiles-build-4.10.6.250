@@ -4,6 +4,7 @@ SRC += Version.rc
 
 # Shared files $(SHARED_SRC)
 VPATH := $(SHARED_SRC) $(VPATH)
+INCS  += -I$(SHARED_SRC)
 SRC += Names.cpp
 SRC += ApplicationFiles.cpp
 SRC += AppSettings.cpp

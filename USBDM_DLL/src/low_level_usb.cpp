@@ -894,7 +894,7 @@ USBDM_ErrorCode bdm_usb_recv_epIn(unsigned count, unsigned char *data, unsigned 
    } while ((rc == LIBUSB_SUCCESS) && (dummyBuffer[0] == BDM_RC_BUSY)  && (backoff<=backoffLimit));
 
    if (rc != LIBUSB_SUCCESS) {
-      Logging::error("Transfer failed (Count = %d, SB error = %s)\n", count, libusb_error_name((libusb_error)rc));
+      Logging::error("Transfer failed (Count = %d, USB error = %s, timeout=%d)\n", count, libusb_error_name((libusb_error)rc), timeoutValue);
       data[0] = BDM_RC_USB_ERROR;
       memset(&data[1], 0x00, count-1);
       return BDM_RC_USB_ERROR;
@@ -1036,7 +1036,7 @@ USBDM_ErrorCode bdmJMxx_simple_usb_transaction( bool                 commandTogg
    if (rc == BDM_RC_USB_ERROR) {
       // Single retry on Rx error
       Logging::error("USB Rx error\n");
-      milliSleep(100);
+      timeoutValue *= 4;
       rc = bdm_usb_recv_epIn(rxSize, inData, actualRxSize);
       if (rc == BDM_RC_USB_ERROR) {
          Logging::error("USB Rx error - retry failed\n");
@@ -1068,6 +1068,8 @@ USBDM_ErrorCode bdmJMxx_simple_usb_transaction( bool                 commandTogg
 //! \brief Executes an USB transaction.
 //! This consists of a transmission of a command and reception of the response
 //! JMxx Version - see \ref bdm_usb_transaction()
+//!
+//! @Note includes retries
 //!
 static
 USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,

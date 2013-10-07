@@ -98,6 +98,14 @@ JNIEXPORT jint JNICALL Java_net_sourceforge_usbdm_jni_Usbdm_usbdmGetUsbdmApplica
   (JNIEnv *env, jclass, jbyteArray jString);
 
 /*
+ * Class:     Java_net_sourceforge_usbdm_jni_Usbdm
+ * Method:    usbdmGetUsbdmResourcePath
+ * Signature: ([C)I
+ */
+JNIEXPORT jint JNICALL Java_net_sourceforge_usbdm_jni_Usbdm_usbdmGetUsbdmResourcePath
+  (JNIEnv *env, jclass, jbyteArray jString);
+
+/*
  * Cnet.sourceforge.usbdm.jni.usbdm_jni_Usbdm
  * Method:    usbdmGetDefaultExtendedOptions
  * Signature: ([C)I

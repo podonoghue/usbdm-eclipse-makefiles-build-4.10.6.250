@@ -3,6 +3,12 @@
 
 #.SILENT :
 
+#===========================================================
+# Shared directories - Relative to child directory
+SHARED_SRC     := ../Shared_V4/src
+SHARED_LIBDIRS := ../Shared_V4/lib
+TARGET_DIR     := ../PackageFiles/bin
+
 ifeq ($(OS),Windows_NT)
     UNAME_S := Windows
 else
@@ -16,28 +22,33 @@ ifeq ($(UNAME_S),Windows)
    EXE_SUFFIX = .exe
    MINGWBIN := c:/Apps/MinGW/bin
    MSYSBIN  := c:/Apps/MinGW/msys/1.0/bin
-   RM       := $(MSYSBIN)/rm
+   RM       := $(MSYSBIN)/rm -f
    RMDIR    := $(MSYSBIN)/rm -R -f
    TOUCH    := $(MSYSBIN)/touch
-   MKDIR    := $(MSYSBIN)/mkdir
+   MKDIR    := $(MSYSBIN)/mkdir -p
+   CP       := $(MSYSBIN)/cp
    MAKE     := $(MINGWBIN)/mingw32-make
    GCC      := $(MINGWBIN)/gcc
    GPP      := $(MINGWBIN)/g++
    WINDRES  := $(MINGWBIN)/windres
-   PROGRAM_DIR = C:/"Program Files"
-   #PROGRAM_DIR = C:/"Program Files (x86)"
+   #PROGRAM_DIR = C:/"Program Files"
+   PROGRAM_DIR = C:/'Program Files (x86)'
 else
    .SUFFIXES : .d
-   LIB_PREFIX = lib
-   LIB_SUFFIX = .so.4.10
-   EXE_SUFFIX = 
+   LIB_PREFIX 			:= lib
+   LIB_SUFFIX 			:= .so.$(MAJOR_VERSION).$(MINOR_VERSION)
+   LIB_MAJOR_SUFFIX		:= .so.$(MAJOR_VERSION)
+   LIB_NO_SUFFIX 		:= .so
+   EXE_SUFFIX 			:= 
 
    MINGWBIN := 
    MSYSBIN  := 
-   RM       := rm
+   RM       := rm -f
    RMDIR    := rm -R -f
    TOUCH    := touch
-   MKDIR    := mkdir
+   MKDIR    := mkdir -p
+   CP       := cp
+   LN       := ln -s -f
    MAKE     := make
    GCC      := gcc
    GPP      := g++
@@ -58,15 +69,11 @@ else
    WIN32_GUI_OPTS     := 
 endif
 
-#===========================================================
-# Shared directory - Relative to child directory
-SHARED_SRC     := 
-SHARED_LIBDIRS := .
 
 #=============================================================
 # Common USBDM DLLs in debug and non-debug versions as needed
 ifeq ($(UNAME_S),Windows)
-   LIB_WX_PLUGIN = wxPlugin
+   LIB_WX_PLUGIN = usbdm-wxPlugin
 else
    LIB_WX_PLUGIN = usbdm-wx
 endif
@@ -122,14 +129,15 @@ endif
 
 #===========================================================
 # Look in shared Library dir first
-LIBDIRS := -L$(SHARED_LIBDIRS)
+LIBDIRS := -L$(SHARED_LIBDIRS) -L$(TARGET_DIR)
 
 #===========================================================
 # Common Definitions for building Programmer, GDI & GDB
 PROGRAMMER_DEFS = -DTARGET=$(TARGET) -DFLASH_PROGRAMMER -DUSE_ICON
 GDI_DEFS        = -DTARGET=$(TARGET) -DGDI
 GDI_LEGACY_DEFS = -DTARGET=$(TARGET) -DGDI -DLEGACY
-GDB_DEFS        = -DTARGET=$(TARGET) -DGDB
+GDB_DEFS        = -DTARGET=$(TARGET) -DGDB -DGDB_SERVER
+GDB_SERVER_DEFS = -DTARGET=$(TARGET) -DUSE_ICON -DGDB -DGDB_SERVER
 
 ifeq ($(UNAME_S),Windows)
 # Windows version of Codewarrior packs structs

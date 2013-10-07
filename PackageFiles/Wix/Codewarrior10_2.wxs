@@ -13,6 +13,8 @@
    <?define DescSRecord="Freescale S-Record binary file" ?>
    <?define ExplorerMenuOpen="Open" ?>
 
+   <!-- ?define WxWidgetsVer="295u" ?-->
+   
    <Fragment>
       <!--======================================================
                Directory structure
@@ -174,8 +176,8 @@
             <File Id='EclipseHCSFiles17_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseHCSFiles18_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />
 
-            <File Id='EclipseHCSFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
-            <File Id='EclipseHCSFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+            <File Id='EclipseHCSFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase$(var.WxWidgetsVer)_gcc_custom.dll' />
+            <File Id='EclipseHCSFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw$(var.WxWidgetsVer)_core_gcc_custom.dll' />
          </Component>
       </DirectoryRef>
 
@@ -204,8 +206,8 @@
             <File Id='EclipseCFFiles17_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseCFFiles18_$(var.CW_VER_UC)'  DiskId='1' Source='bin\libstdc++-6.dll' />
 
-            <File Id='EclipseCFFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
-            <File Id='EclipseCFFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+            <File Id='EclipseCFFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase$(var.WxWidgetsVer)_gcc_custom.dll' />
+            <File Id='EclipseCFFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw$(var.WxWidgetsVer)_core_gcc_custom.dll' />
          </Component>
       </DirectoryRef>
 
@@ -232,8 +234,8 @@
             <File Id='EclipseArmFiles15_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseArmFiles16_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />
 
-            <File Id='EclipseArmFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
-            <File Id='EclipseArmFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+            <File Id='EclipseArmFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase$(var.WxWidgetsVer)_gcc_custom.dll' />
+            <File Id='EclipseArmFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw$(var.WxWidgetsVer)_core_gcc_custom.dll' />
          </Component>
       </DirectoryRef>
 
@@ -260,8 +262,8 @@
             <File Id='EclipseDscFiles15_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseDscFiles16_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />
 
-            <File Id='EclipseDscFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
-            <File Id='EclipseDscFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+            <File Id='EclipseDscFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase$(var.WxWidgetsVer)_gcc_custom.dll' />
+            <File Id='EclipseDscFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw$(var.WxWidgetsVer)_core_gcc_custom.dll' />
          </Component>
       </DirectoryRef>
 
@@ -288,8 +290,8 @@
             <File Id='EclipseS12ZFiles15_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseS12ZFiles16_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />
 
-            <File Id='EclipseS12ZFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
-            <File Id='EclipseS12ZFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+            <File Id='EclipseS12ZFiles20_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxbase$(var.WxWidgetsVer)_gcc_custom.dll' />
+            <File Id='EclipseS12ZFiles21_$(var.CW_VER_UC)' DiskId='1' Source='bin\wxmsw$(var.WxWidgetsVer)_core_gcc_custom.dll' />
          </Component>
       </DirectoryRef>
 

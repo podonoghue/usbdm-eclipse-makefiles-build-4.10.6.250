@@ -1,0 +1,68 @@
+#!/bin/bash
+set -e
+# Automatically added by dh_installdocs
+if [ "$1" = "configure" ]; then
+  if [ -d /usr/doc -a ! -e /usr/doc/parted -a -d /usr/share/doc/parted ]; then
+    ln -sf ../share/doc/parted /usr/doc/parted
+  fi
+fi 
+# End automatically added section
+
+#================================
+# USBDM Version
+#
+MAJOR=4
+MINOR=10
+
+CP_OPTIONS=-p
+
+# Where to find files (relative to /)
+DUMMY_ROOT=""
+USBDM_SHARED_DIR="${DUMMY_ROOT}/usr/share/usbdm"
+USBDM_LIB_DIR="${DUMMY_ROOT}/usr/lib/usbdm"
+
+# System directories
+LIB_DIR="/usr/lib"
+BIN_DIR="/usr/bin"
+RULES_DIR=/etc/udev/rules.d
+
+echo
+echo "Copying rules file to ${RULES_DIR}"
+echo "(Allows USBDM device to be accessed)"
+echo ==================================================================
+echo rm -f ${RULES_DIR}/*usbdm.rules
+rm -f ${RULES_DIR}/*usbdm.rules
+echo "cp $CP_OPTIONS ${USBDM_SHARED_DIR}/usbdm.rules ${RULES_DIR}/46-usbdm.rules"
+cp $CP_OPTIONS ${USBDM_SHARED_DIR}/usbdm.rules ${RULES_DIR}/46-usbdm.rules
+echo "chmod a+r      ${RULES_DIR}/46-usbdm.rules"
+chmod a+r      ${RULES_DIR}/46-usbdm.rules
+
+echo "Create symbolic links to shared library files"
+echo ==================================================================
+for SOURCE_FILE in ${USBDM_LIB_DIR}/*.so.${MAJOR}.${MINOR}; do
+   BASE_FILE_NAME=`basename -s .${MAJOR}.${MINOR} ${SOURCE_FILE}`
+   echo "  Linking ${BASE_FILE_NAME}"
+   ln -s ${SOURCE_FILE} ${LIB_DIR}/${BASE_FILE_NAME}.${MAJOR}.${MINOR}
+   ln -s ${SOURCE_FILE} ${LIB_DIR}/${BASE_FILE_NAME}.${MAJOR}
+   ln -s ${SOURCE_FILE} ${LIB_DIR}/${BASE_FILE_NAME}
+done
+
+# Executables to link
+EXECUTABLES="ARM_FlashProgrammer CFV1_FlashProgrammer CFVx_FlashProgrammer"
+EXECUTABLES="${EXECUTABLES} HCS08_FlashProgrammer HCS12_FlashProgrammer RS08_FlashProgrammer"
+
+echo "Create symbolic links to executables"
+echo ==================================================================
+for FILE in ${EXECUTABLES}; do
+   SOURCE_FILE=${USBDM_LIB_DIR}/${FILE}
+   if [[ -e ${SOURCE_FILE} ]]; then
+      echo "  Linking ${SOURCE_FILE}"
+      ln -s ${SOURCE_FILE} ${BIN_DIR}/`echo ${FILE}|tr '[:upper:]' '[:lower:]'`
+   else
+      echo "${SOURCE_FILE} not found"
+      return 1
+   fi
+done
+
+#ldconfig -X -v | grep usbdm
+

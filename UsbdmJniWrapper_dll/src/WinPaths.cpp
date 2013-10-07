@@ -1,5 +1,5 @@
 /*
- * WinRegistry.cpp
+ * WinPaths.cpp
  *
  *  Created on: 31/01/2013
  *      Author: PODonoghue
@@ -9,7 +9,7 @@
 
 #ifdef WIN32
 #define _WIN32_IE 0x0500      //!< Required for later system calls.
-#define _WIN32_WINNT 0x0500   //!< Required for later system calls.
+//#define _WIN32_WINNT 0x0500   //!< Required for later system calls.
 #include <windows.h>
 #include <shlobj.h>
 
@@ -77,6 +77,18 @@ bool getUsbdmApplicationPath(std::string &applicationDirectory) {
       return false;
    }
    return true;
+}
+
+//! Obtain the path of the resource directory (read only)
+//!
+//! @param applicationDirectory - String to return path
+//!
+//! @return error code -n true => success \n
+//!                    - false => failure
+//!
+bool getUsbdmResourcePath(std::string &path) {
+
+   return getUsbdmApplicationPath(path);
 }
 
 //! Obtain the path of the configuration directory

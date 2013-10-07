@@ -46,6 +46,7 @@ Change History
 #include "FlashImage.h"
 
 #include "GdbServerWindow.h"
+#define CONFIG_FILE_NAME "GDBServer_"
 
 #if TARGET==HCS08
 const TargetType_t targetType = T_HCS08;
@@ -129,7 +130,7 @@ bool GDBServerApp::OnInit(void) {
 
 #ifndef _WIN32
    // Otherwise wxWidgets doesn't look in the correct location
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_(USBDM_INSTALL_DIRECTORY));
 #endif
 
    SetAppName(_("usbdm")); // So application files are kept in the correct directory
@@ -141,7 +142,7 @@ bool GDBServerApp::OnInit(void) {
    shared = SharedPtr(new Shared(targetType));
 
    // Create empty app settings
-   appSettings = new AppSettings("GDBServer_", targetType);
+   appSettings = new AppSettings(CONFIG_FILE_NAME, targetType);
 
    // call for default command parsing behaviour
    if (!wxApp::OnInit()) {
@@ -152,6 +153,7 @@ bool GDBServerApp::OnInit(void) {
       // Not using command line options so load saved settings
       appSettings->loadFromAppDirFile();
    }
+   const wxString title(_("GDB Server"));
 
 #if TARGET == MC56F80xx
    DSC_SetLogFile(Logging::getLogFileHandle());
@@ -159,6 +161,7 @@ bool GDBServerApp::OnInit(void) {
 
    // Create the main application window
    GdbServerWindow *serverWindow = new GdbServerWindow(shared, *appSettings);
+   serverWindow->SetTitle(title);
    SetTopWindow(serverWindow);
    serverWindow->execute(skipOpeningDialogue);
 

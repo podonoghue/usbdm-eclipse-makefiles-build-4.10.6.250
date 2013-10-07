@@ -121,7 +121,7 @@ wxApp& getUsbdmWxApp() {
 
 #ifdef __unix__
 
-#define DLL_NAME "libusbdm-wxPlugin.so"
+#define DLL_NAME "libusbdm-wx.so"
 
 static void *libHandle = NULL;
 
@@ -159,7 +159,7 @@ dll_uninitialize(void) {
 #else
 
 extern "C" WINAPI __declspec(dllexport)
-bool DllMain(HINSTANCE  hDLLInst,
+BOOL DllMain(HINSTANCE  hDLLInst,
              DWORD      fdwReason,
              LPVOID     lpvReserved) {
 

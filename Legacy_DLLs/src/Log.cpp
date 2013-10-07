@@ -23,6 +23,7 @@
     \verbatim
    Change History
    -===============================================================================
+   | 20 Sep 2013 | Changed to using 'A' versions of system calls              - pgo 4.10.6.10
    | 16 Nov 2009 | Relocated log file directory for Vista.                    - pgo
    |  5 Nov 2009 | Completed restructure for V1                               - pgo
    | 22 May 2009 | Added Speed options for CFVx & JTAG targets                - pgo
@@ -188,7 +189,7 @@
 
 #ifdef WIN32
 #define _WIN32_IE 0x0500      //!< Required for later system calls.
-#define _WIN32_WINNT 0x0500   //!< Required for later system calls.
+//#define _WIN32_WINNT 0x0500   //!< Required for later system calls.
 #include <shlobj.h>
 	//! Obtain the path of the configuration directory or file
 	//!
@@ -211,7 +212,7 @@
 	      filename = "\\";
 
 	   // Obtain local app folder (create if needed)
-	   if (SHGetFolderPath(NULL,
+	   if (SHGetFolderPathA(NULL,
 	                       CSIDL_APPDATA|CSIDL_FLAG_CREATE,
 	                       NULL,
 	                       0,
@@ -225,8 +226,8 @@
 	   strcat(configFilePath, CONFIG_WITH_SLASHES);
 
 	   // Check if folder exists or can be created
-	   if ((GetFileAttributes(configFilePath) == INVALID_FILE_ATTRIBUTES) &&
-	       (SHCreateDirectoryEx( NULL, configFilePath, NULL ) != S_OK))
+	   if ((GetFileAttributesA(configFilePath) == INVALID_FILE_ATTRIBUTES) &&
+	       (SHCreateDirectoryExA( NULL, configFilePath, NULL ) != S_OK))
 	      return BDM_RC_FAIL;
 
 	   // Append filename if non-NULL

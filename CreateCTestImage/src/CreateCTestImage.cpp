@@ -19,7 +19,7 @@
 // @param size size of array to produce
 //
 void dumpBytes(FILE *fp, const char *arrayName, uint32_t size) {
-   int count;
+   unsigned count;
    fprintf(stderr, "file size = %d\n", size);
 
    fprintf(fp, "static const unsigned char %s[] = {\n", arrayName);
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
    if (argc > 1) {
       usage();
    }
-   for (int index=0; index<(sizeof(arrays)/sizeof(arrays[0])); index++) {
+   for (unsigned index=0; index<(sizeof(arrays)/sizeof(arrays[0])); index++) {
       char fileName[100];
       strcpy(fileName, arrays[index].name);
       strcat(fileName, ".h");

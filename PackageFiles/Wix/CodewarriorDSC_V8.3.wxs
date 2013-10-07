@@ -12,6 +12,8 @@
    <?define DescSRecord="Freescale S-Record binary file" ?>
    <?define ExplorerMenuOpen="Open" ?>
 
+   <!-- ?define WxWidgetsVer="295u" ?-->
+   
    <Fragment>
       <!--======================================================
             Directory structure
@@ -82,8 +84,8 @@
             <File Id='CODEWARRIOR_DSC_V8_3_Files9'  DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='CODEWARRIOR_DSC_V8_3_Files10' DiskId='1' Source='bin\libstdc++-6.dll' />
 
-            <File Id='CODEWARRIOR_DSC_V8_3_Files_wxComonFiles1'     DiskId='1' Source='bin\wxbase294u_gcc_custom.dll' />
-            <File Id='CODEWARRIOR_DSC_V8_3_Files_wxComonFiles2'     DiskId='1' Source='bin\wxmsw294u_core_gcc_custom.dll' />
+            <File Id='CODEWARRIOR_DSC_V8_3_Files_wxComonFiles1'     DiskId='1' Source='bin\wxbase$(var.WxWidgetsVer)_gcc_custom.dll' />
+            <File Id='CODEWARRIOR_DSC_V8_3_Files_wxComonFiles2'     DiskId='1' Source='bin\wxmsw$(var.WxWidgetsVer)_core_gcc_custom.dll' />
          </Component>
       </DirectoryRef>
 

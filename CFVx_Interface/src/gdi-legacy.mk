@@ -28,4 +28,4 @@ INCS  += -I$(SHARED_SRC)/Programmer
 SRC += AdvancedPanel.cpp
 SRC += InterfacePanel.cpp
 SRC += Shared.cpp
-SRC += UsbdmDialogue.cpp
+SRC += USBDMDialogue.cpp

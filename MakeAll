@@ -1,4 +1,4 @@
 #!/bin/bash
 
-make -f MakeAll.mk all
+make -f Makefile all
 

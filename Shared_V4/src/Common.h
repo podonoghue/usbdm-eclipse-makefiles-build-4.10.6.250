@@ -49,7 +49,7 @@ typedef uint8_t memoryElementType; // Size of target memory element
 #define DEVICE_DATABASE_DIRECTORY "DeviceData"
 
 #ifndef _WIN32
-#define USBDM_INSTALL_DIRECTORY _("/usr")
+#define USBDM_INSTALL_DIRECTORY "/usr"
 #endif
 
 

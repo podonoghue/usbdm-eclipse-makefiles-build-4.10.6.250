@@ -17,6 +17,11 @@
 ;#  when initially loaded into the TCL environment.
 ;#
 
+;###################################################################
+;#  Increased reset recover time
+;#  Increased polling time (added delay)
+;#
+
 ;######################################################################################
 ;#
 ;#
@@ -81,6 +86,7 @@ proc unlockFlash {} {
    pinSet rst=0
    wl $::DBGMCU_CR 0xFFFFFFFF
    pinSet  ;# release reset
+   after 300
    
    rl $::FLASH_CR
 
@@ -109,6 +115,7 @@ proc checkFlashError {} {
    while { $flashBusy } {
       set flashSR [ rl $::FLASH_SR ]
       set flashBusy [expr $flashSR & $::FLASH_SR_BSY]
+      after 50
       incr retry
       if [ expr $retry == 40] {
          error "Flash busy timeout"
@@ -141,7 +148,7 @@ proc programWordLocation { addr value } {
 proc unsecureFlash {} {
 
    unlockFlash
-
+  
 ;#   puts "Erasing Flash option area"
    wl $::FLASH_SR [ expr ($::FLASH_SR_EOP|$::FLASH_SR_PGERR|$::FLASH_SR_WRPRTERR) ]
    wl $::FLASH_CR [ expr ($::FLASH_CR_OPTER|$::FLASH_CR_OPTWRE) ]
@@ -160,7 +167,7 @@ proc unsecureFlash {} {
    pinSet rst=0
    after 100
    pinSet  ;# release reset
-   after 100
+   after 300
    
    set flashOBR [ rl $::FLASH_OBR ]
    if [ expr ( $flashOBR & $::FLASH_OBR_RDPRT ) != 0 ] {

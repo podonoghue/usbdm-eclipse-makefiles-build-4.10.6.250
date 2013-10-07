@@ -21,6 +21,31 @@ USBDM_API USBDM_ErrorCode  USBDM_GetBDMSerialNumber(const char **deviceDescripti
 
 /*
  * Class:     net.sourceforge.usbdm.jni.usbdm
+ * Method:    usbdm_getUsbdmResourcePath
+ * Signature: ([C)I
+ */
+JNIEXPORT jint JNICALL 
+Java_net_sourceforge_usbdm_jni_Usbdm_usbdmGetUsbdmResourcePath(JNIEnv *env, jclass, jbyteArray jString) {
+   std::string installationPath;
+   if (!getUsbdmResourcePath(installationPath)) {
+      return BDM_RC_FAIL;
+   }
+   jint  jlen    = installationPath.length();
+   jbyte jlenMSB = (jbyte)(jlen>>8);
+   jbyte jlenLSB = (jbyte)(jlen);
+   jint len = env->GetArrayLength(jString);
+   if (jlen > len-2) {
+      // Buff not big enough
+      return BDM_RC_ILLEGAL_PARAMS;
+   }
+   env->SetByteArrayRegion(jString, 0, 1, &jlenMSB);
+   env->SetByteArrayRegion(jString, 1, 1, &jlenLSB);
+   env->SetByteArrayRegion(jString, 2, jlen, (const jbyte *)installationPath.c_str());
+   return BDM_RC_OK;
+}
+
+/*
+ * Class:     net.sourceforge.usbdm.jni.usbdm
  * Method:    usbdm_getUsbdmApplicationPath
  * Signature: ([C)I
  */

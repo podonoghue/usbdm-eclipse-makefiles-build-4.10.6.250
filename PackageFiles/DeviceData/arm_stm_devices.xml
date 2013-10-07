@@ -12,6 +12,7 @@
       <memory type="io">
          <memoryRange size="64M" start="0xE0000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000420" />
@@ -28,6 +29,7 @@
       <memory type="ram">
          <memoryRange end="0x20007FFF" start="0x20000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000420" />
@@ -44,6 +46,7 @@
       <memory type="ram">
          <memoryRange end="0x20007FFF" start="0x20000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000428" />
@@ -60,6 +63,7 @@
       <memory type="ram">
          <memoryRange end="0x20007FFF" start="0x20000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000412" />
@@ -76,6 +80,7 @@
       <memory type="ram">
          <memoryRange size="0x5000" start="0x20000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000410" />
@@ -92,6 +97,7 @@
       <memory type="ram">
          <memoryRange end="0x20007FFF" start="0x20000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000414" />
@@ -108,6 +114,7 @@
       <memory type="ram">
          <memoryRange end="0x20007FFF" start="0x20000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000430" />
@@ -124,6 +131,7 @@
       <memory type="ram">
          <memoryRange end="0x20007FFF" start="0x20000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000430" />
@@ -140,6 +148,7 @@
       <memory type="ram">
          <memoryRange size="20K" start="0x20000000" />
       </memory>
+      <memoryRef ref="STM32_IO" />
       <sdidAddress value="0xE0042000" />
       <sdidMask value="0x00000FFF" />
       <sdid value="0x00000410" />

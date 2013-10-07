@@ -1398,7 +1398,7 @@ bool BootloaderApp::OnInit() {
 
 #ifndef _WIN32
    // Otherwise wxWidgets doesn't look in the correct location
-   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(USBDM_INSTALL_DIRECTORY);
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_(USBDM_INSTALL_DIRECTORY));
 #endif
 
    SetAppName(_("usbdm")); // So application files are kept in the correct directory

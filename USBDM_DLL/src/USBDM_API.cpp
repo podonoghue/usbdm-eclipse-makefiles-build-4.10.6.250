@@ -388,6 +388,10 @@ USBDM_ErrorCode USBDM_Close(void) {
       USBDM_SetTargetType(T_OFF);
    }
    bdm_usb_close();
+
+   bdmInfoValid = false;
+   bdmInfo      = defaultBdmInfo;
+
    return BDM_RC_OK;
 }
 
@@ -2055,10 +2059,10 @@ USBDM_ErrorCode USBDM_WriteCReg(unsigned int regNo, unsigned long regValue) {
       case T_ARM_JTAG :
          switch (regNo) {
          case ARM_CRegMDM_AP_Status:
-            Logging::print("reg=MDM-AP.Status,  %s(0x%08X)\n", getMDM_APStatusName(regValue), regValue);
+            Logging::print("reg=MDM-AP.Status,  %s(0x%08X)\n", getMDM_APStatusName((uint32_t)regValue), regValue);
             break;
          case ARM_CRegMDM_AP_Control:
-            Logging::print("reg=MDM-AP.Control, %s(0x%08X)\n", getMDM_APControlName(regValue),regValue);
+            Logging::print("reg=MDM-AP.Control, %s(0x%08X)\n", getMDM_APControlName((uint32_t)regValue),regValue);
             break;
          default:
             Logging::print("reg=%s(0x%X), 0x%08X)\n", getARMControlRegName(regNo), regNo, regValue);

@@ -1,3 +1,3 @@
-mingw32-make -f MakeAll.mk all
+mingw32-make all
 
 pause
