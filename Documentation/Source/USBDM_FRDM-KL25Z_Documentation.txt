@@ -16,11 +16,10 @@
     
  \subsection featureSection Features
    This version of the USBDM code combined with the FRDM-KL25 board provides the following features:
-      -	A SWD interface for programming and debugging of <b>Kinetis ARM-Cortex</b> microcontrollers.
-      -  Both the on-board MKL25Z128M4 and external devices may be programmed.
-      -  Installation of the USBDM software does not require any tools other than the FRDM-KL25Z board.
-      -  The original board software may be restored if USBDM is not found suitable.
-      
+   -	A SWD interface for programming and debugging of <b>Kinetis ARM-Cortex</b> microcontrollers.
+   -  Both the on-board MKL25Z128M4 and external devices may be programmed.
+   -  Installation of the USBDM software does not require any tools other than the FRDM-KL25Z board.
+   -  The original board software may be restored if USBDM is not found suitable.  
    -  Compatible IDEs
       - Codewarrior V10.x (Eclipse version)
          - Kinetis <i>USBDM debug interface</i>
@@ -28,7 +27,6 @@
          - Kinetis <i>New Project Wizard</i>
          - Kinetis <i>USBDM debug target</i>
          - Integration of CodeSourcery Lite for ARM
-         
    -  Linux compatible
    -  Window compatible
    -  The Firmware in the BDM may be updated using the FRDM-KL25 Bootloader function.

@@ -44,6 +44,7 @@ Change History
 #include "Version.h"
 #include "FlashProgramming.h"
 #include "FlashImage.h"
+#include "Names.h"
 
 #include "GdbServerWindow.h"
 #define CONFIG_FILE_NAME "GDBServer_"
@@ -207,6 +208,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] = {
       { wxCMD_LINE_OPTION, _("power"),       NULL, _("Power timing (off,recovery) 100-10000 ms"),             wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("port"),        NULL, _("Server port # to use e.g. 1234"),                       wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("reset"),       NULL, _("Reset timing (active,release,recovery) 10-10000 ms"),   wxCMD_LINE_VAL_STRING },
+      { wxCMD_LINE_OPTION, _("security"),    NULL, _("Device security (unsecured, image, smart)"),            wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("speed"),       NULL, _("Interface speed (CFVx/Kinetis/DSC) kHz"),               wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("trim"),        NULL, _("Trim internal clock to frequency (in kHz) e.g. 32.7"),  wxCMD_LINE_VAL_STRING },
       { wxCMD_LINE_OPTION, _("vdd"),         NULL, _("Supply Vdd to target (3V3 or 5V)"),                     wxCMD_LINE_VAL_STRING },
@@ -292,6 +294,25 @@ bool GDBServerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
          success = false;
       }
    }
+   if (parser.Found(_("security"), &sValue)) {
+      skipOpeningDialogue = true;
+      if (sValue.CmpNoCase(_("Smart")) == 0) {
+         deviceData->setSecurity(SEC_SMART);
+      }
+      else if (sValue.CmpNoCase(_("Image")) == 0) {
+         deviceData->setSecurity(SEC_DEFAULT);
+      }
+      else if (sValue.CmpNoCase(_("Unsecured")) == 0) {
+         deviceData->setSecurity(SEC_UNSECURED);
+      }
+      else {
+#if (wxCHECK_VERSION(2, 9, 0))
+         parser.AddUsageText("***** Error: Illegal security value.\n");
+#endif
+         success = false;
+      }
+   }
+
    if (parser.Found(_("vdd"), &sValue)) {
       skipOpeningDialogue = true;
       if (sValue.CmpNoCase(_("3V3")) == 0) {

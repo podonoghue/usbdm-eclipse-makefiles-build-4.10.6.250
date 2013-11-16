@@ -1,3 +1,5 @@
+Building under linux
+====================================================
 G++ 			(4:4.7.2-1ubuntu2)
 libwxgtk2.8-dev 	(2.8.12.1-11ubuntu3)
 libusb-1.0-0-dev	(2:1.0.12-2)

@@ -4,7 +4,7 @@ Section: embedded
 Priority: optional
 Architecture: i386
 Installed-Size: 44300
-Depends: libwxgtk2.8-0, libwxbase2.8-0, libgcc1, libstdc++6, libxerces-c3.1, libc6, tcl8.5-lib
+Depends: libwxgtk2.8-0, libwxbase2.8-0, libgcc1, libstdc++6, libxerces-c3.1, libc6, tcl
 Maintainer: Peter O'Donoghue <podonoghue@swin.edu.au>
 Description: Debugger Hardware & Software for Freescale microcontrollers.
  USBDM is a debugger hardware interface for a range of Freescale 

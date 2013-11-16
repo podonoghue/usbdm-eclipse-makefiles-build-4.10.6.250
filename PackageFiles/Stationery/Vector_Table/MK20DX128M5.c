@@ -83,16 +83,15 @@ typedef struct {
  */
 __attribute__((__naked__, __weak__, __interrupt__))
 void HardFault_Handler(void) {
-   __asm volatile (
-          "       tst lr, #4                                    \n"
-          "       ite eq                                        \n"
-          "       mrseq r0, msp                                 \n"
-          "       mrsne r0, psp                                 \n"
-          "       ldr r2, handler_addr_const                    \n"
-          "       bx r2                                         \n"
-          "       handler_addr_const: .word _HardFault_Handler  \n"
-      );
+        __asm volatile ( "  tst   lr, #4              \n");  // Check mode
+        __asm volatile ( "  ite   eq                  \n");  // Get active SP
+        __asm volatile ( "  mrseq r0, msp             \n");
+        __asm volatile ( "  mrsne r0, psp             \n");
+//        __asm volatile ( "  ldr   r1,[r0,#24]         \n");  // PC
+//        __asm volatile ( "  push  {r1}                \n");  // Dummy ?
+        __asm volatile ( "  bl    _HardFault_Handler  \n");  // Go to C handler
 }
+
 /******************************************************************************/
 /* Exception frame without floating-point storage
  * hard fault handler in C,
@@ -213,23 +212,23 @@ typedef struct {
 
 __attribute__ ((section(".interrupt_vectors")))
 VectorTable const __vector_table = {
-    &__StackTop,                   /* Vec #0   Initial stack pointer                        */
+    &__StackTop,                       /* Vec #0   Initial stack pointer                        */
     {
-          __HardReset,              /* Vec #1   Reset Handler                                */
-          NMI_Handler,              /* Vec #2   NMI Handler                                  */
-(intfunc) HardFault_Handler,        /* Vec #3   Hard Fault Handler                           */
-          MemManage_Handler,        /* Vec #4   MPU Fault Handler                            */
-          BusFault_Handler,         /* Vec #5   Bus Fault Handler                            */
-          UsageFault_Handler,       /* Vec #6   Usage Fault Handler                          */
-          Default_Handler,          /* Vec #7   Reserved                                     */
-          Default_Handler,          /* Vec #8   Reserved                                     */
-          Default_Handler,          /* Vec #9   Reserved                                     */
-          Default_Handler,          /* Vec #10  Reserved                                     */
-          SVC_Handler,              /* Vec #11  SVCall Handler                               */
-          DebugMon_Handler,         /* Vec #12  Debug Monitor Handler                        */
-          Default_Handler,          /* Vec #13  Reserved                                     */
-          PendSV_Handler,           /* Vec #14  PendSV Handler                               */
-          SysTick_Handler,          /* Vec #15  SysTick Handler                              */
+          __HardReset,                 /* Vec #1   Reset Handler                                */
+          NMI_Handler,                 /* Vec #2   NMI Handler                                  */
+(intfunc) HardFault_Handler,           /* Vec #3   Hard Fault Handler                           */
+          MemManage_Handler,           /* Vec #4   MPU Fault Handler                            */
+          BusFault_Handler,            /* Vec #5   Bus Fault Handler                            */
+          UsageFault_Handler,          /* Vec #6   Usage Fault Handler                          */
+          Default_Handler,             /* Vec #7   Reserved                                     */
+          Default_Handler,             /* Vec #8   Reserved                                     */
+          Default_Handler,             /* Vec #9   Reserved                                     */
+          Default_Handler,             /* Vec #10  Reserved                                     */
+          SVC_Handler,                 /* Vec #11  SVCall Handler                               */
+          DebugMon_Handler,            /* Vec #12  Debug Monitor Handler                        */
+          Default_Handler,             /* Vec #13  Reserved                                     */
+          PendSV_Handler,              /* Vec #14  PendSV Handler                               */
+          SysTick_Handler,             /* Vec #15  SysTick Handler                              */
 
                                     /* External Interrupts */
           DMA0_IRQHandler,          /* Int #0   DMA Channel 0 Transfer Complete and Error    */

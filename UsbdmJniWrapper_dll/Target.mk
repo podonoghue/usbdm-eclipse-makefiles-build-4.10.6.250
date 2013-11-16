@@ -95,7 +95,7 @@ $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 ifeq ($(UNAME_S),Windows)
 	$(CC) -Wl,--kill-at -shared $(STATIC_GCC_OPTION) -o $@  $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 else	
-	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
+	$(CC) -shared -o $@ -Wl,-soname,$(basename $(notdir $@)) $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 endif
 
 DLL_TARGET=$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
@@ -103,32 +103,33 @@ EXE_TARGET=$(TARGET)$(EXE_SUFFIX)
 
 # How to copy LIBRARY to target directory
 #==============================================
-$(TARGET_DIR)/$(DLL_TARGET): $(BUILDDIR)/$(DLL_TARGET)
+$(TARGET_LIBDIR)/$(DLL_TARGET): $(BUILDDIR)/$(DLL_TARGET)
 	@echo --
-	@echo -- Copying $? to $(TARGET_DIR)
+	@echo -- Copying $? to $(TARGET_LIBDIR)
 	$(CP) $? $@
-#ifneq ($(UNAME_S),Windows)
-#	$(LN) ./$(DLL_TARGET) $(TARGET_DIR)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
-#	$(LN) ./$(DLL_TARGET) $(TARGET_DIR)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
-#endif
+ifneq ($(UNAME_S),Windows)
+	$(LN) $(DLL_TARGET) $(TARGET_LIBDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
+	$(LN) $(DLL_TARGET) $(TARGET_LIBDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
+endif
 
 # How to copy EXE to target directory
 #==============================================
-$(TARGET_DIR)/$(EXE_TARGET): $(BUILDDIR)/$(EXE_TARGET)
+$(TARGET_BINDIR)/$(EXE_TARGET): $(BUILDDIR)/$(EXE_TARGET)
 	@echo --
-	@echo -- Copying $? to $(TARGET_DIR)
+	@echo -- Copying $? to $(TARGET_BINDIR)
 	$(CP) $? $@
 
 # Create required directories
 #==============================================
 directories : 
-	-$(MKDIR) $(BUILDDIR) $(TARGET_DIR)
+	-$(MKDIR) $(BUILDDIR) $(TARGET_LIBDIR)
+	-$(MKDIR) $(BUILDDIR) $(TARGET_BINDIR)
     
 clean:
 	-$(RMDIR) $(BUILDDIR)
 
-dll: directories $(TARGET_DIR)/$(DLL_TARGET)
-exe: directories $(TARGET_DIR)/$(EXE_TARGET)
+dll: directories $(TARGET_LIBDIR)/$(DLL_TARGET)
+exe: directories $(TARGET_BINDIR)/$(EXE_TARGET)
    
 .PHONY: directories clean dll exe 
 

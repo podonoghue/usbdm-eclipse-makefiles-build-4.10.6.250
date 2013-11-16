@@ -65,7 +65,7 @@
 #include <math.h>
 #include <string>
 #include <ctype.h>
-#include <memory>
+#include <memory.h>
 #include "Common.h"
 #include "Log.h"
 #include "FlashImage.h"
@@ -1235,7 +1235,7 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, Memory
       flashImage.loadDataBytes(size, securityAddress, data, dontOverwrite);
 #ifdef LOG
       Logging::print("Setting security region, \n"
-            "              mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
+            "              mem[0x%06X-0x%06X] = \n", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
       Logging::printDump(data, size, securityAddress);
 #endif
    }
@@ -1563,7 +1563,6 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
    Logging::print("===========================================================\n");
 
    this->doRamWrites = false;
-
    if (progressTimer != NULL) {
       delete progressTimer;
    }

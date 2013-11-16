@@ -89,7 +89,7 @@ $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
 	@echo -- Linking Target $@
-	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) $(EXTRA_LINK_OPTS)
+	$(CC) -shared -o $@ -Wl,-soname,$(basename $(notdir $@)) $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) $(EXTRA_LINK_OPTS)
 
 DLL_TARGET=$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
 EXE_TARGET=$(TARGET)$(EXE_SUFFIX)
@@ -101,8 +101,8 @@ $(TARGET_DIR)/$(DLL_TARGET): $(BUILDDIR)/$(DLL_TARGET)
 	@echo -- Copying $? to $(TARGET_DIR)
 	$(CP) $? $@
 #ifneq ($(UNAME_S),Windows)
-#	$(LN) ./$(DLL_TARGET) $(TARGET_DIR)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
-#	$(LN) ./$(DLL_TARGET) $(TARGET_DIR)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
+#	$(LN) $(DLL_TARGET) $(TARGET_DIR)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
+#	$(LN) $(DLL_TARGET) $(TARGET_DIR)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
 #endif
 
 # How to copy EXE to target directory

@@ -37,18 +37,16 @@ This will do the following:
 
 <hr>
  \section linuxInstallationSection Installation of USBDM for Linux
-Under Linux, installation is done by a shell script that must be run a sudo root.  This is rather crude and if there is a
-competent Linux expert available to update this feel welcome to step forward :) \n \n
-
+Under Linux, installation is done by standard Debian archive.
   This will do the following:
-  - Copy shared files to system directories
-     - Shared libraries
-  - Create a <b>.usbdm</b> directory in the user's root directory that is used for:
-     - Programmer configurations
-     - Device files (this will eventually move!)
+  - Install shared files to /usr/share/usbdm
+  - Install executables to /usr/bin
+  - Install shared libraries to /usr/lib/i386-linux-gnu/usbdm or /usr/lib/x86-linux-gnu/usbdm
+  - Various GUI desktop icons are created for the programmers and GDB servers.
   - Modify various other applications that USBDM is designed to work with.  These applications need to be installed <b>before</b> USBDM.\n
-    <b>Note : </b> It may be necessary to re-install the USBDM software if Codewarrior is updated or re-installed as USBDM modified files may be replaced.
-     - CW for MCU v10.1/v10.2/v10.3
+     - CW for MCU v10.1/v10.2
+     - Eclipse
+  - A <b>.usbdm</b> directory will be created in the user's root directory when any programs are run.
 
  Various programs are then available in the installation directory.
   - Stand-alone programmers for various targets

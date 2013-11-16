@@ -22,6 +22,7 @@ COMMON_DIRS = \
   CopyFlash            \
   CreateFlashTestImage \
   CreateCTestImage     \
+  USBDM_Kinetis_Unlock \
   USBDM_API_Example
 
 # Built only on Windows
@@ -55,10 +56,12 @@ all: cleanTargetFiles $(BUILD_DIRS)
 clean: $(CLEAN_DIRS)
 
 cleanTargetFiles:
-	$(RMDIR) $(DUMMY_CHILD)/$(TARGET_DIR)
-	$(MKDIR) $(DUMMY_CHILD)/$(TARGET_DIR)
+	$(RMDIR) $(DUMMY_CHILD)/$(TARGET_LIBDIR)
+	$(MKDIR) $(DUMMY_CHILD)/$(TARGET_LIBDIR)
+	$(RMDIR) $(DUMMY_CHILD)/$(TARGET_BINDIR)
+	$(MKDIR) $(DUMMY_CHILD)/$(TARGET_BINDIR)
 ifeq ($(UNAME_S),Windows)
-	$(CP) $(DUMMY_CHILD)/$(SHARED_LIBDIRS)/* $(DUMMY_CHILD)/$(TARGET_DIR)
+	$(CP) $(DUMMY_CHILD)/$(SHARED_LIBDIRS)/* $(DUMMY_CHILD)/$(TARGET_LIBDIR)
 endif
 
 $(BUILD_DIRS):

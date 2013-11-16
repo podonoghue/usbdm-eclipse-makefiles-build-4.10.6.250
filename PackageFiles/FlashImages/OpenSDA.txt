@@ -24,3 +24,4 @@ These are OpenSDA application and is loaded by the following actions:
    on the FRDM-KL25 board will program the USBDM firmware into the MK20 debugger chip on the
    board.
 *  Remove and re-plug the FRDM-KL25 board.  The board will now appear as a USBDM device.
+

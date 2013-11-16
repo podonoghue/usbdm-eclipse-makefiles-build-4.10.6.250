@@ -72,24 +72,22 @@
         ./configure\n
 		make libxerces_c_la_LDFLAGS="-release 3.1 -no-undefined"\n
 		(Note the -no-undefined option is NOT used in the ./configure!)\n
+		
+   - Windows Installer 4.5 SDK (needed to build the Windows installer) \n
+      This is part of Windows SDK for Windows 7.  I was unable to get this version to work so I used earlier non-official download of msi45sdk.msi.
+        - Search for 'Windows Installer 4.5 SDK' or msi45sdk.msi to install the Windows installer by itself.
   
-  - Windows Installer 4.5 SDK (needed to build the Windows installer) \n
-    This is part of Windows SDK for Windows 7.  I was unable to get this version to work so I used earlier non-official download of msi45sdk.msi.
-      - Search for "Windows Installer 4.5 SDK" or msi45sdk.msi to install the Windows installer by itself.
-      
-  - WiX Toolset v3.7 (needed to build the Windows installer) \n
-      - Download from http://wix.codeplex.com/
-      
-  - Building USBDM applications \n
-    The following will build the applications and interface DLLs but not the Java related components.
-      -# Download the source package from Sourceforge http://sourceforge.net/projects/usbdm/files/Version%204.10.3/Source/
-      -# Unzip to a convenient location
-      -# Edit the Common.mk file.  This file assumes the paths given above. Update paths as necessary
-      -# Run the command <b>CollectExternalFiles</b>.  This collects external files.  If it complains, then locate the missing external files or
+   - WiX Tool-set v3.7 (needed to build the Windows installer) \n
+        - Download from http://wix.codeplex.com/
+  
+   - Building USBDM applications \n
+      The following will build the applications and interface DLLs but not the Java related components.
+        -# Download the source package from GITHUB - https://github.com/podonoghue 
+        -# Edit the Common.mk file.  This file assumes the paths given above. Update paths as necessary
+        -# Run the command <b>CollectExternalFiles</b>.  This collects external files.  If it complains, then locate the missing external files or
          correct the paths in the command file.
-      -# Run <b>CollectSharedFile.cmd</b>.  This collects the needed files into a shared library directory where the build expects to find them. \n
-      -# Run the make command "make -f MakeAll.mk all"
-      
+        -# Run the make command "make -f MakeAll.mk all"
+  
 \section Documentation
 	The documentation is built in Eclipse using
 	  - doxygen

@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=ARM_FlashProgrammer
 Comment=Flash programmer for ARM devices
-Keywords=CFV1;Programmer;
-Exec=/usr/lib/usbdm/ARM_FlashProgrammer
+Keywords=ARM;Programmer;
+Exec=/usr/bin/ARM_FlashProgrammer
 Icon=Hardware-Chip
 Terminal=false
 Type=Application

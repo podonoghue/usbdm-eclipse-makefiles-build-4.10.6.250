@@ -2,7 +2,7 @@
 Name=RS08_FlashProgrammer
 Comment=Flash programmer for RS08 devices
 Keywords=RS08;Programmer;
-Exec=/usr/lib/usbdm/RS08_FlashProgrammer
+Exec=/usr/bin/RS08_FlashProgrammer
 Icon=Hardware-Chip
 Terminal=false
 Type=Application

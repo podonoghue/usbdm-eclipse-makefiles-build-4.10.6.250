@@ -2,7 +2,35 @@
 \page pageHistory History & Issues
 
 \section sectionHistory Revision History
-V4.10.6 (August 2013) - This mainly concentrates on Eclipse support 
+
+V4.10.6.60 (November 2013) 
+	- usbdm_4.10.6.60-1-i386.deb 
+	- usbdm_4.10.6.60-1-amd64.deb
+	- USBDM_4_10_6_60_Win.msi
+ 	- Added support for 9S08PA4 & 9S08PA2 
+ 	- Minor fix to Codewarrior 10 interface 
+
+V4.10.6.40 (October 2013) 
+	- usbdm_4.10.6.40-2-i386.deb
+	- usbdm_4.10.6.40-2-amd64.deb
+	- Updated installer for Ubuntu 32 & 64-bit system 
+	- Added Eclipse and Codewarrior 10.2 plug-ins
+      
+V4.10.6c (September 2013) 
+   - Installer updated for CW 10.5 USBDM V4.10.6b 
+   - Fix for command-line operation of programmers 
+   - Experimental build on Ubuntu 32- & 64-bit system
+   - Note: These Linux files do not contain Eclipse or Codewarrior plug-ins
+
+V4.10.6-1 (August 2013) 
+	- usbdm_4.10.6-1-i386.deb 
+	- usbdm_4.10.6-1-amd64.deb 
+
+V4.10.6a (August 2013) 
+   - Fix for installer bug, installed programs should be unchanged 
+   
+V4.10.6 (August 2013) 
+   - This mainly concentrates on Eclipse support   
    - Eclipse Juno and Kepler:
       - Installation no longer adds files to Codesourcery directories
       - Support for other ARM GCC toolchains with Kinetis 

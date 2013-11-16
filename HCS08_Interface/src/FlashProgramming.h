@@ -56,7 +56,7 @@ struct SmallTargetFlashDataHeader {
    uint16_t         controller;              //!< Ptr to flash controller
    uint16_t         dataAddress_sectorSize;  //!< Ptr to data buffer or sector size
    uint16_t         dataSize_sectorCount;    //!< Size of memory range being accessed or number of sectors
-   uint16_t         pageAddress;             //!< Address of PPAGE or EPAGE register
+   uint16_t         page_wdog_Address;       //!< Address of PPAGE or EPAGE register or watchdog
    uint8_t          pageNum;                 //!< Page number
 };
 //! Holds program execution result
@@ -82,6 +82,7 @@ struct TargetProgramInfo {
    uint32_t         calibFactor;             //!< Calibration factor for speed determination
    bool             smallProgram;            //!< Indicates small version of flash code being used
    bool             usePagedAddresses;       //!< Set up paged addressing information
+   bool             useWatchdogAddress;      //!< Set up watchdog address
    uint32_t         programOperation;        //!< either DO_PROGRAM_RANGE or DO_BLANK_CHECK_RANGE|DO_PROGRAM_RANGE|DO_VERIFY_RANGE
 };
 enum FlashOperation {OpNone, OpSelectiveErase, OpBlockErase, OpBlankCheck, OpProgram, OpVerify, OpWriteRam, OpPartitionFlexNVM, OpTiming};

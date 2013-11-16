@@ -75,15 +75,7 @@ The following software needs to be installed:\n
    Complete the process and reboot if prompted. \n \n
 -  <b>USBDM Eclipse plugin</b> \n
    This plugin makes it very easy to create GDB based launch configurations for Coldfire and ARM targets using the
-   USBDM interface.  
-   This plugin can be installed in the same way as the CDT plugin above.  Just add the following repository:
-   \verbatim
-   USBDM Plugin
-   http://usbdm.sourceforge.net/EclipseUpdates
-   \endverbatim
-   Select the added item at the top of the dialogue and then select the following item (version may vary):\n
-   \verbatim
-   USBDM Plugin for Eclipse CDT 4.10.5.xxxx
-   \endverbatim
-   Complete the process and reboot if prompted. \n \n
-
+   USBDM interface.  It also provides a new project wizard to create basic USBDM based C and C++ projects.
+   Under Linux, the plugin will be installed automatically if Eclipse is detected.  Under Windows you should select to install
+   the plugin when the software selection page is displayed.
+   

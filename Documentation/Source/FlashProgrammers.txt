@@ -69,9 +69,8 @@
    
    The dialogue has three tabs.\n
    - The first tab is concerned primarily with USBDM interface selection, communication options and general features.
-   The selected BDM will be opened when moving from this tab and closed when returning.
    - The second tab is specific to a particular target device.
-   - The third tab contains other BDM options that are unlikely to need modification. 
+   - The third tab contains other BDM options that are more advanced or less likely to need modification. 
 
    \b Note that the programmer uses a buffer to store the image to be programmed to the device.  Some of the 
    following options will persistently modify this buffer.  This means that, for example, if you choose the \b secure option, 
@@ -146,14 +145,13 @@
       warning of overlap is given.
    - Auto Reload\n
       Selecting this option causes the programmer to automatically reload the last loaded file if its modification 
-      date has changed since it was last loaded.  It does so without a prompt.  If this option is not selected 
+      date has changed since it was loaded.  It does so without a prompt.  If this option is not selected 
       then you will prompted to reload each time.
       
  - <b>Device Selection </b>\n
    - Device selection\n
       The drop down box allows the selection of the device type of the chip to be programmed.  Selecting a
-      device type will cause most of the dialogue to be automatically completed.  Selecting \b Custom allows
-      the individual selection of options.  This is only recommended for experienced users!
+      device type will cause most of the dialogue to be automatically completed.  
    - Detect SDID\n
       This causes the programmer to read the \b System \b Device \b Identification \b Register
       (\b SDID) from the target chip.  This may be used to partially identify the type of device
@@ -175,13 +173,6 @@
    communication speed and  hence target bus speed.  This is less accurate and the user will be
    prompted to check the value supplied here, and modify if necessary, before proceeding.  \n
    In other circumstances this value is provided for information only.    
-
- - <b>RAM Buffer </b>\n
-   The programmer user a buffer in the target chip RAM during programming.  
-   This information is normally filled in automatically for a known device.        
-   - Begin Address, End Address \n
-     This specifies the \b Beginning and \b Ending inclusive addresses of the RAM buffer to use.
-     This would normally be the largest range of contiguous RAM available in the target.
 
  - <b>Clock type and Parameters (RS08, HCS08 & CFV1 devices only)</b>\n
    The microcontrollers use a range of different clocks.  It is not necessary to know

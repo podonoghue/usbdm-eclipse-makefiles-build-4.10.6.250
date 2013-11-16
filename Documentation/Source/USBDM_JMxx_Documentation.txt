@@ -16,16 +16,17 @@
 
    -  No re-flashing of the BDM is required when changing between targets
    -  Compatible IDEs
-      - Codewarrior V10.1 (Eclipse version)
+      - Codewarrior V10.x (Eclipse version)
         - Tested on Windows-XP-32bit, Windows-7-32bit, Windows-7-64bit
-        - Tested on Ubuntu-32-bit
+        - Tested on Ubuntu-32-bit, Mint-32-bit
       - Codewarrior Legacy versions
       - Codewarrior Development Studio for HCS12(X) V5.1 & \n
         CW for Microcontrollers V6.3 (RS08 is not supported)\n
 \if Coldfire   -  CW for Coldfire V7.1  \endif
         - Tested on Windows-XP-32bit, Windows-Vista-32bit
-      - Initial support for CodeSourcery Lite for Coldfire
-         - Tested on Windows-XP-32bit
+      - Eclipse Juno & Kepler (Coldfire & Kinetis plugins for Codesourcery & ARM-GNU respectively)
+        - Tested on Windows-XP-32bit, Windows-7-32bit, Windows-7-64bit
+        - Tested on Ubuntu-32-bit, Mint-32-bit, Mint-64bit
    -  Trimming of target internal clock (Eclipse version or standalone programming tools only).
    -  Higher USB communication speed cf. JB16 version BDMs (USB full speed cf. USB low speed)
    -  Vista compatible

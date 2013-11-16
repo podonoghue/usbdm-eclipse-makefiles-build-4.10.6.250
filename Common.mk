@@ -8,11 +8,38 @@ MINOR_VERSION := 10
 MICRO_VERSION := 5
 USBDM_VERSION := $(MAJOR_VERSION).$(MINOR_VERSION)
 
+ifeq ($(OS),Windows_NT)
+   BITNESS := 32
+else
+   BITNESS := $(shell getconf LONG_BIT)
+endif
+
+#===========================================================
+# Where to find private libraries on linux
+USBDM_LIBDIR32="/usr/lib/i386-linux-gnu/usbdm"
+USBDM_LIBDIR64="/usr/lib/x86_64-linux-gnu/usbdm"
+
 #===========================================================
 # Shared directories - Relative to child directory
 SHARED_SRC     := ../Shared_V4/src
 SHARED_LIBDIRS := ../Shared_V4/lib
-TARGET_DIR     := ../PackageFiles/bin
+TARGET_BINDIR  := ../PackageFiles/bin
+TARGET_LIBDIR  := ../PackageFiles/lib
+
+ifeq ($(OS),Windows_NT)
+      TARGET_BINDIR  := ../PackageFiles/bin/win32
+      TARGET_LIBDIR  := ../PackageFiles/bin/win32
+else
+   ifeq ($(BITNESS),32)
+      TARGET_BINDIR  := ../PackageFiles/bin/i386-linux-gnu
+      TARGET_LIBDIR  := ../PackageFiles/lib/i386-linux-gnu
+   endif
+   ifeq ($(BITNESS),64)
+      TARGET_BINDIR  := ../PackageFiles/bin/x86_64-linux-gnu
+      TARGET_LIBDIR  := ../PackageFiles/lib/x86_64-linux-gnu
+   endif
+endif
+
 # Used as prefix with the above when in build directory $(DUMMY_CHILD)/$(SHARED_SRC ) = PackageFiles/src
 DUMMY_CHILD    := PackageFiles
 
@@ -280,6 +307,15 @@ else
    LDFLAGS = -s
 endif
 
+ifneq ($(OS),Windows_NT)
+   ifeq ($(BITNESS),32)
+      LDFLAGS += -Wl,-rpath,${USBDM_LIBDIR32}
+   endif
+   ifeq ($(BITNESS),64)
+      LDFLAGS += -Wl,-rpath,${USBDM_LIBDIR64}
+   endif
+endif
+
 CFLAGS  += ${THREADS} -Wall -shared ${GCC_VISIBILITY_DEFS}
 LDFLAGS += ${THREADS}
 
@@ -295,7 +331,7 @@ endif
 
 #===========================================================
 # Look in shared Library dir first
-LIBDIRS := -L$(SHARED_LIBDIRS) -L$(TARGET_DIR)
+LIBDIRS := -L$(SHARED_LIBDIRS) -L$(TARGET_LIBDIR)
 
 #===========================================================
 # Common Definitions for building Programmer, GDI & GDB

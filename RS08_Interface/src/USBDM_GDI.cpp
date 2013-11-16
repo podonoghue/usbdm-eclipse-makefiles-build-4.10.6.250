@@ -384,7 +384,6 @@ USBDM_ErrorCode BDMrc;
    }
    BDMrc = USBDM_TargetStep();
 #endif
-
    if (BDMrc != BDM_RC_OK) {
       return setErrorState(DI_ERR_NONFATAL, BDMrc);
    }
@@ -449,8 +448,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
       pdesExitStatus->dscCause = DI_WAIT_MISCELLANEOUS;
       pdesExitStatus->szReason = (DiStringT)"Debug Halted";
       if (lastStatus != pdesExitStatus->dscCause) {
-         Logging::print("Status change => DI_WAIT_MISCELLANEOUS, (%s)\n",
-               pdesExitStatus->szReason);
+         Logging::print("Status change => DI_WAIT_MISCELLANEOUS, (%s)\n", pdesExitStatus->szReason);
 #if (TARGET==CFV1) && defined(CONVERT_RESETS_TO_EXCEPTIONS)
          // Read-write PC on halt
          // This causes Illegal Operand and Address Errors to be converted from
@@ -468,8 +466,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
       pdesExitStatus->dscCause = DI_WAIT_RUNNING;
       pdesExitStatus->szReason = (DiStringT)"Target Stopped (Low power)...";
       if (lastStatus != pdesExitStatus->dscCause) {
-         Logging::print("Status change => DI_WAIT_RUNNING, (%s)\n",
-               pdesExitStatus->szReason);
+         Logging::print("Status change => DI_WAIT_RUNNING, (%s)\n", pdesExitStatus->szReason);
       }
    }
    else {
@@ -477,8 +474,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
       pdesExitStatus->dscCause = DI_WAIT_RUNNING;
       pdesExitStatus->szReason = (DiStringT)"Running";
       if (lastStatus != pdesExitStatus->dscCause) {
-         Logging::print("Status change => DI_WAIT_RUNNING, (%s)\n",
-               pdesExitStatus->szReason);
+         Logging::print("Status change => DI_WAIT_RUNNING, (%s)\n", pdesExitStatus->szReason);
       }
    }
    lastStatus = pdesExitStatus->dscCause;

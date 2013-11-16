@@ -6,6 +6,7 @@
 \verbatim
 Change History
 -==================================================================================
+|  9 nOV 2013 | Changed default memory access size to 32-bit (+intelligent)   - pgo
 | 31 Mar 2013 | Updated gdbLoop so that break updates status promptly         - pgo
 | 23 Apr 2012 | Created                                                       - pgo
 +==================================================================================
@@ -290,7 +291,6 @@ static void createMemoryMapXML(const char **buffer, unsigned *bufferSize) {
    for (int memIndex=0; true; memIndex++) {
       MemoryRegionPtr pMemoryregion(deviceData.getMemoryRegion(memIndex));
       if (!pMemoryregion) {
-//       Logging::print("FlashProgrammer::setDeviceData() finished\n");
          break;
       }
       Logging::print("memory area #%d", memIndex);
@@ -710,13 +710,25 @@ static void writeRegs(const char *ccPtr) {
    registerBufferSize = 0;
 }
 
+static MemorySpace_t getAlignment(uint32_t address, uint32_t numBytes) {
+
+   MemorySpace_t align = MS_Long; // Assume 4-byte alignment
+   if (((address & 0x3) != 0) || ((numBytes & 0x3) != 0)) {
+      align = MS_Word;
+   }
+   if (((address & 0x1) != 0) || ((numBytes & 0x1) != 0)) {
+      align = MS_Byte;
+   }
+   return align;
+}
 static void readMemory(uint32_t address, uint32_t numBytes) {
    LOGGING;
    unsigned char buff[1000] = {0};
 
-   reportGdbPrintf(M_BORINGINFO, "Reading Memory[%X..%X]\n", address, address+numBytes-1);
+   MemorySpace_t align = getAlignment(address, numBytes);
+   reportGdbPrintf(M_BORINGINFO, "Reading Memory[%X..%X], align = %s\n", address, address+numBytes-1, getMemSpaceName(align));
 //   Logging::print("readMemory(addr=%X, size=%X)\n", address, numBytes);
-   if (USBDM_ReadMemory(1, numBytes, address, buff) != BDM_RC_OK) {
+   if (USBDM_ReadMemory(align, numBytes, address, buff) != BDM_RC_OK) {
       // Ignore errors
       memset(buff, 0xAA, numBytes);
 //      gdbInOut->sendErrorMessage(0x11);
@@ -751,10 +763,11 @@ static bool convertFromHex(unsigned numBytes, const char *dataIn, unsigned char 
 static void writeMemory(const char *ccPtr, uint32_t address, uint32_t numBytes) {
    unsigned char buff[1000];
 
-   reportGdbPrintf(M_BORINGINFO, "Writing Memory[%X..%X]\n", address, address+numBytes-1);
+   MemorySpace_t align = getAlignment(address, numBytes);
+   reportGdbPrintf(M_BORINGINFO, "Writing Memory[%X..%X], align = %s\n", address, address+numBytes-1, getMemSpaceName(align));
 //   Logging::print("writeMemory(addr=%X, size=%X)\n", address, numBytes);
    convertFromHex(numBytes, ccPtr, buff);
-   USBDM_WriteMemory(1, numBytes, address, buff);
+   USBDM_WriteMemory(align, numBytes, address, buff);
    gdbInOut->sendGdbString("OK");
 }
 
@@ -1200,17 +1213,21 @@ static USBDM_ErrorCode programImage(FlashImage *flashImage) {
    USBDM_ErrorCode rc;
    FlashProgrammer flashProgrammer;
 
-#if TARGET==CFV1
-   deviceData.setEraseOption(DeviceData::eraseMass);
+   Logging::print("Security = %s\n", getSecurityName(deviceData.getSecurity()));
+
+   if (deviceData.getEraseOption() == DeviceData::eraseNone) {
+#if (TARGET==CFV1) || (TARGET==ARM)
+      deviceData.setEraseOption(DeviceData::eraseMass);
 #elif TARGET==CFVx
-   deviceData.setEraseOption(DeviceData::eraseAll);
-#elif TARGET==ARM
-   deviceData.setEraseOption(DeviceData::eraseMass);
+      deviceData.setEraseOption(DeviceData::eraseAll);
 #else
    #error "Unhandled case"
 #endif
+   }
 
-   deviceData.setSecurity(SEC_UNSECURED);
+   if (deviceData.getSecurity() == SEC_SECURED) {
+      deviceData.setSecurity(SEC_SMART);
+   }
    deviceData.setClockTrimFreq(0);
    deviceData.setClockTrimNVAddress(0);
    rc = flashProgrammer.setDeviceData(deviceData);

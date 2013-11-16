@@ -1,3 +1,2 @@
-mingw32-make all
-
+mingw32-make -f Makefile all
 pause

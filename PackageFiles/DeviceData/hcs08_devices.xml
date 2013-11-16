@@ -5,7 +5,9 @@
 <!ENTITY HCS08-PTxx-flash-scripts         SYSTEM "HCS08/HCS08-PTxx-flash-scripts.tcl">
 <!ENTITY Custom-Devices                   SYSTEM "Custom/custom-hcs08.xml">
 <!ENTITY Test-Devices                     SYSTEM "HCS08/hcs08_Testdevices.xml">
-<!ENTITY HCS08-PTxx-flash-program         SYSTEM "HCS08/HCS08-PTxx-flash-program.s19">
+<!ENTITY HCS08-PTxx-flash-program         SYSTEM "HCS08/HCS08-PTxx-flash-program.abs.s19">
+<!ENTITY HCS08-PAxx-small-flash-program   SYSTEM "HCS08/HCS08-PAxx-small-flash-program.abs.s19">
+<!ENTITY HCS08-PAxx-small-eeprom-program  SYSTEM "HCS08/HCS08-PAxx-small-eeprom-program.abs.s19">
 <!ENTITY HCS08-small-flash-program        SYSTEM "HCS08/HCS08-small-0x80-flash-program.abs.s19">
 <!ENTITY HCS08-default-flash-program      SYSTEM "HCS08/HCS08-default-0x80-flash-program.abs.s19">
 <!ENTITY HCS08-alt-load-flash-program     SYSTEM "HCS08/HCS08-default-0xB0-flash-program.abs.s19">
@@ -26,6 +28,12 @@
          &HCS08-PTxx-flash-scripts;
       </tclScript>
 <!-- Flash programming code -->
+      <flashProgram id="HCS08-PAxx-small-flash-program">
+         &HCS08-PAxx-small-flash-program;
+      </flashProgram>
+      <flashProgram id="HCS08-PAxx-small-eeprom-program">
+         &HCS08-PAxx-small-eeprom-program;
+      </flashProgram>
       <flashProgram id="HCS08-PTxx-flash-program">
          &HCS08-PTxx-flash-program;
       </flashProgram>
@@ -1184,6 +1192,28 @@
          <sdid value="0x027" />
          <flashProgramRef ref="HCS08-alt-load-flash-program" />
       </device>
+      <device family="HCS08Plus" name="MC9S08PA2">
+         <clock registerAddress="0x3038" type="S08ICSV4" />
+         <memory type="ram">
+            <memoryRange start="0x0040" end="0x023F" />
+         </memory>
+         <memory registerAddress="0x3020" type="eeprom" sectorSize="2" alignment="1">
+            <memoryRange start="0x003100" end="0x00317F" />
+            <flashProgramRef ref="HCS08-PAxx-small-eeprom-program" />
+         </memory>
+         <memory registerAddress="0x3020" type="flash" securityAddress="0xFF70" sectorSize="512" alignment="4">
+            <securityEntryRef ref="HCS08-default-security" />
+            <memoryRange start="0x00F800" end="0x00FFFF" />
+            <flashProgramRef ref="HCS08-PAxx-small-flash-program" />
+         </memory>
+         <soptAddress value="0x3030" />
+         <sdidAddress value="0x3002" />
+         <sdidMask value="0x00FFFF" />
+         <sdid value="0x0000" />
+         <flashScripts>
+            <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
+         </flashScripts>
+      </device>
       <device family="HCS08Plus" name="MC9S08PA4">
          <clock registerAddress="0x3038" type="S08ICSV4" />
          <memory type="ram">
@@ -1191,10 +1221,12 @@
          </memory>
          <memory registerAddress="0x3020" type="eeprom" sectorSize="2" alignment="1">
             <memoryRange start="0x003100" end="0x00317F" />
+            <flashProgramRef ref="HCS08-PAxx-small-eeprom-program" />
          </memory>
          <memory registerAddress="0x3020" type="flash" securityAddress="0xFF70" sectorSize="512" alignment="4">
             <securityEntryRef ref="HCS08-default-security" />
             <memoryRange start="0x00F000" end="0x00FFFF" />
+            <flashProgramRef ref="HCS08-PAxx-small-flash-program" />
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
@@ -1203,7 +1235,6 @@
          <flashScripts>
             <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
          </flashScripts>
-         <flashProgramRef ref="HCS08-PTxx-flash-program" />
       </device>
       <device family="HCS08Plus" name="MC9S08PA8" alias="MC9S08PT8">
          <sdid value="0x0000" />

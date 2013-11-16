@@ -24,6 +24,7 @@
 \verbatim
  Change History
 +===========================================================================================
+| Nov 09 2013 | Added Security options                                            - pgo V4.7
 | Jul 16 2011 | Corrected errors in Codewarrior keys                              - pgo V4.7
 | Feb 26 2011 | Changes for Eclipse 10.1 (handling of default trim)               - pgo V4.4
 | Nov 10 1010 | 4.?.? Created                                                     - pgo
@@ -101,6 +102,7 @@ static const string KeyUseAltBDMClock            = "useAltBDMClock";
 //static const string KeyGuessSpeedIfNoSYNC        = "guessSpeedIfNoSYNC";
 static const string KeyMaskInterrupt             = "maskInterrupt";
 static const string KeyEraseMethod               = "eraseMethod";
+static const string KeySecurity                  = "securityOption";
 
 static const string KeyPowerOffDuration          = "powerOffDuration";
 static const string KeyPowerOnRecoveryInterval   = "powerOnRecoveryInterval";
@@ -419,6 +421,11 @@ USBDM_ErrorCode getDeviceData(DeviceData &deviceData) {
    int eraseOptions;
    getAttribute(KeyEraseMethod, eraseOptions, (int)DeviceData::eraseMass);
    deviceData.setEraseOption((DeviceData::EraseOptions)eraseOptions);
+
+   int securityOption;
+   getAttribute(KeySecurity, securityOption, (int)SEC_SMART);
+   deviceData.setSecurity((SecurityOptions_t)securityOption);
+
    return BDM_RC_OK;
 }
 

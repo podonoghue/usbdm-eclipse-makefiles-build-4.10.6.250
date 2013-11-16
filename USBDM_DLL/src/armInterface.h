@@ -14,7 +14,7 @@
 DLL_LOCAL
 extern bool armInitialiseDone;
 DLL_LOCAL
-extern bool pendingPowerOnReset;
+extern bool pendingResetRelease;
 
 USBDM_ErrorCode resetARM(TargetMode_t targetMode);
 USBDM_ErrorCode armSwdConnect();

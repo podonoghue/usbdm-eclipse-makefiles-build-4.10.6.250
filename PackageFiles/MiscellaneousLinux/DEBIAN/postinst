@@ -8,61 +8,237 @@ if [ "$1" = "configure" ]; then
 fi 
 # End automatically added section
 
+#======================================================
+#  USB Hardware Installation
+#======================================================
+installUSBHardware() {
+
+   echo
+   echo "Copying rules file to ${RULES_DIR}"
+   echo "(Allows USBDM device to be accessed)"
+   echo ==================================================================
+   rm -fv ${RULES_DIR}/*usbdm.rules
+   cp -fv $CP_OPTIONS ${USBDM_SHARED_DIR}/usbdm.rules ${RULES_DIR}/46-usbdm.rules
+   echo "chmod a+r      ${RULES_DIR}/46-usbdm.rules"
+   chmod a+r      ${RULES_DIR}/46-usbdm.rules
+}
+
+#======================================================
+#  Eclipse Plugin Installation
+#======================================================
+# $1 - Eclipse directory
+# $2 - USBDM plugin directory
+#
+installEclipsePlugins() {
+
+   local ECLIPSE_DROPIN_DIR="$1/dropins"
+   local USBDM_PLUGIN_DIR="$2"
+
+   if [[ ! -d ${ECLIPSE_DROPIN_DIR} ]]; then
+      echo "Dropin directory ${ECLIPSE_DROPIN_DIR} Not Found"
+      return
+   fi
+
+   echo 
+   echo "Installing libUsbdmJniWrapper link"
+   echo ======================================================================================
+   # Needed for Java interface to USBDM
+   ln -svf ${USBDM_LIB_DIR}/libUsbdmJniWrapper.so /usr/lib
+
+   echo 
+   echo "Installing Eclipse CDT plugins to ${ECLIPSE_DROPIN_DIR}"
+   echo ======================================================================================
+   if [[ -d "${ECLIPSE_DROPIN_DIR}/usbdm" ]]; then
+      rm -rfv "${ECLIPSE_DROPIN_DIR}/usbdm"
+   fi
+   mkdir -pv "${ECLIPSE_DROPIN_DIR}/usbdm"
+   ln -sv  ${USBDM_PLUGIN_DIR}/* "${ECLIPSE_DROPIN_DIR}/usbdm"
+}
+
+#======================================================
+#  Eclipse Installation
+#======================================================
+installEclipse() {
+
+   echo 
+   echo "Checking for Eclipse directories"
+   echo ==================================================================
+   for ECLIPSE_DIR in "/usr/local/eclipse" "/opt/eclipse" "/usr/lib/eclipse"; do
+      echo -n "Looking for Eclipse in ${ECLIPSE_DIR}"
+      if [[ -d ${ECLIPSE_DIR} ]]; then
+         echo " - Found"
+         installEclipsePlugins ${ECLIPSE_DIR} ${USBDM_CDT_PLUGINS_DIR}
+      else
+        echo " - Not Found"
+      fi
+   done
+}
+
+#======================================================
+#  Codewarrior Instance Installation
+#======================================================
+installCodewarriorInstance() {
+
+   local CODEWARRIOR_DIR="$1"
+   local CODEWARRIOR_ECLIPSE_DIR="$1/eclipse"
+
+   if [[ ! -d ${CODEWARRIOR_ECLIPSE_DIR} ]]; then
+      echo 
+      echo "Codewarrior Eclipse directory not found"
+      echo ======================================================================================
+      return
+   fi
+
+   installEclipsePlugins "${CODEWARRIOR_ECLIPSE_DIR}" ${USBDM_CW_PLUGINS_DIR}
+
+   CF_GDI_DIRECTORY="${CODEWARRIOR_DIR}/MCU/CodeWarrior/CodeWarrior_Plugins/Support/ColdFire/gdi"
+   HCS_GDI_DIRECTORY="${CODEWARRIOR_DIR}/MCU/CodeWarrior/CodeWarrior_Plugins/Support/HC08/gdi"
+   ARM_GDI_DIRECTORY="${CODEWARRIOR_DIR}/MCU/CodeWarrior/CodeWarrior_Plugins/Support/ARM/gdi"
+   DSC_GDI_DIRECTORY="${CODEWARRIOR_DIR}/MCU/CodeWarrior/CodeWarrior_Plugins/Support/DSC/gdi"
+   CW_PLUGIN_DIRECTORY="${CODEWARRIOR_DIR}/eclipse/plugins"
+   CW_DROPIN_DIRECTORY="${CODEWARRIOR_DIR}/eclipse/dropins"
+   WIZARD_DIRECTORY="${CODEWARRIOR_DIR}/MCU/lib/wizard_data"
+   ECLIPSE_CWIDE="${CODEWARRIOR_DIR}/eclipse/cwide"
+
+   CF_GDI_TARGETS="usbdm-cfv1-gdi.so usbdm-cfvx-gdi.so usbdm-cfv1-gdi-debug.so usbdm-cfvx-gdi-debug.so"
+   HCS_GDI_TARGETS="usbdm-hcs08-gdi.so usbdm-rs08-gdi.so usbdm-hcs08-gdi-debug.so usbdm-rs08-gdi-debug.so"
+   ARM_GDI_TARGETS="usbdm-arm-gdi.so usbdm-arm-gdi-debug.so"
+   DSC_GDI_TARGETS="usbdm-dsc-gdi.so usbdm-dsc-gdi-debug.so"
+
+   echo
+   echo "Installing CFV1 & CFVx GDI files to ${CF_GDI_DIRECTORY}"
+   echo ==================================================================
+   for FILENAME in ${CF_GDI_TARGETS}; do
+      SOURCE="${USBDM_LIB_DIR}/lib${FILENAME}.${VERSION}"
+      DESTINATION="${CF_GDI_DIRECTORY}/${FILENAME}"
+      ln -svf ${SOURCE} ${DESTINATION}
+   done
+
+   echo
+   echo "Installing RS08 & HCS08 GDI files from ${HCS_GDI_DIRECTORY}"
+   echo ==================================================================
+   echo "Linking ..."
+   for FILENAME in ${HCS_GDI_TARGETS}; do
+      SOURCE="${USBDM_LIB_DIR}/lib${FILENAME}.${VERSION}"
+      DESTINATION="${HCS_GDI_DIRECTORY}/${FILENAME}"
+      ln -svf ${SOURCE} ${DESTINATION}
+   done
+
+   echo
+   echo "Installing Kinetis GDI files from ${ARM_GDI_DIRECTORY}"
+   echo ==================================================================
+   echo "Linking ..."
+   for FILENAME in ${ARM_GDI_TARGETS}; do
+      SOURCE="${USBDM_LIB_DIR}/lib${FILENAME}.${VERSION}"
+      DESTINATION="${ARM_GDI_DIRECTORY}/${FILENAME}"
+      ln -svf ${SOURCE} ${DESTINATION}
+   done
+
+   echo
+   echo "Installing DSC GDI files from ${DSC_GDI_DIRECTORY}"
+   echo ==================================================================
+   echo "Linking ..."
+   for FILENAME in ${DSC_GDI_TARGETS}; do
+      SOURCE="${USBDM_LIB_DIR}/lib${FILENAME}.${VERSION}"
+      DESTINATION="${DSC_GDI_DIRECTORY}/${FILENAME}"
+      ln -svf ${SOURCE} ${DESTINATION}
+   done
+
+   echo
+   echo "Installing Codewarrior Project Wizard Files for USBDM"
+   echo ==================================================================
+   echo "Installing launch settings"
+   echo "Linking ..."
+   ln -svf "${USBDM_CW_LAUNCH_CONFIG_DIR}/"*".xml" ${WIZARD_DIRECTORY}/launch_config
+
+   echo
+   echo "Patching New Project Wizard"
+   CODEWARRIOR_PATCH_NEW_WIZARD="PatchNewWizardPlugin_V10.2.xml"
+   WIZARD_PATCH_FILE=${USBDM_CW_WIZARD_PATCH_DIR}/${CODEWARRIOR_PATCH_NEW_WIZARD}
+   WIZARD_BASE_DIR=${CW_PLUGIN_DIRECTORY}/"com.freescale.mcu.projectwizard_"  
+   ${USBDM_BIN_DIR}/MergeXML ${WIZARD_BASE_DIR}\* plugin.xml ${WIZARD_PATCH_FILE}
+   echo touch ${WIZARD_BASE_DIR}\*
+   touch ${WIZARD_BASE_DIR}*
+
+   echo
+   echo "Patching Change Project Wizard"
+   CODEWARRIOR_PATCH_CHANGE_WIZARD="PatchChangeWizardPlugin_V10.2.xml"
+   WIZARD_PATCH_FILE=${USBDM_CW_WIZARD_PATCH_DIR}/${CODEWARRIOR_PATCH_CHANGE_WIZARD}
+   WIZARD_BASE_DIR=${CW_PLUGIN_DIRECTORY}/"com.freescale.mcu.changewizard_"  
+   ${USBDM_BIN_DIR}/MergeXML ${WIZARD_BASE_DIR}\* plugin.xml ${WIZARD_PATCH_FILE}
+
+   echo 
+   echo "Refreshing Eclipse"
+   echo touch ${WIZARD_BASE_DIR}\*
+   touch ${WIZARD_BASE_DIR}*
+   echo ${ECLIPSE_CWIDE} -clean -initialize
+   ${ECLIPSE_CWIDE} -clean -initialize
+}
+
+#======================================================
+#  Codewarrior Installation
+#======================================================
+installCodewarrior() {
+
+   echo 
+   echo "Checking for Codewarrior directory"
+   echo ==================================================================
+   for CODEWARRIOR_DIR in "/usr/local/Freescale/CodeWarrior_MCU_10.2" "/opt/Freescale/CodeWarrior_MCU_10.2" ; do
+      echo -n "Looking for Codewarrior in ${CODEWARRIOR_DIR}"
+      if [[ -d ${CODEWARRIOR_DIR} ]]; then
+         echo " - Found"
+         installCodewarriorInstance ${CODEWARRIOR_DIR}
+      else
+         echo " - Not Found"
+      fi
+   done
+
+}
+
+#======================================================
+#  Library Refresh
+#======================================================
+libraryUpdate() {
+   if [ "$1" != "configure" ]; then
+      return
+   fi 
+
+#   ldconfig ${USBDM_LIB_DIR}
+}
+
 #================================
 # USBDM Version
 #
 MAJOR=4
 MINOR=10
-
-CP_OPTIONS=-p
+VERSION=${MAJOR}.${MINOR}
 
 # Where to find files (relative to /)
 DUMMY_ROOT=""
+USBDM_BIN_DIR="${DUMMY_ROOT}/usr/bin"
+USBDM_LIB_DIR64="${DUMMY_ROOT}/usr/lib/x86_64-linux-gnu/usbdm"
+USBDM_LIB_DIR32="${DUMMY_ROOT}/usr/lib/i386-linux-gnu/usbdm"
+
+BITNESS=`getconf LONG_BIT`
+if [[ ${BITNESS} == 32 ]]; then
+   USBDM_LIB_DIR=${USBDM_LIB_DIR32}
+else
+   USBDM_LIB_DIR=${USBDM_LIB_DIR64}
+fi 
+
 USBDM_SHARED_DIR="${DUMMY_ROOT}/usr/share/usbdm"
-USBDM_LIB_DIR="${DUMMY_ROOT}/usr/lib/usbdm"
+USBDM_CDT_PLUGINS_DIR="${USBDM_SHARED_DIR}/CDT_Plugins"
+USBDM_CW_PLUGINS_DIR="${USBDM_SHARED_DIR}/CW_Plugins"
+USBDM_CW_LAUNCH_CONFIG_DIR="${USBDM_SHARED_DIR}/LaunchConfig"
+USBDM_CW_WIZARD_PATCH_DIR="${USBDM_SHARED_DIR}/WizardPatches"
 
 # System directories
 LIB_DIR="/usr/lib"
 BIN_DIR="/usr/bin"
-RULES_DIR=/etc/udev/rules.d
+RULES_DIR="/etc/udev/rules.d"
 
-echo
-echo "Copying rules file to ${RULES_DIR}"
-echo "(Allows USBDM device to be accessed)"
-echo ==================================================================
-echo rm -f ${RULES_DIR}/*usbdm.rules
-rm -f ${RULES_DIR}/*usbdm.rules
-echo "cp $CP_OPTIONS ${USBDM_SHARED_DIR}/usbdm.rules ${RULES_DIR}/46-usbdm.rules"
-cp $CP_OPTIONS ${USBDM_SHARED_DIR}/usbdm.rules ${RULES_DIR}/46-usbdm.rules
-echo "chmod a+r      ${RULES_DIR}/46-usbdm.rules"
-chmod a+r      ${RULES_DIR}/46-usbdm.rules
-
-echo "Create symbolic links to shared library files"
-echo ==================================================================
-for SOURCE_FILE in ${USBDM_LIB_DIR}/*.so.${MAJOR}.${MINOR}; do
-   BASE_FILE_NAME=`basename -s .${MAJOR}.${MINOR} ${SOURCE_FILE}`
-   echo "  Linking ${BASE_FILE_NAME}"
-   ln -s ${SOURCE_FILE} ${LIB_DIR}/${BASE_FILE_NAME}.${MAJOR}.${MINOR}
-   ln -s ${SOURCE_FILE} ${LIB_DIR}/${BASE_FILE_NAME}.${MAJOR}
-   ln -s ${SOURCE_FILE} ${LIB_DIR}/${BASE_FILE_NAME}
-done
-
-# Executables to link
-EXECUTABLES="ARM_FlashProgrammer CFV1_FlashProgrammer CFVx_FlashProgrammer"
-EXECUTABLES="${EXECUTABLES} HCS08_FlashProgrammer HCS12_FlashProgrammer RS08_FlashProgrammer"
-
-echo "Create symbolic links to executables"
-echo ==================================================================
-for FILE in ${EXECUTABLES}; do
-   SOURCE_FILE=${USBDM_LIB_DIR}/${FILE}
-   if [[ -e ${SOURCE_FILE} ]]; then
-      echo "  Linking ${SOURCE_FILE}"
-      ln -s ${SOURCE_FILE} ${BIN_DIR}/`echo ${FILE}|tr '[:upper:]' '[:lower:]'`
-   else
-      echo "${SOURCE_FILE} not found"
-      return 1
-   fi
-done
-
-#ldconfig -X -v | grep usbdm
+installUSBHardware
+installEclipse
+installCodewarrior
+libraryUpdate
 

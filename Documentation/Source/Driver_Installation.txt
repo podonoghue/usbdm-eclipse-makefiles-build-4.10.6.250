@@ -46,7 +46,7 @@ Steps to follow under WIN-XP (its similar for WIN-7 but there will be other conf
  
 <hr> 
 \section InstallingDriversSectionLinux Installation of USBDM USB drivers for Linux
-There isn't any.  The installation script provided will modify the /etc/udev/rules.d file to allow
+There isn't any.  The DEB file provided will modify the /etc/udev/rules.d file to allow
 access to the USBDM device. The required driver for USBDM BDM interface (LibusbV1) is included in the standard
 Linux (at least Ubuntu current version).  The CDC (serial port) is a standard device and should also be installed
 without any extra steps.

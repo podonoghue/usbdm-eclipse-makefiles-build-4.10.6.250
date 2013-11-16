@@ -8,7 +8,7 @@
 #include <wx/msgdlg.h>
 #include <wxPlugin.h>
 #include <MyException.h>
-
+#include <Common.h>
 #ifdef __unix__
 #include <dlfcn.h>
 #endif
@@ -115,13 +115,18 @@ wxApp& getUsbdmWxApp() {
          throw MyException("getUsbdmWxApp() - Creation of wxApp failed");
       }
    }
+#ifndef _WIN32
+   // Otherwise wxWidgets doesn't look in the correct location
+   ((wxStandardPaths&)wxStandardPaths::Get()).SetInstallPrefix(_(USBDM_INSTALL_DIRECTORY));
+#endif
+
 //   reported = true;
    return *wxApplication;
 }
 
 #ifdef __unix__
 
-#define DLL_NAME "libusbdm-wx.so"
+#define DLL_NAME "libusbdm-wx.so.4"
 
 static void *libHandle = NULL;
 

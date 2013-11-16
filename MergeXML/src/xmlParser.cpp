@@ -2,7 +2,12 @@
 //
 // Modifies the Codewarrior New project Wizard xml file to add USBM entries
 //
-
+/*
+ * History
+ * ----------------------------------------------------------------------------------------------
+ * 10 Oct 2013 | Changed string indexes to size_t                                            -pgo
+ * ----------------------------------------------------------------------------------------------
+ */
 #include <iostream>
 using namespace std;
 
@@ -242,7 +247,7 @@ bool XmlParser::processAttributes(DOMElement *mergeEl, DOMElement *patchEl) {
       patchEl->removeAttribute(attr_merge_actions.asXMLString());
       string attributeValue(actionAttributeValue.asCString());
 //      cerr << "XmlParser::processAttributes( attr = \'" << attributeValue << "\')\n";
-      unsigned index = 0;
+      size_t index = 0;
       bool setAttr;
       if ((index = attributeValue.find("set-attr:", index)) != string::npos) {
          setAttr = true;
@@ -253,12 +258,12 @@ bool XmlParser::processAttributes(DOMElement *mergeEl, DOMElement *patchEl) {
       else {
          throw invalid_argument("Illegal merge-action " + attributeValue);
       }
-      unsigned colonIndex     = attributeValue.find(':',index);
+      size_t colonIndex     = attributeValue.find(':',index);
       if (colonIndex == string::npos) {
          throw invalid_argument("Illegal merge-action " + attributeValue);
       }
-      unsigned equalIndex     = attributeValue.find('=',colonIndex);
-      unsigned semiColonIndex = attributeValue.find(';',colonIndex);
+      size_t equalIndex     = attributeValue.find('=',colonIndex);
+      size_t semiColonIndex = attributeValue.find(';',colonIndex);
 
       if (semiColonIndex == string::npos) {
          semiColonIndex = attributeValue.length();
@@ -310,9 +315,12 @@ DOMElement *XmlParser::removeActionAttributes(DOMElement *element) {
    }
    while (element->hasAttribute(attr_merge_actions.asXMLString())) {
       DualString actionAttributeValue(element->getAttribute(attr_merge_actions.asXMLString()));
-      element->removeAttribute(attr_merge_actions.asXMLString());
       string attributeValue(actionAttributeValue.asCString());
-      unsigned index = 0;
+      element->removeAttribute(attr_merge_actions.asXMLString());
+      size_t index = 0;
+      if (verbose) {
+         cerr << "XmlParser::removeActionAttributes():Processing attribute \"" << attributeValue <<"\"\n";
+      }
       for (;;) {
          if ((index = attributeValue.find("set-attr:", index)) != string::npos) {
             setAttr = true;
@@ -323,12 +331,21 @@ DOMElement *XmlParser::removeActionAttributes(DOMElement *element) {
          else {
             break;
          }
-         unsigned colonIndex     = attributeValue.find(':',index);
+         if (verbose) {
+            cerr << "XmlParser::removeActionAttributes():string::npos = " << string::npos << "\n";
+         }
+         if (verbose) {
+            cerr << "XmlParser::removeActionAttributes():index = " << index << "\n";
+         }
+         if (verbose) {
+            cerr << "XmlParser::removeActionAttributes():setAttr = " << setAttr << "\n";
+         }
+         size_t colonIndex     = attributeValue.find(':',index);
          if (colonIndex == string::npos) {
             throw invalid_argument("Illegal merge-action");
          }
-         unsigned equalIndex     = attributeValue.find('=',colonIndex);
-         unsigned semiColonIndex = attributeValue.find(';',colonIndex);
+         size_t equalIndex     = attributeValue.find('=',colonIndex);
+         size_t semiColonIndex = attributeValue.find(';',colonIndex);
 
          if (semiColonIndex == string::npos) {
             semiColonIndex = attributeValue.length();
@@ -352,13 +369,13 @@ DOMElement *XmlParser::removeActionAttributes(DOMElement *element) {
          }
          if (setAttr) {
             if (verbose) {
-               cerr << "Adding attribute " << attrName << "=\"" << attrValue <<"\"\n";
+               cerr << "XmlParser::removeActionAttributes():Adding attribute " << attrName << "=\"" << attrValue <<"\"\n";
             }
             element->setAttribute(DualString(attrName.c_str()).asXMLString(), DualString(attrValue.c_str()).asXMLString());
          }
          else {
             if (verbose) {
-               cerr << "Deleting attribute " << attrName << "\"\n";
+               cerr << "XmlParser::removeActionAttributes():Deleting attribute " << attrName << "\"\n";
             }
             element->removeAttribute(DualString(attrName.c_str()).asXMLString());
          }

@@ -1,7 +1,7 @@
 @echo off
 cls
-set VERSION=4_10_6b
-set VERSIONn=4.10.6.10
+set VERSION=4_10_6_100
+set VERSIONn=4.10.6.100
 
 set WXWIDGETS_VERSION=295u
 
@@ -24,7 +24,9 @@ for %%f in (%ECLIPSE_PLUGIN_SOURCE%\usbdm\artifacts.jar %ECLIPSE_PLUGIN_SOURCE%\
 for %%f in (%CODEWARRIOR_PLUGIN_SOURCE%\usbdm\artifacts.jar %CODEWARRIOR_PLUGIN_SOURCE%\usbdm\content.jar) do if exist %%f del /Q %%f
 
 rem .wxs regenerated Files 
-set REBUILT_WXS=DeviceData.wxs Stationery.wxs FlashImages.wxs WizardPatchData.wxs Examples.wxs EclipsePlugin_1.wxs EclipsePlugin_2.wxs EclipsePlugin_2.wxs Eclipse_Juno.wxs Eclipse_Kepler.wxs
+set REBUILT_WXS=DeviceData.wxs Stationery.wxs FlashImages.wxs WizardPatchData.wxs Examples.wxs
+set REBUILT_WXS=%REBUILT_WXS% EclipsePlugin_1.wxs EclipsePlugin_2.wxs EclipsePlugin_3.wxs EclipsePlugin_4.wxs EclipsePlugin_5.wxs 
+set REBUILT_WXS=%REBUILT_WXS% Eclipse_Juno.wxs Eclipse_Kepler.wxs
 
 set LIGHT_OPTIONS=-ext WixUIExtension -ext WixUtilExtension -sw0204
 set LIGHT_DIRS=-b bin\DeviceData -b bin\Stationery -b bin\FlashImages -b WizardPatches -b Examples -b %CODEWARRIOR_PLUGIN_SOURCE% -b %ECLIPSE_PLUGIN_SOURCE%
@@ -56,6 +58,7 @@ mkdir %WIX_BUILD_DIR%
 %HEAT% dir .\plugins\codewarrior            %HEAT_OPTIONS% -cg Cg.EclipsePlugin_V10.2  -dr D.CW_V10.2_EclipseDropins   -out %WIX_BUILD_DIR%\EclipsePlugin_2.wxs
 %HEAT% dir .\plugins\codewarrior            %HEAT_OPTIONS% -cg Cg.EclipsePlugin_V10.3  -dr D.CW_V10.3_EclipseDropins   -out %WIX_BUILD_DIR%\EclipsePlugin_3.wxs
 %HEAT% dir .\plugins\codewarrior            %HEAT_OPTIONS% -cg Cg.EclipsePlugin_V10.4  -dr D.CW_V10.4_EclipseDropins   -out %WIX_BUILD_DIR%\EclipsePlugin_4.wxs
+%HEAT% dir .\plugins\codewarrior            %HEAT_OPTIONS% -cg Cg.EclipsePlugin_V10.5  -dr D.CW_V10.5_EclipseDropins   -out %WIX_BUILD_DIR%\EclipsePlugin_5.wxs
 %HEAT% dir .\plugins\eclipse                %HEAT_OPTIONS% -cg Cg.EclipseJunoPlugin    -dr D.EclipseJunoDropins        -out %WIX_BUILD_DIR%\EclipseJunoPluginCDT.wxs
 %HEAT% dir .\plugins\eclipse                %HEAT_OPTIONS% -cg Cg.EclipseKeplerPlugin  -dr D.EclipseKeplerDropins      -out %WIX_BUILD_DIR%\EclipseKeplerPluginCDT.wxs
 %CANDLE% -dProductVersion=%VERSIONn% -dWxWidgetsVer=%WXWIDGETS_VERSION% -o %WIX_BUILD_DIR%\ *.wxs %WIX_BUILD_DIR%\*.wxs

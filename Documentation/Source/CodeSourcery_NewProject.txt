@@ -34,9 +34,9 @@ The following example is for a Coldfire target but a similar process is followed
    </tr>
    <tr>
       <td>
-         - USBDM Parameters
-         	- Select the Build Tools being used (choice only for Kinetis devices)
-            - Select the device to be used.  
+         - USBDM Parameters         	
+         	- Select the Build Tools being used choice only for Kinetis devices				
+         	- Select the device to be used.  
          - Linker Parameters
             - Auto-generate linker script - The USBDM Wizard will automatically create a linker script based upon the device's
               memory map.  The linker script is designed to work with the startup files provided by the Wizard.

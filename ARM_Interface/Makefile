@@ -4,10 +4,10 @@ TARGET = ARM
 target = arm
 
 $(TARGET)_FlashProgrammer:
-	$(MAKE) exe -f ../ProgrammerTarget.mk   BUILDDIR=$@ MODULE=programmer           CDEFS='$(PROGRAMMER_DEFS)'
+	$(MAKE) exe -f ../ProgrammerTarget.mk   BUILDDIR=$@ MODULE=programmer      CDEFS='$(PROGRAMMER_DEFS)'
 
 $(TARGET)_FlashProgrammer-debug:
-	$(MAKE) exe -f ../ProgrammerTarget.mk   BUILDDIR=$@ MODULE=programmer           CDEFS='$(PROGRAMMER_DEFS)' DEBUG='Y'
+	$(MAKE) exe -f ../ProgrammerTarget.mk   BUILDDIR=$@ MODULE=programmer      CDEFS='$(PROGRAMMER_DEFS)' DEBUG='Y'
 
 $(TARGET)_GDBServer:
 	$(MAKE) exe -f ../GdbServerGuiTarget.mk BUILDDIR=$@ MODULE=gdbServerGUI  	CDEFS='$(GDB_SERVER_DEFS)'
@@ -16,10 +16,10 @@ $(TARGET)_GDBServer-debug:
 	$(MAKE) exe -f ../GdbServerGuiTarget.mk BUILDDIR=$@ MODULE=gdbServerGUI  	CDEFS='$(GDB_SERVER_DEFS)' DEBUG='Y'
 
 usbdm-$(target)-gdi:
-	$(MAKE) dll -f ../GdiTarget.mk          BUILDDIR=$@ MODULE=gdi                  CDEFS='$(GDI_DEFS)'
+	$(MAKE) dll -f ../GdiTarget.mk          BUILDDIR=$@ MODULE=gdi             CDEFS='$(GDI_DEFS)'
 
 usbdm-$(target)-gdi-debug:
-	$(MAKE) dll -f ../GdiTarget.mk          BUILDDIR=$@ MODULE=gdi                  CDEFS='$(GDI_DEFS)' DEBUG='Y'
+	$(MAKE) dll -f ../GdiTarget.mk          BUILDDIR=$@ MODULE=gdi             CDEFS='$(GDI_DEFS)' DEBUG='Y'
 
 usbdm-$(target)-gdbPipeServer:
 	$(MAKE) exe -f ../GdbTarget.mk          BUILDDIR=$@ MODULE=gdbPipe        	CDEFS='$(GDB_DEFS)' 
@@ -64,8 +64,8 @@ all: allCommon allWindows
 #Test: usbdm-$(target)-gdbSocketServer-debug
 #Test: usbdm-$(target)-gdbPipeServer-debug usbdm-$(target)-gdbSocketServer
 #Test: $(TARGET)_FlashProgrammer-debug
-#Test: $(TARGET)_GDBServer-debug 
-Test: $(TARGET)_GDBServer-debug $(TARGET)_FlashProgrammer-debug
+Test: $(TARGET)_GDBServer-debug 
+#Test: $(TARGET)_GDBServer-debug $(TARGET)_FlashProgrammer-debug
 
 clean: cleanCommon
 

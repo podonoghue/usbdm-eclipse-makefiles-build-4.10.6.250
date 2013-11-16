@@ -3,10 +3,13 @@
 
 \verbatim
 Change History
--==================================================================================
+-==============================================================================================
+|  7 Nov 2013 | Changed displayDialogue() back to previous method for WIN32   - pgo V4.10.6.60
+|  7 Nov 2013 | Corrected return values in displayDialogue()                  - pgo V4.10.6.60
+| 12 Oct 2013 | Improved hiding of dummy parent window in linux               - pgo
 | 16 Jul 2013 | Added creation of a parent window                             - pgo
 |        ???? | Created                                                       - pgo
-+==================================================================================
++==============================================================================================
 \endverbatim
 
 */
@@ -32,6 +35,8 @@ Change History
 
 #include <stdio.h>
 #include <string.h>
+
+#include "Utils.h"
 
 #include "wxPlugin.h"
 #include "myDialog.h"
@@ -68,9 +73,10 @@ static void runGuiEventLoop(void) {
    }
    wxEventLoopBase::SetActive(eLoop);
    while (eLoop->Pending()) {
-//      print("eLoop->Pending == TRUE #1\n");
+//      fprintf(stderr, "eLoop->Pending == TRUE #1\n");
       eLoop->Dispatch();
    }
+//   fprintf(stderr, "eLoop->Pending == FALSE #1\n");
    wxEventLoopBase::SetActive(originalEventLoop);
 }
 #endif
@@ -90,7 +96,7 @@ int displayDialogue(const char *message, const char *caption, long style) {
 //   if (topLevelWindow != NULL) {
 //      topLevelWindow->Enable(false);
 //   }
-#if 0
+#if defined(_WIN32)
    int rc =  wxMessageBox(
                wxString(message, wxConvUTF8), // message
                wxString(caption, wxConvUTF8), // caption
@@ -106,30 +112,37 @@ int displayDialogue(const char *message, const char *caption, long style) {
    }
    getUsbdmWxApp().SetTopWindow(tlw);
    tlw->Centre(wxBOTH);
-   tlw->Show(true);              // show the window
-   ((wxFrame*)tlw)->Iconize(false);          // restore the window if minimized
-   tlw->SetFocus();              // focus on my window
-   tlw->Raise();                 // bring window to front
+   tlw->Show(true);                  // show the window
+   ((wxFrame*)tlw)->Iconize(false);  // restore the window if minimized
+   tlw->SetFocus();                  // focus on my window
+   tlw->Raise();                     // bring window to front
+   milliSleep(100);
    wxMessageDialog dialogue(tlw,
                      wxString(message, wxConvUTF8), // message
                      wxString(caption, wxConvUTF8), // caption
                      style|wxCENTRE                 // style
                      );
    int rc = dialogue.ShowModal();         // show the window
+   switch (rc) {
+      case wxID_OK:     rc = wxOK;     break;
+      case wxID_CANCEL: rc = wxCANCEL; break;
+      case wxID_YES:    rc = wxYES;    break;
+      case wxID_NO:     rc = wxNO;     break;
+      default:;
+   }
+//   fprintf(stderr, "Hiding Window\n");
+   tlw->Show(false);
+//   fprintf(stderr, "Closing Window\n");
+   tlw->Close(true);
    if (tlw != topLevelWindow) {
       // If we made the window, destroy it
+//      fprintf(stderr, "Deleting Window\n");
       tlw->Destroy();
    }
    tlw = NULL;
 #endif
-//   fprintf(logFile, "displayDialogue() after\n");
-//   fflush(logFile);
-//   if (topLevelWindow != NULL) {
-//      topLevelWindow->Enable(true);
-//      topLevelWindow->SetFocus();
-//      topLevelWindow->Raise();
-//   }
 #if !defined(_WIN32)
+//   fprintf(stderr, "calling runGuiEventLoop()\n");
    runGuiEventLoop();
 #endif
    return rc;

@@ -61,22 +61,19 @@ endif
 # Include the C dependency files (if they exist)
 -include $(OBJ:.o=.d)
 
-# Rules to build dependency (.d) files
-#==============================================
-
 # Rules to build object (.o) files
 #==============================================
 ifeq ($(UNAME_S),Windows)
-$(BUILDDIR)/%.o : %.rc $(BUILDDIR)/timestamp
+$(BUILDDIR)/%.o : %.rc
 	@echo -- Building $@ from $<
 	$(WINDRES) $< $(DEFS) $(INCS) -o $@
 endif
 
-$(BUILDDIR)/%.o : %.c $(BUILDDIR)/timestamp
+$(BUILDDIR)/%.o : %.c
 	@echo -- Building $@ from $<
 	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
-$(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/timestamp
+$(BUILDDIR)/%.o : %.cpp
 	@echo -- Building $@ from $<
 	$(CC) $(CFLAGS) $(DEFS) $(INCS) -MD -c $< -o $@
 	
@@ -87,32 +84,45 @@ $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo -- Linking Target $@
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 
-# How to link a DLL
+# How to link a LIBRARY
 #==============================================
 $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX): $(OBJ) $(RESOURCE_OBJ)
 	@echo --
 	@echo -- Linking Target $@
-	$(CC) -shared -o $@ $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
+	$(CC) -shared -o $@ -Wl,-soname,$(basename $(notdir $@)) $(LDFLAGS) $(OBJ) $(RESOURCE_OBJ) $(LIBDIRS) $(LIBS) 
 
-$(BUILDDIR) : $(BUILDDIR)/timestamp
-	
-$(BUILDDIR)/timestamp :
-	-$(MKDIR) $(BUILDDIR)
-	-$(TOUCH) $(BUILDDIR)/timestamp
+DLL_TARGET=$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
+EXE_TARGET=$(TARGET)$(EXE_SUFFIX)
+
+# How to copy LIBRARY to target directory
+#==============================================
+$(TARGET_LIBDIR)/$(DLL_TARGET): $(BUILDDIR)/$(DLL_TARGET)
+	@echo --
+	@echo -- Copying $? to $(TARGET_LIBDIR)
+	$(CP) $? $@
+ifneq ($(UNAME_S),Windows)
+	$(LN) $(DLL_TARGET) $(TARGET_LIBDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_MAJOR_SUFFIX)
+	$(LN) $(DLL_TARGET) $(TARGET_LIBDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_NO_SUFFIX)
+endif
+
+# How to copy EXE to target directory
+#==============================================
+$(TARGET_BINDIR)/$(EXE_TARGET): $(BUILDDIR)/$(EXE_TARGET)
+	@echo --
+	@echo -- Copying $? to $(TARGET_BINDIR)
+	$(CP) $? $@
+
+# Create required directories
+#==============================================
+directories : 
+	-$(MKDIR) $(BUILDDIR) $(TARGET_LIBDIR)
+	-$(MKDIR) $(BUILDDIR) $(TARGET_BINDIR)
     
 clean:
-	-$(RM) $(BUILDDIR)/*.*
 	-$(RMDIR) $(BUILDDIR)
 
-dll: $(BUILDDIR) $(BUILDDIR)/$(LIB_PREFIX)$(TARGET)$(LIB_SUFFIX)
-#	@echo SRC          = $(SRC)
-#	@echo OBJ          = $(OBJ)
-#	@echo RESOURCE_OBJ = $(RESOURCE_OBJ)
-
-exe: $(BUILDDIR) $(BUILDDIR)/$(TARGET)$(EXE_SUFFIX)
-#	@echo SRC          = $(SRC)
-#	@echo OBJ          = $(OBJ)
-#	@echo RESOURCE_OBJ = $(RESOURCE_OBJ)
+dll: directories $(TARGET_LIBDIR)/$(DLL_TARGET)
+exe: directories $(TARGET_BINDIR)/$(EXE_TARGET)
    
-.PHONY: clean dll exe $(BUILDDIR)
+.PHONY: directories clean dll exe 
 

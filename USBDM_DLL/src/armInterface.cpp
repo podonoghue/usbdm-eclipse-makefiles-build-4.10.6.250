@@ -855,7 +855,7 @@ DLL_LOCAL
 USBDM_ErrorCode armJtagConnect() {
    LOGGING;
    USBDM_ErrorCode rc;
-   Logging::print("Pending reset = %s\n", pendingPowerOnReset?"T":"F");
+   Logging::print("Pending reset = %s\n", pendingResetRelease?"T":"F");
    if (!armInitialiseDone) {
       USBDM_ErrorCode rc = armJtagInitialise();
       if (rc != BDM_RC_OK) {

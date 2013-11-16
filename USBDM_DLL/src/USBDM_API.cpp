@@ -102,7 +102,7 @@ DLL_LOCAL
 bool bdmInfoValid = false;
 
 DLL_LOCAL
-bool pendingPowerOnReset = false;
+bool pendingResetRelease = false;
 
 //! Options for BDM
 static const USBDM_ExtendedOptions_t defaultBdmOptions = {
@@ -1051,7 +1051,7 @@ USBDM_ErrorCode USBDM_SetTargetType(TargetType_t targetType) {
    }
    bdmState.activityFlag = BDM_ACTIVE;
    bdmState.targetType   = T_OFF;
-   pendingPowerOnReset   = false;
+   pendingResetRelease   = false;
    armInitialiseDone     = false;
 
    if (targetType == T_ARM) {
@@ -1173,7 +1173,7 @@ USBDM_ErrorCode USBDM_SetTargetType(TargetType_t targetType) {
          // To prevent watch-dog problems leave target in hardware RESET
          // The target will enter debug mode on 1st USBDM_Connect()
          USBDM_ControlPins(PIN_RESET_LOW);
-         pendingPowerOnReset = true;
+         pendingResetRelease = true;
          Logging::print("ARM - Setting pending reset release\n");
          rc = USBDM_SetTargetVdd(BDM_TARGET_VDD_ENABLE);
          milliSleep(bdmOptions.powerOnRecoveryInterval);
@@ -1206,8 +1206,12 @@ USBDM_ErrorCode USBDM_Debug(unsigned char *usb_data) {
 
    usb_data[0] = 0;
    usb_data[1] = CMD_USBDM_DEBUG;
-   Logging::print("%s => 0x%2.2X, 0x%2.2X\n", getDebugCommandName(usb_data[2]), usb_data[3], usb_data[4]);
-   return bdm_usb_transaction(20, 20, usb_data, 1000, &actualRxSize);
+   uint8_t command = usb_data[2];
+   Logging::print("%s => 0x%2.2X, 0x%2.2X\n", getDebugCommandName(command), usb_data[3], usb_data[4]);
+   USBDM_ErrorCode rc = bdm_usb_transaction(20, 20, usb_data, 1000, &actualRxSize);
+   Logging::print("%s <= rc=%s, 0x%2.2X, 0x%2.2X, 0x%2.2X, 0x%2.2X\n",
+                  getDebugCommandName(command), USBDM_GetErrorString(rc), usb_data[1], usb_data[2], usb_data[3], usb_data[4]);
+   return rc;
 }
 
 //! Get status of the last command
@@ -1319,20 +1323,26 @@ USBDM_ErrorCode rc;
    usb_data[0] = 0;
    usb_data[1] = CMD_USBDM_CONNECT;
    rc = bdm_usb_transaction(2, 1, usb_data, 100);
+   Logging::print("basic connect, rc = %d\n", rc);
    if (rc != BDM_RC_OK) {
-      Logging::print("=> rc = %d\n", rc);
       return rc;
    }
    if (bdmOptions.targetType == T_ARM_SWD) {
       rc = armSwdConnect();
+      if (rc != BDM_RC_OK) {
+         rc = armSwdConnect();
+      }
    }
    else if (bdmOptions.targetType == T_ARM_JTAG) {
       rc = armJtagConnect();
+      if (rc != BDM_RC_OK) {
+         rc = armJtagConnect();
+      }
    }
-   if (pendingPowerOnReset) {
+   if (pendingResetRelease) {
       // Release pending reset
       Logging::print("Releasing pending reset and waiting %d ms\n", bdmOptions.resetRecoveryInterval);
-      pendingPowerOnReset = false;
+      pendingResetRelease = false;
       USBDM_ControlPins(PIN_RESET_3STATE);
       milliSleep(bdmOptions.resetRecoveryInterval);
    }
@@ -1812,10 +1822,10 @@ USBDM_ErrorCode USBDM_TargetReset(TargetMode_t target_mode) {
    case T_ARM_SWD:
    case T_ARM_JTAG:
       rc = resetARM(target_mode);
-      if (pendingPowerOnReset) {
+      if (pendingResetRelease) {
          // Clear pending reset
          Logging::print("Clearing pending reset\n");
-         pendingPowerOnReset = false;
+         pendingResetRelease = false;
       }
       return rc;
    default:

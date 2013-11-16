@@ -98,7 +98,7 @@ proc initTarget { flashRegions } {
    
    set ::FLASH_REGIONS  $flashRegions 
 
-   set ::ramAddress 0x1000
+;#   set ::ramAddress 0x1000
 ;#   set wdogH [expr $::WDOG>>8]
 ;#   set wdogL [expr $::WDOG&0xFF]
 

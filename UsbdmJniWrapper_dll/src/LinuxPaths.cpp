@@ -6,10 +6,10 @@
  */
 
 #include <stdlib.h>
-#include <string>
 #include "Common.h"
+#include "UsbdmPaths.h"
 
-std::string getEnvVar( std::string const & key )
+static std::string getEnvVar( std::string const & key )
 {
     char * val = getenv( key.c_str() );
     return val == NULL ? std::string("") : std::string(val);
@@ -37,7 +37,7 @@ bool getUsbdmResourcePath(std::string &path) {
 //!
 bool getUsbdmApplicationPath(std::string &path) {
 
-   path = USBDM_INSTALL_DIRECTORY "/lib/usbdm/";
+   path = USBDM_INSTALL_DIRECTORY "/bin/";
    return true;
 }
 

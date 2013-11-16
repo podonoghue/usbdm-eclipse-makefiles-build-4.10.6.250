@@ -24,6 +24,8 @@
 \verbatim
 Change History
 -============================================================================================
+|  Nov 09 2013 | Minor changes for security                                        - pgo V4.10.6.80
+|  Oct 28 2013 | Added connect with RESET retry to targetConnecvt for ARM          - pgo V4.10.6.40
 |  Dec 22 2012 | Improved Secured device handling & mass erase                     - pgo V4.10.4
 |  Dec 21 2012 | Fixed Reset PC Hack in HCS08 & CFV1                               - pgo V4.10.4
 |  Dec 21 2012 | Removed Mass Erase as separate operation                          - pgo V4.10.4
@@ -260,7 +262,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    rc = USBDM_Init();
    if (rc != BDM_RC_OK) {
       USBDM_Exit();
-      Logging::print("initialiseBDMInterface() - failed, reason = %s\n", USBDM_GetErrorString(rc));
+      Logging::print("USBDM_Init() - failed, reason = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
    // Close any existing connection
@@ -350,7 +352,9 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
       deviceOptions.setEraseOption(DeviceData::eraseMass);
    }
 #endif
-   deviceOptions.setSecurity(SEC_UNSECURED);
+   if (deviceOptions.getSecurity() == SEC_SECURED) {
+      deviceOptions.setSecurity(SEC_SMART);
+   }
    
    // Copy required options for Flash programming.
    // Other options are reset to default.
@@ -394,7 +398,13 @@ USBDM_ErrorCode rc;
 #if TARGET == ARM
       rc = USBDM_Connect();
       if (rc != BDM_RC_OK) {
+         Logging::print("Doing 1st retry\n");
          rc = USBDM_Connect(); // retry
+         if ((rc != BDM_RC_OK) && ((retryMode&retryByReset) != 0)) {
+            Logging::print("Doing retry under reset\n");
+            USBDM_ControlPins(PIN_RESET_LOW);
+            rc = USBDM_Connect(); // retry
+         }
       }
 #elif TARGET == MC56F80xx
       if (retryMode & retryWithInit) {
@@ -578,7 +588,7 @@ USBDM_ErrorCode initialConnect(void) {
    rc = targetConnect(initialConnectOptions);
 
 #if TARGET != ARM
-   // Trying to halting a secured device cause havoc
+   // Trying to halting a secured device causes havoc
    USBDM_TargetHalt();
    USBDM_TargetHalt();
 #endif
@@ -670,6 +680,7 @@ DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
 #if !defined(useWxWidgets)
 #ifdef _WIN32
    // Set up handle on Eclipse Window once only
+   Logging::print("Setting default window handle\n");
    setDefaultWindowParent(FindEclipseWindowHwnd());
 #endif
 #endif

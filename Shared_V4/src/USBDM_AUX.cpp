@@ -437,6 +437,7 @@ int handleError(USBDM_ErrorCode rc) {
       break;
       }
    }
+   Logging::print("handleError(%d (%s)) => %s\n", rc, USBDM_GetErrorString(rc), (getYesNo==wxYES)?"wxYES":"wxNo");
    return getYesNo;
 }
 
@@ -734,7 +735,9 @@ USBDM_ErrorCode USBDM_OpenBySerialNumberWithRetry(TargetType_t targetType, const
    LOGGING;
    USBDM_ErrorCode rc;
    int getYesNo = wxNO;
+   int attemptCount = 0;
    do {
+      Logging::print("attemp = %d\n", attemptCount++);
       rc = USBDM_OpenBySerialNumber(targetType, serialnumber, mustMatch);
       if (rc != BDM_RC_OK) {
          getYesNo = handleError(rc);

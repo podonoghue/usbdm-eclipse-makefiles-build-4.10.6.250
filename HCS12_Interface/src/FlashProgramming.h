@@ -58,6 +58,7 @@ struct TargetProgramInfo {
    uint32_t         calibFactor;             //!< Calibration factor for speed determination
    bool             smallProgram;            //!< Indicates small version of flash code being used
    bool             usePagedAddresses;       //!< Set up paged addressing information
+   bool             useWatchdogAddress;      //!< Set up watchdog address
    uint32_t         programOperation;        //!< either DO_PROGRAM_RANGE or DO_BLANK_CHECK_RANGE|DO_PROGRAM_RANGE|DO_VERIFY_RANGE
 };
 enum FlashOperation {OpNone, OpSelectiveErase, OpBlockErase, OpBlankCheck, OpProgram, OpVerify, OpWriteRam, OpPartitionFlexNVM, OpTiming};

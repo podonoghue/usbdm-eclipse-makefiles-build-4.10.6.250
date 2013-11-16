@@ -572,6 +572,7 @@
             <FeatureRef Id='F.CW_FOR_MCU_V10.2'/>
             <FeatureRef Id='F.CW_FOR_MCU_V10.3'/>
             <FeatureRef Id='F.CW_FOR_MCU_V10.4'/>
+            <FeatureRef Id='F.CW_FOR_MCU_V10.5'/>
             <FeatureRef Id='F.CW_FOR_MICROCONTROLLERS_V6_3' />
             <FeatureRef Id='F.CWS12_X_V5_1' />
          </Feature>
