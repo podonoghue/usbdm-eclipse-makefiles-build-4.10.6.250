@@ -65,8 +65,15 @@ typedef unsigned long dword;
 #endif
 #endif /* __RESET_WATCHDOG */
 
-//#pragma options align=packed
-#pragma pack(push,1)
+#if defined(__CWCC__)
+  #pragma push
+  #pragma cpp_extensions on
+  #pragma pack(1)
+#elif defined(__GNUC__)
+   #pragma pack(push,1)
+#else
+  #error Not supported compiler type
+#endif
 
 /**************** interrupt vector numbers ****************/
 #define VectorNumber_INITSP             0U
@@ -12135,8 +12142,14 @@ typedef union {
 #define PAUR_PADDR                       This_symb_has_been_depreciated
 #define PAUR_PADDR2_10_MASK              This_symb_has_been_depreciated
 #define PAUR_PADDR2_10_BITNUM            This_symb_has_been_depreciated
-//#pragma options align=reset
-#pragma pack(pop)
+
+#if defined(__CWCC__)
+  #pragma pop
+#elif defined(__GNUC__)
+   #pragma pack(pop)
+#else
+  #error Not supported compiler type
+#endif
 
 #endif
 /*lint -restore  +esym(961,18.4) +esym(961,19.7) Enable MISRA rule (1.1,18.4,6.4,19.7) checking. */

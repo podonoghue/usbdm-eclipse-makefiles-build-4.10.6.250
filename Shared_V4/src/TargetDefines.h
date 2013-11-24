@@ -180,7 +180,8 @@
 
 // Coldfire Debug Registers (32-bit read/write)
 #define CFV1_CSR                 (0x00)         //!< Debug register #
-#define CFV1_CSR_SSM             (0x00000010UL) //!< Single Step mode
+#define CFV1_CSR_SSM             (1UL<<4UL))    //!< Single Step mode
+#define CFV1_CSR_IPI             (1UL<<5UL)     //!< Ignore pending interrupts when single-stepping
 #define CFV1_CSR_VBD             (0x00020000UL) //!< Visibility Bus Disable
 
 #define CFV1_SIM_SRS_ADDR        (0xFF8100)  // Address of SRS register

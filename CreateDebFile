@@ -4,7 +4,7 @@
 MAJOR=4
 MINOR=10
 MICRO=6
-NANO=80
+NANO=100
 DEBIAN_VERSION=1
 VERSION=${MAJOR}.${MINOR}.${MICRO}.${NANO}
 
@@ -132,7 +132,7 @@ strip ${USBDM_BINDIR}/*
 chmod 755  ${USBDM_BINDIR}/*
 
 mkdir -pv ${USBDM_MANUAL_DIR}
-for MANPAGE_FILE in ManPages/*; do   
+for MANPAGE_FILE in ${SOURCE_DIRECTORY}/Documentation/ManPages/*; do   
    cp -p ${MANPAGE_FILE} ${MANPAGE_FILE}.1
    gzip --best -f ${MANPAGE_FILE}.1
    mv ${MANPAGE_FILE}.1.gz ${USBDM_MANUAL_DIR}

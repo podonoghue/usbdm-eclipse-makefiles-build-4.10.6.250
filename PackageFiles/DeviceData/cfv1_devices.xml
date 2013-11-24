@@ -150,6 +150,10 @@ Coldfire+
             value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.51" 
             command="-mcpu=51" name="MCF51 family"/>
       </gnuInfoList>
+      <fileList id="Coldfire-V1-file-list">
+         <file source="Project_Headers/utilities.h"            target="Project_Headers/utilities.h" />
+      </fileList>
+
    </sharedInformation>
    <deviceList>
       <device family="CFV1" name="_Default" isDefault="true">
@@ -177,7 +181,7 @@ Coldfire+
          <note>Default CFV1 Device</note>
       </device>
 &Custom-Devices;
-      <device family="CFV1" name="MCF51AC128A">
+      <device family="CFV1" name="MCF51AC128A" subfamily="MCF51AC">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -191,8 +195,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51AC128C">
+      <device family="CFV1" name="MCF51AC128C" subfamily="MCF51AC">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -206,8 +211,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51AC256A">
+      <device family="CFV1" name="MCF51AC256A" subfamily="MCF51AC">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -221,8 +227,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51AC256B">
+      <device family="CFV1" name="MCF51AC256B" subfamily="MCF51AC">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -236,8 +243,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51AG96">
+      <device family="CFV1" name="MCF51AG96" subfamily="MCF51AG">
          <clock registerAddress="0xFF8024" type="S08ICSV3" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -251,8 +259,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-Watchdog-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51AG128">
+      <device family="CFV1" name="MCF51AG128" subfamily="MCF51AG">
          <clock registerAddress="0xFF8024" type="S08ICSV3" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -266,8 +275,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-Watchdog-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51CN128">
+      <device family="CFV1" name="MCF51CN128" subfamily="MCF51CN">
          <clock registerAddress="0xFF8240" type="S08MCGV3" />
          <memoryRef ref="coldfire24K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -281,8 +291,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51EM128">
+      <device family="CFV1" name="MCF51EM128" subfamily="MCF51EM">
          <clock registerAddress="0xFF8220" type="S08ICSV3" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -300,8 +311,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51EM256">
+      <device family="CFV1" name="MCF51EM256" subfamily="MCF51EM">
          <clock registerAddress="0xFF8220" type="S08ICSV3" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -319,8 +331,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51JE128">
+      <device family="CFV1" name="MCF51JE128" subfamily="MCF51JE">
          <clock registerAddress="0xFF8038" type="S08MCGV3" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -337,8 +350,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51JE256">
+      <device family="CFV1" name="MCF51JE256" subfamily="MCF51JE">
          <clock registerAddress="0xFF8038" type="S08MCGV3" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -355,8 +369,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51JF32">
+      <device family="CFV1Plus" name="MCF51JF32" subfamily="MCF51JF">
          <clock type="External" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire16K_FlexNVM" />
@@ -368,8 +383,9 @@ Coldfire+
          <sdid value="0x0D01" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51JF64">
+      <device family="CFV1Plus" name="MCF51JF64" subfamily="MCF51JF">
          <clock type="External" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -381,8 +397,9 @@ Coldfire+
          <sdid value="0x0D01" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51JF128">
+      <device family="CFV1Plus" name="MCF51JF128" subfamily="MCF51JF">
          <clock type="External" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -394,8 +411,9 @@ Coldfire+
          <sdid value="0x0D01" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51JU32">
+      <device family="CFV1Plus" name="MCF51JU32" subfamily="MCF51JU">
          <clock type="External" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire16K_FlexNVM" />
@@ -407,8 +425,9 @@ Coldfire+
          <sdid value="0x0D02" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51JU64">
+      <device family="CFV1Plus" name="MCF51JU64" subfamily="MCF51JU">
          <clock type="External" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -420,8 +439,9 @@ Coldfire+
          <sdid value="0x0D02" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51JU128">
+      <device family="CFV1Plus" name="MCF51JU128" subfamily="MCF51JU">
          <clock type="External" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -433,8 +453,9 @@ Coldfire+
          <sdid value="0x0D02" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51JM32">
+      <device family="CFV1" name="MCF51JM32" subfamily="MCF51JM">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -449,8 +470,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51JM64">
+      <device family="CFV1" name="MCF51JM64" subfamily="MCF51JM">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -465,8 +487,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51JM128">
+      <device family="CFV1" name="MCF51JM128" subfamily="MCF51JM">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -481,8 +504,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51MM128">
+      <device family="CFV1" name="MCF51MM128" subfamily="MCF51MM">
          <clock registerAddress="0xFF8038" type="S08MCGV3" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -500,8 +524,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51MM256">
+      <device family="CFV1" name="MCF51MM256" subfamily="MCF51MM">
          <clock registerAddress="0xFF8038" type="S08MCGV3" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -519,8 +544,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51QE32">
+      <device family="CFV1" name="MCF51QE32" subfamily="MCF51QE">
          <clock registerAddress="0xFF8038" type="S08ICSV3" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -534,8 +560,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51QE64">
+      <device family="CFV1" name="MCF51QE64" subfamily="MCF51QE">
          <clock registerAddress="0xFF8038" type="S08ICSV3" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -549,8 +576,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51QE96">
+      <device family="CFV1" name="MCF51QE96" subfamily="MCF51QE">
          <clock registerAddress="0xFF8038" type="S08ICSV3" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -564,8 +592,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1" name="MCF51QE128">
+      <device family="CFV1" name="MCF51QE128" subfamily="MCF51QE">
          <clock registerAddress="0xFF8038" type="S08ICSV3" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfireIO" />
@@ -579,8 +608,9 @@ Coldfire+
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QF32">
+      <device family="CFV1Plus" name="MCF51QF32" subfamily="MCF51QF">
          <clock type="External" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire16K_FlexNVM" />
@@ -592,8 +622,9 @@ Coldfire+
          <sdid value="0x0D05" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QF64">
+      <device family="CFV1Plus" name="MCF51QF64" subfamily="MCF51QF">
          <clock type="External" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -605,8 +636,9 @@ Coldfire+
          <sdid value="0x0D05" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QF128">
+      <device family="CFV1Plus" name="MCF51QF128" subfamily="MCF51QF">
          <clock type="External" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -618,8 +650,9 @@ Coldfire+
          <sdid value="0x0D05" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QH32">
+      <device family="CFV1Plus" name="MCF51QH32" subfamily="MCF51QH">
          <clock type="External" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire16K_FlexNVM" />
@@ -631,8 +664,9 @@ Coldfire+
          <sdid value="0x0D04" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QH64">
+      <device family="CFV1Plus" name="MCF51QH64" subfamily="MCF51QH">
          <clock type="External" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -644,8 +678,9 @@ Coldfire+
          <sdid value="0x0D04" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QH128">
+      <device family="CFV1Plus" name="MCF51QH128" subfamily="MCF51QH">
          <clock type="External" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -657,8 +692,9 @@ Coldfire+
          <sdid value="0x0D04" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QM32">
+      <device family="CFV1Plus" name="MCF51QM32" subfamily="MCF51QM">
          <clock type="External" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire16K_FlexNVM" />
@@ -670,8 +706,9 @@ Coldfire+
          <sdid value="0x0D03" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QM64">
+      <device family="CFV1Plus" name="MCF51QM64" subfamily="MCF51QM">
          <clock type="External" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -683,8 +720,9 @@ Coldfire+
          <sdid value="0x0D03" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QM128">
+      <device family="CFV1Plus" name="MCF51QM128" subfamily="MCF51QM">
          <clock type="External" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -696,8 +734,9 @@ Coldfire+
          <sdid value="0x0D03" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QU32">
+      <device family="CFV1Plus" name="MCF51QU32" subfamily="MCF51QU">
          <clock type="External" />
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire16K_FlexNVM" />
@@ -709,8 +748,9 @@ Coldfire+
          <sdid value="0x0D06" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QU64">
+      <device family="CFV1Plus" name="MCF51QU64" subfamily="MCF51QU">
          <clock type="External" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -722,8 +762,9 @@ Coldfire+
          <sdid value="0x0D06" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
-      <device family="CFV1Plus" name="MCF51QU128">
+      <device family="CFV1Plus" name="MCF51QU128" subfamily="MCF51QU">
          <clock type="External" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire32K_FlexNVM" />
@@ -735,6 +776,7 @@ Coldfire+
          <sdid value="0x0D06" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
          <gnuInfoListRef ref="gnuSettings.mcf51" />
+         <fileListRef ref="Coldfire-V1-file-list" />
       </device>
 &New-ColdfileV1-Devices;
    </deviceList>

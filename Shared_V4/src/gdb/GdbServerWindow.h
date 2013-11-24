@@ -61,7 +61,10 @@ public:
    void OnShowLogWindow(wxCommandEvent& event);
 
    void OnResetTarget(wxCommandEvent& event);
+   void OnHaltTarget(wxCommandEvent& event);
    void OnSetSpeed(wxCommandEvent& event);
+
+   void OnToggleMaskISR(wxCommandEvent& event);
 
    // Timer Event handler
    void OnTimer(wxTimerEvent& event);

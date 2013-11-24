@@ -38,4 +38,7 @@ USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, const char *format, ...);
 GdbTargetStatus gdbPollTarget(void);
 GdbTargetStatus getGdbTargetStatus(void);
 
+void setMaskISR(bool disableInterrupts);
+bool getMaskISR(void);
+
 #endif /* GDBHANDLER_H_ */

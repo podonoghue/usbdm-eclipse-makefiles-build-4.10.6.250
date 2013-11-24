@@ -6,7 +6,9 @@
 \verbatim
 Change History
 -==================================================================================
-|  9 nOV 2013 | Changed default memory access size to 32-bit (+intelligent)   - pgo
+| 16 Nov 2013 | Changed maskisr function                                      - pgo
+| 16 Nov 2013 | Changed monitor command handling                              - pgo
+|  9 Nov 2013 | Changed default memory access size to 32-bit (+intelligent)   - pgo
 | 31 Mar 2013 | Updated gdbLoop so that break updates status promptly         - pgo
 | 23 Apr 2012 | Created                                                       - pgo
 +==================================================================================
@@ -85,9 +87,10 @@ using namespace std;
 
 enum RunState {halted, stepping, running, breaking};
 
-static GdbInOut        *gdbInOut                   = NULL;
-static RunState         runState                   = halted;
+static GdbInOut        *gdbInOut                     = NULL;
+static RunState         runState                     = halted;
 static DeviceData       deviceData;
+static bool             maskInterruptsWhenStepping   = true;
 
 static GdbTargetStatus gdbTargetStatus = T_UNKNOWN;
 
@@ -962,48 +965,76 @@ static void sendXML(unsigned size, unsigned offset, const char *buffer, unsigned
    gdbInOut->sendGdbBuffer();
 }
 
-//!
-//! Mask/unmask interrupt
-//!
-//! @return original int mask
-// ToDo - fix this
-bool maskInterrupts(bool maskInterrupts) {
-   unsigned long int regValue;
-   if (maskInterrupts) {
-      USBDM_ReadReg(ARM_RegMISC, &regValue);
-      USBDM_WriteReg(ARM_RegMISC, regValue|1);
+#if TARGET==ARM
+/*! Mask/unmask interrupts (in DHCSR)
+ *
+ * @param disableInterrupts - true/false -> disable/enable interrupts
+ */
+void maskInterrupts(bool disableInterrupts) {
+   const uint8_t disableInts[4] = {DHCSR_C_MASKINTS|DHCSR_C_HALT|DHCSR_C_DEBUGEN,0x00,0x5F,0xA0};
+   const uint8_t enableInts[4]  = {DHCSR_C_HALT|DHCSR_C_DEBUGEN,0x00,0x5F,0xA0};
+
+   if (disableInterrupts) {
+      USBDM_WriteMemory(MS_Long, 4, DHCSR, disableInts);
    }
    else {
-      USBDM_ReadReg(ARM_RegMISC, &regValue);
-      USBDM_WriteReg(ARM_RegMISC, regValue&~1);
+      USBDM_WriteMemory(MS_Long, 4, DHCSR, enableInts);
    }
-   return regValue&0x01;
+   // For debug checking
+//   uint8_t temp[4];
+//   USBDM_ReadMemory(MS_Long, 4, DHCSR, temp);
 }
+#elif TARGET==CFV1
+void maskInterrupts(bool disableInterrupts) {
+   unsigned long csrValue;
 
-// returns true if the instruction modifies the interrupt flag
-//
-bool modifiesInterrupt(const unsigned char instruction[2]) {
+   USBDM_ReadDReg(CFV1_DRegCSR, &csrValue);
 
-   if (instruction[1] != 0xB6) {
-      return false;
+   if (disableInterrupts) {
+      USBDM_WriteDReg(CFV1_DRegCSR, csrValue|CFV1_CSR_IPI);
    }
-   //              cpsid i                      cpsid f                    cpsie i                 cpsie f
-   return (instruction[0] == 0x61) || (instruction[0] == 0x62) || (instruction[0] == 0x71) || (instruction[0] == 0x72);
+   else {
+      USBDM_WriteDReg(CFV1_DRegCSR, csrValue&~CFV1_CSR_IPI);
+   }
+   // For debug
+   USBDM_ReadDReg(CFV1_DRegCSR, &csrValue);
 }
+#else
+void maskInterrupts(bool disableInterrupts) {
+      (void)disableInterrupts;
+      // Not implemented
+}
+#endif
 
-void stepTarget(void) {
-   bool originalValue;
-   unsigned long currentPC;
-   unsigned char currentInstruction[2];
-   USBDM_ReadPC(&currentPC);
-   USBDM_ReadMemory(MS_Word, 2, currentPC, currentInstruction);
-
-   originalValue = maskInterrupts(true);
+/*!
+ *    Single step target
+ *
+ * @param disableInterrupts - true/false -> disable/enable interrupts on step
+ */
+void stepTarget(bool disableInterrupts) {
+   maskInterrupts(disableInterrupts);
    USBDM_TargetStep();
-   if (!modifiesInterrupt(currentInstruction)) {
-      // only restore when safe
-      maskInterrupts(originalValue);
+}
+
+/*!
+ *    Continue target
+ *
+ *    If at a breakpoint then a single step is done (with interrupts masked) before
+ *    continuing at full execution.
+ *    Breakpoints are activated.
+ */
+void continueTarget(void) {
+   if (atMemoryBreakpoint()) {
+      // Do 1 step before activating memory breakpoints
+      Logging::print("Continue - stepping one instruction...\n");
+      stepTarget(true);
    }
+   maskInterrupts(false);
+   activateBreakpoints();
+   Logging::print("Continue - executing...\n");
+   USBDM_TargetGo();
+   Logging::print("Continue - Now running\n");
+
 }
 
 /*! Checks if two string are equal
@@ -1028,6 +1059,15 @@ bool strneq(const char *s1, const char *s2, int length) {
    return strncmp(s1,s2,length) == 0;
 }
 
+void setMaskISR(bool disableInterrupts) {
+
+   maskInterruptsWhenStepping = disableInterrupts;
+}
+
+bool getMaskISR(void) {
+   return maskInterruptsWhenStepping;
+}
+
 /* Do monitor commands
  *
  */
@@ -1047,7 +1087,7 @@ static USBDM_ErrorCode doMonitorCommand(const char *cmd) {
       // ignore any parameters
       reportGdbPrintf(M_INFO, "User reset of target\n");
       USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-      gdbInOut->sendGdbHexString("O", "Done", -1);
+      gdbInOut->sendGdbHexString("O", "User reset of target\n", -1);
       gdbInOut->sendGdbString("OK");
       registerBufferSize = 0;
    }
@@ -1055,7 +1095,7 @@ static USBDM_ErrorCode doMonitorCommand(const char *cmd) {
       // ignore any parameters
       reportGdbPrintf(M_INFO, "User halt of target\n");
       USBDM_TargetHalt();
-      gdbInOut->sendGdbHexString("O", "Done", -1);
+      gdbInOut->sendGdbHexString("O", "User halt of target\n", -1);
       gdbInOut->sendGdbString("OK");
       registerBufferSize = 0;
    }
@@ -1067,37 +1107,48 @@ static USBDM_ErrorCode doMonitorCommand(const char *cmd) {
       gdbInOut->sendGdbString("OK");
    }
    else if (strneq(command, "maskisr", sizeof("maskisr")-1)) {
-//      fprintf(stderr, "command: %s\n", command);
       char *ptr = command+sizeof("maskisr")-1;
       while (isspace(*ptr)) {
          ptr++;
       }
-//      fprintf(stderr, "operands = %s\n", ptr);
       if (strneq(ptr, "1",  sizeof("1")-1) ||
             strneq(ptr, "on", sizeof("on")-1) ||
             strneq(ptr, "t",  sizeof("t")-1)) {
-         maskInterrupts(true);
-//         fprintf(stderr, "maskisr %s\n", maskInterruptsWhenStepping?"True":"False");
-//         fflush(stderr);
+         setMaskISR(true);
       }
       else if (strneq(ptr, "0",   sizeof("1")-1) ||
             strneq(ptr, "off", sizeof("off")-1) ||
             strneq(ptr, "f",   sizeof("f")-1)) {
-         maskInterrupts(false);
-//         fprintf(stderr, "maskisr %s\n", maskInterruptsWhenStepping?"True":"False");
-//         fflush(stderr);
+         reportGdbPrintf(M_INFO, "maskisr On\n");
+         setMaskISR(false);
       }
-//         fprintf(stderr, "maskisr %s\n", maskInterruptsWhenStepping?"True":"False");
-//      char buff[100];
-//      sprintf(buff, "maskisr = %s\n", maskInterrupts?"on":"off");
-//      gdbInOut->sendGdbHexString("O", buff, -1);
+      if (maskInterruptsWhenStepping) {
+         reportGdbPrintf(M_INFO, "maskisr on\n");
+         gdbInOut->sendGdbHexString("O", "maskisr on\n", -1);
+      }
+      else {
+         reportGdbPrintf(M_INFO, "maskisr off\n");
+         gdbInOut->sendGdbHexString("O", "maskisr off\n", -1);
+      }
       gdbInOut->sendGdbString("OK");
       registerBufferSize = 0;
    }
+   else if (strneq(command, "help", sizeof("help")-1)) {
+      gdbInOut->sendGdbHexString("O",
+                                 "MON commands\n"
+                                 "=====================\n"
+                                 "maskisr (on|off)\n"
+                                 "halt\n"
+                                 "reset\n"
+                                 "=====================\n",
+                                 -1);
+      gdbInOut->sendGdbString("OK");
+   }
    else {
-      Logging::print("Unrecognised command:\'%s\'\n", cmd);
-      gdbInOut->sendGdbHexString("O", "Unrecognized command", -1);
-      gdbInOut->sendGdbString("OK"); // = Opps!
+      Logging::print("Unrecognised mon commandcommand: \'%s\'\n", cmd);
+      reportGdbPrintf(M_INFO, "Unrecognised command: \'%s\'\n", cmd);
+      gdbInOut->sendGdbHexString("O", "Unrecognized command\n", -1);
+      gdbInOut->sendGdbString("OK");
    }
    return BDM_RC_OK;
 }
@@ -1506,25 +1557,17 @@ USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
       else {
          Logging::print("Continue @PC\n");
       }
-      if (atMemoryBreakpoint()) {
-         // Do 1 step before installing memory breakpoints
-         Logging::print("Continue - stepping one instruction...\n");
-         stepTarget();
-      }
-      activateBreakpoints();
-      Logging::print("Continue - executing...\n");
-      USBDM_TargetGo();
-      Logging::print("Continue - Now running\n");
+      continueTarget();
       runState = running;
       registerBufferSize = 0;
       gdbPollTarget();
       break;
-   case 's' : // 's' [addr] - Single step.
-//      addr is the address at which to resume. If addr is omitted, resume at same address.
-//      Reply: See [Stop Reply Packets], page for the reply specifications.
+   case 's' :
+      // 's' [addr] - Single step.
+      //      addr is the address at which to resume. If addr is omitted, resume at same address.
+      //      Reply: See [Stop Reply Packets], page for the reply specifications.
       if (sscanf(pkt->buffer, "s%X", &address) > 1) {
          // Set PC to address
-//         bigendianToTarget32(address);
          reportGdbPrintf(M_BORINGINFO, "Single step @addr=%X\n", address);
          Logging::print("Single step @addr=%X\n", address);
          USBDM_WritePC(address);
@@ -1534,11 +1577,12 @@ USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
          Logging::print("Single step @PC\n");
       }
       runState = stepping;
-      stepTarget();
+      stepTarget(maskInterruptsWhenStepping);
       registerBufferSize = 0;
       gdbPollTarget();
       break;
-   case 'Z' : // 'z type,addr,kind' - insert/remove breakpoint
+   case 'Z' :
+      // 'z type,addr,kind' - insert/remove breakpoint
       Logging::print("Z - Set breakpoint\n");
       if (sscanf(pkt->buffer, "Z%d,%x,%d", &type, &address, &kind) != 3) {
          Logging::print("Illegal cmd format\n");

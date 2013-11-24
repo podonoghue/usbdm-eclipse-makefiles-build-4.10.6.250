@@ -46,6 +46,8 @@ enum
    SERVER_STATUSTIMER,
    SERVER_RESETTARGET,
    SERVER_SETSPEED,
+   SERVER_TOGGLEMASKISR,
+   SERVER_HALTTARGET,
    // id for sockets
    SERVER_ID = 100,
    SOCKET_ID,
@@ -66,8 +68,12 @@ BEGIN_EVENT_TABLE(GdbServerWindow, wxFrame)
    EVT_MENU(SERVER_MODERATELOG,        GdbServerWindow::OnModerateLog)
    EVT_MENU(SERVER_VERBOSELOG,         GdbServerWindow::OnVerboseLog)
 
+   EVT_MENU(SERVER_HALTTARGET,         GdbServerWindow::OnHaltTarget)
    EVT_MENU(SERVER_RESETTARGET,        GdbServerWindow::OnResetTarget)
    EVT_MENU(SERVER_SETSPEED,           GdbServerWindow::OnSetSpeed)
+
+   EVT_MENU(SERVER_TOGGLEMASKISR,      GdbServerWindow::OnToggleMaskISR)
+   EVT_MENU(SERVER_RESETTARGET,        GdbServerWindow::OnResetTarget)
 
    EVT_SOCKET(SERVER_ID,               GdbServerWindow::OnServerEvent)
    EVT_SOCKET(SOCKET_ID,               GdbServerWindow::OnSocketEvent)
@@ -116,7 +122,10 @@ GdbServerWindow::GdbServerWindow(SharedPtr shared, AppSettings &appSettings) :
    menuBar->Append(menuLog, _("&Log"));
 
    wxMenu *menuTarget = new wxMenu();
-   menuTarget->Append(SERVER_RESETTARGET,     _("&Reset"),           _("Reset target"));
+   menuTarget->Append(SERVER_RESETTARGET,     _("&Reset"),                 _("Reset target"));
+   menuTarget->Append(SERVER_TOGGLEMASKISR,   _("&Disable Interrrupts"),   _("Disable interrupts when stepping"), wxITEM_CHECK);
+   menuTarget->Check(SERVER_TOGGLEMASKISR, getMaskISR());
+
 //   menuTarget->Append(SERVER_SETSPEED,        _("&Interface Speed"), _("Set communication speed"));
    menuBar->Append(menuTarget, _("&Target"));
 
@@ -369,6 +378,22 @@ void GdbServerWindow::OnShowLogWindow(wxCommandEvent& event) {
 void GdbServerWindow::OnResetTarget(wxCommandEvent& event) {
    usbdmResetTarget();
    statusTextControl->AppendText(_("User reset of target - step GDB to synchronise\n"));
+}
+
+/*!  Handler for Reset Target menu item
+ *
+ */
+void GdbServerWindow::OnHaltTarget(wxCommandEvent& event) {
+   USBDM_TargetHalt();
+   statusTextControl->AppendText(_("User halt of target - step GDB to synchronise\n"));
+}
+
+/*!  Handler for Reset Target menu item
+ *
+ */
+void GdbServerWindow::OnToggleMaskISR(wxCommandEvent& event) {
+   bool disableInterrupts = event.IsChecked();
+   setMaskISR(disableInterrupts);
 }
 
 /*!  Handler for Set Speed menu item

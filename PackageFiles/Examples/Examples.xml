@@ -25,19 +25,22 @@ Includes example code demonstrating use of printf() with on-chip UART.
       </example>
       <example description="Freedom KL25Z Basic"         family="ARM"        path="MKL25Z128M4_FRDM.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom KL25Z board
-Includes example clock initialisation, port operations and simple PIT interrupt use.
+Includes example clock initialisation and port operations.
       </example>
       <example description="Freedom KL25Z Demonstration" family="ARM"        path="MKL25Z128M4_FRDM_Demo.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom KL25Z board
-Includes example clock initialisation, port, PIT, LPTMR, RTC, PTM(PWM and OC) operations.
-      </example>
-      <example description="Freedom KL25Z Serial"        family="ARM"        path="MKL25Z128M4_FRDM_Serial.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
-Example project for Freedom KL25Z board
+Includes example clock initialisation, port, PIT, LPTMR, 
+RTC, PTM(PWM and OC), ADC operations and I2C (accelerometer).
 Includes example code demonstrating use of printf() with on-chip UART.
+      </example>
+      <example description="Freedom KL25Z CPP Demonstration" family="ARM"    path="MKL25Z128M4_FRDM_DemoCPP.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
+Example project for Freedom KL25Z board
+As for Freedom KL25Z Demonstration but with some experiments 
+with CPP for comparison
       </example>
       <example description="Freedom KL26Z Basic"         family="ARM"        path="MKL26Z128M4_FRDM.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom KL26Z board
-Includes example clock initialisation, port operations and simple PIT interrupt use.
+Includes example clock initialisation and port operations.
       </example>
       <example description="Freedom KL26Z Serial"        family="ARM"        path="MKL26Z128M4_FRDM_Serial.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom KL26Z board
@@ -45,7 +48,7 @@ Includes example code demonstrating use of printf() with on-chip UART.
       </example>
       <example description="Freedom KL46Z Basic"         family="ARM"        path="MKL46Z256M4_FRDM.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom KL46Z board
-Includes example clock initialisation, port operations and simple PIT interrupt use.
+Includes example clock initialisation and port operations.
       </example>
       <example description="Freedom KL46Z Serial"        family="ARM"        path="MKL46Z256M4_FRDM_Serial.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom KL46Z board
@@ -59,12 +62,10 @@ Includes example code demonstrating use of printf() with on-chip UART.
 Example project for Freedom K20D50M board
 Includes example clock initialisation and port operations.
       </example>
-      <example description="Freedom K20D50M Demonstration"       family="ARM"        path="MK20DX128M5_FRDM.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
+      <example description="Freedom K20D50M Demonstration"       family="ARM"        path="MK20DX128M5_FRDM_Demo.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom K20D50M board
-Includes example clock initialisation, port, PIT, LPTMR, RTC, PTM(PWM and OC) operations.
-      </example>
-      <example description="Freedom K20D50M Serial"      family="ARM"        path="MK20DX128M5_FRDM_Serial.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
-Example project for Freedom K20D50M board
+Includes example clock initialisation, port, PIT, LPTMR, 
+RTC, FTM(PWM and OC), ADC operations and I2C (accelerometer).
 Includes example code demonstrating use of printf() with on-chip UART.
       </example>
       <example description="Freedom K20D50M Colour LCD driver"  family="ARM" path="MK20DX128M5_FRDM_ColourLCD.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
@@ -79,10 +80,11 @@ Includes CMSIS-RTOS examples
 Example project for Tower MCF51JF128 board
 Includes example port operations.
       </example>
-      <example description="Tower MCF51JF128 Serial"     family="COLDFIRE"   path="MCF51JF128_Tower_Serial.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.codesourceryColdfire">
+      <example description="Tower MCF51JF128 Demonstration"     family="COLDFIRE"   path="MCF51JF128_Tower_Demo.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.codesourceryColdfire">
 Example project for Tower MCF51JF128 board
+Includes example clock initialisation, port, PIT, LPTMR, 
+MTIM, PTM(PWM and OC) and ADC operations.
 Includes example code demonstrating use of printf() with on-chip UART.
-Makes use of NewLib library. 
       </example>
       <example description="Tower K40 Basic"             family="ARM"        path="MK40DX256Z_Tower.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Tower Kinetis K40 board
