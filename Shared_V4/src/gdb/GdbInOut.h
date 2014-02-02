@@ -8,6 +8,8 @@
 #ifndef GDBINOUT_H_
 #define GDBINOUT_H_
 
+#include <stdint.h>
+
 #define GDB_OK               (0)
 #define GDB_FATAL_ERROR      (1)
 #define GDB_NON_FATAL_ERROR  (2)
@@ -97,6 +99,7 @@ public:
 
    // Send data to GDB
    void sendGdbBuffer(void);
+   void sendGdbHexDataString(const char *id, const uint8_t *data, unsigned size);
    void sendGdbHex(const unsigned char *buffer, unsigned size);
    void sendGdbString(const char *buffer, int size=-1);
    void sendGdbHexString(const char *id, const char *buffer, int size=-1);

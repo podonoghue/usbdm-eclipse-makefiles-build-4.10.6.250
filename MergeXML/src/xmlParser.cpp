@@ -239,7 +239,7 @@ XmlParser::Actions XmlParser::getAction(DOMElement *patchEl) {
    return currentAction;
 }
 
-bool XmlParser::processAttributes(DOMElement *mergeEl, DOMElement *patchEl) {
+void XmlParser::processAttributes(DOMElement *mergeEl, DOMElement *patchEl) {
 //   cerr << "XmlParser::processAttributes()\n";
 
    while (patchEl->hasAttribute(attr_merge_actions.asXMLString())) {
@@ -256,7 +256,8 @@ bool XmlParser::processAttributes(DOMElement *mergeEl, DOMElement *patchEl) {
          setAttr = false;
       }
       else {
-         throw invalid_argument("Illegal merge-action " + attributeValue);
+         // No attribute changes
+         return;
       }
       size_t colonIndex     = attributeValue.find(':',index);
       if (colonIndex == string::npos) {
@@ -299,7 +300,7 @@ bool XmlParser::processAttributes(DOMElement *mergeEl, DOMElement *patchEl) {
       }
       index = semiColonIndex-1;
    }
-   return true;
+   return;
 }
 
 DOMElement *XmlParser::removeActionAttributes(DOMElement *element) {

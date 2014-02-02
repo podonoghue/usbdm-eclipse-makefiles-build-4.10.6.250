@@ -3,13 +3,28 @@
 
 \section sectionHistory Revision History
 
-V4.10.6.60 (November 2013) 
-	- usbdm_4.10.6.60-1-i386.deb 
-	- usbdm_4.10.6.60-1-amd64.deb
-	- USBDM_4_10_6_60_Win.msi
- 	- Added support for 9S08PA4 & 9S08PA2 
- 	- Minor fix to Codewarrior 10 interface 
+V4.10.6.110 (December 2013)
+   - Added Eclipse Peripheral View
+   - Added MKL16 to database 
 
+V4.10.6.100 (November 2013)
+   - Modified GDB server interrupt masking (ARM+CFV1) 
+   - Added interrupt masking option to GDB server
+   - Eclipse examples updated
+   - NOTE:  The Win versions of the software are no longer compressed with UPX so
+     the executables and downloads are much larger.  The compression was greatly
+     affecting the installation time of the .msi file.  This change also improves
+     the start-up time of the programs.
+   
+V4.10.6.80 (November 2013)
+   - Added support for 9S08PA4 & 9S08PA2
+   - Minor fix to Codewarrior 10 interface
+   - Added security options to Eclipse & Codewarrior plugins
+   - WIN+LINUX versions are feature consistent
+
+V4.10.6.80 (November 2013)
+	- Deleted as corrupted
+	
 V4.10.6.40 (October 2013) 
 	- usbdm_4.10.6.40-2-i386.deb
 	- usbdm_4.10.6.40-2-amd64.deb

@@ -17,7 +17,7 @@
       <sdid value="0x00000420" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <gnuInfoListRef  ref="gnuSettings.cortex.m3" />
+      <projectActionListRef  ref="gnuSettings.cortex.m3" />
+      <projectActionListRef ref="NXP-LPC-file-list" />
       <registerDescriptionRef ref="CortexM3F-register-description" />
-      <fileListRef ref="NXP-LPC-file-list" />
    </device>

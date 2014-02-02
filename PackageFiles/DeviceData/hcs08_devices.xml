@@ -1198,13 +1198,13 @@
             <memoryRange start="0x0040" end="0x023F" />
          </memory>
          <memory registerAddress="0x3020" type="eeprom" sectorSize="2" alignment="1">
-            <memoryRange start="0x003100" end="0x00317F" />
             <flashProgramRef ref="HCS08-PAxx-small-eeprom-program" />
+            <memoryRange start="0x003100" end="0x00317F" />
          </memory>
          <memory registerAddress="0x3020" type="flash" securityAddress="0xFF70" sectorSize="512" alignment="4">
+            <flashProgramRef ref="HCS08-PAxx-small-flash-program" />
             <securityEntryRef ref="HCS08-default-security" />
             <memoryRange start="0x00F800" end="0x00FFFF" />
-            <flashProgramRef ref="HCS08-PAxx-small-flash-program" />
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
@@ -1220,13 +1220,13 @@
             <memoryRange start="0x0040" end="0x023F" />
          </memory>
          <memory registerAddress="0x3020" type="eeprom" sectorSize="2" alignment="1">
-            <memoryRange start="0x003100" end="0x00317F" />
             <flashProgramRef ref="HCS08-PAxx-small-eeprom-program" />
+            <memoryRange start="0x003100" end="0x00317F" />
          </memory>
          <memory registerAddress="0x3020" type="flash" securityAddress="0xFF70" sectorSize="512" alignment="4">
+            <flashProgramRef ref="HCS08-PAxx-small-flash-program" />
             <securityEntryRef ref="HCS08-default-security" />
             <memoryRange start="0x00F000" end="0x00FFFF" />
-            <flashProgramRef ref="HCS08-PAxx-small-flash-program" />
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />

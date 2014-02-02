@@ -76,7 +76,7 @@ private:
    int   commit(const char* xmlFile);
    bool  mergeNodes(xercesc_3_1::DOMElement *mergeEl, xercesc_3_1::DOMElement *patchEl);
    bool  nodesMatch(xercesc_3_1::DOMElement *mergeEl, xercesc_3_1::DOMElement *patchEl);
-   bool  processAttributes(xercesc_3_1::DOMElement *mergeEl, xercesc_3_1::DOMElement *patchEl);
+   void  processAttributes(xercesc_3_1::DOMElement *mergeEl, xercesc_3_1::DOMElement *patchEl);
    Actions getAction(xercesc_3_1::DOMElement *mergeEl);
    xercesc_3_1::DOMElement *removeActionAttributes(xercesc_3_1::DOMElement *patchEl);
    xercesc_3_1::DOMComment *getCommentNode(xercesc_3_1::DOMElement *element);

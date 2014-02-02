@@ -1,0 +1,19 @@
+<!--
+Devices using this peripheral: 
+   MKE02Z2
+   MKL14Z4
+   MKL15Z4
+   MKL16Z4
+   MKL24Z4
+   MKL25Z4
+   MKL26Z4
+   MKL34Z4
+   MKL36Z4
+   MKL46Z4
+-->
+      <peripheral derivedFrom="SPI0">
+         <name>SPI1</name>
+         <description>Serial Peripheral Interface (SPI1)</description>
+         <prependToName>SPI1</prependToName>
+         <baseAddress>0x40077000</baseAddress>
+      </peripheral>

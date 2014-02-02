@@ -1,0 +1,14 @@
+<!--
+Devices using this peripheral: 
+   MK10F12
+   MK20F12
+   MK60F12
+   MK61F12
+   MK70F12
+-->
+      <peripheral derivedFrom="ADC0">
+         <name>ADC3</name>
+         <description>Analog-to-Digital Converter (ADC3)</description>
+         <prependToName>ADC3</prependToName>
+         <baseAddress>0x400BC000</baseAddress>
+      </peripheral>

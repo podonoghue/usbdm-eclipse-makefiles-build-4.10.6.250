@@ -3,7 +3,7 @@ Version: 4.10-6
 Section: embedded
 Priority: optional
 Architecture: amd64
-Installed-Size: 44300
+Installed-Size: 29000
 Pre-Depends: multiarch-support 
 Depends: libwxgtk2.8-0, libwxbase2.8-0, libgcc1, libstdc++6, libxerces-c3.1, libc6, tcl
 Maintainer: Peter O'Donoghue <podonoghue@swin.edu.au>

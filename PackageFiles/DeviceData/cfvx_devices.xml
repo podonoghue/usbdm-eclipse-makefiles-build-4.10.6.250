@@ -5,12 +5,16 @@
 <!ENTITY CFV2-default-flashScripts      SYSTEM "CFVx/ColdfireV2-default-flash-scripts.tcl">
 <!ENTITY Custom-Devices                 SYSTEM "Custom/custom-cfvx.xml">
 ]>
-<!-- 
-      V4.10.6 - Updated GNU Information
-      V4.10.4 - Changed how security information is expressed
+<!--  Notes
+      V4.10.6.110 - Changed to using <projectActionList> tag & related changes
+      V4.10.6     - Added GDB register descriptions 
+      V4.10.5d    - Changed GNU C information
+      V4.10.5     - Added GNU C information
+      V4.10.4     - Changed how security information is expressed
+      V4.10.4     - Added I/O space 
  -->
 <root version="4.10.4">
-   <description>Coldfire V2,3,4 device characteristics v4.10.4 10/8/2011</description>
+   <description>Coldfire V2,3,4 device characteristics v4.10.6 31/01/2014</description>
    <sharedInformation>
       <flashProgram id="default-CFV2-FlashProgram">
          &CFV2-default-flashProgram;
@@ -71,28 +75,77 @@
          <securityEntryRef ref="CFV2-default-security" />
          <memoryRange start="0x000000" size="512K" />
       </memory>
+      
       <!-- GNU Build options -->
-      <gnuInfoList id="gnuSettings.mcf52213">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"
-            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52213" 
-            command="-mcpu=52213" name="MCF52213 family"/>
-      </gnuInfoList>
-      <gnuInfoList id="gnuSettings.mcf52223">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"   
-            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52223" 
-            command="-mcpu=52223" name="MCF52223 family"/>
-      </gnuInfoList>
-      <gnuInfoList id="gnuSettings.mcf52235">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"   
-            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52235" 
-            command="-mcpu=52235" name="MCF52235 family"/>
-      </gnuInfoList>
-      <gnuInfoList id="gnuSettings.mcf52259">
-         <gnuInfo id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"   
-            value="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52259"
-            command="-mcpu=52259" name="MCF52259 family"/>
-      </gnuInfoList>
+      <projectActionList id="gnuSettings.mcf52213">
+         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52213</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
+      </projectActionList>
+      <projectActionList id="gnuSettings.mcf52223">
+         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52223</value> </projectOption> 
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
+      </projectActionList>
+      <projectActionList id="gnuSettings.mcf52235">
+         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52235</value> </projectOption> 
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
+      </projectActionList>
+      <projectActionList id="gnuSettings.mcf52259">
+         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52259</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
+      </projectActionList>
+      
+      <!-- Default files to copy to project -->
+      <projectActionList id="Coldfire-Vx-file-list" root="Stationery/CFVx/" >
+         <copy source="$(externalVectorTable)"                       target="Startup_Code/vectors.c" />
+         <copy source="$(externalLinkerScript)"                      target="Project_Settings/Custom.ld" />
+         <copy source="$(externalHeaderFile)"                        target="Project_Headers/$(targetDevice).h" />
+         <copy source="Startup_Code/sysinit.c"                       target="Startup_Code/sysinit.c" />
+         <copy source="Startup_Code/vectors.c"                       target="Startup_Code/vectors.c" />
+         <copy source="Startup_Code/startup_Codesourcery.S"          target="Startup_Code/startup_Codesourcery.S" />
+         <copy source="Startup_Code/startup_Codesourcery_c.c"        target="Startup_Code/startup_Codesourcery_c.c" />
+         <copy source="Project_Settings/Codesourcery-ram.ld"         target="Project_Settings/Codesourcery-ram.ld" />
+         <copy source="Project_Settings/Codesourcery-ram-hosted.ld"  target="Project_Settings/Codesourcery-ram-hosted.ld" />
+         <copy source="Project_Settings/Codesourcery-rom.ld"         target="Project_Settings/Codesourcery-rom.ld" />
+         <copy source="Project_Settings/Codesourcery-rom-hosted.ld"  target="Project_Settings/Codesourcery-rom-hosted.ld" />
+         <copy source="Project_Settings/Debug.launch"                target="Project_Settings/$(projectName)-Debug.launch" />
+         <copy source="Project_Settings/MemoryMap.ld"                target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
+         <copy source="Project_Headers/derivative.h"                 target="Project_Headers/derivative.h" />
+         <copy source="Project_Headers/TargetDevice.h"               target="Project_Headers/$(targetDevice).h" />
+         <copy source="Project_Headers/utilities.h"                  target="Project_Headers/utilities.h" />
+         <copy source="Sources/main.c"                               target="Sources/main.c" />
+      </projectActionList>
+
+
+      <projectActionList id="Coldfire-mcf52213-ProjectActions">
+          <projectActionListRef ref="gnuSettings.mcf52213" />
+          <projectActionListRef ref="Coldfire-Vx-file-list" />
+      </projectActionList>
+ 
+      <projectActionList id="Coldfire-mcf52223-ProjectActions">
+          <projectActionListRef ref="gnuSettings.mcf52223" />
+          <projectActionListRef ref="Coldfire-Vx-file-list" />
+      </projectActionList>
+ 
+      <projectActionList id="Coldfire-mcf52235-ProjectActions">
+         <projectActionListRef ref="gnuSettings.mcf52235" />
+          <projectActionListRef ref="Coldfire-Vx-file-list" />
+      </projectActionList>
+ 
+      <projectActionList id="Coldfire-mcf52259-ProjectActions">
+         <projectActionListRef ref="gnuSettings.mcf52259" />
+         <projectActionListRef ref="Coldfire-Vx-file-list" />
+      </projectActionList>
+
+      <!-- Extra Optional -->
+      <projectActionList id="Options-file-list-CFVx" >
+      </projectActionList>
+
    </sharedInformation>
+
    <deviceList>
       <device family="CFV2" name="_Default" isDefault="true">
          <clock type="External" registerAddress="0" />
@@ -116,63 +169,72 @@
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x1400" />
-         <gnuInfoListRef ref="gnuSettings.mcf52223" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52223-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52223">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire16K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x14C0" />
-         <gnuInfoListRef ref="gnuSettings.mcf52223" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52223-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52230">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x1200" />
-         <gnuInfoListRef ref="gnuSettings.mcf52235" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52235-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52231">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x1240" />
-         <gnuInfoListRef ref="gnuSettings.mcf52235" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52235-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52232">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x0000" />
-         <gnuInfoListRef ref="gnuSettings.mcf52235" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52235-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52233">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire256K_Flash" />
          <sdid value="0x1280" />
-         <gnuInfoListRef ref="gnuSettings.mcf52235" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52235-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52234">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire256K_Flash" />
          <sdid value="0x12C0" />
-         <gnuInfoListRef ref="gnuSettings.mcf52235" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52235-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52235">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire256K_Flash" />
          <sdid value="0x1300" />
-         <gnuInfoListRef ref="gnuSettings.mcf52235" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52235-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52236">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire256K_Flash" />
          <sdid value="0x1280" />
-         <gnuInfoListRef ref="gnuSettings.mcf52235" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52235-ProjectActions" />
       </device>
       <device family="CFV2" name="MCF52210">
          <clock type="External" registerAddress="0" />
@@ -197,7 +259,8 @@
          <memoryRef ref="coldfire8K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
          <sdid value="0x1580" />
-         <gnuInfoListRef ref="gnuSettings.mcf52213" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52213-ProjectActions" />
       </device>
       <!--
          =======================================================================
@@ -210,7 +273,8 @@
          </memory>
          <memoryRef ref="coldfire512K_Flash" />
          <sdid value="0x2481" />
-         <gnuInfoListRef ref="gnuSettings.mcf52259" />
+         <projectActionListRef ref="Options-file-list-CFVx" />
+         <projectActionListRef ref="Coldfire-mcf52259-ProjectActions" />
       </device>
    </deviceList>
 </root>

@@ -65,15 +65,15 @@
          </securityInfo>
       </securityEntry>
       <securityEntry id="HCS12-xep-security">
-         <securityDescription id="HCS12-default-security-description">
+         <securityDescription id="HCS12-xep-security-description">
             BACKDOOR\t= %8X\nRES\t\t= %4X\nFPROT\t\t= %1X\t\tEPROT\t\t= %1X\nFOPT\t\t= [RES=%4b, ~WCOP=%1b, ~CR=%3b]\nFSEC\t\t= [KEYEN=%2b, NV=%4b, SEC=%2b]
          </securityDescription>
          <!-- HCS12 Unsecured value = backdoor[0-7],RES[0-4],FPROT,RES,FSEC -->
-         <securityInfo size="16" type="unsecure" id="HCS12-default-security-off">
+         <securityInfo size="16" type="unsecure" id="HCS12-xep-security-off">
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE
          </securityInfo>
          <!-- HCS12 Secured value = backdoor[0-7],RES[0-4],FPROT,RES,FSEC -->
-         <securityInfo size="16" type="secure" id="HCS12-default-security-on">
+         <securityInfo size="16" type="secure" id="HCS12-xep-security-on">
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD
          </securityInfo>
       </securityEntry>
@@ -739,11 +739,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x20" pages="512K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0x0400" />
-         <sdid value="0x0401" />
-         <sdid value="0x0402" />
-         <sdid value="0x0403" />
-         <sdid value="0x0404" />
          <flashProgramRef ref="HCS12-MMCV4-FTS_2-flash-program" />
          <note>Untested</note>
       </device>
@@ -864,11 +861,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0x20" pages="512K"  pageEnd="0x3F" />
             <memoryRange start="0xC000" end="0xFFFF" />                <!--  Fixed 0x3F -->
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0x0400" />
-         <sdid value="0x0401" />
-         <sdid value="0x0402" />
-         <sdid value="0x0403" />
-         <sdid value="0x0404" />
          <flashProgramRef ref="HCS12-MMCV4-FTS_2-flash-program" />
          <note>Untested</note>
       </device>
@@ -1391,10 +1385,9 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC100" />
-         <sdid value="0xC101" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
       </device>
@@ -1414,8 +1407,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <sdid value="0xC000" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
@@ -1436,8 +1429,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="256K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
       </device>
@@ -1457,10 +1450,9 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="64K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <sdid value="0xC100" />
-         <sdid value="0xC101" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
       </device>
@@ -1480,8 +1472,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <sdid value="0xC000" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
@@ -1523,10 +1515,9 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <sdid value="0xC100" />
-         <sdid value="0xC101" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
       </device>
       <device family="HCS12" name="MC9S12XD256">
@@ -1545,8 +1536,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pageReset="0xFE" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <sdid value="0xC000" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
@@ -1566,11 +1557,9 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <sdid value="0xC100" />
-         <sdid value="0xC101" />
-         <sdid value="0xC102" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
       </device>
@@ -1610,8 +1599,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <sdid value="0xC000" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
@@ -1632,8 +1621,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="128K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <sdid value="0xC000" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
@@ -1654,8 +1643,8 @@
             <memoryRange start="0x8000" end="0xBFFF" pages="256K"  pageEnd="0xFF" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
+         <sdidMask value="0xFFF0" />
          <sdid value="0xC410" />
-         <sdid value="0xC411" />
          <flashProgramRef ref="HCS12-XMMC-XFTXK-flash-program" />
          <note>Untested</note>
       </device>

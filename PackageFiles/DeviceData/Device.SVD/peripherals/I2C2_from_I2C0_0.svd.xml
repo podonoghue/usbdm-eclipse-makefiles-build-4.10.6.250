@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+   MK21F12
+-->
+      <peripheral derivedFrom="I2C0">
+         <name>I2C2</name>
+         <description>Inter-Integrated Circuit (I2C2)</description>
+         <prependToName>I2C1</prependToName>
+         <baseAddress>0x400E6000</baseAddress>
+      </peripheral>

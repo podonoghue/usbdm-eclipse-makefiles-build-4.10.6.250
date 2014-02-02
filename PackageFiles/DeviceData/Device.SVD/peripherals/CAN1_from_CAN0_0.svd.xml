@@ -1,0 +1,25 @@
+<!--
+Devices using this peripheral: 
+   MK10D10
+   MK10DZ10
+   MK10F12
+   MK20D10
+   MK20DZ10
+   MK20F12
+   MK21F12
+   MK30D10
+   MK30DZ10
+   MK40D10
+   MK40DZ10
+   MK60D10
+   MK60DZ10
+   MK60F12
+   MK61F12
+   MK70F12
+-->
+      <peripheral derivedFrom="CAN0">
+         <name>CAN1</name>
+         <description>Flex Controller Area Network module (CAN1)</description>
+         <prependToName>CAN1</prependToName>
+         <baseAddress>0x400A4000</baseAddress>
+      </peripheral>

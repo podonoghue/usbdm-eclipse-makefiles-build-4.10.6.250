@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+   MKE02Z2
+-->
+      <peripheral derivedFrom="FGPIOA">
+         <name>FGPIOB</name>
+         <description>General Purpose Input/Output (FPTB)</description>
+         <prependToName>FGPIOB</prependToName>
+         <baseAddress>0xF8000040</baseAddress>
+      </peripheral>

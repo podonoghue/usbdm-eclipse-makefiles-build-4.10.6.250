@@ -1,0 +1,15 @@
+<!--
+Devices using this peripheral: 
+   MK10F12
+   MK20F12
+   MK21F12
+   MK60F12
+   MK61F12
+   MK70F12
+-->
+      <peripheral derivedFrom="UART2">
+         <name>UART3</name>
+         <description>Serial Communication Interface (UART3)</description>
+         <prependToName>UART3</prependToName>
+         <baseAddress>0x4006D000</baseAddress>
+      </peripheral>

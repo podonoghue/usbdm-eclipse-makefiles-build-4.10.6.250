@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+   MK10D7
+   MK30D7
+-->
+      <peripheral derivedFrom="AIPS0">
+         <name>AIPS1</name>
+         <prependToName>AIPS1</prependToName>
+         <baseAddress>0x40080000</baseAddress>
+      </peripheral>

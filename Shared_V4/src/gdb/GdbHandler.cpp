@@ -1068,6 +1068,45 @@ bool getMaskISR(void) {
    return maskInterruptsWhenStepping;
 }
 
+static USBDM_ErrorCode doReadCommand(char *command) {
+   char           addrModeC;
+   uint32_t       addr,length;
+   MemorySpace_t  addressMode;
+
+   USBDM_ErrorCode rc = BDM_RC_OK;
+   do {
+      if (sscanf(command, "read %c %X %X", &addrModeC, &addr, &length) != 3) {
+         rc = BDM_RC_ILLEGAL_PARAMS;
+         continue;
+      }
+      switch (addrModeC) {
+         case 'b' : addressMode = MS_Byte; break;
+         case 'h' : addressMode = MS_Word; break;
+         case 'w' : addressMode = MS_Long; break;
+         default  : rc = BDM_RC_ILLEGAL_PARAMS; continue;
+      }
+      reportGdbPrintf(M_INFO, "Target Read [0x%X..0x%x X].%s\n", addr, addr+length-1, getMemSpaceName(addressMode));
+      uint8_t buffer[2000];
+      if (length > sizeof(buffer)) {
+         rc = BDM_RC_ILLEGAL_PARAMS;
+         reportGdbPrintf(M_INFO, "Failed, reason: Length too large\n");
+         continue;
+      }
+      rc = USBDM_ReadMemory(addressMode, length, addr, buffer);
+      if (rc != 0) {
+         reportGdbPrintf(M_INFO, "Failed, reason:%s\n", USBDM_GetErrorString(rc));
+         continue;
+      }
+      gdbInOut->sendGdbHexDataString("O", buffer, length);
+   }
+   while (0);
+   if (rc != BDM_RC_OK) {
+      gdbInOut->sendGdbHexString("O", USBDM_GetErrorString(rc), -1);
+   }
+   gdbInOut->sendGdbString("OK");
+   return rc;
+}
+
 /* Do monitor commands
  *
  */
@@ -1083,7 +1122,10 @@ static USBDM_ErrorCode doMonitorCommand(const char *cmd) {
    }
    *bPtr = '\0';
    Logging::print("%s\n", command);
-   if (strneq(command, "reset", sizeof("reset")-1)) {
+   if (strneq(command, "read", sizeof("read")-1)) {
+      doReadCommand(command);
+   }
+   else if (strneq(command, "reset", sizeof("reset")-1)) {
       // ignore any parameters
       reportGdbPrintf(M_INFO, "User reset of target\n");
       USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));

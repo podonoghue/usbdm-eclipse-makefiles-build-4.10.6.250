@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+   MKE02Z2
+-->
+      <peripheral derivedFrom="UART0">
+         <name>UART2</name>
+         <description>Universal Asynchronous Receiver/Transmitter (UART) (UART2)</description>
+         <prependToName>UART2</prependToName>
+         <baseAddress>0x4006C000</baseAddress>
+      </peripheral>

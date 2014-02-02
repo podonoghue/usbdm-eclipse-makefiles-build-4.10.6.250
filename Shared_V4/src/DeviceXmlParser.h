@@ -49,13 +49,10 @@ private:
    DualString   tag_flexNvmInfoRef;
    DualString   tag_eeepromEntry;
    DualString   tag_partitionEntry;
-   DualString   tag_gnuInfoList;
-   DualString   tag_gnuInfoListRef;
-   DualString   tag_gnuInfo;
+   DualString   tag_projectActionList;
+   DualString   tag_projectActionListRef;
    DualString   tag_registerDescription;
    DualString   tag_registerDescriptionRef;
-   DualString   tag_fileList;
-   DualString   tag_fileListRef;
 
    DualString   attr_name;
    DualString   attr_isDefault;

@@ -1,7 +1,7 @@
 @echo off
 cls
-set VERSION=4_10_6_100
-set VERSIONn=4.10.6.100
+set VERSION=4_10_6_110
+set VERSIONn=4.10.6.110
 
 set WXWIDGETS_VERSION=295u
 

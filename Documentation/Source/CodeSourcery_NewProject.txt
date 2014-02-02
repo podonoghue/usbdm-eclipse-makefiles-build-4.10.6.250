@@ -2,7 +2,7 @@
 \page codeSourceryNewProject Eclipse - New Project Wizard
 
 This page provides brief instructions on how to create a C or C++ project for a Coldfire or Kinetis
-target using Eclipse and Codesourcery Lite tools.  
+target using Eclipse and either ARM Ltd or Codesourcery Lite tools.  
 
 It assumes that the required software has been installed \ref codeSourceryInstallPage
    
@@ -191,5 +191,31 @@ by the USBDM Wizard.\n
    - Execution stops at the first line of main()
    
    You should be able to debug in the usual fashion with breakpoints, single-stepping etc.
+
+\section debugPeripheralView Debug Peripheral View (ARM Targets only)
+
+- The peripheral view provides a register level view of the peripherals in the target when debugging.  
+  This view may be opened from the USBDM menu. Please be aware that the view has to read the register
+  values from the target.  This has two obvious effects:
+  	- Reading some peripheral registers <i>may</i> affect the peripheral's state.  The view uses the debug 
+  	  interface to access the peripheral's registers.  This is not the same as the processor accessing 
+  	  the peripheral and in many cases does NOT affect the state as would be naively expected.  Please 
+  	  refer to the detailed peripheral description to check for any side-effects of debug accesses.
+  	- The peripherals may contain many registers and may require individual accesses to many distinct
+  	  locations.  This can be rather slow so having many registers visible may impact on stepping speed.
+  	  The view intelligently merges accesses to adjacent memory locations where possible.  This improves
+  	  the performance but there are still a few situations where this cannot be done e.g. the USB devices
+  	  appear as many disjoint byte locations so may require individual accesses for each register.  Not 
+  	  much can be done to improve the speed since this basically requires pushing many messages through 
+  	  GDB which is a bottleneck.
+
+         \image html AnnotatedPeripheralView.png
+
+- The peripheral view supports modifying registers interactively but this feature should be used carefully.  
+	When a register or field is changed the updated value is written to the target and then the register
+	(and often adjacent registers) are re-read to obtain updated display values as they may not be consistent 
+	with the value actually written.  For example, writing to the GPIOA_PSOR has no affect on the GPIOA_PSOR 
+	value which	always reads as zero.  It will however change the values of the GPIOA_PDOR register and 
+	probably the GPIOA_PDIR register.  This will be reflected in the view since these register are all re-read.
 
 */

@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+   MKE02Z2
+-->
+      <peripheral derivedFrom="FGPIOA">
+         <name>GPIOA</name>
+         <description>General Purpose Input/Output (GPIOA)</description>
+         <prependToName>GPIOA</prependToName>
+         <baseAddress>0x400FF000</baseAddress>
+      </peripheral>

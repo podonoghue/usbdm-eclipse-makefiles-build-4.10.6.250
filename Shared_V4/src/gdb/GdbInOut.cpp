@@ -399,21 +399,39 @@ void GdbInOut::sendGdbString(const char *str, int size) {
    txGdbPkt();
 }
 
- /*!  Immediately send a string to GDB as a series of hex digit pairs with leading id string
-  *
-  *   @param id   - '\0' terminated string to send unencoded (may be NULL)
-  *   @param s    - '\0' terminated string to send encoded
-  *   @param size - maximum size of encoded string to send (-1 ignored)
-  */
+/*!  Immediately send a string to GDB as a series of hex digit pairs with leading id string
+ *
+ *   @param id   - '\0' terminated string to send unencoded (may be NULL)
+ *   @param s    - '\0' terminated string to send encoded
+ *   @param size - maximum size of encoded string to send (-1 ignored)
+ */
 void GdbInOut::sendGdbHexString(const char *id, const char *s, int size) {
-   if (id == NULL) {
-      id = "";
-   }
-   putGdbPreamble();
-   putGdbString(id);
-   putGdbHexString(s, size);
-   putGdbChecksum();
-   txGdbPkt();
+  if (id == NULL) {
+     id = "";
+  }
+  putGdbPreamble();
+  putGdbString(id);
+  putGdbHexString(s, size);
+  putGdbChecksum();
+  txGdbPkt();
+}
+
+/*!  Immediately send data to GDB as a series of hex digit pairs with leading id string
+ *   Used for monitor read memory command only
+ *
+ *   @param id   - '\0' terminated string to send unencoded (may be NULL)
+ *   @param s    - data to send encoded
+ *   @param size - size of data to send (in bytes)
+ */
+void GdbInOut::sendGdbHexDataString(const char *id, const uint8_t *data, unsigned size) {
+  if (id == NULL) {
+     id = "";
+  }
+  putGdbPreamble();
+  putGdbString(id);
+  putGdbHex(data, size);
+  putGdbChecksum();
+  txGdbPkt();
 }
 
  /*!  Immediately send bytes to GDB as Hex character pairs

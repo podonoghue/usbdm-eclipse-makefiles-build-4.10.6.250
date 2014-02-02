@@ -25,6 +25,7 @@
     \verbatim
    Change History
    -=====================================================================================
+   |    Jan 2014 | Added <projectActions> and removed obsolete elements     - pgo 4.10.6
    |  6 Jul 2013 | Added Register description parsing                       - pgo 4.10.6
    |        2013 | Added GNU information parsing (incomplete)               - pgo 4.10.4?
    |  6 Oct 2012 | Fixed default SDID etc                                   - pgo 4.10.2
@@ -385,13 +386,10 @@ DeviceXmlParser::DeviceXmlParser(DeviceDataBase *deviceDataBase)
    tag_flexNvmInfoRef("flexNVMInfoRef"),
    tag_eeepromEntry("eeepromEntry"),
    tag_partitionEntry("partitionEntry"),
-   tag_gnuInfoList("gnuInfoList"),
-   tag_gnuInfoListRef("gnuInfoListRef"),
-   tag_gnuInfo("gnuInfo"),
+   tag_projectActionList("projectActionList"),
+   tag_projectActionListRef("projectActionListRef"),
    tag_registerDescription("registerDescription"),
    tag_registerDescriptionRef("registerDescriptionRef"),
-   tag_fileList("fileList"),
-   tag_fileListRef("fileListRef"),
 
    attr_name("name"),
    attr_isDefault("isDefault"),
@@ -732,14 +730,8 @@ void DeviceXmlParser::parseSharedXML(void) {
             // Parse <memory>
             deviceDataBase->addSharedData(string(sId.asCString()), parseMemory(sharedInformationElement));
          }
-         else if (XMLString::equals(sTag.asXMLString(), tag_gnuInfoList.asXMLString())) {
-            // Parse <gnuInfoList>
-//            deviceDataBase->addSharedData(string(sId.asCString()), parseGnuInfoList(sharedInformationElement));
-         }
-         else if (XMLString::equals(sTag.asXMLString(), tag_fileList.asXMLString())) {
-            // Parse <fileList>
-            // Ignored
-//            deviceDataBase->addSharedData(string(sId.asCString()), parseFileList(sharedInformationElement));
+         else if (XMLString::equals(sTag.asXMLString(), tag_projectActionList.asXMLString())) {
+            // Parse <projectActionList>
          }
          else {
             throw MyException(string("DeviceXmlParser::parseSharedXML() - Unexpected Tag = ")+sTag.asCString());
@@ -1197,53 +1189,31 @@ MemoryRegionPtr DeviceXmlParser::parseMemory(DOMElement *currentProperty) {
    return memoryRegionPtr;
 }
 
-//! Create memory description from node
-//!
-//! @param currentProperty - Present position in XML parse
-//!
-//! @return == 0 - success\n
-//!         != 0 - fail
-//!
-GnuInfoPtr DeviceXmlParser::parseGnuInfo(DOMElement *currentProperty) {
-
-//   <!ELEMENT gnuInfo (#PCDATA)>
-//        <!ATTLIST gnuInfo id    CDATA #REQUIRED>
-//        <!ATTLIST gnuInfo value CDATA #IMPLIED>
-//        <!ATTLIST gnuInfo path  CDATA #IMPLIED>
-   GnuInfoPtr gnuInfoPtr(new GnuInfo());
-   return gnuInfoPtr;
-}
-
-//! Create memory description from node
-//!
-//! @param currentProperty - Present position in XML parse
-//!
-//! @return == 0 - success\n
-//!         != 0 - fail
-//!
-GnuInfoListPtr DeviceXmlParser::parseGnuInfoList(DOMElement *currentProperty) {
-
-//   <!ELEMENT gnuInfoList (gnuInfo)+>
-//        <!ATTLIST gnuInfoList id ID #IMPLIED>
-   GnuInfoListPtr gnuInfoListPtr(new GnuInfoList());
-   return gnuInfoListPtr;
-}
-
-//! Create device description from node
-//!
-//!      <!ELEMENT device ((clock?,(memory|memoryRef)+,
-//!                       (soptAddress|copctlAddress)?,
-//!                       sdidAddress?,sdidMask?,sdid+,
-//!                       flashScripts?,
-//!                       (tclScript|tclScriptRef)?,
-//!                       (flashProgram|flashProgramRef)?,flashProgramData?,
-//!                       (flexNVMInfo|flexNVMInfoRef)?,
-//!                       note*))?>
-//! @param deviceEl - Present position in XML parse
-//!
-//! @return == 0 - success\n
-//!         != 0 - fail
-//!
+/*!
+ *    Create device description from node
+ *
+ *   !ELEMENT device ((sdid*|
+ *                     (clock?,
+ *                      (memory|memoryRef)+,
+ *                      (soptAddress|copctlAddress)?,
+ *                      sdidAddress?,
+ *                      sdidMask?,
+ *                      sdid+,
+ *                      flashScripts?,
+ *                      (tclScript|tclScriptRef)?,
+ *                      (flashProgram|flashProgramRef)?,
+ *                      flashProgramData?,
+ *                      (flexNVMInfo|flexNVMInfoRef)?,
+ *                      (projectActionList|projectActionListRef)*,
+ *                      (registerDescription|registerDescriptionRef)?
+ *                      )
+ *                     ),
+ *                    note*)>
+ *
+ *  @param deviceEl - Present position in XML parse
+ *  @return == 0 - success\n
+ *          != 0 - fail
+ */
 DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
    Logging log("DeviceXmlParser::parseDeviceXML", Logging::neither);
 
@@ -1469,22 +1439,11 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
             defFlashProgram = itDev->getFlashProgram();
          }
       }
-      else if (XMLString::equals(propertyTag.asXMLString(), tag_gnuInfoList.asXMLString())) {
-         // <gnuInfoList>
-         parseGnuInfoList(currentProperty);
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_projectActionList.asXMLString())) {
+         // <projectActionList>
       }
-      else if (XMLString::equals(propertyTag.asXMLString(), tag_fileList.asXMLString())) {
-         // <fileList>
-         // Ignored
-         //parseGnuInfoList(currentProperty);
-      }
-      else if (XMLString::equals(propertyTag.asXMLString(), tag_fileListRef.asXMLString())) {
-         // <fileListRef>
-         // Ignored
-         //parseGnuInfoList(currentProperty);
-      }
-      else if (XMLString::equals(propertyTag.asXMLString(), tag_gnuInfoListRef.asXMLString())) {
-         // <gnuInfoListRef>
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_projectActionListRef.asXMLString())) {
+         // <projectActionListRef>
       }
       else {
          throw MyException(string("DeviceXmlParser::parseDevice() - Unknown tag - ")+propertyTag.asCString());
@@ -1495,21 +1454,30 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
 
 //! Create device list from device nodes
 //!
-//!      <!ELEMENT device ((clock?,(memory|memoryRef)+,
-//!                       (soptAddress|copctlAddress)?,
-//!                       sdidAddress?,sdidMask?,sdid+,
-//!                       flashScripts?,
-//!                       (tclScript|tclScriptRef)?,
-//!                       (flashProgram|flashProgramRef)?,flashProgramData?,
-//!                       (flexNVMInfo|flexNVMInfoRef)?,
-//!                       note*))?>
-//!           <!ATTLIST device name ID #REQUIRED>
-//!           <!ATTLIST device isDefault (true|false) #IMPLIED>
-//!           <!ATTLIST device alias IDREF #IMPLIED>
-//!           <!ATTLIST device hidden (true|false) #IMPLIED>
-//!           <!ATTLIST device family (RS08|HCS08|HCS12|CFV1|CFV1Plus|CFVx|ARM|DSC) #IMPLIED>
-//!           <!ATTLIST device subFamily CDATA #IMPLIED>
-//!           <!ATTLIST device frequency CDATA #IMPLIED>
+//!   !ELEMENT device ((sdid*|
+//!                     (clock?,
+//!                      (memory|memoryRef)+,
+//!                      (soptAddress|copctlAddress)?,
+//!                      sdidAddress?,
+//!                      sdidMask?,
+//!                      sdid+,
+//!                      flashScripts?,
+//!                      (tclScript|tclScriptRef)?,
+//!                      (flashProgram|flashProgramRef)?,
+//!                      flashProgramData?,
+//!                      (flexNVMInfo|flexNVMInfoRef)?,
+//!                      (projectActionList|projectActionListRef)*,
+//!                      (registerDescription|registerDescriptionRef)?
+//!                      )
+//!                     ),
+//!                    note*)>
+//!       <!ATTLIST device name ID #REQUIRED>
+//!       <!ATTLIST device alias IDREF #IMPLIED>
+//!       <!ATTLIST device family (RS08|HCS08|HCS08Plus|HCS12|CFV1|CFV1Plus|CFV2|CFV3|CFV4|ARM|DSC|CortexM0|CortexM3|CortexM3F|CortexM4|CortexM4F) #IMPLIED>
+//!       <!ATTLIST device isDefault (true) #IMPLIED>
+//!       <!ATTLIST device speed CDATA #IMPLIED>
+//!       <!ATTLIST device subfamily CDATA #IMPLIED>
+//!       <!ATTLIST device hidden (true) #IMPLIED>
 //!
 //! @return == 0 - success\n
 //!         != 0 - fail

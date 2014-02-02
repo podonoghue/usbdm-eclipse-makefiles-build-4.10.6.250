@@ -7,7 +7,7 @@
 #define USBDM_VERSION_MAJOR  4       //!< DLL Major version #
 #define USBDM_VERSION_MINOR  10      //!< DLL Minor version #
 #define USBDM_VERSION_MICRO  6       //!< DLL Micro version #
-#define USBDM_VERSION_NANO   100     //!< DLL Nano version #
+#define USBDM_VERSION_NANO   110     //!< DLL Nano version #
 
 #ifdef LOG
 #define USBDM_VERSION_STRING "4.10.6.100-Debug" //!< Version as string
@@ -23,6 +23,8 @@
 
 //----------------------------------------------------------------------------
 // Revision History
+//-----------+----------------------------------------------------------------
+//    Jan 14 | 4.10.6.110 PLugin changes                                 - pgo
 //-----------+----------------------------------------------------------------
 //    Jun 13 | 4.10.6 Mostly GDB Sever code                              - pgo
 //-----------+----------------------------------------------------------------

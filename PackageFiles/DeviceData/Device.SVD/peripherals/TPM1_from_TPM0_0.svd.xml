@@ -1,0 +1,9 @@
+<!--
+Devices using this peripheral: 
+   MKL02Z4
+-->
+      <peripheral derivedFrom="TPM0">
+         <name>TPM1</name>
+         <prependToName>TPM1</prependToName>
+         <baseAddress>0x40039000</baseAddress>
+      </peripheral>

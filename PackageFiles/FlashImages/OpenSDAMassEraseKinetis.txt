@@ -43,7 +43,8 @@ The debugger firmware is based on a stripped down version of USBDM.
      FRDM-KL05Z |   J4 also remove R27
      FRDM-KL25Z |   J4
      FRDM-KL46Z |   J17 also remove R1,R2
-     
+     FRDM-K20D5 |   J4 also remove R73 & R81 
+
    The manual jumper can be used to power the target in normal use.
 
 ** A wire jumper lead for use when erasing the board - for some reason using a jumper is unreliable.

@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+   MKE02Z2
+-->
+      <peripheral derivedFrom="ACMP0">
+         <name>ACMP1</name>
+         <description>Analog comparator (ACMP1)</description>
+         <prependToName>ACMP1</prependToName>
+         <baseAddress>0x40074000</baseAddress>
+      </peripheral>

@@ -18,9 +18,8 @@
                     (flashProgram|flashProgramRef)?,
                     flashProgramData?,
                     (flexNVMInfo|flexNVMInfoRef)?,
-                    (gnuInfoList|gnuInfoListRef)?,
-                    (registerDescription|registerDescriptionRef)?,
-                    (fileList|fileListRef)?
+                    (projectActionList|projectActionListRef)*,
+                    (registerDescription|registerDescriptionRef)?
                     )
                    ),
                   note*)>
@@ -32,32 +31,51 @@
      <!ATTLIST device subfamily CDATA #IMPLIED>
      <!ATTLIST device hidden (true) #IMPLIED>
 
-  <!-- List of files to add to project -->
-<!ELEMENT fileList (file*)>
-     <!ATTLIST fileList id    ID    #IMPLIED>
-<!ELEMENT file EMPTY >
-     <!ATTLIST file source  CDATA #REQUIRED>
-     <!ATTLIST file target  CDATA #IMPLIED>
+  <!-- List of actions to be applied to a project -->
+<!ELEMENT projectActionList (projectActionListRef|projectActionList|copy|variable|condition|projectOption)*>
+     <!ATTLIST projectActionList id    ID     #IMPLIED>
+     <!ATTLIST projectActionList root  CDATA  #IMPLIED>
+     
+<!ELEMENT projectActionListRef EMPTY>
+     <!ATTLIST projectActionListRef ref IDREF #REQUIRED>
+     
+ <!-- File to be copied to a project -->
+<!ELEMENT copy EMPTY >
+     <!ATTLIST copy source  CDATA #REQUIRED>
+     <!ATTLIST copy target  CDATA #REQUIRED>
+     <!ATTLIST copy type    CDATA #IMPLIED>
+     
+ <!-- Variable controlling a condition -->
+<!ELEMENT variable EMPTY >
+     <!ATTLIST variable id           ID    #REQUIRED>
+     <!ATTLIST variable name         CDATA #REQUIRED>
+     <!ATTLIST variable description  CDATA #IMPLIED>
+     <!ATTLIST variable defaultValue CDATA #IMPLIED>
+     <!ATTLIST variable type         CDATA #IMPLIED>
+     <!ATTLIST variable values       CDATA #IMPLIED>
+     
+ <!-- Condition controlling actions -->
+<!ELEMENT condition (createFolder|copy|projectOption)*>
+     <!ATTLIST condition variable    IDREF #REQUIRED>
+     <!ATTLIST condition negated    (true) #IMPLIED>
+     
+<!ELEMENT createFolder EMPTY >
+     <!ATTLIST createFolder target  CDATA #REQUIRED>
+     <!ATTLIST createFolder type    CDATA #REQUIRED>
+     
   <!-- Register description for GDB -->
-<!ELEMENT fileListRef EMPTY>
-     <!ATTLIST fileListRef ref IDREF #REQUIRED>
 <!ELEMENT registerDescription (#PCDATA)>
      <!ATTLIST registerDescription id    ID    #IMPLIED>
      <!ATTLIST registerDescription count CDATA #REQUIRED>
 <!ELEMENT registerDescriptionRef EMPTY>
      <!ATTLIST registerDescriptionRef ref IDREF #REQUIRED>
 
-  <!-- GNU data (gcc, gdb) -->
-<!ELEMENT gnuInfoList (gnuInfo)+>
-     <!ATTLIST gnuInfoList id ID #IMPLIED>
-<!ELEMENT gnuInfoListRef EMPTY>
-     <!ATTLIST gnuInfoListRef ref IDREF #REQUIRED>
-<!ELEMENT gnuInfo (#PCDATA)>
-     <!ATTLIST gnuInfo id        CDATA #REQUIRED>
-     <!ATTLIST gnuInfo value     CDATA #IMPLIED>
-     <!ATTLIST gnuInfo path      CDATA #IMPLIED>
-     <!ATTLIST gnuInfo name      CDATA #IMPLIED>
-     <!ATTLIST gnuInfo command   CDATA #IMPLIED>
+  <!-- Eclipse project options (for gcc, gdb etc) -->
+<!ELEMENT projectOption (value*)>
+     <!ATTLIST projectOption id        CDATA #REQUIRED>
+
+  <!-- Attribute value for projectOption --> 
+<!ELEMENT value (#PCDATA)>  
 
   <!-- Type of clock & characteristics -->
 <!ELEMENT clock EMPTY>
@@ -152,7 +170,7 @@
 <!ELEMENT note (#PCDATA)>
   <!-- Information shared between devices -->
 <!ELEMENT sharedInformation 
-	(memory|tclScript|flashProgram|securityEntry|securityDescription|securityInfo|flexNVMInfo|gnuInfoList|registerDescription|fileList)*>
+	(memory|tclScript|flashProgram|securityEntry|securityDescription|securityInfo|flexNVMInfo|projectActionList|registerDescription)*>
   <!--TCL Script-->
 <!ELEMENT tclScript (#PCDATA)>
      <!ATTLIST tclScript id ID #IMPLIED>

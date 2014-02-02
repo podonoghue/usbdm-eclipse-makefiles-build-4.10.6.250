@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+   MKE02Z2
+-->
+      <peripheral derivedFrom="KBI0">
+         <name>KBI1</name>
+         <description>Keyboard interrupts (KBI1)</description>
+         <prependToName>KBI1</prependToName>
+         <baseAddress>0x4007A000</baseAddress>
+      </peripheral>

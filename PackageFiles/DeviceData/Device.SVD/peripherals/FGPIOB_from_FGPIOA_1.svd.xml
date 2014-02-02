@@ -1,0 +1,21 @@
+<!--
+Devices using this peripheral: 
+   MKL02Z4
+   MKL04Z4
+   MKL05Z4
+   MKL14Z4
+   MKL15Z4
+   MKL16Z4
+   MKL24Z4
+   MKL25Z4
+   MKL26Z4
+   MKL34Z4
+   MKL36Z4
+   MKL46Z4
+-->
+      <peripheral derivedFrom="FGPIOA">
+         <name>FGPIOB</name>
+         <description>General Purpose Input/Output (FPTB)</description>
+         <prependToName>FGPIOB</prependToName>
+         <baseAddress>0xF80FF040</baseAddress>
+      </peripheral>
