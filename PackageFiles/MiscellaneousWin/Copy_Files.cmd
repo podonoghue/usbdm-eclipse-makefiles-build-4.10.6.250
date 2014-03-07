@@ -6,22 +6,24 @@ set VERSION_MINOR_NUMBER=10
 set VERSION_SUFFIX=_V%VERSION_NUMBER%
 set VERSION_MINOR_SUFFIX=_V%VERSION_NUMBER%_%VERSION_MINOR_NUMBER%
 
-rem where to find applications (Eclipse folder)
-set APP_ROOT=..\EclipseUSBDM
+set USBDM_ROOT=C:\Users\podonoghue\Development\USBDM
 
 rem where to find applications (Eclipse folder)
-set PLUGIN_ROOT=..\EclipsePlugin
+set APP_ROOT=%USBDM_ROOT%\usbdm-eclipse-makefiles-build
+
+rem where to find plugins (Eclipse folder)
+set PLUGIN_ROOT=%APP_ROOT%\PackageFiles
 
 rem where to find documentation (Eclipse folder)
-set DOC_ROOT=..\EclipseUSBDM
+set DOC_ROOT=%USBDM_ROOT%\usbdm-eclipse-makefiles-build
 
 rem where to find JMxx/JS16 firmware
-set CW_JB16_ROOT=..\USBDM_JB16%VERSION_MINOR_SUFFIX%
-set CW_JMxx_ROOT=..\CodewarriorUSBDM\USBDM_JMxx%VERSION_MINOR_SUFFIX%
-set CW_Kinetis_ROOT=..\CodewarriorUSBDM\USBDM_Kinetis
+set CW_JB16_ROOT=%USBDM_ROOT%\USBDM_JB16%VERSION_MINOR_SUFFIX%
+set CW_JMxx_ROOT=%USBDM_ROOT%\CodewarriorUSBDM\USBDM_JMxx%VERSION_MINOR_SUFFIX%
+set CW_Kinetis_ROOT=%USBDM_ROOT%\CodewarriorUSBDM\USBDM_Kinetis
 
 rem where to find PCBs
-set PCB_ROOT=..\PCB
+set PCB_ROOT=%USBDM_ROOT%\PCB
 
 set WIN_RAR=c:\Program Files\WinRAR\rar.exe
 set HW_VERSION=4_0_0
@@ -31,10 +33,13 @@ set DOCUMENTATION_INSTALLATION_DIR=%INSTALLATION_DIR%\Documentation
 set WIN32_APPLICATION_DIR=%INSTALLATION_DIR%\WinApplications
 set BIN_DIR=%WIN32_APPLICATION_DIR%\bin
 set INSTALL_DIR=%WIN32_APPLICATION_DIR%\Install
+set PLUGIN_DIR=%WIN32_APPLICATION_DIR%\plugins
 set FLASH_DIR=%BIN_DIR%\FlashImages
 set SOURCE_DIR=2. Source
 set PCB_DESTINATION=3. PCB
 set DLL_VER=USBDM_DLL_V4
+
+rem goto checkthis
 
 if not exist "%INSTALLATION_DIR%"                 mkdir "%INSTALLATION_DIR%"
 if not exist "%WIN32_APPLICATION_DIR%"            mkdir "%WIN32_APPLICATION_DIR%"
@@ -62,53 +67,18 @@ xcopy /E /I /Y /Q "%APP_ROOT%\PackageFiles\WizardPatches"               "%WIN32_
 echo ***  Wix ...
 xcopy /E /I /Y /Q "%APP_ROOT%\PackageFiles\Wix"                         "%WIN32_APPLICATION_DIR%"
 
-echo *** Command line programmer tests
-copy "%APP_ROOT%\PackageFiles\MiscellaneousWin\TryProgrammer.cmd"       "%BIN_DIR%"
-copy "%APP_ROOT%\PackageFiles\MiscellaneousWin\MakeTestImages.cmd"      "%BIN_DIR%"
-copy "%APP_ROOT%\PackageFiles\Miscellaneous\*.s19"                      "%BIN_DIR%"
-copy "%APP_ROOT%\PackageFiles\Miscellaneous\*.wav"                      "%BIN_DIR%"
+set MISC_WIN=TryProgrammer.cmd MakeTestImages.cmd usbdm-make.exe usbdm-rm.exe 
+set MISC_WIN=%MISC_WIN% libiconv2.dll libiconv-2.dll libintl3.dll libintl-8.dll
+echo ***  Miscellaneous (%MISC_WIN%) ...
+for %%f in (%MISC_WIN%) do copy "%APP_ROOT%\PackageFiles\MiscellaneousWin\%%f"  "%BIN_DIR%"
+copy "%APP_ROOT%\PackageFiles\Miscellaneous\*.s19"                              "%BIN_DIR%"
+copy "%APP_ROOT%\PackageFiles\Miscellaneous\*.wav"                              "%BIN_DIR%"
 
-rem List of Targets supported by Programmers
-set PROGRAMMER_TARGETS=ARM HCS12 HCS08 RS08 CFV1 CFVx DSC
-echo ***  Programmers (%PROGRAMMER_TARGETS%) ...
-for %%f in (%PROGRAMMER_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\%%f_FlashProgrammer\*.exe         "%BIN_DIR%"
-for %%f in (%PROGRAMMER_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\%%f_FlashProgrammer-debug\*.exe   "%BIN_DIR%"
-
-set UTILTITIES_PROGS=FirmwareChanger MergeXML SetBoot JS16_Bootloader
-echo ***  Utilities (%UTILTITIES_PROGS%) ...
-for %%f in (%UTILTITIES_PROGS%) do copy "%APP_ROOT%\%%f\%%f\*.exe"       "%BIN_DIR%"
-for %%f in (%UTILTITIES_PROGS%) do copy "%APP_ROOT%\%%f\%%f-debug\*.exe" "%BIN_DIR%"
-
-set UNLOCKER_PROGS=CFVx_Unlocker CFVx_Unlocker-debug DSC_Unlocker DSC_Unlocker-debug
-echo ***  Unlockers (%UNLOCKER_PROGS%) ...
-for %%f in (%UNLOCKER_PROGS%) do copy "%APP_ROOT%\Unlocker\%%f\*.exe" "%BIN_DIR%"
-
-echo ***  UsbdmScript ...
-copy "%APP_ROOT%\Usbdm_TCL\UsbdmScript\*.exe"                             "%BIN_DIR%"
-copy "%APP_ROOT%\Usbdm_TCL\UsbdmScript-debug\*.exe"                       "%BIN_DIR%"
-echo ***  TCL DLLs ...
-copy "%APP_ROOT%\Usbdm_TCL\UsbdmTCL\*.dll"                                "%BIN_DIR%"
-copy "%APP_ROOT%\Usbdm_TCL\UsbdmTCL-debug\*.dll"                          "%BIN_DIR%"
-echo ***  CreateFlashTestImage ...
-copy "%APP_ROOT%\CreateFlashTestImage\CreateFlashTestImage\*.exe"         "%BIN_DIR%"
+xcopy /E /I /Y /Q "%APP_ROOT%\PackageFiles\bin\win32"                           "%BIN_DIR%"
 
 echo ***  Shared_V4\lib ...
 copy "%APP_ROOT%\Shared_V4\lib\*.dll"                        "%BIN_DIR%"
 copy "%APP_ROOT%\Shared_V4\src\*.ico"                        "%BIN_DIR%"
-
-echo ***  USBDM DLL ...
-copy "%APP_ROOT%\Usbdm_DLL\usbdm\*.dll"                      "%BIN_DIR%"
-copy "%APP_ROOT%\Usbdm_DLL\usbdm-debug\*.dll"                "%BIN_DIR%"
-echo ***  ARM DLL ...
-copy "%APP_ROOT%\USBDM_ARM_DLL\usbdm-arm\*.dll"              "%BIN_DIR%"
-copy "%APP_ROOT%\USBDM_ARM_DLL\usbdm-arm-debug\*.dll"        "%BIN_DIR%"
-echo ***  DSC DLL ...
-copy "%APP_ROOT%\USBDM_DSC_DLL\usbdm-dsc\*.dll"              "%BIN_DIR%"
-copy "%APP_ROOT%\USBDM_DSC_DLL\usbdm-dsc-debug\*.dll"        "%BIN_DIR%"
-copy "%APP_ROOT%\wxPlugin_DLL\usbdm-wxPlugin\*.dll"          "%BIN_DIR%"
-
-echo ***  MyCustomAction ...
-copy "%APP_ROOT%\MyCustomAction\MyCustomAction\*.dll"        "%BIN_DIR%"
 
 echo ***  ReadMeWizard ...
 copy "%APP_ROOT%\PackageFiles\WizardPatches\ReadMeWizard.txt" "%BIN_DIR%"
@@ -141,7 +111,7 @@ copy "%APP_ROOT%\Legacy_DLLs\opensourcebdm\*.dll"          "%INSTALL_DIR%\Legacy
 copy "%APP_ROOT%\Legacy_DLLs\tbdml-debug\*.dll"            "%INSTALL_DIR%\Legacy"
 copy "%APP_ROOT%\Legacy_DLLs\opensourcebdm-debug\*.dll"    "%INSTALL_DIR%\Legacy"
 
-echo *** Doing Eclipse GDIs (Release, Debug)                                                       
+echo *** Doing Codewarrior Eclipse GDIs (Release, Debug)                                                       
 rem List of target having Eclipse GDI support                                                      
 set GDI_TARGETS=HCS08 RS08 CFV1 CFVx ARM DSC HCS12                                                 
 for %%f in (%GDI_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"usbdm-%%f-gdi"\*.dll          "%INSTALL_DIR%\CW_10_x"
@@ -152,16 +122,6 @@ rem List of target having Legacy GDI support
 set GDI_TARGETS=CFVx DSC
 for %%f in (%GDI_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"usbdm-%%f-gdi-legacy"\*.dll        "%INSTALL_DIR%\Legacy"
 for %%f in (%GDI_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"usbdm-%%f-gdi-legacy-debug"\*.dll  "%INSTALL_DIR%\Legacy"
-
-echo *** Doing GDB (Release, Debug) X (Pipe, Socket, GUI)
-rem List of target having GDB support
-set GDB_TARGETS=CFVx CFV1 ARM
-for %%f in (%GDB_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"usbdm-%%f-gdbPipeServer"\*.exe               "%BIN_DIR%"
-for %%f in (%GDB_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"usbdm-%%f-gdbPipeServer-debug"\*.exe         "%BIN_DIR%"
-for %%f in (%GDB_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"usbdm-%%f-gdbSocketServer"\*.exe         "%BIN_DIR%"
-for %%f in (%GDB_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"usbdm-%%f-gdbSocketServer-debug"\*.exe   "%BIN_DIR%"
-for %%f in (%GDB_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"%%f_GDBServer"\*.exe                     "%BIN_DIR%"
-for %%f in (%GDB_TARGETS%) do copy "%APP_ROOT%"\%%f_Interface\"%%f_GDBServer-debug"\*.exe               "%BIN_DIR%"
 
 echo ***  ****************************************
 echo ***  Do Win32 drivers
@@ -174,15 +134,23 @@ copy "%APP_ROOT%\PackageFiles\MiscellaneousWin\USBDM-CFFlasher-Readme.txt"      
 copy "%APP_ROOT%\Usbdm_DLL\usbdm-cff\*.dll"                                        "%BIN_DIR%"
 copy "%APP_ROOT%\Usbdm_DLL\usbdm-cff-debug\*.dll"                                  "%BIN_DIR%"
 
-echo **********=================**************
-echo **********=================**************
-echo **********=================**************
-rem goto allDone
-
 echo ***  ****************************************
 echo ***  Do Firmware files
 echo ***  ****************************************
 xcopy /E /I /Y /Q "%APP_ROOT%\PackageFiles\FlashImages"                      "%FLASH_DIR%"
+
+:checkthis
+echo ***  ****************************************
+echo ***  Do Plugin files
+echo ***  ****************************************
+if exist "%PLUGIN_DIR%"\eclipse\usbdm\plugins del /q "%PLUGIN_DIR%"\eclipse\usbdm\plugins\*.*
+xcopy /E /I /Y /Q "%PLUGIN_ROOT%"\CDT_Plugins\plugins                        "%PLUGIN_DIR%"\eclipse\usbdm\plugins
+if exist "%PLUGIN_DIR%"\codewarrior\usbdm\plugins del /q "%PLUGIN_DIR%"\codewarrior\usbdm\plugins\*.*
+xcopy /E /I /Y /Q "%PLUGIN_ROOT%"\CW_Plugins\plugins                         "%PLUGIN_DIR%"\codewarrior\usbdm\plugins
+
+echo **********=================**************
+echo **********=================**************
+echo **********=================**************
 
 goto allDone
 

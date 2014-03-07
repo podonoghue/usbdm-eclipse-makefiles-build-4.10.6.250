@@ -88,7 +88,7 @@ Reset_Handler:
 
 #ifndef __NO_SYSTEM_INIT
     // Low-level system initialise must be done here so to avoid WDOG timeout
-    bl    SystemInit
+    bl    SystemInitLowLevel
 #endif
 /*
  *     Loop to copy data from read only memory to RAM. The ranges of copy from/to are
@@ -148,6 +148,9 @@ Reset_Handler:
 
 #ifndef __START
 #define __START _start
+#endif
+#ifndef __NO_SYSTEM_INIT
+    bl    SystemInit
 #endif
     bl    __START
     .pool

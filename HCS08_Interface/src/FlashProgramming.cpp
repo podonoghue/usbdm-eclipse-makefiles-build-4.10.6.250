@@ -26,6 +26,7 @@
 +================================================================================
 | Revision History
 +================================================================================
+| 26 Feb 14 | 4.10.6.120 removed buffer clearing initSmallTargetBuffer()    - pgo
 |  6 Nov 13 | 4.10.6.60 Changes to support PAxx small programmer            - pgo
 |  4 Jun 13 | 4.10.5.20 Set controller address in partitionFlexNVM()        - pgo
 | 28 Dec 12 | 4.10.4 Changed handling of security area (& erasing)          - pgo
@@ -1542,8 +1543,6 @@ USBDM_ErrorCode FlashProgrammer::initLargeTargetBuffer(memoryElementType *buffer
 USBDM_ErrorCode FlashProgrammer::initSmallTargetBuffer(memoryElementType *buffer) {
    LOGGING;
    SmallTargetFlashDataHeader *pFlashHeader = (SmallTargetFlashDataHeader*)buffer;
-
-   memset(pFlashHeader, 0, sizeof(SmallTargetFlashDataHeader));
 
    pFlashHeader->flashAddress    = nativeToTarget16(flashOperationInfo.flashAddress);
    pFlashHeader->controller      = nativeToTarget16(flashOperationInfo.controller);

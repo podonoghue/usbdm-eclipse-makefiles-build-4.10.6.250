@@ -13,29 +13,28 @@ The following example is for a Coldfire target but a similar process is followed
       <td>
          - Select <i>File->New->Project</i> from the Menu\n
          The dialogue shown should appear.\n
-         Select the options to create a C or C++ Project as needed.\n
-         (This example shows C++) \n
+         Select the C/C++ Project (USBDM) to start creating a project.\n
          Click <i>Next</i>
       </td>
       <td colspan=2>
-         \image html "NewProject.png"
+         \image html "1.NewProject.png"
       </td>
    </tr>
    <tr>
       <td>
          - Type in a Project Name\n
-         - Select the desired Coldfire or Kinetis target. \n
+         - Select the desired Coldfire or Kinetis target in C or C++ versions as preferred. \n
 
          - Click <i>Next</i>
       </td>
       <td colspan=2>
-         \image html C++Project.png
+         \image html 2.USBDMCreateProject.png
       </td>
    </tr>
    <tr>
       <td>
          - USBDM Parameters         	
-         	- Select the Build Tools being used choice only for Kinetis devices				
+         	- Select the Build Tools being used (choice only available for Kinetis devices)				
          	- Select the device to be used.  
          - Linker Parameters
             - Auto-generate linker script - The USBDM Wizard will automatically create a linker script based upon the device's
@@ -46,7 +45,21 @@ The following example is for a Coldfire target but a similar process is followed
          - Click <i>Next</i> 
       </td>
       <td colspan=2>
-         \image html CrossCompileOptions.png
+         \image html 3.USBDMProjectParameters.png
+      </td>
+   </tr>
+   
+   <tr>
+      <td>
+         - USBDM Options         	
+         	- This page is specific to a particular device and the options will vary.			
+         	- Choose which optional components (files) to add to the project.  Some of these will require manual customization upon completion of the Wizard.
+         	This is often the case for CMSIS on smaller devices where the heap and stack sizes as well as the CMSIS options will need to be adjusted for the 
+         	very limited amount of RAM available.
+         - Click <i>Next</i> 
+      </td>
+      <td colspan=2>
+         \image html 4.USBDMProjectOptions.png
       </td>
    </tr>
    
@@ -74,14 +87,15 @@ The following example is for a Coldfire target but a similar process is followed
          - Click <i>Next</i> 
       </td>
       <td colspan=2>
-         \image html USBDMConfigure.png
+         \image html 5.USBDMToolSettings.png
       </td>
    </tr>
    
    <tr>
       <td>
          The Wizard will create a basic project with a brief demonstration mainline.\n
-         It should now be possible to build the project using the menu item <b>Project->Build All</b>\n
+         The project will contain optional components such as CMSIS-RTX if these option were selected.
+         It should now be possible to build the project using the menu item <b>Project->Build All</b>\n\n
          Expanding the project will display the project contents as shown:
          - Project_Headers
             - derivative.h - for convenience.  Just includes the target-specific header file.
@@ -107,6 +121,7 @@ The following example is for a Coldfire target but a similar process is followed
          - Project_Settings
             - The folder contains the target linker files either generated or copied into the project.  It also
               contains a default launch configuration for the <b>Debug</b> target for use with the USBDM debugger. 
+         - Additional folders may be present e.g. CMSIS
       </td>
       <td>
          \image html ProjectExplorer.png
@@ -115,6 +130,43 @@ The following example is for a Coldfire target but a similar process is followed
 </table>
 
 - You may now build the project by clicking on the hammer icon.
+
+\section eclipseCustomization Customizing options in Eclipse using the Configuration Editor
+Several of the project files (C source & header files and linker files) contain configuration information with mark-up in the comments section
+that allows convenient editing.\n 
+For example the <i>MemoryMapxxx.ld</i> file in the <i>Project_Settings</i> directory has settings for the HEAP and STACK size.  These may
+be edited manually by changing the text of the file or alternatively the file may be opened in the <b>Configuration Editor</B> for a more convenient 
+ways of doing this.  Right-click on the file and choose <i>Configuration Editor</i> from the menu to do this.\n
+The Configuration Editor provides two views of the file.  One is a conventional text editor with simplified syntax highlighting of the 
+mark-up describing the options (in red) and the embedded options in the body of the C code (in blue).  The latter are just strings or numbers 
+that may be modified within the GUI view provided by the editor.\n
+The mark-up used is described here http://www.keil.com/support/man/docs/uv4/uv4_ut_configwizard.htm
+
+<table border="0">
+   <tr>
+      <td>
+			\image html  OpenConfigurationEditor.png
+      </td>
+      <td>
+			\image html ConfigurationEditorLinker.png
+      </td>
+   </tr>
+</table>
+
+<table border="0">
+   <tr>
+      <td>
+			There is extensive customization of the CMSIS-RTX configuration possible in the same way.  \n
+			Open the <i>RTX_Conf_CM.c</i> file located in 
+			the <i>Sources</i> folder using the Configuration Editor to change these settings.\n
+			Refer to the CMSIS-RTX documentation provided by the <i>CMSIS.html</i> link within the project for details
+			of what these various options do.
+      </td>
+      <td>
+			\image html ConfigurationEditorCMSIS.png
+      </td>
+   </tr>
+</table>
 
 \section launchConfigurationColdfire Launch Configuration Settings
 The following describes important dialogues and settings in the launch configuration that will have been created

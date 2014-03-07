@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE device
 [
-<!ENTITY VECTOR_TABLE SYSTEM "vectorTables/Empty_VectorTable.svd.xml">
+<!ENTITY VECTOR_TABLE SYSTEM "vectorTables/MK60D10_VectorTable.svd.xml">
 <!ENTITY ADC0         SYSTEM "peripherals/ADC0_MKDZ10.svd.xml">
 <!ENTITY ADC1         SYSTEM "peripherals/ADC1_from_ADC0_0.svd.xml">
 <!ENTITY AIPS0        SYSTEM "peripherals/AIPS0_6CH.svd.xml">

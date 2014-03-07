@@ -372,6 +372,16 @@ Devices using this vector table:
             <value>82</value>
          </interrupt>
          <interrupt>
+            <name>TSI</name>
+            <description>Touch Sense Interface</description>
+            <value>83</value>
+         </interrupt>
+         <interrupt>
+            <name>MCG</name>
+            <description>Multipurpose Clock Generator</description>
+            <value>84</value>
+         </interrupt>
+         <interrupt>
             <name>LPTMR0</name>
             <description>LPTMR Low Power Timer interrupt</description>
             <value>85</value>

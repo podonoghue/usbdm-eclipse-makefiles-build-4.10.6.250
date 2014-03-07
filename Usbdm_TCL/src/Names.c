@@ -625,15 +625,17 @@ char const *getCFV1RegName( unsigned int regAddr ){
       "PST0","PST1","PST2","PST3","PST4","PST5",
       "PST6","PST7","PST8","PST9","PST10","PST11",
       };
-   const char *regName = NULL;
-
-   if (regAddr < sizeof(names)/sizeof(names[0]))
-       regName = names[regAddr];
-
-   if (regName == NULL)
-      regName = "unknown";
-
-   return regName;
+   static const char *names2[] = {
+      "_A7","VBR","CPUCR","SR","PC"
+      };
+   if (regAddr < sizeof(names)/sizeof(names[0])) {
+       return names[regAddr];
+   }
+   regAddr -= CFV1_RegOTHER_A7;
+   if (regAddr < sizeof(names2)/sizeof(names2[0])) {
+      return names2[regAddr];
+   }
+   return "Unknown";
 }
 
 //! \brief Maps a Coldfire V2,3,4 register # to a string

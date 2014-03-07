@@ -23,7 +23,7 @@
 \endverbatim
 \verbatim
 Change History
--============================================================================================
+-=====================================================================================================
 |  Nov 09 2013 | Minor changes for security                                        - pgo V4.10.6.80
 |  Oct 28 2013 | Added connect with RESET retry to targetConnecvt for ARM          - pgo V4.10.6.40
 |  Dec 22 2012 | Improved Secured device handling & mass erase                     - pgo V4.10.4
@@ -435,6 +435,22 @@ USBDM_ErrorCode rc;
    Logging::print("rc = %s\n", USBDM_GetErrorString(rc));
    return rc;
 }
+//
+//static USBDM_ErrorCode setFixedBDMClock() {
+//   LOGGING;
+//   USBDM_ErrorCode rc = BDM_RC_OK;
+//#if (TARGET == CFV1)
+//   // Switch to independent clock
+//   unsigned long status;
+//   USBDM_ReadStatusReg(&status);
+//   Logging::print("Switch to independent clock done, original status = %s\n", getStatusRegName(T_CFV1, status));
+//   USBDM_WriteControlReg(status&~CFV1_XCSR_CLKSW);
+//   USBDM_Connect();
+//   USBDM_ReadStatusReg(&status);
+//   Logging::print("Switch to independent clock done, final status = %s\n", getStatusRegName(T_CFV1, status));
+//#endif
+//   return rc;
+//}
 
 //! Open GDI
 //!
@@ -1076,7 +1092,9 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
          DSC_Connect();
 #else
          USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
-         USBDM_Connect();
+         // Connect but ignore error which will be discovered on next operation
+         (void)targetConnect(softConnectOptions);
+//         setFixedBDMClock();
 #endif
          forceMassErase = false;
          return setErrorState(DI_OK);
@@ -1563,6 +1581,7 @@ USBDM_ErrorCode rc;
    USBDM_TargetHalt(); // Make sure target is awake - may be sleeping due to STOP/WAIT instruction
    USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
    rc = targetConnect(initialConnectOptions);
+//   setFixedBDMClock(); - despite the manual it doesn't work
 #else
    rc = USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
    if (rc != BDM_RC_OK) {

@@ -56,6 +56,8 @@ struct SmallTargetFlashDataHeader {
    uint16_t         controller;              //!< Ptr to flash controller
    uint16_t         dataAddress_sectorSize;  //!< Ptr to data buffer or sector size
    uint16_t         dataSize_sectorCount;    //!< Size of memory range being accessed or number of sectors
+   //---------------------------------------------
+   // Optional for Paged devices
    uint16_t         page_wdog_Address;       //!< Address of PPAGE or EPAGE register or watchdog
    uint8_t          pageNum;                 //!< Page number
 };

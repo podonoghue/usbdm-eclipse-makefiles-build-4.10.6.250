@@ -1,42 +1,87 @@
-USBDM V4.10
-=========================
-V4.10.4 (November 2012) -
-   - Improved HCS08/HCS12 programming speeds (15~30%)
+usbdm_4.10.6.110-1-i386.deb (February 2013)
+usbdm_4.10.6.110-1-amd64.deb (February 2013)
+USBDM_4_10_6_110.Win.msi (February 2013)
+======================================================================================= 
+   New features in Eclipse
+   - Added Peripheral View (Kinetis devices)
+   - Added SVD files and derived header files
+   - Added CMSIS-RTX support (Kinetis devices)
+   - Added UART support for some devices (Kinetis devices)
+   - Added Clock support for some devices (Kinetis devices)
+   Corrected errors in programmer device files
    
-V4.10.3 (November 2012) -
-   - Added device driver installation (V1.0.0)
-   - Fixed BDM doing reset when setting target even if already powered.
-     This was interfering with doing a 'gentle' connection to a running target.
-   - ELF Files now supported for MC56F80xx devices.
-V4.10.2 (October 2012) -
-This is intended as a interim release to support Codewarrior 10.3 Beta.
-It has not been extensively tested.
-Use only if you wish to experiment with CW10.3!
-   - Updated installer for Codewarrior 10.3 Beta
-   - Kinetis & CFV1 targets now correctly support RAM only targets (again)
-   - Changed to shared DLLs build for wxWidgets
-   - Support added for Kinetis KLxx devices
-   - Updated libusbx version (& changed to static linkage)
-   Bug Fixes
-     - Fixes for an output glitch on USBDM_JMxx_CLD & CLC. (firmware)
-     - Kinetis-SWD reports memory read/write errors on failing access
-       (not following access) (firmware) 
+usbdm_4.10.6.100-1-i386.deb (November 2013)
+usbdm_4.10.6.100-1-amd64.deb (November 2013)
+USBDM_4_10_6_110.Win.msi (December 2013)
+======================================================================================= 
+   - Added Eclipse Peripheral View 
+
+USBDM_4_10_6_100.Win.msi (November 2013)
+======================================================================================= 
+   - Modified GDB server interrupt masking (ARM+CFV1) 
+   - Added interrupt masking option to GDB server
+   - Eclipse examples updated
+   - NOTE:  The Win versions of the software are no longer compressed with UPX so
+     the executables and downloads are much larger.  The compression was greatly
+     affecting the installation time of the .msi file.  This change also improves
+     the start-up time of the programs.
    
-V4.10.0 (September 2012) -
-   - Improved ARM-JTAG interface speed.
-   - Added support for ARM-SWD interfaces (requires different hardware). 
-     ARM-SWD is much faster than ARM-JTAG. For reference, programming a
-     file to flash using Codewarrior 10.2:
-                      Readback     Without
-                      verify       readback
-      - OSJTAG        1m 20s         53s      
-      - USBDM-JTAG       47s         23s
-      - USBDM-SWD        21s         17s
-   - ARM interfaces (JTAG & SWD) are now provided by USBDM interface DLL. This
-     means that the ARM API is now uniform with the RS08, HCS08, HCS12 and 
-     CFV1 interfaces. A compatibility DLL is provided for legacy use.
-   - Simple ARM-SWD interface hardware designs are provided.
-   - Bug fixes
-      - Alignment error in programming code for some S12 targets
-      - Corrected load addresses for ELF files for HCS08/HCS12
-      - Added/corrected support for MCF51AG128
+usbdm_4.10.6.80-1-i386.deb (November 2013)
+usbdm_4.10.6.80-1-amd64.deb (November 2013)
+USBDM_4_10_6_80.Win.msi (November 2013)
+======================================================================================= 
+   - Added support for 9S08PA4 & 9S08PA2
+   - Minor fix to Codewarrior 10 interface
+   - Added security options to Eclipse & Codewarrior plugins
+   - WIN+LINUX versions are feature consistent
+   
+USBDM_4_10_6_60.Win.msi (November 2013)
+======================================================================================= 
+   - Deleted (Upload corrupted)
+
+usbdm_4.10.6.40-2-i386.deb (October 2013)
+usbdm_4.10.6.40-2-amd64.deb (October 2013)
+======================================================================================= 
+   -2 version Only change is dependencies
+   - Updated installer for Ubuntu 32- & 64-bit system
+   - Added Eclipse and Codewarrior 10.2 plug-ins
+   - Note: I have been unable to get any debug functions to work with Codewarrior 10.2 
+           on Ubuntu-64
+
+USBDM V4.10.6c (October 2013)
+======================================================================================= 
+   - Installer updated for CW 10.5
+
+   USBDM V4.10.6b (September 2013)
+======================================================================================= 
+   - Fix for command-line operation of programmers
+   
+usbdm_4.10.6-1-i386.deb (August 2013)
+usbdm_4.10.6-1-amd64.deb (August 2013)
+======================================================================================= 
+   - Experimental build on Ubuntu 32- & 64-bit system
+   - Note: These files do not contain Eclipse or Codewarrior plug-ins
+   
+USBDM V4.10.6a (August 2013)
+======================================================================================= 
+   - Fix for installer bug, installed programs should be unchanged
+   
+USBDM V4.10.6 (August 2013)
+======================================================================================= 
+This mainly concentrates on Eclipse support 
+   - Eclipse Juno and Kepler:
+      - Installation no longer adds files to Codesourcery directories
+      - Support for other ARM GCC toolchains with Kinetis 
+      - GDB server (sprite) bug fixes (GDB no longer dies if R0/D0 contains Exxxxxxx!).
+      - GDB socket based server introduced (ARM+Coldfire).
+      - GDB servers support float registers on ARM
+      - Additional example projects for ARM targets.
+      - Support for Floating point options with ARM Ltd toolchain
+      - Newlib support (stdio using serial port) with  ARM Ltd toolchain
+      - Added USBDM menu items (Examples, Configuration)
+      - USBDM now includes make tools from GNU to conveniently support Builds on windows
+      - Added a range of programming options to GDB server e.g. trimming of target clock. 
+   - Programmer dialogues slightly smaller
+   - Linux CDC devices (serial ports) appear as ttyUsbdm devices so they are easier to locate
+   - Multiple Linux install scripts (Base, Codewarrior and Eclipse Juno installation)
+   - Added additional Kinetis devices (KE02 family)

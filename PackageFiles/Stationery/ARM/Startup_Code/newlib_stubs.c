@@ -251,3 +251,11 @@ int _write(int file, char *ptr, int len) {
 void os_tmr_call(uint16_t  info) {
    (void)info;
 }
+
+void _exit(int i) {
+   (void)i;
+   while (1) {
+      asm("bkpt #0");
+   }
+}
+

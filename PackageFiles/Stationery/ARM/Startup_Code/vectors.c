@@ -63,8 +63,8 @@ typedef struct {
    unsigned int r2;
    unsigned int r3;
    unsigned int r12;
-   unsigned int lr;
-   unsigned int pc;
+   void       (*lr)();
+   void       (*pc)();
    unsigned int psr;
 } ExceptionFrame;
 

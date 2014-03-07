@@ -146,5 +146,6 @@
       <device name="MKE02Z16M2">       <svdFileName>MKE02Z2</svdFileName> </device>
       <device name="MKE02Z32M2">       <svdFileName>MKE02Z2</svdFileName> </device>
       <device name="MKE02Z64M2">       <svdFileName>MKE02Z2</svdFileName> </device>
+      <device name="STM32F103RBT6">    <svdFileName>STM32F103xx</svdFileName> </device>
    </deviceList>
 </root>

@@ -99,7 +99,7 @@
       </projectActionList>
       
       <!-- Default files to copy to project -->
-      <projectActionList id="Coldfire-Vx-file-list" root="Stationery/CFVx/" >
+      <projectActionList id="Coldfire-Vx-file-list" root="usbdm_resource_path/Stationery/CFVx/" >
          <copy source="$(externalVectorTable)"                       target="Startup_Code/vectors.c" />
          <copy source="$(externalLinkerScript)"                      target="Project_Settings/Custom.ld" />
          <copy source="$(externalHeaderFile)"                        target="Project_Headers/$(targetDevice).h" />

@@ -29,7 +29,8 @@
 
 \verbatim
  Change History
-+==================================================================================================
++======================================================================================================
+| 01 Mar 2014 | Removed MCF51AC256 CSR.VBD hack                                     - pgo - V4.10.6.120
 | 16 Mar 2013 | Added default frequency to getDefaultExtendedOptions()              - pgo - V4.10.4
 | 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo - V4.10.4
 |  1 Dec 2012 | Changed logging                                                     - pgo - V4.10.4
@@ -59,7 +60,7 @@
 |  1 Aug 2009 | Change to USBDM + wrappers for TBDML, OSBDM & TBLCF                 - pgo
 |  1 Jan 2009 | Changed to common file for TBDML, OSBDM & TBLCF dlls                - pgo
 | 27 Dec 2008 | Added extendedConnect() to target_sync()                            - pgo
-+==================================================================================================
++======================================================================================================
 \endverbatim
 */
 #include <stdio.h>
@@ -2234,11 +2235,11 @@ USBDM_ErrorCode USBDM_WriteDReg(unsigned int regNo, unsigned long regValue) {
    };
 #endif
 
-   if ((bdmState.targetType == T_CFV1) && (regNo == CFV1_DRegCSR)) {
-      // MCF51AC Hack
-      Logging::print("Hacking CSR value\n", regValue);
-      regValue |= CFV1_CSR_VBD;
-   }
+//   if ((bdmState.targetType == T_CFV1) && (regNo == CFV1_DRegCSR)) {
+//      // MCF51AC Hack
+//      Logging::print("Setting CSR.VBD bit CSR=%08X\n", regValue);
+//      regValue |= CFV1_CSR_VBD;
+//   }
    usb_data[0] = 0;
    usb_data[1] = CMD_USBDM_WRITE_DREG;
    usb_data[2] = (uint8_t)(regNo>>8);

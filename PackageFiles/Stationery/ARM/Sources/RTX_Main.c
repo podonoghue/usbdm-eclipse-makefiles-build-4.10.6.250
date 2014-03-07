@@ -12,7 +12,6 @@
 #include "derivative.h"
 #include "utilities.h"
 #include "cmsis_os.h"
-#include "clock.h"
 
 // Forward references
 void threadFunction(void const *argument);    // prototype for thread function
@@ -50,8 +49,6 @@ void threadFunction(void const *argument) {
  */
 int main(void) {
 
-   SystemCoreClockUpdate();
-
    // Get main thread ID
    mainFunctionId = osThreadGetId();
 
@@ -68,7 +65,7 @@ int main(void) {
       // Wait for signal from thread
       osSignalWait(SIGNAL_MASK, osWaitForever);
 
-      printf("Thread signalled\n");
+      printf("Thread signaled\n");
    }
 
 }

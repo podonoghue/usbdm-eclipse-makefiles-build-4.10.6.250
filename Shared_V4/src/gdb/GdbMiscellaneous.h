@@ -12,5 +12,6 @@ USBDM_ErrorCode usbdmInit(USBDM_ExtendedOptions_t *bdmOptions);
 USBDM_ErrorCode usbdmInit(TargetType_t targetType);
 USBDM_ErrorCode usbdmClose(void);
 USBDM_ErrorCode usbdmResetTarget(bool retry = true);
-
+USBDM_ErrorCode setBDMClockMode(ClkSwValues_t clockMode);
+USBDM_ErrorCode setFixedBDMClock();
 #endif /* GDBMISCELLANEOUS_H_ */

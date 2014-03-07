@@ -18,8 +18,7 @@
       <sdid value="0x00000420" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+      <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>
    <device name="STM32F100xx-medium" family="CortexM3">
@@ -35,8 +34,7 @@
       <sdid value="0x00000420" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+      <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>
    <device name="STM32F100xx-high" family="CortexM3">
@@ -52,8 +50,7 @@
       <sdid value="0x00000428" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+      <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>
    <device name="STM32F103xx-low" family="CortexM3">
@@ -69,8 +66,7 @@
       <sdid value="0x00000412" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+	   <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>
    <device name="STM32F103xx-medium" family="CortexM3">
@@ -86,8 +82,7 @@
       <sdid value="0x00000410" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+      <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>
    <device name="STM32F103xx-high" family="CortexM3">
@@ -103,8 +98,7 @@
       <sdid value="0x00000414" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+      <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>
    <device name="STM32F103xx-XL" family="CortexM3">
@@ -120,8 +114,7 @@
       <sdid value="0x00000430" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+      <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>
    <device name="STM32F103xx-Connectivity" family="CortexM3">
@@ -137,8 +130,7 @@
       <sdid value="0x00000430" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+      <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>
    <device name="STM32F103RBT6" family="CortexM3">
@@ -154,7 +146,6 @@
       <sdid value="0x00000410" />
       <tclScriptRef ref="STM32F100xx-default-Scripts" />
       <flashProgramRef ref="STM32F100xx-default-FlashProgram" />
-      <projectActionListRef  ref="gnuSettings.cortex.m3" />
-	   <projectActionListRef ref="STM32-file-list" />
+      <projectActionListRef ref="STM32Fxxx-ProjectActions" />
       <registerDescriptionRef ref="CortexM3-register-description" />
    </device>

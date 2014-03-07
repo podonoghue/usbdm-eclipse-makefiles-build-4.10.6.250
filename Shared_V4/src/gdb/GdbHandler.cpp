@@ -26,6 +26,7 @@ Change History
 #include "Names.h"
 //#include "wxPlugin.h"
 #include "FindWindow.h"
+#include "GdbMiscellaneous.h"
 
 using namespace std;
 
@@ -1430,6 +1431,10 @@ static USBDM_ErrorCode doVCommands(const GdbPacket *pkt) {
          USBDM_ErrorCode rc = programImage(flashImage);
          delete flashImage;
          flashImage = NULL;
+//#if (TARGET == CFV1)
+//         setFixedBDMClock();
+//         Logging::print("vFlashDone: Setting clock mode\n");
+//#endif
          if (rc != PROGRAMMING_RC_OK) {
             Logging::print("vFlashDone: Programming failed, rc=%s\n", USBDM_GetErrorString(rc));
             reportGdbPrintf(M_FATAL, rc,"Programming Flash Image failed: ");

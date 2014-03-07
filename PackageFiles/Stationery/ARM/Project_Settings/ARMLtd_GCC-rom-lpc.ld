@@ -150,7 +150,7 @@ SECTIONS
 		__bss_end__ = .;
 	} > ram
 	
-   /* Dummy HEAP - from top of BSS */
+   /* Minimum HEAP - from top of BSS */
   .heap_dummy :
   {
     . = ALIGN(4);
@@ -160,7 +160,6 @@ SECTIONS
    __HeapBottom = .;
 	__heap_addr = .;
     . = . + __heap_size;
-   __HeapLimit = .;
   } > ram
 
    /* Dummy STACK space - between HEAP and end of RAM*/
@@ -173,11 +172,10 @@ SECTIONS
   /* Set stack top to end of ram, and stack limit move down by
    * size of stack_dummy section 
    */
-  __StackTop = ORIGIN(ram) + LENGTH(ram);
-  __StackLimit = __StackTop - SIZEOF(.stack_dummy);
+  __StackTop   = ORIGIN(ram) + LENGTH(ram);
+  __HeapLimit  = ORIGIN(ram) + LENGTH(ram)-__stack_size;
+  __StackLimit = ORIGIN(ram) + LENGTH(ram)-__stack_size;
+  
   PROVIDE(__stack = __StackTop);
   PROVIDE(__cs3_stack = __StackTop);
-
-  /* Check if data + heap + stack exceeds ram limit */
-  ASSERT(__StackLimit >= __HeapLimit, "region ram overflowed")
 }

@@ -24,7 +24,7 @@ set PCB_ROOT=%USBDM_ROOT%\PCB
 
 set WIN_RAR=c:\Program Files\WinRAR\rar.exe
 
-set FLASH_DIR=..\FlashImages
+set FLASH_DIR=.\FlashImages
 
 echo ***  ****************************************
 echo ***  Do Firmware files

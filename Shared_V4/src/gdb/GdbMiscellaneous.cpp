@@ -9,6 +9,7 @@
 #include "Log.h"
 #include "GdbMiscellaneous.h"
 #include "Names.h"
+#include "TargetDefines.h"
 
 USBDM_ErrorCode usbdmResetTarget(bool retry) {
    Logging::print("Resetting target\n");
@@ -20,6 +21,34 @@ USBDM_ErrorCode usbdmResetTarget(bool retry) {
       rc = usbdmResetTarget(false);
    }
    return rc;
+}
+
+//USBDM_ErrorCode setFixedBDMClock() {
+//   LOGGING;
+//   USBDM_ErrorCode rc = BDM_RC_OK;
+//#if (TARGET == CFV1)
+//   // Switch to independent clock
+//   unsigned long status;
+//   USBDM_ReadStatusReg(&status);
+//   Logging::print("Switch to independent clock done, original status = %s\n", getStatusRegName(T_CFV1, status));
+//   USBDM_WriteControlReg(status&~CFV1_XCSR_CLKSW);
+//   USBDM_Connect();
+//   USBDM_ReadStatusReg(&status);
+//   Logging::print("Switch to independent clock done, final status = %s\n", getStatusRegName(T_CFV1, status));
+//#endif
+//   return rc;
+//}
+
+USBDM_ErrorCode setBDMClockMode(ClkSwValues_t clockMode) {
+   Logging::print("Switch to independent clock done\n");
+   USBDM_ExtendedOptions_t localBdmOptions = {sizeof(USBDM_ExtendedOptions_t), T_NONE};
+   USBDM_ErrorCode rc;
+   rc = USBDM_GetExtendedOptions(&localBdmOptions);
+   if (rc != BDM_RC_OK) {
+      return rc;
+   }
+   localBdmOptions.bdmClockSource = clockMode;
+   return USBDM_SetExtendedOptions(&localBdmOptions);
 }
 
 static USBDM_ErrorCode usbdmInit(TargetType_t targetType, USBDM_ExtendedOptions_t *bdmOptions) {

@@ -395,6 +395,9 @@ ToDo - review flash block sizes for MK20-MK70
          <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="512K" />
       </memory>
+      <memory id="FTFL_PFlash0_128K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" >
+         <memoryRange start="0x00020000" size="128K" />
+      </memory>
       <!--  flexNVM - FTFL 1K sector size -->
       <memory id="FTFL_DFlash0_32K_1KS" type="flexNVM" registerAddress="0x40020000"  sectorSize="1024" alignment="4">
          <flexNVMInfoRef ref="kinetis32K_FlexPartitionInfo" />
@@ -506,7 +509,7 @@ ToDo - review flash block sizes for MK20-MK70
       </registerDescription>
       
       <!-- GNU Build options Cortex M0 (e.g. MKL, MKE) devices -->
-      <projectActionList id="gnuSettings.cortex.m0" root="Stationery/ARM/" >
+      <projectActionList id="gnuSettings.cortex.m0" >
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"              > <value>net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM0</value> </projectOption>
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb"            > <value>true</value> </projectOption>
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.buildtools"        > <value>$(buildToolId)</value> </projectOption>
@@ -514,7 +517,7 @@ ToDo - review flash block sizes for MK20-MK70
          <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
       </projectActionList>
       <!-- GNU Build options Cortex M3 (e.g. lpc, stm) devices -->
-      <projectActionList id="gnuSettings.cortex.m3" root="Stationery/ARM/" >
+      <projectActionList id="gnuSettings.cortex.m3" >
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"              > <value>net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM3</value> </projectOption>
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb"            > <value>true</value> </projectOption>
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.buildtools"        > <value>$(buildToolId)</value> </projectOption>
@@ -522,7 +525,7 @@ ToDo - review flash block sizes for MK20-MK70
          <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
       </projectActionList>
       <!-- GNU Build options Cortex M4 (e.g. MK) devices -->
-      <projectActionList id="gnuSettings.cortex.m4" root="Stationery/ARM/" >
+      <projectActionList id="gnuSettings.cortex.m4" >
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"              > <value>net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM4</value> </projectOption>
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb"            > <value>true</value> </projectOption>
          <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.buildtools"        > <value>$(buildToolId)</value> </projectOption>
@@ -530,7 +533,7 @@ ToDo - review flash block sizes for MK20-MK70
          <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
       </projectActionList>
       <!-- Cortex-M0 CMSIS RTOS -->
-      <projectActionList id="Cortex-M0-CMSIS" root="Stationery/ARM/" >
+      <projectActionList id="Cortex-M0-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="CMSIS-M0-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
          <condition variable="CMSIS-M0-rtos">
             <createFolder                                           target="cmsis"      type="include" />
@@ -542,12 +545,10 @@ ToDo - review flash block sizes for MK20-MK70
             <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
             <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
             <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/Project_Headers&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
             </projectOption>            
             <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/Project_Headers&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
             </projectOption>            
@@ -562,7 +563,7 @@ ToDo - review flash block sizes for MK20-MK70
          </condition>
       </projectActionList>
       <!-- Cortex-M3 CMSIS RTOS -->
-      <projectActionList id="Cortex-M3-CMSIS" root="Stationery/ARM/" >
+      <projectActionList id="Cortex-M3-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="CMSIS-M3-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
          <condition variable="CMSIS-M3-rtos">
             <createFolder                                           target="cmsis"      type="include" />
@@ -574,12 +575,10 @@ ToDo - review flash block sizes for MK20-MK70
             <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
             <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
             <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/Project_Headers&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
             </projectOption>            
             <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/Project_Headers&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
             </projectOption>            
@@ -594,7 +593,7 @@ ToDo - review flash block sizes for MK20-MK70
          </condition>
       </projectActionList>
       <!-- Cortex-M4 CMSIS RTOS -->
-      <projectActionList id="Cortex-M4-CMSIS" root="Stationery/ARM/" >
+      <projectActionList id="Cortex-M4-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="CMSIS-M4-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
          <condition variable="CMSIS-M4-rtos">
             <createFolder                                           target="cmsis"      type="include" />
@@ -606,12 +605,10 @@ ToDo - review flash block sizes for MK20-MK70
             <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
             <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
             <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/Project_Headers&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
             </projectOption>            
             <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/Project_Headers&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
             </projectOption>            
@@ -626,7 +623,7 @@ ToDo - review flash block sizes for MK20-MK70
          </condition>
       </projectActionList>
       <!-- Cortex-M4F CMSIS RTOS -->
-      <projectActionList id="Cortex-M4F-CMSIS" root="Stationery/ARM/" >
+      <projectActionList id="Cortex-M4F-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="CMSIS-M4F-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
          <condition variable="CMSIS-M4F-rtos">
             <createFolder                                           target="cmsis"      type="include" />
@@ -638,32 +635,31 @@ ToDo - review flash block sizes for MK20-MK70
             <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
             <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
             <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/Project_Headers&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
             </projectOption>            
             <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/Project_Headers&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
                <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
             </projectOption>            
             <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
                <value>__CORTEX_M4F</value>
                <value>__CMSIS_RTOS</value>
-               <value>__MPU_PRESENT</value>
+               <value>__FPU_PRESENT</value>
             </projectOption>            
             <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
                <value>__CORTEX_M4F</value>
                <value>__CMSIS_RTOS</value>
+               <value>__FPU_PRESENT</value>
             </projectOption>            
          </condition>
       </projectActionList>
       <!-- Base MKE files -->
-      <projectActionList id="Kinetis-MKE-files" root="Stationery/ARM/" >
+      <projectActionList id="Kinetis-MKE-files" root="usbdm_resource_path/Stationery/ARM/" >
          <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
          <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
          <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/sysinit-mke.c"                  target="Startup_Code/sysinit.c" />
+         <copy source="Startup_Code/system_mke.c"                   target="Startup_Code/system_mke.c" />
          <copy source="Startup_Code/vectors-mke.c"                  target="Startup_Code/vectors.c" />
          <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
          <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
@@ -683,11 +679,11 @@ ToDo - review flash block sizes for MK20-MK70
          <copy source="Sources/main.c"                              target="Sources/main.c" />
       </projectActionList>
       <!-- Base MKL files -->
-      <projectActionList id="Kinetis-MKL-files" root="Stationery/ARM/" >
+      <projectActionList id="Kinetis-MKL-files" root="usbdm_resource_path/Stationery/ARM/" >
          <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
          <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
          <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/sysinit-mkl.c"                  target="Startup_Code/sysinit.c" />
+         <copy source="Startup_Code/system_mkl.c"                   target="Startup_Code/system_mkl.c" />
          <copy source="Startup_Code/vectors-mkl.c"                  target="Startup_Code/vectors.c" />
          <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
          <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
@@ -707,35 +703,109 @@ ToDo - review flash block sizes for MK20-MK70
          <copy source="Sources/main.c"                              target="Sources/main.c" />
       </projectActionList>
       <!-- Base NXP-LPC files -->
-      <projectActionList id="NXP-LPC-file-list" root="Stationery/ARM/" >
-         <copy source="Startup_Code/sysinit-lpc.c"                  target="Startup_Code/sysinit.c" />
+      <projectActionList id="NXP-LPC-file-list" root="usbdm_resource_path/Stationery/ARM/" >
+         <copy source="Startup_Code/system_lpc.c"                   target="Startup_Code/system_lpc.c" />
          <copy source="Startup_Code/vectors-lpc.c"                  target="Startup_Code/vectors.c" />
          <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
          <copy source="Project_Settings/ARMLtd_GCC-rom-lpc.ld"      target="Project_Settings/ARMLtd_GCC-rom.ld" />
          <copy source="Project_Settings/Codesourcery-rom-lpc.ld"    target="Project_Settings/Codesourcery-rom.ld" />
          <copy source="Project_Headers/derivative.h"                target="Project_Headers/derivative.h" />
+         <copy source="Project_Headers/TargetDevice.h"              target="Project_Headers/$(targetDevice).h" />
          <copy source="Project_Headers/core_cm3.h"                  target="Project_Headers/core_cm3.h" />
          <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
          <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
       </projectActionList>
       <!-- Base STM32 files -->
-      <projectActionList id="STM32-file-list" root="Stationery/ARM/" >
-         <copy source="Startup_Code/sysinit-stm32.c"                target="Startup_Code/sysinit.c" />
-         <copy source="Startup_Code/vectors-stm32.c"                target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
-         <copy source="Project_Settings/ARMLtd_GCC-rom-stm32.ld"    target="Project_Settings/ARMLtd_GCC-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-stm32.ld"  target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Headers/derivative.h"                target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/core_cm3.h"                  target="Project_Headers/core_cm3.h" />
-         <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
-         <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
-      </projectActionList>
-      <!-- Base MK files -->
-      <projectActionList id="Kinetis-MK-files" root="Stationery/ARM/" >
+      <projectActionList id="STM32F10xx-files" root="usbdm_resource_path/Stationery/ARM/" >
          <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
          <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
          <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/sysinit-mk.c"                   target="Startup_Code/sysinit.c" />
+         <copy source="Startup_Code/system_stm32f10x.c"             target="Startup_Code/system_stm32f10x.c" />
+         <copy source="Startup_Code/vectors-stm32.c"                target="Startup_Code/vectors.c" />
+         <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
+         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM3.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
+         <!--copy source="Startup_Code/startup_Codesourcery_c.c"     target="Startup_Code/startup_Codesourcery_c.c" />
+         <copy source="Startup_Code/startup_Codesourcery.S"       target="Startup_Code/startup_Codesourcery.S" /-->
+         <copy source="Project_Settings/ARMLtd_GCC-rom-stm32.ld"    target="Project_Settings/ARMLtd_GCC-rom.ld" />
+         <copy source="Project_Settings/Codesourcery-rom-stm32.ld"  target="Project_Settings/Codesourcery-rom.ld" />
+         <copy source="Project_Settings/Debug.launch"               target="Project_Settings/$(projectName)-Debug.launch" />
+         <copy source="Project_Settings/MemoryMap.ld"               target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
+         <copy source="Project_Headers/derivative-STM32xx.h"        target="Project_Headers/derivative.h" />
+         <copy source="Project_Headers/core_cm3.h"                  target="Project_Headers/core_cm3.h" />
+         <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
+         <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
+         <copy source="Project_Headers/stm32f10x.h"                 target="Project_Headers/stm32f10x.h" />
+         <copy source="Project_Headers/system_stm32f10x.h"          target="Project_Headers/system_stm32f10x.h" />
+         <copy source="Project_Headers/utilities-stm32.h"           target="Project_Headers/utilities.h" />
+         <copy source="Sources/main.c"                              target="Sources/main.c" />
+           <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
+              <value>STM32F10X_LD</value>
+           </projectOption>            
+           <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
+              <value>STM32F10X_LD</value>
+           </projectOption>            
+      </projectActionList>
+      <!-- Additions for STM32xx SPL -->
+      <projectActionList id="STM32-spl-files" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="STM32-spl" name="Standard Peripheral Library"      description="Adds code for the STM32 Standard peripheral Library - check assumptions made" />
+         <condition variable="STM32-spl" >
+           <createFolder                                              target="spl"          type="include" />
+           <copy source="spl/inc"                                     target="spl/inc" />
+           <copy source="spl/src"                                     target="spl/src" />
+            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
+               <value>&quot;${ProjDirPath}/spl/inc&quot;</value>
+               <value>&quot;${ProjDirPath}/spl/src&quot;</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
+               <value>&quot;${ProjDirPath}/spl/inc&quot;</value>
+               <value>&quot;${ProjDirPath}/spl/src&quot;</value>
+            </projectOption>            
+           <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
+              <value>USE_STDPERIPH_DRIVER</value>	    
+           </projectOption>            
+           <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
+              <value>USE_STDPERIPH_DRIVER</value>
+           </projectOption>            
+         </condition>
+      </projectActionList>
+      
+      <!-- Cortex-M4 CMSIS RTOS -->
+      <projectActionList id="Cortex-STM32xx-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="CMSIS-STM32xx-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
+         <condition variable="CMSIS-STM32xx-rtos">
+            <createFolder                                           target="cmsis"      type="include" />
+            <copy           source="cmsis/Doc/index.html"           target="CMSIS.html" type="link" />
+            <copy           source="cmsis/INC"                      target="cmsis/INC" />
+            <copy           source="cmsis/SRC"                      target="cmsis/SRC" />
+            <copy           source="cmsis/GCC/SVC_Table.S"          target="cmsis/GCC/SVC_Table.S" />
+            <copy           source="cmsis/GCC/HAL_CM3.S"            target="cmsis/GCC/HAL_CM3.S" />
+            <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
+            <copy           source="Sources/RTX_Main.c"     target="Sources/main.c" />
+            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
+               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
+               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
+               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
+               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
+               <value>__CORTEX_M3</value>
+               <value>__CMSIS_RTOS</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
+               <value>__CORTEX_M3</value>
+               <value>__CMSIS_RTOS</value>
+            </projectOption>            
+         </condition>
+      </projectActionList>
+      
+      <!-- Base MK files -->
+      <projectActionList id="Kinetis-MK-files" root="usbdm_resource_path/Stationery/ARM/" >
+         <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
+         <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
+         <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
+         <copy source="Startup_Code/system_mk.c"                    target="Startup_Code/system_mk.c" />
          <copy source="Startup_Code/vectors-mk.c"                   target="Startup_Code/vectors.c" />
          <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
          <copy source="Startup_Code/startup_ARMLtdGCC_CortexM4.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
@@ -756,12 +826,12 @@ ToDo - review flash block sizes for MK20-MK70
          <copy source="Sources/main.c"                              target="Sources/main.c" />
       </projectActionList>
       <!-- Base MK-F files -->
-      <projectActionList id="Kinetis-MK-F-files" root="Stationery/ARM/" >
+      <projectActionList id="Kinetis-MK-F-files" root="usbdm_resource_path/Stationery/ARM/" >
          <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
          <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
          <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
          <copy source="Startup_Code/fp_init.c"                      target="Startup_Code/fp_init.c" />
-         <copy source="Startup_Code/sysinit-mk.c"                   target="Startup_Code/sysinit.c" />
+         <copy source="Startup_Code/system_mk.c"                    target="Startup_Code/system_mk.c" />
          <copy source="Startup_Code/vectors-mk.c"                   target="Startup_Code/vectors.c" />
          <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
          <copy source="Startup_Code/startup_ARMLtdGCC_CortexM4.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
@@ -803,9 +873,30 @@ ToDo - review flash block sizes for MK20-MK70
          <projectActionListRef  ref="Cortex-M4F-CMSIS" />
          <projectActionListRef  ref="Kinetis-MK-F-files" />
       </projectActionList>
+      <projectActionList id="STM32Fxxx-ProjectActions" >
+         <projectActionListRef  ref="gnuSettings.cortex.m3" />
+         <projectActionListRef  ref="Cortex-STM32xx-CMSIS" />
+         <projectActionListRef  ref="STM32-spl-files" />
+         <projectActionListRef  ref="STM32F10xx-files" />
+      </projectActionList>
 
+      <!-- Extra Optional files for MKE0x -->
+      <projectActionList id="Options-file-list-MKE0x" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Clock-setup-MKE0x" name="Clock setup code"      description="Adds code for basic clock initialization - check assumptions made" />
+         <variable id="UART-setup-MKE0x"  name="UART setup code"       description="Adds C stdio (UART) support for newlib" />
+         <condition variable="Clock-setup-MKE0x" >
+            <copy source="Startup_Code/clock-MKE0x.c"                  target="Startup_Code/clock.c" />
+            <copy source="Project_Headers/clock_private-MKE0x.h"       target="Project_Headers/clock_private.h" />
+         </condition>
+         <condition variable="UART-setup-MKE0x">
+            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
+            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
+            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
+         </condition>
+      </projectActionList>
+      
       <!-- Extra Optional files for MKL0x -->
-      <projectActionList id="Options-file-list-MKL0x" root="Stationery/ARM/" >
+      <projectActionList id="Options-file-list-MKL0x" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="Clock-setup-MKL0x" name="Clock setup code"      description="Adds code for basic clock initialization - check assumptions made" />
          <variable id="UART-setup-MKL0x"  name="UART setup code"       description="Adds C stdio (UART) support for newlib" />
          <condition variable="Clock-setup-MKL0x" >
@@ -820,11 +911,11 @@ ToDo - review flash block sizes for MK20-MK70
       </projectActionList>
       
       <!-- Extra Optional files for MK1x MKL2x MKL3x -->
-      <projectActionList id="Options-file-list-MKLxx" root="Stationery/ARM/" >
+      <projectActionList id="Options-file-list-MKLxx" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="Clock-setup-MKL25" name="Clock setup code"      description="Adds code for basic clock initialization - check assumptions made" />
          <variable id="UART-setup-MKL25"  name="UART setup code"       description="Adds C stdio (UART) support for newlib" />
          <condition variable="Clock-setup-MKL25" >
-            <copy source="Startup_Code/clock-MKL25.c"                  target="Startup_Code/clock.c" />
+            <copy source="Startup_Code/clock-MKLxx.c"                  target="Startup_Code/clock.c" />
             <copy source="Project_Headers/clock_private-MKLxx.h"       target="Project_Headers/clock_private.h" />
          </condition>
          <condition variable="UART-setup-MKL25">
@@ -835,7 +926,7 @@ ToDo - review flash block sizes for MK20-MK70
       </projectActionList>
 
       <!-- Extra Optional files for MKxxM5 -->
-      <projectActionList id="Options-file-list-MKxxM5" root="Stationery/ARM/" >
+      <projectActionList id="Options-file-list-MKxxM5" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="Clock-setup-MKxxM5" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
          <variable id="UART-setup-MKxxM5"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
          <condition variable="Clock-setup-MKxxM5" >
@@ -850,7 +941,7 @@ ToDo - review flash block sizes for MK20-MK70
       </projectActionList>
 
       <!-- Extra Optional files for MKxxM7 -->
-      <projectActionList id="Options-file-list-MKxxM7" root="Stationery/ARM/" >
+      <projectActionList id="Options-file-list-MKxxM7" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="Clock-setup-MKxxM7" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
          <variable id="UART-setup-MKxxM7"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
          <condition variable="Clock-setup-MKxxM7" >
@@ -865,7 +956,7 @@ ToDo - review flash block sizes for MK20-MK70
       </projectActionList>
 
       <!-- Extra Optional files for MKxxM10 -->
-      <projectActionList id="Options-file-list-MKxxM10" root="Stationery/ARM/" >
+      <projectActionList id="Options-file-list-MKxxM10" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="Clock-setup-MKxxM10" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
          <variable id="UART-setup-MKxxM10"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
          <condition variable="Clock-setup-MKxxM10" >
@@ -880,7 +971,7 @@ ToDo - review flash block sizes for MK20-MK70
       </projectActionList>
 
       <!-- Extra Optional files for MKxx10Z -->
-      <projectActionList id="Options-file-list-MKxxM10Z" root="Stationery/ARM/" >
+      <projectActionList id="Options-file-list-MKxxM10Z" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="Clock-setup-MKxxM10Z" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
          <variable id="UART-setup-MKxxM10Z"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
          <condition variable="Clock-setup-MKxxM10Z" >
@@ -895,11 +986,11 @@ ToDo - review flash block sizes for MK20-MK70
       </projectActionList>
 
       <!-- Extra Optional files for MKxxM12 -->
-      <projectActionList id="Options-file-list-MKxxM12" root="Stationery/ARM/" >
+      <projectActionList id="Options-file-list-MKxxM12" root="usbdm_resource_path/Stationery/ARM/" >
          <variable id="Clock-setup-MKxxM12" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
          <variable id="UART-setup-MKxxM12"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
          <condition variable="Clock-setup-MKxxM12" >
-            <copy source="Startup_Code/clock-MKxx.c"                	  target="Startup_Code/clock.c" />
+            <copy source="Startup_Code/clock-MKxxM12.c"                	  target="Startup_Code/clock.c" />
             <copy source="Project_Headers/clock_private-MKxxM12.h"  	  target="Project_Headers/clock_private.h" />
          </condition>
          <condition variable="UART-setup-MKxxM12">
@@ -931,6 +1022,17 @@ ToDo - review flash block sizes for MK20-MK70
          </memory>
          <sdidAddress value="0x40048024" />
          <!-- 
+         // KE series
+         SDID[15..0]  = Other uses
+         SDID[6..4]   = "000"
+         SDID[19..16] = Pin ID      
+         SDID[23..20] = Rev ID
+         SDID[27..24] = Sub-family ID  2 => KEx2
+            0010 KEx2 sub-family
+         SDID[31..28] = Family ID      0 => KE0x
+            0000 KE0x family.
+         mask 0xFF000000
+
          // KL series
          SDID[3..0]   = Pin ID         0,1,2,4,5,6,8 => 16,24,32,48,64,80,100p
          SDID[6..4]   = "000"
@@ -938,13 +1040,31 @@ ToDo - review flash block sizes for MK20-MK70
          SDID[15..12] = Rev ID
          SDID[19..16] = RAM Size       0..7 => .5,1,2,4,8,16,32,64 KB
          SDID[23..20] = Series ID      1 => Cortex M0+
-         SDID[27..24] = Sub-family ID  4..5 => KLx4..KLx5
+         SDID[27..24] = Sub-family ID  2,4..7 => KLx2,KLx4..KLx7
+               0010 KLx2 Subfamily (low end)
+               0100 KLx4 Subfamily (basic analog)
+               0101 KLx5 Subfamily (advanced analog)
+               0110 KLx6 Subfamily (advanced analog with I2S)
+               0111 KLx7 Subfamily (advanced analog with I2S and extended RAM)
          SDID[31..28] = Family ID      0..4 => KL0x..KL4x
+               0000 KL0x Family (low end)
+               0001 KL1x Family (basic)
+               0010 KL2x Family (USB)
+               0011 KL3x Family (Segment LCD)
+               0100 KL4x Family (USB and Segment LCD)
          mask 0xFFFF0000
 
          // K series
          SDID[3..0]   = Pin ID         0,1,2,4,5,6,8 => 16,24,32,48,64,80,100p
          SDID[6..4]   = Family ID      0=K10/12,1=K20/K22,2=K30/K11/K61,3=K40/K21,4=K60/K62,5=K70,6=KW24
+               000 K10 or K12 Family
+               001 K20 or K22 Family
+               010 K30 Family or K11 Family or K61 Family
+               011 K40 Family or K21 Family
+               100 K60 or K62 Family
+               101 K70 Family
+               110 Reserved
+               111 Reserved         
          SDID[11..7]  = DIEID "00010"/"00000"
          SDID[15..12] = Rev ID
          SDID[31..16] = 0
@@ -965,11 +1085,12 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFFFF0000" />
+         <sdidMask value="0xFF000000" />
          <sdid value="0x02070000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
-         <projectActionListRef ref="Kinetis-MKE-ProjectActions" />
+         <projectActionListRef  ref="Options-file-list-MKE0x" />
+         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE02Z32M2" family="CortexM0" subfamily="MKE02Z2">
@@ -977,10 +1098,11 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFFFF0000" />
+         <sdidMask value="0xFF000000" />
          <sdid value="0x02070000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKE0x" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
@@ -989,10 +1111,11 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x02070000" />
+         <sdidMask value="0xFF000000" />
+         <sdid value="0x02040000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKE0x" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
@@ -1666,6 +1789,8 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="MK20DX256M7" family="CortexM4" subfamily="MK20D7">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
+         <!--memoryRef ref="FTFL_PFlash0_SEC_128K_2KS" />
+         <memoryRef ref="FTFL_PFlash0_128K_2KS" /-->
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" />
