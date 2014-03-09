@@ -72,7 +72,7 @@
 
  \subsection pictureSection Pictures
    - <b>Top Image</b> - V3.1 with serial interface\n \n
-   \image html USBDM_CF_SER.jpg
+   \image html USBDM_CF_SER.png
          
  \section sectionHardwareDesign Hardware Design
    Please refer to the following document for hardware design details:

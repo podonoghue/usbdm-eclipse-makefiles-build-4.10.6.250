@@ -95,10 +95,10 @@ test
 
  <hr>
 
- \section addingTargets Adding Missing Targets to Codewarrior V6(HCS08/CFV1) or V5.1(HCS12)
- 
-    <b>Note: The above Installation process now modifies the Legacy Codewarrior installations to incorporate
-    the changes described in the second alternative below. </b>
+ \section addingTargets Adding Missing Targets to Codewarrior for HCS08/CFV1 or HCS12
+
+   <b>Note: The above Installation process now modifies the Legacy Codewarrior installations to incorporate
+      the changes described in the second alternative below. </b>
 
    USBDM 'pretends' to be a OSBDM or a TBDML for Legacy Codewarrior versions.  Unfortunately OSBDM and TBDML 
    (and hence USBDM) are no longer supported by Freescale for newer targets including some HCS12, HCS08 and 

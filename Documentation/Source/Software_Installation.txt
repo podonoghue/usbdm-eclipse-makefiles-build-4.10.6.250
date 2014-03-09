@@ -1,12 +1,14 @@
 /*!    
  \page softwareInstallationPage Software Installation
 
-<hr>
  \section windowsInstallationSection Installation of USBDM for Windows
 
-Under Windows, installation is done with standard Windows MSI files. \n
-Note that there is a separate installation for the device drivers and you must select the version appropriate to you operating system \ref driverPage.\n \n
-This will do the following:
+Under Windows, installation is done with a standard Windows MSI file <b>USBDM_X_X_X_X_Win.msi. </b>\n
+Download from: <A HREF="http://sourceforge.net/projects/usbdm/files/Version 4.10.6/Software/">USBDM Sourceforge</A>\n
+\image html MSI_Installer.png
+
+Note that there is a separate installation for the device drivers and you must select the version appropriate to your operating system see \ref driverPage.\n \n
+The USBDM installation will do the following:
   - Install stand-alone programmers for various targets
      - Kinetis
      - Coldfire V1
@@ -23,6 +25,7 @@ This will do the following:
      - MC56F80xx Unlocker
      - JB16 Setboot utility
      - GDB Servers
+  - Install documentation and Examples
   - Modify various other applications that USBDM is designed to work with.  These applications need to be installed <b>before</b> USBDM.\n
   <b>Note : </b> It may be necessary to re-install the USBDM software if Codewarrior is updated or re-installed as USBDM modified files may be replaced.
      - CodeWarrior for Coldfire V7.2
@@ -33,7 +36,6 @@ This will do the following:
      - Eclipse Juno or Kepler (need to manually select the installation directory)
      - FreeMASTER V1.3
      - CF Flasher V3.1
-  - Install documentation and Examples
 
 <hr>
  \section linuxInstallationSection Installation of USBDM for Linux
@@ -42,6 +44,7 @@ Under Linux, installation is done by standard Debian archive.
   - Install shared files to /usr/share/usbdm
   - Install executables to /usr/bin
   - Install shared libraries to /usr/lib/i386-linux-gnu/usbdm or /usr/lib/x86-linux-gnu/usbdm
+  - Modify the /etc/udev/rules.d file to allow use of the USBDM hardware as a USB device.
   - Various GUI desktop icons are created for the programmers and GDB servers.
   - Modify various other applications that USBDM is designed to work with.  These applications need to be installed <b>before</b> USBDM.\n
      - CW for MCU v10.1/v10.2

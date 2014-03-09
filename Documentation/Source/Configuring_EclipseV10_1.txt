@@ -3,45 +3,18 @@
  
 \section EclipseWizard Using the New Project Wizard to create a Project with USBDM support
 
- USBDM is now fully supported by the Codewarrior <b>New Project Wizard</b>.  The following shows the required initial 
+ USBDM is fully supported by the Codewarrior <b>New Project Wizard</b>.  The following shows the required initial 
  steps of creating a USBDM project using the wizard.
 
-<table border="0">
-   <tr>
-      <td>
-         -  Start the wizard from the pop-up menu in the Project Explorer window or from the main Menu, for 
-            example <b>New->Bareboard Project</b>. 
-      </td>
-      <td>
-         \image html "eclipseNewProjectWizard1.png"
-      </td>
-   </tr>
-   <tr>
-      <td>
-         -  Choose a suitable name for the project. 
-      </td>
-      <td>
-         \image html "eclipseNewProjectWizard2.png"
-      </td>
-   </tr>
-   <tr>
-      <td>
-         -  Select the target device or board for development. 
-      </td>
-      <td>
-         \image html "eclipseNewProjectWizard3.png"
-      </td>
-   </tr>
-   <tr>
-      <td>
-         -  Select the USDBM connection and any other connections required. 
-      </td>
-      <td>
-         \image html "eclipseV10_1_NewProjectWizard4.png"
-      </td>
-   </tr>
-</table>
- 
+   -  Start the wizard from the pop-up menu in the Project Explorer window or from the main Menu, for example <b>New->Bareboard Project</b>.\n\n
+      \image html "eclipseNewProjectWizard1.png"
+   -  Choose a suitable name for the project. \n\n
+      \image html "eclipseNewProjectWizard2.png"
+   -  Select the target device or board for development. \n\n
+      \image html "eclipseNewProjectWizard3.png"
+   -  Select the USDBM connection and any other connections required. \n\n 
+      \image html "eclipseV10_1_NewProjectWizard4.png"
+
 The remaining pages of the Wizard are independent of the target connection and allow a range of options 
 and alternative for the project.  If only a basic project is needed it is sufficient to click <i>Finish</i> 
 now. This will create a new project with a <b>Remote System</b> connection for USBDM.  \n

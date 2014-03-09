@@ -3,7 +3,7 @@
 
 \section sectionHistory Revision History
 
-USBDM.4.1.6.120 (March 2014)
+V4.1.6.120 (March 2014)
 ======================================================================================= 
    - New features in Eclipse
    	- Added project options to Eclipse plugin
@@ -13,12 +13,12 @@ USBDM.4.1.6.120 (March 2014)
    	- Standard Peripheral Library & CMSIS for STM devices
    - Bug Fixes
    	- Fixed bug affecting 9S08AC8,-QA2,-QD4 & -SF4 devices (small memory HCS08 devices)
-      - Fixed bug affecting 9s08PT16 and similar (removed needless restriction of EEPROM alignment) 
+   	- Fixed bug affecting 9s08PT16 and similar (removed needless restriction of EEPROM alignment) 
    - Firmware
 		- Greatly extended timeouts in ARM interfaces.  Improves operation with slow clocks (16kHz)
    - Stripped binaries to reduce size
 	
-USBDM.4.10.6.110 (February 2014)
+V4.10.6.110 (February 2014)
 ======================================================================================= 
    - New features in Eclipse
 	   - Added Peripheral View (Kinetis devices)

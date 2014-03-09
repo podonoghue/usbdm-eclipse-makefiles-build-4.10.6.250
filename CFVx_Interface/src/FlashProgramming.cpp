@@ -832,9 +832,6 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
       Logging::error("Failed, loadSRec() failed\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-
-   memset(&targetProgramInfo, 0, sizeof(targetProgramInfo));
-
 #if TARGET == MC56F80xx
    MemorySpace_t memorySpace = MS_XWord;
 #else      
@@ -1362,8 +1359,6 @@ static void report(const char *msg) {
 USBDM_ErrorCode FlashProgrammer::initLargeTargetBuffer(memoryElementType *buffer) {
    LOGGING;
    LargeTargetFlashDataHeader *pFlashHeader = (LargeTargetFlashDataHeader*)buffer;
-
-   memset(pFlashHeader, 0, sizeof(LargeTargetFlashDataHeader));
 
    pFlashHeader->errorCode       = nativeToTarget16(-1);
    pFlashHeader->controller      = nativeToTarget32(flashOperationInfo.controller);

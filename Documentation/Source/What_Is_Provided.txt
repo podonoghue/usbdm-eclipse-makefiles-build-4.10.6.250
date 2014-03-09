@@ -1,16 +1,19 @@
 /*!
  \page whatIsProvided What is Provided
 
- \section A Installation
+ \section A Installation Files (Available from Sourceforge)
    - Windows:
       - <b>USBDM_X_X_X_Win.msi</b> - Installer for USBDM software.
-      - <b>USBDM_Drivers_X_X_X_Win_x32.msi</b> - Installer for the USBDM drivers for 32-bit windows.
-      - <b>USBDM_Drivers_X_X_X_Win_x64.msi</b> - Installer for the USBDM drivers for 64-bit windows.
+      - <b>USBDM_Drivers_X_X_X_Win_x32.msi</b> - Installer for the USBDM drivers for windows 7 32-bit.
+      - <b>USBDM_Drivers_X_X_X_Win_x64.msi</b> - Installer for the USBDM drivers for windows 7 64-bit.
+      - <b>USBDM_Drivers_X_X_X_WinXP_x32.msi</b> - Installer for the USBDM drivers for Win-XP 32-bit.
+      - <b>USBDM_Drivers_X_X_X_WinXP_x64.msi</b> - Installer for the USBDM drivers for Win-XP 64-bit.
    - Linux:
-      - tar achive
+      - <b>usbdm_X.X.X.X-1-i386.deb</b> - Debian installer for 32-bit Linux
+      - <b>usbdm_X.X.X.X-1-amd64.deb</b> - Debian installer for 64-bit Linux
       
 \section B Other Files
-   - Source code is usually available as a Zip file on Sourceforge or as a GIT repository on GITHUB
+   - Source code is available on GITHUB https://github.com/podonoghue
    
  \section C PCB 
    This folder contains the files necessary to produce the USBDM hardware
@@ -18,8 +21,7 @@
    -  Bill of materials
    -  Schematic & assembly layouts
 
- \section D Source folder
-   This contains the sources for the software (above DLLs and Firmware).
+ \section D Source
    
  \subsection EclipseFiles Eclipse Archive Files
    - <b>The following files are archives exported from Eclipse CDT for windows.</b> \n

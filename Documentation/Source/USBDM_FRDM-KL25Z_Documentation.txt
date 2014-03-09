@@ -1,42 +1,45 @@
 /*!
-  \mainpage USBDM-FRDM - USBDM Debugger based on Freescale FRDM-KL25Z board
+  \mainpage USBDM-FRDM - USBDM Debugger based on Freescale FRDM-xxxx board
 
  \section introSection Introduction
-   The FRM-KL25 board from Freescale includes a minimal SWD based debugging interface for ARM Kinetis targets.  The interface
+   The FRM-xxxx boards from Freescale includes a minimal SWD based debugging interface for ARM Kinetis targets.  The interface
    hardware is simple but flexible enough to be used with a wide range of Kinetis devices.  The board includes provision for 
-   the connector necessary to allow programming of external devices as well as the MKL25Z128M4 device on the board.  
+   the connector necessary to allow programming of external devices as well as the target device on the board.  
    
-   Unfortunately the debugger firmware available with the FRDM-KL25 is specifically tied to the target chip on the FRDM board 
-   (MKL25Z128M4).  In fact, it is tied to the individual serial number of the chip on the board and cannot be even used to program other
-   MKL25Z128M4 devices.  Changing the chip on the board renders the debugging interface useless. 
+   Unfortunately the existing debugger firmware available with the FRDM-xxxx boards is specifically tied to the target chip on the board 
+   (e.g. MKL25Z128M4).  In fact, it is tied to the <b>individual</b> serial number of the <b>chip</b> on the board and cannot be even used to program other
+   otherwise identical devices.  Changing the chip on the board renders the debugging interface useless. 
    
-   This manual describes a version of the USBDM firmware that can be loaded into the KL20 based debugging interface of the FRDM board.
-   This allows its use as a general purpose programmer and debugger for Kinetis devices (including the KL25 on the board).  This provides a
-   very inexpensive debugger tool.
+   This manual describes a version of the USBDM firmware that can be loaded into the KL20 based debugging interface of the FRDM boards.
+   This allows its use as a general purpose programmer and debugger for Kinetis devices (including the on board target chip e.g. KL25 on the board).
+   This provides a very inexpensive debugging tool.
     
+   While the USBDM firmware may be used with any of the FRDM-xxxx boards it is recommended to use a FRDM-KL25Z or FRDM-K20D50M board as some of the early
+   versions of the other boards have various hardware errors that make connection to an external device difficult.
+   
  \subsection featureSection Features
-   This version of the USBDM code combined with the FRDM-KL25 board provides the following features:
+   This version of the USBDM code combined with the FRDM-xxxx board provides the following features:
    -	A SWD interface for programming and debugging of <b>Kinetis ARM-Cortex</b> microcontrollers.
-   -  Both the on-board MKL25Z128M4 and external devices may be programmed.
+   -  Both the on-board target device (e.g. MKL25Z128M4) and external devices may be programmed.
    -  Installation of the USBDM software does not require any tools other than the FRDM-KL25Z board.
-   -  The original board software may be restored if USBDM is not found suitable.  
    -  Compatible IDEs
       - Codewarrior V10.x (Eclipse version)
          - Kinetis <i>USBDM debug interface</i>
-      - Eclipse JUNO
+      - Eclipse Kepler
          - Kinetis <i>New Project Wizard</i>
          - Kinetis <i>USBDM debug target</i>
-         - Integration of CodeSourcery Lite for ARM
-   -  Linux compatible
-   -  Window compatible
-   -  The Firmware in the BDM may be updated using the FRDM-KL25 Bootloader function.
+         - Integration of GNU tools for ARM
    -  Stand-alone Kinetis programmer utility.
+   -  Linux compatible
+   -  Windows compatible
+   -  The Firmware in the BDM may be updated using the FRDM-KL25 Bootloader function.
+   -  The original board software may be restored if USBDM is not found suitable.  
 
 <b>The capabilities and features of the USBDM interface varies between the different versions of hardware. 
 Not all of the functionality described in the following pages may apply to this version.</b>
        
  \subsection pictureSection Pictures
-   - <b>Image</b> - FRDM-KL25 with debug cable and Connector (also on board)\n \n
+   - <b>Image</b> - FRDM-KL25 with debug cable and Connector (also shown soldered on the board)\n \n
    \image html "FRDM-Cable.png"
          
  \section sectionCredits Credits

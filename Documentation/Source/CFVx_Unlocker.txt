@@ -1,10 +1,11 @@
 /*!
  \page unlockingCFVxPage Unlocking Coldfire V2, 3 or 4 devices. (Basic Operation)
  
+\section Preamble
+
    The CF_Unlocker utility allows coldfire V2, 3 and 4 chips to be unsecured 
    and erased using the JTAG interface.\n
 
-\section Preamble
    Most of the Coldfire chips require certain signals to be changed to enable the 
    JTAG interface.  Check the details of your hardware and ensure that any required links have 
    been changed before running <b>CF_Unlocker</b>.
@@ -67,11 +68,11 @@
 /*!
 \page unlockingCFVxPageAdvanced Unlocking Coldfire V2, 3 or 4 devices. (Advanced Operation)
 
+\section Preamble
 
    The CF_Unlocker utility allows coldfire V2, 3 and 4 chips to be unsecured 
    and erased using the JTAG interface.\n
 
-\section Preamble
    Most of the Coldfire chips require certain signals to be changed to enable the 
    JTAG interface.  Check the details of your hardware and ensure that any required links have 
    been changed before running <b>CF_Unlocker</b>.

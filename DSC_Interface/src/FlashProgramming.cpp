@@ -66,7 +66,7 @@
 #include <math.h>
 #include <string>
 #include <ctype.h>
-#include <memory>
+#include <memory.h>
 #include "Common.h"
 #include "Log.h"
 #include "FlashImage.h"
@@ -1022,6 +1022,7 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType    *bu
       Logging::print("Reloading due to change in flash code\n");
       // Write the flash programming code to target memory
       if (WriteMemory(memorySpace, codeLoadSize, codeLoadAddress, (uint8_t *)buffer) != BDM_RC_OK) {
+         Logging::print("WriteMemory() Failed, rc = %d\n");
          return PROGRAMMING_RC_ERROR_BDM_WRITE;
       }
    }
@@ -1301,7 +1302,7 @@ USBDM_ErrorCode getRunStatus(void) {
 }
 #endif
 
-#if 0 && defined(LOG) && (TARGET==ARM)
+#if defined(LOG) && (TARGET==ARM) && 0
 //! Report ARM status
 //!
 //! @param msg - message to print
@@ -1521,6 +1522,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    USBDM_Connect();
    ReadPC(&value);
    Logging::print("Start PC = 0x%08X, end PC = 0x%08X\n", targetRegPC, value);
+
    // Read the flash parameters back from target memory
    ResultStruct executionResult;
    if (ReadMemory(memorySpace, sizeof(ResultStruct),
@@ -2131,7 +2133,7 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, Memory
       flashImage.loadDataBytes(size, securityAddress, data, dontOverwrite);
 #ifdef LOG
       Logging::print("Setting security region, \n"
-            "              mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
+            "              mem[0x%06X-0x%06X] = \n", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
       Logging::printDump(data, size, securityAddress);
 #endif
    }
@@ -2601,11 +2603,17 @@ USBDM_ErrorCode FlashProgrammer::doProgram(FlashImage *flashImage) {
    Logging log("FlashProgrammer::doProgram");
    // Load target flash code to check programming options
    flashOperationInfo.alignment = 2;
-   loadTargetProgram(OpBlankCheck);
    USBDM_ErrorCode rc;
+   rc = loadTargetProgram(OpBlankCheck);
+   if (rc != BDM_RC_OK) {
+      return rc;
+   }
    if ((targetProgramInfo.programOperation&DO_BLANK_CHECK_RANGE) == 0) {
       // Do separate blank check if not done by program operation
       rc = doBlankCheck(flashImage);
+   }
+   if (rc != BDM_RC_OK) {
+      return rc;
    }
    if ((targetProgramInfo.programOperation&DO_VERIFY_RANGE) == 0) {
       progressTimer->restart("Programming");

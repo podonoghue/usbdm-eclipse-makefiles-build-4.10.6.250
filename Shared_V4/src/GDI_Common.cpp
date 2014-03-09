@@ -112,6 +112,9 @@ bool usbdm_gdi_dll_open(void);
 bool usbdm_gdi_dll_close(void);
 
 USBDMStatus_t USBDMStatus;
+#if TARGET == MC56F80xx
+dscInfo_t     dscInformation;
+#endif
 
 #ifdef FLASH_PROGRAMMING
 static FlashProgrammer *flashProgrammer = NULL;
@@ -407,6 +410,10 @@ USBDM_ErrorCode rc;
          }
       }
 #elif TARGET == MC56F80xx
+      rc = getBDMStatus(&USBDMStatus);
+      if (rc != BDM_RC_OK) {
+         break;
+      }
       if (retryMode & retryWithInit) {
          dscInformation.size = sizeof(dscInfo_t);
          rc = DSC_GetInfo(&dscInformation);
@@ -603,7 +610,7 @@ USBDM_ErrorCode initialConnect(void) {
    // Initial connect using all strategies
    rc = targetConnect(initialConnectOptions);
 
-#if TARGET != ARM
+#if (TARGET != ARM) && (TARGET != MC56F80xx)
    // Trying to halting a secured device causes havoc
    USBDM_TargetHalt();
    USBDM_TargetHalt();
@@ -1406,7 +1413,6 @@ DiReturnT DiMemoryRead ( DiAddrT       daTarget,
 uint32_t        address      = (U32c)daTarget;   // Load address
 MemorySpace_t   memorySpace;                     // Memory space & size
 uint32_t        endAddress;                      // End address
-//int             organization;
 
    switch(daTarget.dmsMemSpace) {
       case 0 : // Treat 0 as byte
@@ -2035,8 +2041,32 @@ DiReturnT DiCpuCurrent ( DiUInt32T *dnCpuId ) {
 //!
 USBDM_GDI_API
 DiReturnT DiProcess ( void *information ) {
+#if 0
+   uint8_t  *info8  = (uint8_t*) information;
+   uint32_t *info32 = (uint32_t*)information;
 
-   Logging::print("DiProcess() - not implemented\n");
+   uint32_t *dataPtr = (uint32_t *)info32[1];
+
+   Logging::print("DiProcess() - &information = %p \n"
+                  "               information = %p \n"
+                  "              &DiProcess() = %p \n",
+                  &information, information, &DiProcess);
+
+   Logging::print("information[0] = %p \n"
+                  "information[1] = %p \n"
+                  "information[2] = %p \n",
+                  info32[0],info32[1],info32[2]);
+
+   Logging::print("DiProcess() - not implemented, data = \n"
+                  "=================================================================\n");
+   Logging::printDump(info8, 0x100, (uint32_t)info8);
+   Logging::print("=================================================================\n");
+
+   Logging::print("DiProcess() - data = \n"
+                  "=================================================================\n");
+   Logging::printDump((uint8_t*)dataPtr, 0x100, (uint32_t)dataPtr);
+   Logging::print("=================================================================\n");
+#endif
    return setErrorState(DI_ERR_NOTSUPPORTED);
 }
 

@@ -4,10 +4,11 @@
 SRC += DSC_Utilities.cpp
 SRC += FlashProgramming.cpp
 SRC += USBDM_GDI.cpp
+SRC += GDI_Common.cpp
 SRC += Version.rc
 
 # Shared files $(SHARED_SRC)
-VPATH := $(SHARED_SRC) $(VPATH)
+VPATH := $(VPATH) $(SHARED_SRC)
 INCS  += -I$(SHARED_SRC)
 SRC += ApplicationFiles.cpp
 SRC += AppSettings.cpp

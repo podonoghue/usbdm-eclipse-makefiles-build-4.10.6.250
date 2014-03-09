@@ -1,135 +1,132 @@
 /*!
 \page codeSourceryNewProject Eclipse - New Project Wizard
 
-This page provides brief instructions on how to create a C or C++ project for a Coldfire or Kinetis
+\section usbdmForEclipse USBDM Functions in Eclipse
+
+The following sections assume that the required software has been installed \ref codeSourceryInstallPage
+   
+After installing the USBDM plugin for Eclipse there will be a new menu item allowing convenient access to the USBDM functions.
+\image html "USBDMMenu.png"
+
+-	<b>New Project...</b> - Create a new USBDM project for a Coldfire or ARM device
+-	<b>Open Peripheral View</b> - Open the USBDM Peripheral register view for use during debugging
+-	<b>New Example...</b> - Create a new USBDM example project
+-	<b>Start ARM GDB Server</b> - Launch the ARM GDB Server
+-	<b>Start CFV1 GDB Server</b> - Launch the Coldfire V1 GDB Server
+-	<b>Start CFV2,3,4 GDB Server</b> - Launch the  Coldfire V2,3,4 GDB Server
+-	<b>Configure</b> - Configure USBDM options within Eclipse
+
+\section creatingEclipseProject Creating an Eclipse Cross-Compiler Project with USBDM
+
+This section provides brief instructions on how to create a C or C++ project for a Coldfire or Kinetis
 target using Eclipse and either ARM Ltd or Codesourcery Lite tools.  
 
-It assumes that the required software has been installed \ref codeSourceryInstallPage
-   
-\section creatingEclipseProject Creating an Eclipse Cross-Compiler Project with USBDM
-The following example is for a Coldfire target but a similar process is followed for a Kinetis device.\n
+The following example is for an Kinetis target but a similar process is followed for a Coldfire device.\n
+
+- Select <i>USBDM->New Project...</i> from the Menu.\n
+
+\image html USBDMMenuNewProject.png
+
+<b>Create a new USBDM C/C++ Project</b>\n
+	- Type in a Project Name\n
+	- Select the desired Coldfire or Kinetis target in C or C++ versions as preferred. \n
+	- Click <i>Next</i>
+
+\image html 2.USBDMCreateProject.png
+
+<b>Select project parameters</b>
+- USBDM Parameters         	
+	- Select the Build Tools being used (choice only available for Kinetis devices)				
+	- Select the device to be used.  
+- Linker Parameters
+   - Auto-generate linker script - The USBDM Wizard will automatically create a linker script based upon the device's
+     memory map.  The linker script is designed to work with the startup files provided by the Wizard.
+   - Linker Script is used to use a pre-existing linker script instead of automatically generating one.  Codesourcery
+     provides various linker scripts that may be used.  This linker script will be <b>copied</b> into the project 
+     directory.   
+- Click <i>Next</i> 
+
+\image html 3.USBDMProjectParameters.png
+
+<b>Select project options</b>         	
+	- This page is specific to a particular device and the options will vary.			
+	- Choose which optional components (files) to add to the project.  Some of these will require manual customization upon completion of the Wizard.
+	This is often the case for CMSIS on smaller devices where the heap and stack sizes as well as the CMSIS options will need to be adjusted for the 
+	very limited amount of RAM available.
+	- Click <i>Next</i> 
+	
+\image html 4.USBDMProjectOptions.png
+
+<b>Select USBDM Tool Settings</b>
+
+These values are used to update system-level settings and affect all existing and new projects.  It is usually
+only necessary to set these value once for Eclipse.  These values may also be accessed from the USBDM menu.
+- ARM Ltd GNU Tools for ARM
+- Codesourcery Tools for ARM
+- Codesourcery Tools for Coldfire
+   - The Eclipse tools need to know the target-specific tool prefix.\n
+     The prefix <b>m68k-elf-</b> is usual for M68K (Coldfire etc) targets.\n
+     The prefix <b>arm-eabi-</b> is usual for ARM targets.\n
+   - Eclipse needs to know where to find the GCC Tools.  
+   These two options can be conveniently set by using the Browse Button to browse to the 
+   installation location of the XXXXXgcc.exe program included with the tools e.g. arm-eabi-gcc.exe.\n
+   If a particular toolchain is not being used then the entries should be cleared.  
+- Make command \n
+  Under windows it is necessary to provide a GNU make tool to use in project builds.  
+  USBDM includes a copy of the GNU make utility renamed as usbdm-make.  This is a convenient choice.
+- Rm (delete) command \n
+  Under windows it is necessary to provide a usable delete command to use in project builds.  
+  USBDM includes a copy of the GNU rm utility renamed as usbdm-rm.  This is a convenient choice.
+- Click <i>Next</i> 
+
+\image html 5.USBDMToolSettings.png
+
+<b>Project Structure</b>
+
 <table border="0">
    <tr>
       <td>
-         - Select <i>File->New->Project</i> from the Menu\n
-         The dialogue shown should appear.\n
-         Select the C/C++ Project (USBDM) to start creating a project.\n
-         Click <i>Next</i>
-      </td>
-      <td colspan=2>
-         \image html "1.NewProject.png"
-      </td>
-   </tr>
-   <tr>
-      <td>
-         - Type in a Project Name\n
-         - Select the desired Coldfire or Kinetis target in C or C++ versions as preferred. \n
-
-         - Click <i>Next</i>
-      </td>
-      <td colspan=2>
-         \image html 2.USBDMCreateProject.png
-      </td>
-   </tr>
-   <tr>
-      <td>
-         - USBDM Parameters         	
-         	- Select the Build Tools being used (choice only available for Kinetis devices)				
-         	- Select the device to be used.  
-         - Linker Parameters
-            - Auto-generate linker script - The USBDM Wizard will automatically create a linker script based upon the device's
-              memory map.  The linker script is designed to work with the startup files provided by the Wizard.
-            - Linker Script is used to use a pre-existing linker script instead of automatically generating one.  Codesourcery
-              provides various linker scripts that may be used.  This linker script will be <b>copied</b> into the project 
-              directory.   
-         - Click <i>Next</i> 
-      </td>
-      <td colspan=2>
-         \image html 3.USBDMProjectParameters.png
-      </td>
-   </tr>
-   
-   <tr>
-      <td>
-         - USBDM Options         	
-         	- This page is specific to a particular device and the options will vary.			
-         	- Choose which optional components (files) to add to the project.  Some of these will require manual customization upon completion of the Wizard.
-         	This is often the case for CMSIS on smaller devices where the heap and stack sizes as well as the CMSIS options will need to be adjusted for the 
-         	very limited amount of RAM available.
-         - Click <i>Next</i> 
-      </td>
-      <td colspan=2>
-         \image html 4.USBDMProjectOptions.png
-      </td>
-   </tr>
-   
-   <tr>
-      <td>
-         These values are used to update system-level settings and affect all existing and new projects.  It is usually
-         only necessary to set these value once for Eclipse.\n
-         These values may also be accessed from the USBDM menu.
-         - ARM Ltd GNU Tools
-         - Codesourcery Tools for ARM
-         - Codesourcery Tools for Coldfire
-	         - The Eclipse tools need to know the target-specific tool prefix.\n
-	           The prefix <b>m68k-elf-</b> is usual for M68K (Coldfire etc) targets.\n
-	           The prefix <b>arm-eabi-</b> is usual for ARM targets.\n
-	         - Eclipse needs to know where to find the GCC Tools.  
-	         These two options can be conveniently set by using the Browse Button to browse to the 
-	         installation location of the XXXXXgcc.exe program included with the tools e.g. arm-eabi-gcc.exe.\n
-	         If a particular toolchain is not being used then the entries should be cleared.  
-         - Make command \n
-	        Under windows it is necessary to provide a GNU make tool to use in project builds.  
-	        USBDM includes a copy of the GNU make utility renamed as usbdm-make.  This is a convenient choice.
-         - Rm (delete) command \n
-	        Under windows it is necessary to provide a usable delete command to use in project builds.  
-	        USBDM includes a copy of the GNU rm utility renamed as usbdm-rm.  This is a convenient choice.
-         - Click <i>Next</i> 
-      </td>
-      <td colspan=2>
-         \image html 5.USBDMToolSettings.png
-      </td>
-   </tr>
-   
-   <tr>
-      <td>
-         The Wizard will create a basic project with a brief demonstration mainline.\n
-         The project will contain optional components such as CMSIS-RTX if these option were selected.
-         It should now be possible to build the project using the menu item <b>Project->Build All</b>\n\n
-         Expanding the project will display the project contents as shown:
-         - Project_Headers
-            - derivative.h - for convenience.  Just includes the target-specific header file.
-            - MCF51CN128 - Target specific header file.  This is a just a place holder.\n
-              Freescale provide various header files for their devices.  However it would not
-              be legal to distribute these with USBDM.\n
-              It is possible to add header files to the USBDM installation.  Refer to the header file 
-              provided for instructions.
-         - Source
-            - This the main source folder.  At the moment it contains only the example main.cpp\n
-              This program is a simple demo.  It includes an example of implementing an interrupt handler that
-              will work with the provided vector table (see below).
-         - Startup_Code
-            - The Codesourcery software assumes certain startup actions to support the C library.  The target
-              processor also may require some low-level initialization.  These file provide generic examples
-              that may be modified for a particular target.  They have been tested with a few devices but are
-              unlikely to be suitable for every target.\n
-              It also contain a file describing a generic vector table for the device with default handler. \n
-              These are based on the Codesourcery documentation or provided examples.
-         - Debug
-            - This directory contains the compiled files for the Debug target.  These are created by the 
-              Build operation.
-         - Project_Settings
-            - The folder contains the target linker files either generated or copied into the project.  It also
-              contains a default launch configuration for the <b>Debug</b> target for use with the USBDM debugger. 
-         - Additional folders may be present e.g. CMSIS
+			\image html ProjectExplorer.png
       </td>
       <td>
-         \image html ProjectExplorer.png
+			The Wizard will create a basic project with a brief demonstration mainline.\n
+			The project will contain optional components such as CMSIS-RTX if these option were selected.\n
+			Expanding the project will display the project contents as shown:
+			- Project_Headers
+			   - derivative.h - for convenience. Just includes the target-specific header file.
+			   - MK20DX128M5.h - Target specific header file. This may be a place holder if USBDM doesn't
+			     include the required header file.
+			     Freescale provide various header files for their devices.  However it would not
+			     be legal to distribute these with USBDM.
+			     It is possible to add header files to the USBDM installation.  Refer to the skeleton header
+			     file provided for instructions.
+			   - Various other files will be present dependent on the device type and project options chosen.
+			     For example <b>clock_private.h</b> and <b>uart.h</b> may be present.
+			- Source
+			   - This the main source folder.  In this case it contains an example main.cpp and CMSIS_RTX 
+			     configuration file (see below for more details).\n
+			- Startup_Code
+			   - The C compiler assumes certain startup actions to support the C library.  The target
+			     processor also may require some low-level initialization.  These files provide generic examples
+			     that may be modified for a particular target.  They have been tested with a few devices but are
+			     unlikely to be suitable for every target.\n
+			     It also contain a file describing a generic vector table for the device with default handler. \n
+			     These are based on the Codesourcery documentation or provided examples.
+			- cmsis
+			   - The source code for CMSIS-RTX library is included in this folder.  While it is possible to use
+			     libraries to achieve the same thing this arrangement allows more convenient source debugging and
+			     RTX configuration. 
+			- Debug
+			   - This directory contains the compiled files for the Debug target.  These are created by the 
+			     Build operation.
+			- Project_Settings
+			   - The folder contains the target linker files either generated or copied into the project.  It also
+			     contains a default launch configuration for the <b>Debug</b> target for use with the USBDM debugger. 
       </td>
    </tr>
 </table>
 
-- You may now build the project by clicking on the hammer icon.
+It should now be possible to build the project using the menu item <b>Project->Build All</b> or by clicking on the hammer icon.
 
 \section eclipseCustomization Customizing options in Eclipse using the Configuration Editor
 Several of the project files (C source & header files and linker files) contain configuration information with mark-up in the comments section
