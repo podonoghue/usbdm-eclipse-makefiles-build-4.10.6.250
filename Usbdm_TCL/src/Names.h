@@ -63,4 +63,7 @@ const char *getSRSLName(uint32_t srslValue);
 const char *getSRSHName(uint32_t srshValue);
 const char *getDpRegName(int reg);
 char const *ARM_GetRegisterName( unsigned int regAddr );
+
+char const *getPinLevelName(PinLevelMasks_t level);
+
 #endif // NAMES_H_

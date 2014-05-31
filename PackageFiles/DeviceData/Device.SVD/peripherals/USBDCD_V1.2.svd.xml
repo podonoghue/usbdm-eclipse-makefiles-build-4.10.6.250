@@ -1,6 +1,6 @@
 <!--
 Devices using this peripheral: 
-   MK21F12
+      MK21F12
 -->
       <peripheral sourceFile="USBDCD_V1.2">
          <name>USBDCD</name>

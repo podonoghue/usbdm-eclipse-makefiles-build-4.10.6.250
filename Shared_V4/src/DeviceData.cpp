@@ -46,16 +46,6 @@ using namespace std;
 
 static string emptyString("");
 
-//static void strUpper(char *s) {
-//   if (s == NULL) {
-//	   return;
-//   }
-//   while (*s != '\0') {
-//      int ch = ::toupper(*s);
-//      *s++ = ch;
-//   }
-//}
-
 //! Allows meaningful printing of memory ranges
 //!
 std::ostream& operator<<(std::ostream& s, const MemoryRegion mr) {

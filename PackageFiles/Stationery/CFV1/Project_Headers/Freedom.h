@@ -35,6 +35,31 @@
 #define UART0_TX_PIN_FN        2
 #endif
 
+#ifdef MCU_mcf51ju128
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_ORANGE_PORT      A
+#define LED_ORANGE_NUM       0
+
+#define LED_GREEN_PORT       A
+#define LED_GREEN_NUM        1
+
+//=================================================================================
+// UART Port bit masks
+//
+// D6, MXC_PTDPF1, FN=2
+#define UART0_RX_PIN_PORT      C   // Port name
+#define UART0_RX_PIN_NUM       7   // Bit on port
+#define UART0_RX_MUX_NUM       1   // Mux reg # (4-(pin/2))
+#define UART0_RX_PIN_FN        2   // Mux function number
+
+#define UART0_TX_PIN_PORT      C
+#define UART0_TX_PIN_NUM       6
+#define UART0_TX_MUX_NUM       1
+#define UART0_TX_PIN_FN        2
+#endif
+
 #if defined(MCU_MKE02Z2)
 //=================================================================================
 // LED Port bit masks

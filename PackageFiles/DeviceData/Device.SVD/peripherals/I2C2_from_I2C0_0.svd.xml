@@ -1,6 +1,8 @@
 <!--
 Devices using this peripheral: 
-   MK21F12
+      MK21F12
+      MK22F12
+      MK64F12
 -->
       <peripheral derivedFrom="I2C0">
          <name>I2C2</name>

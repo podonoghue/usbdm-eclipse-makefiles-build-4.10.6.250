@@ -1,6 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MKL02Z4
+      MK22F12
+      MKL02Z4
 -->
       <peripheral sourceFile="PORTA_1">
          <name>PORTA</name>

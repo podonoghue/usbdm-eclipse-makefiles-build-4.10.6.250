@@ -1,7 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MK10D5
-   MK20D5
+      MK10D5
+      MK20D5
 -->
       <peripheral sourceFile="SMC_1">
          <name>SMC</name>

@@ -68,27 +68,30 @@ extern "C" UINT __stdcall CheckCodewarriorPaths(MSIHANDLE hInstall) {
    char path[MAX_PATH];
    DWORD filePathLength;
    DirectoryQuad pathsToCheck[] = {
-         // directory                         feature                            subdir         description
-         {"D.CW_FOR_MCU_V10_4",              "F.CW_FOR_MCU_V10_4",              "MCU",          "Codewarrior Interfaces\n     +MCU V10.4"},
-         {"D.CW_FOR_MCU_V10_3",              "F.CW_FOR_MCU_V10_3",              "MCU",          "Codewarrior Interfaces\n     +MCU V10.3"},
-         {"D.CW_FOR_MCU_V10_2",              "F.CW_FOR_MCU_V10_2",              "MCU",          "Codewarrior Interfaces\n     +MCU V10.2"},
-         {"D.CW_FOR_MCU_V10_1",              "F.CW_FOR_MCU_V10_1",              "MCU",          "Codewarrior Interfaces\n     +MCU V10.1"},
-         {"D.CODEWARRIOR_COLDFIRE_V7_2",     "F.CODEWARRIOR_COLDFIRE_V7_2",     "bin",          "Codewarrior Interfaces\n     +Coldfire V7.2"},
-         {"D.CODEWARRIOR_COLDFIRE_V7_1",     "F.CODEWARRIOR_COLDFIRE_V7_1",     "bin",          "Codewarrior Interfaces\n     +Coldfire V7.1"},
-         {"D.CODEWARRIOR_COLDFIRE_V7",       "F.CODEWARRIOR_COLDFIRE_V7",       "bin",          "Codewarrior Interfaces\n     +Coldfire V7.x"},
-         {"D.CODEWARRIOR_DSC_V8_3",          "F.CODEWARRIOR_DSC_V8_3",          "bin",          "Codewarrior Interfaces\n     +DSC56800E B8,3"},
-         {"D.CW_FOR_MICROCONTROLLERS_V6_3",  "F.CW_FOR_MICROCONTROLLERS_V6_3",  "bin",          "Codewarrior Interfaces\n     +Microcontrollers V6.3"},
-         {"D.CW_FOR_MICROCONTROLLERS_V6_2",  "F.CW_FOR_MICROCONTROLLERS_V6_2",  "bin",          "Codewarrior Interfaces\n     +Microcontrollers V6.2"},
-         {"D.CW_FOR_MICROCONTROLLERS_V6",    "F.CW_FOR_MICROCONTROLLERS_V6",    "bin",          "Codewarrior Interfaces\n     +Microcontrollers V6.x"},
-         {"D.CWS12_X_V5_1",                  "F.CWS12_X_V5_1",                  "bin",          "Codewarrior Interfaces\n     +S12(X) V5.1"},
-         {"D.FREEMASTER_V1_3",               "F.FREEMASTER_V1_3",               "plugins",      "FreeMASTER V1.3"},
-         {"D.CFFLASHER_V3_1",                "F.CFFLASHER_V3_1",                "BDM Protocol", "CF Flasher V3.1"},
-         {"D.CODESOURCERY_CF",               "F.CODESOURCERY_CF",               "bin",          "Sourcery Interfaces\n     +Codebench Lite for Coldfire ELF"},
-         {"D.CODESOURCERY_KINETIS",          "F.CODESOURCERY_KINETIS",          "bin",          "Sourcery Interfaces\n     +Codebench Lite for Kinetis EABI"},
-         {"D.CODESOURCERY_ARM",              "F.CODESOURCERY_ARM",              "bin",          "Sourcery Interfaces\n     +Codebench Lite for ARM EABI"},
-         {"D.ECLIPSE_CDT_JUNO",              "F.ECLIPSE_CDT_JUNO",              "dropins",      "Eclipse CDT Interfaces\n     +Eclipse Juno Plugin"},
-         {"D.ECLIPSE_CDT_KEPLER",            "F.ECLIPSE_CDT_KEPLER",            "dropins",      "Eclipse CDT Interfaces\n     +Eclipse Kepler Plugin"},
-         {NULL,                              NULL,                              NULL,      NULL}
+         // directory                         feature                            subdir               description
+         {"D.CW_FOR_MCU_V10_7",              "F.CW_FOR_MCU_V10_7",              "MCU",               "Codewarrior Interfaces\n     +MCU V10.7"},
+         {"D.CW_FOR_MCU_V10_6",              "F.CW_FOR_MCU_V10_6",              "MCU",               "Codewarrior Interfaces\n     +MCU V10.6"},
+         {"D.CW_FOR_MCU_V10_5",              "F.CW_FOR_MCU_V10_5",              "MCU",               "Codewarrior Interfaces\n     +MCU V10.5"},
+         {"D.CW_FOR_MCU_V10_4",              "F.CW_FOR_MCU_V10_4",              "MCU",               "Codewarrior Interfaces\n     +MCU V10.4"},
+         {"D.CW_FOR_MCU_V10_3",              "F.CW_FOR_MCU_V10_3",              "MCU",               "Codewarrior Interfaces\n     +MCU V10.3"},
+         {"D.CW_FOR_MCU_V10_2",              "F.CW_FOR_MCU_V10_2",              "MCU",               "Codewarrior Interfaces\n     +MCU V10.2"},
+         {"D.CW_FOR_MCU_V10_1",              "F.CW_FOR_MCU_V10_1",              "MCU",               "Codewarrior Interfaces\n     +MCU V10.1"},
+         {"D.CODEWARRIOR_COLDFIRE_V7_2",     "F.CODEWARRIOR_COLDFIRE_V7_2",     "bin",               "Codewarrior Interfaces\n     +Coldfire V7.2"},
+         {"D.CODEWARRIOR_COLDFIRE_V7_1",     "F.CODEWARRIOR_COLDFIRE_V7_1",     "bin",               "Codewarrior Interfaces\n     +Coldfire V7.1"},
+         {"D.CODEWARRIOR_COLDFIRE_V7",       "F.CODEWARRIOR_COLDFIRE_V7",       "bin",               "Codewarrior Interfaces\n     +Coldfire V7.x"},
+         {"D.CODEWARRIOR_DSC_V8_3",          "F.CODEWARRIOR_DSC_V8_3",          "bin",               "Codewarrior Interfaces\n     +DSC56800E B8,3"},
+         {"D.CW_FOR_MICROCONTROLLERS_V6_3",  "F.CW_FOR_MICROCONTROLLERS_V6_3",  "bin",               "Codewarrior Interfaces\n     +Microcontrollers V6.3"},
+         {"D.CW_FOR_MICROCONTROLLERS_V6_2",  "F.CW_FOR_MICROCONTROLLERS_V6_2",  "bin",               "Codewarrior Interfaces\n     +Microcontrollers V6.2"},
+         {"D.CW_FOR_MICROCONTROLLERS_V6",    "F.CW_FOR_MICROCONTROLLERS_V6",    "bin",               "Codewarrior Interfaces\n     +Microcontrollers V6.x"},
+         {"D.CWS12_X_V5_1",                  "F.CWS12_X_V5_1",                  "bin",               "Codewarrior Interfaces\n     +S12(X) V5.1"},
+         {"D.FREEMASTER_V1_3",               "F.FREEMASTER_V1_3",               "plugins",           "FreeMASTER V1.3"},
+         {"D.CFFLASHER_V3_1",                "F.CFFLASHER_V3_1",                "BDM Protocol",      "CF Flasher V3.1"},
+         {"D.CODESOURCERY_CF",               "F.CODESOURCERY_CF",               "bin",               "Sourcery Interfaces\n     +Codebench Lite for Coldfire ELF"},
+         {"D.CODESOURCERY_KINETIS",          "F.CODESOURCERY_KINETIS",          "bin",               "Sourcery Interfaces\n     +Codebench Lite for Kinetis EABI"},
+         {"D.CODESOURCERY_ARM",              "F.CODESOURCERY_ARM",              "bin",               "Sourcery Interfaces\n     +Codebench Lite for ARM EABI"},
+         {"D.ECLIPSE_CDT",                   "F.ECLIPSE_CDT",                   "dropins",           "Eclipse CDT Interfaces\n     +Eclipse Plugin"},
+         {"D.KINETIS_DESIGN_STUDIO",         "F.KINETIS_DESIGN_STUDIO",         "eclipse/dropins",   "Freescale Design Studio"},
+         {NULL,                              NULL,                              NULL,                NULL}
    };
    ::hInstall = hInstall;
    printLog(hInstall,  "CheckCodewarriorPaths()\n");

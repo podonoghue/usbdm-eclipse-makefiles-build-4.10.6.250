@@ -70,10 +70,11 @@
 \endif
 
  \subsection pictureSection Pictures (USBDM_JS16_SWD - HCS08/HCS12/CFV1/ARM-SWD)
-   - <b>Top Image</b>
-   \image html "USBDM_JS16_SWD_Top.jpg"
-   - <b>Bottom Image</b>
-   \image html "USBDM_JS16_SWD_Bottom.jpg"
+   - <b>USBDM Minimal HCS08/HCS12/CFV1 & SWD interfaces</b>
+   \image html "USBDM_JS16_SWD_Top.png"
+         
+   - <b>USBDM HCS08/HCS12/CFV1, SWD & Serial interfaces with manual target power.</b>
+   \image html "USBDM_JS16_SWD_SER_Top.png"
          
  \section sectionHardwareDesign Hardware Design
    Please refer to the following PDF documents for Schematics, Assembly Overlays & Bill of Materials:

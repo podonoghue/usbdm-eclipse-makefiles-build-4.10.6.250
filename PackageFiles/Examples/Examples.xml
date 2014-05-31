@@ -76,6 +76,18 @@ Includes driver for colour LCD (Spark Fun LCD-09363 or ElecFreaks SHD-CLS).
 Example project for Freedom K20D50M board
 Includes CMSIS-RTOS examples
       </example>
+      <example description="Freedom K22FN12M Demonstration"  family="ARM"        path="MK22FN1M0M12_FRDM_Demo.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
+Example project for Freedom K20D50M board modified with K22FN12M
+Includes example clock initialisation, port, PIT, LPTMR, 
+RTC, FTM(PWM and OC), ADC operations and I2C (accelerometer).
+Includes example code demonstrating use of printf() with on-chip UART.
+      </example>
+      <example description="Freedom K64F Demonstration"  family="ARM"        path="MK64FN1M0M12_FRDM_Demo.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
+Example project for Freedom K64F board
+Includes example clock initialisation, port, PIT, LPTMR, 
+RTC, FTM(PWM and OC), ADC operations and I2C (accelerometer).
+Includes example code demonstrating use of printf() with on-chip UART.
+      </example>
       <example description="Tower MCF51JF128 Basic"      family="COLDFIRE"   path="MCF51JF128_Tower.zip" buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.codesourceryColdfire">
 Example project for Tower MCF51JF128 board
 Includes example port operations.

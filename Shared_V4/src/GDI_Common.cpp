@@ -24,6 +24,7 @@
 \verbatim
 Change History
 -=====================================================================================================
+|  May 30 2014 | Removed optimised ARM memory read/writes                          - pgo V4.10.6.150
 |  Nov 09 2013 | Minor changes for security                                        - pgo V4.10.6.80
 |  Oct 28 2013 | Added connect with RESET retry to targetConnecvt for ARM          - pgo V4.10.6.40
 |  Dec 22 2012 | Improved Secured device handling & mass erase                     - pgo V4.10.4
@@ -1127,7 +1128,7 @@ DiReturnT DiMemoryDownload ( DiBoolT            fUseAuxiliaryPath,
 
 static uint8_t memoryReadWriteBuffer[MAX_BLOCK_SIZE];
 
-#if TARGET == ARM
+#if TARGET == ARM && 0
 //! Write data to target memory
 //! ARM Memory writes are decomposed into a minimal sequence of the largest aligned object writes
 //!
@@ -1323,7 +1324,7 @@ uint32_t        endAddress;                      // End address
       if (!writeDone) {
          // Write data directly to memory
          USBDM_ErrorCode rc = BDM_RC_OK;
-#if TARGET == ARM
+#if TARGET == ARM && 0
          // ARM is special case - ignore write size and use longs!
          rc = ARM_WriteMemory(memorySpace, sub, writeAddress, memoryReadWriteBuffer);
 #elif TARGET == MC56F80xx
@@ -1339,7 +1340,7 @@ uint32_t        endAddress;                      // End address
    return setErrorState(DI_OK);
 }
 
-#if TARGET == ARM
+#if TARGET == ARM && 0
 //! Read data from target memory
 //! ARM Memory reads are decomposed into a minimal sequence of the largest aligned object reads
 //!
@@ -1440,11 +1441,12 @@ uint32_t        endAddress;                      // End address
          return setErrorState(DI_ERR_NOTSUPPORTED, "Unknown memory space");
    }
 #if TARGET == ARM
-   Logging::print("DiMemoryRead(daTarget.dmsMemSpace=%X, dnBufferItems=%d, [0x%06X...0x%06X]), (%s)\n",
+   Logging::print("DiMemoryRead(daTarget.dmsMemSpace=%X, dnBufferItems=%d, [0x%06X...0x%06X]), (%s,%s)\n",
          daTarget.dmsMemSpace,
          dnBufferItems,
          address,
          endAddress,
+         getMemSpaceName(memorySpace),
          ARM_GetMemoryName(address));
 #else
    Logging::print("DiMemoryRead(daTarget.dmsMemSpace=%X, dnBufferItems=%d, [0x%06X...0x%06X])\n",
@@ -1462,7 +1464,7 @@ uint32_t        endAddress;                      // End address
          blockSize = sizeof(memoryReadWriteBuffer);
       }
 USBDM_ErrorCode rc = BDM_RC_OK;
-#if TARGET == ARM
+#if TARGET == ARM && 0
       rc = ARM_ReadMemory(memorySpace, blockSize, address, memoryReadWriteBuffer);
 #elif TARGET == MC56F80xx
       rc = DSC_ReadMemory(memorySpace, blockSize, address, memoryReadWriteBuffer);

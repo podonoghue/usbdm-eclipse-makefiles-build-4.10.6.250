@@ -1,13 +1,13 @@
 <!--
 Devices using this peripheral: 
-   MK50D10
-   MK50DZ10
-   MK51D10
-   MK51DZ10
-   MK52D10
-   MK52DZ10
-   MK53D10
-   MK53DZ10
+      MK50D10
+      MK50DZ10
+      MK51D10
+      MK51DZ10
+      MK52D10
+      MK52DZ10
+      MK53D10
+      MK53DZ10
 -->
       <peripheral derivedFrom="TRIAMP0">
          <name>TRIAMP1</name>

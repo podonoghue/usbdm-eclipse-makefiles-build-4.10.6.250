@@ -20,7 +20,8 @@
 ;#####################################################################################
 ;#  History
 ;#
-;#  V4.10.4 - Changed return code handling
+;#  V4.10.6.130 - Changed initTarget() to catch errors
+;#  V4.10.4     - Changed return code handling
 ;# 
 
 ;######################################################################################
@@ -73,8 +74,8 @@ proc loadSymbols {} {
 ;#
 proc initTarget { arg } {
    ;# Disable COP
-   wb $::SIM_COPC $::SIM_COPC_VALUE
-   
+   ;# Ignore error as may be secured
+   catch { wb $::SIM_COPC $::SIM_COPC_VALUE }
    return
 }
 
@@ -83,8 +84,7 @@ proc initTarget { arg } {
 ;#  busFrequency - Target bus frequency in kHz
 ;#
 proc initFlash { busFrequency } {
-;# Not used
-   
+;# Not used  
    return
 }
 

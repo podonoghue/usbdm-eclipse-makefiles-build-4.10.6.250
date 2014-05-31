@@ -1,12 +1,12 @@
 <!--
 Devices using this peripheral: 
-   MKL05Z4
-   MKL15Z4
-   MKL16Z4
-   MKL25Z4
-   MKL26Z4
-   MKL36Z4
-   MKL46Z4
+      MKL05Z4
+      MKL15Z4
+      MKL16Z4
+      MKL25Z4
+      MKL26Z4
+      MKL36Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="TSI0_MKL">
          <name>TSI0</name>

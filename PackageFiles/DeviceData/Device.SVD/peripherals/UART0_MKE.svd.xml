@@ -1,6 +1,10 @@
 <!--
 Devices using this peripheral: 
-   MKE02Z2
+      MKE02Z2
+      MKE02Z4
+      MKE04Z4
+      MKE04Z8M4
+      MKE06Z4
 -->
       <peripheral sourceFile="UART0_MKE">
          <name>UART0</name>
@@ -60,12 +64,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Hardware interrupts from UART_S2[RXEDGIF] disabled (use polling)</description>
+                           <description>Hardware interrupts from RXEDGIF disabled (use polling)</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when UART_S2[RXEDGIF] flag is 1</description>
+                           <description>Hardware interrupt requested when RXEDGIF flag is 1</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -78,12 +82,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Hardware interrupts from UART_S2[LBKDIF] disabled (use polling)</description>
+                           <description>LBKDIF interrupt requests disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when UART_S2[LBKDIF] flag is 1</description>
+                           <description>LBKDIF interrupt requests enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -138,12 +142,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No hardware parity generation or checking</description>
+                           <description>Parity function disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Parity enabled</description>
+                           <description>Parity function enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -339,18 +343,18 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                   </field>
                   <field>
                      <name>ILIE</name>
-                     <description>Idle Line Interrupt Enable for IDLE</description>
+                     <description>Idle Line Interrupt Enable</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Hardware interrupts from IDLE disabled; use polling</description>
+                           <description>IDLE interrupt requests disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when IDLE flag is 1</description>
+                           <description>IDLE interrupt requests enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -375,18 +379,18 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                   </field>
                   <field>
                      <name>TCIE</name>
-                     <description>Transmission Complete Interrupt Enable for TC</description>
+                     <description>Transmission Complete Interrupt Enable</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Hardware interrupts from TC disabled; use polling</description>
+                           <description>TC interrupt requests disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when TC flag is 1</description>
+                           <description>TC interrupt requests enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -530,7 +534,7 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                   </field>
                   <field>
                      <name>TC</name>
-                     <description>Transmission Complete Flag</description>
+                     <description>Transmit Complete Flag</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -582,7 +586,7 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>UART receiver idle waiting for a start bit</description>
+                           <description>UART receiver idle/inactive waiting for a start bit</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -612,7 +616,7 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                   </field>
                   <field>
                      <name>BRK13</name>
-                     <description>Break Character Generation Length</description>
+                     <description>Break Transmit Character Length</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -654,12 +658,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Receive data not inverted</description>
+                           <description>Receive data is not inverted</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Receive data inverted</description>
+                           <description>Receive data is inverted</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -717,12 +721,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PF interrupts disabled; use polling)</description>
+                           <description>PF interrupt requests are disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when PF is set</description>
+                           <description>PF interrupt requests are enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -735,12 +739,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FE interrupts disabled; use polling</description>
+                           <description>FE interrupt requests are disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when FE is set</description>
+                           <description>FE interrupt requests are enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -753,30 +757,30 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>NF interrupts disabled; use polling</description>
+                           <description>NF interrupt requests are disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when NF is set</description>
+                           <description>NF interrupt requests are enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ORIE</name>
-                     <description>Overrun Interrupt Enable</description>
+                     <description>Overrun Error Interrupt Enable</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>OR interrupts disabled; use polling</description>
+                           <description>OR interrupts are disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when OR is set</description>
+                           <description>OR interrupt requests are enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -789,30 +793,30 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Transmit data not inverted</description>
+                           <description>Transmit data is not inverted</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Transmit data inverted</description>
+                           <description>Transmit data is inverted</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>TXDIR</name>
-                     <description>TxD Pin Direction in Single-Wire Mode</description>
+                     <description>Transmitter Pin Data Direction in Single-Wire mode</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>TxD pin is an input in single-wire mode</description>
+                           <description>TXD pin is an input in single-wire mode</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>TxD pin is an output in single-wire mode</description>
+                           <description>TXD pin is an output in single-wire mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

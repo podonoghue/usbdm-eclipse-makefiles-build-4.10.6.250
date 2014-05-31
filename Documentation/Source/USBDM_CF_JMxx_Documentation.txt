@@ -15,7 +15,7 @@
       -  <b>Coldfire V1</b>  microcontrollers
       -  <b>Coldfire V2, \b V3 & \b V4</b> microcontrollers
       -  <b>Kinetis ARM-Cortex</b> microcontrollers
-      -  <b>MC56F80xx</b> Digital Signal Controllers
+      -  <b>MC56F80xx</b> Digital Signal Controllers (Limited range of devices in CW 10 & stand-alone programmer)
    -  No re-flashing of the BDM is required when changing between targets
    -  Compatible IDEs
       - Codewarrior V10.1 (Eclipse version)

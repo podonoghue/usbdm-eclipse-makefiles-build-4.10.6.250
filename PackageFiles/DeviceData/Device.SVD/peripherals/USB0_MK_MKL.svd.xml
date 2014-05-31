@@ -1,28 +1,28 @@
 <!--
 Devices using this peripheral: 
-   MK20D5
-   MK20D7
-   MK20D10
-   MK20F12
-   MK21D5
-   MK21F12
-   MK22D5
-   MK40D7
-   MK40D10
-   MK50D7
-   MK50D10
-   MK51D7
-   MK51D10
-   MK52D10
-   MK53D10
-   MK60D10
-   MK60F12
-   MK61F12
-   MK70F12
-   MKL24Z4
-   MKL25Z4
-   MKL26Z4
-   MKL46Z4
+      MK20D5
+      MK20D7
+      MK20D10
+      MK20F12
+      MK21D5
+      MK21F12
+      MK22D5
+      MK40D7
+      MK40D10
+      MK50D7
+      MK50D10
+      MK51D7
+      MK51D10
+      MK52D10
+      MK53D10
+      MK60D10
+      MK60F12
+      MK61F12
+      MK70F12
+      MKL24Z4
+      MKL25Z4
+      MKL26Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="USB0_MK_MKL" forcedAccessWidth="32">
          <name>USB0</name>
@@ -1142,48 +1142,48 @@ Devices using this peripheral:
                   <size>8</size>
                   <resetMask>0xFF</resetMask>
                   <fields>
-                  <field>
-                     <name>EPHSHK</name>
-                     <description>When set this bet enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>EPSTALL</name>
-                     <description>When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>EPTXEN</name>
-                     <description>This bit, when set, enables the endpoint for TX transfers</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>EPRXEN</name>
-                     <description>This bit, when set, enables the endpoint for RX transfers</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>EPCTLDIS</name>
-                     <description>This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>RETRYDIS</name>
-                     <description>This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK&apos;ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared NAKed transactions is retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>HOSTWOHUB</name>
-                     <description>This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit allows the host to communicate to a directly connected low speed device. When cleared, the host produces the PRE_PID. It then switches to low-speed signaling when sends a token to a low speed device as required to communicate with a low speed device through a hub</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
+                     <field>
+                        <name>EPHSHK</name>
+                        <description>When set this bet enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>EPSTALL</name>
+                        <description>When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller</description>
+                        <bitOffset>1</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>EPTXEN</name>
+                        <description>This bit, when set, enables the endpoint for TX transfers</description>
+                        <bitOffset>2</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>EPRXEN</name>
+                        <description>This bit, when set, enables the endpoint for RX transfers</description>
+                        <bitOffset>3</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>EPCTLDIS</name>
+                        <description>This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set</description>
+                        <bitOffset>4</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>RETRYDIS</name>
+                        <description>This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK&apos;ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared NAKed transactions is retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint</description>
+                        <bitOffset>6</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>HOSTWOHUB</name>
+                        <description>This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit allows the host to communicate to a directly connected low speed device. When cleared, the host produces the PRE_PID. It then switches to low-speed signaling when sends a token to a low speed device as required to communicate with a low speed device through a hub</description>
+                        <bitOffset>7</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>

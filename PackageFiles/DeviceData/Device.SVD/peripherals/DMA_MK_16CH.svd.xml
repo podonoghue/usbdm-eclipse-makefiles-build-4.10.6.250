@@ -1,34 +1,35 @@
 <!--
 Devices using this peripheral: 
-   MK10D7
-   MK10D10
-   MK10DZ10
-   MK11D5
-   MK12D5
-   MK20D7
-   MK20D10
-   MK20DZ10
-   MK21D5
-   MK21F12
-   MK22D5
-   MK30D7
-   MK30D10
-   MK30DZ10
-   MK40D7
-   MK40D10
-   MK40DZ10
-   MK50D7
-   MK50D10
-   MK50DZ10
-   MK51D7
-   MK51D10
-   MK51DZ10
-   MK52D10
-   MK52DZ10
-   MK53D10
-   MK53DZ10
-   MK60D10
-   MK60DZ10
+      MK10D7
+      MK10D10
+      MK10DZ10
+      MK11D5
+      MK12D5
+      MK20D7
+      MK20D10
+      MK20DZ10
+      MK21D5
+      MK21F12
+      MK22D5
+      MK30D7
+      MK30D10
+      MK30DZ10
+      MK40D7
+      MK40D10
+      MK40DZ10
+      MK50D7
+      MK50D10
+      MK50DZ10
+      MK51D7
+      MK51D10
+      MK51DZ10
+      MK52D10
+      MK52DZ10
+      MK53D10
+      MK53DZ10
+      MK60D10
+      MK60DZ10
+      MK64F12
 -->
       <peripheral sourceFile="DMA_MK_16CH" preferredAccessWidth="32">
          <name>DMA</name>
@@ -2407,11 +2408,11 @@ Devices using this peripheral:
                   <description>TCD Source Address</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>SADDR</name>
-                     <description>Source Address</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>SADDR</name>
+                        <description>Source Address</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2421,11 +2422,11 @@ Devices using this peripheral:
                   <size>16</size>
                   <resetMask>0xFFFF</resetMask>
                   <fields>
-                  <field>
-                     <name>SOFF</name>
-                     <description>Source address signed offset</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>SOFF</name>
+                        <description>Source address signed offset</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2435,79 +2436,79 @@ Devices using this peripheral:
                   <size>16</size>
                   <resetMask>0xFFFF</resetMask>
                   <fields>
-                  <field>
-                     <name>DSIZE</name>
-                     <description>Destination Data Transfer Size</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>3</bitWidth>
-                  </field>
-                  <field>
-                     <name>DMOD</name>
-                     <description>Destination Address Modulo</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>5</bitWidth>
-                  </field>
-                  <field>
-                     <name>SSIZE</name>
-                     <description>Source data transfer size</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>3</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b000</name>
-                           <description>8-bit</description>
-                           <value>0b000</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b001</name>
-                           <description>16-bit</description>
-                           <value>0b001</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b010</name>
-                           <description>32-bit</description>
-                           <value>0b010</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b011</name>
-                           <description>Reserved</description>
-                           <value>0b011</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b100</name>
-                           <description>16-byte</description>
-                           <value>0b100</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b101</name>
-                           <description>32-byte</description>
-                           <value>0b101</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b110</name>
-                           <description>Reserved</description>
-                           <value>0b110</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b111</name>
-                           <description>Reserved</description>
-                           <value>0b111</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>SMOD</name>
-                     <description>Source Address Modulo</description>
-                     <bitOffset>11</bitOffset>
-                     <bitWidth>5</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Source address modulo feature is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>DSIZE</name>
+                        <description>Destination Data Transfer Size</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>3</bitWidth>
+                     </field>
+                     <field>
+                        <name>DMOD</name>
+                        <description>Destination Address Modulo</description>
+                        <bitOffset>3</bitOffset>
+                        <bitWidth>5</bitWidth>
+                     </field>
+                     <field>
+                        <name>SSIZE</name>
+                        <description>Source data transfer size</description>
+                        <bitOffset>8</bitOffset>
+                        <bitWidth>3</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b000</name>
+                              <description>8-bit</description>
+                              <value>0b000</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b001</name>
+                              <description>16-bit</description>
+                              <value>0b001</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b010</name>
+                              <description>32-bit</description>
+                              <value>0b010</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b011</name>
+                              <description>Reserved</description>
+                              <value>0b011</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b100</name>
+                              <description>16-byte</description>
+                              <value>0b100</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b101</name>
+                              <description>32-byte</description>
+                              <value>0b101</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b110</name>
+                              <description>Reserved</description>
+                              <value>0b110</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b111</name>
+                              <description>Reserved</description>
+                              <value>0b111</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>SMOD</name>
+                        <description>Source Address Modulo</description>
+                        <bitOffset>11</bitOffset>
+                        <bitWidth>5</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Source address modulo feature is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2515,11 +2516,11 @@ Devices using this peripheral:
                   <description>TCD Minor Byte Count (Minor Loop Disabled)</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>NBYTES</name>
-                     <description>Minor Byte Transfer Count</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>NBYTES</name>
+                        <description>Minor Byte Transfer Count</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2527,48 +2528,48 @@ Devices using this peripheral:
                   <description>TCD Signed Minor Loop Offset (Minor Loop Enabled and Offset Disabled)</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>NBYTES</name>
-                     <description>Minor Byte Transfer Count</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>30</bitWidth>
-                  </field>
-                  <field>
-                     <name>DMLOE</name>
-                     <description>Destination Minor Loop Offset enable</description>
-                     <bitOffset>30</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The minor loop offset is not applied to the DADDR</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The minor loop offset is applied to the DADDR</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>SMLOE</name>
-                     <description>Source Minor Loop Offset Enable</description>
-                     <bitOffset>31</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The minor loop offset is not applied to the SADDR</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The minor loop offset is applied to the SADDR</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>NBYTES</name>
+                        <description>Minor Byte Transfer Count</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>30</bitWidth>
+                     </field>
+                     <field>
+                        <name>DMLOE</name>
+                        <description>Destination Minor Loop Offset enable</description>
+                        <bitOffset>30</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The minor loop offset is not applied to the DADDR</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The minor loop offset is applied to the DADDR</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>SMLOE</name>
+                        <description>Source Minor Loop Offset Enable</description>
+                        <bitOffset>31</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The minor loop offset is not applied to the SADDR</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The minor loop offset is applied to the SADDR</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2576,54 +2577,54 @@ Devices using this peripheral:
                   <description>TCD Signed Minor Loop Offset (Minor Loop and Offset Enabled)</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>NBYTES</name>
-                     <description>Minor Byte Transfer Count</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>10</bitWidth>
-                  </field>
-                  <field>
-                     <name>MLOFF</name>
-                     <description>If SMLOE or DMLOE is set, this field represents a sign-extended offset applied to the source or destination address to form the next-state value after the minor loop completes</description>
-                     <bitOffset>10</bitOffset>
-                     <bitWidth>20</bitWidth>
-                  </field>
-                  <field>
-                     <name>DMLOE</name>
-                     <description>Destination Minor Loop Offset enable</description>
-                     <bitOffset>30</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The minor loop offset is not applied to the DADDR</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The minor loop offset is applied to the DADDR</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>SMLOE</name>
-                     <description>Source Minor Loop Offset Enable</description>
-                     <bitOffset>31</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The minor loop offset is not applied to the SADDR</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The minor loop offset is applied to the SADDR</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>NBYTES</name>
+                        <description>Minor Byte Transfer Count</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>10</bitWidth>
+                     </field>
+                     <field>
+                        <name>MLOFF</name>
+                        <description>If SMLOE or DMLOE is set, this field represents a sign-extended offset applied to the source or destination address to form the next-state value after the minor loop completes</description>
+                        <bitOffset>10</bitOffset>
+                        <bitWidth>20</bitWidth>
+                     </field>
+                     <field>
+                        <name>DMLOE</name>
+                        <description>Destination Minor Loop Offset enable</description>
+                        <bitOffset>30</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The minor loop offset is not applied to the DADDR</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The minor loop offset is applied to the DADDR</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>SMLOE</name>
+                        <description>Source Minor Loop Offset Enable</description>
+                        <bitOffset>31</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The minor loop offset is not applied to the SADDR</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The minor loop offset is applied to the SADDR</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2631,11 +2632,11 @@ Devices using this peripheral:
                   <description>TCD Last Source Address Adjustment</description>
                   <addressOffset>0xC</addressOffset>
                   <fields>
-                  <field>
-                     <name>SLAST</name>
-                     <description>Last source Address Adjustment</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>SLAST</name>
+                        <description>Last source Address Adjustment</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2643,11 +2644,11 @@ Devices using this peripheral:
                   <description>TCD Destination Address</description>
                   <addressOffset>0x10</addressOffset>
                   <fields>
-                  <field>
-                     <name>DADDR</name>
-                     <description>Destination Address</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>DADDR</name>
+                        <description>Destination Address</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2657,11 +2658,11 @@ Devices using this peripheral:
                   <size>16</size>
                   <resetMask>0xFFFF</resetMask>
                   <fields>
-                  <field>
-                     <name>DOFF</name>
-                     <description>Destination Address Signed offset</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>DOFF</name>
+                        <description>Destination Address Signed offset</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2671,30 +2672,30 @@ Devices using this peripheral:
                   <size>16</size>
                   <resetMask>0xFFFF</resetMask>
                   <fields>
-                  <field>
-                     <name>CITER</name>
-                     <description>Current Major Iteration Count</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>15</bitWidth>
-                  </field>
-                  <field>
-                     <name>ELINK</name>
-                     <description>Enable channel-to-channel linking on minor-loop complete</description>
-                     <bitOffset>15</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The channel-to-channel linking is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The channel-to-channel linking is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>CITER</name>
+                        <description>Current Major Iteration Count</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>15</bitWidth>
+                     </field>
+                     <field>
+                        <name>ELINK</name>
+                        <description>Enable channel-to-channel linking on minor-loop complete</description>
+                        <bitOffset>15</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The channel-to-channel linking is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The channel-to-channel linking is enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2704,36 +2705,36 @@ Devices using this peripheral:
                   <size>16</size>
                   <resetMask>0xFFFF</resetMask>
                   <fields>
-                  <field>
-                     <name>CITER</name>
-                     <description>Current Major Iteration Count</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>9</bitWidth>
-                  </field>
-                  <field>
-                     <name>LINKCH</name>
-                     <description>Link Channel Number</description>
-                     <bitOffset>9</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>ELINK</name>
-                     <description>Enable channel-to-channel linking on minor-loop complete</description>
-                     <bitOffset>15</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The channel-to-channel linking is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The channel-to-channel linking is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>CITER</name>
+                        <description>Current Major Iteration Count</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>9</bitWidth>
+                     </field>
+                     <field>
+                        <name>LINKCH</name>
+                        <description>Link Channel Number</description>
+                        <bitOffset>9</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>ELINK</name>
+                        <description>Enable channel-to-channel linking on minor-loop complete</description>
+                        <bitOffset>15</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The channel-to-channel linking is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The channel-to-channel linking is enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2741,11 +2742,11 @@ Devices using this peripheral:
                   <description>TCD Last Destination Address Adjustment/Scatter Gather Address</description>
                   <addressOffset>0x18</addressOffset>
                   <fields>
-                  <field>
-                     <name>DLASTSGA</name>
-                     <description>Destination last address adjustment or the memory address for the next transfer control descriptor to be loaded into this channel (scatter/gather). If (TCDn_CSR[ESG] = 0) then Adjustment value added to the destination address at the completion of the major iteration count. This value can apply to restore the destination address to the initial value or adjust the address to reference the next data structure. else This address points to the beginning of a 0-modulo-32-byte region containing the next transfer control descriptor to be loaded into this channel. This channel reload is performed as the major iteration count completes. The scatter/gather address must be 0-modulo-32-byte, else a configuration error is reported</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>DLASTSGA</name>
+                        <description>Destination last address adjustment or the memory address for the next transfer control descriptor to be loaded into this channel (scatter/gather). If (TCDn_CSR[ESG] = 0) then Adjustment value added to the destination address at the completion of the major iteration count. This value can apply to restore the destination address to the initial value or adjust the address to reference the next data structure. else This address points to the beginning of a 0-modulo-32-byte region containing the next transfer control descriptor to be loaded into this channel. This channel reload is performed as the major iteration count completes. The scatter/gather address must be 0-modulo-32-byte, else a configuration error is reported</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2755,160 +2756,160 @@ Devices using this peripheral:
                   <size>16</size>
                   <resetMask>0xFFFF</resetMask>
                   <fields>
-                  <field>
-                     <name>START</name>
-                     <description>Channel Start</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The channel is not explicitly started</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The channel is explicitly started via a software initiated service request</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>INTMAJOR</name>
-                     <description>Enable an interrupt when major iteration count completes</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The end-of-major loop interrupt is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The end-of-major loop interrupt is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>INTHALF</name>
-                     <description>Enable an interrupt when major counter is half complete</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The half-point interrupt is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The half-point interrupt is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DREQ</name>
-                     <description>Disable Request</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The channel&apos;s ERQ bit is not affected</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The channel&apos;s ERQ bit is cleared when the major loop is complete</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>ESG</name>
-                     <description>Enable Scatter/Gather Processing</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The current channel&apos;s TCD is normal format</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The current channel&apos;s TCD specifies a scatter gather format. The DLASTSGA field provides a memory pointer to the next TCD to be loaded into this channel after the major loop completes its execution</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>MAJORELINK</name>
-                     <description>Enable channel-to-channel linking on major loop complete</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The channel-to-channel linking is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The channel-to-channel linking is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>ACTIVE</name>
-                     <description>Channel Active</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>DONE</name>
-                     <description>Channel Done</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>MAJORLINKCH</name>
-                     <description>Link Channel Number</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>BWC</name>
-                     <description>Bandwidth Control</description>
-                     <bitOffset>14</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>No eDMA engine stalls</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Reserved</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>eDMA engine stalls for 4 cycles after each r/w</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>eDMA engine stalls for 8 cycles after each r/w</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>START</name>
+                        <description>Channel Start</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The channel is not explicitly started</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The channel is explicitly started via a software initiated service request</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>INTMAJOR</name>
+                        <description>Enable an interrupt when major iteration count completes</description>
+                        <bitOffset>1</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The end-of-major loop interrupt is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The end-of-major loop interrupt is enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>INTHALF</name>
+                        <description>Enable an interrupt when major counter is half complete</description>
+                        <bitOffset>2</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The half-point interrupt is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The half-point interrupt is enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>DREQ</name>
+                        <description>Disable Request</description>
+                        <bitOffset>3</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The channel&apos;s ERQ bit is not affected</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The channel&apos;s ERQ bit is cleared when the major loop is complete</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>ESG</name>
+                        <description>Enable Scatter/Gather Processing</description>
+                        <bitOffset>4</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The current channel&apos;s TCD is normal format</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The current channel&apos;s TCD specifies a scatter gather format. The DLASTSGA field provides a memory pointer to the next TCD to be loaded into this channel after the major loop completes its execution</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>MAJORELINK</name>
+                        <description>Enable channel-to-channel linking on major loop complete</description>
+                        <bitOffset>5</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The channel-to-channel linking is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The channel-to-channel linking is enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>ACTIVE</name>
+                        <description>Channel Active</description>
+                        <bitOffset>6</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>DONE</name>
+                        <description>Channel Done</description>
+                        <bitOffset>7</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>MAJORLINKCH</name>
+                        <description>Link Channel Number</description>
+                        <bitOffset>8</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>BWC</name>
+                        <description>Bandwidth Control</description>
+                        <bitOffset>14</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>No eDMA engine stalls</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>Reserved</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b10</name>
+                              <description>eDMA engine stalls for 4 cycles after each r/w</description>
+                              <value>0b10</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b11</name>
+                              <description>eDMA engine stalls for 8 cycles after each r/w</description>
+                              <value>0b11</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2918,30 +2919,30 @@ Devices using this peripheral:
                   <size>16</size>
                   <resetMask>0xFFFF</resetMask>
                   <fields>
-                  <field>
-                     <name>BITER</name>
-                     <description>Starting Major Iteration Count</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>15</bitWidth>
-                  </field>
-                  <field>
-                     <name>ELINK</name>
-                     <description>Enables channel-to-channel linking on minor loop complete</description>
-                     <bitOffset>15</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The channel-to-channel linking is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The channel-to-channel linking is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>BITER</name>
+                        <description>Starting Major Iteration Count</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>15</bitWidth>
+                     </field>
+                     <field>
+                        <name>ELINK</name>
+                        <description>Enables channel-to-channel linking on minor loop complete</description>
+                        <bitOffset>15</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The channel-to-channel linking is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The channel-to-channel linking is enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -2951,36 +2952,36 @@ Devices using this peripheral:
                   <size>16</size>
                   <resetMask>0xFFFF</resetMask>
                   <fields>
-                  <field>
-                     <name>BITER</name>
-                     <description>Starting Major Iteration Count</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>9</bitWidth>
-                  </field>
-                  <field>
-                     <name>LINKCH</name>
-                     <description>Link Channel Number</description>
-                     <bitOffset>9</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>ELINK</name>
-                     <description>Enables channel-to-channel linking on minor loop complete</description>
-                     <bitOffset>15</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The channel-to-channel linking is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The channel-to-channel linking is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>BITER</name>
+                        <description>Starting Major Iteration Count</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>9</bitWidth>
+                     </field>
+                     <field>
+                        <name>LINKCH</name>
+                        <description>Link Channel Number</description>
+                        <bitOffset>9</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>ELINK</name>
+                        <description>Enables channel-to-channel linking on minor loop complete</description>
+                        <bitOffset>15</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>The channel-to-channel linking is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>The channel-to-channel linking is enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
             </cluster>

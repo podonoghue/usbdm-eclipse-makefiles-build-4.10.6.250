@@ -5,7 +5,7 @@
  *           Equivalent: MKL05Z32M4, MKL05Z8M4, MKL05Z16M4
  *
  * @version  V0.0
- * @date     2014/01
+ * @date     2014/05
  *
  *******************************************************************************************************/
 
@@ -1412,7 +1412,7 @@ typedef struct {                                /*!<       LPTMR0 Structure     
 #define LPTMR0_CNR                     (LPTMR0->CNR)
 
 /* ================================================================================ */
-/* ================           MCG (file:MCG_5)                     ================ */
+/* ================           MCG (file:MCG_MKL_5)                 ================ */
 /* ================================================================================ */
 
 /**
@@ -2875,7 +2875,7 @@ typedef struct {                                /*!<       SMC Structure        
 #define SMC_PMSTAT                     (SMC->PMSTAT)
 
 /* ================================================================================ */
-/* ================           SPI0 (file:SPI0_5)                   ================ */
+/* ================           SPI0 (file:SPI0_MKL_DMA)             ================ */
 /* ================================================================================ */
 
 /**
@@ -3242,7 +3242,7 @@ typedef struct {                                /*!<       TSI0 Structure       
 #define TSI0_TSHD                      (TSI0->TSHD)
 
 /* ================================================================================ */
-/* ================           UART0 (file:UART0_4)                 ================ */
+/* ================           UART0 (file:UART0_MKL)               ================ */
 /* ================================================================================ */
 
 /**
@@ -3376,9 +3376,9 @@ typedef struct {                                /*!<       UART0 Structure      
 #define UART_C3_R8T9_SHIFT                       7                                                   /*!< UART0_C3: R8T9 Position                 */
 
 /* ------- UART0_D                                  ------ */
-#define UART_D_DATA_MASK                         (0xFFUL << UART_D_DATA_SHIFT)                       /*!< UART0_D: DATA Mask                      */
-#define UART_D_DATA_SHIFT                        0                                                   /*!< UART0_D: DATA Position                  */
-#define UART_D_DATA(x)                           (((x)<<UART_D_DATA_SHIFT)&UART_D_DATA_MASK)         /*!< UART0_D                                 */
+#define UART_D_RT_MASK                           (0xFFUL << UART_D_RT_SHIFT)                         /*!< UART0_D: RT Mask                        */
+#define UART_D_RT_SHIFT                          0                                                   /*!< UART0_D: RT Position                    */
+#define UART_D_RT(x)                             (((x)<<UART_D_RT_SHIFT)&UART_D_RT_MASK)             /*!< UART0_D                                 */
 
 /* ------- UART0_MA                                 ------ */
 #define UART_MA_MA_MASK                          (0xFFUL << UART_MA_MA_SHIFT)                        /*!< UART0_MA: MA Mask                       */

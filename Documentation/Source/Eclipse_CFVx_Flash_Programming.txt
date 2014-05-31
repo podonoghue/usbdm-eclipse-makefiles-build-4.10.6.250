@@ -1,7 +1,7 @@
 /*!
  \page eclipseFlashProgrammingPage Codewarrior - Coldfire V2-V4 Flash programming
 
- \section EclipseFlashConfiguration Creating a Flash Programming Task for USBDM
+ \section EclipseFlashConfiguration Creating a Flash Programming Task in Codewarrior 10.x
  
 USBDM does not support the automatic programming of Coldfire V2 - V4 devices as the programming algorithms
 required are too varied between different devices.  This situation is no different from the arrangement 
@@ -9,9 +9,6 @@ that applies to the other Codewarrior supported BDM interfaces.\n
 
 Codewarrior Eclipse allows the creation of Flash programming tasks which may then be automatically executed 
 prior to debugging a device.  The following describes the setting up of a such a task for a MCF52233.\n
-
-Codewarrior will usually have already set up a suitable Flash Programming task for Coldfire V2-V4 devices when the 
-project was created so the following should only be necessary in rare circumstances.\n
 
 Open the Flash Programmer as shown: 
 \image html "Flash_Programming_Task_0.png"

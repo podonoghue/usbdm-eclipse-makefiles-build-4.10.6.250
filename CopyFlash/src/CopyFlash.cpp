@@ -79,11 +79,25 @@ DeviceDescription deviceDescriptions[] = {
       {{0x000000, 0x01FFFF},}
 },
 {
-      "MK40X256",
+      "MKxx128",
+      T_ARM,
+      12000,
+      1,
+      {{0x000000, 0x01FFFF},}
+},
+{
+      "MKxx256",
       T_ARM,
       12000,
       1,
       {{0x000000, 0x03FFFF},}
+},
+{
+      "MKxx1M0",
+      T_ARM,
+      12000,
+      1,
+      {{0x000000, 0x0FFFFF},}
 },
 {
       "STM32F100C8",

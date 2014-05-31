@@ -1,13 +1,13 @@
 <!--
 Devices using this peripheral: 
-   MK10D5
-   MK10D7
-   MK20D5
-   MK20D7
-   MK30D7
-   MK40D7
-   MK50D7
-   MK51D7
+      MK10D5
+      MK10D7
+      MK20D5
+      MK20D7
+      MK30D7
+      MK40D7
+      MK50D7
+      MK51D7
 -->
       <peripheral sourceFile="RTC_WAR_RAR_TSIE">
          <name>RTC</name>

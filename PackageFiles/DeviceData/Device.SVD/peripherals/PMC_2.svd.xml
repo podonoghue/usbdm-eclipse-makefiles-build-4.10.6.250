@@ -1,11 +1,11 @@
 <!--
 Devices using this peripheral: 
-   MK10DZ10
-   MK20DZ10
-   MK30DZ10
-   MK40DZ10
-   MK53DZ10
-   MK60DZ10
+      MK10DZ10
+      MK20DZ10
+      MK30DZ10
+      MK40DZ10
+      MK53DZ10
+      MK60DZ10
 -->
       <peripheral sourceFile="PMC_2">
          <name>PMC</name>

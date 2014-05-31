@@ -1,6 +1,6 @@
 <!--
 Devices using this peripheral: 
-   MKL02Z4
+      MKL02Z4
 -->
       <peripheral sourceFile="I2C0_1">
          <name>I2C0</name>

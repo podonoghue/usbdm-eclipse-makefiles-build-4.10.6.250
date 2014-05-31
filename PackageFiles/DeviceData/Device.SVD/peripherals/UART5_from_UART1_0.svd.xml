@@ -1,23 +1,23 @@
 <!--
 Devices using this peripheral: 
-   MK10D10
-   MK10DZ10
-   MK20D10
-   MK20DZ10
-   MK30D10
-   MK30DZ10
-   MK40D10
-   MK40DZ10
-   MK50D10
-   MK50DZ10
-   MK51D10
-   MK51DZ10
-   MK52D10
-   MK52DZ10
-   MK53D10
-   MK53DZ10
-   MK60D10
-   MK60DZ10
+      MK10D10
+      MK10DZ10
+      MK20D10
+      MK20DZ10
+      MK30D10
+      MK30DZ10
+      MK40D10
+      MK40DZ10
+      MK50D10
+      MK50DZ10
+      MK51D10
+      MK51DZ10
+      MK52D10
+      MK52DZ10
+      MK53D10
+      MK53DZ10
+      MK60D10
+      MK60DZ10
 -->
       <peripheral derivedFrom="UART1">
          <name>UART5</name>

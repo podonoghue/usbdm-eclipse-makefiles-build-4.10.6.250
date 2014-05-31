@@ -1,7 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MKL14Z4
-   MKL15Z4
+      MKL14Z4
+      MKL15Z4
 -->
       <peripheral sourceFile="SMC_7">
          <name>SMC</name>

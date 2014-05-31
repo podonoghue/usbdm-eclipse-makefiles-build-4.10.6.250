@@ -1,7 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MK11D5
-   MK12D5
+      MK11D5
+      MK12D5
 -->
       <peripheral sourceFile="MCM_4">
          <name>MCM</name>

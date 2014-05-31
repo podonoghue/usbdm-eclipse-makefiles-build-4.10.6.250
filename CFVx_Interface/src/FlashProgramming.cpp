@@ -26,6 +26,8 @@
 +================================================================================
 | Revision History
 +================================================================================
+| 26 Feb 14 | 4.10.6.120 removed buffer clearing initSmallTargetBuffer()    - pgo
+|  6 Nov 13 | 4.10.6.60 Changes to support PAxx small programmer            - pgo
 |  4 Jun 13 | 4.10.5.20 Set controller address in partitionFlexNVM()        - pgo
 | 28 Dec 12 | 4.10.4 Changed handling of security area (& erasing)          - pgo
 | 28 Dec 12 | 4.10.4 Changed TCL interface error handling                   - pgo
@@ -832,6 +834,9 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
       Logging::error("Failed, loadSRec() failed\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
+
+   memset(&targetProgramInfo, 0, sizeof(targetProgramInfo));
+
 #if TARGET == MC56F80xx
    MemorySpace_t memorySpace = MS_XWord;
 #else      
@@ -848,7 +853,6 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
 #if (TARGET==HCS08)   
    LoadInfoStruct *infoPtr = (LoadInfoStruct *)buffer;
    targetProgramInfo.smallProgram = (infoPtr->flags&OPT_SMALL_CODE) != 0;
-//   infoPtr->flags &= ~OPT_SMALL_CODE;
    if (targetProgramInfo.smallProgram) {
       return loadSmallTargetProgram(buffer, loadAddress, size, flashProgram, flashOperation);
    }
@@ -995,11 +999,11 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType    *bu
 
    // RS08, HCS08, HCS12 are byte aligned
    // MC56F80xx deals with word addresses which are always aligned
-   if ((codeLoadAddress & procAlignmentMask) != 0){
+   if ((codeLoadAddress & procAlignmentMask) != 0) {
       Logging::error("CodeLoadAddress is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-   if (((targetProgramInfo.headerAddress+targetProgramInfo.dataOffset) & procAlignmentMask) != 0){
+   if (((targetProgramInfo.headerAddress+targetProgramInfo.dataOffset) & procAlignmentMask) != 0) {
       Logging::error("FlashProgramHeader.dataOffset is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
@@ -1329,7 +1333,7 @@ USBDM_ErrorCode getRunStatus(void) {
 }
 #endif
 
-#if defined(LOG) && (TARGET==ARM) && 0
+#if 0 && defined(LOG) && (TARGET==ARM)
 //! Report ARM status
 //!
 //! @param msg - message to print
@@ -1440,7 +1444,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    Logging::print("dataSize=0x%X\n", dataSize);
 
    USBDM_ErrorCode rc = BDM_RC_OK;
-   memoryElementType buffer[1000];
+   memoryElementType buffer[1000] = {0};
    if (pBuffer == NULL) {
       if (dataSize != 0) {
          Logging::error("Error: No buffer but size non-zero\n");
@@ -2422,7 +2426,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
    unsigned int maxSplitBlockSize = targetProgramInfo.maxDataSize;
 
    const unsigned int MaxSplitBlockSize = 0x4000;
-   memoryElementType  buffer[MaxSplitBlockSize+50];
+   memoryElementType  buffer[MaxSplitBlockSize+50] = {0};
    memoryElementType *bufferData = buffer+targetProgramInfo.dataOffset;
 
    // Maximum split block size must be made less than buffer size

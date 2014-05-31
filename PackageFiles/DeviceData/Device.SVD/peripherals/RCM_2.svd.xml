@@ -1,7 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MK11D5
-   MK21D5
+      MK11D5
+      MK21D5
 -->
       <peripheral sourceFile="RCM_2">
          <name>RCM</name>

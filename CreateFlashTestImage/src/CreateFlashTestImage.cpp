@@ -185,10 +185,13 @@ void dumpWords(FILE *fp, uint32_t startAddress, uint32_t endAddress) {
 
 void usage(void) {
    fprintf(stderr, "\n\nUsage:\n"
-                   "CreateDummyImage [-word] [-hcs08|-hcs12]imageFile.s19 [startAddress endAddress]*\n\n"
+                   "CreateDummyImage [-word] [-hcs08|-hcs12|-kin|-cfv1] imageFile.s19 [startAddress endAddress]*\n\n"
                    "-word - create image with word addresses (DSC)\n"
                    "-hcs08 - set image as unsecured for hcs08 devices\n"
-                   "-hcs12 - set image as unsecured for hcs12 devices\n\n");
+                   "-hcs12 - set image as unsecured for hcs12 devices\n"
+                   "-kin   - set image as unsecured for kinetis devices\n"
+                   "-cfv1  - set image as unsecured for coldfire V1 devices\n\n"
+           );
    exit(1);
 }
 int main(int argc, char *argv[]) {
@@ -209,14 +212,17 @@ int main(int argc, char *argv[]) {
          static const uint8_t  newSecurityValues[]   = {
                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE };
+
          securityStartAddress = 0xFFB0;
          securitySize         = sizeof(newSecurityValues);
          memcpy(securityValues, newSecurityValues, securitySize);
+
          static const uint8_t  newResetValues[]   = {
                0xFF, 0xFF,};
          resetStartAddress = 0xFFFE;
          resetSize         = sizeof(newResetValues);
          memcpy(resetValues, newResetValues, resetSize);
+
          argNum++;
       }
       else if (stricmp(argv[argNum], "-hcs12") == 0) {
@@ -271,6 +277,7 @@ int main(int argc, char *argv[]) {
    }
    // Must have at least a filename remaining
    if (argNum >= argc) {
+      fprintf(stderr, "\nInsufficient arguments (found = %d, argc = %d)\n", argNum, argc);
       usage();
    }
    char fileName[2000];
@@ -281,6 +288,7 @@ int main(int argc, char *argv[]) {
    strcat(fileName, ".sx");
    FILE *fp = fopen(fileName, "wt");
    if (fp == NULL){
+      fprintf(stderr, "\nFaild to open \"%s\"\n", fileName);
       usage();
    }
    printf("Producing image file: %s\n", fileName);
@@ -288,6 +296,7 @@ int main(int argc, char *argv[]) {
 
    // Remaining parameters must be in pairs
    if (((argc-argNum)%2) != 0) {
+      fprintf(stderr, "\nodd number of memory range arguments\n");
       usage();
       fclose(fp);
    }

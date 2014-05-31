@@ -30,6 +30,7 @@
 \verbatim
  Change History
 +==================================================================================================
+| 23 Mar 2014 | Changes to handling pendingResetRelease                             - pgo - V4.10.6.130
 | 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo - V4.10.4
 |  1 Dec 2012 | Changed logging                                                     - pgo - V4.10.4
 | 18 Nov 2012 | resetARM() now connects with reset pin asserted for H/W reset       - pgo - V4.10.4
@@ -731,7 +732,7 @@ USBDM_ErrorCode armSwdConnect() {
 //! @note - Leaves Core TAP in RUN-TEST/IDLE
 //!
 static USBDM_ErrorCode readIDCODE(uint32_t *idCode, uint8_t command, uint8_t length, bool resetTAP) {
-   LOGGING_Q;
+   LOGGING_E;
    // Sequence using readIdcode command to read IDCODE
    uint8_t readCoreIdCodeSequence[] = {
       JTAG_MOVE_IR_SCAN,                              // Write IDCODE command to IR
@@ -751,12 +752,14 @@ static USBDM_ErrorCode readIDCODE(uint32_t *idCode, uint8_t command, uint8_t len
    };
    JTAG32 idcode(0,32);
    USBDM_ErrorCode rc;
-   if (resetTAP)
+   if (resetTAP) {
       rc = executeJTAGSequence(sizeof(readCoreIdCodeByResetSequence), readCoreIdCodeByResetSequence,
                                4, idcode.getData(32));
-   else
+   }
+   else {
       rc = executeJTAGSequence(sizeof(readCoreIdCodeSequence), readCoreIdCodeSequence,
                                4, idcode.getData(32));
+   }
    if (rc != BDM_RC_OK) {
       Logging::error("Failed, reason = %s\n", USBDM_GetErrorString(rc));
       return rc;

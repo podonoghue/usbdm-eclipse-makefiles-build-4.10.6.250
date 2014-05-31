@@ -27,7 +27,6 @@
 //!
 //! @return ptr to static string describing the hardware
 //!
-
 const char *getHardwareDescription(unsigned int hardwareVersion) {
    //! BDM hardware descriptions
    static const char *hardwareDescriptions[] = {
@@ -67,7 +66,6 @@ const char *getHardwareDescription(unsigned int hardwareVersion) {
 //!
 //! @return ptr to static string describing the hardware
 //!
-
 const char *getBriefHardwareDescription(unsigned int hardwareVersion) {
    static const char *briefHardwareDescriptions[] = {
     /*  0  */  "Reserved",
@@ -118,7 +116,6 @@ static const char *const ICPerrorMessages[] = {
 //!
 //! @return pointer to static string describing the error
 //!
-
 const char *getICPErrorName(unsigned char error) {
    char const *errorName = NULL;
 
@@ -137,7 +134,6 @@ const char *getICPErrorName(unsigned char error) {
 //!
 //! @return pointer to static string describing the target
 //!
-
 char const *getTargetTypeName( unsigned int type ) {
    static const char *names[] = {
       "HCS12","HCS08","RS08","CFV1","CFVx","JTAG",
@@ -158,7 +154,6 @@ char const *getTargetTypeName( unsigned int type ) {
    return typeName;
 }
 
-
 char const *getVoltageStatusName(TargetVddState_t level) {
    switch (level) {
       case BDM_TARGET_VDD_NONE : return "Vdd-None";
@@ -168,7 +163,6 @@ char const *getVoltageStatusName(TargetVddState_t level) {
       default  :                 return "Vdd-??";
    }
 }
-
 
 char const *getConnectionStateName(SpeedMode_t level) {
    switch (level) {
@@ -186,7 +180,6 @@ char const *getConnectionStateName(SpeedMode_t level) {
 //!
 //! @return pointer to static string buffer describing the value
 //!
-
 char const *getBDMStatusName(USBDMStatus_t *USBDMStatus) {
 static char buff[150] = "";
 
@@ -212,7 +205,7 @@ char const *getSecurityName(SecurityOptions_t security) {
    }
 }
 
-#ifdef LOG
+#if defined(LOG)
 //! Command String from Command #
 static const char *const newCommandTable[]= {
    "CMD_USBDM_GET_COMMAND_RESPONSE"          , // 0
@@ -278,7 +271,6 @@ static const char *const newCommandTable[]= {
 //!
 //! @return pointer to static string describing the command
 //!
-
 const char *getCommandName(unsigned char command) {
    char const *commandName = NULL;
 
@@ -322,7 +314,6 @@ static const char *const debugCommands[] = {
 //!
 //! @return pointer to static string describing the command
 //!
-
 const char *getDebugCommandName(unsigned char cmd) {
    char const *cmdName = NULL;
    if (cmd < sizeof(debugCommands)/sizeof(debugCommands[0])) {
@@ -333,7 +324,6 @@ const char *getDebugCommandName(unsigned char cmd) {
    }
    return cmdName;
 }
-
 
 char const *getAutoConnectName(AutoConnect_t mode) {
    static char buff[40] = "";
@@ -390,7 +380,6 @@ static const char *getUnknownReg(unsigned int regAddr) {
 //!
 //! @return pointer to static string describing the register
 //!
-
 char const *getCFV1ControlRegName( unsigned int regAddr ){
    static const char *names[] = {
       "_A7","VBR","CPUCR",NULL,NULL,NULL,NULL,NULL,
@@ -415,7 +404,6 @@ char const *getCFV1ControlRegName( unsigned int regAddr ){
 //!
 //! @return pointer to static string describing the register
 //!
-
 char const *getCFVxControlRegName( unsigned int regAddr ){
 static const char *regs[] = {"D0","D1","D2","D3","D4","D5","D6","D7",
                              "A0","A1","A2","A3","A4","A5","A6","USP"};
@@ -455,7 +443,6 @@ const char *regName = NULL;
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getARMControlRegName( unsigned int regAddr ) {
    //! The regAddr is actually a AP bus address as follows:
    //!    A[31:24]  => DP-AP-SELECT[31:24] (AP # Select) \n
@@ -493,7 +480,6 @@ char const *getARMControlRegName( unsigned int regAddr ) {
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getCFV1DebugRegName( unsigned int regAddr ){
    static const char *names[] = {
      "CSR","XCSR","CSR2","CSR3",// 00-03
@@ -534,7 +520,6 @@ char const *getCFV1DebugRegName( unsigned int regAddr ){
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getCFVxDebugRegName( unsigned int regAddr ){
    static const char *names[] = {"CSR", NULL, NULL, NULL,   // 00-03
                                  NULL,"BAAR","AATR","TDR",  // 04-07
@@ -561,7 +546,6 @@ char const *getCFVxDebugRegName( unsigned int regAddr ){
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getSWDDebugRegName( unsigned int regAddr ) {
    static const char *names[] = {
    "DP_IDCODE/ABORT",    //!< DP-IDCODE read, ABORT write
@@ -588,7 +572,6 @@ char const *getSWDDebugRegName( unsigned int regAddr ) {
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getHCS12DebugRegName( unsigned int regAddr ) {
    if (regAddr == 0xFF01) {
       return "BDMSTS";
@@ -611,7 +594,6 @@ char const *getHCS12DebugRegName( unsigned int regAddr ) {
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getHCS12RegName( unsigned int regAddr ) {
    static const char *names[] = {
       NULL,NULL,NULL,"PC","D","X","Y","SP"
@@ -633,7 +615,6 @@ char const *getHCS12RegName( unsigned int regAddr ) {
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getHCS08RegName( unsigned int regAddr ) {
    static const char *names[] = {
       NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
@@ -656,7 +637,6 @@ char const *getHCS08RegName( unsigned int regAddr ) {
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getRS08RegName( unsigned int regAddr ) {
    static const char *names[] = {
       NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
@@ -680,7 +660,6 @@ char const *getRS08RegName( unsigned int regAddr ) {
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getCFV1RegName( unsigned int regAddr ){
    static const char *names[] = {
       "D0","D1","D2","D3","D4","D5","D6","D7",
@@ -688,10 +667,17 @@ char const *getCFV1RegName( unsigned int regAddr ){
       "PST0","PST1","PST2","PST3","PST4","PST5",
       "PST6","PST7","PST8","PST9","PST10","PST11",
       };
+   static const char *names2[] = {
+      "_A7","VBR","CPUCR","SR","PC"
+      };
    const char *regName = NULL;
 
    if (regAddr < sizeof(names)/sizeof(names[0])) {
        regName = names[regAddr];
+   }
+   regAddr -= CFV1_RegOTHER_A7;
+   if (regAddr < sizeof(names2)/sizeof(names2[0])) {
+      regName = names2[regAddr];
    }
    if (regName == NULL) {
       regName = getUnknownReg(regAddr);
@@ -706,7 +692,6 @@ char const *getCFV1RegName( unsigned int regAddr ){
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getCFVxRegName( unsigned int regAddr ) {
    static const char *names[] = {
       "D0","D1","D2","D3","D4","D5","D6","D7",
@@ -809,7 +794,6 @@ char const *getDSCRegName( unsigned int regAddr) {
 //!
 //! @return pointer to static string describing the command
 //!
-
 char const *getRegName( unsigned int targetType,
                         unsigned int regNo ){
    switch (targetType) {
@@ -824,9 +808,9 @@ char const *getRegName( unsigned int targetType,
          return getCFV1RegName(regNo);
       case T_CFVx :
          return getCFVxRegName(regNo);
+      case T_ARM :
       case T_ARM_JTAG :
       case T_ARM_SWD :
-      case T_ARM :
          return getARMRegName(regNo);
       case T_MC56F80xx:
          return getDSCRegName(regNo);
@@ -840,7 +824,6 @@ char const *getRegName( unsigned int targetType,
 //!
 //! @return pointer to static string buffer describing the CSR
 //!
-
 char const *getCFVx_CSR_Name( unsigned int CSR) {
    static const char *hrlName[] = {
       "A","B","C","D","?","?","?","?",
@@ -886,7 +869,6 @@ char const *getCFVx_CSR_Name( unsigned int CSR) {
 //!
 //! @return pointer to static string buffer describing the BDMSTS
 //!
-
 char const *getHCS12_BDMSTS_Name( unsigned int BDMSTS) {
    static char buff[100];
 
@@ -908,7 +890,6 @@ char const *getHCS12_BDMSTS_Name( unsigned int BDMSTS) {
 //!
 //! @return pointer to static string buffer describing the BDCSCR
 //!
-
 char const *getHCS08_BDCSCR_Name( unsigned int BDCSCR) {
    static char buff[100];
 
@@ -931,7 +912,6 @@ char const *getHCS08_BDCSCR_Name( unsigned int BDCSCR) {
 //!
 //! @return pointer to static string buffer describing the BDCSCR
 //!
-
 char const *getRS08_BDCSCR_Name( unsigned int BDCSCR) {
 static char buff[100];
    snprintf(buff, sizeof(buff), "(0x%2.2X) = %s%s%s%s%s%s%s",
@@ -952,7 +932,6 @@ static char buff[100];
 //!
 //! @return pointer to static string buffer describing the XCSR
 //!
-
 char const *getCFV1_XCSR_Name( unsigned int XCSR) {
    static char buff[100];
    static const char *mode[] = {"RUN,", "STOP,", "HALT,", "???,"};
@@ -974,7 +953,6 @@ char const *getCFV1_XCSR_Name( unsigned int XCSR) {
 //!
 //! @return pointer to static string buffer describing the value
 //!
-
 char const *getStatusRegName(unsigned int targetType, unsigned int value) {
 
    switch (targetType) {
@@ -999,7 +977,6 @@ char const *getStatusRegName(unsigned int targetType, unsigned int value) {
 //!
 //! @return pointer to static string buffer describing the XCSR
 //!
-
 const char *getCapabilityName(unsigned int capability) {
 unsigned index;
 static char buff[250] = "";
@@ -1032,7 +1009,6 @@ static const char *capabilityTable[] = {
    return buff;
 }
 
-
 char const *getTargetModeName(TargetMode_t type) {
 static char buff[100] = "";
 static const char *resetMethod[] = {"ALL",
@@ -1056,7 +1032,6 @@ static const char *resetMode[] = {"SPECIAL",
                              );
          return buff;
 }
-
 
 char const *getPinLevelName(PinLevelMasks_t level) {
 static char buff[100];
@@ -1103,7 +1078,6 @@ static char buff[100];
    return buff;
 }
 
-
 char const *getControlLevelName(InterfaceLevelMasks_t level) {
 static char buff[100];
 
@@ -1132,7 +1106,6 @@ static char buff[100];
    return buff;
 }
 
-
 char const *getVoltageSelectName(TargetVddSelect_t level) {
    switch (level) {
       case BDM_TARGET_VDD_OFF      : return "Vdd-Off";
@@ -1144,7 +1117,6 @@ char const *getVoltageSelectName(TargetVddSelect_t level) {
    }
 }
 
-
 char const *getVppSelectName(TargetVppSelect_t level) {
    switch (level) {
       case BDM_TARGET_VPP_OFF       : return "Vpp-Off";
@@ -1154,7 +1126,6 @@ char const *getVppSelectName(TargetVppSelect_t level) {
       default :                       return "Vpp-??";
    }
 }
-
 
 char const *getClockSelectName(ClkSwValues_t level) {
    switch (level) {
@@ -1167,7 +1138,6 @@ char const *getClockSelectName(ClkSwValues_t level) {
 
 //! Map JTAG Exit action codes to strings
 //!
-
 const char *getExitAction(int action) {
 static char buff[100];
 const char *exitAction;
@@ -1209,7 +1179,6 @@ const char *fillMode;
 //!
 //! @param options - options to report
 //!
-
 void printBdmOptions(const USBDM_ExtendedOptions_t *options) {
    Logging::print("\n"
          "========================================\n"
@@ -1293,7 +1262,6 @@ const char *getDpRegName(int reg) {
    return names[reg&0x03];
 }
 
-
 const char *getDHCSRName(uint32_t dhcsrValue) {
 typedef struct {
    const char *bitName;
@@ -1329,7 +1297,6 @@ bitInfo *bitPtr = bitNames;
    return buffer;
 }
 
-
 const char *getDEMCRName(uint32_t demcrValue) {
 typedef struct {
    const char *bitName;
@@ -1363,7 +1330,6 @@ bitInfo *bitPtr = bitNames;
    return buffer;
 }
 
-
 const char *getMDM_APStatusName(uint32_t mdmApValue) {
 typedef struct {
    const char *bitName;
@@ -1396,7 +1362,6 @@ const bitInfo *bitPtr = bitNames;
    return buffer;
 }
 
-
 const char *getMDM_APControlName(uint32_t mdmApValue) {
 typedef struct {
    const char *bitName;
@@ -1425,7 +1390,6 @@ const bitInfo *bitPtr = bitNames;
    return buffer;
 }
 
-
 const char *getSRSHName(uint32_t srshValue) {
 typedef struct {
    const char *bitName;
@@ -1448,7 +1412,6 @@ bitInfo *bitPtr = bitNames;
    }
    return buffer;
 }
-
 
 const char *getSRSLName(uint32_t srslValue) {
 typedef struct {

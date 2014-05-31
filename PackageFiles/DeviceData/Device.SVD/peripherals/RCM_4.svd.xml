@@ -1,8 +1,8 @@
 <!--
 Devices using this peripheral: 
-   MKL02Z4
-   MKL04Z4
-   MKL05Z4
+      MKL02Z4
+      MKL04Z4
+      MKL05Z4
 -->
       <peripheral sourceFile="RCM_4">
          <name>RCM</name>

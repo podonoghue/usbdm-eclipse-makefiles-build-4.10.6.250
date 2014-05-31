@@ -1,6 +1,6 @@
 <!--
 Devices using this peripheral: 
-   MK10D7
+      MK10D7
 -->
       <peripheral sourceFile="SIM_MK10D7">
          <name>SIM</name>

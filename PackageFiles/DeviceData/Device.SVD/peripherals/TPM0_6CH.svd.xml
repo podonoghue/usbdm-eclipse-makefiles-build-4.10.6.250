@@ -1,16 +1,16 @@
 <!--
 Devices using this peripheral: 
-   MKL04Z4
-   MKL05Z4
-   MKL14Z4
-   MKL15Z4
-   MKL16Z4
-   MKL24Z4
-   MKL25Z4
-   MKL26Z4
-   MKL34Z4
-   MKL36Z4
-   MKL46Z4
+      MKL04Z4
+      MKL05Z4
+      MKL14Z4
+      MKL15Z4
+      MKL16Z4
+      MKL24Z4
+      MKL25Z4
+      MKL26Z4
+      MKL34Z4
+      MKL36Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="TPM0_6CH">
          <name>TPM0</name>
@@ -233,84 +233,84 @@ Devices using this peripheral:
                   <description>Channel (n) Status and Control</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>DMA</name>
-                     <description>DMA Enable</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Disable DMA transfers</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Enable DMA transfers</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>ELSA</name>
-                     <description>Edge or Level Select</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>ELSB</name>
-                     <description>Edge or Level Select</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>MSA</name>
-                     <description>Channel Mode Select</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>MSB</name>
-                     <description>Channel Mode Select</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>CHIE</name>
-                     <description>Channel Interrupt Enable</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Disable channel interrupts</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Enable channel interrupts</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CHF</name>
-                     <description>Channel Flag</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>DMA</name>
+                        <description>DMA Enable</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Disable DMA transfers</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Enable DMA transfers</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>ELSA</name>
+                        <description>Edge or Level Select</description>
+                        <bitOffset>2</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>ELSB</name>
+                        <description>Edge or Level Select</description>
+                        <bitOffset>3</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>MSA</name>
+                        <description>Channel Mode Select</description>
+                        <bitOffset>4</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>MSB</name>
+                        <description>Channel Mode Select</description>
+                        <bitOffset>5</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>CHIE</name>
+                        <description>Channel Interrupt Enable</description>
+                        <bitOffset>6</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Disable channel interrupts</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Enable channel interrupts</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>CHF</name>
+                        <description>Channel Flag</description>
+                        <bitOffset>7</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>No channel event has occurred</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>A channel event has occurred</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -318,12 +318,12 @@ Devices using this peripheral:
                   <description>Channel (n) Value</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
-                  <field>
-                     <name>VAL</name>
-                     <description>Channel Value</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>16</bitWidth>
-                  </field>
+                     <field>
+                        <name>VAL</name>
+                        <description>Channel Value</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>16</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>

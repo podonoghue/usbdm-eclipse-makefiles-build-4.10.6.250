@@ -32,6 +32,7 @@ int main(void) {
    // Generate Access error (interrupt handler demonstration)
    // (*(unsigned int *) 101) = 100;
 
+   // Real programs never die!
    for(;;) {
       __asm__("nop");
    }

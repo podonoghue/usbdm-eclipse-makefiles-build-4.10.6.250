@@ -1,11 +1,13 @@
 <!--
 Devices using this peripheral: 
-   MK10F12
-   MK20F12
-   MK21F12
-   MK60F12
-   MK61F12
-   MK70F12
+      MK10F12
+      MK20F12
+      MK21F12
+      MK22F12
+      MK60F12
+      MK61F12
+      MK64F12
+      MK70F12
 -->
       <peripheral sourceFile="MPU_1">
          <name>MPU</name>
@@ -135,11 +137,11 @@ Devices using this peripheral:
                   <addressOffset>0x0</addressOffset>
                   <access>read-only</access>
                   <fields>
-                  <field>
-                     <name>EADDR</name>
-                     <description>Error Address</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>EADDR</name>
+                        <description>Error Address</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -148,70 +150,70 @@ Devices using this peripheral:
                   <addressOffset>0x4</addressOffset>
                   <access>read-only</access>
                   <fields>
-                  <field>
-                     <name>ERW</name>
-                     <description>Error Read/Write</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Read</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Write</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>EATTR</name>
-                     <description>Error Attributes</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>3</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b000</name>
-                           <description>User mode, instruction access</description>
-                           <value>0b000</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b001</name>
-                           <description>User mode, data access</description>
-                           <value>0b001</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b010</name>
-                           <description>Supervisor mode, instruction access</description>
-                           <value>0b010</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b011</name>
-                           <description>Supervisor mode, data access</description>
-                           <value>0b011</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>EMN</name>
-                     <description>Error Master Number</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>EPID</name>
-                     <description>Error process identification</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
-                  <field>
-                     <name>EACD</name>
-                     <description>Error Access Control Detail</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>16</bitWidth>
-                  </field>
+                     <field>
+                        <name>ERW</name>
+                        <description>Error Read/Write</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Read</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Write</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>EATTR</name>
+                        <description>Error Attributes</description>
+                        <bitOffset>1</bitOffset>
+                        <bitWidth>3</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b000</name>
+                              <description>User mode, instruction access</description>
+                              <value>0b000</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b001</name>
+                              <description>User mode, data access</description>
+                              <value>0b001</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b010</name>
+                              <description>Supervisor mode, instruction access</description>
+                              <value>0b010</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b011</name>
+                              <description>Supervisor mode, data access</description>
+                              <value>0b011</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>EMN</name>
+                        <description>Error Master Number</description>
+                        <bitOffset>4</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>EPID</name>
+                        <description>Error process identification</description>
+                        <bitOffset>8</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
+                     <field>
+                        <name>EACD</name>
+                        <description>Error Access Control Detail</description>
+                        <bitOffset>16</bitOffset>
+                        <bitWidth>16</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>
@@ -226,12 +228,12 @@ Devices using this peripheral:
                   <description>Region Descriptor n, Word 0</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>SRTADDR</name>
-                     <description>Start Address</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>27</bitWidth>
-                  </field>
+                     <field>
+                        <name>SRTADDR</name>
+                        <description>Start Address</description>
+                        <bitOffset>5</bitOffset>
+                        <bitWidth>27</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -240,12 +242,12 @@ Devices using this peripheral:
                   <addressOffset>0x4</addressOffset>
                   <resetValue>0xFFFFFFFF</resetValue>
                   <fields>
-                  <field>
-                     <name>ENDADDR</name>
-                     <description>End Address</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>27</bitWidth>
-                  </field>
+                     <field>
+                        <name>ENDADDR</name>
+                        <description>End Address</description>
+                        <bitOffset>5</bitOffset>
+                        <bitWidth>27</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -254,268 +256,268 @@ Devices using this peripheral:
                   <addressOffset>0x8</addressOffset>
                   <resetValue>0x61F7DF</resetValue>
                   <fields>
-                  <field>
-                     <name>M0UM</name>
-                     <description>Bus Master 0 User Mode Access Control</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>3</bitWidth>
-                  </field>
-                  <field>
-                     <name>M0SM</name>
-                     <description>Bus Master 0 Supervisor Mode Access Control</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>2</bitWidth>
-                  </field>
-                  <field>
-                     <name>M0PE</name>
-                     <description>Bus master 0 process identifier enable</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>M1UM</name>
-                     <description>Bus Master 1 User Mode Access Control</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>3</bitWidth>
-                  </field>
-                  <field>
-                     <name>M1SM</name>
-                     <description>Bus Master 1 Supervisor Mode Access Control</description>
-                     <bitOffset>9</bitOffset>
-                     <bitWidth>2</bitWidth>
-                  </field>
-                  <field>
-                     <name>M1PE</name>
-                     <description>Bus master 1 process identifier enable</description>
-                     <bitOffset>11</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>M2UM</name>
-                     <description>Bus Master 2 User Mode Access control</description>
-                     <bitOffset>12</bitOffset>
-                     <bitWidth>3</bitWidth>
-                  </field>
-                  <field>
-                     <name>M2SM</name>
-                     <description>Bus Master 2 Supervisor Mode Access Control</description>
-                     <bitOffset>15</bitOffset>
-                     <bitWidth>2</bitWidth>
-                  </field>
-                  <field>
-                     <name>M2PE</name>
-                     <description>Bus master 2 process identifier enable</description>
-                     <bitOffset>17</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>M3UM</name>
-                     <description>Bus Master 3 User Mode Access Control</description>
-                     <bitOffset>18</bitOffset>
-                     <bitWidth>3</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>An attempted access of that mode may be terminated with an access error (if not allowed by another descriptor) and the access not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Allows the given access type to occur</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M3SM</name>
-                     <description>Bus Master 3 Supervisor Mode Access Control</description>
-                     <bitOffset>21</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>r/w/x; read, write and execute allowed</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>r/x; read and execute allowed, but no write</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>r/w; read and write allowed, but no execute</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Same as User mode defined in M3UM</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M3PE</name>
-                     <description>Bus master 3 process identifier enable</description>
-                     <bitOffset>23</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not include the process identifier in the evaluation</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Include the process identifier and mask (RGDn_WORD3) in the region hit evaluation</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M4WE</name>
-                     <description>Bus Master 4 Write Enable</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Bus master 4 writes terminate with an access error and the write is not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Bus master 4 writes allowed</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M4RE</name>
-                     <description>Bus Master 4 Read Enable</description>
-                     <bitOffset>25</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Bus master 4 reads terminate with an access error and the read is not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Bus master 4 reads allowed</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M5WE</name>
-                     <description>Bus Master 5 Write Enable</description>
-                     <bitOffset>26</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Bus master 5 writes terminate with an access error and the write is not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Bus master 5 writes allowed</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M5RE</name>
-                     <description>Bus Master 5 Read Enable</description>
-                     <bitOffset>27</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Bus master 5 reads terminate with an access error and the read is not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Bus master 5 reads allowed</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M6WE</name>
-                     <description>Bus Master 6 Write Enable</description>
-                     <bitOffset>28</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Bus master 6 writes terminate with an access error and the write is not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Bus master 6 writes allowed</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M6RE</name>
-                     <description>Bus Master 6 Read Enable</description>
-                     <bitOffset>29</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Bus master 6 reads terminate with an access error and the read is not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Bus master 6 reads allowed</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M7WE</name>
-                     <description>Bus Master 7 Write Enable</description>
-                     <bitOffset>30</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Bus master 7 writes terminate with an access error and the write is not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Bus master 7 writes allowed</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M7RE</name>
-                     <description>Bus Master 7 Read Enable</description>
-                     <bitOffset>31</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Bus master 7 reads terminate with an access error and the read is not performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Bus master 7 reads allowed</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>M0UM</name>
+                        <description>Bus Master 0 User Mode Access Control</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>3</bitWidth>
+                     </field>
+                     <field>
+                        <name>M0SM</name>
+                        <description>Bus Master 0 Supervisor Mode Access Control</description>
+                        <bitOffset>3</bitOffset>
+                        <bitWidth>2</bitWidth>
+                     </field>
+                     <field>
+                        <name>M0PE</name>
+                        <description>Bus master 0 process identifier enable</description>
+                        <bitOffset>5</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>M1UM</name>
+                        <description>Bus Master 1 User Mode Access Control</description>
+                        <bitOffset>6</bitOffset>
+                        <bitWidth>3</bitWidth>
+                     </field>
+                     <field>
+                        <name>M1SM</name>
+                        <description>Bus Master 1 Supervisor Mode Access Control</description>
+                        <bitOffset>9</bitOffset>
+                        <bitWidth>2</bitWidth>
+                     </field>
+                     <field>
+                        <name>M1PE</name>
+                        <description>Bus master 1 process identifier enable</description>
+                        <bitOffset>11</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>M2UM</name>
+                        <description>Bus Master 2 User Mode Access control</description>
+                        <bitOffset>12</bitOffset>
+                        <bitWidth>3</bitWidth>
+                     </field>
+                     <field>
+                        <name>M2SM</name>
+                        <description>Bus Master 2 Supervisor Mode Access Control</description>
+                        <bitOffset>15</bitOffset>
+                        <bitWidth>2</bitWidth>
+                     </field>
+                     <field>
+                        <name>M2PE</name>
+                        <description>Bus master 2 process identifier enable</description>
+                        <bitOffset>17</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>M3UM</name>
+                        <description>Bus Master 3 User Mode Access Control</description>
+                        <bitOffset>18</bitOffset>
+                        <bitWidth>3</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>An attempted access of that mode may be terminated with an access error (if not allowed by another descriptor) and the access not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Allows the given access type to occur</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M3SM</name>
+                        <description>Bus Master 3 Supervisor Mode Access Control</description>
+                        <bitOffset>21</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>r/w/x; read, write and execute allowed</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>r/x; read and execute allowed, but no write</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b10</name>
+                              <description>r/w; read and write allowed, but no execute</description>
+                              <value>0b10</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b11</name>
+                              <description>Same as User mode defined in M3UM</description>
+                              <value>0b11</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M3PE</name>
+                        <description>Bus master 3 process identifier enable</description>
+                        <bitOffset>23</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Do not include the process identifier in the evaluation</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Include the process identifier and mask (RGDn_WORD3) in the region hit evaluation</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M4WE</name>
+                        <description>Bus Master 4 Write Enable</description>
+                        <bitOffset>24</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Bus master 4 writes terminate with an access error and the write is not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Bus master 4 writes allowed</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M4RE</name>
+                        <description>Bus Master 4 Read Enable</description>
+                        <bitOffset>25</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Bus master 4 reads terminate with an access error and the read is not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Bus master 4 reads allowed</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M5WE</name>
+                        <description>Bus Master 5 Write Enable</description>
+                        <bitOffset>26</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Bus master 5 writes terminate with an access error and the write is not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Bus master 5 writes allowed</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M5RE</name>
+                        <description>Bus Master 5 Read Enable</description>
+                        <bitOffset>27</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Bus master 5 reads terminate with an access error and the read is not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Bus master 5 reads allowed</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M6WE</name>
+                        <description>Bus Master 6 Write Enable</description>
+                        <bitOffset>28</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Bus master 6 writes terminate with an access error and the write is not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Bus master 6 writes allowed</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M6RE</name>
+                        <description>Bus Master 6 Read Enable</description>
+                        <bitOffset>29</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Bus master 6 reads terminate with an access error and the read is not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Bus master 6 reads allowed</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M7WE</name>
+                        <description>Bus Master 7 Write Enable</description>
+                        <bitOffset>30</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Bus master 7 writes terminate with an access error and the write is not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Bus master 7 writes allowed</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>M7RE</name>
+                        <description>Bus Master 7 Read Enable</description>
+                        <bitOffset>31</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Bus master 7 reads terminate with an access error and the read is not performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Bus master 7 reads allowed</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -524,36 +526,36 @@ Devices using this peripheral:
                   <addressOffset>0xC</addressOffset>
                   <resetValue>0x1</resetValue>
                   <fields>
-                  <field>
-                     <name>VLD</name>
-                     <description>Valid</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Region descriptor is invalid</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Region descriptor is valid</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>PIDMASK</name>
-                     <description>Process identifier mask</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
-                  <field>
-                     <name>PID</name>
-                     <description>Process identifier</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
+                     <field>
+                        <name>VLD</name>
+                        <description>Valid</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Region descriptor is invalid</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Region descriptor is valid</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>PIDMASK</name>
+                        <description>Process identifier mask</description>
+                        <bitOffset>16</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
+                     <field>
+                        <name>PID</name>
+                        <description>Process identifier</description>
+                        <bitOffset>24</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>

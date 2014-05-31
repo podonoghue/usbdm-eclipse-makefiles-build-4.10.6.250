@@ -43,10 +43,6 @@ Change History
 #elif (TARGET == ARM)
 #define USBDM_ReadPC(x)                      USBDM_ReadReg(ARM_RegPC, x);
 #define USBDM_WritePC(x)                     USBDM_WriteReg(ARM_RegPC, x);
-#define USBDM_ReadSP(x)                      USBDM_ReadReg(ARM_RegSP, x);
-#define USBDM_WriteSP(x)                     USBDM_WriteReg(ARM_RegSP, x);
-#define USBDM_ReadSR(x)                      USBDM_ReadReg(ARM_RegSR, x);
-#define USBDM_WriteSR(x)                     USBDM_WriteReg(ARM_RegSR, x);
 #else
 #error "Unhandled TARGET"
 #endif
@@ -75,7 +71,7 @@ const char *typeName = "Invalid";
    return typeName;
 }
 
-//! Converts a uint32_t value to an array of bytes in litteEndian order
+//! Converts a uint32_t value to an array of 4 uint8_t in litteEndian order
 //!
 //! @param data - value to convert
 //!
@@ -88,6 +84,16 @@ inline const uint8_t *getData4x8Le(uint32_t data) {
    data8[2]= data>>16;
    data8[3]= data>>24;
    return data8;
+}
+
+//! Converts an array of 4 uint8_t values  in litteEndian order to a uint32_t
+//!
+//! @param data - value to convert
+//!
+//! @return ptr to static buffer containing value
+//!
+uint32_t getU32Le(uint8_t data[]) {
+   return data[0]+(data[1]<<8)+(data[2]<<16)+(data[3]<<24);
 }
 
 //===========================================================
@@ -148,8 +154,6 @@ static memoryBreakInfo *findFreeMemoryBreakpoint(void) {
 //================================================================
 // Hardware PC breakpoints using breakpoint hardware
 //
-// 4 available on Coldfire V1 devices.
-//
 typedef struct {
    bool  inUse;
    uint32_t   address;
@@ -196,9 +200,7 @@ static hardwareBreakInfo *findFreeHardwareBreakpoint(void) {
 }
 
 //================================================================
-// Hardware data read/write/access watchpoint using hardware
-//
-// 1 available on Coldfire V1 devices.
+// Hardware data read/write/access watchpoint
 //
 typedef struct {
    bool        inUse;
@@ -483,6 +485,7 @@ const uint8_t *getFpCompAddress(uint32_t address) {
    fpCompValue |= FP_COMP_ENABLE;
    return getData4x8Le(fpCompValue);
 }
+
 //! Activate breakpoints. \n
 //! This may involve changing target code for RAM breakpoints or
 //! modifying target breakpoint hardware
@@ -551,6 +554,7 @@ void activateBreakpoints(void) {
       }
    }
 }
+
 //! De-activate breakpoints. \n
 //! This may involve changing target code for RAM breakpoints or
 //! modifying target breakpoint hardware.
@@ -574,7 +578,7 @@ void deactivateBreakpoints(void) {
    breakpointsActive = false;
 }
 
-//! No adjustment needed for memory breakpoints
+//! Adjust PC needed for hosted BKPT breakpoints
 //!
 void checkAndAdjustBreakpointHalt(void) {
    unsigned long pcValue;
@@ -609,9 +613,7 @@ USBDM_ErrorCode initBreakpoints() {
 };
 #elif (TARGET == ARM) || (TARGET == ARM_SWD)
 
-uint32_t getU32Le(uint8_t data[]) {
-   return data[0]+(data[1]<<8)+(data[2]<<16)+(data[3]<<24);
-}
+
 
 // Initialise Breakpoint before first use
 //

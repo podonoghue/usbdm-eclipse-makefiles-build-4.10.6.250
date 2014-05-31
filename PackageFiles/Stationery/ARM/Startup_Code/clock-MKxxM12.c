@@ -13,7 +13,7 @@
 #include "utilities.h"
 #include "stdbool.h"
 
-// Some MCU call OSC_CR0 just OSC_CR
+// Some MCUs call OSC_CR0 just OSC_CR
 #ifndef OSC0_CR
 #define OSC0_CR OSC_CR
 #endif
@@ -26,7 +26,7 @@ uint32_t SystemBusClock  = SYSTEM_BUS_CLOCK; // Hz
  */
 void clock_initialise(void) {
 
-#if (CLOCK_MODE == CLOCK_MODE_RESET)
+#if (CLOCK_MODE == CLOCK_MODE_NONE)
    // No clock setup
 #else
    // XTAL0/EXTAL0 Pins
@@ -70,7 +70,8 @@ void clock_initialise(void) {
    // =============================================================
 
    // Set up crystal or external clock source for OSC0
-   MCG_C2 = MCG_C2_LOCRE0_M     | // LOCRE0 = 0,1   -> Loss of clock reset enable
+   MCG_C2 = 
+            MCG_C2_LOCRE0_M     | // LOCRE0 = 0,1   -> Loss of clock reset enable
             MCG_C2_RANGE0_M     | // RANGE0 = 0,1,2 -> Oscillator low/high/very high clock range
             MCG_C2_HGO0_M       | // HGO0   = 0,1   -> Oscillator low power/high gain
             MCG_C2_EREFS0_M     | // EREFS0 = 0,1   -> Select external clock/crystal oscillator
@@ -243,7 +244,7 @@ void clock_initialise(void) {
             MCG_C2_IRCS_M;         // IRCS   = 0,1   -> Select slow/fast internal clock for internal reference
 
 #endif // (CLOCK_MODE == CLOCK_MODE_BLPE) || (CLOCK_MODE == CLOCK_MODE_BLPI)
-#endif // (CLOCK_MODE == CLOCK_MODE_RESET)
+#endif // (CLOCK_MODE == CLOCK_MODE_NONE)
 
    // Basic clock multiplexing
 #if defined(MCU_MK20D5) || defined(MCU_MK20D7) || defined(MCU_MK40D10) || defined(MCU_MK40DZ10)
@@ -276,6 +277,14 @@ void clock_initialise(void) {
 #elif defined(MCU_MK10D12) || defined(MCU_MK10F12)
    // Peripheral clock choice (incl. USB), USBCLK = MCGCLK
    SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK; // PLL rather than FLL for peripheral clock
+#elif defined MCU_MK64F12
+   SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_M |
+                SIM_SOPT2_USBSRC_MASK;
+#elif defined(MCU_MK64F12)
+   // Peripheral clock choice (incl. USB), USBCLK = MCGCLK
+   SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_M    | // PLL rather than FLL for peripheral clock
+                SIM_SOPT2_USBSRC_MASK;     // MCGPLLCLK/2 Source as USB clock (48MHz req.)
+   SIM_SOPT1 = (SIM_SOPT1&~SIM_SOPT1_OSC32KSEL_MASK)|SIM_SOPT1_OSC32KSEL_M; // ERCLK32K source
 #else
    #error "Please add code as required"
 #endif
@@ -291,9 +300,10 @@ void SystemCoreClockUpdate(void) {
    uint32_t oscerclk = (MCG_C7&MCG_C7_OSCSEL_MASK)?RTCCLK_CLOCK:OSCCLK0_CLOCK;
    switch (MCG_S&MCG_S_CLKST_MASK) {
       case MCG_S_CLKST(0) : // FLL
+         SystemCoreClock = (MCG_C4&MCG_C4_DMX32_MASK)?732:640;
          if ((MCG_C1&MCG_C1_IREFS_MASK) == 0) {
-            SystemCoreClock = oscerclk/(1<<((MCG_C1&MCG_C1_FRDIV_MASK)>>MCG_C1_FRDIV_SHIFT));
-            if (((MCG_C2&MCG_C2_RANGE0_MASK) != 0) && ((MCG_C7&MCG_C7_OSCSEL_MASK) ==  0)) {
+            SystemCoreClock *= oscerclk/(1<<((MCG_C1&MCG_C1_FRDIV_MASK)>>MCG_C1_FRDIV_SHIFT));
+            if (((MCG_C2&MCG_C2_RANGE0_MASK) != 0) && ((MCG_C7&MCG_C7_OSCSEL_MASK) !=  1)) {
                if ((MCG_C1&MCG_C1_FRDIV_M) == MCG_C1_FRDIV(6)) {
                   SystemCoreClock /= 20;
                }
@@ -306,9 +316,8 @@ void SystemCoreClockUpdate(void) {
             }
          }
          else {
-            SystemCoreClock = SYSTEM_SLOW_IRC_CLOCK;
+            SystemCoreClock *= SYSTEM_SLOW_IRC_CLOCK;
          }
-         SystemCoreClock *= (MCG_C4&MCG_C4_DMX32_MASK)?732:640;
          SystemCoreClock *= ((MCG_C4&MCG_C4_DRST_DRS_MASK)>>MCG_C4_DRST_DRS_SHIFT)+1;
       break;
       case MCG_S_CLKST(1) : // Internal Reference Clock
@@ -333,7 +342,7 @@ void SystemCoreClockUpdate(void) {
                // OSC1
                oscerclk = OSCCLK1_CLOCK;
             }
-            SystemCoreClock  = (oscerclk/10)*(((MCG_C6&MCG_C6_VDIV0_MASK)>>MCG_C6_VDIV0_SHIFT)+16);
+            SystemCoreClock  = (oscerclk/10)*(((MCG_C6&MCG_C6_VDIV0_MASK)>>MCG_C6_VDIV0_SHIFT)+24);
             SystemCoreClock /= ((MCG_C5&MCG_C5_PRDIV0_MASK)>>MCG_C5_PRDIV0_SHIFT)+1;
          }
          else {
@@ -349,7 +358,7 @@ void SystemCoreClockUpdate(void) {
             SystemCoreClock  = (oscerclk/10)*(((MCG_C12&MCG_C12_VDIV1_MASK)>>MCG_C12_VDIV1_SHIFT)+16);
             SystemCoreClock /= ((MCG_C11&MCG_C11_PRDIV1_MASK)>>MCG_C11_PRDIV1_SHIFT)+1;
          }
-         SystemCoreClock *= 5;
+         SystemCoreClock *= 10;
          break;
    }
    SystemBusClock    = SystemCoreClock/(((SIM_CLKDIV1&SIM_CLKDIV1_OUTDIV2_MASK)>>SIM_CLKDIV1_OUTDIV2_SHIFT)+1);

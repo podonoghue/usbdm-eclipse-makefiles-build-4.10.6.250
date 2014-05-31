@@ -1,18 +1,22 @@
 <!--
 Devices using this peripheral: 
-   MKE02Z2
-   MKL02Z4
-   MKL04Z4
-   MKL05Z4
-   MKL14Z4
-   MKL15Z4
-   MKL16Z4
-   MKL24Z4
-   MKL25Z4
-   MKL26Z4
-   MKL34Z4
-   MKL36Z4
-   MKL46Z4
+      MKE02Z2
+      MKE02Z4
+      MKE04Z4
+      MKE04Z8M4
+      MKE06Z4
+      MKL02Z4
+      MKL04Z4
+      MKL05Z4
+      MKL14Z4
+      MKL15Z4
+      MKL16Z4
+      MKL24Z4
+      MKL25Z4
+      MKL26Z4
+      MKL34Z4
+      MKL36Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="DWT_MKL">
          <name>DWT</name>
@@ -81,11 +85,11 @@ A value of zero indicates no comparator support</description>
                   <description>Comparator Register 0</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>COMP</name>
-                     <description>COMP[31:0]. Reference value for comparison</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>COMP</name>
+                        <description>COMP[31:0]. Reference value for comparison</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -93,13 +97,13 @@ A value of zero indicates no comparator support</description>
                   <description>Mask Register 0</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
-                  <field>
-                     <name>MASK</name>
-                     <description>MASK[4:0]. The size of the ignore mask, 0-31 bits, applied to address range matching.\n
+                     <field>
+                        <name>MASK</name>
+                        <description>MASK[4:0]. The size of the ignore mask, 0-31 bits, applied to address range matching.\n
 The maximum mask size is IMPLEMENTATION DEFINED. A debugger can write 0b11111 to this field and then read the register back to determine the maximum mask size supported</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>5</bitWidth>
-                  </field>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>5</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -107,34 +111,34 @@ The maximum mask size is IMPLEMENTATION DEFINED. A debugger can write 0b11111 to
                   <description>Function Register 0</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>FUNCTION</name>
-                     <description>FUNCTION[3:0]. Selects action taken on comparator match.\n
+                     <field>
+                        <name>FUNCTION</name>
+                        <description>FUNCTION[3:0]. Selects action taken on comparator match.\n
 This field resets to zero</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>MATCHED</name>
-                     <description>MATCHED bit. Comparator match.\n
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>MATCHED</name>
+                        <description>MATCHED bit. Comparator match.\n
 A value of 1 indicates that the operation defined by the FUNCTION field occurred since the last read of the register.\n
 Reading the register clears this bit to 0</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No match</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Match</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                        <bitOffset>24</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <access>read-only</access>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>No match</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Match</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
             </cluster>

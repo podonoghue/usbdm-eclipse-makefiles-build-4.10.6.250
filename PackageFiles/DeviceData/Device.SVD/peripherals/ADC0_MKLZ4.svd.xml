@@ -1,10 +1,10 @@
 <!--
 Devices using this peripheral: 
-   MKL02Z4
-   MKL04Z4
-   MKL05Z4
-   MKL14Z4
-   MKL24Z4
+      MKL02Z4
+      MKL04Z4
+      MKL05Z4
+      MKL14Z4
+      MKL24Z4
 -->
       <peripheral sourceFile="ADC0_MKLZ4">
          <name>ADC0</name>

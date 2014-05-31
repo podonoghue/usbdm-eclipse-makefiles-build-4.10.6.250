@@ -1,41 +1,43 @@
 <!--
 Devices using this peripheral: 
-   MK10D5
-   MK10D7
-   MK10D10
-   MK10DZ10
-   MK10F12
-   MK11D5
-   MK12D5
-   MK20D5
-   MK20D7
-   MK20D10
-   MK20DZ10
-   MK20F12
-   MK21D5
-   MK21F12
-   MK22D5
-   MK30D7
-   MK30D10
-   MK30DZ10
-   MK40D7
-   MK40D10
-   MK40DZ10
-   MK50D7
-   MK50D10
-   MK50DZ10
-   MK51D7
-   MK51D10
-   MK51DZ10
-   MK52D10
-   MK52DZ10
-   MK53D10
-   MK53DZ10
-   MK60D10
-   MK60DZ10
-   MK60F12
-   MK61F12
-   MK70F12
+      MK10D5
+      MK10D7
+      MK10D10
+      MK10DZ10
+      MK10F12
+      MK11D5
+      MK12D5
+      MK20D5
+      MK20D7
+      MK20D10
+      MK20DZ10
+      MK20F12
+      MK21D5
+      MK21F12
+      MK22D5
+      MK22F12
+      MK30D7
+      MK30D10
+      MK30DZ10
+      MK40D7
+      MK40D10
+      MK40DZ10
+      MK50D7
+      MK50D10
+      MK50DZ10
+      MK51D7
+      MK51D10
+      MK51DZ10
+      MK52D10
+      MK52DZ10
+      MK53D10
+      MK53DZ10
+      MK60D10
+      MK60DZ10
+      MK60F12
+      MK61F12
+      MK64F12
+      MK70F12
 -->
       <peripheral sourceFile="DWT_MK">
          <name>DWT</name>
@@ -502,11 +504,11 @@ A value of zero indicates no comparator support</description>
                   <description>Comparator Register 0</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>COMP</name>
-                     <description>COMP[31:0]. Reference value for comparison</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>COMP</name>
+                        <description>COMP[31:0]. Reference value for comparison</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -514,13 +516,13 @@ A value of zero indicates no comparator support</description>
                   <description>Mask Register 0</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
-                  <field>
-                     <name>MASK</name>
-                     <description>MASK[4:0]. The size of the ignore mask, 0-31 bits, applied to address range matching.\n
+                     <field>
+                        <name>MASK</name>
+                        <description>MASK[4:0]. The size of the ignore mask, 0-31 bits, applied to address range matching.\n
 The maximum mask size is IMPLEMENTATION DEFINED. A debugger can write 0b11111 to this field and then read the register back to determine the maximum mask size supported</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>5</bitWidth>
-                  </field>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>5</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -528,156 +530,156 @@ The maximum mask size is IMPLEMENTATION DEFINED. A debugger can write 0b11111 to
                   <description>Function Register 0</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>FUNCTION</name>
-                     <description>FUNCTION[3:0]. Selects action taken on comparator match.\n
+                     <field>
+                        <name>FUNCTION</name>
+                        <description>FUNCTION[3:0]. Selects action taken on comparator match.\n
 This field resets to zero</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>EMITRANGE</name>
-                     <description>EMITRANGE bit. If the implementation supports trace sampling, enables generation of Data trace address offset packets, that hold Daddr[15:0].\n
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>EMITRANGE</name>
+                        <description>EMITRANGE bit. If the implementation supports trace sampling, enables generation of Data trace address offset packets, that hold Daddr[15:0].\n
 If DWT_CTRL.NOTRCPKT is RAZ then this bit is UNK/SBZP</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Data trace address offset packets disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Enable Data trace address offset packet generation</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CYCMATCH</name>
-                     <description>CYCMATCH bit. If the implementation supports cycle counting, enable cycle count comparison for comparator 0.\n
+                        <bitOffset>5</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Data trace address offset packets disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Enable Data trace address offset packet generation</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>CYCMATCH</name>
+                        <description>CYCMATCH bit. If the implementation supports cycle counting, enable cycle count comparison for comparator 0.\n
 If DWT_CTRL.NOCYCCNT is RAZ then this bit is UNK/SBZP</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No comparison is performed</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Compare DWT_COMP0 with the cycle counter, DWT_CYCCNT</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DATAVMATCH</name>
-                     <description>DATAVMATCH bit. Enables data value comparison, if supported.\n
+                        <bitOffset>7</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>No comparison is performed</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Compare DWT_COMP0 with the cycle counter, DWT_CYCCNT</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>DATAVMATCH</name>
+                        <description>DATAVMATCH bit. Enables data value comparison, if supported.\n
 For comparator 0, when the CYCMATCH is set to 1, DATAVMATCH must be set to 0 for it to perform cycle count comparison.\n
 See LNK1ENA, DATAVSIZE, DATAVADDR0 and DATAVADDR1 for related information.\n
 If the implementation does not support data value comparison this bit is RAZ/WI</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Perform address comparison</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Perform data value comparison</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>LNK1ENA</name>
-                     <description>LNK1ENA bit. Indicates whether the implementation supports use of a second linked comparator.\n
+                        <bitOffset>8</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Perform address comparison</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Perform data value comparison</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>LNK1ENA</name>
+                        <description>LNK1ENA bit. Indicates whether the implementation supports use of a second linked comparator.\n
 When LNK1ENA is RAO, the DATAVADDR1 field specifies the comparator to use as the second linked comparator</description>
-                     <bitOffset>9</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Second linked comparator not supported</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Second linked comparator supported</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DATAVSIZE</name>
-                     <description>DATAVSIZE[1:0]. For data value matching, specifies the size of the required data comparison</description>
-                     <bitOffset>10</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>Byte</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Halfword</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Word</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Reserved. Using this value means behaviour is UNPREDICTABLE</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DATAVADDR0</name>
-                     <description>DATAVADDR0[3:0]. When the DATAVMATCH bit is set to 1 this field can hold the comparator number of a comparator to use for linked address comparison. \n
+                        <bitOffset>9</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <access>read-only</access>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Second linked comparator not supported</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Second linked comparator supported</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>DATAVSIZE</name>
+                        <description>DATAVSIZE[1:0]. For data value matching, specifies the size of the required data comparison</description>
+                        <bitOffset>10</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>Byte</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>Halfword</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b10</name>
+                              <description>Word</description>
+                              <value>0b10</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b11</name>
+                              <description>Reserved. Using this value means behaviour is UNPREDICTABLE</description>
+                              <value>0b11</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>DATAVADDR0</name>
+                        <description>DATAVADDR0[3:0]. When the DATAVMATCH bit is set to 1 this field can hold the comparator number of a comparator to use for linked address comparison. \n
 The DWT unit ignores the value of this field if the DATAVMATCH bit is set to 0</description>
-                     <bitOffset>12</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>DATAVADDR1</name>
-                     <description>DATAVADDR1[3:0]. When the DATAVMATCH and LNK1ENA bits are both 1, this field can hold the comparator number of a second comparator to use for linked address comparison. \n
+                        <bitOffset>12</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>DATAVADDR1</name>
+                        <description>DATAVADDR1[3:0]. When the DATAVMATCH and LNK1ENA bits are both 1, this field can hold the comparator number of a second comparator to use for linked address comparison. \n
 The DWT unit ignores the value of this field unless the LNK1ENA bit is RAO and the DATAVMATCH bit is set to 1.\n
 If LNK1ENA is RAZ, this field is RAZ/WI</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>MATCHED</name>
-                     <description>MATCHED bit. Comparator match.\n
+                        <bitOffset>16</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>MATCHED</name>
+                        <description>MATCHED bit. Comparator match.\n
 A value of 1 indicates that the operation defined by the FUNCTION field occurred since the last read of the register.\n
 Reading the register clears this bit to 0</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No match</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Match</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                        <bitOffset>24</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <access>read-only</access>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>No match</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Match</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
             </cluster>

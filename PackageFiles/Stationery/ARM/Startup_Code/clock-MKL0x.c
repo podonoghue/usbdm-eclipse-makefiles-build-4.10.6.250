@@ -26,7 +26,7 @@ uint32_t SystemBusClock  = SYSTEM_BUS_CLOCK; // Hz
  */
 void clock_initialise(void) {
 
-#if (CLOCK_MODE == CLOCK_MODE_RESET)
+#if (CLOCK_MODE == CLOCK_MODE_NONE)
    // No clock setup
 #else
    // XTAL/EXTAL Pins

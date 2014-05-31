@@ -1,7 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MKL04Z4
-   MKL05Z4
+      MKL04Z4
+      MKL05Z4
 -->
       <peripheral sourceFile="LLWU_2">
          <name>LLWU</name>

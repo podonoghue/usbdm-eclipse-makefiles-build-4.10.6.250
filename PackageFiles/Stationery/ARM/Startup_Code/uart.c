@@ -11,7 +11,7 @@
 #include "uart.h"
 #include "Freedom.h"
 
-#if defined(MCU_MKE02Z2)
+#if defined(MCU_MKE02Z2) ||  defined(MCU_MKE02Z4) ||  defined(MCU_MKE06Z4)
 //=================================================================================
 // UART to use
 //
@@ -25,6 +25,27 @@ __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
    SIM_SCGC |= SIM_SCGC_UART1_MASK;
+}
+#elif defined(MCU_MKE04Z8M4)
+//=================================================================================
+// UART to use
+//
+#define UART  UART0
+#define UART_CLOCK SYSTEM_UART1_CLOCK
+
+//=================================================================================
+// UART Port pin setup
+//
+__attribute__((always_inline))
+inline static void initDefaultUart()  {
+   // Enable clock to UART
+   SIM_SCGC |= SIM_SCGC_UART0_MASK;
+
+   // Set Tx & Rx Pin function
+   SIM_PINSEL &= ~SIM_PINSEL_UART0PS_MASK; // UART0_RX and UART0_TX are mapped on PTB0 and PTB1.
+   SIM_SOPT   &= ~(SIM_SOPT_RXDFE_MASK|  // RXD0 input signal is connected to UART0 module directly
+                   SIM_SOPT_RXDCE_MASK|  // UART0_RX input signal is connected to the UART0 module only
+                   SIM_SOPT_TXDME_MASK); // UART0_TX output is connected to pin-out directly.
 }
 #elif defined(MCU_MKL02Z4) || defined(MCU_MKL04Z4) || defined(MCU_MKL05Z4)
 //=================================================================================
@@ -152,6 +173,31 @@ inline static void initDefaultUart()  {
    // Set Tx & Rx Pin function
    PORTE_PCR8 = PORT_PCR_MUX(3);
    PORTE_PCR9 = PORT_PCR_MUX(3);
+}
+#elif defined(MCU_MK64F12)
+//=================================================================================
+// UART to use
+//
+#define UART  UART0
+#define UART_CLOCK SYSTEM_UART0_CLOCK
+
+//=================================================================================
+// UART Port pin setup
+//
+__attribute__((always_inline))
+inline static void initDefaultUart()  {
+   // Enable clock to UART
+   SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
+
+   // Enable clock to port pins used by UART
+   SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+
+   // Select Tx & Rx pins to use
+   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
+
+   // Set Tx & Rx Pin function
+   PORTB_PCR16 = PORT_PCR_MUX(3);
+   PORTB_PCR17 = PORT_PCR_MUX(3);
 }
 #else
 #error "Please modify before use"

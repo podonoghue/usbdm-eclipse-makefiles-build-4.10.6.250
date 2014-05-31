@@ -86,7 +86,7 @@ static void setSysDividers(uint32_t simClkDiv1) {
  */
 void clock_initialise(void) {
 
-#if (CLOCK_MODE == CLOCK_MODE_RESET)
+#if (CLOCK_MODE == CLOCK_MODE_NONE)
    // No clock setup
 #else
    // XTAL/EXTAL Pins

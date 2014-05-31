@@ -1,8 +1,8 @@
 <!--
 Devices using this peripheral: 
-   MKL34Z4
-   MKL36Z4
-   MKL46Z4
+      MKL34Z4
+      MKL36Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="LCD_2">
          <name>LCD</name>

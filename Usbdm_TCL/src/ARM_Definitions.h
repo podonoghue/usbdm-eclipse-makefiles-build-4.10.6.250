@@ -49,19 +49,19 @@
 #define MDM_AP (1) // Access MDM-AP    - Freescale specific AP
 #define AHB_AP (0) // Access AHB-AP    - Memory access (generic MEM-AP)
 
-#define MDM_AP_Flash_Mass_Erase_Ack          (1<<0)
-#define MDM_AP_Flash_Ready                   (1<<1)
-#define MDM_AP_System_Security               (1<<2)
-#define MDM_AP_System_Reset                  (1<<3)
-#define MDM_AP_Mass_Erase_Enable             (1<<5)
-#define MDM_AP_Backdoor_Access_Enable        (1<<6)
-#define MDM_AP_LP_Enable                     (1<<7)
-#define MDM_AP_VLP_Enable                    (1<<8)
-#define MDM_AP_LLS_Mode_Exit                 (1<<9)
-#define MDM_AP_VLLSx_Mode_Exit               (1<<10)
-#define MDM_AP_Status_Core_Halted            (1<<16)
-#define MDM_AP_Status_Core_SLEEPDEEP         (1<<17)
-#define MDM_AP_Status_Core_SLEEPING          (1<<18)
+#define MDM_AP_Status_Flash_Mass_Erase_Ack     (1<<0)
+#define MDM_AP_Status_Flash_Ready              (1<<1)
+#define MDM_AP_Status_System_Security          (1<<2)
+#define MDM_AP_Status_System_Reset             (1<<3)
+#define MDM_AP_Status_Mass_Erase_Enable        (1<<5)
+#define MDM_AP_Status_Backdoor_Access_Enable   (1<<6)
+#define MDM_AP_Status_LP_Enable                (1<<7)
+#define MDM_AP_Status_VLP_Enable               (1<<8)
+#define MDM_AP_Status_LLS_Mode_Exit            (1<<9)
+#define MDM_AP_Status_VLLSx_Mode_Exit          (1<<10)
+#define MDM_AP_Status_Core_Halted              (1<<16)
+#define MDM_AP_Status_Core_SLEEPDEEP           (1<<17)
+#define MDM_AP_Status_Core_SLEEPING            (1<<18)
 
 #define MDM_AP_Control_Flash_Mass_Erase      (1<<0)
 #define MDM_AP_Control_Debug_Disable         (1<<1)
@@ -96,7 +96,8 @@
 #define MC_SRSH (0x4007E000) // System Reset Status Register High
 #define MC_SRSL (0x4007E001) // System Reset Status Register Low
 
-#define DHCSR_DBGKEY       (0xA05F<<16)
+#define DHCSR_DBGKEY       (0xA05FUL<<16)
+#define DHCSR_DBGKEY_MASK  (0xFFFFUL<<16)
 #define DHCSR_S_RESET_ST   (1<<25)
 #define DHCSR_S_RETIRE_ST  (1<<24)
 #define DHCSR_S_LOCKUP     (1<<19)

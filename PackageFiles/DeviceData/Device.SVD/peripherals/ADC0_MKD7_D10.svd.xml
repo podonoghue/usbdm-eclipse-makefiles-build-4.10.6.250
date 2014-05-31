@@ -1,20 +1,20 @@
 <!--
 Devices using this peripheral: 
-   MK10D7
-   MK10D10
-   MK20D7
-   MK20D10
-   MK30D7
-   MK30D10
-   MK40D7
-   MK40D10
-   MK50D7
-   MK50D10
-   MK51D7
-   MK51D10
-   MK52D10
-   MK53D10
-   MK60D10
+      MK10D7
+      MK10D10
+      MK20D7
+      MK20D10
+      MK30D7
+      MK30D10
+      MK40D7
+      MK40D10
+      MK50D7
+      MK50D10
+      MK51D7
+      MK51D10
+      MK52D10
+      MK53D10
+      MK60D10
 -->
       <peripheral sourceFile="ADC0_MKD7_D10">
          <name>ADC0</name>

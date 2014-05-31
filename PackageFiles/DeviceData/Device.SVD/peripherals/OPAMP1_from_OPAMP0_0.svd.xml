@@ -1,15 +1,15 @@
 <!--
 Devices using this peripheral: 
-   MK50D7
-   MK50D10
-   MK50DZ10
-   MK51D7
-   MK51D10
-   MK51DZ10
-   MK52D10
-   MK52DZ10
-   MK53D10
-   MK53DZ10
+      MK50D7
+      MK50D10
+      MK50DZ10
+      MK51D7
+      MK51D10
+      MK51DZ10
+      MK52D10
+      MK52DZ10
+      MK53D10
+      MK53DZ10
 -->
       <peripheral derivedFrom="OPAMP0">
          <name>OPAMP1</name>

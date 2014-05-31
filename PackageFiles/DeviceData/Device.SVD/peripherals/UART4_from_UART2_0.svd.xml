@@ -1,11 +1,13 @@
 <!--
 Devices using this peripheral: 
-   MK10F12
-   MK20F12
-   MK21F12
-   MK60F12
-   MK61F12
-   MK70F12
+      MK10F12
+      MK20F12
+      MK21F12
+      MK22F12
+      MK60F12
+      MK61F12
+      MK64F12
+      MK70F12
 -->
       <peripheral derivedFrom="UART2">
          <name>UART4</name>

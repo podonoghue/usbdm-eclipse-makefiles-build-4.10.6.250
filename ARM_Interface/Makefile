@@ -55,7 +55,7 @@ all: allCommon allWindows
 
 # used for quick test builds
 #Test: $(TARGET)_FlashProgrammer-debug
-#Test: usbdm-$(target)-gdi-debug
+Test: usbdm-$(target)-gdi-debug
 #Test: usbdm-$(target)-gdbPipeServer-debug usbdm-$(target)-gdbPipeServer
 #Test: usbdm-$(target)-gdbPipeServer-debug usbdm-$(target)-gdbSocketServer
 #Test: usbdm-$(target)-gdbPipeServer-debug
@@ -64,7 +64,7 @@ all: allCommon allWindows
 #Test: usbdm-$(target)-gdbSocketServer-debug
 #Test: usbdm-$(target)-gdbPipeServer-debug usbdm-$(target)-gdbSocketServer
 #Test: $(TARGET)_FlashProgrammer-debug
-Test: $(TARGET)_GDBServer-debug 
+#Test: $(TARGET)_GDBServer-debug 
 #Test: $(TARGET)_GDBServer-debug $(TARGET)_FlashProgrammer-debug
 
 clean: cleanCommon

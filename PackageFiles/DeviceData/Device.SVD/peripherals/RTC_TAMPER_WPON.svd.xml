@@ -1,9 +1,10 @@
 <!--
 Devices using this peripheral: 
-   MK11D5
-   MK12D5
-   MK21D5
-   MK22D5
+      MK11D5
+      MK12D5
+      MK21D5
+      MK22D5
+      MK22F12
 -->
       <peripheral sourceFile="RTC_TAMPER_WPON">
          <name>RTC</name>

@@ -1,11 +1,11 @@
 <!--
 Devices using this peripheral: 
-   MK10D7
-   MK20D7
-   MK30D7
-   MK40D7
-   MK50D7
-   MK51D7
+      MK10D7
+      MK20D7
+      MK30D7
+      MK40D7
+      MK50D7
+      MK51D7
 -->
       <peripheral sourceFile="SMC_2">
          <name>SMC</name>

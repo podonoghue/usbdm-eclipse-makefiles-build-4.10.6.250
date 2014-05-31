@@ -35,63 +35,7 @@
 #define UART0_TX_PIN_FN        2
 #endif
 
-#ifdef MCU_MKL02Z4
-//=================================================================================
-// LED Port bit masks
-//
-#define LED_GREEN_PORT         B
-#define LED_GREEN_NUM          7
-
-#define LED_RED_PORT           B
-#define LED_RED_NUM            6
-
-#define LED_BLUE_PORT          B
-#define LED_BLUE_NUM           10
-
-//=================================================================================
-// UART Port bit masks
-//
-#define UART0_RX_PIN_PORT      B
-#define UART0_RX_PIN_NUM       2
-#define UART0_RX_PIN_FN        2
-
-#define UART0_TX_PIN_PORT      B
-#define UART0_TX_PIN_NUM       1
-#define UART0_TX_PIN_FN        2
-#endif
-
-#ifdef MCU_MK60DZ10
-//=================================================================================
-// LED Port bit masks
-//
-#define LED_RED_PORT         A
-#define LED_RED_NUM         11
-
-#define LED_ORANGE_PORT      A
-#define LED_ORANGE_NUM      28
-
-#define LED_GREEN_PORT       A
-#define LED_GREEN_NUM       29
-
-#define LED_BLUE_PORT        A
-#define LED_BLUE_NUM        10
-
-//=================================================================================
-// UART Port bit masks
-//
-#define UART_RX_PIN_PORT      E
-#define UART_RX_PIN_NUM       9
-#define UART_RX_PIN_FN        3
-
-#define UART_TX_PIN_PORT      E
-#define UART_TX_PIN_NUM       8
-#define UART_TX_PIN_FN        3
-
-#define UART_NUM              5
-
-#endif
-
-#ifdef MCU_MKE02Z2
+#if defined(MCU_MKE02Z2) || defined(MCU_MKE02Z4)
 //=================================================================================
 // LED Port bit masks
 //
@@ -103,48 +47,64 @@
 
 #define LED_BLUE_PORT        E
 #define LED_BLUE_NUM         7
-
-//=================================================================================
-// UART Port bit masks
-// Not used
-//#define UART1_RX_PIN_PORT      C
-//#define UART1_RX_PIN_NUM       6
-//#define UART1_RX_PIN_FN        2
-//
-//#define UART1_TX_PIN_PORT      C
-//#define UART1_TX_PIN_NUM       7
-//#define UART1_TX_PIN_FN        2
 #endif
 
-#ifdef MCU_MK40DZ10
+#if defined(MCU_MKE04Z8M4)
 //=================================================================================
 // LED Port bit masks
 //
 #define LED_RED_PORT         C
-#define LED_RED_NUM          7
-
-#define LED_ORANGE_PORT      C
-#define LED_ORANGE_NUM       8
+#define LED_RED_NUM          5
 
 #define LED_GREEN_PORT       C
-#define LED_GREEN_NUM        9
+#define LED_GREEN_NUM        4
 
 #define LED_BLUE_PORT        B
-#define LED_BLUE_NUM        11
+#define LED_BLUE_NUM         3
+#endif
 
+#if defined(MCU_MKE06Z4)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         G
+#define LED_RED_NUM          5
+
+#define LED_GREEN_PORT       G
+#define LED_GREEN_NUM        6
+
+#define LED_BLUE_PORT        G
+#define LED_BLUE_NUM         7
+#endif
+
+#if defined(MCU_MKL02Z4)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_GREEN_PORT         B
+#define LED_GREEN_NUM          7
+
+#define LED_RED_PORT           B
+#define LED_RED_NUM            6
+
+#define LED_BLUE_PORT          B
+#define LED_BLUE_NUM           10
+#endif
+
+#if defined(MCU_MKL04Z4)
 //=================================================================================
 // UART Port bit masks
 //
-#define UART0_RX_PIN_PORT      D
-#define UART0_RX_PIN_NUM       6
-#define UART0_RX_PIN_FN        3
+#define UART_RX_PIN_PORT      B
+#define UART_RX_PIN_NUM       2
+#define UART_RX_PIN_FN        2
 
-#define UART0_TX_PIN_PORT      D
-#define UART0_TX_PIN_NUM       7
-#define UART0_TX_PIN_FN        3
+#define UART_TX_PIN_PORT      B
+#define UART_TX_PIN_NUM       1
+#define UART_TX_PIN_FN        2
 #endif
 
-#ifdef MCU_MKL05Z4
+#if defined(MCU_MKL05Z4)
 //=================================================================================
 // LED Port bit masks
 //
@@ -156,20 +116,9 @@
 
 #define LED_BLUE_PORT          B
 #define LED_BLUE_NUM          10
-
-//=================================================================================
-// UART Port bit masks
-//
-#define UART0_RX_PIN_PORT      B
-#define UART0_RX_PIN_NUM       2
-#define UART0_RX_PIN_FN        2
-
-#define UART0_TX_PIN_PORT      B
-#define UART0_TX_PIN_NUM       1
-#define UART0_TX_PIN_FN        2
 #endif
 
-#ifdef MCU_MKL25Z4
+#if defined(MCU_MKL25Z4)
 //=================================================================================
 // LED Port bit masks
 //
@@ -205,17 +154,6 @@
 #define WEST_SWITCH_NUM             2
 
 //=================================================================================
-// UART Port bit masks
-//
-#define UART0_RX_PIN_PORT      A
-#define UART0_RX_PIN_NUM       1
-#define UART0_RX_PIN_FN        2
-
-#define UART0_TX_PIN_PORT      A
-#define UART0_TX_PIN_NUM       2
-#define UART0_TX_PIN_FN        2
-
-//=================================================================================
 // I2C  pins
 //
 // PTE24(Fn5) = SCL
@@ -229,10 +167,9 @@
 #define I2C_SDA_PIN_NUM      25
 #define I2C_SDA_FN           5
 #define I2C_SDA_CLOCK_MASK   SIM_SCGC5_PORTE_MASK
-
 #endif
 
-#ifdef MCU_MKL26Z4
+#if defined(MCU_MKL26Z4)
 //=================================================================================
 // LED Port bit masks
 //
@@ -244,20 +181,12 @@
 
 #define LED_BLUE_PORT          D
 #define LED_BLUE_NUM          13
-
-//=================================================================================
-// UART Port bit masks
-//
-#define UART0_RX_PIN_PORT      A
-#define UART0_RX_PIN_NUM       1
-#define UART0_RX_PIN_FN        2
-
-#define UART0_TX_PIN_PORT      A
-#define UART0_TX_PIN_NUM       2
-#define UART0_TX_PIN_FN        2
 #endif
 
-#ifdef MCU_MKL46Z4
+#if  defined(MCU_MKL14Z4) || defined(MCU_MKL15Z4) || defined(MCU_MKL16Z4) || defined(MCU_MKL24Z4) || defined(MCU_MKL34Z4) || defined(MCU_MKL36Z4)
+#endif
+
+#if defined(MCU_MKL46Z4)
 //=================================================================================
 // LED Port bit masks
 //
@@ -266,20 +195,9 @@
 
 #define LED_RED_PORT           E
 #define LED_RED_NUM           29
-
-//=================================================================================
-// UART Port bit masks
-//
-#define UART0_RX_PIN_PORT      A
-#define UART0_RX_PIN_NUM       1
-#define UART0_RX_PIN_FN        2
-
-#define UART0_TX_PIN_PORT      A
-#define UART0_TX_PIN_NUM       2
-#define UART0_TX_PIN_FN        2
 #endif
 
-#ifdef MCU_MK20D5
+#if defined(MCU_MK20D5) || defined(MCU_MK22F12)
 
 //=================================================================================
 // LED Port bit masks
@@ -301,17 +219,6 @@
 #define LED_BLUE_NUM           2
 #define LED_BLUE_FTM_FN        3
 #define LED_BLUE_FTM_CHANNEL   7
-
-//=================================================================================
-// UART Port bit masks
-//
-#define UART0_RX_PIN_PORT      B
-#define UART0_RX_PIN_NUM      16
-#define UART0_RX_PIN_FN        3
-
-#define UART0_TX_PIN_PORT      B
-#define UART0_TX_PIN_NUM      17
-#define UART0_TX_PIN_FN        3
 
 //=================================================================================
 // I2C Port bit masks
@@ -347,7 +254,98 @@
 //
 #define ADC_IN_LIGHT_SENSOR (adc_channel_dm0) // Note - No PCR
 #define ADC_IN_TEMP_SENSOR  (adc_channel_dm3) // Note - No PCR
+#endif
 
+#if defined(MCU_MK10D7) || defined(MCU_MK22D5) || defined(MCU_MK20D7) || defined(MCU_MK22D7)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT        E
+#define LED_RED_NUM         0
+
+#define LED_GREEN_PORT      E
+#define LED_GREEN_NUM       1
+#endif
+
+#if defined(MCU_MK40D10) || defined(MCU_MK40DZ10)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         C
+#define LED_RED_NUM          7
+
+#define LED_ORANGE_PORT      C
+#define LED_ORANGE_NUM       8
+
+#define LED_GREEN_PORT       C
+#define LED_GREEN_NUM        9
+
+#define LED_BLUE_PORT        B
+#define LED_BLUE_NUM        11
+#endif
+
+#if defined(MCU_MK60DZ10) || defined(MCU_MK60DZ10)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         A
+#define LED_RED_NUM         11
+
+#define LED_ORANGE_PORT      A
+#define LED_ORANGE_NUM      28
+
+#define LED_GREEN_PORT       A
+#define LED_GREEN_NUM       29
+
+#define LED_BLUE_PORT        A
+#define LED_BLUE_NUM        10
+#endif
+
+#if defined(MCU_MK10F12) || defined(MCU_MK60F12)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         C
+#define LED_RED_NUM          0
+
+#define LED_GREEN_PORT       C
+#define LED_GREEN_NUM        1
+
+#endif
+
+#if defined(MCU_MK64F12)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         B
+#define LED_RED_NUM          22
+
+#define LED_GREEN_PORT       E
+#define LED_GREEN_NUM        26
+
+#define LED_BLUE_PORT        B
+#define LED_BLUE_NUM         21
+
+//=================================================================================
+// I2C Port bit masks
+//
+// PTB0(Fn2) = SCL
+#define I2C_SCL_PORT         E
+#define I2C_SCL_PIN_NUM      24
+#define I2C_SCL_FN           5
+#define I2C_SCL_CLOCK_MASK   SIM_SCGC5_PORTE_MASK
+
+// PTB1(Fn2) = SDA
+#define I2C_SDA_PORT         E
+#define I2C_SDA_PIN_NUM      25
+#define I2C_SDA_FN           5
+#define I2C_SDA_CLOCK_MASK   SIM_SCGC5_PORTE_MASK
+
+//=================================================================================
+// ADC Channel numbers
+//
+#define ADC_IN_LIGHT_SENSOR (adc_channel_dm0) // Note - No PCR
+#define ADC_IN_TEMP_SENSOR  (adc_channel_dm3) // Note - No PCR
 #endif
 
 #endif /* FREEDOM_H_ */

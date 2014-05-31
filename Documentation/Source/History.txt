@@ -3,6 +3,26 @@
 
 \section sectionHistory Revision History
 
+V4.1.6.150 (April 2014)
+======================================================================================= 
+   - Initial support for Keil with ARM targets
+
+V4.1.6.140 (April 2014)
+======================================================================================= 
+   - Additional Kinetis devices (MKE04, MKE06, MK64F)
+   - Bug fixes
+   	- Corrected programmer file dialogue wildcards for .axf files
+   	- Fixes for MKE devices (failed to program except after Mass Erase)
+   - HCS08 Programmer on PA & PT targets no longer affects WDOG settings 
+   	
+V4.1.6.130 (March 2014)
+======================================================================================= 
+   - Bug fixes
+   	- Fix for the fix applied to 9s08 small targets (i.e. the fix broke other targets)
+   	- Fix for MC56F80xx devices in CW 10 
+	   - Improved mass erase for Kinetis devices with reset problems
+	   - Stripped some missed files.
+   	
 V4.1.6.120 (March 2014)
 ======================================================================================= 
    - New features in Eclipse

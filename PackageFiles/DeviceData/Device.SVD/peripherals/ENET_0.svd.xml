@@ -1,11 +1,11 @@
 <!--
 Devices using this peripheral: 
-   MK52D10
-   MK53D10
-   MK60D10
-   MK60F12
-   MK61F12
-   MK70F12
+      MK52D10
+      MK53D10
+      MK60D10
+      MK60F12
+      MK61F12
+      MK70F12
 -->
       <peripheral sourceFile="ENET_0">
          <name>ENET</name>

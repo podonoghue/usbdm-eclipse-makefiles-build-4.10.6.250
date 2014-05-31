@@ -1,6 +1,10 @@
 <!--
 Devices using this peripheral: 
-   MKE02Z2
+      MKE02Z2
+      MKE02Z4
+      MKE04Z4
+      MKE04Z8M4
+      MKE06Z4
 -->
       <peripheral sourceFile="I2C0_MKE">
          <name>I2C0</name>
@@ -422,24 +426,6 @@ Devices using this peripheral:
                      </enumeratedValues>
                   </field>
                   <field>
-                     <name>HDRS</name>
-                     <description>High Drive Select</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Normal drive mode</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>High drive mode</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
                      <name>ADEXT</name>
                      <description>Address Extension</description>
                      <bitOffset>6</bitOffset>
@@ -486,9 +472,11 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>FLT</name>
-                     <description>I2C Programmable Filter Factor</description>
+                     <description>I2C Programmable Filter Factor\n
+Controls the width of the glitch, in terms of I2C module clock cycles, that the filter must absorb.\n
+For any glitch whose size is less than or equal to this width setting, the filter does not allow the glitch to pass</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>5</bitWidth>
+                     <bitWidth>4</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -498,26 +486,48 @@ Devices using this peripheral:
                      </enumeratedValues>
                   </field>
                   <field>
-                     <name>STOPIE</name>
-                     <description>I2C Bus Stop Interrupt Enable</description>
+                     <name>STARTF</name>
+                     <description>I2C Bus Start Detect Flag: Hardware sets this</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>No start happens on I2C bus</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Start detected on I2C bus</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>SSIE</name>
+                     <description>II2C Bus Stop or Start Interrupt Enable: This bit enables the interrupt for I2C bus stop or start detection.
+NOTE: To clear the I2C bus stop or start detection interrupt: In the interrupt service routine, first clear the STOPF or STARTF bit by writing 1 to it,
+ and then clear the IICIF bit in the status register. If this sequence is reversed, the IICIF bit is asserted again</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Stop detection interrupt is disabled</description>
+                           <description>Stop or start detection interrupt is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Stop detection interrupt is enabled</description>
+                           <description>Stop or start detection interrupt is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>STOPF</name>
-                     <description>I2C Bus Stop Detect Flag</description>
+                     <description>I2C Bus Stop Detect Flag: 
+Hardware sets this bit when the I2C bus&apos;s stop status is detected. The STOPF bit must be cleared by
+writing 1 to it</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -535,7 +545,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>SHEN</name>
-                     <description>Stop Hold Enable</description>
+                     <description>Stop Hold Enable\n
+Set this bit to hold off entry to stop mode when any data transmission or reception is occurring</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

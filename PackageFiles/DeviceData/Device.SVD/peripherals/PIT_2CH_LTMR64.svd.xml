@@ -1,16 +1,16 @@
 <!--
 Devices using this peripheral: 
-   MKL04Z4
-   MKL05Z4
-   MKL14Z4
-   MKL15Z4
-   MKL16Z4
-   MKL24Z4
-   MKL25Z4
-   MKL26Z4
-   MKL34Z4
-   MKL36Z4
-   MKL46Z4
+      MKL04Z4
+      MKL05Z4
+      MKL14Z4
+      MKL15Z4
+      MKL16Z4
+      MKL24Z4
+      MKL25Z4
+      MKL26Z4
+      MKL34Z4
+      MKL36Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="PIT_2CH_LTMR64">
          <name>PIT</name>
@@ -121,11 +121,11 @@ Devices using this peripheral:
                   <description>Timer Load Value Register</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>TSV</name>
-                     <description>Timer Start Value</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>TSV</name>
+                        <description>Timer Start Value</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -134,11 +134,11 @@ Devices using this peripheral:
                   <addressOffset>0x4</addressOffset>
                   <access>read-only</access>
                   <fields>
-                  <field>
-                     <name>TVL</name>
-                     <description>Current Timer Value</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>TVL</name>
+                        <description>Current Timer Value</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -146,60 +146,60 @@ Devices using this peripheral:
                   <description>Timer Control Register</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>TEN</name>
-                     <description>Timer Enable</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Timer n is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Timer n is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>TIE</name>
-                     <description>Timer Interrupt Enable</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Interrupt requests from Timer n are disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Interrupt will be requested whenever TIF is set</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CHN</name>
-                     <description>Chain Mode</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Timer is not chained</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Timer is chained to previous timer. For example, for Channel 2, if this field is set, Timer 2 is chained to Timer 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>TEN</name>
+                        <description>Timer Enable</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Timer n is disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Timer n is enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>TIE</name>
+                        <description>Timer Interrupt Enable</description>
+                        <bitOffset>1</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Interrupt requests from Timer n are disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Interrupt will be requested whenever TIF is set</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>CHN</name>
+                        <description>Chain Mode</description>
+                        <bitOffset>2</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Timer is not chained</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Timer is chained to previous timer. For example, for Channel 2, if this field is set, Timer 2 is chained to Timer 1</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -207,24 +207,24 @@ Devices using this peripheral:
                   <description>Timer Flag Register</description>
                   <addressOffset>0xC</addressOffset>
                   <fields>
-                  <field>
-                     <name>TIF</name>
-                     <description>Timer Interrupt Flag</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Timeout has not yet occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Timeout has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                     <field>
+                        <name>TIF</name>
+                        <description>Timer Interrupt Flag</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Timeout has not yet occurred</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Timeout has occurred</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
             </cluster>

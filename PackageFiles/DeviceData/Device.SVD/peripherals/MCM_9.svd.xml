@@ -1,14 +1,14 @@
 <!--
 Devices using this peripheral: 
-   MKL14Z4
-   MKL15Z4
-   MKL16Z4
-   MKL24Z4
-   MKL25Z4
-   MKL26Z4
-   MKL34Z4
-   MKL36Z4
-   MKL46Z4
+      MKL14Z4
+      MKL15Z4
+      MKL16Z4
+      MKL24Z4
+      MKL25Z4
+      MKL26Z4
+      MKL34Z4
+      MKL36Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="MCM_9">
          <name>MCM</name>

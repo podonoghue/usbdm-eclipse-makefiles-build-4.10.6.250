@@ -1240,7 +1240,7 @@
          <sdid value="0x0000" />
       </device>
       <device family="HCS08Plus" name="MC9S08PA16" alias="MC9S08PT16">
-         <sdid value="0x0000" />
+         <sdid value="0x0042" />
       </device>
       <device family="HCS08Plus" name="MC9S08PA32" alias="MC9S08PT32">
          <sdid value="0x0000" />

@@ -1,9 +1,9 @@
 <!--
 Devices using this peripheral: 
-   MKL16Z4
-   MKL26Z4
-   MKL36Z4
-   MKL46Z4
+      MKL16Z4
+      MKL26Z4
+      MKL36Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="I2S0_3">
          <name>I2S0</name>

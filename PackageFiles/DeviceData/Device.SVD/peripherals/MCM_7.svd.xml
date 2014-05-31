@@ -1,6 +1,6 @@
 <!--
 Devices using this peripheral: 
-   MKL02Z4
+      MKL02Z4
 -->
       <peripheral sourceFile="MCM_7">
          <name>MCM</name>

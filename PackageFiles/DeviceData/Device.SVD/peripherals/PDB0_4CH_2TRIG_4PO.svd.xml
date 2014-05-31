@@ -1,10 +1,10 @@
 <!--
 Devices using this peripheral: 
-   MK10F12
-   MK20F12
-   MK60F12
-   MK61F12
-   MK70F12
+      MK10F12
+      MK20F12
+      MK60F12
+      MK61F12
+      MK70F12
 -->
       <peripheral sourceFile="PDB0_4CH_2TRIG_4PO">
          <name>PDB0</name>
@@ -446,64 +446,64 @@ Reading this field returns the value that is effective for the current cycle of 
                   <description>Channel n Control Register 1</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>EN</name>
-                     <description>PDB Channel Pre-Trigger Enable\n
+                     <field>
+                        <name>EN</name>
+                        <description>PDB Channel Pre-Trigger Enable\n
 Enable the PDB ADC pre-trigger outputs. Only lower M pre-trigger bits are implemented</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>PDB channel&apos;s corresponding pre-trigger disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>PDB channel&apos;s corresponding pre-trigger enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>TOS</name>
-                     <description>PDB Channel Pre-Trigger Output Select\n
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>8</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>PDB channel&apos;s corresponding pre-trigger disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>PDB channel&apos;s corresponding pre-trigger enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>TOS</name>
+                        <description>PDB Channel Pre-Trigger Output Select\n
 Selects the PDB ADC pre-trigger outputs. Only lower M pre-trigger fields are implemented</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>PDB channel&apos;s corresponding pre-trigger is in bypassed mode. The pre-trigger asserts one peripheral clock cycle after a rising edge is detected on selected trigger input source or software trigger is selected and SWTRIG is written with 1</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>PDB channel&apos;s corresponding pre-trigger asserts when the counter reaches the channel delay register and one peripheral clock cycle after a rising edge is detected on selected trigger input source or software trigger is selected and SETRIG is written with 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>BB</name>
-                     <description>PDB Channel Pre-Trigger Back-to-Back Operation Enable\n
+                        <bitOffset>8</bitOffset>
+                        <bitWidth>8</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>PDB channel&apos;s corresponding pre-trigger is in bypassed mode. The pre-trigger asserts one peripheral clock cycle after a rising edge is detected on selected trigger input source or software trigger is selected and SWTRIG is written with 1</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>PDB channel&apos;s corresponding pre-trigger asserts when the counter reaches the channel delay register and one peripheral clock cycle after a rising edge is detected on selected trigger input source or software trigger is selected and SETRIG is written with 1</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>BB</name>
+                        <description>PDB Channel Pre-Trigger Back-to-Back Operation Enable\n
 Enables the ADC conversions complete to trigger the next PDB channel pre-trigger and trigger output, so that the ADC conversions can be triggered on next set of configuration and results registers. \n
 Only lower M pre-trigger bits are implemented</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>PDB channel&apos;s corresponding pre-trigger back-to-back operation disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>PDB channel&apos;s corresponding pre-trigger back-to-back operation enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                        <bitOffset>16</bitOffset>
+                        <bitWidth>8</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>PDB channel&apos;s corresponding pre-trigger back-to-back operation disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>PDB channel&apos;s corresponding pre-trigger back-to-back operation enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -511,43 +511,43 @@ Only lower M pre-trigger bits are implemented</description>
                   <description>Channel n Status Register</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
-                  <field>
-                     <name>ERR</name>
-                     <description>PDB Channel Sequence Error Flags</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Sequence error not detected on PDB channel&apos;s corresponding pre-trigger</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Sequence error detected on PDB channel&apos;s corresponding pre-trigger. ADCn block can be triggered for a conversion by one pre-trigger from PDB channel n. When one conversion, which is triggered by one of the pre-triggers from PDB channel n, is in progress, new trigger from PDB channel&apos;s corresponding pre-trigger m cannot be accepted by ADCn, and ERR[m] is set. Writing 1&apos;s to clear the sequence error flags</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CF</name>
-                     <description>PDB Channel Flags\n
+                     <field>
+                        <name>ERR</name>
+                        <description>PDB Channel Sequence Error Flags</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>8</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Sequence error not detected on PDB channel&apos;s corresponding pre-trigger</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Sequence error detected on PDB channel&apos;s corresponding pre-trigger. ADCn block can be triggered for a conversion by one pre-trigger from PDB channel n. When one conversion, which is triggered by one of the pre-triggers from PDB channel n, is in progress, new trigger from PDB channel&apos;s corresponding pre-trigger m cannot be accepted by ADCn, and ERR[m] is set. Writing 1&apos;s to clear the sequence error flags</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>CF</name>
+                        <description>PDB Channel Flags\n
 The CF[m] bit is set when the PDB counter matches the CHnDLYm. Write 0 to clear these bits</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No match has occurred since flag last cleared</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Match has occurred since flag last cleared</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                        <bitOffset>16</bitOffset>
+                        <bitWidth>8</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>No match has occurred since flag last cleared</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Match has occurred since flag last cleared</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -561,12 +561,12 @@ Reading this field returns the value that is effective for the current cycle</de
                   <dimIncrement>4</dimIncrement>
                   <dimIndex>0,1</dimIndex>
                   <fields>
-                  <field>
-                     <name>DLY</name>
-                     <description>PDB Channel Delay</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>16</bitWidth>
-                  </field>
+                     <field>
+                        <name>DLY</name>
+                        <description>PDB Channel Delay</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>16</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>
@@ -581,43 +581,43 @@ Reading this field returns the value that is effective for the current cycle</de
                   <description>DAC Interval Trigger n Control Register</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>TOE</name>
-                     <description>DAC Interval Trigger Enable</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>DAC interval trigger disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>DAC interval trigger enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>EXT</name>
-                     <description>DAC External Trigger Input Enable\n
+                     <field>
+                        <name>TOE</name>
+                        <description>DAC Interval Trigger Enable</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>DAC interval trigger disabled</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>DAC interval trigger enabled</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
+                        <name>EXT</name>
+                        <description>DAC External Trigger Input Enable\n
 Enables the external trigger for DAC interval counter</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>DAC external trigger input disabled. DAC interval counter is reset and counting starts when a rising edge is detected on selected trigger input source or software trigger is selected and SWTRIG is written with 1</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>DAC external trigger input enabled. DAC interval counter is bypassed and DAC external trigger input triggers the DAC interval trigger</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                        <bitOffset>1</bitOffset>
+                        <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>DAC external trigger input disabled. DAC interval counter is reset and counting starts when a rising edge is detected on selected trigger input source or software trigger is selected and SWTRIG is written with 1</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>DAC external trigger input enabled. DAC interval counter is bypassed and DAC external trigger input triggers the DAC interval trigger</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -626,12 +626,12 @@ Enables the external trigger for DAC interval counter</description>
 Specifies the interval value for DAC interval trigger. DAC interval trigger triggers DAC[1:0] update when the DAC interval counter is equal to the DACINT. Reading this field returns the value of internal register that is effective for the current PDB cycle</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
-                  <field>
-                     <name>INT</name>
-                     <description>DAC Interval</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>16</bitWidth>
-                  </field>
+                     <field>
+                        <name>INT</name>
+                        <description>DAC Interval</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>16</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>

@@ -1,9 +1,9 @@
 <!--
 Devices using this peripheral: 
-   MK30D10
-   MK40D10
-   MK51D10
-   MK53D10
+      MK30D10
+      MK40D10
+      MK51D10
+      MK53D10
 -->
       <peripheral sourceFile="LCD_0">
          <name>LCD</name>

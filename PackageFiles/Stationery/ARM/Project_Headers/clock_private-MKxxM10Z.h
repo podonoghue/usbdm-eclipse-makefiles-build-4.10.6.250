@@ -62,7 +62,7 @@ extern "C" {
 // SYSTEM_ERC_CLOCK ==============================
 //
 //   <o> External Reference Clock (Hz) <constant> <name=system_erc_clock>
-//   <i> Derived from the external crystal or clock source on XTAL/EXTAL or XTAL32/EXTAL32
+//   <i> Derived from the OSCCLK0 (external crystal or clock source on XTAL/EXTAL) or RTC_CLOCK(XTAL32/EXTAL32)
 #define SYSTEM_ERC_CLOCK (8000000UL)
 
 // SYSTEM_SLOW_IRC_CLOCK ==============================
@@ -392,7 +392,7 @@ extern "C" {
 //  <o> MCGOUTCLK Clock Source Select (CLKS) [0-2] <constant> <name=mcg_c1_clks>
 //  <i> Selects the clock source for MCGOUTCLK [MCG_C1_CLKS]
 //  <i> This option is determined by the Clock Mode selection
-//      <0=> Output of FLL is selected
+//      <0=> Output of FLL or PLL is selected
 //      <1=> Internal reference clock is selected
 //      <2=> External reference clock is selected
 #define MCG_C1_CLKS_V 0
@@ -400,7 +400,7 @@ extern "C" {
 
 // MCG_C1_FRDIV ================================
 //
-//   <o> FLL External Reference Divider (FRDIV) <constant> <name=mcg_c1_frdiv>
+//   <o> FLL External Reference Divider (FRDIV) <0-7> <constant> <name=mcg_c1_frdiv>
 //   <i> Selects the amount to divide down the external reference clock for the FLL. [MCG_C1_FRDIV]
 //   <i> The resulting frequency must be in the range 31.25 kHz to 39.0625 kHz
 //   <i> Division factor depends on Clock Range [MGC_C2_RANGE0]
@@ -430,8 +430,8 @@ extern "C" {
 //
 //   <q> Internal Reference Clock Enable (IRCLKEN)
 //   <i> Enables the internal reference clock for use as MCGIRCLK [MCG_C1_IRCLKEN]
-//      <0=> inactive
-//      <1=> active
+//      <0=> Inactive
+//      <1=> Active
 #define MCG_C1_IRCLKEN_V   0
 #define MCG_C1_IRCLKEN_M   (1<<MCG_C1_IRCLKEN_SHIFT)
 
@@ -457,8 +457,8 @@ extern "C" {
 //   <i> Selects the frequency range for the crystal oscillator or external clock source [MCG_C2_RANGE0]
 //   <i> This value is calculated from the FLL input clock frequency
 //      <0=> Low range
-//      <1=> Medium range
-//      <2=> High range
+//      <1=> High range
+//      <2=> Very High range
 #define MCG_C2_RANGE_V   1
 #define MCG_C2_RANGE_M   (MCG_C2_RANGE_V<<MCG_C2_RANGE_SHIFT)
 
@@ -466,7 +466,7 @@ extern "C" {
 //
 //   <q> Oscillator Gain (HGO)
 //   <i> Controls the crystal oscillator mode of operation [MCG_C2_HGO]
-//      <0=> Low gain
+//      <0=> Low power
 //      <1=> High gain
 #define MCG_C2_HGO_V   0
 #define MCG_C2_HGO_M   (MCG_C2_HGO_V<<MCG_C2_HGO_SHIFT)
@@ -518,10 +518,10 @@ extern "C" {
 //
 //   <o> DCO Range Select (DRST_DRS) <constant> <0-3> <name=mcg_c4_drst_drs>
 //   <i> Frequency range for the FLL output, DCOOUT [MCG_C4_DRST_DRS]
-//      <0=> Low (x640/x732, 24/20-25 MHz)
-//      <1=> Mid (x1280/x1464, 48/40-50 MHz)
-//      <2=> Mid-high (x1920/x2197, 72/60-75 MHz)
-//      <3=> High (x2560/x2929, 96/80-100 MHz)
+//      <0=> Low (x640/x732, 20-25/24 MHz)
+//      <1=> Mid (x1280/x1464, 40-50/48 MHz)
+//      <2=> Mid-high (x1920/x2197, 60-75/72 MHz)
+//      <3=> High (x2560/x2929, 80-100/96 MHz)
 #define MCG_C4_DRST_DRS_V  3
 #define MCG_C4_DRST_DRS_M (MCG_C4_DRST_DRS_V<<MCG_C4_DRST_DRS_SHIFT)
 
@@ -588,13 +588,13 @@ extern "C" {
 //   <i> Determines if a reset request is made following a loss of external clock indication. [MCG_C6_CME]
 //   <i> This field must be set to a logic 1 only when the ICS is in an operational mode that uses the external clock (FEE, FBE, or FBELP).
 //      <0=> Clock monitor is disabled.
-//      <1=> Generates a reset request on loss of external clock.
+//      <1=> Clock monitor is enabled.
 #define MCG_C6_CME_V (0)
 #define MCG_C6_CME_M (MCG_C6_CME_V<<MCG_C6_CME_SHIFT)
 
 // MCG_C6_VDIV ==============================
 //
-//   <o> VCO Divider (VDIV) Multiply by: <name=mcg_c6_vdiv0> <#-24>
+//   <o> VCO Divider (VDIV) Multiply by: <constant> <name=mcg_c6_vdiv0> <#-24>
 //   <i> Determines the multiplication factor for the reference clock of the PLL. [MCG_C6_VDIV]
 //   <i> This value is calculated from PLL input and output clock frequencies
 #define MCG_C6_VDIV_V (0)
@@ -612,7 +612,7 @@ extern "C" {
 #define ERC_AFTER_FRDIV_CLOCK (SYSTEM_OSCER_CLOCK/(1<<5)/40)
 #elif (MCG_C1_FRDIV_V == 7)
 #define ERC_AFTER_FRDIV_CLOCK (SYSTEM_OSCER_CLOCK/(1<<5)/48)
-#endif // (MCG_C1_IREFS_V == 0)
+#endif
 
 // SYSTEM_MCGFF_CLOCK  ==============================
 // Only available if less than 1/8 MCGOUT clock
@@ -630,7 +630,7 @@ extern "C" {
 //   <q> Peripheral clock source (PLL/FLL)
 //   <i> Source for clock used by some peripherals [SIM_SOPT2_PLLFLLSEL]
 //      <0=> FLL (MCGFLLCLK)
-//      <1=> PLL (MCGPLLCLK/2)
+//      <1=> PLL (MCGPLLCLK)
 #define SIM_SOPT2_PLLFLLSEL_V  1
 #define SIM_SOPT2_PLLFLLSEL_M (SIM_SOPT2_PLLFLLSEL_V<<SIM_SOPT2_PLLFLLSEL_SHIFT)
 
@@ -644,7 +644,7 @@ extern "C" {
 // SIM_SOPT1_OSC32KSEL ================================
 //
 //   <o> 32kHz Clock Source (ERCLK32)
-//   <i> [SIM_SOPT1_OSC32KSEL]
+//   <i> Source for nominal 32K clock for peripherals [SIM_SOPT1_OSC32KSEL]
 //     <0=> System Oscillator (OSC32KCLK)
 //     <1=> RTC 32.768kHz oscillator
 #define SIM_SOPT1_OSC32KSEL_V (1)

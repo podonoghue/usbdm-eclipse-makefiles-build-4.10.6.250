@@ -1,17 +1,18 @@
 <!--
 Devices using this peripheral: 
-   MK11D5
-   MK21D5
-   MK21F12
-   MK52D10
-   MK52DZ10
-   MK53D10
-   MK53DZ10
-   MK60D10
-   MK60DZ10
-   MK60F12
-   MK61F12
-   MK70F12
+      MK11D5
+      MK21D5
+      MK21F12
+      MK52D10
+      MK52DZ10
+      MK53D10
+      MK53DZ10
+      MK60D10
+      MK60DZ10
+      MK60F12
+      MK61F12
+      MK64F12
+      MK70F12
 -->
       <peripheral sourceFile="CAU_0">
          <name>CAU</name>
@@ -89,14 +90,16 @@ Devices using this peripheral:
             </register>
             <register>
                <name>LDR_CASR</name>
-               <description>Status register  - Load Register command</description>
+               <description>Status register - Load Register command\n
+Contains the status and configuration for the CAU</description>
                <addressOffset>0x840</addressOffset>
                <access>write-only</access>
                <resetValue>0x20000000</resetValue>
                <fields>
                   <field>
                      <name>IC</name>
-                     <description>Illegal command</description>
+                     <description>Illegal command
+Indicates whether an illegal instruction has been executed</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -114,7 +117,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>DPE</name>
-                     <description>DES parity error</description>
+                     <description>DES parity error
+Indicates whether a DES parity error has been detected</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -132,7 +136,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>VER</name>
-                     <description>CAU version</description>
+                     <description>CAU version
+Indicates CAU version</description>
                      <bitOffset>28</bitOffset>
                      <bitWidth>4</bitWidth>
                      <enumeratedValues>
@@ -143,7 +148,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0010</name>
-                           <description>Second version, added support for SHA-256 algorithm.(This is the value on this device)</description>
+                           <description>Second version, added support for SHA-256 algorithm</description>
                            <value>0b0010</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -169,14 +174,16 @@ Devices using this peripheral:
             </register>
             <register>
                <name>STR_CASR</name>
-               <description>Status register  - Store Register command</description>
+               <description>Status register  - Store Register command\n
+Contains the status and configuration for the CAU</description>
                <addressOffset>0x880</addressOffset>
                <access>read-only</access>
                <resetValue>0x20000000</resetValue>
                <fields>
                   <field>
                      <name>IC</name>
-                     <description>Illegal command</description>
+                     <description>Illegal command\n
+Indicates whether an illegal instruction has been executed</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -194,7 +201,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>DPE</name>
-                     <description>DES parity error</description>
+                     <description>DES parity error
+Indicates whether a DES parity error has been detected</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -212,7 +220,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>VER</name>
-                     <description>CAU version</description>
+                     <description>CAU version
+Indicates CAU version</description>
                      <bitOffset>28</bitOffset>
                      <bitWidth>4</bitWidth>
                      <enumeratedValues>
@@ -223,7 +232,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0010</name>
-                           <description>Second version, added support for SHA-256 algorithm.(This is the value on this device)</description>
+                           <description>Second version, added support for SHA-256 algorithm</description>
                            <value>0b0010</value>
                         </enumeratedValue>
                      </enumeratedValues>

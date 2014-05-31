@@ -1,14 +1,14 @@
 <!--
 Devices using this peripheral: 
-   MK10DZ10
-   MK20DZ10
-   MK30DZ10
-   MK40DZ10
-   MK50DZ10
-   MK51DZ10
-   MK52DZ10
-   MK53DZ10
-   MK60DZ10
+      MK10DZ10
+      MK20DZ10
+      MK30DZ10
+      MK40DZ10
+      MK50DZ10
+      MK51DZ10
+      MK52DZ10
+      MK53DZ10
+      MK60DZ10
 -->
       <peripheral sourceFile="TSI0_MKDZ">
          <name>TSI0</name>

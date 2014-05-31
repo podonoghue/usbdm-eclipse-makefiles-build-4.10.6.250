@@ -208,7 +208,7 @@ void clock_initialise(void) {
 #endif // (CLOCK_MODE == CLOCK_MODE_RESET)
 
    // Basic clock multiplexing
-#if defined(MCU_mcf51jf128)
+#if defined(MCU_mcf51jf128) || defined(MCU_mcf51ju128)
 //   SIM_SOPT2 = SIM_SOPT2_UART0SRC_M      | // UART0 clock - 0,1,2,3 -> Disabled, (MCGFLLCLK, MCGPLLCLK/2),  OSCERCLK, MCGIRCLK
 //               SIM_SOPT2_TPMSRC_M ;        // TPM2 source
 #else

@@ -1,18 +1,18 @@
 <!--
 Devices using this peripheral: 
-   MK10D10
-   MK11D5
-   MK12D5
-   MK20D10
-   MK21D5
-   MK22D5
-   MK30D10
-   MK40D10
-   MK50D10
-   MK51D10
-   MK52D10
-   MK53D10
-   MK60D10
+      MK10D10
+      MK11D5
+      MK12D5
+      MK20D10
+      MK21D5
+      MK22D5
+      MK30D10
+      MK40D10
+      MK50D10
+      MK51D10
+      MK52D10
+      MK53D10
+      MK60D10
 -->
       <peripheral sourceFile="VREF_MK_0">
          <name>VREF</name>

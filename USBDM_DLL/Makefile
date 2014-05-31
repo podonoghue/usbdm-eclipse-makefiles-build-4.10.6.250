@@ -47,7 +47,10 @@ all: allCommon allWindows
 
 clean: cleanCommon cleanWindows
 
+test: usbdm-debug
+
 .PHONY: all clean 
 .PHONY: allCommon allWindows cleanCommon cleanWindows
 .PHONY: usbdm usbdm-debug 
 .PHONY: osbdm osbdm-debug usbdm-cff usbdm-cff-debug
+.PHONY: test

@@ -1,10 +1,10 @@
 <!--
 Devices using this vector table: 
-   MK40D10
-   MK40DZ10
+   MK60D10
+   MK60DZ10
 -->
       <interrupts>
-         <name>MK40D10_VectorTable</name>
+         <name>MK60D10_VectorTable</name>
          <description>MK60D10 VectorTable</description>
          <interrupt>
             <name>DMA0</name>
@@ -182,6 +182,16 @@ Devices using this vector table:
             <value>34</value>
          </interrupt>
          <interrupt>
+            <name>I2S0_Tx</name>
+            <description>I2S0 Transmit</description>
+            <value>35</value>
+         </interrupt>
+         <interrupt>
+            <name>I2S0_Rx</name>
+            <description>I2S0 Receive</description>
+            <value>36</value>
+         </interrupt>
+         <interrupt>
             <name>CAN1_Message</name>
             <description>CAN1 ORed Message Bufer (0-15)</description>
             <value>37</value>
@@ -210,6 +220,11 @@ Devices using this vector table:
             <name>CAN1_WakeUp</name>
             <description>CAN1 Wake Up</description>
             <value>42</value>
+         </interrupt>
+         <interrupt>
+            <name>UART0_LON</name>
+            <description>UART0 LON interrupt</description>
+            <value>44</value>
          </interrupt>
          <interrupt>
             <name>UART0_RxTx</name>
@@ -322,6 +337,11 @@ Devices using this vector table:
             <value>66</value>
          </interrupt>
          <interrupt>
+            <name>RTC_Seconds</name>
+            <description>RTC seconds interrupt</description>
+            <value>67</value>
+         </interrupt>
+         <interrupt>
             <name>PIT_Ch0</name>
             <description>PIT timer channel 0 interrupt</description>
             <value>68</value>
@@ -332,18 +352,18 @@ Devices using this vector table:
             <value>69</value>
          </interrupt>
          <interrupt>
-            <name>PIT_ch2</name>
+            <name>PIT_Ch2</name>
             <description>PIT timer channel 2 interrupt</description>
             <value>70</value>
          </interrupt>
          <interrupt>
-            <name>PIT_ch3</name>
+            <name>PIT_Ch3</name>
             <description>PIT timer channel 3 interrupt</description>
             <value>71</value>
          </interrupt>
          <interrupt>
-            <name>PDB0</name>
-            <description>PDB0 Programmable Delay Block interrupt</description>
+            <name>PDB</name>
+            <description>PDB Programmable Delay Block interrupt</description>
             <value>72</value>
          </interrupt>
          <interrupt>
@@ -375,11 +395,6 @@ Devices using this vector table:
             <name>MAC_Error</name>
             <description>Ethernet MAC Error and miscellaneous interrupt</description>
             <value>78</value>
-         </interrupt>
-         <interrupt>
-            <name>I2S0</name>
-            <description>I2SO all sources</description>
-            <value>79</value>
          </interrupt>
          <interrupt>
             <name>SDHC</name>

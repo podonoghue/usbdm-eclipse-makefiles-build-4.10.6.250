@@ -327,12 +327,12 @@ Devices using this vector table:
             <value>69</value>
          </interrupt>
          <interrupt>
-            <name>PIT_ch2</name>
+            <name>PIT_Ch2</name>
             <description>PIT timer channel 2 interrupt</description>
             <value>70</value>
          </interrupt>
          <interrupt>
-            <name>PIT_ch3</name>
+            <name>PIT_Ch3</name>
             <description>PIT timer channel 3 interrupt</description>
             <value>71</value>
          </interrupt>

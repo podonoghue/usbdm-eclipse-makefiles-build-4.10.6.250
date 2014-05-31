@@ -1,6 +1,6 @@
 <!--
 Devices using this peripheral: 
-   MKL14Z4
+      MKL14Z4
 -->
       <peripheral sourceFile="SIM_MKL14Z4">
          <name>SIM</name>
@@ -180,24 +180,6 @@ Devices using this peripheral:
                      </enumeratedValues>
                   </field>
                   <field>
-                     <name>PLLFLLSEL</name>
-                     <description>PLL/FLL clock select</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>MCGFLLCLK clock</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>MCGPLLCLK clock with fixed divide by two</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
                      <name>TPMSRC</name>
                      <description>TPM clock source select</description>
                      <bitOffset>24</bitOffset>
@@ -210,7 +192,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>MCGFLLCLK clock or MCGPLLCLK/2</description>
+                           <description>MCGFLLCLK clock</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -238,7 +220,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>MCGFLLCLK clock or MCGPLLCLK/2 clock</description>
+                           <description>MCGFLLCLK clock</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>

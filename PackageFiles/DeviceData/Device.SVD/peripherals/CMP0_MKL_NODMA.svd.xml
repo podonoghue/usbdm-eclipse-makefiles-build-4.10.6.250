@@ -1,6 +1,6 @@
 <!--
 Devices using this peripheral: 
-   MKL02Z4
+      MKL02Z4
 -->
       <peripheral sourceFile="CMP0_MKL_NODMA">
          <name>CMP0</name>

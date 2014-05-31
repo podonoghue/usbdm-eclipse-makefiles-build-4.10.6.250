@@ -1,18 +1,22 @@
 <!--
 Devices using this peripheral: 
-   MK10D10
-   MK11D5
-   MK12D5
-   MK20D10
-   MK21D5
-   MK22D5
-   MK30D10
-   MK40D10
-   MK50D10
-   MK51D10
-   MK52D10
-   MK53D10
-   MK60D10
+      MK10D5
+      MK10D7
+      MK10DZ10
+      MK20D5
+      MK20D7
+      MK20DZ10
+      MK30D7
+      MK30DZ10
+      MK40D7
+      MK40DZ10
+      MK50D7
+      MK50DZ10
+      MK51D7
+      MK51DZ10
+      MK52DZ10
+      MK53DZ10
+      MK60DZ10
 -->
       <peripheral sourceFile="UART1_0">
          <name>UART1</name>
@@ -60,12 +64,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Hardware interrupts from UART_S2[RXEDGIF] disabled (use polling)</description>
+                           <description>Hardware interrupts from RXEDGIF disabled (use polling)</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when UART_S2[RXEDGIF] flag is 1</description>
+                           <description>Hardware interrupt requested when RXEDGIF flag is 1</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -78,12 +82,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Hardware interrupts from UART_S2[LBKDIF] disabled (use polling)</description>
+                           <description>LBKDIF interrupt requests disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when UART_S2[LBKDIF] flag is 1</description>
+                           <description>LBKDIF interrupt requests enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -138,12 +142,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No hardware parity generation or checking</description>
+                           <description>Parity function disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Parity enabled</description>
+                           <description>Parity function enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -251,7 +255,7 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Loop mode where transmitter output is internally connected to receiver input. The receiver input is determined by the RSRC bit</description>
+                           <description>Loop mode where transmitter output is internally connected to receiver input. [See also RSRC]</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -296,7 +300,8 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>RWU enables the wakeup function and inhibits further receiver interrupt requests. Normally, hardware wakes the receiver by automatically clearing RWU</description>
+                           <description>RWU enables the wakeup function and inhibits further receiver interrupt requests. 
+Normally, hardware wakes the receiver by automatically clearing RWU</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -339,18 +344,18 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                   </field>
                   <field>
                      <name>ILIE</name>
-                     <description>Idle Line Interrupt Enable for IDLE</description>
+                     <description>Idle Line Interrupt Enable</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Hardware interrupts from IDLE disabled; use polling</description>
+                           <description>IDLE interrupt requests disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware interrupt requested when IDLE flag is 1</description>
+                           <description>IDLE interrupt requests enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -428,7 +433,8 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No parity error has been detected since the last time this flag was cleared. If the receive buffer has a depth greater than 1 then there may be data in the receive buffer what was received with a parity error</description>
+                           <description>No parity error has been detected since the last time this flag was cleared. 
+If the receive buffer has a depth greater than 1 then there may be data in the receive buffer what was received with a parity error</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -464,7 +470,8 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No noise detected since the last time this flag was cleared. If the receive buffer has a depth greater than 1 then there may be data in the receiver buffer that was received with noise</description>
+                           <description>No noise detected since the last time this flag was cleared. 
+If the receive buffer has a depth greater than 1 then there may be data in the receiver buffer that was received with noise</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -853,16 +860,14 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
             <register>
                <name>D</name>
                <description>UART Data Register\n
-Reads return the contents of the read-only\n
-receive data buffer and writes go to the write-only transmit data buffer. Reads and writes\n
-of this register are also involved in the automatic flag clearing mechanisms for the UART\n
-status flags</description>
+Reads return the contents of the read-only receive data buffer and writes go to the write-only transmit data buffer. \n
+Reads and writes of this register are also involved in the automatic flag clearing mechanisms for the UART status flags</description>
                <addressOffset>0x7</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
-                     <name>DATA</name>
+                     <name>RT</name>
                      <description>Read receive data buffer or write transmit data buffer</description>
                      <bitOffset>0</bitOffset>
                   </field>
@@ -929,7 +934,10 @@ status flags</description>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>All data received with the most significant bit cleared, is discarded. All data received with the most significant bit set, is compared with contents of MA2 register. If no match occurs, the data is discarded. If match occurs, data is transferred to the data buffer.This bit must be cleared when C7816[ISO7816E] is set/enabled</description>
+                           <description>All data received with the most significant bit cleared, is discarded. 
+All data received with the most significant bit set, is compared with contents of MA2 register. 
+If no match occurs, the data is discarded. 
+If match occurs, data is transferred to the data buffer</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -947,7 +955,10 @@ status flags</description>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>All data received with the most significant bit cleared, is discarded. All data received with the most significant bit set, is compared with contents of MA1 register. If no match occurs, the data is discarded. If match occurs, data is transferred to the data buffer.This bit must be cleared when C7816[ISO7816E] is set/enabled</description>
+                           <description>All data received with the most significant bit cleared, is discarded. 
+All data received with the most significant bit set, is compared with contents of MA1 register. 
+If no match occurs, the data is discarded. 
+If match occurs, data is transferred to the data buffer</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -969,12 +980,12 @@ status flags</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>If C2[RIE] and S1[RDRF] flags are set, the RDFR interrupt request signal is asserted to request an interrupt service</description>
+                           <description>If C2[RIE] and S1[RDRF] flags are set, then the RDFR interrupt request signal is asserted to request an interrupt service</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>If C2[RIE] and S1[RDRF] flags are set, the RDRF DMA request signal is asserted to request a DMA transfer</description>
+                           <description>If C2[RIE] and S1[RDRF] flags are set, then the RDRF DMA request signal is asserted to request a DMA transfer</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -987,12 +998,12 @@ status flags</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>If C2[TIE] and S1[TDRE] flags are set, the TDRE interrupt request signal is asserted to request interrupt service</description>
+                           <description>If C2[TIE] and S1[TDRE] flags are set, then the TDRE interrupt request signal is asserted to request interrupt service</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>If C2[TIE] and S1[TDRE] flags are set, the TDRE DMA request signal is asserted to request a DMA transfer</description>
+                           <description>If C2[TIE] and S1[TDRE] flags are set, then the TDRE DMA request signal is asserted to request a DMA transfer</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1065,7 +1076,9 @@ status flags</description>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enables clear-to-send operation. The transmitter checks the state of CTS each time it is ready to send a character. If CTS is asserted, the character is sent. If CTS is deasserted, the signal TXD remains in the mark state and transmission is delayed until CTS is asserted. Changes in CTS as a character is being sent do not affect its transmission</description>
+                           <description>The transmitter checks the state of CTS each time it is ready to send a character. 
+If CTS is asserted, the character is sent. If CTS is deasserted, the signal TXD remains in the mark state and transmission is delayed until CTS is asserted. 
+Changes in CTS as a character is being sent do not affect its transmission</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1083,7 +1096,8 @@ status flags</description>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>When a character is placed into an empty transmitter data buffer(FIFO), RTS asserts one bit time before the start bit is transmitted. RTS deasserts one bit time after all characters in the transmitter data buffer(FIFO) and shift register are completely sent, including the last stop bit</description>
+                           <description>When a character is placed into an empty transmitter data buffer(FIFO), RTS asserts one bit time before the start bit is transmitted. 
+RTS deasserts one bit time after all characters in the transmitter data buffer(FIFO) and shift register are completely sent, including the last stop bit</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1368,24 +1382,6 @@ status flags</description>
                      </enumeratedValues>
                   </field>
                   <field>
-                     <name>RXOFE</name>
-                     <description>Receive FIFO Overflow Interrupt Enable</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>RXOF flag does not generate an interrupt to the host</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>RXOF flag generates an interrupt to the host</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
                      <name>RXFLUSH</name>
                      <description>Receive FIFO/Buffer Flush</description>
                      <bitOffset>6</bitOffset>
@@ -1465,24 +1461,6 @@ status flags</description>
                         <enumeratedValue>
                            <name>0b1</name>
                            <description>At least one transmit buffer overflow has occurred since the last time the flag was cleared</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>RXOF</name>
-                     <description>Receiver Buffer Overflow Flag</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No receive buffer overflow has occurred since the last time the flag was cleared</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>At least one receive buffer overflow has occurred since the last time the flag was cleared</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

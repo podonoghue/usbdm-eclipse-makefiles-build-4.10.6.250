@@ -26,6 +26,7 @@
 +================================================================================
 | Revision History
 +================================================================================
+|  6 Nov 13 | 4.10.6.60 Changes to support PAxx small programmer            - pgo
 |  4 Jun 13 | 4.10.5.20 Set controller address in partitionFlexNVM()        - pgo
 | 28 Dec 12 | 4.10.4 Changed handling of security area (& erasing)          - pgo
 | 28 Dec 12 | 4.10.4 Changed TCL interface error handling                   - pgo
@@ -66,7 +67,7 @@
 #include <math.h>
 #include <string>
 #include <ctype.h>
-#include <memory>
+#include <memory.h>
 #include "Common.h"
 #include "Log.h"
 #include "FlashImage.h"
@@ -187,7 +188,7 @@ inline uint32_t getData16Be(uint8_t *data) {
    return (data[0]<<8)+data[1];
 }
 inline uint32_t getData16Le(uint8_t *data) {
-   return data[0]+(data[1]<<8);
+   return (data[1]<<8)+data[0];
 }
 inline uint32_t getData32Be(uint16_t *data) {
    return (data[0]<<16)+data[1];
@@ -753,7 +754,7 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashOperation flashOperation
 //!
 USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashProgram, FlashOperation flashOperation) {
    LOGGING;
-   memoryElementType     buffer[4000];
+   memoryElementType     buffer[4000] = {0};
 
    Logging::print("Op=%s\n", getFlashOperationName(flashOperation));
    switch(flashOperation) {
@@ -808,6 +809,9 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
       Logging::error("Failed, loadSRec() failed\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
+
+   memset(&targetProgramInfo, 0, sizeof(targetProgramInfo));
+
 #if TARGET == MC56F80xx
    MemorySpace_t memorySpace = MS_XWord;
 #else      
@@ -824,7 +828,6 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
 #if (TARGET==HCS08)   
    LoadInfoStruct *infoPtr = (LoadInfoStruct *)buffer;
    targetProgramInfo.smallProgram = (infoPtr->flags&OPT_SMALL_CODE) != 0;
-   infoPtr->flags &= ~OPT_SMALL_CODE;
    if (targetProgramInfo.smallProgram) {
       return loadSmallTargetProgram(buffer, loadAddress, size, flashProgram, flashOperation);
    }
@@ -1304,7 +1307,7 @@ USBDM_ErrorCode getRunStatus(void) {
 }
 #endif
 
-#if defined(LOG) && (TARGET==ARM) && 0
+#if 0 && defined(LOG) && (TARGET==ARM)
 //! Report ARM status
 //!
 //! @param msg - message to print
@@ -1334,6 +1337,8 @@ static void report(const char *msg) {
 USBDM_ErrorCode FlashProgrammer::initLargeTargetBuffer(memoryElementType *buffer) {
    LOGGING;
    LargeTargetFlashDataHeader *pFlashHeader = (LargeTargetFlashDataHeader*)buffer;
+
+   memset(pFlashHeader, 0, sizeof(LargeTargetFlashDataHeader));
 
    pFlashHeader->errorCode       = nativeToTarget16(-1);
    pFlashHeader->controller      = nativeToTarget32(flashOperationInfo.controller);
@@ -1415,7 +1420,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    Logging::print("dataSize=0x%X\n", dataSize);
 
    USBDM_ErrorCode rc = BDM_RC_OK;
-   memoryElementType buffer[1000];
+   memoryElementType buffer[1000] = {0};
    if (pBuffer == NULL) {
       if (dataSize != 0) {
          Logging::error("Error: No buffer but size non-zero\n");
@@ -1714,7 +1719,7 @@ USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
          addressFlag |= 0x83000000;
       }
 #endif      
-#if (TARGET == CFV1)
+#if (TARGET == CFV1) || (TARGET == ARM)
       if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
          // Flag needed for DFLASH/flexNVM access
          addressFlag  |= (1<<23);
@@ -1809,7 +1814,7 @@ USBDM_ErrorCode FlashProgrammer::selectiveEraseFlashSecurity(void) {
          addressFlag |= 0x83000000;
       }
 #endif
-#if (TARGET == CFV1) 
+#if (TARGET == CFV1) || (TARGET == ARM)
       MemType_t memoryType = memoryRegionPtr->getMemoryType();
       if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
          // Flag need for DFLASH/flexNVM access
@@ -2153,7 +2158,7 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, Memory
       flashImage.loadDataBytes(size, securityAddress, data, dontOverwrite);
 #ifdef LOG
       Logging::print("Setting security region, \n"
-            "              mem[0x%06X-0x%06X] = ", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
+            "              mem[0x%06X-0x%06X] = \n", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
       Logging::printDump(data, size, securityAddress);
 #endif
    }
@@ -2438,7 +2443,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
    unsigned int maxSplitBlockSize = targetProgramInfo.maxDataSize;
 
    const unsigned int MaxSplitBlockSize = 0x4000;
-   memoryElementType  buffer[MaxSplitBlockSize+50];
+   memoryElementType  buffer[MaxSplitBlockSize+50] = {0};
    memoryElementType *bufferData = buffer+targetProgramInfo.dataOffset;
 
    // Maximum split block size must be made less than buffer size
@@ -2476,10 +2481,10 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
       }
 #endif
 #if (TARGET == CFV1)
-      if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
-         // Flag needed for DFLASH/flexNVM access
-         addressFlag |= (1<<23);
-      }
+   if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
+      // Flag needed for DFLASH/FlexNVM access on CFV1
+      addressFlag |= (1<<23);
+   }
 #endif
    // Round start address off to alignment requirements
    flashAddress  &= ~alignMask;
@@ -2625,12 +2630,15 @@ USBDM_ErrorCode FlashProgrammer::doProgram(FlashImage *flashImage) {
    flashOperationInfo.alignment = 2;
    USBDM_ErrorCode rc;
    rc = loadTargetProgram(OpBlankCheck);
-   if (rc != PROGRAMMING_RC_OK) {
+   if (rc != BDM_RC_OK) {
       return rc;
    }
    if ((targetProgramInfo.programOperation&DO_BLANK_CHECK_RANGE) == 0) {
       // Do separate blank check if not done by program operation
       rc = doBlankCheck(flashImage);
+   }
+   if (rc != BDM_RC_OK) {
+      return rc;
    }
    if ((targetProgramInfo.programOperation&DO_VERIFY_RANGE) == 0) {
       progressTimer->restart("Programming");
@@ -3025,9 +3033,11 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    // erase some targets without a complete debug connection
    if ((rc != BDM_RC_OK) &&
        ((parameters.getEraseOption() != DeviceData::eraseMass) ||
-        ((rc != PROGRAMMING_RC_ERROR_SECURED) &&
-         (rc != BDM_RC_SECURED) &&
-         (rc != BDM_RC_BDM_EN_FAILED) ))) {
+        ((rc != PROGRAMMING_RC_ERROR_SECURED) &&      // Secured device
+         (rc != BDM_RC_SECURED) &&                    // Secured device
+         (rc != BDM_RC_BDM_EN_FAILED) &&              // BDM enable failed (on HCS devices)
+         (rc != BDM_RC_RESET_TIMEOUT_RISE)            // Reset pulsing on Kinetis etc.
+         ))) {
       return rc;
    }
    bool secured = checkTargetUnSecured() != PROGRAMMING_RC_OK;

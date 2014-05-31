@@ -1,6 +1,6 @@
 <!--
 Devices using this peripheral: 
-   MKL16Z4
+      MKL16Z4
 -->
       <peripheral sourceFile="SIM_MKL16Z4">
          <name>SIM</name>
@@ -1719,17 +1719,17 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>COP timeout after 2^5 LPO cycles or 213 bus clock cycles</description>
+                           <description>COP timeout after 2^5 LPO cycles or 2^13 bus clock cycles</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>COP timeout after 2^8 LPO cycles or 216 bus clock cycles</description>
+                           <description>COP timeout after 2^8 LPO cycles or 2^16 bus clock cycles</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>COP timeout after 2^10 LPO cycles or 218 bus clock cycles</description>
+                           <description>COP timeout after 2^10 LPO cycles or 2^18 bus clock cycles</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>

@@ -1,6 +1,6 @@
 <!--
 Devices using this peripheral: 
-   MK70F12
+      MK70F12
 -->
       <peripheral sourceFile="LCDC_0">
          <name>LCDC</name>

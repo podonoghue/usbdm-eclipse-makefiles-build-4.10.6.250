@@ -113,7 +113,7 @@ typedef enum  {
  PROGRAMMING_RC_ERROR_BDM_READ                 = 111,   //!< 11 Failed to read from target
  PROGRAMMING_RC_ERROR_BDM_RESET                = 112,   //!< 12 Failed to reset target
  PROGRAMMING_RC_ERROR_TRIM                     = 113,   //!< 13 Trimming target clock failed
- PROGRAMMING_RC_ERROR_SECURED                  = 114,   //!< 14 Target is secured
+ PROGRAMMING_RC_ERROR_SECURED                  = 114,   //!< 14 Target is secured and cannot be programmed
  PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND     = 115,   //!< 15 Flash command failed
  PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE     = 116,   //!< 16 Failed to find a suitable FCDIV value (clock problem?)
  PROGRAMMING_RC_ERROR_CHECKSUM                 = 117,   //!< 17 Checksum of SREC invalid

@@ -1,7 +1,7 @@
 include ../Common.mk
 
-EXE_DEFS ="-DUSE_ICON -DINTERACTIVE"
-DLL_DEFS ="-DUSBDM_TCL_DLL_EXPORTS"
+EXE_DEFS ='-DUSE_ICON -DINTERACTIVE'
+DLL_DEFS ='-DUSBDM_TCL_DLL_EXPORTS'
 
 ifeq ($(UNAME_S),Windows)
 USBDM_TCL = UsbdmTCL
@@ -14,13 +14,13 @@ UsbdmScript:
 	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS=$(EXE_DEFS)
 
 UsbdmScript-debug:
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS=$(EXE_DEFS) DEBUG="Y"
+	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS=$(EXE_DEFS) DEBUG='Y'
 
 $(USBDM_TCL):
 	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@$(VER_SUFFIX) CDEFS=$(DLL_DEFS) 
 
 $(USBDM_TCL)-debug:
-	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@$(VER_SUFFIX) CDEFS=$(DLL_DEFS) DEBUG="Y"
+	$(MAKE) dll -f Target.mk BUILDDIR=$@ TARGET=$@$(VER_SUFFIX) CDEFS=$(DLL_DEFS) DEBUG='Y'
 
 all: UsbdmScript UsbdmScript-debug $(USBDM_TCL) $(USBDM_TCL)-debug
 

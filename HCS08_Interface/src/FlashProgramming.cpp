@@ -853,7 +853,6 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
 #if (TARGET==HCS08)   
    LoadInfoStruct *infoPtr = (LoadInfoStruct *)buffer;
    targetProgramInfo.smallProgram = (infoPtr->flags&OPT_SMALL_CODE) != 0;
-//   infoPtr->flags &= ~OPT_SMALL_CODE;
    if (targetProgramInfo.smallProgram) {
       return loadSmallTargetProgram(buffer, loadAddress, size, flashProgram, flashOperation);
    }
@@ -1000,11 +999,11 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType    *bu
 
    // RS08, HCS08, HCS12 are byte aligned
    // MC56F80xx deals with word addresses which are always aligned
-   if ((codeLoadAddress & procAlignmentMask) != 0){
+   if ((codeLoadAddress & procAlignmentMask) != 0) {
       Logging::error("CodeLoadAddress is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-   if (((targetProgramInfo.headerAddress+targetProgramInfo.dataOffset) & procAlignmentMask) != 0){
+   if (((targetProgramInfo.headerAddress+targetProgramInfo.dataOffset) & procAlignmentMask) != 0) {
       Logging::error("FlashProgramHeader.dataOffset is not aligned\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
@@ -1475,8 +1474,6 @@ USBDM_ErrorCode FlashProgrammer::initLargeTargetBuffer(memoryElementType *buffer
    LOGGING;
    LargeTargetFlashDataHeader *pFlashHeader = (LargeTargetFlashDataHeader*)buffer;
 
-   memset(pFlashHeader, 0, sizeof(LargeTargetFlashDataHeader));
-
    pFlashHeader->errorCode       = nativeToTarget16(-1);
    pFlashHeader->controller      = nativeToTarget16(flashOperationInfo.controller);
    pFlashHeader->watchdogAddress = nativeToTarget16(parameters.getSOPTAddress());
@@ -1613,7 +1610,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    Logging::print("dataSize=0x%X\n", dataSize);
 
    USBDM_ErrorCode rc = BDM_RC_OK;
-   memoryElementType buffer[1000];
+   memoryElementType buffer[1000] = {0};
    if (pBuffer == NULL) {
       if (dataSize != 0) {
          Logging::error("Error: No buffer but size non-zero\n");
@@ -1684,13 +1681,13 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
       if (rc != BDM_RC_OK) {
          Logging::error("ReadPC() Failed, rc=%s\n",
                USBDM_GetErrorString(rc));
-         report("FlashProgrammer::executeTargetProgram()");
+//         report("FlashProgrammer::executeTargetProgram()");
          return rc;
       }
       if ((currentPC<(targetRegPC-0x1000))||(currentPC>(targetRegPC+0x1000))) {
          Logging::error("Read PC out of range, PC=0x%08X\n",
                currentPC);
-         report("FlashProgrammer::executeTargetProgram()");
+//         report("FlashProgrammer::executeTargetProgram()");
          return PROGRAMMING_RC_ERROR_BDM;
       }
       uint8_t  iBuffer[8];
@@ -1698,7 +1695,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
       if (rc != BDM_RC_OK) {
          Logging::error("ReadMemory() Failed, rc=%s\n",
                USBDM_GetErrorString(rc));
-         report("FlashProgrammer::executeTargetProgram()");
+//         report("FlashProgrammer::executeTargetProgram()");
          return rc;
       }
       Logging::print("Step: PC=0x%06X => %02X %02X %02X %02X\n",
@@ -2635,7 +2632,7 @@ USBDM_ErrorCode FlashProgrammer::doFlashBlock(FlashImage     *flashImage,
    unsigned int maxSplitBlockSize = targetProgramInfo.maxDataSize;
 
    const unsigned int MaxSplitBlockSize = 0x4000;
-   memoryElementType  buffer[MaxSplitBlockSize+50];
+   memoryElementType  buffer[MaxSplitBlockSize+50] = {0};
    memoryElementType *bufferData = buffer+targetProgramInfo.dataOffset;
 
    // Maximum split block size must be made less than buffer size

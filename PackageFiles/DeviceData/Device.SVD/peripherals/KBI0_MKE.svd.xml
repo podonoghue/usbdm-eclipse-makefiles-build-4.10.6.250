@@ -1,6 +1,8 @@
 <!--
 Devices using this peripheral: 
-   MKE02Z2
+      MKE02Z2
+      MKE02Z4
+      MKE04Z8M4
 -->
       <peripheral sourceFile="KBI0_MKE">
          <name>KBI0</name>

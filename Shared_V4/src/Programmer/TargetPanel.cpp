@@ -25,6 +25,7 @@
  \verbatim
 Change History
 -==============================================================================
+| 10 Apr 2014 | 4.10.20 Fixed .axf extension                              - pgo
 | 30 Jun 2013 | 4.10.6  Added GDB Server code & refactored                - pgo
 | 26 Dec 2012 | 4.10.4  Fixed file change check if file has been deleted  - pgo
 |  4 Nov 2012 | 4.10.4  Fixed filer for file extensions to load           - pgo
@@ -1113,9 +1114,9 @@ void TargetPanel::OnLoadFileButtonClick( wxCommandEvent& event ) {
 //   Logging::print("TargetPanel::OnLoadFileButtonClick()\n");
 
    wxString caption  = _("Select Binary File to Load");
-   wxString wildcard = _("Binary Files(*.s19,*.sx,*.afx,*.elf)|*.s19;*.sx;*.afx;*.elf|"
+   wxString wildcard = _("Binary Files(*.s19,*.sx,*.axf,*.elf)|*.s19;*.sx;*.axf;*.elf|"
                          "SREC Hex files (*.s19,*.sx)|*.s19;*.sx|"
-                         "Elf files (*.afx)|*.afx;*.elf|"
+                         "Elf files (*.axf,*.elf)|*.axf;*.elf|"
                          "All Files|*");
    wxString defaultDir = wxEmptyString;
    wxString defaultFilename = wxEmptyString;

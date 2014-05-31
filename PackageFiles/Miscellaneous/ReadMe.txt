@@ -1,6 +1,39 @@
-usbdm_4.10.6.110-1-i386.deb (February 2013)
-usbdm_4.10.6.110-1-amd64.deb (February 2013)
-USBDM_4_10_6_110.Win.msi (February 2013)
+USBDM_4_10_6_140.Win.msi (March 2014)
+======================================================================================= 
+   - Initial support for Keil with ARM targets
+   - Additional Kinetis devices (MKE04, MKE06, MK64F)
+   - Bug fixes
+   	- Corrected programmer file dialogue wildcards for .axf files
+   	- Fixes for MKE devices (failed to program except after Mass Erase)
+   - HCS08 Programmer on PA & PT targets no longer affects WDOG settings 
+   
+USBDM_4_10_6_130.Win.msi (March 2014)
+======================================================================================= 
+   - Bug fixes for PA4
+   - Improved mass erase for Kinetis devices with reset problems
+   - Bug fix for MC56F80xx devices in CW 10 
+   - Stripped some missed files.
+   
+usbdm_4.10.6.120-1-i386.deb (March 2014)
+usbdm_4.10.6.120-1-amd64.deb (March 2014)
+USBDM_4_10_6_120.Win.msi (March 2014)
+======================================================================================= 
+   - New features in Eclipse
+      - Added project options to Eclipse plugin
+      - Configuration editor (used for clock configuration)
+      - Clock configurations for Kinetis devices
+      - Clock configurations for (some) Coldfire devices
+      - Standard Peripheral Library & CMSIS for STM devices
+   - Bug Fixes
+      - Fixed bug affecting 9S08AC8 and similar (small RAM memory HCS08 devices)
+      - Fixed bug affecting 9s08PT16 and similar (removed needless restriction on EEPROM alignment) 
+   - Firmware
+      - Greatly extended timeouts in ARM interfaces.  Improves operation with slow clocks (16kHz)
+   - Stripped binaries to reduce size
+	
+usbdm_4.10.6.110-1-i386.deb (February 2014)
+usbdm_4.10.6.110-1-amd64.deb (February 2014)
+USBDM_4_10_6_110.Win.msi (February 2014)
 ======================================================================================= 
    New features in Eclipse
    - Added Peripheral View (Kinetis devices)

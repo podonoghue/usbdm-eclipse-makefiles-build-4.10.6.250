@@ -1,0 +1,11 @@
+<!--
+Devices using this peripheral: 
+      MKE04Z4
+      MKE06Z4
+-->
+      <peripheral derivedFrom="FGPIOC">
+         <name>GPIOC</name>
+         <description>General Purpose Input/Output (GPIOC)</description>
+         <prependToName>GPIOC</prependToName>
+         <baseAddress>0x400FF080</baseAddress>
+      </peripheral>

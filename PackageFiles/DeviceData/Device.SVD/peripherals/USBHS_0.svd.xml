@@ -1,9 +1,9 @@
 <!--
 Devices using this peripheral: 
-   MK20F12
-   MK60F12
-   MK61F12
-   MK70F12
+      MK20F12
+      MK60F12
+      MK61F12
+      MK70F12
 -->
       <peripheral sourceFile="USBHS_0">
          <name>USBHS</name>

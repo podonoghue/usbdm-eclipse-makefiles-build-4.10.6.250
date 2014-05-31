@@ -1,37 +1,15 @@
 /*!
  \page freedomSetup Setting Up the FRDM-KL25Z
  
- 
- \section FreedomHardwareModifications Hardware Modifications to FRDM-KL25Z
- 
- Before using the FRDMxxxx board as an <b>external</b> Kinetis programmer it is necessary to make some hardware modifications.  The on-board chip
- may be programmed without modification so is useful as an initial test of the system before making hardware modifications.\n
+Installing the USBDM firmware to the FRDM board allows the on-board target chip to be programmed using the USBDM tools.  This
+does not require any hardware modification of the board.  This is useful as an initial test of the USBDM system.\n
 
- The modification detailed below are for the FRDM-KL25Z board.  Similar modifications are necessary for the other FRDM boards but the details will
- vary.
+Before using the FRDMxxxx board as an <b>external</b> Kinetis programmer it is necessary to make some hardware modifications.\n
 
-  - Cut the PCB trace on the <b>bottom</b> of the board under J11.  This trace connects the SWD hardware to the MKL25Z128M4 device on the board.  
-    It must be opened to allow an external target to be connected without interference from the on-board chip.\n
-    Connection to the on-board target may be restored by adding pins and a jumper at J11 on the top of the board.\n\n
-    \image html "J11-Cut.png"
-    \image html SWD_ConnectorSchematic.png
-    \n\n
-  - Add a 10-pin connector at location J6 which is also marked SWD.  Do not confuse this with the similar connector at J8 marked SDA/SWD.\n
-    A suitable connector would be Element-14 #681-1184.  This is an unprotected header.\n\n
-<table border="0">
-   <tr>
-    <td>\image html "SWD-Connector.png" </td>
-    <td>\image html "J6-Target-SWD.png" </td>
-   </tr>
-</table>
-    \n\n
-  - Procure a 10-pin to 10-pin programming cable to connect to the target.  The cheapest I've found has been from Element14 #2144328.\n\n
-   \image html "FRDM-Cable.png"
-   FRDM-KL25 with SWD connector, J11 jumper pins and debug cable\n \n
-   \n
+The above steps are described int the following:
  
 \section FreedomFirmwareInstallation Installing USBDM firmware on FRDM-KL25Z
-   Install the USBDM software and USBDM drivers before doing the following:  \n
+   Complete the USBDM \ref softwareInstallationPage and \ref driverPage before doing the following:  \n
    
    - Locate the USBDM_OpenSDA.sx file in the USBDM firmware folder.
    
@@ -45,22 +23,66 @@
       <td>\image html BDMFlashImagesFolder.png</td>
    </tr>
 </table>
-   The installation of the USBDM firmware uses the usual FRDM-KL25 OpenSDA bootloader process.\n
 	- There are two firmware images for the FRDM board. These are OpenSDA applications.  
 		- <b>USBDM_OpenSDA.sx</b> - Image with a fixed USB ID
 		- <b>USBDM_OpenSDA_Unique_ID.sx</b> - Image with a USB ID that is determined from the device unique ID.
 
-	Using the second of these images means that each BDM will be assigned a unique serial port number irrespective of which USB port is used. 
-	This really only makes a difference if you have multiple BDMs and you don't want to play "find the com port number" under windows.\n
-   These are OpenSDA applications.  The following process is used to load them into the FRDM board:
+	Using the second of these images means that each BDM will be assigned a unique and consistent serial port number irrespective of which USB port is used. 
+	This really only makes a difference if you have multiple BDMs and you don't want to play "find the com port number" when you plug the BDM
+	into a different USB port under windows.\n
+	In a laboratory environment it may be better to use the first image as otherwise a different serial port number will be assigned whenever
+	a different	BDM is plugged in.\n
+   These are OpenSDA applications and installation uses the usual FRDM-KL25 OpenSDA bootloader process: \n
    - Unplug the FRDM-KL25 board.
    - Whilst holding the reset switch depressed plug in the FRDM-KL25 board.  The green LED should start blinking at a rate of about 1Hz.  
    - Open a file explorer and locate the USB drive that has now appeared.  It will have the drive name "BOOTLOADER".
-   - Drag the file <b>USBDM_OpenSDAxxxxx.sx</b> to the USB drive and wait a short while.  The OpenSDA firmware on the FRDM-KL25 board will 
+   - Drag the file <b>USBDM_OpenSDAxxxxx.sx</b> to the USB drive and wait a short while.  The OpenSDA bootloader on the FRDM-KL25 board will 
      program the USBDM firmware into the MK20 debugger chip on the board.
+      \image html OpenSDA-drag-n-drop.png
    - Remove and re-plug the FRDM-KL25 board.  The board will now appear as a USBDM device and USBDM driver installation will occur.
    
-   You can test the interface by trying the stand-alone ARM flash programmer that is part of the USBDM installation. Placing a jumper on J-11
-   will allow the programming of the MKL25Z128M4 chip on the FRDM board.  It is necessary to open J-11 and use the cable for external targets.
+   You can test the interface by trying the stand-alone ARM flash programmer that is part of the USBDM installation. If you have already modified
+   the hardware it will be necessary to place a jumper on J-11 to allow the programming of the target MKL25Z128M4 chip on the FRDM board.
+
+ \section FreedomHardwareModifications Hardware Modifications to FRDM-KL25Z
+ 
+ Before using the FRDMxxxx board as an <b>external</b> Kinetis programmer it is necessary to make some hardware modifications.  The on-board chip
+ may be programmed without modification.\n
+
+ The modifications detailed below are for the FRDM-KL25Z board.  Similar modifications are necessary for the other FRDM boards but the details will
+ vary.  Some of the early revisions of the FRDM boards have hardware errors that make it difficult to use as external programmers.  I recommend
+ FRDM-KL25 or FRDM-K20 boards.
+
+  - Cut the PCB trace on the <b>bottom</b> of the board under J11.  This trace connects the SWD hardware to the MKL25Z128M4 device on the board.  
+    It must be opened to allow an external target to be connected without interference from the on-board chip (but see comments below).\n
+    Connection to the on-board target may be restored by adding pins and a jumper at J11 on the top of the board.\n\n
+    \image html "J11-Cut.png"
+    \image html SWD_ConnectorSchematic.png
+    \n\n
+  - Add a 10-pin connector at location J6 which is also marked SWD.  Do not confuse this with the similar connector at J8 marked SDA/SWD.\n
+    A suitable connector would be Element-14 #681-1184.  This is an unprotected header.\n\n
+<table border="0">
+   <tr>
+    <td>\image html "SWD-Connector.png" </td>
+    <td>\image html "J6-Target-SWD.png" </td>
+   </tr>
+</table>
+    \n\n
+  - Obtain a suitable 10-pin to 10-pin programming cable to connect to the target.  The cheapest I've found has been from Element14 #2144328.\n\n
+   \image html "FRDM-Cable.png"
+   Debug cable and FRDM-KL25 with SWD connector & J11 jumper pins highlighted.\n \n
+   \n
+ 
+\section ExternalProgrammingSection Programming an External Device
    
+   Jumper J-11 isolates the on-board device from the SWCLK signal on the programming interface.  This effectively disables the SWD interface on this device.
+   Unfortunately this does not entirely isolate the on-board device from the programming interface - RESET is still connected.\n  
+   Due to this, it is important that the on-board device contains a valid program so that it does not affect the programming of an external device
+   by asserting the reset signal because of a watch-dog timeout or program crash.  
+   
+   <td>\image html BootLoopFolder.png</td>
+   
+   It is recommended to program the BootLoopXX.sx file or similar <i>harmless</i> program to the on-board device before using the external interface. 
+   The USBDM ARM Flash programmer is a convenient way to do this. Program with the J-11 jumper present. 
+   After doing this, remove the jumper on J-11 to use the external programming interface.
 */

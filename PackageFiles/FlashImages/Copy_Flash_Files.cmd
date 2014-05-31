@@ -57,6 +57,8 @@ for %%f in (%FIRMWARE_VERSIONS%) do copy "%CW_JMxx_ROOT%"\%%f\USBDM*.sx      "%F
 echo ***  MKxx...
 set FIRMWARE_VERSIONS=OpenSDA OpenSDA_Unique_ID
 for %%f in (%FIRMWARE_VERSIONS%) do copy "%CW_Kinetis_ROOT%"\%%f\*.sx        "%FLASH_DIR%\MKxx"
+set FIRMWARE_VERSIONS=OpenSDA2 OpenSDA2_Unique_ID
+for %%f in (%FIRMWARE_VERSIONS%) do copy "%CW_Kinetis_ROOT%"\%%f\*.bin        "%FLASH_DIR%\MKxx"
 echo ***  TWR...
 set FIRMWARE_VERSIONS=USBDM_TWR_CFV1 USBDM_TWR_HCS08 USBDM_TWR_Kinetis USBDM_TWR_CFVx USBDM_TWR_HCS12
 for %%f in (%FIRMWARE_VERSIONS%) do copy "%CW_JMxx_ROOT%"\%%f\USBDM*.sx      "%FLASH_DIR%\Tower"

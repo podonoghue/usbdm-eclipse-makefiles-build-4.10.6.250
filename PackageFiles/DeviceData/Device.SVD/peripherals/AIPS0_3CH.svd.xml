@@ -1,7 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MK10D7
-   MK30D7
+      MK10D7
+      MK30D7
 -->
       <peripheral sourceFile="AIPS0_3CH">
          <name>AIPS0</name>
@@ -641,25 +641,25 @@ Devices using this peripheral:
                   </field>
                </fields>
             </register>
-            <register derivedFrom="PACRA">
-               <name>PACRB</name>
-               <addressOffset>0x24</addressOffset>
-            </register>
-            <register derivedFrom="PACRA">
-               <name>PACRC</name>
-               <addressOffset>0x28</addressOffset>
-            </register>
-            <register derivedFrom="PACRA">
-               <name>PACRD</name>
-               <addressOffset>0x2C</addressOffset>
-            </register>
-            <register derivedFrom="PACRA">
-               <name>PACR%s</name>
-               <addressOffset>0x40</addressOffset>
-               <resetValue>0x0</resetValue>
-               <dim>12</dim>
-               <dimIncrement>4</dimIncrement>
-               <dimIndex>E,F,G,H,I,J,K,L,M,N,O,P</dimIndex>
-            </register>
+                        <register derivedFrom="PACRA">
+                           <name>PACRB</name>
+                           <addressOffset>0x24</addressOffset>
+                        </register>
+                        <register derivedFrom="PACRA">
+                           <name>PACRC</name>
+                           <addressOffset>0x28</addressOffset>
+                        </register>
+                        <register derivedFrom="PACRA">
+                           <name>PACRD</name>
+                           <addressOffset>0x2C</addressOffset>
+                        </register>
+                        <register derivedFrom="PACRA">
+                           <name>PACR%s</name>
+                           <addressOffset>0x40</addressOffset>
+                           <resetValue>0x0</resetValue>
+            <dim>12</dim>
+            <dimIncrement>4</dimIncrement>
+            <dimIndex>E,F,G,H,I,J,K,L,M,N,O,P</dimIndex>
+                        </register>
          </registers>
       </peripheral>

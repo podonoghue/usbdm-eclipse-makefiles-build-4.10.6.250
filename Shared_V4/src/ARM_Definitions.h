@@ -87,8 +87,8 @@
 
 // The following are addresses in the target memory space (Accessed through AHB-AP
 #define DHCSR (0xE000EDF0) // RW Debug Halting Control and Status Register
-#define DCSR  (0xE000EDF4) // WO Debug Core Selector Register
-#define DCDR  (0xE000EDF8) // RW Debug Core Data Register
+#define DCRSR (0xE000EDF4) // WO Debug Core Register Selector Register
+#define DCRDR (0xE000EDF8) // RW Debug Core Register Data Register
 #define DEMCR (0xE000EDFC) // RW Debug Exception and Monitor Control Register
 #define DFSR  (0xE000ED30) // Debug Fault Status Register
 #define AIRCR (0xE000ED0C) // Application Interrupt and Reset Control Register
@@ -135,6 +135,19 @@
 #define AIRCR_VECTKEY      (0x05FA<<16)   // Key value
 #define AIRCR_SYSRESETREQ  (1<<2)         // System Reset Request
 #define AIRCR_VECTRESET    (1<<0)         // Local system reset (only in debug state!)
+
+#define WDOG_STCTRLH (0x40052000)
+#define WDOG_STCTRLL (0x40052002)
+#define WDOG_TOVALH  (0x40052004)
+#define WDOG_TOVALL  (0x40052006)
+#define WDOG_WINH    (0x40052008)
+#define WDOG_WINL    (0x4005200A)
+#define WDOG_REFRESH (0x4005200C)
+#define WDOG_UNLOCK  (0x4005200E)
+#define WDOG_TMROUTH (0x40052010)
+#define WDOG_TMROUTL (0x40052012)
+#define WDOG_RSTCNT  (0x40052014)
+#define WDOG_PRESC   (0x40052016)
 
 // STM32F10xx
 // It is necessary to disable the watch-dog timers when debugging

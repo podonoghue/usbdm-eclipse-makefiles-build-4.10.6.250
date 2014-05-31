@@ -16,10 +16,11 @@
 <!ENTITY Custom-Devices                   SYSTEM "Custom/custom-hcs12.xml">
 ]>
 <!-- 
+      V4.10.5 - Added MC9S12HZ256 - untested
       V4.10.4 - Fixed XEP100 EEPROM
       V4.10.4 - Changed how security information is expressed
  -->
-<root version="4.10.4">
+<root version="4.10.5">
    <description>HCS12 Device characteristics v4.9.0 9/2/2012</description>
    <sharedInformation>
 <!-- TCL Scripts -->
@@ -1105,6 +1106,28 @@
          </flashScripts>
          <flashProgramRef ref="HCS12-PMMC-FTMRCK-flash-program" />
       </device>
+      
+      
+      <device family="HCS12" name="MC9S12HZ256">
+         <clock type="External" />
+         <memory type="ram">
+            <memoryRange start="0x1000" end="0x3FFF" />
+         </memory>
+         <memory registerAddress="0x0110" type="eeprom" sectorSize="4" alignment="2">
+            <memoryRange start="0x000400" end="0x0007FF" />
+         </memory>
+         <memory pageAddress="0x0030" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" alignment="8">
+            <securityEntryRef ref="HCS12-default-security" />
+            <memoryRange start="0x4000" end="0x7FFF" /> <!-- Page 3E -->
+            <memoryRange start="0x8000" end="0xBFFF" pages="256K"  pageEnd="0x3F" />
+            <memoryRange start="0xC000" end="0xFFFF" /> <!-- Page 3F -->
+         </memory>
+         <sdid value="0x1402" />
+         <sdid value="0x1403" />
+         <flashProgramRef ref="HCS12-MMCV4-FTS_2-flash-program" />
+      </device>
+      
+      
       <device family="HCS12" name="MC9S12HY32">
          <clock type="External" />
          <memory type="ram">

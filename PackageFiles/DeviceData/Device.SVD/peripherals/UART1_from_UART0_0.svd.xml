@@ -1,10 +1,15 @@
 <!--
 Devices using this peripheral: 
-   MKE02Z2
+      MK22F12
+      MK64F12
+      MKE02Z2
+      MKE02Z4
+      MKE04Z4
+      MKE06Z4
 -->
       <peripheral derivedFrom="UART0">
          <name>UART1</name>
-         <description>Universal Asynchronous Receiver/Transmitter (UART) (UART1)</description>
+         <description>Universal Asynchronous Receiver/Transmitter (UART)</description>
          <prependToName>UART1</prependToName>
          <baseAddress>0x4006B000</baseAddress>
       </peripheral>

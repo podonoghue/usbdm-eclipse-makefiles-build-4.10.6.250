@@ -1,10 +1,10 @@
 <!--
 Devices using this peripheral: 
-   MK10D10
-   MK20D10
-   MK30D10
-   MK40D10
-   MK60D10
+      MK10D10
+      MK20D10
+      MK30D10
+      MK40D10
+      MK60D10
 -->
       <peripheral sourceFile="CAN0_MKD10">
          <name>CAN0</name>
@@ -1433,42 +1433,42 @@ Devices using this peripheral:
                   <description>Message Buffer 0 CS Register</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>TIME_STAMP</name>
-                     <description>Free-Running Counter Time stamp. This 16-bit field is a copy of the Free-Running Timer, captured for Tx and Rx frames at the time when the beginning of the Identifier field appears on the CAN bus</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>16</bitWidth>
-                  </field>
-                  <field>
-                     <name>DLC</name>
-                     <description>Length of the data to be stored/transmitted</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>RTR</name>
-                     <description>Remote Transmission Request. One/zero for remote/data frame</description>
-                     <bitOffset>20</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>IDE</name>
-                     <description>ID Extended. One/zero for extended/standard format frame</description>
-                     <bitOffset>21</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>SRR</name>
-                     <description>Substitute Remote Request. Contains a fixed recessive bit</description>
-                     <bitOffset>22</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>CODE</name>
-                     <description>Reserved</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
+                     <field>
+                        <name>TIME_STAMP</name>
+                        <description>Free-Running Counter Time stamp. This 16-bit field is a copy of the Free-Running Timer, captured for Tx and Rx frames at the time when the beginning of the Identifier field appears on the CAN bus</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>16</bitWidth>
+                     </field>
+                     <field>
+                        <name>DLC</name>
+                        <description>Length of the data to be stored/transmitted</description>
+                        <bitOffset>16</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
+                     <field>
+                        <name>RTR</name>
+                        <description>Remote Transmission Request. One/zero for remote/data frame</description>
+                        <bitOffset>20</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>IDE</name>
+                        <description>ID Extended. One/zero for extended/standard format frame</description>
+                        <bitOffset>21</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>SRR</name>
+                        <description>Substitute Remote Request. Contains a fixed recessive bit</description>
+                        <bitOffset>22</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>CODE</name>
+                        <description>Reserved</description>
+                        <bitOffset>24</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -1476,24 +1476,24 @@ Devices using this peripheral:
                   <description>Message Buffer 0 ID Register</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
-                  <field>
-                     <name>EXT</name>
-                     <description>Contains extended (LOW word) identifier of message buffer</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>18</bitWidth>
-                  </field>
-                  <field>
-                     <name>STD</name>
-                     <description>Contains standard/extended (HIGH word) identifier of message buffer</description>
-                     <bitOffset>18</bitOffset>
-                     <bitWidth>11</bitWidth>
-                  </field>
-                  <field>
-                     <name>PRIO</name>
-                     <description>Local priority. This 3-bit fieldis only used when LPRIO_EN bit is set in MCR and it only makes sense for Tx buffers. These bits are not transmitted. They are appended to the regular ID to define the transmission priority</description>
-                     <bitOffset>29</bitOffset>
-                     <bitWidth>3</bitWidth>
-                  </field>
+                     <field>
+                        <name>EXT</name>
+                        <description>Contains extended (LOW word) identifier of message buffer</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>18</bitWidth>
+                     </field>
+                     <field>
+                        <name>STD</name>
+                        <description>Contains standard/extended (HIGH word) identifier of message buffer</description>
+                        <bitOffset>18</bitOffset>
+                        <bitWidth>11</bitWidth>
+                     </field>
+                     <field>
+                        <name>PRIO</name>
+                        <description>Local priority. This 3-bit fieldis only used when LPRIO_EN bit is set in MCR and it only makes sense for Tx buffers. These bits are not transmitted. They are appended to the regular ID to define the transmission priority</description>
+                        <bitOffset>29</bitOffset>
+                        <bitWidth>3</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -1501,30 +1501,30 @@ Devices using this peripheral:
                   <description>Message Buffer 0 WORD0 Register</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>DATA_BYTE_3</name>
-                     <description>Data byte 3 of Rx/Tx frame</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
-                  <field>
-                     <name>DATA_BYTE_2</name>
-                     <description>Data byte 2 of Rx/Tx frame</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
-                  <field>
-                     <name>DATA_BYTE_1</name>
-                     <description>Data byte 1 of Rx/Tx frame</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
-                  <field>
-                     <name>DATA_BYTE_0</name>
-                     <description>Data byte 0 of Rx/Tx frame</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
+                     <field>
+                        <name>DATA_BYTE_3</name>
+                        <description>Data byte 3 of Rx/Tx frame</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
+                     <field>
+                        <name>DATA_BYTE_2</name>
+                        <description>Data byte 2 of Rx/Tx frame</description>
+                        <bitOffset>8</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
+                     <field>
+                        <name>DATA_BYTE_1</name>
+                        <description>Data byte 1 of Rx/Tx frame</description>
+                        <bitOffset>16</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
+                     <field>
+                        <name>DATA_BYTE_0</name>
+                        <description>Data byte 0 of Rx/Tx frame</description>
+                        <bitOffset>24</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -1532,30 +1532,30 @@ Devices using this peripheral:
                   <description>Message Buffer 0 WORD1 Register</description>
                   <addressOffset>0xC</addressOffset>
                   <fields>
-                  <field>
-                     <name>DATA_BYTE_7</name>
-                     <description>Data byte 7 of Rx/Tx frame</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
-                  <field>
-                     <name>DATA_BYTE_6</name>
-                     <description>Data byte 6 of Rx/Tx frame</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
-                  <field>
-                     <name>DATA_BYTE_5</name>
-                     <description>Data byte 5 of Rx/Tx frame</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
-                  <field>
-                     <name>DATA_BYTE_4</name>
-                     <description>Data byte 4 of Rx/Tx frame</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>8</bitWidth>
-                  </field>
+                     <field>
+                        <name>DATA_BYTE_7</name>
+                        <description>Data byte 7 of Rx/Tx frame</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
+                     <field>
+                        <name>DATA_BYTE_6</name>
+                        <description>Data byte 6 of Rx/Tx frame</description>
+                        <bitOffset>8</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
+                     <field>
+                        <name>DATA_BYTE_5</name>
+                        <description>Data byte 5 of Rx/Tx frame</description>
+                        <bitOffset>16</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
+                     <field>
+                        <name>DATA_BYTE_4</name>
+                        <description>Data byte 4 of Rx/Tx frame</description>
+                        <bitOffset>24</bitOffset>
+                        <bitWidth>8</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>

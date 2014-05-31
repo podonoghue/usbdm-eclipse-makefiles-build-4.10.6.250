@@ -1,14 +1,14 @@
 <!--
 Devices using this peripheral: 
-   MK10D10
-   MK20D10
-   MK30D10
-   MK40D10
-   MK50D10
-   MK51D10
-   MK52D10
-   MK53D10
-   MK60D10
+      MK10D10
+      MK20D10
+      MK30D10
+      MK40D10
+      MK50D10
+      MK51D10
+      MK52D10
+      MK53D10
+      MK60D10
 -->
       <peripheral sourceFile="DAC0_MKD10">
          <name>DAC0</name>
@@ -39,11 +39,11 @@ Devices using this peripheral:
                   <size>8</size>
                   <resetMask>0xFF</resetMask>
                   <fields>
-                  <field>
-                     <name>DATA0</name>
-                     <description>When the DAC buffer is not enabled, DATA[11:0] controls the output voltage based on the following formula: V out = V in * (1 + DACDAT0[11:0])/4096 When the DAC buffer is enabled, DATA is mapped to the 16-word buffer</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>DATA0</name>
+                        <description>When the DAC buffer is not enabled, DATA[11:0] controls the output voltage based on the following formula: V out = V in * (1 + DACDAT0[11:0])/4096 When the DAC buffer is enabled, DATA is mapped to the 16-word buffer</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -53,12 +53,12 @@ Devices using this peripheral:
                   <size>8</size>
                   <resetMask>0xFF</resetMask>
                   <fields>
-                  <field>
-                     <name>DATA1</name>
-                     <description>When the DAC Buffer is not enabled, DATA[11:0] controls the output voltage based on the following formula. V out = V in * (1 + DACDAT0[11:0])/4096 When the DAC buffer is enabled, DATA[11:0] is mapped to the 16-word buffer</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
+                     <field>
+                        <name>DATA1</name>
+                        <description>When the DAC Buffer is not enabled, DATA[11:0] controls the output voltage based on the following formula. V out = V in * (1 + DACDAT0[11:0])/4096 When the DAC buffer is enabled, DATA[11:0] is mapped to the 16-word buffer</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>4</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>

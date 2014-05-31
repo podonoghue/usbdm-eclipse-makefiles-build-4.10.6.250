@@ -1,8 +1,8 @@
 <!--
 Devices using this peripheral: 
-   MK52DZ10
-   MK53DZ10
-   MK60DZ10
+      MK52DZ10
+      MK53DZ10
+      MK60DZ10
 -->
       <peripheral sourceFile="ENET_1">
          <name>ENET</name>

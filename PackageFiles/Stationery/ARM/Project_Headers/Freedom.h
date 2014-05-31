@@ -35,7 +35,7 @@
 #define UART0_TX_PIN_FN        2
 #endif
 
-#if defined(MCU_MKE02Z2)
+#if defined(MCU_MKE02Z2) || defined(MCU_MKE02Z4)
 //=================================================================================
 // LED Port bit masks
 //
@@ -46,6 +46,34 @@
 #define LED_GREEN_NUM        2
 
 #define LED_BLUE_PORT        E
+#define LED_BLUE_NUM         7
+#endif
+
+#if defined(MCU_MKE04Z8M4)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         C
+#define LED_RED_NUM          5
+
+#define LED_GREEN_PORT       C
+#define LED_GREEN_NUM        4
+
+#define LED_BLUE_PORT        B
+#define LED_BLUE_NUM         3
+#endif
+
+#if defined(MCU_MKE06Z4)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         G
+#define LED_RED_NUM          5
+
+#define LED_GREEN_PORT       G
+#define LED_GREEN_NUM        6
+
+#define LED_BLUE_PORT        G
 #define LED_BLUE_NUM         7
 #endif
 
@@ -281,6 +309,21 @@
 
 #define LED_GREEN_PORT       C
 #define LED_GREEN_NUM        1
+
+#endif
+
+#if defined(MCU_MK64F12)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         C
+#define LED_RED_NUM          0
+
+#define LED_GREEN_PORT       C
+#define LED_GREEN_NUM        1
+
+#define LED_BLUE_PORT        A
+#define LED_BLUE_NUM        10
 
 #endif
 

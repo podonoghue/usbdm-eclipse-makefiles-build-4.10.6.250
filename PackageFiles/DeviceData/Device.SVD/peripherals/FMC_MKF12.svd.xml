@@ -1,11 +1,11 @@
 <!--
 Devices using this peripheral: 
-   MK10F12
-   MK20F12
-   MK21F12
-   MK60F12
-   MK61F12
-   MK70F12
+      MK10F12
+      MK20F12
+      MK21F12
+      MK60F12
+      MK61F12
+      MK70F12
 -->
       <peripheral sourceFile="FMC_MKF12">
          <name>FMC</name>
@@ -779,18 +779,18 @@ Devices using this peripheral:
                   <description>Cache Tag Storage</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>valid</name>
-                     <description>1-bit valid for cache entry</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>tag</name>
-                     <description>13-bit tag for cache entry</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>14</bitWidth>
-                  </field>
+                     <field>
+                        <name>valid</name>
+                        <description>1-bit valid for cache entry</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>tag</name>
+                        <description>13-bit tag for cache entry</description>
+                        <bitOffset>6</bitOffset>
+                        <bitWidth>14</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -798,18 +798,18 @@ Devices using this peripheral:
                   <description>Cache Tag Storage</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
-                  <field>
-                     <name>valid</name>
-                     <description>1-bit valid for cache entry</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>tag</name>
-                     <description>13-bit tag for cache entry</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>14</bitWidth>
-                  </field>
+                     <field>
+                        <name>valid</name>
+                        <description>1-bit valid for cache entry</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>tag</name>
+                        <description>13-bit tag for cache entry</description>
+                        <bitOffset>6</bitOffset>
+                        <bitWidth>14</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -817,18 +817,18 @@ Devices using this peripheral:
                   <description>Cache Tag Storage</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>valid</name>
-                     <description>1-bit valid for cache entry</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>tag</name>
-                     <description>13-bit tag for cache entry</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>14</bitWidth>
-                  </field>
+                     <field>
+                        <name>valid</name>
+                        <description>1-bit valid for cache entry</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>tag</name>
+                        <description>13-bit tag for cache entry</description>
+                        <bitOffset>6</bitOffset>
+                        <bitWidth>14</bitWidth>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -836,18 +836,18 @@ Devices using this peripheral:
                   <description>Cache Tag Storage</description>
                   <addressOffset>0xC</addressOffset>
                   <fields>
-                  <field>
-                     <name>valid</name>
-                     <description>1-bit valid for cache entry</description>
-                     <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                  </field>
-                  <field>
-                     <name>tag</name>
-                     <description>13-bit tag for cache entry</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>14</bitWidth>
-                  </field>
+                     <field>
+                        <name>valid</name>
+                        <description>1-bit valid for cache entry</description>
+                        <bitOffset>0</bitOffset>
+                        <bitWidth>1</bitWidth>
+                     </field>
+                     <field>
+                        <name>tag</name>
+                        <description>13-bit tag for cache entry</description>
+                        <bitOffset>6</bitOffset>
+                        <bitWidth>14</bitWidth>
+                     </field>
                   </fields>
                </register>
             </cluster>
@@ -862,11 +862,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (uppermost word)</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [127:96] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [127:96] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -874,11 +874,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (mid-upper word)</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [95:64] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [95:64] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -886,11 +886,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (mid-lower word)</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [63:32] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [63:32] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -898,11 +898,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (lowermost word)</description>
                   <addressOffset>0xC</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [31:0] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [31:0] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -910,11 +910,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (uppermost word)</description>
                   <addressOffset>0x10</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [127:96] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [127:96] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -922,11 +922,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (mid-upper word)</description>
                   <addressOffset>0x14</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [95:64] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [95:64] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -934,11 +934,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (mid-lower word)</description>
                   <addressOffset>0x18</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [63:32] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [63:32] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -946,11 +946,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (lowermost word)</description>
                   <addressOffset>0x1C</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [31:0] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [31:0] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -958,11 +958,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (uppermost word)</description>
                   <addressOffset>0x20</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [127:96] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [127:96] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -970,11 +970,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (mid-upper word)</description>
                   <addressOffset>0x24</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [95:64] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [95:64] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -982,11 +982,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (mid-lower word)</description>
                   <addressOffset>0x28</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [63:32] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [63:32] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -994,11 +994,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (lowermost word)</description>
                   <addressOffset>0x2C</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [31:0] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [31:0] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -1006,11 +1006,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (uppermost word)</description>
                   <addressOffset>0x30</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [127:96] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [127:96] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -1018,11 +1018,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (mid-upper word)</description>
                   <addressOffset>0x34</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [95:64] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [95:64] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -1030,11 +1030,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (mid-lower word)</description>
                   <addressOffset>0x38</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [63:32] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [63:32] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
                <register>
@@ -1042,11 +1042,11 @@ Devices using this peripheral:
                   <description>Cache Data Storage (lowermost word)</description>
                   <addressOffset>0x3C</addressOffset>
                   <fields>
-                  <field>
-                     <name>data</name>
-                     <description>Bits [31:0] of data entry</description>
-                     <bitOffset>0</bitOffset>
-                  </field>
+                     <field>
+                        <name>data</name>
+                        <description>Bits [31:0] of data entry</description>
+                        <bitOffset>0</bitOffset>
+                     </field>
                   </fields>
                </register>
             </cluster>

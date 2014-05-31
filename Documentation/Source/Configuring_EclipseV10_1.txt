@@ -3,6 +3,16 @@
  
 \section EclipseWizard Using the New Project Wizard to create a Project with USBDM support
 
+Support in Codewarrior V10.x is available as follows:
+   - RS08
+   - HCS08
+   - Coldfire V1
+   - Coldfire V2,3,4 (Programming requires creation of a flash programming task \ref EclipseFlashConfiguration ).
+   - Kinetis
+   - DSC support in very limited - Debugging may be unreliable.
+
+\section EclipseWizard Using the New Project Wizard to create a Project with USBDM support
+
  USBDM is fully supported by the Codewarrior <b>New Project Wizard</b>.  The following shows the required initial 
  steps of creating a USBDM project using the wizard.
 
@@ -517,7 +527,7 @@ autorun task setup as part of the Debug Launch Configuration</em>.\n\n
        \image html "5. NewDebugConfiguration_Debugger_Download_CFVx.png" </td>
    </tr>               
    <tr>               
-      <td> \image html "Flash_Programming_Task_8.png" </td>
+      <td> \image html "AddDownloadTask.png" </td>
    </tr>
 </table>
 \endif

@@ -201,8 +201,13 @@
 // Kinetis
 //=======================================================================
 
+#define MC_SRS  (0x4007E000)
 #define MC_SRSH (0x4007E000)
 #define MC_SRSL (0x4007E001)
+
+#define RCM_SRS  (0x4007F000)
+#define RCM_SRS0 (0x4007F000)
+#define RCM_SRS1 (0x4007F001)
 
 
 #endif //  _TARGET_DEFINES_H_

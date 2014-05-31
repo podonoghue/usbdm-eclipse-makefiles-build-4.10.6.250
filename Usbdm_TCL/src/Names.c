@@ -88,7 +88,8 @@ const char *getBriefHardwareDescription(unsigned int hardwareVersion) {
     /* 20  */  "USBDM_TWR_CFV1",
     /* 21  */  "USBDM_TWR_HCS08",
     /* 22  */  "USBDM_TWR_CFVx",
-    /* 23  */  "USBDM-SWD-SER -(JS16CWJ-V2)",
+    /* 23  */  "USBDM-SWD-SER -(JS16CWJ)",
+    /* 24  */  "USBDM-SWD -(JS16CWJ)",
          };
 
    const char *hardwareName = "unknown hardware";
@@ -115,10 +116,12 @@ static const char *const ICPerrorMessages[] = {
 const char *getICPErrorName(unsigned char error) {
    char const *errorName = NULL;
 
-   if (error < sizeof(ICPerrorMessages)/sizeof(ICPerrorMessages[0]))
+   if (error < sizeof(ICPerrorMessages)/sizeof(ICPerrorMessages[0])) {
       errorName = ICPerrorMessages[error];
-   if (errorName == NULL)
+   }
+   if (errorName == NULL) {
       errorName = "UNKNOWN";
+   }
    return errorName;
 }
 
@@ -130,8 +133,9 @@ const char *getICPErrorName(unsigned char error) {
 //!
 char const *getTargetTypeName( unsigned int type ) {
    static const char *names[] = {
-      "HCS12","HCS08","RS08","CFV1","CFVx","JTAG","EZFlash","MC56F80xx","ARM-JTAG","ARM-SWD","ARM",
-   };
+      "HCS12","HCS08","RS08","CFV1","CFVx","JTAG",
+      "EZFlash","MC56F80xx","ARM-JTAG","ARM-SWD","ARM",
+      };
    const char *typeName = NULL;
    static char unknownBuffer[10];
    if (type < sizeof(names)/sizeof(names[0])) {
@@ -187,64 +191,77 @@ static char buff[150] = "";
       return buff;
 }
 
+#if 0
+char const *getSecurityName(SecurityOptions_t security) {
+   switch (security) {
+      case SEC_DEFAULT     : return "default";
+      case SEC_SECURED     : return "secured";
+      case SEC_UNSECURED   : return "unsecured";
+      case SEC_INTELLIGENT : return "intelligent";
+      case SEC_CUSTOM      : return "custom";
+      default              : return "security-??";
+   }
+}
+#endif
+
 #if defined(LOG) || 1
 //! Command String from Command #
 static const char *const newCommandTable[]= {
-   "CMD_USBDM_GET_COMMAND_RESPONSE"    , // 0
-   "CMD_USBDM_SET_TARGET"              , // 1
-   "CMD_USBDM_SET_VDD"                 , // 2
-   "CMD_USBDM_DEBUG"                   , // 3
-   "CMD_USBDM_GET_BDM_STATUS"          , // 4
-   "CMD_USBDM_GET_CAPABILITIES"        , // 5
-   "CMD_USBDM_SET_OPTIONS"             , // 6
-   NULL                                , // 7
-   "CMD_USBDM_CONTROL_PINS"            , // 8
-   NULL                                , // 9
-   NULL                                , // 10
-   NULL                                , // 11
-   "CMD_USBDM_GET_VER"                 , // 12
-   NULL                                , // 13
-   "CMD_USBDM_ICP_BOOT"                , // 14
+   "CMD_USBDM_GET_COMMAND_RESPONSE"          , // 0
+   "CMD_USBDM_SET_TARGET"                    , // 1
+   "CMD_USBDM_SET_VDD"                       , // 2
+   "CMD_USBDM_DEBUG"                         , // 3
+   "CMD_USBDM_GET_BDM_STATUS"                , // 4
+   "CMD_USBDM_GET_CAPABILITIES"              , // 5
+   "CMD_USBDM_SET_OPTIONS"                   , // 6
+   NULL                                      , // 7
+   "CMD_USBDM_CONTROL_PINS"                  , // 8
+   NULL                                      , // 9
+   NULL                                      , // 10
+   NULL                                      , // 11
+   "CMD_USBDM_GET_VER"                       , // 12
+   NULL                                      , // 13
+   "CMD_USBDM_ICP_BOOT"                      , // 14
 
-   "CMD_USBDM_CONNECT"                 , // 15
-   "CMD_USBDM_SET_SPEED"               , // 16
-   "CMD_USBDM_GET_SPEED"               , // 17
+   "CMD_USBDM_CONNECT"                       , // 15
+   "CMD_USBDM_SET_SPEED"                     , // 16
+   "CMD_USBDM_GET_SPEED"                     , // 17
 
-   "CMD_USBDM_CONTROL_INTERFACE"       , // 18
-   NULL                                , // 19
+   "CMD_USBDM_CONTROL_INTERFACE"             , // 18
+   NULL                                      , // 19
 
-   "CMD_USBDM_READ_STATUS_REG"         , // 20
-   "CMD_USBDM_WRITE_CONROL_REG"        , // 21
+   "CMD_USBDM_READ_STATUS_REG"               , // 20
+   "CMD_USBDM_WRITE_CONROL_REG"              , // 21
 
-   "CMD_USBDM_TARGET_RESET"            , // 22
-   "CMD_USBDM_TARGET_STEP"             , // 23
-   "CMD_USBDM_TARGET_GO"               , // 24
-   "CMD_USBDM_TARGET_HALT"             , // 25
+   "CMD_USBDM_TARGET_RESET"                  , // 22
+   "CMD_USBDM_TARGET_STEP"                   , // 23
+   "CMD_USBDM_TARGET_GO"                     , // 24
+   "CMD_USBDM_TARGET_HALT"                   , // 25
 
-   "CMD_USBDM_WRITE_REG"               , // 26
-   "CMD_USBDM_READ_REG"                , // 27
+   "CMD_USBDM_WRITE_REG"                     , // 26
+   "CMD_USBDM_READ_REG"                      , // 27
 
-   "CMD_USBDM_WRITE_CREG"              , // 28
-   "CMD_USBDM_READ_CREG"               , // 29
+   "CMD_USBDM_WRITE_CREG"                    , // 28
+   "CMD_USBDM_READ_CREG"                     , // 29
 
-   "CMD_USBDM_WRITE_DREG"              , // 30
-   "CMD_USBDM_READ_DREG"               , // 31
+   "CMD_USBDM_WRITE_DREG"                    , // 30
+   "CMD_USBDM_READ_DREG"                     , // 31
 
-   "CMD_USBDM_WRITE_MEM"               , // 32
-   "CMD_USBDM_READ_MEM"                , // 33
+   "CMD_USBDM_WRITE_MEM"                     , // 32
+   "CMD_USBDM_READ_MEM"                      , // 33
 
-   "CMD_USBDM_TRIM_CLOCK - removed"          , // 34
+   "CMD_USBDM_READ_ALL_CORE_REGS"            , // 34
    "CMD_USBDM_RS08_FLASH_ENABLE - removed"   , // 35
    "CMD_USBDM_RS08_FLASH_STATUS - removed"   , // 36
    "CMD_USBDM_RS08_FLASH_DISABLE - removed"  , // 37
 
-   "CMD_USBDM_JTAG_GOTORESET"          , // 38
-   "CMD_USBDM_JTAG_GOTOSHIFT"          , // 39
-   "CMD_USBDM_JTAG_WRITE"              , // 40
-   "CMD_USBDM_JTAG_READ"               , // 41
-   "CMD_USBDM_SET_VPP"                 , // 42,
-   "CMD_USBDM_JTAG_READ_WRITE"         , // 43,
-   "CMD_USBDM_JTAG_EXECUTE_SEQUENCE"   , // 44,
+   "CMD_USBDM_JTAG_GOTORESET"                , // 38
+   "CMD_USBDM_JTAG_GOTOSHIFT"                , // 39
+   "CMD_USBDM_JTAG_WRITE"                    , // 40
+   "CMD_USBDM_JTAG_READ"                     , // 41
+   "CMD_USBDM_SET_VPP"                       , // 42,
+   "CMD_USBDM_JTAG_READ_WRITE"               , // 43,
+   "CMD_USBDM_JTAG_EXECUTE_SEQUENCE"         , // 44,
 };
 
 //! \brief Maps a command code to a string
@@ -258,16 +275,12 @@ const char *getCommandName(unsigned char command) {
 
    command &= ~0x80;
 
-//   if (bdmState.compatibilityMode != C_USBDM_V2) {
-//      if (command < sizeof(oldCommandTable)/sizeof(oldCommandTable[0]))
-//         commandName = oldCommandTable[command];
-//   }
-//   else {
-      if (command < sizeof(newCommandTable)/sizeof(newCommandTable[0]))
+   if (command < sizeof(newCommandTable)/sizeof(newCommandTable[0])) {
          commandName = newCommandTable[command];
-//   }
-   if (commandName == NULL)
+   }
+   if (commandName == NULL) {
       commandName = "UNKNOWN";
+   }
    return commandName;
 }
 
@@ -302,17 +315,19 @@ static const char *const debugCommands[] = {
 //!
 const char *getDebugCommandName(unsigned char cmd) {
    char const *cmdName = NULL;
-   if (cmd < sizeof(debugCommands)/sizeof(debugCommands[0]))
+   if (cmd < sizeof(debugCommands)/sizeof(debugCommands[0])) {
       cmdName = debugCommands[cmd];
-   if (cmdName == NULL)
+   }
+   if (cmdName == NULL) {
       cmdName = "UNKNOWN";
+   }
    return cmdName;
 }
 
 char const *getAutoConnectName(AutoConnect_t mode) {
    static char buff[40] = "";
    switch(mode) {
-   case AUTOCONNECT_NEVER  : strcpy(buff,"NEVER");      break;
+   case AUTOCONNECT_NEVER  : strcpy(buff,"NEVER");       break;
    case AUTOCONNECT_ALWAYS : strcpy(buff,"ALWAYS");      break;
    case AUTOCONNECT_STATUS : strcpy(buff,"STATUS");      break;
    }
@@ -338,9 +353,25 @@ char const *getConnectionRetryName(RetryMode mode) {
    if (mode & retryByReset) {
       strcat(buff,"+RESET");
    }
+   if (mode & retryDelayedCheck) {
+      strcat(buff,"+DELAYCHECK");
+   }
    return buff;
 }
 #endif
+
+//!  Creates dummy register name in static buffer
+//!
+//! @param regAddr number indicating the register
+//!
+//! @return ptr to static buffer
+//!
+static const char *getUnknownReg(unsigned int regAddr) {
+   static char buffer[20];
+   memset(buffer, 0, sizeof(buffer));
+   snprintf(buffer, sizeof(buffer)-1, "UnknowReg#%X", regAddr);
+   return buffer;
+}
 
 //! \brief Maps a Coldfire V1 Control register # to a string
 //! (As used by WRITE_CREG/READ_CREG)
@@ -360,9 +391,9 @@ char const *getCFV1ControlRegName( unsigned int regAddr ){
 
    regAddr &= 0x1F; // CRN field is only 5 bits
    regName = names[regAddr];
-   if (regName == NULL)
-      regName = "unknown";
-
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
@@ -382,21 +413,27 @@ static const char *regs2[] = {"SSP","VBR",NULL,NULL,"MACSR","MASK","ACC",NULL,
                                NULL,NULL,NULL,NULL,NULL,NULL,"SR","PC"};
 const char *regName = NULL;
 
-   if (regAddr <= 8) // Register Misc (Some targets only)
+   if (regAddr <= 8) { // Register Misc (Some targets only)
       regName = regs1[regAddr];
-   else if ((regAddr >= 0x080) && (regAddr <= 0x08F)) // Register D0-A7
+   }
+   else if ((regAddr >= 0x080) && (regAddr <= 0x08F)) { // Register D0-A7
       regName = regs[regAddr-0x80];
-   else if ((regAddr >= 0x180) && (regAddr <= 0x18F)) // Register D0-A7
+   }
+   else if ((regAddr >= 0x180) && (regAddr <= 0x18F)) { // Register D0-A7
       regName = regs[regAddr-0x180];
-   else if ((regAddr >= 0x800) && (regAddr <= 0x80F)) // Register Misc
+   }
+   else if ((regAddr >= 0x800) && (regAddr <= 0x80F)) { // Register Misc
       regName = regs2[regAddr-0x800];
-   else if (regAddr == 0xC04)
+   }
+   else if (regAddr == 0xC04) {
       regName = "FLASHBAR";
-   else if (regAddr == 0xC05)
+   }
+   else if (regAddr == 0xC05) {
       regName = "RAMBAR";
-   if (regName == NULL)
-      regName = "unknown";
-
+   }
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
@@ -461,16 +498,18 @@ char const *getCFV1DebugRegName( unsigned int regAddr ){
 
    if (regAddr > CFV1_ByteRegs) {// Byte access?
       regAddr -= CFV1_ByteRegs;
-      if (regAddr < sizeof(names2)/sizeof(names2[0]))
+      if (regAddr < sizeof(names2)/sizeof(names2[0])) {
           regName = names2[regAddr];
+      }
    }
    else {
-      if (regAddr < sizeof(names)/sizeof(names[0]))
-          regName = names[regAddr];
+      if (regAddr < sizeof(names)/sizeof(names[0])) {
+         regName = names[regAddr];
+      }
    }
-   if (regName == NULL)
-      regName = "unknown";
-
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
@@ -492,12 +531,12 @@ char const *getCFVxDebugRegName( unsigned int regAddr ){
                                 };
    const char *regName = NULL;
 
-   if (regAddr < sizeof(names)/sizeof(names[0]))
+   if (regAddr < sizeof(names)/sizeof(names[0])) {
        regName = names[regAddr];
-
-   if (regName == NULL)
-      regName = "unknown";
-
+   }
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
@@ -534,16 +573,19 @@ char const *getSWDDebugRegName( unsigned int regAddr ) {
 //! @return pointer to static string describing the command
 //!
 char const *getHCS12DebugRegName( unsigned int regAddr ) {
-   if (regAddr == 0xFF01)
+   if (regAddr == 0xFF01) {
       return "BDMSTS";
-   if (regAddr == 0xFF06)
+   }
+   if (regAddr == 0xFF06) {
       return "BDMCCR";
-   if (regAddr == 0xFF07)
+   }
+   if (regAddr == 0xFF07) {
       return "BDMCCRH";
-   if (regAddr == 0xFF08)
+   }
+   if (regAddr == 0xFF08) {
       return "BDMGPR";
-
-   return "Unknown";
+   }
+   return getUnknownReg(regAddr);
 }
 
 //! \brief Maps a HCS12 register # to a string
@@ -558,12 +600,12 @@ char const *getHCS12RegName( unsigned int regAddr ) {
       };
    const char *regName = NULL;
 
-   if (regAddr < sizeof(names)/sizeof(names[0]))
+   if (regAddr < sizeof(names)/sizeof(names[0])) {
        regName = names[regAddr];
-
-   if (regName == NULL)
-      regName = "unknown";
-
+   }
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
@@ -580,12 +622,12 @@ char const *getHCS08RegName( unsigned int regAddr ) {
       };
    const char *regName = NULL;
 
-   if (regAddr < sizeof(names)/sizeof(names[0]))
+   if (regAddr < sizeof(names)/sizeof(names[0])) {
        regName = names[regAddr];
-
-   if (regName == NULL)
-      regName = "unknown";
-
+   }
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
@@ -602,12 +644,12 @@ char const *getRS08RegName( unsigned int regAddr ) {
       };
    const char *regName = NULL;
 
-   if (regAddr < sizeof(names)/sizeof(names[0]))
+   if (regAddr < sizeof(names)/sizeof(names[0])) {
        regName = names[regAddr];
-
-   if (regName == NULL)
-      regName = "unknown";
-
+   }
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
@@ -628,14 +670,19 @@ char const *getCFV1RegName( unsigned int regAddr ){
    static const char *names2[] = {
       "_A7","VBR","CPUCR","SR","PC"
       };
+   const char *regName = NULL;
+
    if (regAddr < sizeof(names)/sizeof(names[0])) {
-       return names[regAddr];
+       regName = names[regAddr];
    }
    regAddr -= CFV1_RegOTHER_A7;
    if (regAddr < sizeof(names2)/sizeof(names2[0])) {
-      return names2[regAddr];
+      regName = names2[regAddr];
    }
-   return "Unknown";
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
+   return regName;
 }
 
 //! \brief Maps a Coldfire V2,3,4 register # to a string
@@ -645,23 +692,29 @@ char const *getCFV1RegName( unsigned int regAddr ){
 //!
 //! @return pointer to static string describing the command
 //!
-char const *getCFVxRegName( unsigned int regAddr ){
+char const *getCFVxRegName( unsigned int regAddr ) {
    static const char *names[] = {
       "D0","D1","D2","D3","D4","D5","D6","D7",
       "A0","A1","A2","A3","A4","A5","A6","USP",
       };
    const char *regName = NULL;
 
-   if (regAddr < sizeof(names)/sizeof(names[0]))
+   if (regAddr < sizeof(names)/sizeof(names[0])) {
        regName = names[regAddr];
-
-   if (regName == NULL)
-      regName = "unknown";
-
+   }
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
-char const *getDSCRegName( unsigned int regNum) {
+//! \brief Maps a DSC register # to a string
+//!
+//! @param regNum = register number
+//!
+//! @return pointer to static string describing the register
+//!
+char const *getDSCRegName( unsigned int regAddr) {
    static const char *const regNames[] =  {
       // Core registers
       "DSC_RegX0",
@@ -725,11 +778,12 @@ char const *getDSCRegName( unsigned int regNum) {
       "DSC_RegOB0CNTR",                             // Breakpoint Unit 0 Counter
    } ;
    const char *regName = NULL;
-
-   if (regNum < sizeof(regNames)/sizeof(regNames[0]))
-       regName = regNames[regNum];
-   if (regName == NULL)
-      regName = "unknown";
+   if (regAddr < sizeof(regNames)/sizeof(regNames[0])) {
+       regName = regNames[regAddr];
+   }
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
    return regName;
 }
 
@@ -895,9 +949,9 @@ char const *getCFV1_XCSR_Name( unsigned int XCSR) {
 //! \brief Maps a Status register value to a string
 //!
 //! @param targetType = Type of target (T_HC12 etc)
-//! @param XCSR       = XCSR register value
+//! @param value      = register value
 //!
-//! @return pointer to static string buffer describing the XCSR
+//! @return pointer to static string buffer describing the value
 //!
 char const *getStatusRegName(unsigned int targetType, unsigned int value) {
 
@@ -952,7 +1006,6 @@ static const char *capabilityTable[] = {
          strcat(buff,capabilityTable[index]);
       }
    }
-
    return buff;
 }
 
@@ -1128,7 +1181,8 @@ const char *fillMode;
 //! @param options - options to report
 //!
 void printBdmOptions(const USBDM_ExtendedOptions_t *options) {
-   print("========================================\n"
+   Logging::print("\n"
+         "========================================\n"
          "autoReconnect         => %s\n"
          "bdmClockSource        => %s\n"
          "cycleVddOnConnect     => %s\n"
@@ -1177,22 +1231,29 @@ void printBdmOptions(const USBDM_ExtendedOptions_t *options) {
 //! @return pointer to static string describing the register
 //!
 char const *getARMRegName( unsigned int regAddr ) {
-static const char *regs[] = {"R0","R1","R2","R3","R4","R5","R6","R7",
-                             "R8","R9","R10","R11","R12","SP","LR","PC",
-                             "PSR","MSP","PSP",
-                             "MISC/PRIMASK", "FAULTMASK", "BASEPRI", "CONTROL"};
-const char *regName = NULL;
-
+   static const char *regs[] = {"R0","R1","R2","R3","R4","R5","R6","R7",
+                                "R8","R9","R10","R11","R12","SP","LR","PC",
+                                "PSR","MSP","PSP", NULL,
+                                "CONTROL/FAULTMASK/BASEPRI/PRIMASK"};
+   const char *regName = NULL;
    if (regAddr < sizeof(regs)/sizeof(regs[0]))
       regName = regs[regAddr];
    else if (regAddr==ARM_RegFPSCR) {
       regName = "FPSCR";
    }
    else if ((regAddr>=ARM_RegFPS0) && (regAddr<=ARM_RegFPS0+31)) {
-      regName = "FPSn";
+      static char fpName[20] = "S00";
+      int index = 0;
+      fpName[index++] = 'S';
+      if (((regAddr-ARM_RegFPS0)/10) > 0) {
+         fpName[index++] = '0' + (regAddr-ARM_RegFPS0)/10;
+      }
+      fpName[index++] = '0' + (regAddr-ARM_RegFPS0)%10;
+      fpName[index++] = '\0';
+      regName = fpName;
    }
    if (regName == NULL) {
-      regName = "unknown";
+      regName = getUnknownReg(regAddr);
    }
    return regName;
 }
@@ -1223,8 +1284,12 @@ bitInfo bitNames[] = {
       {NULL, 0},
 };
 bitInfo *bitPtr = bitNames;
-static char buffer[200];
+   static char buffer[200];
    buffer[0] = '\0';
+   if ((dhcsrValue&DHCSR_DBGKEY_MASK)==DHCSR_DBGKEY) {
+      strcpy(buffer, "DHCSR_DBGKEY|");
+      dhcsrValue &= ~DHCSR_DBGKEY_MASK;
+   }
    while (bitPtr->bitMask != 0) {
       if ((dhcsrValue & bitPtr->bitMask) != 0) {
          strcat(buffer, bitPtr->bitName);
@@ -1252,7 +1317,7 @@ bitInfo bitNames[] = {
       {NULL, 0},
 };
 bitInfo *bitPtr = bitNames;
-static char buffer[200];
+   static char buffer[200];
    buffer[0] = '\0';
    if ((demcrValue & DEMCR_VC_ALL_ERRORS) == DEMCR_VC_ALL_ERRORS) {
       strcat(buffer, "ALL_ERRORS|");
@@ -1273,22 +1338,22 @@ typedef struct {
    const uint32_t   bitMask;
 } bitInfo;
 static const bitInfo bitNames[] = {
-      {"MASS_ERASE_ACK|",  MDM_AP_Flash_Mass_Erase_Ack},
-      {"FLASH_READY|",     MDM_AP_Flash_Ready},
-      {"SECURE|",          MDM_AP_System_Security},
-      {"RESET|",           MDM_AP_System_Reset},
-      {"MASS_ERASE_EN|",   MDM_AP_Mass_Erase_Enable},
-      {"BACKDOOR_EN|",     MDM_AP_Backdoor_Access_Enable},
-      {"LOW_POWER_EN|",    MDM_AP_LP_Enable},
-      {"LLS_EXIT|",        MDM_AP_LLS_Mode_Exit},
-      {"VLLSx_EXIT|",      MDM_AP_VLLSx_Mode_Exit},
+      {"MASS_ERASE_ACK|",  MDM_AP_Status_Flash_Mass_Erase_Ack},
+      {"FLASH_READY|",     MDM_AP_Status_Flash_Ready},
+      {"SECURE|",          MDM_AP_Status_System_Security},
+      {"RESET|",           MDM_AP_Status_System_Reset},
+      {"MASS_ERASE_EN|",   MDM_AP_Status_Mass_Erase_Enable},
+      {"BACKDOOR_EN|",     MDM_AP_Status_Backdoor_Access_Enable},
+      {"LOW_POWER_EN|",    MDM_AP_Status_LP_Enable},
+      {"LLS_EXIT|",        MDM_AP_Status_LLS_Mode_Exit},
+      {"VLLSx_EXIT|",      MDM_AP_Status_VLLSx_Mode_Exit},
       {"HALT|",            MDM_AP_Status_Core_Halted},
       {"SLEEP_DEEP|",      MDM_AP_Status_Core_SLEEPDEEP},
       {"SLEEPING|",        MDM_AP_Status_Core_SLEEPING},
       {NULL, 0},
 };
 const bitInfo *bitPtr = bitNames;
-static char buffer[200];
+   static char buffer[200];
    buffer[0] = '\0';
    while (bitPtr->bitMask != 0) {
       if ((mdmApValue & bitPtr->bitMask) != 0) {
@@ -1298,6 +1363,7 @@ static char buffer[200];
    }
    return buffer;
 }
+
 const char *getMDM_APControlName(uint32_t mdmApValue) {
 typedef struct {
    const char *bitName;
@@ -1315,7 +1381,7 @@ static const bitInfo bitNames[] = {
       {NULL, 0},
 };
 const bitInfo *bitPtr = bitNames;
-static char buffer[200];
+   static char buffer[200];
    buffer[0] = '\0';
    while (bitPtr->bitMask != 0) {
       if ((mdmApValue & bitPtr->bitMask) != 0) {
@@ -1338,7 +1404,7 @@ bitInfo bitNames[] = {
       {NULL, 0},
 };
 bitInfo *bitPtr = bitNames;
-static char buffer[200];
+   static char buffer[200];
    buffer[0] = '\0';
    while (bitPtr->bitMask != 0) {
       if ((srshValue & bitPtr->bitMask) != 0) {
@@ -1364,7 +1430,7 @@ bitInfo bitNames[] = {
       {NULL, 0},
 };
 bitInfo *bitPtr = bitNames;
-static char buffer[200];
+   static char buffer[200];
    buffer[0] = '\0';
    while (bitPtr->bitMask != 0) {
       if ((srslValue & bitPtr->bitMask) != 0) {
@@ -1375,28 +1441,56 @@ static char buffer[200];
    return buffer;
 }
 
+
+const char *getMemSpaceAbbreviatedName(MemorySpace_t memSpace) {
+   static char buffer[100];
+   buffer[0] = '\0';
+   if (memSpace & MS_Fast) {
+      strcat(buffer,"F|");
+   }
+   switch(memSpace&MS_SPACE) {
+     case MS_None    :  strcat(buffer,"-");  break;
+     case MS_Program :  strcat(buffer,"P");  break;
+     case MS_Data    :  strcat(buffer,"X");  break;
+     case MS_Global  :  strcat(buffer,"G");  break;
+     default         :  strcat(buffer,"?");  break;
+   };
+   switch(memSpace&MS_SIZE) {
+     case MS_Byte   :  strcat(buffer,"B:");  break;
+     case MS_Word   :  strcat(buffer,"W:");  break;
+     case MS_Long   :  strcat(buffer,"L:");  break;
+     default        :  strcat(buffer,"?:");  break;
+   };
+   return buffer;
+}
+
+
 const char *getMemSpaceName(MemorySpace_t memSpace) {
    static char buffer[100];
+   buffer[0] = '\0';
+   if (memSpace & MS_Fast) {
+      strcpy(buffer,"MS_Fast|");
+   }
    switch(memSpace) {
-     case MS_PWord   :  return "MS_PWord";
-     case MS_PLong   :  return "MS_PLong";
-     case MS_XByte   :  return "MS_XByte";
-     case MS_XWord   :  return "MS_XWord";
-     case MS_XLong   :  return "MS_XLong";
+     case MS_PWord   :  strcat(buffer, "MS_PWord"); break;
+     case MS_PLong   :  strcat(buffer, "MS_PLong"); break;
+     case MS_XByte   :  strcat(buffer, "MS_XByte"); break;
+     case MS_XWord   :  strcat(buffer, "MS_XWord"); break;
+     case MS_XLong   :  strcat(buffer, "MS_XLong"); break;
      default: break;
    };
    switch(memSpace&MS_SPACE) {
-     case MS_None    :  strcpy(buffer,"-|");               break;
-     case MS_Program :  strcpy(buffer,"MS_Program|");      break;
-     case MS_Data    :  strcpy(buffer,"MS_Data|");         break;
-     case MS_Global  :  strcpy(buffer,"MS_Global|");       break;
-     default         :  strcpy(buffer,"MS_UnknownSpace|"); break;
+     case MS_None    :  strcat(buffer,"-|");               break;
+     case MS_Program :  strcat(buffer,"MS_Program|");      break;
+     case MS_Data    :  strcat(buffer,"MS_Data|");         break;
+     case MS_Global  :  strcat(buffer,"MS_Global|");       break;
+     default         :  strcat(buffer,"MS_UnknownSpace|"); break;
    };
    switch(memSpace&MS_SIZE) {
-     case MS_Byte   :  strcat(buffer,"MS_Byte");        break;
-     case MS_Word   :  strcat(buffer,"MS_Word");        break;
-     case MS_Long   :  strcat(buffer,"MS_Long");        break;
-     default        :  strcat(buffer,"-"); break;
+     case MS_Byte   :  strcat(buffer,"MS_Byte");   break;
+     case MS_Word   :  strcat(buffer,"MS_Word");   break;
+     case MS_Long   :  strcat(buffer,"MS_Long");   break;
+     default        :  strcat(buffer,"-");         break;
    };
    return buffer;
 }

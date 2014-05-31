@@ -62,7 +62,7 @@ extern "C" {
 // SYSTEM_ERC_CLOCK ==============================
 //
 //   <o> External Reference Clock (Hz) <constant> <name=system_erc_clock>
-//   <i> Derived from the external crystal or clock source on XTAL/EXTAL or XTAL32/EXTAL32
+//   <i> Derived from the OSCCLK0 (external crystal or clock source on XTAL/EXTAL) or RTC_CLOCK(XTAL32/EXTAL32)
 #define SYSTEM_ERC_CLOCK (8000000UL)
 
 // SYSTEM_SLOW_IRC_CLOCK ==============================
@@ -381,7 +381,7 @@ extern "C" {
 //  <o> MCGOUTCLK Clock Source Select (CLKS) [0-2] <constant> <name=mcg_c1_clks>
 //  <i> Selects the clock source for MCGOUTCLK [MCG_C1_CLKS]
 //  <i> This option is determined by the Clock Mode selection
-//      <0=> Output of FLL is selected
+//      <0=> Output of FLL or PLL is selected
 //      <1=> Internal reference clock is selected
 //      <2=> External reference clock is selected
 #define MCG_C1_CLKS_V 0
@@ -455,16 +455,16 @@ extern "C" {
 //   <i> Selects the frequency range for the crystal oscillator or external clock source [MCG_C2_RANGE0]
 //   <i> This value is calculated from the FLL input clock frequency
 //      <0=> Low range
-//      <1=> Medium range
-//      <2=> High range
-#define MCG_C2_RANGE0_V   0
+//      <1=> High range
+//      <2=> Very High range
+#define MCG_C2_RANGE0_V   1
 #define MCG_C2_RANGE0_M   (MCG_C2_RANGE0_V<<MCG_C2_RANGE0_SHIFT)
 
 // MCG_C2_HGO0 =============================
 //
 //   <q> Oscillator Gain (HGO0)
 //   <i> Controls the crystal oscillator mode of operation [MCG_C2_HGO0]
-//      <0=> Low gain
+//      <0=> Low power
 //      <1=> High gain
 #define MCG_C2_HGO0_V   0
 #define MCG_C2_HGO0_M   (MCG_C2_HGO0_V<<MCG_C2_HGO0_SHIFT)
@@ -516,10 +516,10 @@ extern "C" {
 //
 //   <o> DCO Range Select (DRST_DRS) <constant> <0-3> <name=mcg_c4_drst_drs>
 //   <i> Frequency range for the FLL output, DCOOUT [MCG_C4_DRST_DRS]
-//      <0=> Low (x640/x732, 24/20-25 MHz)
-//      <1=> Mid (x1280/x1464, 48/40-50 MHz)
-//      <2=> Mid-high (x1920/x2197, 72/60-75 MHz)
-//      <3=> High (x2560/x2929, 96/80-100 MHz)
+//      <0=> Low (x640/x732, 20-25/24 MHz)
+//      <1=> Mid (x1280/x1464, 40-50/48 MHz)
+//      <2=> Mid-high (x1920/x2197, 60-75/72 MHz)
+//      <3=> High (x2560/x2929, 80-100/96 MHz)
 #define MCG_C4_DRST_DRS_V  3
 #define MCG_C4_DRST_DRS_M (MCG_C4_DRST_DRS_V<<MCG_C4_DRST_DRS_SHIFT)
 
@@ -531,7 +531,7 @@ extern "C" {
 
 // MCG_C5_PLLCLKEN0 ==============================
 //
-//   <q> PLL Clock Enable (PLLCLKEN0)
+//   <q> PLL Clock Enable (PLLCLKEN0) 
 //   <i> Enables the PLL independent of PLLS and enables the PLL clock for use as MCGPLLCLK. [MCG_C5_PLLCLKEN0]
 //     <0=> MCGPLLCLK is inactive.
 //     <1=> MCGPLLCLK is active.
@@ -549,7 +549,7 @@ extern "C" {
 
 // MCG_C5_PRDIV0 ==============================
 //
-//   <o> PLL External Reference Divider (PRDIV0) Divide by: <name=mcg_c5_prdiv0>  <#-1> <1-24>
+//   <o> PLL External Reference Divider (PRDIV0) Divide by: <name=mcg_c5_prdiv0> <constant> <#-1> <1-24>
 //   <i> Determines the amount to divide down the external reference clock for the PLL. [MCG_C5_PRDIV0]
 //   <i> This value is calculated from PLL input and output clock frequencies
 #define MCG_C5_PRDIV0_V    1
@@ -577,7 +577,7 @@ extern "C" {
 //   <i> Selects PLL or FLL output [MCG_C6_PLLS]
 //     <0=> FLL is selected
 //     <1=> PLL is selected
-#define MCG_C6_PLLS_V    1
+#define MCG_C6_PLLS_V    0
 #define MCG_C6_PLLS_M   (MCG_C6_PLLS_V<<MCG_C6_PLLS_SHIFT)
 
 // MCG_C6_CME0 ==============================
@@ -586,13 +586,13 @@ extern "C" {
 //   <i> Determines if a reset request is made following a loss of external clock indication. [MCG_C6_CME0]
 //   <i> This field must be set to a logic 1 only when the ICS is in an operational mode that uses the external clock (FEE, FBE, or FBELP).
 //      <0=> Clock monitor is disabled.
-//      <1=> Generates a reset request on loss of external clock.
+//      <1=> Clock monitor is enabled.
 #define MCG_C6_CME0_V (0)
 #define MCG_C6_CME0_M (MCG_C6_CME0_V<<MCG_C6_CME0_SHIFT)
 
 // MCG_C6_VDIV0 ==============================
 //
-//   <o> VCO Divider (VDIV0) Multiply by: <name=mcg_c6_vdiv0> <#-24>
+//   <o> VCO Divider (VDIV0) Multiply by: <constant> <name=mcg_c6_vdiv0> <#-24>
 //   <i> Determines the multiplication factor for the reference clock of the PLL. [MCG_C6_VDIV0]
 //   <i> This value is calculated from PLL input and output clock frequencies
 #define MCG_C6_VDIV0_V    (0)
@@ -632,8 +632,13 @@ extern "C" {
 //   <i> Selects the MCG FLL/PLL external reference clock source [MCG_C7_OSCSEL]
 //     <0=> Main System Oscillator (OSCCLK)
 //     <1=> 32 kHz RTC Oscillator (OSC32KCLK)
-#define MCG_C7_OSCSEL_V  1
+#define MCG_C7_OSCSEL_V  0
 #define MCG_C7_OSCSEL_M (MCG_C7_OSCSEL_V<<MCG_C7_OSCSEL_SHIFT)
+
+// Check if 32kHz clock is available
+#if (RTC_CR_CLKO_V == 0) && (MCG_C7_OSCSEL_V == 1)
+#error "RTC Clock should be enabled to external devices for selection as MCG clock source"
+#endif
 
 // </h>
 
@@ -646,7 +651,7 @@ extern "C" {
 #define ERC_AFTER_FRDIV_CLOCK (SYSTEM_OSCER_CLOCK/(1<<5)/40)
 #elif (MCG_C1_FRDIV_V == 7)
 #define ERC_AFTER_FRDIV_CLOCK (SYSTEM_OSCER_CLOCK/(1<<5)/48)
-#endif // (MCG_C1_IREFS_V == 0) || (MCG_C7_OSCSEL_V != 0)
+#endif
 
 // SYSTEM_MCGFF_CLOCK  ==============================
 // Only available if less than 1/8 MCGOUT clock
@@ -664,14 +669,14 @@ extern "C" {
 //   <q> Peripheral clock source (PLL/FLL)
 //   <i> Source for clock used by some peripherals [SIM_SOPT2_PLLFLLSEL]
 //      <0=> FLL (MCGFLLCLK)
-//      <1=> PLL (MCGPLLCLK/2)
+//      <1=> PLL (MCGPLLCLK)
 #define SIM_SOPT2_PLLFLLSEL_V  1
 #define SIM_SOPT2_PLLFLLSEL_M (SIM_SOPT2_PLLFLLSEL_V<<SIM_SOPT2_PLLFLLSEL_SHIFT)
 
 #if (SIM_SOPT2_PLLFLLSEL_V == 0) 
 #define SYSTEM_PERIPHERAL_CLOCK SYSTEM_MCGFLL_CLOCK
 #else
-#define SYSTEM_PERIPHERAL_CLOCK (SYSTEM_MCGPLL_CLOCK/2)
+#define SYSTEM_PERIPHERAL_CLOCK SYSTEM_MCGPLL_CLOCK
 #endif
 
 
@@ -719,6 +724,8 @@ extern "C" {
 #define SYSTEM_UART1_CLOCK SystemCoreClock
 #define SYSTEM_UART2_CLOCK SystemBusClock
 #define SYSTEM_UART3_CLOCK SystemBusClock
+#define SYSTEM_UART4_CLOCK SystemBusClock
+#define SYSTEM_UART5_CLOCK SystemBusClock
 
 // </h>
 

@@ -86,7 +86,7 @@ static void setSysDividers(uint32_t simClkDiv1) {
  */
 void clock_initialise(void) {
 
-#if (CLOCK_MODE == CLOCK_MODE_RESET)
+#if (CLOCK_MODE == CLOCK_MODE_NONE)
    // No clock setup
 #else
    // XTAL/EXTAL Pins
@@ -265,7 +265,8 @@ void clock_initialise(void) {
 #endif // (CLOCK_MODE == CLOCK_MODE_RESET)
 
    // Basic clock multiplexing
-#if defined(MCU_MK20D5) || defined(MCU_MK20D7) || defined(MCU_MK40D10) || defined(MCU_MK40DZ10)
+#if defined(MCU_MK22F12) || defined(MCU_MK20D5) || defined(MCU_MK20D7) || defined(MCU_MK20D10) || defined(MCU_MK20D5) || defined(MCU_MK20D7) ||\
+    defined(MCU_MK22D5) || defined(MCU_MK40D10) || defined(MCU_MK40DZ10)
    // Peripheral clock choice (incl. USB), USBCLK = MCGCLK
    SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_M    | // PLL rather than FLL for peripheral clock
                 SIM_SOPT2_USBSRC_MASK;     // MCGPLLCLK/2 Source as USB clock (48MHz req.)

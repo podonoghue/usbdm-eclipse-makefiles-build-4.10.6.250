@@ -14,7 +14,7 @@
    - HCS08,
    - HC12,
    - Coldfire V1-4 microcontrollers
-   - MC56F800xx Digital Signal Controllers (very limited range).
+   - MC56F800xx Digital Signal Controllers (very limited range of devices).
    - Kinetis ARM-cortex
    
    Other features have also been added compared to the original TBDML/OSBDM designs.
@@ -61,7 +61,7 @@
    The following designs use the <b>MC9S08JM60CLD</b> (44 pin LQFP).\n
    This chip is USB2 Full speed and requires a <b>HCS08 BDM for programming the device</b>.
 
-   <b>USBDM-CF - Supports HCS12, HCS08, RS08 & Coldfire V1, V2, V3 & V4, Kinetis(via JTAG) and MC56F800xx</b>
+   <b>USBDM-CF - Supports HCS12, HCS08, RS08 & Coldfire V1, V2, V3 & V4, Kinetis(via JTAG) and MC56F80xx</b>
        - This is a complete fully-featured design using a MC9S08JM60CLD (44 pin LQFP).
        - It has target power and various other options. 
        - It <b>REQUIRES a BDM</b> for initial programming.
@@ -275,8 +275,8 @@ The table below shows the support provided by each version and provides links to
   <td valign=top >  <p  align=center >    </p>  </td>
  </tr>
 </table>
-<br>* DSC support is limited in Codewarrior 10
-<br>* CFV2,3,4 support is limited in programmer
+<br>* DSC support is very limited in Codewarrior 10 and the stand-alone programmer
+<br>* CFV2,3,4 support is limited in the stand-alone programmer
 @endhtmlonly
 <hr>
  \subsection OtherLinks Other Links

@@ -5,12 +5,20 @@ echo Batch file showing examples of command-line flash programming
 echo.
 echo ================================================================
 
-set FLASHCOMMAND=CFV1_FlashProgrammer.exe
-set IMAGEFILE=TestMCF51CN128.elf.S19
+set FLASHCOMMAND=ARM_FlashProgrammer.exe
+set IMAGEFILE=TestMKL25Z128M4.elf
+set TARGET=MKL25Z128M4
+set TRIM=
+
+rem set FLASHCOMMAND=CFV1_FlashProgrammer.exe
+rem set IMAGEFILE=TestMCF51CN128.elf.S19
+rem set TARGET=MCF51JU128
+rem set TRIM="-trim=35" 
+
 cls
 
 echo Programming an image without trimming the clock
-%FLASHCOMMAND% -device=MCF51CN128 -vdd=3v3 -program -unsecure %IMAGEFILE%
+%FLASHCOMMAND% -device=%TARGET% -vdd=3v3 -program -unsecure %IMAGEFILE%
 if not ERRORLEVEL 1 goto phase2
 echo Programming image failed
 goto end
@@ -19,7 +27,7 @@ goto end
 echo Success!
 
 echo Verifying programmed image
-%FLASHCOMMAND% -device=MCF51CN128 -vdd=3v3 -verify -unsecure %IMAGEFILE%
+%FLASHCOMMAND% -device=%TARGET% -vdd=3v3 -verify -unsecure %IMAGEFILE%
 if not ERRORLEVEL 1 goto phase3
 echo Verifying image failed
 goto end
@@ -28,7 +36,7 @@ goto end
 echo Success!
 
 echo Programming clock trim on an already programmed device
-%FLASHCOMMAND% -device=MCF51CN128 -vdd=3v3 -program -trim=35 -erase=none
+%FLASHCOMMAND% -device=%TARGET% -vdd=3v3 -program %TRIM% -erase=none
 if not ERRORLEVEL 1 goto phase4
 echo Programming trim failed
 goto end
@@ -37,7 +45,7 @@ goto end
 echo Success!
 
 echo Programming an image with clock trim and securing
-%FLASHCOMMAND% -device=MCF51CN128 -vdd=3v3 -program -secure -trim=31.25 %IMAGEFILE%
+%FLASHCOMMAND% -device=%TARGET% -vdd=3v3 -program -secure %TRIM% %IMAGEFILE%
 if not ERRORLEVEL 1 goto phase5
 echo Programming image failed
 goto end
@@ -46,7 +54,7 @@ goto end
 echo Success!
 
 echo Verifying programmed image - this should fail as device is secured
-%FLASHCOMMAND% -device=MCF51CN128 -vdd=3v3 -verify %IMAGEFILE%
+%FLASHCOMMAND% -device=%TARGET% -vdd=3v3 -verify %IMAGEFILE%
 if not ERRORLEVEL 1 goto phase6
 echo Verifying image failed (as it should)
 goto end

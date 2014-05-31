@@ -1,10 +1,10 @@
 <!--
 Devices using this peripheral: 
-   MK10F12
-   MK20F12
-   MK60F12
-   MK61F12
-   MK70F12
+      MK10F12
+      MK20F12
+      MK60F12
+      MK61F12
+      MK70F12
 -->
       <peripheral derivedFrom="ADC0">
          <name>ADC3</name>

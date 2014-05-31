@@ -1,25 +1,27 @@
 <!--
 Devices using this peripheral: 
-   MK10D5
-   MK10F12
-   MK20D5
-   MK20F12
-   MK21F12
-   MK60F12
-   MK61F12
-   MK70F12
-   MKL02Z4
-   MKL04Z4
-   MKL05Z4
-   MKL14Z4
-   MKL15Z4
-   MKL16Z4
-   MKL24Z4
-   MKL25Z4
-   MKL26Z4
-   MKL34Z4
-   MKL36Z4
-   MKL46Z4
+      MK10D5
+      MK10F12
+      MK20D5
+      MK20F12
+      MK21F12
+      MK22F12
+      MK60F12
+      MK61F12
+      MK64F12
+      MK70F12
+      MKL02Z4
+      MKL04Z4
+      MKL05Z4
+      MKL14Z4
+      MKL15Z4
+      MKL16Z4
+      MKL24Z4
+      MKL25Z4
+      MKL26Z4
+      MKL34Z4
+      MKL36Z4
+      MKL46Z4
 -->
       <peripheral sourceFile="OSC0_0">
          <name>OSC0</name>

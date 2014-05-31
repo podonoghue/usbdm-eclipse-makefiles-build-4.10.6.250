@@ -1,6 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MKE02Z2
+      MKE02Z2
+      MKE02Z4
 -->
       <peripheral sourceFile="SIM_MKE02Z2">
          <name>SIM</name>
@@ -328,12 +329,14 @@ NOTE: This bit POR to 1, LVR to uncertain value and reset to 0 at any other cond
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PTA4/ACMP0_OUT/SWD_DIO as PTA4 or ACMP0_OUT function, PTC4/RTCO/FTM1_CH0/ACMP0_IN2/SWD_CLK as PTC4, RTCO, FTM1_CH0, or ACMP0_IN2 function</description>
+                           <description>PTA4/ACMP0_OUT/SWD_DIO as PTA4 or ACMP0_OUT function, 
+PTC4/RTCO/FTM1_CH0/ACMP0_IN2/SWD_CLK as PTC4, RTCO, FTM1_CH0, or ACMP0_IN2 function</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>PTA4/ACMP0_OUT/SWD_DIO as SWD_DIO function, PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
+                           <description>PTA4/ACMP0_OUT/SWD_DIO as SWD_DIO function, 
+PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1119,8 +1122,8 @@ NOTE: This bit POR to 1, LVR to uncertain value and reset to 0 at any other cond
                      </enumeratedValues>
                   </field>
                   <field>
-                     <name>ACMP2</name>
-                     <description>ACMP2 Clock Gate Control</description>
+                     <name>ACMP0</name>
+                     <description>ACMP0 Clock Gate Control</description>
                      <bitOffset>30</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

@@ -43,7 +43,8 @@ The following software needs to be installed:\n
    C/C++ Memory View Enhancements      x.x.x.xxxxxxxxxxxx
    \endverbatim
    \image html Install_CDT_Plugin_Selection.png 
-   Click next and accept the various prompt to complete installation.  Reboot if prompted.\n
+   Click next and accept the various prompts to complete installation.\n
+   Restart Eclipse if prompted.\n
 -  <b>Codesourcery Lite (Coldfire Targets) </b> \n
    Download from: http://www.mentor.com/embedded-software/codesourcery \n
    Download the <b>Lite Edition</b> not the evaluations which are more complete but time limited.
@@ -52,7 +53,7 @@ The following software needs to be installed:\n
    There are different versions available for Windows and Linux
    \image html CodesourceryBasicVersions.png
    Run the installer to install to the default location.
-   There is no need to allow the installer to modify the PATHs as the USBDM Eclipse plugin allows this to be set. \n \n
+   There is no need to allow the installer to modify the PATHs as the USBDM Eclipse plugin allows this to be set from within Eclipse. \n \n
 -  <b>ARM Ltd GNU Tools (ARM Targets) </b> \n
    Download from: https://launchpad.net/gcc-arm-embedded \n
    This is the preferred alternative for ARM.  A significant advantage over the Codesourcery version is the inclusion of
@@ -60,7 +61,7 @@ The following software needs to be installed:\n
    for the use of reduced size versions of printf etc.\n
    Choose the software for the appropriate platform.\n 
    Run the installer to install to the default location.
-   There is no need to allow the installer to modify the PATHs as the USBDM Eclipse plugin allows this to be set. \n \n
+   There is no need to allow the installer to modify the PATHs as the USBDM Eclipse plugin allows this to be set from within Eclipse. \n \n
 -  <b>Install the USBDM Eclipse Plugin</b> \n
    The USBDM Eclipse plugin is available as part of the standard USBDM installation process.\n
    This plugin makes it very easy to create USBDM based projects for Coldfire & Kinetis devices. It also adds an

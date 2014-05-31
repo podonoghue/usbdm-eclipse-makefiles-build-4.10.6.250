@@ -25,8 +25,8 @@ Coldfire
 Coldfire+
      ram       Programming buffer
      flash     Programmable memory - Block 0 or only flash present  
-     flexNVM   Flash that may be partitioned between dFlash and emulated EEPROM backing store
-     dFlash    Data flash - as for flash but Block 1
+     flexNVM   Flash that may be partitioned between dFlash and emulated EEPROM backing store (A23=1 when programming)
+     dFlash    Data flash - as for flash but Block 1 (A23=1 when programming)
  -->
 <root version="4.10.6">
    <description>Coldfire V1 Device characteristics v4.10.6 31/01/2014</description>

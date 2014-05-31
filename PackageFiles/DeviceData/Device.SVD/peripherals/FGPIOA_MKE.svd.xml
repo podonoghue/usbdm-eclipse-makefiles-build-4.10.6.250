@@ -1,6 +1,10 @@
 <!--
 Devices using this peripheral: 
-   MKE02Z2
+      MKE02Z2
+      MKE02Z4
+      MKE04Z4
+      MKE04Z8M4
+      MKE06Z4
 -->
       <peripheral sourceFile="FGPIOA_MKE">
          <name>FGPIOA</name>
@@ -24,9 +28,64 @@ Devices using this peripheral:
                <addressOffset>0x0</addressOffset>
                <fields>
                   <field>
-                     <name>PDO</name>
-                     <description>Port Data Output</description>
+                     <name>PTA</name>
+                     <description>Port A Data Output</description>
                      <bitOffset>0</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Logic level 0 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Logic level 1 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTB</name>
+                     <description>Port B Data Output</description>
+                     <bitOffset>8</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Logic level 0 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Logic level 1 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTC</name>
+                     <description>Port C Data Output</description>
+                     <bitOffset>16</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Logic level 0 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Logic level 1 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTD</name>
+                     <description>Port D Data Output</description>
+                     <bitOffset>24</bitOffset>
+                     <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -49,9 +108,64 @@ Devices using this peripheral:
                <access>write-only</access>
                <fields>
                   <field>
-                     <name>PTSO</name>
-                     <description>Port Set Output</description>
+                     <name>PTA</name>
+                     <description>Port A Set Output</description>
                      <bitOffset>0</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit is set to logic 1</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTB</name>
+                     <description>Port B Set Output</description>
+                     <bitOffset>8</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit is set to logic 1</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTC</name>
+                     <description>Port C Set Output</description>
+                     <bitOffset>16</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit is set to logic 1</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTD</name>
+                     <description>Port D Set Output</description>
+                     <bitOffset>24</bitOffset>
+                     <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -74,9 +188,64 @@ Devices using this peripheral:
                <access>write-only</access>
                <fields>
                   <field>
-                     <name>PTCO</name>
-                     <description>Port Clear Output</description>
+                     <name>PTA</name>
+                     <description>Port A Clear Output</description>
                      <bitOffset>0</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit in PDORn does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit in PDORn is cleared to logic 0</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTB</name>
+                     <description>Port B Clear Output</description>
+                     <bitOffset>8</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit in PDORn does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit in PDORn is cleared to logic 0</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTC</name>
+                     <description>Port C Clear Output</description>
+                     <bitOffset>16</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit in PDORn does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit in PDORn is cleared to logic 0</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTD</name>
+                     <description>Port D Clear Output</description>
+                     <bitOffset>24</bitOffset>
+                     <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -99,9 +268,64 @@ Devices using this peripheral:
                <access>write-only</access>
                <fields>
                   <field>
-                     <name>PTTO</name>
-                     <description>Port Toggle Output</description>
+                     <name>PTA</name>
+                     <description>Port A Toggle Output</description>
                      <bitOffset>0</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit in PDORn does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit in PDORn is set to the inverse of its existing logic state</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTB</name>
+                     <description>Port B Toggle Output</description>
+                     <bitOffset>8</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit in PDORn does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit in PDORn is set to the inverse of its existing logic state</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTC</name>
+                     <description>Port C Toggle Output</description>
+                     <bitOffset>16</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Corresponding bit in PDORn does not change</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Corresponding bit in PDORn is set to the inverse of its existing logic state</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTD</name>
+                     <description>Port D Toggle Output</description>
+                     <bitOffset>24</bitOffset>
+                     <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -123,9 +347,64 @@ Devices using this peripheral:
                <addressOffset>0x10</addressOffset>
                <fields>
                   <field>
-                     <name>PDI</name>
-                     <description>Port Data Input</description>
+                     <name>PTA</name>
+                     <description>Port A Data Input</description>
                      <bitOffset>0</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin logic level is logic 0 or is not configured for use by digital function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin logic level is logic 1</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTB</name>
+                     <description>Port B Data Input</description>
+                     <bitOffset>8</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin logic level is logic 0 or is not configured for use by digital function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin logic level is logic 1</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTC</name>
+                     <description>Port C Data Input</description>
+                     <bitOffset>16</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin logic level is logic 0 or is not configured for use by digital function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin logic level is logic 1</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTD</name>
+                     <description>Port D Data Input</description>
+                     <bitOffset>24</bitOffset>
+                     <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -147,9 +426,64 @@ Devices using this peripheral:
                <addressOffset>0x14</addressOffset>
                <fields>
                   <field>
-                     <name>PDD</name>
-                     <description>Port Data Direction</description>
+                     <name>PTA</name>
+                     <description>Port A Data Direction</description>
                      <bitOffset>0</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTB</name>
+                     <description>Port B Data Direction</description>
+                     <bitOffset>8</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTC</name>
+                     <description>Port C Data Direction</description>
+                     <bitOffset>16</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTD</name>
+                     <description>Port D Data Direction</description>
+                     <bitOffset>24</bitOffset>
+                     <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -169,8 +503,81 @@ Devices using this peripheral:
                <name>PIDR</name>
                <description>Port Input Disable Register</description>
                <addressOffset>0x18</addressOffset>
-               <size>32</size>
                <access>read-only</access>
+               <fields>
+                  <field>
+                     <name>PTA</name>
+                     <description>Port A Data Direction</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTB</name>
+                     <description>Port B Data Direction</description>
+                     <bitOffset>8</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTC</name>
+                     <description>Port C Data Direction</description>
+                     <bitOffset>16</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>PTD</name>
+                     <description>Port D Data Direction</description>
+                     <bitOffset>24</bitOffset>
+                     <bitWidth>8</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
             </register>
          </registers>
       </peripheral>

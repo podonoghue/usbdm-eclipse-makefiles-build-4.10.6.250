@@ -1,7 +1,8 @@
 <!--
 Devices using this peripheral: 
-   MK11D5
-   MK21D5
+      MK11D5
+      MK21D5
+      MK64F12
 -->
       <peripheral sourceFile="RNG_1">
          <name>RNG</name>

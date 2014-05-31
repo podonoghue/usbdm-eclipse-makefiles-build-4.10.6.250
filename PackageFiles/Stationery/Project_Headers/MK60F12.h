@@ -5,7 +5,7 @@
  *           Equivalent: MK60FX512M12, MK60FX512M15, MK60FN1M0M12, MK60FN1M0M15
  *
  * @version  V0.0
- * @date     2014/01
+ * @date     2014/05
  *
  *******************************************************************************************************/
 
@@ -31,6 +31,106 @@ typedef enum {
   DebugMonitor_IRQn             =  -4,   /*!<  12 Debug Monitor                                                                    */
   PendSV_IRQn                   =  -2,   /*!<  14 Pendable request for system service                                              */
   SysTick_IRQn                  =  -1,   /*!<  15 System Tick Timer                                                                */
+/* ----------------------   MK60F12 VectorTable                      ---------------------- */
+  DMA0_IRQn                     =   0,   /*!<  16 DMA channel 0 transfer complete interrupt                                        */
+  DMA1_IRQn                     =   1,   /*!<  17 DMA channel 1 transfer complete interrupt                                        */
+  DMA2_IRQn                     =   2,   /*!<  18 DMA channel 2 transfer complete interrupt                                        */
+  DMA3_IRQn                     =   3,   /*!<  19 DMA channel 3 transfer complete interrupt                                        */
+  DMA4_IRQn                     =   4,   /*!<  20 DMA channel 4 transfer complete interrupt                                        */
+  DMA5_IRQn                     =   5,   /*!<  21 DMA channel 5 transfer complete interrupt                                        */
+  DMA6_IRQn                     =   6,   /*!<  22 DMA channel 6 transfer complete interrupt                                        */
+  DMA7_IRQn                     =   7,   /*!<  23 DMA channel 7 transfer complete interrupt                                        */
+  DMA8_IRQn                     =   8,   /*!<  24 DMA channel 8 transfer complete interrupt                                        */
+  DMA9_IRQn                     =   9,   /*!<  25 DMA channel 9 transfer complete interrupt                                        */
+  DMA10_IRQn                    =  10,   /*!<  26 DMA channel 10 transfer complete interrupt                                       */
+  DMA11_IRQn                    =  11,   /*!<  27 DMA channel 11 transfer complete interrupt                                       */
+  DMA12_IRQn                    =  12,   /*!<  28 DMA channel 12 transfer complete interrupt                                       */
+  DMA13_IRQn                    =  13,   /*!<  29 DMA channel 13 transfer complete interrupt                                       */
+  DMA14_IRQn                    =  14,   /*!<  30 DMA channel 14 transfer complete interrupt                                       */
+  DMA15_IRQn                    =  15,   /*!<  31 DMA channel 15 transfer complete interrupt                                       */
+  DMA_Error_IRQn                =  16,   /*!<  32 DMA error interrupt all channels                                                 */
+  MCM_IRQn                      =  17,   /*!<  33 Normal Interrupt                                                                 */
+  FTFE_Command_IRQn             =  18,   /*!<  34 FTFL interrupt                                                                   */
+  FTFE_Collision_IRQn           =  19,   /*!<  35 FTFL Read collision interrupt                                                    */
+  PMC_IRQn                      =  20,   /*!<  36 PMC Low Voltage Detect, Low Voltage Warning                                      */
+  LLWU_IRQn                     =  21,   /*!<  37 LLWU Low Leakage Wakeup                                                          */
+  WDOG_IRQn                     =  22,   /*!<  38 WDOG interrupt                                                                   */
+  RNG_IRQn                      =  23,   /*!<  39 Random Number Generator                                                          */
+  I2C0_IRQn                     =  24,   /*!<  40 I2C0 interrupt                                                                   */
+  I2C1_IRQn                     =  25,   /*!<  41 I2C1 interrupt                                                                   */
+  SPI0_IRQn                     =  26,   /*!<  42 SPI0 interrupt                                                                   */
+  SPI1_IRQn                     =  27,   /*!<  43 SPI1 interrupt                                                                   */
+  SPI2_IRQn                     =  28,   /*!<  44 SPI2 interrupt                                                                   */
+  CAN0_Message_IRQn             =  29,   /*!<  45 CAN0 ORed Message Buffer (0-15)                                                  */
+  CAN0_BusOff_IRQn              =  30,   /*!<  46 CAN0 Bus Off                                                                     */
+  CAN0_Error_IRQn               =  31,   /*!<  47 CAN0 Error                                                                       */
+  CAN0_Tx_IRQn                  =  32,   /*!<  48 CAN0 Transmit Warning                                                            */
+  CAN0_Rx_IRQn                  =  33,   /*!<  49 CAN0 Receive Warning                                                             */
+  CAN0_WakeUp_IRQn              =  34,   /*!<  50 CAN0 Wake Up                                                                     */
+  I2S0_Tx_IRQn                  =  35,   /*!<  51 I2S0 Transmit                                                                    */
+  I2S0_Rx_IRQn                  =  36,   /*!<  52 I2S0 Receive                                                                     */
+  CAN1_Message_IRQn             =  37,   /*!<  53 CAN1 ORed Message Bufer (0-15)                                                   */
+  CAN1_BusOff_IRQn              =  38,   /*!<  54 CAN1 Bus Off                                                                     */
+  CAN1_Error_IRQn               =  39,   /*!<  55 CAN1 Error                                                                       */
+  CAN1_Tx_IRQn                  =  40,   /*!<  56 CAN1 Transmit Warning                                                            */
+  CAN1_Rx_IRQn                  =  41,   /*!<  57 CAN1 Receive Warning                                                             */
+  CAN1_WakeUp_IRQn              =  42,   /*!<  58 CAN1 Wake Up                                                                     */
+  UART0_LON_IRQn                =  44,   /*!<  60 UART0 LON interrupt                                                              */
+  UART0_RxTx_IRQn               =  45,   /*!<  61 UART0 receive/transmit interrupt                                                 */
+  UART0_Error_IRQn              =  46,   /*!<  62 UART0 error interrupt                                                            */
+  UART1_RxTx_IRQn               =  47,   /*!<  63 UART1 receive/transmit interrupt                                                 */
+  UART1_Error_IRQn              =  48,   /*!<  64 UART1 error interrupt                                                            */
+  UART2_RxTx_IRQn               =  49,   /*!<  65 UART2 receive/transmit interrupt                                                 */
+  UART2_Error_IRQn              =  50,   /*!<  66 UART0 error interrupt                                                            */
+  UART3_RxTx_IRQn               =  51,   /*!<  67 UART2 receive/transmit interrupt                                                 */
+  UART3_Error_IRQn              =  52,   /*!<  68 UART0 error interrupt                                                            */
+  UART4_RxTx_IRQn               =  53,   /*!<  69 UART2 receive/transmit interrupt                                                 */
+  UART4_Error_IRQn              =  54,   /*!<  70 UART0 error interrupt                                                            */
+  UART5_RxTx_IRQn               =  55,   /*!<  71 UART2 receive/transmit interrupt                                                 */
+  UART5_Error_IRQn              =  56,   /*!<  72 UART0 error interrupt                                                            */
+  ADC0_IRQn                     =  57,   /*!<  73 ADC0 interrupt                                                                   */
+  ADC1_IRQn                     =  58,   /*!<  74 ADC1 interrupt                                                                   */
+  CMP0_IRQn                     =  59,   /*!<  75 CMP0 interrupt                                                                   */
+  CMP1_IRQn                     =  60,   /*!<  76 CMP1 interrupt                                                                   */
+  CMP2_IRQn                     =  61,   /*!<  77 CMP2 interrupt                                                                   */
+  FTM0_IRQn                     =  62,   /*!<  78 FTM0 fault, overflow and channels interrupt                                      */
+  FTM1_IRQn                     =  63,   /*!<  79 FTM1 fault, overflow and channels interrupt                                      */
+  FTM2_IRQn                     =  64,   /*!<  80 FTM2 fault, overflow and channels interrupt                                      */
+  CMT_IRQn                      =  65,   /*!<  81 CMT interrupt                                                                    */
+  RTC_Alarm_IRQn                =  66,   /*!<  82 RTC interrupt                                                                    */
+  RTC_Seconds_IRQn              =  67,   /*!<  83 RTC seconds interrupt                                                            */
+  PIT_Ch0_IRQn                  =  68,   /*!<  84 PIT timer channel 0 interrupt                                                    */
+  PIT_Ch1_IRQn                  =  69,   /*!<  85 PIT timer channel 1 interrupt                                                    */
+  PIT_Ch2_IRQn                  =  70,   /*!<  86 PIT timer channel 2 interrupt                                                    */
+  PIT_Ch3_IRQn                  =  71,   /*!<  87 PIT timer channel 3 interrupt                                                    */
+  PDB_IRQn                      =  72,   /*!<  88 PDB Programmable Delay Block interrupt                                           */
+  USBOTG_IRQn                   =  73,   /*!<  89 USB0 OTG interrupt                                                               */
+  USBDCD_IRQn                   =  74,   /*!<  90 USBDCD interrupt                                                                 */
+  MAC_1588Timeout_IRQn          =  75,   /*!<  91 Ethernet MAC IEEE 1588 Timer interrupt                                           */
+  MAC_Tx_IRQn                   =  76,   /*!<  92 Ethernet MAC Transmit interrupt                                                  */
+  MAC_Rx_IRQn                   =  77,   /*!<  93 Ethernet MAC Receive interrupt                                                   */
+  MAC_Error_IRQn                =  78,   /*!<  94 Ethernet MAC Error and miscellaneous interrupt                                   */
+  SDHC_IRQn                     =  80,   /*!<  96 SDHC                                                                             */
+  DAC0_IRQn                     =  81,   /*!<  97 Digital to Analogue Converter                                                    */
+  DAC1_IRQn                     =  82,   /*!<  98 Digital to Analogue Converter                                                    */
+  TSI_IRQn                      =  83,   /*!<  99 Touch Sense Interface                                                            */
+  MCG_IRQn                      =  84,   /*!< 100 Multipurpose Clock Generator                                                     */
+  LPTMR0_IRQn                   =  85,   /*!< 101 LPTMR Low Power Timer interrupt                                                  */
+  PORTA_IRQn                    =  87,   /*!< 103 Port A interrupt                                                                 */
+  PORTB_IRQn                    =  88,   /*!< 104 Port B interrupt                                                                 */
+  PORTC_IRQn                    =  89,   /*!< 105 Port C interrupt                                                                 */
+  PORTD_IRQn                    =  90,   /*!< 106 Port D interrupt                                                                 */
+  PORTE_IRQn                    =  91,   /*!< 107 Port E interrupt                                                                 */
+  PORTF_IRQn                    =  92,   /*!< 108 Port F interrupt                                                                 */
+  SWI_IRQn                      =  94,   /*!< 110 Software interrupt                                                               */
+  NFC_IRQn                      =  95,   /*!< 111 NAND flash controller                                                            */
+  USB_HS_IRQn                   =  96,   /*!< 112 USB High Speed                                                                   */
+  CMP3_IRQn                     =  98,   /*!< 114 CMP3 interrupt                                                                   */
+  FTM3_IRQn                     = 101,   /*!< 117 FTM3 interrupt                                                                   */
+  ADC2_IRQn                     = 102,   /*!< 118 ADC2 interrupt                                                                   */
+  ADC3_IRQn                     = 103,   /*!< 119 ADC3 interrupt                                                                   */
+  I2S1_IRQn                     = 104,   /*!< 120 I2S1 interrupt                                                                   */
+  I2S2_IRQn                     = 105,   /*!< 121 I2S2 interrupt                                                                   */
 } IRQn_Type;
 
 /* -------------------------  Exception Handlers  ------------------------ */
@@ -43,6 +143,105 @@ extern void SVC_Handler(void);
 extern void DebugMon_Handler(void);
 extern void PendSV_Handler(void);
 extern void SysTick_Handler(void);
+extern void DMA0_IRQHandler(void);
+extern void DMA1_IRQHandler(void);
+extern void DMA2_IRQHandler(void);
+extern void DMA3_IRQHandler(void);
+extern void DMA4_IRQHandler(void);
+extern void DMA5_IRQHandler(void);
+extern void DMA6_IRQHandler(void);
+extern void DMA7_IRQHandler(void);
+extern void DMA8_IRQHandler(void);
+extern void DMA9_IRQHandler(void);
+extern void DMA10_IRQHandler(void);
+extern void DMA11_IRQHandler(void);
+extern void DMA12_IRQHandler(void);
+extern void DMA13_IRQHandler(void);
+extern void DMA14_IRQHandler(void);
+extern void DMA15_IRQHandler(void);
+extern void DMA_Error_IRQHandler(void);
+extern void MCM_IRQHandler(void);
+extern void FTFE_Command_IRQHandler(void);
+extern void FTFE_Collision_IRQHandler(void);
+extern void PMC_IRQHandler(void);
+extern void LLWU_IRQHandler(void);
+extern void WDOG_IRQHandler(void);
+extern void RNG_IRQHandler(void);
+extern void I2C0_IRQHandler(void);
+extern void I2C1_IRQHandler(void);
+extern void SPI0_IRQHandler(void);
+extern void SPI1_IRQHandler(void);
+extern void SPI2_IRQHandler(void);
+extern void CAN0_Message_IRQHandler(void);
+extern void CAN0_BusOff_IRQHandler(void);
+extern void CAN0_Error_IRQHandler(void);
+extern void CAN0_Tx_IRQHandler(void);
+extern void CAN0_Rx_IRQHandler(void);
+extern void CAN0_WakeUp_IRQHandler(void);
+extern void I2S0_Tx_IRQHandler(void);
+extern void I2S0_Rx_IRQHandler(void);
+extern void CAN1_Message_IRQHandler(void);
+extern void CAN1_BusOff_IRQHandler(void);
+extern void CAN1_Error_IRQHandler(void);
+extern void CAN1_Tx_IRQHandler(void);
+extern void CAN1_Rx_IRQHandler(void);
+extern void CAN1_WakeUp_IRQHandler(void);
+extern void UART0_LON_IRQHandler(void);
+extern void UART0_RxTx_IRQHandler(void);
+extern void UART0_Error_IRQHandler(void);
+extern void UART1_RxTx_IRQHandler(void);
+extern void UART1_Error_IRQHandler(void);
+extern void UART2_RxTx_IRQHandler(void);
+extern void UART2_Error_IRQHandler(void);
+extern void UART3_RxTx_IRQHandler(void);
+extern void UART3_Error_IRQHandler(void);
+extern void UART4_RxTx_IRQHandler(void);
+extern void UART4_Error_IRQHandler(void);
+extern void UART5_RxTx_IRQHandler(void);
+extern void UART5_Error_IRQHandler(void);
+extern void ADC0_IRQHandler(void);
+extern void ADC1_IRQHandler(void);
+extern void CMP0_IRQHandler(void);
+extern void CMP1_IRQHandler(void);
+extern void CMP2_IRQHandler(void);
+extern void FTM0_IRQHandler(void);
+extern void FTM1_IRQHandler(void);
+extern void FTM2_IRQHandler(void);
+extern void CMT_IRQHandler(void);
+extern void RTC_Alarm_IRQHandler(void);
+extern void RTC_Seconds_IRQHandler(void);
+extern void PIT_Ch0_IRQHandler(void);
+extern void PIT_Ch1_IRQHandler(void);
+extern void PIT_Ch2_IRQHandler(void);
+extern void PIT_Ch3_IRQHandler(void);
+extern void PDB_IRQHandler(void);
+extern void USBOTG_IRQHandler(void);
+extern void USBDCD_IRQHandler(void);
+extern void MAC_1588Timeout_IRQHandler(void);
+extern void MAC_Tx_IRQHandler(void);
+extern void MAC_Rx_IRQHandler(void);
+extern void MAC_Error_IRQHandler(void);
+extern void SDHC_IRQHandler(void);
+extern void DAC0_IRQHandler(void);
+extern void DAC1_IRQHandler(void);
+extern void TSI_IRQHandler(void);
+extern void MCG_IRQHandler(void);
+extern void LPTMR0_IRQHandler(void);
+extern void PORTA_IRQHandler(void);
+extern void PORTB_IRQHandler(void);
+extern void PORTC_IRQHandler(void);
+extern void PORTD_IRQHandler(void);
+extern void PORTE_IRQHandler(void);
+extern void PORTF_IRQHandler(void);
+extern void SWI_IRQHandler(void);
+extern void NFC_IRQHandler(void);
+extern void USB_HS_IRQHandler(void);
+extern void CMP3_IRQHandler(void);
+extern void FTM3_IRQHandler(void);
+extern void ADC2_IRQHandler(void);
+extern void ADC3_IRQHandler(void);
+extern void I2S1_IRQHandler(void);
+extern void I2S2_IRQHandler(void);
 
 /* ================================================================================ */
 /* ================      Processor and Core Peripheral Section     ================ */
@@ -93,7 +292,7 @@ extern void SysTick_Handler(void);
 #endif
 
 /* ================================================================================ */
-/* ================           ADC0 (file:ADC0_MKF12)               ================ */
+/* ================           ADC0 (file:ADC0_MKF12_PGA)           ================ */
 /* ================================================================================ */
 
 /**
@@ -7662,7 +7861,7 @@ typedef struct {                                /*!<       LPTMR0 Structure     
 #define LPTMR0_CNR                     (LPTMR0->CNR)
 
 /* ================================================================================ */
-/* ================           MCG (file:MCG_3)                     ================ */
+/* ================           MCG (file:MCG_MKF12)                 ================ */
 /* ================================================================================ */
 
 /**
@@ -10856,7 +11055,7 @@ typedef struct {                                /*!<       SMC Structure        
 #define SMC_PMSTAT                     (SMC->PMSTAT)
 
 /* ================================================================================ */
-/* ================           SPI0 (file:SPI0_1)                   ================ */
+/* ================           SPI0 (file:SPI0_MK)                  ================ */
 /* ================================================================================ */
 
 /**
@@ -11124,7 +11323,7 @@ typedef SPI0_Type SPI1_Type;  /*!< SPI1 Structure                               
 /* ================================================================================ */
 
 /**
- * @brief Deserial Serial Peripheral Interface (SPI2)
+ * @brief Serial Peripheral Interface (SPI2)
  */
 typedef SPI0_Type SPI2_Type;  /*!< SPI2 Structure                                              */
 
@@ -11590,7 +11789,7 @@ typedef struct {                                /*!<       TSI0 Structure       
 #define TSI0_THRESHOLD                 (TSI0->THRESHOLD)
 
 /* ================================================================================ */
-/* ================           UART0 (file:UART0_0)                 ================ */
+/* ================           UART0 (file:UART0_C7816_CEA709)       ================ */
 /* ================================================================================ */
 
 /**
@@ -11763,9 +11962,9 @@ typedef struct {                                /*!<       UART0 Structure      
 #define UART_C3_R8_SHIFT                         7                                                   /*!< UART0_C3: R8 Position                   */
 
 /* ------- UART0_D                                  ------ */
-#define UART_D_DATA_MASK                         (0xFFUL << UART_D_DATA_SHIFT)                       /*!< UART0_D: DATA Mask                      */
-#define UART_D_DATA_SHIFT                        0                                                   /*!< UART0_D: DATA Position                  */
-#define UART_D_DATA(x)                           (((x)<<UART_D_DATA_SHIFT)&UART_D_DATA_MASK)         /*!< UART0_D                                 */
+#define UART_D_RT_MASK                           (0xFFUL << UART_D_RT_SHIFT)                         /*!< UART0_D: RT Mask                        */
+#define UART_D_RT_SHIFT                          0                                                   /*!< UART0_D: RT Position                    */
+#define UART_D_RT(x)                             (((x)<<UART_D_RT_SHIFT)&UART_D_RT_MASK)             /*!< UART0_D                                 */
 
 /* ------- UART0_MA                                 ------ */
 #define UART_MA_MA_MASK                          (0xFFUL << UART_MA_MA_SHIFT)                        /*!< UART0_MA: MA Mask                       */
@@ -12122,15 +12321,15 @@ typedef struct {                                /*!<       UART0 Structure      
 #define UART0_TIDT                     (UART0->TIDT)
 
 /* ================================================================================ */
-/* ================           UART1 (file:UART1_2)                 ================ */
+/* ================           UART1 (file:UART1_C7816)             ================ */
 /* ================================================================================ */
 
 /**
- * @brief Serial Communication Interface (UART1)
+ * @brief Universal Asynchronous Receiver/Transmitter (UART)
  */
 typedef struct {                                /*!<       UART1 Structure                                              */
-   __IO uint8_t   BDH;                          /*!< 0000: UART Baud Rate Registers: High                               */
-   __IO uint8_t   BDL;                          /*!< 0001: UART Baud Rate Registers: Low                                */
+   __IO uint8_t   BDH;                          /*!< 0000: UART Baud Rate Register: High                                */
+   __IO uint8_t   BDL;                          /*!< 0001: UART Baud Rate Register: Low                                 */
    __IO uint8_t   C1;                           /*!< 0002: UART Control Register 1                                      */
    __IO uint8_t   C2;                           /*!< 0003: UART Control Register 2                                      */
    __I  uint8_t   S1;                           /*!< 0004: UART Status Register 1                                       */
@@ -12173,294 +12372,64 @@ typedef struct {                                /*!<       UART1 Structure      
 
 
 /* ------- UART1_BDH                                ------ */
-#define UART1_BDH_SBR_MASK                       (0x1FUL << UART1_BDH_SBR_SHIFT)                     /*!< UART1_BDH: SBR Mask                     */
-#define UART1_BDH_SBR_SHIFT                      0                                                   /*!< UART1_BDH: SBR Position                 */
-#define UART1_BDH_SBR(x)                         (((x)<<UART1_BDH_SBR_SHIFT)&UART1_BDH_SBR_MASK)     /*!< UART1_BDH                               */
-#define UART1_BDH_RXEDGIE_MASK                   (0x01UL << UART1_BDH_RXEDGIE_SHIFT)                 /*!< UART1_BDH: RXEDGIE Mask                 */
-#define UART1_BDH_RXEDGIE_SHIFT                  6                                                   /*!< UART1_BDH: RXEDGIE Position             */
-#define UART1_BDH_LBKDIE_MASK                    (0x01UL << UART1_BDH_LBKDIE_SHIFT)                  /*!< UART1_BDH: LBKDIE Mask                  */
-#define UART1_BDH_LBKDIE_SHIFT                   7                                                   /*!< UART1_BDH: LBKDIE Position              */
 
 /* ------- UART1_BDL                                ------ */
-#define UART1_BDL_SBR_MASK                       (0xFFUL << UART1_BDL_SBR_SHIFT)                     /*!< UART1_BDL: SBR Mask                     */
-#define UART1_BDL_SBR_SHIFT                      0                                                   /*!< UART1_BDL: SBR Position                 */
-#define UART1_BDL_SBR(x)                         (((x)<<UART1_BDL_SBR_SHIFT)&UART1_BDL_SBR_MASK)     /*!< UART1_BDL                               */
 
 /* ------- UART1_C1                                 ------ */
-#define UART1_C1_PT_MASK                         (0x01UL << UART1_C1_PT_SHIFT)                       /*!< UART1_C1: PT Mask                       */
-#define UART1_C1_PT_SHIFT                        0                                                   /*!< UART1_C1: PT Position                   */
-#define UART1_C1_PE_MASK                         (0x01UL << UART1_C1_PE_SHIFT)                       /*!< UART1_C1: PE Mask                       */
-#define UART1_C1_PE_SHIFT                        1                                                   /*!< UART1_C1: PE Position                   */
-#define UART1_C1_ILT_MASK                        (0x01UL << UART1_C1_ILT_SHIFT)                      /*!< UART1_C1: ILT Mask                      */
-#define UART1_C1_ILT_SHIFT                       2                                                   /*!< UART1_C1: ILT Position                  */
-#define UART1_C1_WAKE_MASK                       (0x01UL << UART1_C1_WAKE_SHIFT)                     /*!< UART1_C1: WAKE Mask                     */
-#define UART1_C1_WAKE_SHIFT                      3                                                   /*!< UART1_C1: WAKE Position                 */
-#define UART1_C1_M_MASK                          (0x01UL << UART1_C1_M_SHIFT)                        /*!< UART1_C1: M Mask                        */
-#define UART1_C1_M_SHIFT                         4                                                   /*!< UART1_C1: M Position                    */
-#define UART1_C1_RSRC_MASK                       (0x01UL << UART1_C1_RSRC_SHIFT)                     /*!< UART1_C1: RSRC Mask                     */
-#define UART1_C1_RSRC_SHIFT                      5                                                   /*!< UART1_C1: RSRC Position                 */
-#define UART1_C1_UARTSWAI_MASK                   (0x01UL << UART1_C1_UARTSWAI_SHIFT)                 /*!< UART1_C1: UARTSWAI Mask                 */
-#define UART1_C1_UARTSWAI_SHIFT                  6                                                   /*!< UART1_C1: UARTSWAI Position             */
-#define UART1_C1_LOOPS_MASK                      (0x01UL << UART1_C1_LOOPS_SHIFT)                    /*!< UART1_C1: LOOPS Mask                    */
-#define UART1_C1_LOOPS_SHIFT                     7                                                   /*!< UART1_C1: LOOPS Position                */
 
 /* ------- UART1_C2                                 ------ */
-#define UART1_C2_SBK_MASK                        (0x01UL << UART1_C2_SBK_SHIFT)                      /*!< UART1_C2: SBK Mask                      */
-#define UART1_C2_SBK_SHIFT                       0                                                   /*!< UART1_C2: SBK Position                  */
-#define UART1_C2_RWU_MASK                        (0x01UL << UART1_C2_RWU_SHIFT)                      /*!< UART1_C2: RWU Mask                      */
-#define UART1_C2_RWU_SHIFT                       1                                                   /*!< UART1_C2: RWU Position                  */
-#define UART1_C2_RE_MASK                         (0x01UL << UART1_C2_RE_SHIFT)                       /*!< UART1_C2: RE Mask                       */
-#define UART1_C2_RE_SHIFT                        2                                                   /*!< UART1_C2: RE Position                   */
-#define UART1_C2_TE_MASK                         (0x01UL << UART1_C2_TE_SHIFT)                       /*!< UART1_C2: TE Mask                       */
-#define UART1_C2_TE_SHIFT                        3                                                   /*!< UART1_C2: TE Position                   */
-#define UART1_C2_ILIE_MASK                       (0x01UL << UART1_C2_ILIE_SHIFT)                     /*!< UART1_C2: ILIE Mask                     */
-#define UART1_C2_ILIE_SHIFT                      4                                                   /*!< UART1_C2: ILIE Position                 */
-#define UART1_C2_RIE_MASK                        (0x01UL << UART1_C2_RIE_SHIFT)                      /*!< UART1_C2: RIE Mask                      */
-#define UART1_C2_RIE_SHIFT                       5                                                   /*!< UART1_C2: RIE Position                  */
-#define UART1_C2_TCIE_MASK                       (0x01UL << UART1_C2_TCIE_SHIFT)                     /*!< UART1_C2: TCIE Mask                     */
-#define UART1_C2_TCIE_SHIFT                      6                                                   /*!< UART1_C2: TCIE Position                 */
-#define UART1_C2_TIE_MASK                        (0x01UL << UART1_C2_TIE_SHIFT)                      /*!< UART1_C2: TIE Mask                      */
-#define UART1_C2_TIE_SHIFT                       7                                                   /*!< UART1_C2: TIE Position                  */
 
 /* ------- UART1_S1                                 ------ */
-#define UART1_S1_PF_MASK                         (0x01UL << UART1_S1_PF_SHIFT)                       /*!< UART1_S1: PF Mask                       */
-#define UART1_S1_PF_SHIFT                        0                                                   /*!< UART1_S1: PF Position                   */
-#define UART1_S1_FE_MASK                         (0x01UL << UART1_S1_FE_SHIFT)                       /*!< UART1_S1: FE Mask                       */
-#define UART1_S1_FE_SHIFT                        1                                                   /*!< UART1_S1: FE Position                   */
-#define UART1_S1_NF_MASK                         (0x01UL << UART1_S1_NF_SHIFT)                       /*!< UART1_S1: NF Mask                       */
-#define UART1_S1_NF_SHIFT                        2                                                   /*!< UART1_S1: NF Position                   */
-#define UART1_S1_OR_MASK                         (0x01UL << UART1_S1_OR_SHIFT)                       /*!< UART1_S1: OR Mask                       */
-#define UART1_S1_OR_SHIFT                        3                                                   /*!< UART1_S1: OR Position                   */
-#define UART1_S1_IDLE_MASK                       (0x01UL << UART1_S1_IDLE_SHIFT)                     /*!< UART1_S1: IDLE Mask                     */
-#define UART1_S1_IDLE_SHIFT                      4                                                   /*!< UART1_S1: IDLE Position                 */
-#define UART1_S1_RDRF_MASK                       (0x01UL << UART1_S1_RDRF_SHIFT)                     /*!< UART1_S1: RDRF Mask                     */
-#define UART1_S1_RDRF_SHIFT                      5                                                   /*!< UART1_S1: RDRF Position                 */
-#define UART1_S1_TC_MASK                         (0x01UL << UART1_S1_TC_SHIFT)                       /*!< UART1_S1: TC Mask                       */
-#define UART1_S1_TC_SHIFT                        6                                                   /*!< UART1_S1: TC Position                   */
-#define UART1_S1_TDRE_MASK                       (0x01UL << UART1_S1_TDRE_SHIFT)                     /*!< UART1_S1: TDRE Mask                     */
-#define UART1_S1_TDRE_SHIFT                      7                                                   /*!< UART1_S1: TDRE Position                 */
 
 /* ------- UART1_S2                                 ------ */
-#define UART1_S2_RAF_MASK                        (0x01UL << UART1_S2_RAF_SHIFT)                      /*!< UART1_S2: RAF Mask                      */
-#define UART1_S2_RAF_SHIFT                       0                                                   /*!< UART1_S2: RAF Position                  */
-#define UART1_S2_LBKDE_MASK                      (0x01UL << UART1_S2_LBKDE_SHIFT)                    /*!< UART1_S2: LBKDE Mask                    */
-#define UART1_S2_LBKDE_SHIFT                     1                                                   /*!< UART1_S2: LBKDE Position                */
-#define UART1_S2_BRK13_MASK                      (0x01UL << UART1_S2_BRK13_SHIFT)                    /*!< UART1_S2: BRK13 Mask                    */
-#define UART1_S2_BRK13_SHIFT                     2                                                   /*!< UART1_S2: BRK13 Position                */
-#define UART1_S2_RWUID_MASK                      (0x01UL << UART1_S2_RWUID_SHIFT)                    /*!< UART1_S2: RWUID Mask                    */
-#define UART1_S2_RWUID_SHIFT                     3                                                   /*!< UART1_S2: RWUID Position                */
-#define UART1_S2_RXINV_MASK                      (0x01UL << UART1_S2_RXINV_SHIFT)                    /*!< UART1_S2: RXINV Mask                    */
-#define UART1_S2_RXINV_SHIFT                     4                                                   /*!< UART1_S2: RXINV Position                */
-#define UART1_S2_MSBF_MASK                       (0x01UL << UART1_S2_MSBF_SHIFT)                     /*!< UART1_S2: MSBF Mask                     */
-#define UART1_S2_MSBF_SHIFT                      5                                                   /*!< UART1_S2: MSBF Position                 */
-#define UART1_S2_RXEDGIF_MASK                    (0x01UL << UART1_S2_RXEDGIF_SHIFT)                  /*!< UART1_S2: RXEDGIF Mask                  */
-#define UART1_S2_RXEDGIF_SHIFT                   6                                                   /*!< UART1_S2: RXEDGIF Position              */
-#define UART1_S2_LBKDIF_MASK                     (0x01UL << UART1_S2_LBKDIF_SHIFT)                   /*!< UART1_S2: LBKDIF Mask                   */
-#define UART1_S2_LBKDIF_SHIFT                    7                                                   /*!< UART1_S2: LBKDIF Position               */
 
 /* ------- UART1_C3                                 ------ */
-#define UART1_C3_PEIE_MASK                       (0x01UL << UART1_C3_PEIE_SHIFT)                     /*!< UART1_C3: PEIE Mask                     */
-#define UART1_C3_PEIE_SHIFT                      0                                                   /*!< UART1_C3: PEIE Position                 */
-#define UART1_C3_FEIE_MASK                       (0x01UL << UART1_C3_FEIE_SHIFT)                     /*!< UART1_C3: FEIE Mask                     */
-#define UART1_C3_FEIE_SHIFT                      1                                                   /*!< UART1_C3: FEIE Position                 */
-#define UART1_C3_NEIE_MASK                       (0x01UL << UART1_C3_NEIE_SHIFT)                     /*!< UART1_C3: NEIE Mask                     */
-#define UART1_C3_NEIE_SHIFT                      2                                                   /*!< UART1_C3: NEIE Position                 */
-#define UART1_C3_ORIE_MASK                       (0x01UL << UART1_C3_ORIE_SHIFT)                     /*!< UART1_C3: ORIE Mask                     */
-#define UART1_C3_ORIE_SHIFT                      3                                                   /*!< UART1_C3: ORIE Position                 */
-#define UART1_C3_TXINV_MASK                      (0x01UL << UART1_C3_TXINV_SHIFT)                    /*!< UART1_C3: TXINV Mask                    */
-#define UART1_C3_TXINV_SHIFT                     4                                                   /*!< UART1_C3: TXINV Position                */
-#define UART1_C3_TXDIR_MASK                      (0x01UL << UART1_C3_TXDIR_SHIFT)                    /*!< UART1_C3: TXDIR Mask                    */
-#define UART1_C3_TXDIR_SHIFT                     5                                                   /*!< UART1_C3: TXDIR Position                */
-#define UART1_C3_T8_MASK                         (0x01UL << UART1_C3_T8_SHIFT)                       /*!< UART1_C3: T8 Mask                       */
-#define UART1_C3_T8_SHIFT                        6                                                   /*!< UART1_C3: T8 Position                   */
-#define UART1_C3_R8_MASK                         (0x01UL << UART1_C3_R8_SHIFT)                       /*!< UART1_C3: R8 Mask                       */
-#define UART1_C3_R8_SHIFT                        7                                                   /*!< UART1_C3: R8 Position                   */
 
 /* ------- UART1_D                                  ------ */
-#define UART1_D_RT_MASK                          (0xFFUL << UART1_D_RT_SHIFT)                        /*!< UART1_D: RT Mask                        */
-#define UART1_D_RT_SHIFT                         0                                                   /*!< UART1_D: RT Position                    */
-#define UART1_D_RT(x)                            (((x)<<UART1_D_RT_SHIFT)&UART1_D_RT_MASK)           /*!< UART1_D                                 */
 
 /* ------- UART1_MA                                 ------ */
-#define UART1_MA_MA_MASK                         (0xFFUL << UART1_MA_MA_SHIFT)                       /*!< UART1_MA: MA Mask                       */
-#define UART1_MA_MA_SHIFT                        0                                                   /*!< UART1_MA: MA Position                   */
-#define UART1_MA_MA(x)                           (((x)<<UART1_MA_MA_SHIFT)&UART1_MA_MA_MASK)         /*!< UART1_MA                                */
 
 /* ------- UART1_C4                                 ------ */
-#define UART1_C4_BRFA_MASK                       (0x1FUL << UART1_C4_BRFA_SHIFT)                     /*!< UART1_C4: BRFA Mask                     */
-#define UART1_C4_BRFA_SHIFT                      0                                                   /*!< UART1_C4: BRFA Position                 */
-#define UART1_C4_BRFA(x)                         (((x)<<UART1_C4_BRFA_SHIFT)&UART1_C4_BRFA_MASK)     /*!< UART1_C4                                */
-#define UART1_C4_M10_MASK                        (0x01UL << UART1_C4_M10_SHIFT)                      /*!< UART1_C4: M10 Mask                      */
-#define UART1_C4_M10_SHIFT                       5                                                   /*!< UART1_C4: M10 Position                  */
-#define UART1_C4_MAEN2_MASK                      (0x01UL << UART1_C4_MAEN2_SHIFT)                    /*!< UART1_C4: MAEN2 Mask                    */
-#define UART1_C4_MAEN2_SHIFT                     6                                                   /*!< UART1_C4: MAEN2 Position                */
-#define UART1_C4_MAEN1_MASK                      (0x01UL << UART1_C4_MAEN1_SHIFT)                    /*!< UART1_C4: MAEN1 Mask                    */
-#define UART1_C4_MAEN1_SHIFT                     7                                                   /*!< UART1_C4: MAEN1 Position                */
 
 /* ------- UART1_C5                                 ------ */
-#define UART1_C5_RDMAS_MASK                      (0x01UL << UART1_C5_RDMAS_SHIFT)                    /*!< UART1_C5: RDMAS Mask                    */
-#define UART1_C5_RDMAS_SHIFT                     5                                                   /*!< UART1_C5: RDMAS Position                */
-#define UART1_C5_TDMAS_MASK                      (0x01UL << UART1_C5_TDMAS_SHIFT)                    /*!< UART1_C5: TDMAS Mask                    */
-#define UART1_C5_TDMAS_SHIFT                     7                                                   /*!< UART1_C5: TDMAS Position                */
 
 /* ------- UART1_ED                                 ------ */
-#define UART1_ED_PARITYE_MASK                    (0x01UL << UART1_ED_PARITYE_SHIFT)                  /*!< UART1_ED: PARITYE Mask                  */
-#define UART1_ED_PARITYE_SHIFT                   6                                                   /*!< UART1_ED: PARITYE Position              */
-#define UART1_ED_NOISY_MASK                      (0x01UL << UART1_ED_NOISY_SHIFT)                    /*!< UART1_ED: NOISY Mask                    */
-#define UART1_ED_NOISY_SHIFT                     7                                                   /*!< UART1_ED: NOISY Position                */
 
 /* ------- UART1_MODEM                              ------ */
-#define UART1_MODEM_TXCTSE_MASK                  (0x01UL << UART1_MODEM_TXCTSE_SHIFT)                /*!< UART1_MODEM: TXCTSE Mask                */
-#define UART1_MODEM_TXCTSE_SHIFT                 0                                                   /*!< UART1_MODEM: TXCTSE Position            */
-#define UART1_MODEM_TXRTSE_MASK                  (0x01UL << UART1_MODEM_TXRTSE_SHIFT)                /*!< UART1_MODEM: TXRTSE Mask                */
-#define UART1_MODEM_TXRTSE_SHIFT                 1                                                   /*!< UART1_MODEM: TXRTSE Position            */
-#define UART1_MODEM_TXRTSPOL_MASK                (0x01UL << UART1_MODEM_TXRTSPOL_SHIFT)              /*!< UART1_MODEM: TXRTSPOL Mask              */
-#define UART1_MODEM_TXRTSPOL_SHIFT               2                                                   /*!< UART1_MODEM: TXRTSPOL Position          */
-#define UART1_MODEM_RXRTSE_MASK                  (0x01UL << UART1_MODEM_RXRTSE_SHIFT)                /*!< UART1_MODEM: RXRTSE Mask                */
-#define UART1_MODEM_RXRTSE_SHIFT                 3                                                   /*!< UART1_MODEM: RXRTSE Position            */
 
 /* ------- UART1_IR                                 ------ */
-#define UART1_IR_TNP_MASK                        (0x03UL << UART1_IR_TNP_SHIFT)                      /*!< UART1_IR: TNP Mask                      */
-#define UART1_IR_TNP_SHIFT                       0                                                   /*!< UART1_IR: TNP Position                  */
-#define UART1_IR_TNP(x)                          (((x)<<UART1_IR_TNP_SHIFT)&UART1_IR_TNP_MASK)       /*!< UART1_IR                                */
-#define UART1_IR_IREN_MASK                       (0x01UL << UART1_IR_IREN_SHIFT)                     /*!< UART1_IR: IREN Mask                     */
-#define UART1_IR_IREN_SHIFT                      2                                                   /*!< UART1_IR: IREN Position                 */
 
 /* ------- UART1_PFIFO                              ------ */
-#define UART1_PFIFO_RXFIFOSIZE_MASK              (0x07UL << UART1_PFIFO_RXFIFOSIZE_SHIFT)            /*!< UART1_PFIFO: RXFIFOSIZE Mask            */
-#define UART1_PFIFO_RXFIFOSIZE_SHIFT             0                                                   /*!< UART1_PFIFO: RXFIFOSIZE Position        */
-#define UART1_PFIFO_RXFIFOSIZE(x)                (((x)<<UART1_PFIFO_RXFIFOSIZE_SHIFT)&UART1_PFIFO_RXFIFOSIZE_MASK) /*!< UART1_PFIFO                             */
-#define UART1_PFIFO_RXFE_MASK                    (0x01UL << UART1_PFIFO_RXFE_SHIFT)                  /*!< UART1_PFIFO: RXFE Mask                  */
-#define UART1_PFIFO_RXFE_SHIFT                   3                                                   /*!< UART1_PFIFO: RXFE Position              */
-#define UART1_PFIFO_TXFIFOSIZE_MASK              (0x07UL << UART1_PFIFO_TXFIFOSIZE_SHIFT)            /*!< UART1_PFIFO: TXFIFOSIZE Mask            */
-#define UART1_PFIFO_TXFIFOSIZE_SHIFT             4                                                   /*!< UART1_PFIFO: TXFIFOSIZE Position        */
-#define UART1_PFIFO_TXFIFOSIZE(x)                (((x)<<UART1_PFIFO_TXFIFOSIZE_SHIFT)&UART1_PFIFO_TXFIFOSIZE_MASK) /*!< UART1_PFIFO                             */
-#define UART1_PFIFO_TXFE_MASK                    (0x01UL << UART1_PFIFO_TXFE_SHIFT)                  /*!< UART1_PFIFO: TXFE Mask                  */
-#define UART1_PFIFO_TXFE_SHIFT                   7                                                   /*!< UART1_PFIFO: TXFE Position              */
 
 /* ------- UART1_CFIFO                              ------ */
-#define UART1_CFIFO_RXUFE_MASK                   (0x01UL << UART1_CFIFO_RXUFE_SHIFT)                 /*!< UART1_CFIFO: RXUFE Mask                 */
-#define UART1_CFIFO_RXUFE_SHIFT                  0                                                   /*!< UART1_CFIFO: RXUFE Position             */
-#define UART1_CFIFO_TXOFE_MASK                   (0x01UL << UART1_CFIFO_TXOFE_SHIFT)                 /*!< UART1_CFIFO: TXOFE Mask                 */
-#define UART1_CFIFO_TXOFE_SHIFT                  1                                                   /*!< UART1_CFIFO: TXOFE Position             */
-#define UART1_CFIFO_RXOFE_MASK                   (0x01UL << UART1_CFIFO_RXOFE_SHIFT)                 /*!< UART1_CFIFO: RXOFE Mask                 */
-#define UART1_CFIFO_RXOFE_SHIFT                  2                                                   /*!< UART1_CFIFO: RXOFE Position             */
-#define UART1_CFIFO_RXFLUSH_MASK                 (0x01UL << UART1_CFIFO_RXFLUSH_SHIFT)               /*!< UART1_CFIFO: RXFLUSH Mask               */
-#define UART1_CFIFO_RXFLUSH_SHIFT                6                                                   /*!< UART1_CFIFO: RXFLUSH Position           */
-#define UART1_CFIFO_TXFLUSH_MASK                 (0x01UL << UART1_CFIFO_TXFLUSH_SHIFT)               /*!< UART1_CFIFO: TXFLUSH Mask               */
-#define UART1_CFIFO_TXFLUSH_SHIFT                7                                                   /*!< UART1_CFIFO: TXFLUSH Position           */
 
 /* ------- UART1_SFIFO                              ------ */
-#define UART1_SFIFO_RXUF_MASK                    (0x01UL << UART1_SFIFO_RXUF_SHIFT)                  /*!< UART1_SFIFO: RXUF Mask                  */
-#define UART1_SFIFO_RXUF_SHIFT                   0                                                   /*!< UART1_SFIFO: RXUF Position              */
-#define UART1_SFIFO_TXOF_MASK                    (0x01UL << UART1_SFIFO_TXOF_SHIFT)                  /*!< UART1_SFIFO: TXOF Mask                  */
-#define UART1_SFIFO_TXOF_SHIFT                   1                                                   /*!< UART1_SFIFO: TXOF Position              */
-#define UART1_SFIFO_RXOF_MASK                    (0x01UL << UART1_SFIFO_RXOF_SHIFT)                  /*!< UART1_SFIFO: RXOF Mask                  */
-#define UART1_SFIFO_RXOF_SHIFT                   2                                                   /*!< UART1_SFIFO: RXOF Position              */
-#define UART1_SFIFO_RXEMPT_MASK                  (0x01UL << UART1_SFIFO_RXEMPT_SHIFT)                /*!< UART1_SFIFO: RXEMPT Mask                */
-#define UART1_SFIFO_RXEMPT_SHIFT                 6                                                   /*!< UART1_SFIFO: RXEMPT Position            */
-#define UART1_SFIFO_TXEMPT_MASK                  (0x01UL << UART1_SFIFO_TXEMPT_SHIFT)                /*!< UART1_SFIFO: TXEMPT Mask                */
-#define UART1_SFIFO_TXEMPT_SHIFT                 7                                                   /*!< UART1_SFIFO: TXEMPT Position            */
 
 /* ------- UART1_TWFIFO                             ------ */
-#define UART1_TWFIFO_TXWATER_MASK                (0xFFUL << UART1_TWFIFO_TXWATER_SHIFT)              /*!< UART1_TWFIFO: TXWATER Mask              */
-#define UART1_TWFIFO_TXWATER_SHIFT               0                                                   /*!< UART1_TWFIFO: TXWATER Position          */
-#define UART1_TWFIFO_TXWATER(x)                  (((x)<<UART1_TWFIFO_TXWATER_SHIFT)&UART1_TWFIFO_TXWATER_MASK) /*!< UART1_TWFIFO                            */
 
 /* ------- UART1_TCFIFO                             ------ */
-#define UART1_TCFIFO_TXCOUNT_MASK                (0xFFUL << UART1_TCFIFO_TXCOUNT_SHIFT)              /*!< UART1_TCFIFO: TXCOUNT Mask              */
-#define UART1_TCFIFO_TXCOUNT_SHIFT               0                                                   /*!< UART1_TCFIFO: TXCOUNT Position          */
-#define UART1_TCFIFO_TXCOUNT(x)                  (((x)<<UART1_TCFIFO_TXCOUNT_SHIFT)&UART1_TCFIFO_TXCOUNT_MASK) /*!< UART1_TCFIFO                            */
 
 /* ------- UART1_RWFIFO                             ------ */
-#define UART1_RWFIFO_RXWATER_MASK                (0xFFUL << UART1_RWFIFO_RXWATER_SHIFT)              /*!< UART1_RWFIFO: RXWATER Mask              */
-#define UART1_RWFIFO_RXWATER_SHIFT               0                                                   /*!< UART1_RWFIFO: RXWATER Position          */
-#define UART1_RWFIFO_RXWATER(x)                  (((x)<<UART1_RWFIFO_RXWATER_SHIFT)&UART1_RWFIFO_RXWATER_MASK) /*!< UART1_RWFIFO                            */
 
 /* ------- UART1_RCFIFO                             ------ */
-#define UART1_RCFIFO_RXCOUNT_MASK                (0xFFUL << UART1_RCFIFO_RXCOUNT_SHIFT)              /*!< UART1_RCFIFO: RXCOUNT Mask              */
-#define UART1_RCFIFO_RXCOUNT_SHIFT               0                                                   /*!< UART1_RCFIFO: RXCOUNT Position          */
-#define UART1_RCFIFO_RXCOUNT(x)                  (((x)<<UART1_RCFIFO_RXCOUNT_SHIFT)&UART1_RCFIFO_RXCOUNT_MASK) /*!< UART1_RCFIFO                            */
 
 /* ------- UART1_C7816                              ------ */
-#define UART1_C7816_ISO_7816E_MASK               (0x01UL << UART1_C7816_ISO_7816E_SHIFT)             /*!< UART1_C7816: ISO_7816E Mask             */
-#define UART1_C7816_ISO_7816E_SHIFT              0                                                   /*!< UART1_C7816: ISO_7816E Position         */
-#define UART1_C7816_TTYPE_MASK                   (0x01UL << UART1_C7816_TTYPE_SHIFT)                 /*!< UART1_C7816: TTYPE Mask                 */
-#define UART1_C7816_TTYPE_SHIFT                  1                                                   /*!< UART1_C7816: TTYPE Position             */
-#define UART1_C7816_INIT_MASK                    (0x01UL << UART1_C7816_INIT_SHIFT)                  /*!< UART1_C7816: INIT Mask                  */
-#define UART1_C7816_INIT_SHIFT                   2                                                   /*!< UART1_C7816: INIT Position              */
-#define UART1_C7816_ANACK_MASK                   (0x01UL << UART1_C7816_ANACK_SHIFT)                 /*!< UART1_C7816: ANACK Mask                 */
-#define UART1_C7816_ANACK_SHIFT                  3                                                   /*!< UART1_C7816: ANACK Position             */
-#define UART1_C7816_ONACK_MASK                   (0x01UL << UART1_C7816_ONACK_SHIFT)                 /*!< UART1_C7816: ONACK Mask                 */
-#define UART1_C7816_ONACK_SHIFT                  4                                                   /*!< UART1_C7816: ONACK Position             */
 
 /* ------- UART1_IE7816                             ------ */
-#define UART1_IE7816_RXTE_MASK                   (0x01UL << UART1_IE7816_RXTE_SHIFT)                 /*!< UART1_IE7816: RXTE Mask                 */
-#define UART1_IE7816_RXTE_SHIFT                  0                                                   /*!< UART1_IE7816: RXTE Position             */
-#define UART1_IE7816_TXTE_MASK                   (0x01UL << UART1_IE7816_TXTE_SHIFT)                 /*!< UART1_IE7816: TXTE Mask                 */
-#define UART1_IE7816_TXTE_SHIFT                  1                                                   /*!< UART1_IE7816: TXTE Position             */
-#define UART1_IE7816_GTVE_MASK                   (0x01UL << UART1_IE7816_GTVE_SHIFT)                 /*!< UART1_IE7816: GTVE Mask                 */
-#define UART1_IE7816_GTVE_SHIFT                  2                                                   /*!< UART1_IE7816: GTVE Position             */
-#define UART1_IE7816_INITDE_MASK                 (0x01UL << UART1_IE7816_INITDE_SHIFT)               /*!< UART1_IE7816: INITDE Mask               */
-#define UART1_IE7816_INITDE_SHIFT                4                                                   /*!< UART1_IE7816: INITDE Position           */
-#define UART1_IE7816_BWTE_MASK                   (0x01UL << UART1_IE7816_BWTE_SHIFT)                 /*!< UART1_IE7816: BWTE Mask                 */
-#define UART1_IE7816_BWTE_SHIFT                  5                                                   /*!< UART1_IE7816: BWTE Position             */
-#define UART1_IE7816_CWTE_MASK                   (0x01UL << UART1_IE7816_CWTE_SHIFT)                 /*!< UART1_IE7816: CWTE Mask                 */
-#define UART1_IE7816_CWTE_SHIFT                  6                                                   /*!< UART1_IE7816: CWTE Position             */
-#define UART1_IE7816_WTE_MASK                    (0x01UL << UART1_IE7816_WTE_SHIFT)                  /*!< UART1_IE7816: WTE Mask                  */
-#define UART1_IE7816_WTE_SHIFT                   7                                                   /*!< UART1_IE7816: WTE Position              */
 
 /* ------- UART1_IS7816                             ------ */
-#define UART1_IS7816_RXT_MASK                    (0x01UL << UART1_IS7816_RXT_SHIFT)                  /*!< UART1_IS7816: RXT Mask                  */
-#define UART1_IS7816_RXT_SHIFT                   0                                                   /*!< UART1_IS7816: RXT Position              */
-#define UART1_IS7816_TXT_MASK                    (0x01UL << UART1_IS7816_TXT_SHIFT)                  /*!< UART1_IS7816: TXT Mask                  */
-#define UART1_IS7816_TXT_SHIFT                   1                                                   /*!< UART1_IS7816: TXT Position              */
-#define UART1_IS7816_GTV_MASK                    (0x01UL << UART1_IS7816_GTV_SHIFT)                  /*!< UART1_IS7816: GTV Mask                  */
-#define UART1_IS7816_GTV_SHIFT                   2                                                   /*!< UART1_IS7816: GTV Position              */
-#define UART1_IS7816_INITD_MASK                  (0x01UL << UART1_IS7816_INITD_SHIFT)                /*!< UART1_IS7816: INITD Mask                */
-#define UART1_IS7816_INITD_SHIFT                 4                                                   /*!< UART1_IS7816: INITD Position            */
-#define UART1_IS7816_BWT_MASK                    (0x01UL << UART1_IS7816_BWT_SHIFT)                  /*!< UART1_IS7816: BWT Mask                  */
-#define UART1_IS7816_BWT_SHIFT                   5                                                   /*!< UART1_IS7816: BWT Position              */
-#define UART1_IS7816_CWT_MASK                    (0x01UL << UART1_IS7816_CWT_SHIFT)                  /*!< UART1_IS7816: CWT Mask                  */
-#define UART1_IS7816_CWT_SHIFT                   6                                                   /*!< UART1_IS7816: CWT Position              */
-#define UART1_IS7816_WT_MASK                     (0x01UL << UART1_IS7816_WT_SHIFT)                   /*!< UART1_IS7816: WT Mask                   */
-#define UART1_IS7816_WT_SHIFT                    7                                                   /*!< UART1_IS7816: WT Position               */
 
 /* ------- UART1_WP7816T0                           ------ */
-#define UART1_WP7816T0_WI_MASK                   (0xFFUL << UART1_WP7816T0_WI_SHIFT)                 /*!< UART1_WP7816T0: WI Mask                 */
-#define UART1_WP7816T0_WI_SHIFT                  0                                                   /*!< UART1_WP7816T0: WI Position             */
-#define UART1_WP7816T0_WI(x)                     (((x)<<UART1_WP7816T0_WI_SHIFT)&UART1_WP7816T0_WI_MASK) /*!< UART1_WP7816T0                          */
 
 /* ------- UART1_WP7816T1                           ------ */
-#define UART1_WP7816T1_BWI_MASK                  (0x0FUL << UART1_WP7816T1_BWI_SHIFT)                /*!< UART1_WP7816T1: BWI Mask                */
-#define UART1_WP7816T1_BWI_SHIFT                 0                                                   /*!< UART1_WP7816T1: BWI Position            */
-#define UART1_WP7816T1_BWI(x)                    (((x)<<UART1_WP7816T1_BWI_SHIFT)&UART1_WP7816T1_BWI_MASK) /*!< UART1_WP7816T1                          */
-#define UART1_WP7816T1_CWI_MASK                  (0x0FUL << UART1_WP7816T1_CWI_SHIFT)                /*!< UART1_WP7816T1: CWI Mask                */
-#define UART1_WP7816T1_CWI_SHIFT                 4                                                   /*!< UART1_WP7816T1: CWI Position            */
-#define UART1_WP7816T1_CWI(x)                    (((x)<<UART1_WP7816T1_CWI_SHIFT)&UART1_WP7816T1_CWI_MASK) /*!< UART1_WP7816T1                          */
 
 /* ------- UART1_WN7816                             ------ */
-#define UART1_WN7816_GTN_MASK                    (0xFFUL << UART1_WN7816_GTN_SHIFT)                  /*!< UART1_WN7816: GTN Mask                  */
-#define UART1_WN7816_GTN_SHIFT                   0                                                   /*!< UART1_WN7816: GTN Position              */
-#define UART1_WN7816_GTN(x)                      (((x)<<UART1_WN7816_GTN_SHIFT)&UART1_WN7816_GTN_MASK) /*!< UART1_WN7816                            */
 
 /* ------- UART1_WF7816                             ------ */
-#define UART1_WF7816_GTFD_MASK                   (0xFFUL << UART1_WF7816_GTFD_SHIFT)                 /*!< UART1_WF7816: GTFD Mask                 */
-#define UART1_WF7816_GTFD_SHIFT                  0                                                   /*!< UART1_WF7816: GTFD Position             */
-#define UART1_WF7816_GTFD(x)                     (((x)<<UART1_WF7816_GTFD_SHIFT)&UART1_WF7816_GTFD_MASK) /*!< UART1_WF7816                            */
 
 /* ------- UART1_ET7816                             ------ */
-#define UART1_ET7816_RXTHRESHOLD_MASK            (0x0FUL << UART1_ET7816_RXTHRESHOLD_SHIFT)          /*!< UART1_ET7816: RXTHRESHOLD Mask          */
-#define UART1_ET7816_RXTHRESHOLD_SHIFT           0                                                   /*!< UART1_ET7816: RXTHRESHOLD Position      */
-#define UART1_ET7816_RXTHRESHOLD(x)              (((x)<<UART1_ET7816_RXTHRESHOLD_SHIFT)&UART1_ET7816_RXTHRESHOLD_MASK) /*!< UART1_ET7816                            */
-#define UART1_ET7816_TXTHRESHOLD_MASK            (0x0FUL << UART1_ET7816_TXTHRESHOLD_SHIFT)          /*!< UART1_ET7816: TXTHRESHOLD Mask          */
-#define UART1_ET7816_TXTHRESHOLD_SHIFT           4                                                   /*!< UART1_ET7816: TXTHRESHOLD Position      */
-#define UART1_ET7816_TXTHRESHOLD(x)              (((x)<<UART1_ET7816_TXTHRESHOLD_SHIFT)&UART1_ET7816_TXTHRESHOLD_MASK) /*!< UART1_ET7816                            */
 
 /* ------- UART1_TL7816                             ------ */
-#define UART1_TL7816_TLEN_MASK                   (0xFFUL << UART1_TL7816_TLEN_SHIFT)                 /*!< UART1_TL7816: TLEN Mask                 */
-#define UART1_TL7816_TLEN_SHIFT                  0                                                   /*!< UART1_TL7816: TLEN Position             */
-#define UART1_TL7816_TLEN(x)                     (((x)<<UART1_TL7816_TLEN_SHIFT)&UART1_TL7816_TLEN_MASK) /*!< UART1_TL7816                            */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'UART1' Register Access macros                       ----------- */
@@ -12499,7 +12468,7 @@ typedef struct {                                /*!<       UART1 Structure      
 #define UART1_TL7816                   (UART1->TL7816)
 
 /* ================================================================================ */
-/* ================           UART2 (file:UART2_0)                 ================ */
+/* ================           UART2 (file:UART2_MK)                ================ */
 /* ================================================================================ */
 
 /**
@@ -12538,214 +12507,46 @@ typedef struct {                                /*!<       UART2 Structure      
 
 
 /* ------- UART2_BDH                                ------ */
-#define UART2_BDH_SBR_MASK                       (0x1FUL << UART2_BDH_SBR_SHIFT)                     /*!< UART2_BDH: SBR Mask                     */
-#define UART2_BDH_SBR_SHIFT                      0                                                   /*!< UART2_BDH: SBR Position                 */
-#define UART2_BDH_SBR(x)                         (((x)<<UART2_BDH_SBR_SHIFT)&UART2_BDH_SBR_MASK)     /*!< UART2_BDH                               */
-#define UART2_BDH_RXEDGIE_MASK                   (0x01UL << UART2_BDH_RXEDGIE_SHIFT)                 /*!< UART2_BDH: RXEDGIE Mask                 */
-#define UART2_BDH_RXEDGIE_SHIFT                  6                                                   /*!< UART2_BDH: RXEDGIE Position             */
-#define UART2_BDH_LBKDIE_MASK                    (0x01UL << UART2_BDH_LBKDIE_SHIFT)                  /*!< UART2_BDH: LBKDIE Mask                  */
-#define UART2_BDH_LBKDIE_SHIFT                   7                                                   /*!< UART2_BDH: LBKDIE Position              */
 
 /* ------- UART2_BDL                                ------ */
-#define UART2_BDL_SBR_MASK                       (0xFFUL << UART2_BDL_SBR_SHIFT)                     /*!< UART2_BDL: SBR Mask                     */
-#define UART2_BDL_SBR_SHIFT                      0                                                   /*!< UART2_BDL: SBR Position                 */
-#define UART2_BDL_SBR(x)                         (((x)<<UART2_BDL_SBR_SHIFT)&UART2_BDL_SBR_MASK)     /*!< UART2_BDL                               */
 
 /* ------- UART2_C1                                 ------ */
-#define UART2_C1_PT_MASK                         (0x01UL << UART2_C1_PT_SHIFT)                       /*!< UART2_C1: PT Mask                       */
-#define UART2_C1_PT_SHIFT                        0                                                   /*!< UART2_C1: PT Position                   */
-#define UART2_C1_PE_MASK                         (0x01UL << UART2_C1_PE_SHIFT)                       /*!< UART2_C1: PE Mask                       */
-#define UART2_C1_PE_SHIFT                        1                                                   /*!< UART2_C1: PE Position                   */
-#define UART2_C1_ILT_MASK                        (0x01UL << UART2_C1_ILT_SHIFT)                      /*!< UART2_C1: ILT Mask                      */
-#define UART2_C1_ILT_SHIFT                       2                                                   /*!< UART2_C1: ILT Position                  */
-#define UART2_C1_WAKE_MASK                       (0x01UL << UART2_C1_WAKE_SHIFT)                     /*!< UART2_C1: WAKE Mask                     */
-#define UART2_C1_WAKE_SHIFT                      3                                                   /*!< UART2_C1: WAKE Position                 */
-#define UART2_C1_M_MASK                          (0x01UL << UART2_C1_M_SHIFT)                        /*!< UART2_C1: M Mask                        */
-#define UART2_C1_M_SHIFT                         4                                                   /*!< UART2_C1: M Position                    */
-#define UART2_C1_RSRC_MASK                       (0x01UL << UART2_C1_RSRC_SHIFT)                     /*!< UART2_C1: RSRC Mask                     */
-#define UART2_C1_RSRC_SHIFT                      5                                                   /*!< UART2_C1: RSRC Position                 */
-#define UART2_C1_UARTSWAI_MASK                   (0x01UL << UART2_C1_UARTSWAI_SHIFT)                 /*!< UART2_C1: UARTSWAI Mask                 */
-#define UART2_C1_UARTSWAI_SHIFT                  6                                                   /*!< UART2_C1: UARTSWAI Position             */
-#define UART2_C1_LOOPS_MASK                      (0x01UL << UART2_C1_LOOPS_SHIFT)                    /*!< UART2_C1: LOOPS Mask                    */
-#define UART2_C1_LOOPS_SHIFT                     7                                                   /*!< UART2_C1: LOOPS Position                */
 
 /* ------- UART2_C2                                 ------ */
-#define UART2_C2_SBK_MASK                        (0x01UL << UART2_C2_SBK_SHIFT)                      /*!< UART2_C2: SBK Mask                      */
-#define UART2_C2_SBK_SHIFT                       0                                                   /*!< UART2_C2: SBK Position                  */
-#define UART2_C2_RWU_MASK                        (0x01UL << UART2_C2_RWU_SHIFT)                      /*!< UART2_C2: RWU Mask                      */
-#define UART2_C2_RWU_SHIFT                       1                                                   /*!< UART2_C2: RWU Position                  */
-#define UART2_C2_RE_MASK                         (0x01UL << UART2_C2_RE_SHIFT)                       /*!< UART2_C2: RE Mask                       */
-#define UART2_C2_RE_SHIFT                        2                                                   /*!< UART2_C2: RE Position                   */
-#define UART2_C2_TE_MASK                         (0x01UL << UART2_C2_TE_SHIFT)                       /*!< UART2_C2: TE Mask                       */
-#define UART2_C2_TE_SHIFT                        3                                                   /*!< UART2_C2: TE Position                   */
-#define UART2_C2_ILIE_MASK                       (0x01UL << UART2_C2_ILIE_SHIFT)                     /*!< UART2_C2: ILIE Mask                     */
-#define UART2_C2_ILIE_SHIFT                      4                                                   /*!< UART2_C2: ILIE Position                 */
-#define UART2_C2_RIE_MASK                        (0x01UL << UART2_C2_RIE_SHIFT)                      /*!< UART2_C2: RIE Mask                      */
-#define UART2_C2_RIE_SHIFT                       5                                                   /*!< UART2_C2: RIE Position                  */
-#define UART2_C2_TCIE_MASK                       (0x01UL << UART2_C2_TCIE_SHIFT)                     /*!< UART2_C2: TCIE Mask                     */
-#define UART2_C2_TCIE_SHIFT                      6                                                   /*!< UART2_C2: TCIE Position                 */
-#define UART2_C2_TIE_MASK                        (0x01UL << UART2_C2_TIE_SHIFT)                      /*!< UART2_C2: TIE Mask                      */
-#define UART2_C2_TIE_SHIFT                       7                                                   /*!< UART2_C2: TIE Position                  */
 
 /* ------- UART2_S1                                 ------ */
-#define UART2_S1_PF_MASK                         (0x01UL << UART2_S1_PF_SHIFT)                       /*!< UART2_S1: PF Mask                       */
-#define UART2_S1_PF_SHIFT                        0                                                   /*!< UART2_S1: PF Position                   */
-#define UART2_S1_FE_MASK                         (0x01UL << UART2_S1_FE_SHIFT)                       /*!< UART2_S1: FE Mask                       */
-#define UART2_S1_FE_SHIFT                        1                                                   /*!< UART2_S1: FE Position                   */
-#define UART2_S1_NF_MASK                         (0x01UL << UART2_S1_NF_SHIFT)                       /*!< UART2_S1: NF Mask                       */
-#define UART2_S1_NF_SHIFT                        2                                                   /*!< UART2_S1: NF Position                   */
-#define UART2_S1_OR_MASK                         (0x01UL << UART2_S1_OR_SHIFT)                       /*!< UART2_S1: OR Mask                       */
-#define UART2_S1_OR_SHIFT                        3                                                   /*!< UART2_S1: OR Position                   */
-#define UART2_S1_IDLE_MASK                       (0x01UL << UART2_S1_IDLE_SHIFT)                     /*!< UART2_S1: IDLE Mask                     */
-#define UART2_S1_IDLE_SHIFT                      4                                                   /*!< UART2_S1: IDLE Position                 */
-#define UART2_S1_RDRF_MASK                       (0x01UL << UART2_S1_RDRF_SHIFT)                     /*!< UART2_S1: RDRF Mask                     */
-#define UART2_S1_RDRF_SHIFT                      5                                                   /*!< UART2_S1: RDRF Position                 */
-#define UART2_S1_TC_MASK                         (0x01UL << UART2_S1_TC_SHIFT)                       /*!< UART2_S1: TC Mask                       */
-#define UART2_S1_TC_SHIFT                        6                                                   /*!< UART2_S1: TC Position                   */
-#define UART2_S1_TDRE_MASK                       (0x01UL << UART2_S1_TDRE_SHIFT)                     /*!< UART2_S1: TDRE Mask                     */
-#define UART2_S1_TDRE_SHIFT                      7                                                   /*!< UART2_S1: TDRE Position                 */
 
 /* ------- UART2_S2                                 ------ */
-#define UART2_S2_RAF_MASK                        (0x01UL << UART2_S2_RAF_SHIFT)                      /*!< UART2_S2: RAF Mask                      */
-#define UART2_S2_RAF_SHIFT                       0                                                   /*!< UART2_S2: RAF Position                  */
-#define UART2_S2_LBKDE_MASK                      (0x01UL << UART2_S2_LBKDE_SHIFT)                    /*!< UART2_S2: LBKDE Mask                    */
-#define UART2_S2_LBKDE_SHIFT                     1                                                   /*!< UART2_S2: LBKDE Position                */
-#define UART2_S2_BRK13_MASK                      (0x01UL << UART2_S2_BRK13_SHIFT)                    /*!< UART2_S2: BRK13 Mask                    */
-#define UART2_S2_BRK13_SHIFT                     2                                                   /*!< UART2_S2: BRK13 Position                */
-#define UART2_S2_RWUID_MASK                      (0x01UL << UART2_S2_RWUID_SHIFT)                    /*!< UART2_S2: RWUID Mask                    */
-#define UART2_S2_RWUID_SHIFT                     3                                                   /*!< UART2_S2: RWUID Position                */
-#define UART2_S2_RXINV_MASK                      (0x01UL << UART2_S2_RXINV_SHIFT)                    /*!< UART2_S2: RXINV Mask                    */
-#define UART2_S2_RXINV_SHIFT                     4                                                   /*!< UART2_S2: RXINV Position                */
-#define UART2_S2_MSBF_MASK                       (0x01UL << UART2_S2_MSBF_SHIFT)                     /*!< UART2_S2: MSBF Mask                     */
-#define UART2_S2_MSBF_SHIFT                      5                                                   /*!< UART2_S2: MSBF Position                 */
-#define UART2_S2_RXEDGIF_MASK                    (0x01UL << UART2_S2_RXEDGIF_SHIFT)                  /*!< UART2_S2: RXEDGIF Mask                  */
-#define UART2_S2_RXEDGIF_SHIFT                   6                                                   /*!< UART2_S2: RXEDGIF Position              */
-#define UART2_S2_LBKDIF_MASK                     (0x01UL << UART2_S2_LBKDIF_SHIFT)                   /*!< UART2_S2: LBKDIF Mask                   */
-#define UART2_S2_LBKDIF_SHIFT                    7                                                   /*!< UART2_S2: LBKDIF Position               */
 
 /* ------- UART2_C3                                 ------ */
-#define UART2_C3_PEIE_MASK                       (0x01UL << UART2_C3_PEIE_SHIFT)                     /*!< UART2_C3: PEIE Mask                     */
-#define UART2_C3_PEIE_SHIFT                      0                                                   /*!< UART2_C3: PEIE Position                 */
-#define UART2_C3_FEIE_MASK                       (0x01UL << UART2_C3_FEIE_SHIFT)                     /*!< UART2_C3: FEIE Mask                     */
-#define UART2_C3_FEIE_SHIFT                      1                                                   /*!< UART2_C3: FEIE Position                 */
-#define UART2_C3_NEIE_MASK                       (0x01UL << UART2_C3_NEIE_SHIFT)                     /*!< UART2_C3: NEIE Mask                     */
-#define UART2_C3_NEIE_SHIFT                      2                                                   /*!< UART2_C3: NEIE Position                 */
-#define UART2_C3_ORIE_MASK                       (0x01UL << UART2_C3_ORIE_SHIFT)                     /*!< UART2_C3: ORIE Mask                     */
-#define UART2_C3_ORIE_SHIFT                      3                                                   /*!< UART2_C3: ORIE Position                 */
-#define UART2_C3_TXINV_MASK                      (0x01UL << UART2_C3_TXINV_SHIFT)                    /*!< UART2_C3: TXINV Mask                    */
-#define UART2_C3_TXINV_SHIFT                     4                                                   /*!< UART2_C3: TXINV Position                */
-#define UART2_C3_TXDIR_MASK                      (0x01UL << UART2_C3_TXDIR_SHIFT)                    /*!< UART2_C3: TXDIR Mask                    */
-#define UART2_C3_TXDIR_SHIFT                     5                                                   /*!< UART2_C3: TXDIR Position                */
-#define UART2_C3_T8_MASK                         (0x01UL << UART2_C3_T8_SHIFT)                       /*!< UART2_C3: T8 Mask                       */
-#define UART2_C3_T8_SHIFT                        6                                                   /*!< UART2_C3: T8 Position                   */
-#define UART2_C3_R8_MASK                         (0x01UL << UART2_C3_R8_SHIFT)                       /*!< UART2_C3: R8 Mask                       */
-#define UART2_C3_R8_SHIFT                        7                                                   /*!< UART2_C3: R8 Position                   */
 
 /* ------- UART2_D                                  ------ */
-#define UART2_D_DATA_MASK                        (0xFFUL << UART2_D_DATA_SHIFT)                      /*!< UART2_D: DATA Mask                      */
-#define UART2_D_DATA_SHIFT                       0                                                   /*!< UART2_D: DATA Position                  */
-#define UART2_D_DATA(x)                          (((x)<<UART2_D_DATA_SHIFT)&UART2_D_DATA_MASK)       /*!< UART2_D                                 */
 
 /* ------- UART2_MA                                 ------ */
-#define UART2_MA_MA_MASK                         (0xFFUL << UART2_MA_MA_SHIFT)                       /*!< UART2_MA: MA Mask                       */
-#define UART2_MA_MA_SHIFT                        0                                                   /*!< UART2_MA: MA Position                   */
-#define UART2_MA_MA(x)                           (((x)<<UART2_MA_MA_SHIFT)&UART2_MA_MA_MASK)         /*!< UART2_MA                                */
 
 /* ------- UART2_C4                                 ------ */
-#define UART2_C4_BRFA_MASK                       (0x1FUL << UART2_C4_BRFA_SHIFT)                     /*!< UART2_C4: BRFA Mask                     */
-#define UART2_C4_BRFA_SHIFT                      0                                                   /*!< UART2_C4: BRFA Position                 */
-#define UART2_C4_BRFA(x)                         (((x)<<UART2_C4_BRFA_SHIFT)&UART2_C4_BRFA_MASK)     /*!< UART2_C4                                */
-#define UART2_C4_M10_MASK                        (0x01UL << UART2_C4_M10_SHIFT)                      /*!< UART2_C4: M10 Mask                      */
-#define UART2_C4_M10_SHIFT                       5                                                   /*!< UART2_C4: M10 Position                  */
-#define UART2_C4_MAEN2_MASK                      (0x01UL << UART2_C4_MAEN2_SHIFT)                    /*!< UART2_C4: MAEN2 Mask                    */
-#define UART2_C4_MAEN2_SHIFT                     6                                                   /*!< UART2_C4: MAEN2 Position                */
-#define UART2_C4_MAEN1_MASK                      (0x01UL << UART2_C4_MAEN1_SHIFT)                    /*!< UART2_C4: MAEN1 Mask                    */
-#define UART2_C4_MAEN1_SHIFT                     7                                                   /*!< UART2_C4: MAEN1 Position                */
 
 /* ------- UART2_C5                                 ------ */
-#define UART2_C5_RDMAS_MASK                      (0x01UL << UART2_C5_RDMAS_SHIFT)                    /*!< UART2_C5: RDMAS Mask                    */
-#define UART2_C5_RDMAS_SHIFT                     5                                                   /*!< UART2_C5: RDMAS Position                */
-#define UART2_C5_TDMAS_MASK                      (0x01UL << UART2_C5_TDMAS_SHIFT)                    /*!< UART2_C5: TDMAS Mask                    */
-#define UART2_C5_TDMAS_SHIFT                     7                                                   /*!< UART2_C5: TDMAS Position                */
 
 /* ------- UART2_ED                                 ------ */
-#define UART2_ED_PARITYE_MASK                    (0x01UL << UART2_ED_PARITYE_SHIFT)                  /*!< UART2_ED: PARITYE Mask                  */
-#define UART2_ED_PARITYE_SHIFT                   6                                                   /*!< UART2_ED: PARITYE Position              */
-#define UART2_ED_NOISY_MASK                      (0x01UL << UART2_ED_NOISY_SHIFT)                    /*!< UART2_ED: NOISY Mask                    */
-#define UART2_ED_NOISY_SHIFT                     7                                                   /*!< UART2_ED: NOISY Position                */
 
 /* ------- UART2_MODEM                              ------ */
-#define UART2_MODEM_TXCTSE_MASK                  (0x01UL << UART2_MODEM_TXCTSE_SHIFT)                /*!< UART2_MODEM: TXCTSE Mask                */
-#define UART2_MODEM_TXCTSE_SHIFT                 0                                                   /*!< UART2_MODEM: TXCTSE Position            */
-#define UART2_MODEM_TXRTSE_MASK                  (0x01UL << UART2_MODEM_TXRTSE_SHIFT)                /*!< UART2_MODEM: TXRTSE Mask                */
-#define UART2_MODEM_TXRTSE_SHIFT                 1                                                   /*!< UART2_MODEM: TXRTSE Position            */
-#define UART2_MODEM_TXRTSPOL_MASK                (0x01UL << UART2_MODEM_TXRTSPOL_SHIFT)              /*!< UART2_MODEM: TXRTSPOL Mask              */
-#define UART2_MODEM_TXRTSPOL_SHIFT               2                                                   /*!< UART2_MODEM: TXRTSPOL Position          */
-#define UART2_MODEM_RXRTSE_MASK                  (0x01UL << UART2_MODEM_RXRTSE_SHIFT)                /*!< UART2_MODEM: RXRTSE Mask                */
-#define UART2_MODEM_RXRTSE_SHIFT                 3                                                   /*!< UART2_MODEM: RXRTSE Position            */
 
 /* ------- UART2_IR                                 ------ */
-#define UART2_IR_TNP_MASK                        (0x03UL << UART2_IR_TNP_SHIFT)                      /*!< UART2_IR: TNP Mask                      */
-#define UART2_IR_TNP_SHIFT                       0                                                   /*!< UART2_IR: TNP Position                  */
-#define UART2_IR_TNP(x)                          (((x)<<UART2_IR_TNP_SHIFT)&UART2_IR_TNP_MASK)       /*!< UART2_IR                                */
-#define UART2_IR_IREN_MASK                       (0x01UL << UART2_IR_IREN_SHIFT)                     /*!< UART2_IR: IREN Mask                     */
-#define UART2_IR_IREN_SHIFT                      2                                                   /*!< UART2_IR: IREN Position                 */
 
 /* ------- UART2_PFIFO                              ------ */
-#define UART2_PFIFO_RXFIFOSIZE_MASK              (0x07UL << UART2_PFIFO_RXFIFOSIZE_SHIFT)            /*!< UART2_PFIFO: RXFIFOSIZE Mask            */
-#define UART2_PFIFO_RXFIFOSIZE_SHIFT             0                                                   /*!< UART2_PFIFO: RXFIFOSIZE Position        */
-#define UART2_PFIFO_RXFIFOSIZE(x)                (((x)<<UART2_PFIFO_RXFIFOSIZE_SHIFT)&UART2_PFIFO_RXFIFOSIZE_MASK) /*!< UART2_PFIFO                             */
-#define UART2_PFIFO_RXFE_MASK                    (0x01UL << UART2_PFIFO_RXFE_SHIFT)                  /*!< UART2_PFIFO: RXFE Mask                  */
-#define UART2_PFIFO_RXFE_SHIFT                   3                                                   /*!< UART2_PFIFO: RXFE Position              */
-#define UART2_PFIFO_TXFIFOSIZE_MASK              (0x07UL << UART2_PFIFO_TXFIFOSIZE_SHIFT)            /*!< UART2_PFIFO: TXFIFOSIZE Mask            */
-#define UART2_PFIFO_TXFIFOSIZE_SHIFT             4                                                   /*!< UART2_PFIFO: TXFIFOSIZE Position        */
-#define UART2_PFIFO_TXFIFOSIZE(x)                (((x)<<UART2_PFIFO_TXFIFOSIZE_SHIFT)&UART2_PFIFO_TXFIFOSIZE_MASK) /*!< UART2_PFIFO                             */
-#define UART2_PFIFO_TXFE_MASK                    (0x01UL << UART2_PFIFO_TXFE_SHIFT)                  /*!< UART2_PFIFO: TXFE Mask                  */
-#define UART2_PFIFO_TXFE_SHIFT                   7                                                   /*!< UART2_PFIFO: TXFE Position              */
 
 /* ------- UART2_CFIFO                              ------ */
-#define UART2_CFIFO_RXUFE_MASK                   (0x01UL << UART2_CFIFO_RXUFE_SHIFT)                 /*!< UART2_CFIFO: RXUFE Mask                 */
-#define UART2_CFIFO_RXUFE_SHIFT                  0                                                   /*!< UART2_CFIFO: RXUFE Position             */
-#define UART2_CFIFO_TXOFE_MASK                   (0x01UL << UART2_CFIFO_TXOFE_SHIFT)                 /*!< UART2_CFIFO: TXOFE Mask                 */
-#define UART2_CFIFO_TXOFE_SHIFT                  1                                                   /*!< UART2_CFIFO: TXOFE Position             */
-#define UART2_CFIFO_RXOFE_MASK                   (0x01UL << UART2_CFIFO_RXOFE_SHIFT)                 /*!< UART2_CFIFO: RXOFE Mask                 */
-#define UART2_CFIFO_RXOFE_SHIFT                  2                                                   /*!< UART2_CFIFO: RXOFE Position             */
-#define UART2_CFIFO_RXFLUSH_MASK                 (0x01UL << UART2_CFIFO_RXFLUSH_SHIFT)               /*!< UART2_CFIFO: RXFLUSH Mask               */
-#define UART2_CFIFO_RXFLUSH_SHIFT                6                                                   /*!< UART2_CFIFO: RXFLUSH Position           */
-#define UART2_CFIFO_TXFLUSH_MASK                 (0x01UL << UART2_CFIFO_TXFLUSH_SHIFT)               /*!< UART2_CFIFO: TXFLUSH Mask               */
-#define UART2_CFIFO_TXFLUSH_SHIFT                7                                                   /*!< UART2_CFIFO: TXFLUSH Position           */
 
 /* ------- UART2_SFIFO                              ------ */
-#define UART2_SFIFO_RXUF_MASK                    (0x01UL << UART2_SFIFO_RXUF_SHIFT)                  /*!< UART2_SFIFO: RXUF Mask                  */
-#define UART2_SFIFO_RXUF_SHIFT                   0                                                   /*!< UART2_SFIFO: RXUF Position              */
-#define UART2_SFIFO_TXOF_MASK                    (0x01UL << UART2_SFIFO_TXOF_SHIFT)                  /*!< UART2_SFIFO: TXOF Mask                  */
-#define UART2_SFIFO_TXOF_SHIFT                   1                                                   /*!< UART2_SFIFO: TXOF Position              */
-#define UART2_SFIFO_RXOF_MASK                    (0x01UL << UART2_SFIFO_RXOF_SHIFT)                  /*!< UART2_SFIFO: RXOF Mask                  */
-#define UART2_SFIFO_RXOF_SHIFT                   2                                                   /*!< UART2_SFIFO: RXOF Position              */
-#define UART2_SFIFO_RXEMPT_MASK                  (0x01UL << UART2_SFIFO_RXEMPT_SHIFT)                /*!< UART2_SFIFO: RXEMPT Mask                */
-#define UART2_SFIFO_RXEMPT_SHIFT                 6                                                   /*!< UART2_SFIFO: RXEMPT Position            */
-#define UART2_SFIFO_TXEMPT_MASK                  (0x01UL << UART2_SFIFO_TXEMPT_SHIFT)                /*!< UART2_SFIFO: TXEMPT Mask                */
-#define UART2_SFIFO_TXEMPT_SHIFT                 7                                                   /*!< UART2_SFIFO: TXEMPT Position            */
 
 /* ------- UART2_TWFIFO                             ------ */
-#define UART2_TWFIFO_TXWATER_MASK                (0xFFUL << UART2_TWFIFO_TXWATER_SHIFT)              /*!< UART2_TWFIFO: TXWATER Mask              */
-#define UART2_TWFIFO_TXWATER_SHIFT               0                                                   /*!< UART2_TWFIFO: TXWATER Position          */
-#define UART2_TWFIFO_TXWATER(x)                  (((x)<<UART2_TWFIFO_TXWATER_SHIFT)&UART2_TWFIFO_TXWATER_MASK) /*!< UART2_TWFIFO                            */
 
 /* ------- UART2_TCFIFO                             ------ */
-#define UART2_TCFIFO_TXCOUNT_MASK                (0xFFUL << UART2_TCFIFO_TXCOUNT_SHIFT)              /*!< UART2_TCFIFO: TXCOUNT Mask              */
-#define UART2_TCFIFO_TXCOUNT_SHIFT               0                                                   /*!< UART2_TCFIFO: TXCOUNT Position          */
-#define UART2_TCFIFO_TXCOUNT(x)                  (((x)<<UART2_TCFIFO_TXCOUNT_SHIFT)&UART2_TCFIFO_TXCOUNT_MASK) /*!< UART2_TCFIFO                            */
 
 /* ------- UART2_RWFIFO                             ------ */
-#define UART2_RWFIFO_RXWATER_MASK                (0xFFUL << UART2_RWFIFO_RXWATER_SHIFT)              /*!< UART2_RWFIFO: RXWATER Mask              */
-#define UART2_RWFIFO_RXWATER_SHIFT               0                                                   /*!< UART2_RWFIFO: RXWATER Position          */
-#define UART2_RWFIFO_RXWATER(x)                  (((x)<<UART2_RWFIFO_RXWATER_SHIFT)&UART2_RWFIFO_RXWATER_MASK) /*!< UART2_RWFIFO                            */
 
 /* ------- UART2_RCFIFO                             ------ */
-#define UART2_RCFIFO_RXCOUNT_MASK                (0xFFUL << UART2_RCFIFO_RXCOUNT_SHIFT)              /*!< UART2_RCFIFO: RXCOUNT Mask              */
-#define UART2_RCFIFO_RXCOUNT_SHIFT               0                                                   /*!< UART2_RCFIFO: RXCOUNT Position          */
-#define UART2_RCFIFO_RXCOUNT(x)                  (((x)<<UART2_RCFIFO_RXCOUNT_SHIFT)&UART2_RCFIFO_RXCOUNT_MASK) /*!< UART2_RCFIFO                            */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'UART2' Register Access macros                       ----------- */

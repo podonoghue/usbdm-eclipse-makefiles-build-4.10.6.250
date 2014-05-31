@@ -1,14 +1,14 @@
 <!--
 Devices using this peripheral: 
-   MK10D10
-   MK20D10
-   MK30D10
-   MK40D10
-   MK50D10
-   MK51D10
-   MK52D10
-   MK53D10
-   MK60D10
+      MK10D10
+      MK20D10
+      MK30D10
+      MK40D10
+      MK50D10
+      MK51D10
+      MK52D10
+      MK53D10
+      MK60D10
 -->
       <peripheral sourceFile="CMP0_MKD10">
          <name>CMP0</name>

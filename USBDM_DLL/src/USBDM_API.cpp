@@ -30,6 +30,8 @@
 \verbatim
  Change History
 +======================================================================================================
+| 25 Apr 2014 | Added check for Power sense option in Power-on sequence             - pgo - V4.10.6.140
+| 23 Mar 2014 | Changes to handling pendingResetRelease                             - pgo - V4.10.6.130
 | 01 Mar 2014 | Removed MCF51AC256 CSR.VBD hack                                     - pgo - V4.10.6.120
 | 16 Mar 2013 | Added default frequency to getDefaultExtendedOptions()              - pgo - V4.10.4
 | 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo - V4.10.4
@@ -866,10 +868,15 @@ USBDM_ErrorCode  USBDM_SetTargetVdd(TargetVddSelect_t targetVdd) {
    case BDM_TARGET_VDD_ENABLE:
       // Set to last level
       targetVdd = bdmOptions.targetVdd;
+      armInitialiseDone     = false;
       break;
    case BDM_TARGET_VDD_DISABLE:
       // Change to off but do not change last level
       targetVdd = BDM_TARGET_VDD_OFF;
+      armInitialiseDone     = false;
+      break;
+   case BDM_TARGET_VDD_OFF:
+      armInitialiseDone     = false;
       break;
    default:
       // Record new level
@@ -1015,6 +1022,11 @@ USBDM_ErrorCode USBDM_ControlPins(unsigned int control, unsigned int *status) {
    if ((rc == BDM_RC_OK) && (status != NULL)) {
       *status = (usb_data[1]<<8) + usb_data[2];
    }
+   if (pendingResetRelease && ((control&PIN_RESET) != PIN_RESET_NC)) {
+      // Manually set reset level - clear pending release
+      pendingResetRelease = false;
+      Logging::print("Clearing pending RESET release\n");
+   }
    return rc;
 }
 
@@ -1122,7 +1134,8 @@ USBDM_ErrorCode USBDM_SetTargetType(TargetType_t targetType) {
       // Just turn off power
       return USBDM_SetTargetVdd(BDM_TARGET_VDD_OFF);
    }
-   if ((bdmStatus.power_state == BDM_TARGET_VDD_INT) || (bdmStatus.power_state == BDM_TARGET_VDD_EXT)) {
+   if ((bdmStatus.power_state == BDM_TARGET_VDD_INT) ||
+       ( ((bdmInfo.capabilities & BDM_CAP_VDDSENSE) != 0) && (bdmStatus.power_state == BDM_TARGET_VDD_EXT))) {
       // Target already powered - don't do POR
       Logging::print("Target already powered - no POR\n");
       return BDM_RC_OK;

@@ -1,7 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MK61F12
-   MK70F12
+      MK61F12
+      MK70F12
 -->
       <peripheral sourceFile="RCM_3">
          <name>RCM</name>

@@ -41,7 +41,7 @@ The following example is for an Kinetis target but a similar process is followed
 - Linker Parameters
    - Auto-generate linker script - The USBDM Wizard will automatically create a linker script based upon the device's
      memory map.  The linker script is designed to work with the startup files provided by the Wizard.
-   - Linker Script is used to use a pre-existing linker script instead of automatically generating one.  Codesourcery
+   - Linker Script - This allows selection of a pre-existing linker script instead of automatically generating one.  Codesourcery
      provides various linker scripts that may be used.  This linker script will be <b>copied</b> into the project 
      directory.   
 - Click <i>Next</i> 
@@ -176,7 +176,7 @@ by the USBDM Wizard.\n
 - Locate the launch configuration corresponding to the project just created.  This will be under USBDM Hardware
  Debugging item in the left-hand panel.
   
-- <b>Debugger Tab</b> in the dialogue.\n
+- <b>Debugger</b> Tab in the dialogue.\n
     - USBDM Parameters
       - Interface - This indicates the target-specific USBDM debugging interface being used.
       - Target Device - Indicates the device being debugged.
@@ -214,8 +214,7 @@ by the USBDM Wizard.\n
 
 \image html DebuggerTabColdfire.png
 
-- Startup Tab\n
-  <b>Startup Tab</b> in the dialogue. Check the following settings:
+- <b>Startup</b> Tab in the dialogue. Check the following settings:
     - Initialization Commands
        - Reset and Delay - Not used (Not supported by USBDM interface)
        - Halt -  Not used (Not supported by USBDM interface)

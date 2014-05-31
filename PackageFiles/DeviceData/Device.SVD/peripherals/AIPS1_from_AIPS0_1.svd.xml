@@ -1,7 +1,7 @@
 <!--
 Devices using this peripheral: 
-   MK10D7
-   MK30D7
+      MK10D7
+      MK30D7
 -->
       <peripheral derivedFrom="AIPS0">
          <name>AIPS1</name>
