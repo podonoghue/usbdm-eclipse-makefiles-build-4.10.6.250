@@ -5,7 +5,7 @@
  *           Equivalent: MK22FX512M12, MK22FN1M0M12
  *
  * @version  V0.0
- * @date     2014/05
+ * @date     2014/06
  *
  *******************************************************************************************************/
 
@@ -50,8 +50,8 @@ typedef enum {
   DMA15_IRQn                    =  15,   /*!<  31 DMA channel 15 transfer complete interrupt                                       */
   DMA_Error_IRQn                =  16,   /*!<  32 DMA error interrupt all channels                                                 */
   MCM_IRQn                      =  17,   /*!<  33 Normal Interrupt                                                                 */
-  FTFE_Command_IRQn             =  18,   /*!<  34 FTFL interrupt                                                                   */
-  FTFE_Collision_IRQn           =  19,   /*!<  35 FTFL Read collision interrupt                                                    */
+  FTFE_Command_IRQn             =  18,   /*!<  34 FTFE interrupt                                                                   */
+  FTFE_Collision_IRQn           =  19,   /*!<  35 FTFE Read collision interrupt                                                    */
   PMC_IRQn                      =  20,   /*!<  36 PMC Low Voltage Detect, Low Voltage Warning                                      */
   LLWU_IRQn                     =  21,   /*!<  37 LLWU Low Leakage Wakeup                                                          */
   WDOG_IRQn                     =  22,   /*!<  38 WDOG interrupt                                                                   */
@@ -252,41 +252,41 @@ extern void SDHC_IRQHandler(void);
 #endif
 
 /* ================================================================================ */
-/* ================           ADC0 (file:ADC0_MKF12)               ================ */
+/* ================           ADC0 (file:ADC0_MKD5_MKLZ4)          ================ */
 /* ================================================================================ */
 
 /**
- * @brief Analog-to-Digital Converter (ADC0)
+ * @brief Analog-to-Digital Converter
  */
 typedef struct {                                /*!<       ADC0 Structure                                               */
-   __IO uint32_t  SC1A;                         /*!< 0000: ADC Status and Control Registers 1                           */
-   __IO uint32_t  SC1B;                         /*!< 0004: ADC Status and Control Registers 1                           */
-   __IO uint32_t  CFG1;                         /*!< 0008: ADC Configuration Register 1                                 */
-   __IO uint32_t  CFG2;                         /*!< 000C: ADC Configuration Register 2                                 */
-   __I  uint32_t  RA;                           /*!< 0010: ADC Data Result Register                                     */
-   __I  uint32_t  RB;                           /*!< 0014: ADC Data Result Register                                     */
+   __IO uint32_t  SC1A;                         /*!< 0000: Status and Control Registers 1                               */
+   __IO uint32_t  SC1B;                         /*!< 0004: Status and Control Registers 1                               */
+   __IO uint32_t  CFG1;                         /*!< 0008: Configuration Register 1                                     */
+   __IO uint32_t  CFG2;                         /*!< 000C: Configuration Register 2                                     */
+   __I  uint32_t  RA;                           /*!< 0010: Data Result Register                                         */
+   __I  uint32_t  RB;                           /*!< 0014: Data Result Register                                         */
    __IO uint32_t  CV1;                          /*!< 0018: Compare Value                                                */
    __IO uint32_t  CV2;                          /*!< 001C: Compare Value                                                */
    __IO uint32_t  SC2;                          /*!< 0020: Status and Control Register 2                                */
    __IO uint32_t  SC3;                          /*!< 0024: Status and Control Register 3                                */
-   __IO uint32_t  OFS;                          /*!< 0028: ADC Offset Correction Register                               */
-   __IO uint32_t  PG;                           /*!< 002C: ADC Plus-Side Gain Register                                  */
-   __IO uint32_t  MG;                           /*!< 0030: ADC Minus-Side Gain Register                                 */
-   __IO uint32_t  CLPD;                         /*!< 0034: ADC Plus-Side General Calibration Value Register             */
-   __IO uint32_t  CLPS;                         /*!< 0038: ADC Plus-Side General Calibration Value Register             */
-   __IO uint32_t  CLP4;                         /*!< 003C: ADC Plus-Side General Calibration Value Register             */
-   __IO uint32_t  CLP3;                         /*!< 0040: ADC Plus-Side General Calibration Value Register             */
-   __IO uint32_t  CLP2;                         /*!< 0044: ADC Plus-Side General Calibration Value Register             */
-   __IO uint32_t  CLP1;                         /*!< 0048: ADC Plus-Side General Calibration Value Register             */
-   __IO uint32_t  CLP0;                         /*!< 004C: ADC Plus-Side General Calibration Value Register             */
+   __IO uint32_t  OFS;                          /*!< 0028: Offset Correction Register                                   */
+   __IO uint32_t  PG;                           /*!< 002C: Plus-Side Gain Register                                      */
+   __IO uint32_t  MG;                           /*!< 0030: Minus-Side Gain Register                                     */
+   __IO uint32_t  CLPD;                         /*!< 0034: Plus-Side General Calibration Value Register                 */
+   __IO uint32_t  CLPS;                         /*!< 0038: Plus-Side General Calibration Value Register                 */
+   __IO uint32_t  CLP4;                         /*!< 003C: Plus-Side General Calibration Value Register                 */
+   __IO uint32_t  CLP3;                         /*!< 0040: Plus-Side General Calibration Value Register                 */
+   __IO uint32_t  CLP2;                         /*!< 0044: Plus-Side General Calibration Value Register                 */
+   __IO uint32_t  CLP1;                         /*!< 0048: Plus-Side General Calibration Value Register                 */
+   __IO uint32_t  CLP0;                         /*!< 004C: Plus-Side General Calibration Value Register                 */
    __I  uint32_t  RESERVED0;                    /*!< 0050:                                                              */
-   __IO uint32_t  CLMD;                         /*!< 0054: ADC Minus-Side General Calibration Value Register            */
-   __IO uint32_t  CLMS;                         /*!< 0058: ADC Minus-Side General Calibration Value Register            */
-   __IO uint32_t  CLM4;                         /*!< 005C: ADC Minus-Side General Calibration Value Register            */
-   __IO uint32_t  CLM3;                         /*!< 0060: ADC Minus-Side General Calibration Value Register            */
-   __IO uint32_t  CLM2;                         /*!< 0064: ADC Minus-Side General Calibration Value Register            */
-   __IO uint32_t  CLM1;                         /*!< 0068: ADC Minus-Side General Calibration Value Register            */
-   __IO uint32_t  CLM0;                         /*!< 006C: ADC Minus-Side General Calibration Value Register            */
+   __IO uint32_t  CLMD;                         /*!< 0054: Minus-Side General Calibration Value Register                */
+   __IO uint32_t  CLMS;                         /*!< 0058: Minus-Side General Calibration Value Register                */
+   __IO uint32_t  CLM4;                         /*!< 005C: Minus-Side General Calibration Value Register                */
+   __IO uint32_t  CLM3;                         /*!< 0060: Minus-Side General Calibration Value Register                */
+   __IO uint32_t  CLM2;                         /*!< 0064: Minus-Side General Calibration Value Register                */
+   __IO uint32_t  CLM1;                         /*!< 0068: Minus-Side General Calibration Value Register                */
+   __IO uint32_t  CLM0;                         /*!< 006C: Minus-Side General Calibration Value Register                */
 } ADC0_Type;
 
 
@@ -494,7 +494,7 @@ typedef struct {                                /*!<       ADC0 Structure       
 /* ================================================================================ */
 
 /**
- * @brief Analog-to-Digital Converter (ADC1)
+ * @brief Analog-to-Digital Converter
  */
 typedef ADC0_Type ADC1_Type;  /*!< ADC1 Structure                                              */
 
@@ -532,11 +532,11 @@ typedef ADC0_Type ADC1_Type;  /*!< ADC1 Structure                               
 #define ADC1_CLM0                      (ADC1->CLM0)
 
 /* ================================================================================ */
-/* ================           CAN0 (file:CAN0_MK64F12)             ================ */
+/* ================           CAN0 (file:CAN0_F12)                 ================ */
 /* ================================================================================ */
 
 /**
- * @brief Flex Controller Area Network module (CAN0)
+ * @brief Flex Controller Area Network module
  */
 typedef struct {                                /*!<       CAN0 Structure                                               */
    __IO uint32_t  MCR;                          /*!< 0000: Module Configuration Register                                */
@@ -590,6 +590,8 @@ typedef struct {                                /*!<       CAN0 Structure       
 #define CAN_MCR_IRMQ_SHIFT                       16                                                  /*!< CAN0_MCR: IRMQ Position                 */
 #define CAN_MCR_SRXDIS_MASK                      (0x01UL << CAN_MCR_SRXDIS_SHIFT)                    /*!< CAN0_MCR: SRXDIS Mask                   */
 #define CAN_MCR_SRXDIS_SHIFT                     17                                                  /*!< CAN0_MCR: SRXDIS Position               */
+#define CAN_MCR_WAKSRC_MASK                      (0x01UL << CAN_MCR_WAKSRC_SHIFT)                    /*!< CAN0_MCR: WAKSRC Mask                   */
+#define CAN_MCR_WAKSRC_SHIFT                     19                                                  /*!< CAN0_MCR: WAKSRC Position               */
 #define CAN_MCR_LPMACK_MASK                      (0x01UL << CAN_MCR_LPMACK_SHIFT)                    /*!< CAN0_MCR: LPMACK Mask                   */
 #define CAN_MCR_LPMACK_SHIFT                     20                                                  /*!< CAN0_MCR: LPMACK Position               */
 #define CAN_MCR_WRNEN_MASK                       (0x01UL << CAN_MCR_WRNEN_SHIFT)                     /*!< CAN0_MCR: WRNEN Mask                    */
@@ -727,9 +729,11 @@ typedef struct {                                /*!<       CAN0 Structure       
 #define CAN_IMASK1_BUFLM(x)                      (((x)<<CAN_IMASK1_BUFLM_SHIFT)&CAN_IMASK1_BUFLM_MASK) /*!< CAN0_IMASK1                             */
 
 /* ------- CAN0_IFLAG1                              ------ */
-#define CAN_IFLAG1_BUF4TO0I_MASK                 (0x1FUL << CAN_IFLAG1_BUF4TO0I_SHIFT)               /*!< CAN0_IFLAG1: BUF4TO0I Mask              */
-#define CAN_IFLAG1_BUF4TO0I_SHIFT                0                                                   /*!< CAN0_IFLAG1: BUF4TO0I Position          */
-#define CAN_IFLAG1_BUF4TO0I(x)                   (((x)<<CAN_IFLAG1_BUF4TO0I_SHIFT)&CAN_IFLAG1_BUF4TO0I_MASK) /*!< CAN0_IFLAG1                             */
+#define CAN_IFLAG1_BUF0I_MASK                    (0x01UL << CAN_IFLAG1_BUF0I_SHIFT)                  /*!< CAN0_IFLAG1: BUF0I Mask                 */
+#define CAN_IFLAG1_BUF0I_SHIFT                   0                                                   /*!< CAN0_IFLAG1: BUF0I Position             */
+#define CAN_IFLAG1_BUF4TO1I_MASK                 (0x0FUL << CAN_IFLAG1_BUF4TO1I_SHIFT)               /*!< CAN0_IFLAG1: BUF4TO1I Mask              */
+#define CAN_IFLAG1_BUF4TO1I_SHIFT                1                                                   /*!< CAN0_IFLAG1: BUF4TO1I Position          */
+#define CAN_IFLAG1_BUF4TO1I(x)                   (((x)<<CAN_IFLAG1_BUF4TO1I_SHIFT)&CAN_IFLAG1_BUF4TO1I_MASK) /*!< CAN0_IFLAG1                             */
 #define CAN_IFLAG1_BUF5I_MASK                    (0x01UL << CAN_IFLAG1_BUF5I_SHIFT)                  /*!< CAN0_IFLAG1: BUF5I Mask                 */
 #define CAN_IFLAG1_BUF5I_SHIFT                   5                                                   /*!< CAN0_IFLAG1: BUF5I Position             */
 #define CAN_IFLAG1_BUF6I_MASK                    (0x01UL << CAN_IFLAG1_BUF6I_SHIFT)                  /*!< CAN0_IFLAG1: BUF6I Mask                 */
@@ -949,7 +953,7 @@ typedef struct {                                /*!<       CAN0 Structure       
 /* ================================================================================ */
 
 /**
- * @brief High-Speed Comparator (CMP), Voltage Reference (VREF) Digital-to-Analog Converter (DAC), and Analog Mux (ANMUX) (CMP0)
+ * @brief Comparator, Voltage Ref, D-to-A Converter and Analog Mux
  */
 typedef struct {                                /*!<       CMP0 Structure                                               */
    __IO uint8_t   CR0;                          /*!< 0000: CMP Control Register 0                                       */
@@ -1044,7 +1048,7 @@ typedef struct {                                /*!<       CMP0 Structure       
 /* ================================================================================ */
 
 /**
- * @brief High-Speed Comparator (CMP), Voltage Reference (VREF) Digital-to-Analog Converter (DAC), and Analog Mux (ANMUX) (CMP1)
+ * @brief Comparator, Voltage Ref, D-to-A Converter and Analog Mux
  */
 typedef CMP0_Type CMP1_Type;  /*!< CMP1 Structure                                              */
 
@@ -1065,7 +1069,7 @@ typedef CMP0_Type CMP1_Type;  /*!< CMP1 Structure                               
 /* ================================================================================ */
 
 /**
- * @brief High-Speed Comparator (CMP), Voltage Reference (VREF) Digital-to-Analog Converter (DAC), and Analog Mux (ANMUX) (CMP2)
+ * @brief Comparator, Voltage Ref, D-to-A Converter and Analog Mux
  */
 typedef CMP0_Type CMP2_Type;  /*!< CMP2 Structure                                              */
 
@@ -1086,21 +1090,21 @@ typedef CMP0_Type CMP2_Type;  /*!< CMP2 Structure                               
 /* ================================================================================ */
 
 /**
- * @brief Carrier Modulator Transmitter (CMT)
+ * @brief Carrier Modulator Transmitter
  */
 typedef struct {                                /*!<       CMT Structure                                                */
-   __IO uint8_t   CGH1;                         /*!< 0000: CMT Carrier Generator High Data Register 1                   */
-   __IO uint8_t   CGL1;                         /*!< 0001: CMT Carrier Generator Low Data Register 1                    */
-   __IO uint8_t   CGH2;                         /*!< 0002: CMT Carrier Generator High Data Register 2                   */
-   __IO uint8_t   CGL2;                         /*!< 0003: CMT Carrier Generator Low Data Register 2                    */
-   __IO uint8_t   OC;                           /*!< 0004: CMT Output Control Register                                  */
-   __IO uint8_t   MSC;                          /*!< 0005: CMT Modulator Status and Control Register                    */
-   __IO uint8_t   CMD1;                         /*!< 0006: CMT Modulator Data Register Mark High                        */
-   __IO uint8_t   CMD2;                         /*!< 0007: CMT Modulator Data Register Mark Low                         */
-   __IO uint8_t   CMD3;                         /*!< 0008: CMT Modulator Data Register Space High                       */
-   __IO uint8_t   CMD4;                         /*!< 0009: CMT Modulator Data Register Space Low                        */
-   __IO uint8_t   PPS;                          /*!< 000A: CMT Primary Prescaler Register                               */
-   __IO uint8_t   DMA;                          /*!< 000B: CMT Direct Memory Access Register                            */
+   __IO uint8_t   CGH1;                         /*!< 0000: Carrier Generator High Data Register 1                       */
+   __IO uint8_t   CGL1;                         /*!< 0001: Carrier Generator Low Data Register 1                        */
+   __IO uint8_t   CGH2;                         /*!< 0002: Carrier Generator High Data Register 2                       */
+   __IO uint8_t   CGL2;                         /*!< 0003: Carrier Generator Low Data Register 2                        */
+   __IO uint8_t   OC;                           /*!< 0004: Output Control Register                                      */
+   __IO uint8_t   MSC;                          /*!< 0005: Modulator Status and Control Register                        */
+   __IO uint8_t   CMD1;                         /*!< 0006: Modulator Data Register Mark High                            */
+   __IO uint8_t   CMD2;                         /*!< 0007: Modulator Data Register Mark Low                             */
+   __IO uint8_t   CMD3;                         /*!< 0008: Modulator Data Register Space High                           */
+   __IO uint8_t   CMD4;                         /*!< 0009: Modulator Data Register Space Low                            */
+   __IO uint8_t   PPS;                          /*!< 000A: Primary Prescaler Register                                   */
+   __IO uint8_t   DMA;                          /*!< 000B: Direct Memory Access Register                                */
 } CMT_Type;
 
 
@@ -1205,12 +1209,54 @@ typedef struct {                                /*!<       CMT Structure        
 /* ================================================================================ */
 
 /**
- * @brief Cyclic Redundancy Check (CRC)
+ * @brief Cyclic Redundancy Check
  */
 typedef struct {                                /*!<       CRC Structure                                                */
-   __IO uint32_t  DATA;                         /*!< 0000: CRC Data register                                            */
-   __IO uint32_t  GPOLY;                        /*!< 0004: CRC Polynomial register                                      */
-   __IO uint32_t  CTRL;                         /*!< 0008: CRC Control register                                         */
+   union {                                      /*!< 0000: (size=0004)                                                  */
+      __IO uint32_t  DATA;                      /*!< 0000: Data register                                                */
+      struct {                                  /*!< 0000: (size=0004)                                                  */
+         union {                                /*!< 0000: (size=0002)                                                  */
+            __IO uint16_t  DATAL;               /*!< 0000: DATAL register                                               */
+            struct {                            /*!< 0000: (size=0002)                                                  */
+               __IO uint8_t   DATALL;           /*!< 0000: DATALL register                                              */
+               __IO uint8_t   DATALU;           /*!< 0001: DATALU register                                              */
+            };
+         };
+         union {                                /*!< 0000: (size=0002)                                                  */
+            __IO uint16_t  DATAH;               /*!< 0002: DATAH register                                               */
+            struct {                            /*!< 0000: (size=0002)                                                  */
+               __IO uint8_t   DATAHL;           /*!< 0002: DATAHL register                                              */
+               __IO uint8_t   DATAHU;           /*!< 0003: DATAHU register                                              */
+            };
+         };
+      };
+   };
+   union {                                      /*!< 0000: (size=0004)                                                  */
+      __IO uint32_t  GPOLY;                     /*!< 0004: Polynomial register                                          */
+      struct {                                  /*!< 0000: (size=0004)                                                  */
+         union {                                /*!< 0000: (size=0002)                                                  */
+            __IO uint16_t  GPOLYL;              /*!< 0004: GPOLYL register                                              */
+            struct {                            /*!< 0000: (size=0002)                                                  */
+               __IO uint8_t   GPOLYLL;          /*!< 0004: GPOLYLL register                                             */
+               __IO uint8_t   GPOLYLU;          /*!< 0005: GPOLYLU register                                             */
+            };
+         };
+         union {                                /*!< 0000: (size=0002)                                                  */
+            __IO uint16_t  GPOLYH;              /*!< 0006: GPOLYH register                                              */
+            struct {                            /*!< 0000: (size=0002)                                                  */
+               __IO uint8_t   GPOLYHL;          /*!< 0006: GPOLYHL register                                             */
+               __IO uint8_t   GPOLYHU;          /*!< 0007: GPOLYHU register                                             */
+            };
+         };
+      };
+   };
+   union {                                      /*!< 0000: (size=0004)                                                  */
+      __IO uint32_t  CTRL;                      /*!< 0008: Control register                                             */
+      struct {                                  /*!< 0000: (size=0004)                                                  */
+         __I  uint8_t   RESERVED0[3];           /*!< 0008:                                                              */
+         __IO uint8_t   CTRLHU;                 /*!< 000B: CTRLHU register                                              */
+      };
+   };
 } CRC_Type;
 
 
@@ -1233,6 +1279,36 @@ typedef struct {                                /*!<       CRC Structure        
 #define CRC_DATA_HU_SHIFT                        24                                                  /*!< CRC_DATA: HU Position                   */
 #define CRC_DATA_HU(x)                           (((x)<<CRC_DATA_HU_SHIFT)&CRC_DATA_HU_MASK)         /*!< CRC_DATA                                */
 
+/* ------- CRC_DATAL                                ------ */
+#define CRC_DATAL_DATAL_MASK                     (0xFFFFUL << CRC_DATAL_DATAL_SHIFT)                 /*!< CRC_DATAL: DATAL Mask                   */
+#define CRC_DATAL_DATAL_SHIFT                    0                                                   /*!< CRC_DATAL: DATAL Position               */
+#define CRC_DATAL_DATAL(x)                       (((x)<<CRC_DATAL_DATAL_SHIFT)&CRC_DATAL_DATAL_MASK) /*!< CRC_DATAL                               */
+
+/* ------- CRC_DATALL                               ------ */
+#define CRC_DATALL_DATALL_MASK                   (0xFFUL << CRC_DATALL_DATALL_SHIFT)                 /*!< CRC_DATALL: DATALL Mask                 */
+#define CRC_DATALL_DATALL_SHIFT                  0                                                   /*!< CRC_DATALL: DATALL Position             */
+#define CRC_DATALL_DATALL(x)                     (((x)<<CRC_DATALL_DATALL_SHIFT)&CRC_DATALL_DATALL_MASK) /*!< CRC_DATALL                              */
+
+/* ------- CRC_DATALU                               ------ */
+#define CRC_DATALU_DATALU_MASK                   (0xFFUL << CRC_DATALU_DATALU_SHIFT)                 /*!< CRC_DATALU: DATALU Mask                 */
+#define CRC_DATALU_DATALU_SHIFT                  0                                                   /*!< CRC_DATALU: DATALU Position             */
+#define CRC_DATALU_DATALU(x)                     (((x)<<CRC_DATALU_DATALU_SHIFT)&CRC_DATALU_DATALU_MASK) /*!< CRC_DATALU                              */
+
+/* ------- CRC_DATAH                                ------ */
+#define CRC_DATAH_DATAH_MASK                     (0xFFFFUL << CRC_DATAH_DATAH_SHIFT)                 /*!< CRC_DATAH: DATAH Mask                   */
+#define CRC_DATAH_DATAH_SHIFT                    0                                                   /*!< CRC_DATAH: DATAH Position               */
+#define CRC_DATAH_DATAH(x)                       (((x)<<CRC_DATAH_DATAH_SHIFT)&CRC_DATAH_DATAH_MASK) /*!< CRC_DATAH                               */
+
+/* ------- CRC_DATAHL                               ------ */
+#define CRC_DATAHL_DATAHL_MASK                   (0xFFUL << CRC_DATAHL_DATAHL_SHIFT)                 /*!< CRC_DATAHL: DATAHL Mask                 */
+#define CRC_DATAHL_DATAHL_SHIFT                  0                                                   /*!< CRC_DATAHL: DATAHL Position             */
+#define CRC_DATAHL_DATAHL(x)                     (((x)<<CRC_DATAHL_DATAHL_SHIFT)&CRC_DATAHL_DATAHL_MASK) /*!< CRC_DATAHL                              */
+
+/* ------- CRC_DATAHU                               ------ */
+#define CRC_DATAHU_DATAHU_MASK                   (0xFFUL << CRC_DATAHU_DATAHU_SHIFT)                 /*!< CRC_DATAHU: DATAHU Mask                 */
+#define CRC_DATAHU_DATAHU_SHIFT                  0                                                   /*!< CRC_DATAHU: DATAHU Position             */
+#define CRC_DATAHU_DATAHU(x)                     (((x)<<CRC_DATAHU_DATAHU_SHIFT)&CRC_DATAHU_DATAHU_MASK) /*!< CRC_DATAHU                              */
+
 /* ------- CRC_GPOLY                                ------ */
 #define CRC_GPOLY_LOW_MASK                       (0xFFFFUL << CRC_GPOLY_LOW_SHIFT)                   /*!< CRC_GPOLY: LOW Mask                     */
 #define CRC_GPOLY_LOW_SHIFT                      0                                                   /*!< CRC_GPOLY: LOW Position                 */
@@ -1240,6 +1316,36 @@ typedef struct {                                /*!<       CRC Structure        
 #define CRC_GPOLY_HIGH_MASK                      (0xFFFFUL << CRC_GPOLY_HIGH_SHIFT)                  /*!< CRC_GPOLY: HIGH Mask                    */
 #define CRC_GPOLY_HIGH_SHIFT                     16                                                  /*!< CRC_GPOLY: HIGH Position                */
 #define CRC_GPOLY_HIGH(x)                        (((x)<<CRC_GPOLY_HIGH_SHIFT)&CRC_GPOLY_HIGH_MASK)   /*!< CRC_GPOLY                               */
+
+/* ------- CRC_GPOLYL                               ------ */
+#define CRC_GPOLYL_GPOLYL_MASK                   (0xFFFFUL << CRC_GPOLYL_GPOLYL_SHIFT)               /*!< CRC_GPOLYL: GPOLYL Mask                 */
+#define CRC_GPOLYL_GPOLYL_SHIFT                  0                                                   /*!< CRC_GPOLYL: GPOLYL Position             */
+#define CRC_GPOLYL_GPOLYL(x)                     (((x)<<CRC_GPOLYL_GPOLYL_SHIFT)&CRC_GPOLYL_GPOLYL_MASK) /*!< CRC_GPOLYL                              */
+
+/* ------- CRC_GPOLYLL                              ------ */
+#define CRC_GPOLYLL_GPOLYLL_MASK                 (0xFFUL << CRC_GPOLYLL_GPOLYLL_SHIFT)               /*!< CRC_GPOLYLL: GPOLYLL Mask               */
+#define CRC_GPOLYLL_GPOLYLL_SHIFT                0                                                   /*!< CRC_GPOLYLL: GPOLYLL Position           */
+#define CRC_GPOLYLL_GPOLYLL(x)                   (((x)<<CRC_GPOLYLL_GPOLYLL_SHIFT)&CRC_GPOLYLL_GPOLYLL_MASK) /*!< CRC_GPOLYLL                             */
+
+/* ------- CRC_GPOLYLU                              ------ */
+#define CRC_GPOLYLU_GPOLYLU_MASK                 (0xFFUL << CRC_GPOLYLU_GPOLYLU_SHIFT)               /*!< CRC_GPOLYLU: GPOLYLU Mask               */
+#define CRC_GPOLYLU_GPOLYLU_SHIFT                0                                                   /*!< CRC_GPOLYLU: GPOLYLU Position           */
+#define CRC_GPOLYLU_GPOLYLU(x)                   (((x)<<CRC_GPOLYLU_GPOLYLU_SHIFT)&CRC_GPOLYLU_GPOLYLU_MASK) /*!< CRC_GPOLYLU                             */
+
+/* ------- CRC_GPOLYH                               ------ */
+#define CRC_GPOLYH_GPOLYH_MASK                   (0xFFFFUL << CRC_GPOLYH_GPOLYH_SHIFT)               /*!< CRC_GPOLYH: GPOLYH Mask                 */
+#define CRC_GPOLYH_GPOLYH_SHIFT                  0                                                   /*!< CRC_GPOLYH: GPOLYH Position             */
+#define CRC_GPOLYH_GPOLYH(x)                     (((x)<<CRC_GPOLYH_GPOLYH_SHIFT)&CRC_GPOLYH_GPOLYH_MASK) /*!< CRC_GPOLYH                              */
+
+/* ------- CRC_GPOLYHL                              ------ */
+#define CRC_GPOLYHL_GPOLYHL_MASK                 (0xFFUL << CRC_GPOLYHL_GPOLYHL_SHIFT)               /*!< CRC_GPOLYHL: GPOLYHL Mask               */
+#define CRC_GPOLYHL_GPOLYHL_SHIFT                0                                                   /*!< CRC_GPOLYHL: GPOLYHL Position           */
+#define CRC_GPOLYHL_GPOLYHL(x)                   (((x)<<CRC_GPOLYHL_GPOLYHL_SHIFT)&CRC_GPOLYHL_GPOLYHL_MASK) /*!< CRC_GPOLYHL                             */
+
+/* ------- CRC_GPOLYHU                              ------ */
+#define CRC_GPOLYHU_GPOLYHU_MASK                 (0xFFUL << CRC_GPOLYHU_GPOLYHU_SHIFT)               /*!< CRC_GPOLYHU: GPOLYHU Mask               */
+#define CRC_GPOLYHU_GPOLYHU_SHIFT                0                                                   /*!< CRC_GPOLYHU: GPOLYHU Position           */
+#define CRC_GPOLYHU_GPOLYHU(x)                   (((x)<<CRC_GPOLYHU_GPOLYHU_SHIFT)&CRC_GPOLYHU_GPOLYHU_MASK) /*!< CRC_GPOLYHU                             */
 
 /* ------- CRC_CTRL                                 ------ */
 #define CRC_CTRL_TCRC_MASK                       (0x01UL << CRC_CTRL_TCRC_SHIFT)                     /*!< CRC_CTRL: TCRC Mask                     */
@@ -1255,30 +1361,57 @@ typedef struct {                                /*!<       CRC Structure        
 #define CRC_CTRL_TOT_SHIFT                       30                                                  /*!< CRC_CTRL: TOT Position                  */
 #define CRC_CTRL_TOT(x)                          (((x)<<CRC_CTRL_TOT_SHIFT)&CRC_CTRL_TOT_MASK)       /*!< CRC_CTRL                                */
 
+/* ------- CRC_CTRLHU                               ------ */
+#define CRC_CTRLHU_TCRC_MASK                     (0x01UL << CRC_CTRLHU_TCRC_SHIFT)                   /*!< CRC_CTRLHU: TCRC Mask                   */
+#define CRC_CTRLHU_TCRC_SHIFT                    0                                                   /*!< CRC_CTRLHU: TCRC Position               */
+#define CRC_CTRLHU_WAS_MASK                      (0x01UL << CRC_CTRLHU_WAS_SHIFT)                    /*!< CRC_CTRLHU: WAS Mask                    */
+#define CRC_CTRLHU_WAS_SHIFT                     1                                                   /*!< CRC_CTRLHU: WAS Position                */
+#define CRC_CTRLHU_FXOR_MASK                     (0x01UL << CRC_CTRLHU_FXOR_SHIFT)                   /*!< CRC_CTRLHU: FXOR Mask                   */
+#define CRC_CTRLHU_FXOR_SHIFT                    2                                                   /*!< CRC_CTRLHU: FXOR Position               */
+#define CRC_CTRLHU_TOTR_MASK                     (0x03UL << CRC_CTRLHU_TOTR_SHIFT)                   /*!< CRC_CTRLHU: TOTR Mask                   */
+#define CRC_CTRLHU_TOTR_SHIFT                    4                                                   /*!< CRC_CTRLHU: TOTR Position               */
+#define CRC_CTRLHU_TOTR(x)                       (((x)<<CRC_CTRLHU_TOTR_SHIFT)&CRC_CTRLHU_TOTR_MASK) /*!< CRC_CTRLHU                              */
+#define CRC_CTRLHU_TOT_MASK                      (0x03UL << CRC_CTRLHU_TOT_SHIFT)                    /*!< CRC_CTRLHU: TOT Mask                    */
+#define CRC_CTRLHU_TOT_SHIFT                     6                                                   /*!< CRC_CTRLHU: TOT Position                */
+#define CRC_CTRLHU_TOT(x)                        (((x)<<CRC_CTRLHU_TOT_SHIFT)&CRC_CTRLHU_TOT_MASK)   /*!< CRC_CTRLHU                              */
+
 /* -------------------------------------------------------------------------------- */
 /* -----------     'CRC' Register Access macros                         ----------- */
 /* -------------------------------------------------------------------------------- */
 
 #define CRC_DATA                       (CRC->DATA)
+#define CRC_DATAL                      (CRC->DATAL)
+#define CRC_DATALL                     (CRC->DATALL)
+#define CRC_DATALU                     (CRC->DATALU)
+#define CRC_DATAH                      (CRC->DATAH)
+#define CRC_DATAHL                     (CRC->DATAHL)
+#define CRC_DATAHU                     (CRC->DATAHU)
 #define CRC_GPOLY                      (CRC->GPOLY)
+#define CRC_GPOLYL                     (CRC->GPOLYL)
+#define CRC_GPOLYLL                    (CRC->GPOLYLL)
+#define CRC_GPOLYLU                    (CRC->GPOLYLU)
+#define CRC_GPOLYH                     (CRC->GPOLYH)
+#define CRC_GPOLYHL                    (CRC->GPOLYHL)
+#define CRC_GPOLYHU                    (CRC->GPOLYHU)
 #define CRC_CTRL                       (CRC->CTRL)
+#define CRC_CTRLHU                     (CRC->CTRLHU)
 
 /* ================================================================================ */
 /* ================           DAC0 (file:DAC0_MKDZ10)              ================ */
 /* ================================================================================ */
 
 /**
- * @brief 12-Bit Digital-to-Analog Converter (DAC0)
+ * @brief 12-Bit Digital-to-Analog Converter
  */
 typedef struct {                                /*!<       DAC0 Structure                                               */
    struct { /* (cluster) */                     /*!< 0000: (size=0x0020, 32)                                            */
       __IO uint8_t   DATL;                      /*!< 0000: DAC Data Low Register                                        */
-      __IO uint8_t   DATH;                      /*!< 0001: DAC Data High Register                                       */
+      __IO uint8_t   DATH;                      /*!< 0001: Data High Register                                           */
    } DAT[16];
-   __IO uint8_t   SR;                           /*!< 0020: DAC Status Register                                          */
-   __IO uint8_t   C0;                           /*!< 0021: DAC Control Register                                         */
-   __IO uint8_t   C1;                           /*!< 0022: DAC Control Register 1                                       */
-   __IO uint8_t   C2;                           /*!< 0023: DAC Control Register 2                                       */
+   __IO uint8_t   SR;                           /*!< 0020: Status Register                                              */
+   __IO uint8_t   C0;                           /*!< 0021: Control Register                                             */
+   __IO uint8_t   C1;                           /*!< 0022: Control Register 1                                           */
+   __IO uint8_t   C2;                           /*!< 0023: Control Register 2                                           */
 } DAC0_Type;
 
 
@@ -1389,7 +1522,7 @@ typedef struct {                                /*!<       DAC0 Structure       
 /* ================================================================================ */
 
 /**
- * @brief 12-Bit Digital-to-Analog Converter (DAC1)
+ * @brief 12-Bit Digital-to-Analog Converter
  */
 typedef DAC0_Type DAC1_Type;  /*!< DAC1 Structure                                              */
 
@@ -1436,11 +1569,11 @@ typedef DAC0_Type DAC1_Type;  /*!< DAC1 Structure                               
 #define DAC1_C2                        (DAC1->C2)
 
 /* ================================================================================ */
-/* ================           DMA (file:DMA_MK_16CH_1)             ================ */
+/* ================           DMA (file:DMA_MK_16CH_EARS)          ================ */
 /* ================================================================================ */
 
 /**
- * @brief Enhanced direct memory access controller (DMA)
+ * @brief Enhanced direct memory access controller
  */
 typedef struct {                                /*!<       DMA Structure                                                */
    __IO uint32_t  CR;                           /*!< 0000: Control Register                                             */
@@ -1462,7 +1595,7 @@ typedef struct {                                /*!<       DMA Structure        
    __I  uint32_t  RESERVED3;                    /*!< 0028:                                                              */
    __IO uint32_t  ERR;                          /*!< 002C: Error Register                                               */
    __I  uint32_t  RESERVED4;                    /*!< 0030:                                                              */
-   __IO uint32_t  HRS;                          /*!< 0034: Hardware Request Status Register                             */
+   __I  uint32_t  HRS;                          /*!< 0034: Hardware Request Status Register                             */
    __I  uint32_t  RESERVED5[3];                 /*!< 0038:                                                              */
    __IO uint32_t  EARS;                         /*!< 0044: Enable Asynchronous Request in Stop Register                 */
    __I  uint32_t  RESERVED6[46];                /*!< 0048:                                                              */
@@ -2230,7 +2363,7 @@ typedef struct {                                /*!<       DMA Structure        
 /* ================================================================================ */
 
 /**
- * @brief DMA channel multiplexor (DMAMUX)
+ * @brief DMA channel multiplexor
  */
 typedef struct {                                /*!<       DMAMUX Structure                                             */
    __IO uint8_t   CHCFG[16];                    /*!< 0000: Channel Configuration Register                               */
@@ -3330,7 +3463,7 @@ typedef struct {                                /*!<       ETM Structure        
 /* ================================================================================ */
 
 /**
- * @brief External Watchdog Monitor (EWM)
+ * @brief External Watchdog Monitor
  */
 typedef struct {                                /*!<       EWM Structure                                                */
    __IO uint8_t   CTRL;                         /*!< 0000: Control Register                                             */
@@ -3384,7 +3517,7 @@ typedef struct {                                /*!<       EWM Structure        
 /* ================================================================================ */
 
 /**
- * @brief FlexBus external bus interface (FB)
+ * @brief FlexBus external bus interface
  */
 typedef struct {                                /*!<       FB Structure                                                 */
    struct { /* (cluster) */                     /*!< 0000: (size=0x0048, 72)                                            */
@@ -3496,7 +3629,7 @@ typedef struct {                                /*!<       FB Structure         
 /* ================================================================================ */
 
 /**
- * @brief Flash Memory Controller (FMC)
+ * @brief Flash Memory Controller
  */
 typedef struct {                                /*!<       FMC Structure                                                */
    __IO uint32_t  PFAPR;                        /*!< 0000: Flash Access Protection Register                             */
@@ -3983,7 +4116,7 @@ typedef struct {                                /*!<       FPB Structure        
 /* ================================================================================ */
 
 /**
- * @brief Flash Memory Interface (FTFE)
+ * @brief Flash Memory Interface
  */
 typedef struct {                                /*!<       FTFE Structure                                               */
    __IO uint8_t   FSTAT;                        /*!< 0000: Flash Status Register                                        */
@@ -4007,8 +4140,8 @@ typedef struct {                                /*!<       FTFE Structure       
    __IO uint8_t   FPROT1;                       /*!< 0012: Program Flash Protection                                     */
    __IO uint8_t   FPROT0;                       /*!< 0013: Program Flash Protection                                     */
    __I  uint16_t  RESERVED0;                    /*!< 0014:                                                              */
-   __IO uint8_t   FEPROT;                       /*!< 0016: EEPROM Protection Register                                   */
-   __IO uint8_t   FDPROT;                       /*!< 0017: Data Flash Protection Register                               */
+   __IO uint8_t   FEPROT;                       /*!< 0016: EEPROM Protection Register (Only for devices with FlexNVM)   */
+   __IO uint8_t   FDPROT;                       /*!< 0017: Data Flash Protection Register (Only for devices with FlexNVM) */
 } FTFE_Type;
 
 
@@ -4125,8 +4258,8 @@ typedef struct {                                /*!<       FTM0 Structure       
    __IO uint32_t  CNT;                          /*!< 0004: Counter                                                      */
    __IO uint32_t  MOD;                          /*!< 0008: Modulo                                                       */
    struct { /* (cluster) */                     /*!< 000C: (size=0x0040, 64)                                            */
-      __IO uint32_t  CnSC;                      /*!< 000C: Channel (n) Status and Control                               */
-      __IO uint32_t  CnV;                       /*!< 0010: Channel (n) Value                                            */
+      __IO uint32_t  CnSC;                      /*!< 000C: Channel (%s) Status and Control                              */
+      __IO uint32_t  CnV;                       /*!< 0010: Channel (%s) Value                                           */
    } CONTROLS[8];
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
    __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
@@ -4640,8 +4773,8 @@ typedef struct {                                /*!<       FTM1 Structure       
    __IO uint32_t  CNT;                          /*!< 0004: Counter                                                      */
    __IO uint32_t  MOD;                          /*!< 0008: Modulo                                                       */
    struct { /* (cluster) */                     /*!< 000C: (size=0x0010, 16)                                            */
-      __IO uint32_t  CnSC;                      /*!< 000C: Channel (n) Status and Control                               */
-      __IO uint32_t  CnV;                       /*!< 0010: Channel (n) Value                                            */
+      __IO uint32_t  CnSC;                      /*!< 000C: Channel (%s) Status and Control                              */
+      __IO uint32_t  CnV;                       /*!< 0010: Channel (%s) Value                                           */
    } CONTROLS[2];
    __I  uint32_t  RESERVED0[12];                /*!< 001C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
@@ -4855,7 +4988,7 @@ typedef FTM0_Type FTM3_Type;  /*!< FTM3 Structure                               
 /* ================================================================================ */
 
 /**
- * @brief General Purpose Input/Output (PTA)
+ * @brief General Purpose Input/Output
  */
 typedef struct {                                /*!<       GPIOA Structure                                              */
    __IO uint32_t  PDOR;                         /*!< 0000: Port Data Output Register                                    */
@@ -4918,7 +5051,7 @@ typedef struct {                                /*!<       GPIOA Structure      
 /* ================================================================================ */
 
 /**
- * @brief General Purpose Input/Output (PTB)
+ * @brief General Purpose Input/Output
  */
 typedef GPIOA_Type GPIOB_Type;  /*!< GPIOB Structure                                             */
 
@@ -4939,7 +5072,7 @@ typedef GPIOA_Type GPIOB_Type;  /*!< GPIOB Structure                            
 /* ================================================================================ */
 
 /**
- * @brief General Purpose Input/Output (PTC)
+ * @brief General Purpose Input/Output
  */
 typedef GPIOA_Type GPIOC_Type;  /*!< GPIOC Structure                                             */
 
@@ -4960,7 +5093,7 @@ typedef GPIOA_Type GPIOC_Type;  /*!< GPIOC Structure                            
 /* ================================================================================ */
 
 /**
- * @brief General Purpose Input/Output (PTD)
+ * @brief General Purpose Input/Output
  */
 typedef GPIOA_Type GPIOD_Type;  /*!< GPIOD Structure                                             */
 
@@ -4981,7 +5114,7 @@ typedef GPIOA_Type GPIOD_Type;  /*!< GPIOD Structure                            
 /* ================================================================================ */
 
 /**
- * @brief General Purpose Input/Output (PTE)
+ * @brief General Purpose Input/Output
  */
 typedef GPIOA_Type GPIOE_Type;  /*!< GPIOE Structure                                             */
 
@@ -4998,25 +5131,25 @@ typedef GPIOA_Type GPIOE_Type;  /*!< GPIOE Structure                            
 #define GPIOE_PDDR                     (GPIOE->PDDR)
 
 /* ================================================================================ */
-/* ================           I2C0 (file:I2C0_SMB_2)               ================ */
+/* ================           I2C0 (file:I2C0_F12)                 ================ */
 /* ================================================================================ */
 
 /**
- * @brief Inter-Integrated Circuit (I2C0)
+ * @brief Inter-Integrated Circuit
  */
 typedef struct {                                /*!<       I2C0 Structure                                               */
-   __IO uint8_t   A1;                           /*!< 0000: I2C Address Register 1                                       */
-   __IO uint8_t   F;                            /*!< 0001: I2C Frequency Divider register                               */
-   __IO uint8_t   C1;                           /*!< 0002: I2C Control Register 1                                       */
-   __IO uint8_t   S;                            /*!< 0003: I2C Status Register                                          */
-   __IO uint8_t   D;                            /*!< 0004: I2C Data I/O register                                        */
-   __IO uint8_t   C2;                           /*!< 0005: I2C Control Register 2                                       */
-   __IO uint8_t   FLT;                          /*!< 0006: I2C Programmable Input Glitch Filter register                */
-   __IO uint8_t   RA;                           /*!< 0007: I2C Range Address register                                   */
-   __IO uint8_t   SMB;                          /*!< 0008: I2C SMBus Control and Status register                        */
-   __IO uint8_t   A2;                           /*!< 0009: I2C Address Register 2                                       */
-   __IO uint8_t   SLTH;                         /*!< 000A: I2C SCL Low Timeout Register High                            */
-   __IO uint8_t   SLTL;                         /*!< 000B: I2C SCL Low Timeout Register Low                             */
+   __IO uint8_t   A1;                           /*!< 0000: Address Register 1                                           */
+   __IO uint8_t   F;                            /*!< 0001: Frequency Divider register                                   */
+   __IO uint8_t   C1;                           /*!< 0002: Control Register 1                                           */
+   __IO uint8_t   S;                            /*!< 0003: Status Register                                              */
+   __IO uint8_t   D;                            /*!< 0004: Data I/O register                                            */
+   __IO uint8_t   C2;                           /*!< 0005: Control Register 2                                           */
+   __IO uint8_t   FLT;                          /*!< 0006: Programmable Input Glitch Filter register                    */
+   __IO uint8_t   RA;                           /*!< 0007: Range Address register                                       */
+   __IO uint8_t   SMB;                          /*!< 0008: SMBus Control and Status register                            */
+   __IO uint8_t   A2;                           /*!< 0009: Address Register 2                                           */
+   __IO uint8_t   SLTH;                         /*!< 000A: SCL Low Timeout Register High                                */
+   __IO uint8_t   SLTL;                         /*!< 000B: SCL Low Timeout Register Low                                 */
 } I2C0_Type;
 
 
@@ -5167,7 +5300,7 @@ typedef struct {                                /*!<       I2C0 Structure       
 /* ================================================================================ */
 
 /**
- * @brief Inter-Integrated Circuit (I2C1)
+ * @brief Inter-Integrated Circuit
  */
 typedef I2C0_Type I2C1_Type;  /*!< I2C1 Structure                                              */
 
@@ -5194,7 +5327,7 @@ typedef I2C0_Type I2C1_Type;  /*!< I2C1 Structure                               
 /* ================================================================================ */
 
 /**
- * @brief Inter-Integrated Circuit (I2C2)
+ * @brief Inter-Integrated Circuit
  */
 typedef I2C0_Type I2C2_Type;  /*!< I2C2 Structure                                              */
 
@@ -5217,11 +5350,11 @@ typedef I2C0_Type I2C2_Type;  /*!< I2C2 Structure                               
 #define I2C2_SLTL                      (I2C2->SLTL)
 
 /* ================================================================================ */
-/* ================           I2S0 (file:I2S0_0)                   ================ */
+/* ================           I2S0 (file:I2S0_MK)                  ================ */
 /* ================================================================================ */
 
 /**
- * @brief Inter-IC Sound / Synchronous Audio Interface (I2S0)
+ * @brief Inter-IC Sound / Synchronous Audio Interface
  */
 typedef struct {                                /*!<       I2S0 Structure                                               */
    __IO uint32_t  TCSR;                         /*!< 0000: SAI Transmit Control Register                                */
@@ -5541,20 +5674,20 @@ typedef struct {                                /*!<       I2S0 Structure       
 /* ================================================================================ */
 
 /**
- * @brief Low leakage wakeup unit (LLWU)
+ * @brief Low leakage wakeup unit
  */
 typedef struct {                                /*!<       LLWU Structure                                               */
-   __IO uint8_t   PE1;                          /*!< 0000: LLWU Pin Enable 1 Register                                   */
-   __IO uint8_t   PE2;                          /*!< 0001: LLWU Pin Enable 2 Register                                   */
-   __IO uint8_t   PE3;                          /*!< 0002: LLWU Pin Enable 3 Register                                   */
-   __IO uint8_t   PE4;                          /*!< 0003: LLWU Pin Enable 4 Register                                   */
-   __IO uint8_t   ME;                           /*!< 0004: LLWU Module Enable Register                                  */
-   __IO uint8_t   F1;                           /*!< 0005: LLWU Flag 1 Register                                         */
-   __IO uint8_t   F2;                           /*!< 0006: LLWU Flag 2 Register                                         */
-   __I  uint8_t   F3;                           /*!< 0007: LLWU Flag 3 Register                                         */
-   __IO uint8_t   FILT1;                        /*!< 0008: LLWU Pin Filter 1 register                                   */
-   __IO uint8_t   FILT2;                        /*!< 0009: LLWU Pin Filter 2 register                                   */
-   __IO uint8_t   RST;                          /*!< 000A: LLWU Reset Enable register                                   */
+   __IO uint8_t   PE1;                          /*!< 0000: Pin Enable 1 Register                                        */
+   __IO uint8_t   PE2;                          /*!< 0001: Pin Enable 2 Register                                        */
+   __IO uint8_t   PE3;                          /*!< 0002: Pin Enable 3 Register                                        */
+   __IO uint8_t   PE4;                          /*!< 0003: Pin Enable 4 Register                                        */
+   __IO uint8_t   ME;                           /*!< 0004: Module Enable Register                                       */
+   __IO uint8_t   F1;                           /*!< 0005: Flag 1 Register                                              */
+   __IO uint8_t   F2;                           /*!< 0006: Flag 2 Register                                              */
+   __I  uint8_t   F3;                           /*!< 0007: Flag 3 Register                                              */
+   __IO uint8_t   FILT1;                        /*!< 0008: Pin Filter 1 Register                                        */
+   __IO uint8_t   FILT2;                        /*!< 0009: Pin Filter 2 Register                                        */
+   __IO uint8_t   RST;                          /*!< 000A: Reset Enable Register                                        */
 } LLWU_Type;
 
 
@@ -5728,13 +5861,13 @@ typedef struct {                                /*!<       LLWU Structure       
 /* ================================================================================ */
 
 /**
- * @brief Low Power Timer (LPTMR0)
+ * @brief Low Power Timer
  */
 typedef struct {                                /*!<       LPTMR0 Structure                                             */
-   __IO uint32_t  CSR;                          /*!< 0000: Low Power Timer Control Status Register                      */
-   __IO uint32_t  PSR;                          /*!< 0004: Low Power Timer Prescale Register                            */
-   __IO uint32_t  CMR;                          /*!< 0008: Low Power Timer Compare Register                             */
-   __I  uint32_t  CNR;                          /*!< 000C: Low Power Timer Counter Register                             */
+   __IO uint32_t  CSR;                          /*!< 0000: Control Status Register                                      */
+   __IO uint32_t  PSR;                          /*!< 0004: Prescale Register                                            */
+   __IO uint32_t  CMR;                          /*!< 0008: Compare Register                                             */
+   __I  uint32_t  CNR;                          /*!< 000C: Counter Register                                             */
 } LPTMR0_Type;
 
 
@@ -5794,23 +5927,23 @@ typedef struct {                                /*!<       LPTMR0 Structure     
 /* ================================================================================ */
 
 /**
- * @brief Multipurpose Clock Generator module (MCG)
+ * @brief Multipurpose Clock Generator module
  */
 typedef struct {                                /*!<       MCG Structure                                                */
-   __IO uint8_t   C1;                           /*!< 0000: MCG Control 1 Register                                       */
-   __IO uint8_t   C2;                           /*!< 0001: MCG Control 2 Register                                       */
-   __IO uint8_t   C3;                           /*!< 0002: MCG Control 3 Register                                       */
-   __IO uint8_t   C4;                           /*!< 0003: MCG Control 4 Register                                       */
-   __IO uint8_t   C5;                           /*!< 0004: MCG Control 5 Register                                       */
-   __IO uint8_t   C6;                           /*!< 0005: MCG Control 6 Register                                       */
-   __I  uint8_t   S;                            /*!< 0006: MCG Status Register                                          */
+   __IO uint8_t   C1;                           /*!< 0000: Control 1 Register                                           */
+   __IO uint8_t   C2;                           /*!< 0001: Control 2 Register                                           */
+   __IO uint8_t   C3;                           /*!< 0002: Control 3 Register                                           */
+   __IO uint8_t   C4;                           /*!< 0003: Control 4 Register                                           */
+   __IO uint8_t   C5;                           /*!< 0004: Control 5 Register                                           */
+   __IO uint8_t   C6;                           /*!< 0005: Control 6 Register                                           */
+   __I  uint8_t   S;                            /*!< 0006: Status Register                                              */
    __I  uint8_t   RESERVED0;                    /*!< 0007:                                                              */
-   __IO uint8_t   SC;                           /*!< 0008: MCG Status and Control Register                              */
+   __IO uint8_t   SC;                           /*!< 0008: Status and Control Register                                  */
    __I  uint8_t   RESERVED1;                    /*!< 0009:                                                              */
-   __IO uint8_t   ATCVH;                        /*!< 000A: MCG Auto Trim Compare Value High Register                    */
-   __IO uint8_t   ATCVL;                        /*!< 000B: MCG Auto Trim Compare Value Low Register                     */
-   __IO uint8_t   C7;                           /*!< 000C: MCG Control 7 Register                                       */
-   __IO uint8_t   C8;                           /*!< 000D: MCG Control 8 Register                                       */
+   __IO uint8_t   ATCVH;                        /*!< 000A: Auto Trim Compare Value High Register                        */
+   __IO uint8_t   ATCVL;                        /*!< 000B: Auto Trim Compare Value Low Register                         */
+   __IO uint8_t   C7;                           /*!< 000C: Control 7 Register                                           */
+   __IO uint8_t   C8;                           /*!< 000D: Control 8 Register                                           */
 } MCG_Type;
 
 
@@ -5963,7 +6096,7 @@ typedef struct {                                /*!<       MCG Structure        
 /* ================================================================================ */
 
 /**
- * @brief Core Platform Miscellaneous Control Module (MCM)
+ * @brief Core Platform Miscellaneous Control Module
  */
 typedef struct {                                /*!<       MCM Structure                                                */
    __I  uint32_t  RESERVED0[2];                 /*!< 0000:                                                              */
@@ -6088,11 +6221,11 @@ typedef struct {                                /*!<       MCM Structure        
 #define MCM_PID                        (MCM->PID)
 
 /* ================================================================================ */
-/* ================           MPU (file:MPU_1)                     ================ */
+/* ================           MPU (file:MPU_MKF)                   ================ */
 /* ================================================================================ */
 
 /**
- * @brief Memory protection unit (MPU)
+ * @brief Memory protection unit
  */
 typedef struct {                                /*!<       MPU Structure                                                */
    __IO uint32_t  CESR;                         /*!< 0000: Control/Error Status Register                                */
@@ -6141,8 +6274,8 @@ typedef struct {                                /*!<       MPU Structure        
 #define MPU_CESR_HRL_MASK                        (0x0FUL << MPU_CESR_HRL_SHIFT)                      /*!< MPU_CESR: HRL Mask                      */
 #define MPU_CESR_HRL_SHIFT                       16                                                  /*!< MPU_CESR: HRL Position                  */
 #define MPU_CESR_HRL(x)                          (((x)<<MPU_CESR_HRL_SHIFT)&MPU_CESR_HRL_MASK)       /*!< MPU_CESR                                */
-#define MPU_CESR_SPERR_MASK                      (0xFFUL << MPU_CESR_SPERR_SHIFT)                    /*!< MPU_CESR: SPERR Mask                    */
-#define MPU_CESR_SPERR_SHIFT                     24                                                  /*!< MPU_CESR: SPERR Position                */
+#define MPU_CESR_SPERR_MASK                      (0x1FUL << MPU_CESR_SPERR_SHIFT)                    /*!< MPU_CESR: SPERR Mask                    */
+#define MPU_CESR_SPERR_SHIFT                     27                                                  /*!< MPU_CESR: SPERR Position                */
 #define MPU_CESR_SPERR(x)                        (((x)<<MPU_CESR_SPERR_SHIFT)&MPU_CESR_SPERR_MASK)   /*!< MPU_CESR                                */
 
 /* ------- MPU_EAR                                  ------ */
@@ -6413,21 +6546,21 @@ typedef struct {                                /*!<       MPU Structure        
 #define MPU_RGDAAC11                   (MPU->RGDAAC11)
 
 /* ================================================================================ */
-/* ================           NV (file:NV_MK_1)                    ================ */
+/* ================           NV (file:NV_FTFE)                    ================ */
 /* ================================================================================ */
 
 /**
  * @brief Flash configuration field
  */
 typedef struct {                                /*!<       NV Structure                                                 */
-   __I  uint8_t   BACKKEY3;                     /*!< 0000: Backdoor Comparison Key                                      */
-   __I  uint8_t   BACKKEY2;                     /*!< 0001: Backdoor Comparison Key                                      */
-   __I  uint8_t   BACKKEY1;                     /*!< 0002: Backdoor Comparison Key                                      */
-   __I  uint8_t   BACKKEY0;                     /*!< 0003: Backdoor Comparison Key                                      */
-   __I  uint8_t   BACKKEY7;                     /*!< 0004: Backdoor Comparison Key                                      */
-   __I  uint8_t   BACKKEY6;                     /*!< 0005: Backdoor Comparison Key                                      */
-   __I  uint8_t   BACKKEY5;                     /*!< 0006: Backdoor Comparison Key                                      */
-   __I  uint8_t   BACKKEY4;                     /*!< 0007: Backdoor Comparison Key                                      */
+   __I  uint8_t   BACKKEY3;                     /*!< 0000: Backdoor Comparison Key 3                                    */
+   __I  uint8_t   BACKKEY2;                     /*!< 0001: Backdoor Comparison Key 2                                    */
+   __I  uint8_t   BACKKEY1;                     /*!< 0002: Backdoor Comparison Key 1                                    */
+   __I  uint8_t   BACKKEY0;                     /*!< 0003: Backdoor Comparison Key 0                                    */
+   __I  uint8_t   BACKKEY7;                     /*!< 0004: Backdoor Comparison Key 7                                    */
+   __I  uint8_t   BACKKEY6;                     /*!< 0005: Backdoor Comparison Key 6                                    */
+   __I  uint8_t   BACKKEY5;                     /*!< 0006: Backdoor Comparison Key 5                                    */
+   __I  uint8_t   BACKKEY4;                     /*!< 0007: Backdoor Comparison Key 4                                    */
    __I  uint8_t   FPROT3;                       /*!< 0008: Non-volatile P-Flash Protection Register                     */
    __I  uint8_t   FPROT2;                       /*!< 0009: Non-volatile P-Flash Protection Register                     */
    __I  uint8_t   FPROT1;                       /*!< 000A: Non-volatile P-Flash Protection Register                     */
@@ -6508,11 +6641,11 @@ typedef struct {                                /*!<       NV Structure         
 #define NV_FDPROT                      (NV->FDPROT)
 
 /* ================================================================================ */
-/* ================           OSC0 (file:OSC0_0)                   ================ */
+/* ================           OSC0 (file:OSC_0)                    ================ */
 /* ================================================================================ */
 
 /**
- * @brief Oscillator (OSC0)
+ * @brief System Oscillator
  */
 typedef struct {                                /*!<       OSC0 Structure                                               */
    __IO uint8_t   CR;                           /*!< 0000: OSC Control Register                                         */
@@ -6704,7 +6837,7 @@ typedef struct {                                /*!<       PDB0 Structure       
  * @brief Periodic Interrupt Timer (4 channels)
  */
 typedef struct {                                /*!<       PIT Structure                                                */
-   __IO uint32_t  MCR;                          /*!< 0000: PIT Module Control Register                                  */
+   __IO uint32_t  MCR;                          /*!< 0000: Module Control Register                                      */
    __I  uint32_t  RESERVED0[63];                /*!< 0004:                                                              */
    struct { /* (cluster) */                     /*!< 0100: (size=0x0040, 64)                                            */
       __IO uint32_t  LDVAL;                     /*!< 0100: Timer Load Value Register                                    */
@@ -6775,7 +6908,7 @@ typedef struct {                                /*!<       PIT Structure        
 /* ================================================================================ */
 
 /**
- * @brief Power Management Controller (PMC)
+ * @brief Power Management Controller
  */
 typedef struct {                                /*!<       PMC Structure                                                */
    __IO uint8_t   LVDSC1;                       /*!< 0000: Low Voltage Detect Status and Control 1 Register             */
@@ -6834,7 +6967,7 @@ typedef struct {                                /*!<       PMC Structure        
 /* ================================================================================ */
 
 /**
- * @brief Pin Control and Interrupts (PORTA)
+ * @brief Pin Control and Interrupts
  */
 typedef struct {                                /*!<       PORTA Structure                                              */
    __IO uint32_t  PCR[32];                      /*!< 0000: Pin Control Register n                                       */
@@ -6961,7 +7094,7 @@ typedef struct {                                /*!<       PORTA Structure      
 /* ================================================================================ */
 
 /**
- * @brief Pin Control and Interrupts (PORTB)
+ * @brief Pin Control and Interrupts
  */
 typedef PORTA_Type PORTB_Type;  /*!< PORTB Structure                                             */
 
@@ -7014,7 +7147,7 @@ typedef PORTA_Type PORTB_Type;  /*!< PORTB Structure                            
 /* ================================================================================ */
 
 /**
- * @brief Pin Control and Interrupts (PORTC)
+ * @brief Pin Control and Interrupts
  */
 typedef PORTA_Type PORTC_Type;  /*!< PORTC Structure                                             */
 
@@ -7067,7 +7200,7 @@ typedef PORTA_Type PORTC_Type;  /*!< PORTC Structure                            
 /* ================================================================================ */
 
 /**
- * @brief Pin Control and Interrupts (PORTD)
+ * @brief Pin Control and Interrupts
  */
 typedef PORTA_Type PORTD_Type;  /*!< PORTD Structure                                             */
 
@@ -7120,7 +7253,7 @@ typedef PORTA_Type PORTD_Type;  /*!< PORTD Structure                            
 /* ================================================================================ */
 
 /**
- * @brief Pin Control and Interrupts (PORTE)
+ * @brief Pin Control and Interrupts
  */
 typedef PORTA_Type PORTE_Type;  /*!< PORTE Structure                                             */
 
@@ -7173,14 +7306,14 @@ typedef PORTA_Type PORTE_Type;  /*!< PORTE Structure                            
 /* ================================================================================ */
 
 /**
- * @brief Reset Control Module (RCM)
+ * @brief Reset Control Module
  */
 typedef struct {                                /*!<       RCM Structure                                                */
    __I  uint8_t   SRS0;                         /*!< 0000: System Reset Status Register 0                               */
    __I  uint8_t   SRS1;                         /*!< 0001: System Reset Status Register 1                               */
    __I  uint16_t  RESERVED0;                    /*!< 0002:                                                              */
    __IO uint8_t   RPFC;                         /*!< 0004: Reset Pin Filter Control Register                            */
-   __IO uint8_t   RPFW;                         /*!< 0005: Reset Pin Filter Width register                              */
+   __IO uint8_t   RPFW;                         /*!< 0005: Reset Pin Filter Width Register                              */
    __I  uint8_t   RESERVED1;                    /*!< 0006:                                                              */
    __I  uint8_t   MR;                           /*!< 0007: Mode Register                                                */
 } RCM_Type;
@@ -7220,6 +7353,8 @@ typedef struct {                                /*!<       RCM Structure        
 #define RCM_SRS1_EZPT_SHIFT                      4                                                   /*!< RCM_SRS1: EZPT Position                 */
 #define RCM_SRS1_SACKERR_MASK                    (0x01UL << RCM_SRS1_SACKERR_SHIFT)                  /*!< RCM_SRS1: SACKERR Mask                  */
 #define RCM_SRS1_SACKERR_SHIFT                   5                                                   /*!< RCM_SRS1: SACKERR Position              */
+#define RCM_SRS1_TAMPER_MASK                     (0x01UL << RCM_SRS1_TAMPER_SHIFT)                   /*!< RCM_SRS1: TAMPER Mask                   */
+#define RCM_SRS1_TAMPER_SHIFT                    7                                                   /*!< RCM_SRS1: TAMPER Position               */
 
 /* ------- RCM_RPFC                                 ------ */
 #define RCM_RPFC_RSTFLTSRW_MASK                  (0x03UL << RCM_RPFC_RSTFLTSRW_SHIFT)                /*!< RCM_RPFC: RSTFLTSRW Mask                */
@@ -7340,24 +7475,24 @@ typedef struct {                                /*!<       RFVBAT Structure     
 /* ================================================================================ */
 
 /**
- * @brief Secure Real Time Clock (RTC)
+ * @brief Secure Real Time Clock
  */
 typedef struct {                                /*!<       RTC Structure                                                */
-   __IO uint32_t  TSR;                          /*!< 0000: RTC Time Seconds Register                                    */
-   __IO uint32_t  TPR;                          /*!< 0004: RTC Time Prescaler Register                                  */
-   __IO uint32_t  TAR;                          /*!< 0008: RTC Time Alarm Register                                      */
-   __IO uint32_t  TCR;                          /*!< 000C: RTC Time Compensation Register                               */
-   __IO uint32_t  CR;                           /*!< 0010: RTC Control Register                                         */
-   __IO uint32_t  SR;                           /*!< 0014: RTC Status Register                                          */
-   __IO uint32_t  LR;                           /*!< 0018: RTC Lock Register                                            */
-   __IO uint32_t  IER;                          /*!< 001C: RTC Interrupt Enable Register                                */
-   __I  uint32_t  TTSR;                         /*!< 0020: RTC Tamper Time Seconds Register                             */
-   __IO uint32_t  MER;                          /*!< 0024: RTC Monotonic Enable Register                                */
-   __IO uint32_t  MCLR;                         /*!< 0028: RTC Monotonic Counter Low Register                           */
-   __IO uint32_t  MCHR;                         /*!< 002C: RTC Monotonic Counter High Register                          */
+   __IO uint32_t  TSR;                          /*!< 0000: Time Seconds Register                                        */
+   __IO uint32_t  TPR;                          /*!< 0004: Time Prescaler Register                                      */
+   __IO uint32_t  TAR;                          /*!< 0008: Time Alarm Register                                          */
+   __IO uint32_t  TCR;                          /*!< 000C: Time Compensation Register                                   */
+   __IO uint32_t  CR;                           /*!< 0010: Control Register                                             */
+   __IO uint32_t  SR;                           /*!< 0014: Status Register                                              */
+   __IO uint32_t  LR;                           /*!< 0018: Lock Register                                                */
+   __IO uint32_t  IER;                          /*!< 001C: Interrupt Enable Register                                    */
+   __I  uint32_t  TTSR;                         /*!< 0020: Tamper Time Seconds Register                                 */
+   __IO uint32_t  MER;                          /*!< 0024: Monotonic Enable Register                                    */
+   __IO uint32_t  MCLR;                         /*!< 0028: Monotonic Counter Low Register                               */
+   __IO uint32_t  MCHR;                         /*!< 002C: Monotonic Counter High Register                              */
    __I  uint32_t  RESERVED0[500];               /*!< 0030:                                                              */
-   __IO uint32_t  WAR;                          /*!< 0800: RTC Write Access Register                                    */
-   __IO uint32_t  RAR;                          /*!< 0804: RTC Read Access Register                                     */
+   __IO uint32_t  WAR;                          /*!< 0800: Write Access Register                                        */
+   __IO uint32_t  RAR;                          /*!< 0804: Read Access Register                                         */
 } RTC_Type;
 
 
@@ -7556,7 +7691,7 @@ typedef struct {                                /*!<       RTC Structure        
 /* ================================================================================ */
 
 /**
- * @brief Secured Digital Host Controller (SDHC)
+ * @brief Secured Digital Host Controller
  */
 typedef struct {                                /*!<       SDHC Structure                                               */
    __IO uint32_t  DSADDR;                       /*!< 0000: DMA System Address Register                                  */
@@ -8009,7 +8144,7 @@ typedef struct {                                /*!<       SDHC Structure       
 /* ================================================================================ */
 
 /**
- * @brief System Integration Module (SIM)
+ * @brief System Integration Module
  */
 typedef struct {                                /*!<       SIM Structure                                                */
    __IO uint32_t  SOPT1;                        /*!< 0000: System Options Register 1                                    */
@@ -8390,7 +8525,7 @@ typedef struct {                                /*!<       SIM Structure        
 /* ================================================================================ */
 
 /**
- * @brief System Mode Controller (SMC)
+ * @brief System Mode Controller
  */
 typedef struct {                                /*!<       SMC Structure                                                */
    __IO uint8_t   PMPROT;                       /*!< 0000: Power Mode Protection Register                               */
@@ -8455,7 +8590,7 @@ typedef struct {                                /*!<       SMC Structure        
 /* ================================================================================ */
 
 /**
- * @brief Serial Peripheral Interface (SPI0)
+ * @brief Serial Peripheral Interface
  */
 typedef struct {                                /*!<       SPI0 Structure                                               */
    __IO uint32_t  MCR;                          /*!< 0000: Module Configuration Register                                */
@@ -8466,16 +8601,16 @@ typedef struct {                                /*!<       SPI0 Structure       
       __IO uint32_t  CTAR0_SLAVE;               /*!< 000C: Clock and Transfer Attributes Register (In Slave Mode)       */
    };
    __I  uint32_t  RESERVED1[6];                 /*!< 0014:                                                              */
-   __IO uint32_t  SR;                           /*!< 002C: DSPI Status Register                                         */
+   __IO uint32_t  SR;                           /*!< 002C: Status Register                                              */
    __IO uint32_t  RSER;                         /*!< 0030: DMA/Interrupt Request Select and Enable Register             */
    union {                                      /*!< 0000: (size=0004)                                                  */
       __IO uint32_t  PUSHR;                     /*!< 0034: PUSH TX FIFO Register In Master Mode                         */
       __IO uint32_t  PUSHR_SLAVE;               /*!< 0034: PUSH TX FIFO Register In Slave Mode                          */
    };
    __I  uint32_t  POPR;                         /*!< 0038: POP RX FIFO Register                                         */
-   __I  uint32_t  TXFR[4];                      /*!< 003C: DSPI Transmit FIFO                                           */
+   __I  uint32_t  TXFR[4];                      /*!< 003C: Transmit FIFO                                                */
    __I  uint32_t  RESERVED2[12];                /*!< 004C:                                                              */
-   __I  uint32_t  RXFR[4];                      /*!< 007C: DSPI Receive FIFO                                            */
+   __I  uint32_t  RXFR[4];                      /*!< 007C: Receive FIFO                                                 */
 } SPI0_Type;
 
 
@@ -8686,7 +8821,7 @@ typedef struct {                                /*!<       SPI0 Structure       
 /* ================================================================================ */
 
 /**
- * @brief Serial Peripheral Interface (SPI1)
+ * @brief Serial Peripheral Interface
  */
 typedef struct {                                /*!<       SPI1 Structure                                               */
    __IO uint32_t  MCR;                          /*!< 0000: Module Configuration Register                                */
@@ -8697,7 +8832,7 @@ typedef struct {                                /*!<       SPI1 Structure       
       __IO uint32_t  CTAR0_SLAVE;               /*!< 000C: Clock and Transfer Attributes Register (In Slave Mode)       */
    };
    __I  uint32_t  RESERVED1[6];                 /*!< 0014:                                                              */
-   __IO uint32_t  SR;                           /*!< 002C: DSPI Status Register                                         */
+   __IO uint32_t  SR;                           /*!< 002C: Status Register                                              */
    __IO uint32_t  RSER;                         /*!< 0030: DMA/Interrupt Request Select and Enable Register             */
    union {                                      /*!< 0000: (size=0004)                                                  */
       __IO uint32_t  PUSHR;                     /*!< 0034: PUSH TX FIFO Register In Master Mode                         */
@@ -8706,7 +8841,7 @@ typedef struct {                                /*!<       SPI1 Structure       
    __I  uint32_t  POPR;                         /*!< 0038: POP RX FIFO Register                                         */
    __I  uint32_t  TXFR[1];                      /*!< 003C: DSPI Transmit FIFO                                           */
    __I  uint32_t  RESERVED2[15];                /*!< 0040:                                                              */
-   __I  uint32_t  RXFR[1];                      /*!< 007C: DSPI Receive FIFO                                            */
+   __I  uint32_t  RXFR[1];                      /*!< 007C: Receive FIFO                                                 */
 } SPI1_Type;
 
 
@@ -8759,7 +8894,7 @@ typedef struct {                                /*!<       SPI1 Structure       
 /* ================================================================================ */
 
 /**
- * @brief Serial Peripheral Interface (SPI2)
+ * @brief Serial Peripheral Interface
  */
 typedef SPI1_Type SPI2_Type;  /*!< SPI2 Structure                                              */
 
@@ -8780,6 +8915,64 @@ typedef SPI1_Type SPI2_Type;  /*!< SPI2 Structure                               
 #define SPI2_POPR                      (SPI2->POPR)
 #define SPI2_TXFR0                     (SPI2->TXFR[0])
 #define SPI2_RXFR0                     (SPI2->RXFR[0])
+
+/* ================================================================================ */
+/* ================           SYST (file:SysTick_0)                ================ */
+/* ================================================================================ */
+
+/**
+ * @brief System timer SysTick
+ */
+typedef struct {                                /*!<       SYST Structure                                               */
+   __IO uint32_t  CSR;                          /*!< 0000: Control and Status Register                                  */
+   __IO uint32_t  RVR;                          /*!< 0004: Reload Value Register                                        */
+   __IO uint32_t  CVR;                          /*!< 0008: Current Value Register                                       */
+   __I  uint32_t  CALIB;                        /*!< 000C: Calibration Value Register                                   */
+} SYST_Type;
+
+
+/* -------------------------------------------------------------------------------- */
+/* -----------     'SYST' Position & Mask macros                        ----------- */
+/* -------------------------------------------------------------------------------- */
+
+
+/* ------- SYST_CSR                                 ------ */
+#define SYST_CSR_ENABLE_MASK                     (0x01UL << SYST_CSR_ENABLE_SHIFT)                   /*!< SYST_CSR: ENABLE Mask                   */
+#define SYST_CSR_ENABLE_SHIFT                    0                                                   /*!< SYST_CSR: ENABLE Position               */
+#define SYST_CSR_TICKINT_MASK                    (0x01UL << SYST_CSR_TICKINT_SHIFT)                  /*!< SYST_CSR: TICKINT Mask                  */
+#define SYST_CSR_TICKINT_SHIFT                   1                                                   /*!< SYST_CSR: TICKINT Position              */
+#define SYST_CSR_CLKSOURCE_MASK                  (0x01UL << SYST_CSR_CLKSOURCE_SHIFT)                /*!< SYST_CSR: CLKSOURCE Mask                */
+#define SYST_CSR_CLKSOURCE_SHIFT                 2                                                   /*!< SYST_CSR: CLKSOURCE Position            */
+#define SYST_CSR_COUNTFLAG_MASK                  (0x01UL << SYST_CSR_COUNTFLAG_SHIFT)                /*!< SYST_CSR: COUNTFLAG Mask                */
+#define SYST_CSR_COUNTFLAG_SHIFT                 16                                                  /*!< SYST_CSR: COUNTFLAG Position            */
+
+/* ------- SYST_RVR                                 ------ */
+#define SYST_RVR_RELOAD_MASK                     (0xFFFFFFUL << SYST_RVR_RELOAD_SHIFT)               /*!< SYST_RVR: RELOAD Mask                   */
+#define SYST_RVR_RELOAD_SHIFT                    0                                                   /*!< SYST_RVR: RELOAD Position               */
+#define SYST_RVR_RELOAD(x)                       (((x)<<SYST_RVR_RELOAD_SHIFT)&SYST_RVR_RELOAD_MASK) /*!< SYST_RVR                                */
+
+/* ------- SYST_CVR                                 ------ */
+#define SYST_CVR_CURRENT_MASK                    (0xFFFFFFUL << SYST_CVR_CURRENT_SHIFT)              /*!< SYST_CVR: CURRENT Mask                  */
+#define SYST_CVR_CURRENT_SHIFT                   0                                                   /*!< SYST_CVR: CURRENT Position              */
+#define SYST_CVR_CURRENT(x)                      (((x)<<SYST_CVR_CURRENT_SHIFT)&SYST_CVR_CURRENT_MASK) /*!< SYST_CVR                                */
+
+/* ------- SYST_CALIB                               ------ */
+#define SYST_CALIB_TENMS_MASK                    (0xFFFFFFUL << SYST_CALIB_TENMS_SHIFT)              /*!< SYST_CALIB: TENMS Mask                  */
+#define SYST_CALIB_TENMS_SHIFT                   0                                                   /*!< SYST_CALIB: TENMS Position              */
+#define SYST_CALIB_TENMS(x)                      (((x)<<SYST_CALIB_TENMS_SHIFT)&SYST_CALIB_TENMS_MASK) /*!< SYST_CALIB                              */
+#define SYST_CALIB_SKEW_MASK                     (0x01UL << SYST_CALIB_SKEW_SHIFT)                   /*!< SYST_CALIB: SKEW Mask                   */
+#define SYST_CALIB_SKEW_SHIFT                    30                                                  /*!< SYST_CALIB: SKEW Position               */
+#define SYST_CALIB_NOREF_MASK                    (0x01UL << SYST_CALIB_NOREF_SHIFT)                  /*!< SYST_CALIB: NOREF Mask                  */
+#define SYST_CALIB_NOREF_SHIFT                   31                                                  /*!< SYST_CALIB: NOREF Position              */
+
+/* -------------------------------------------------------------------------------- */
+/* -----------     'SYST' Register Access macros                        ----------- */
+/* -------------------------------------------------------------------------------- */
+
+#define SYST_CSR                       (SYST->CSR)
+#define SYST_RVR                       (SYST->RVR)
+#define SYST_CVR                       (SYST->CVR)
+#define SYST_CALIB                     (SYST->CALIB)
 
 /* ================================================================================ */
 /* ================           TPIU (file:TPIU_0)                   ================ */
@@ -9063,44 +9256,44 @@ typedef struct {                                /*!<       TPIU Structure       
 /* ================================================================================ */
 
 /**
- * @brief Universal Asynchronous Receiver/Transmitter (UART)
+ * @brief Universal Asynchronous Receiver/Transmitter
  */
 typedef struct {                                /*!<       UART0 Structure                                              */
-   __IO uint8_t   BDH;                          /*!< 0000: UART Baud Rate Register: High                                */
-   __IO uint8_t   BDL;                          /*!< 0001: UART Baud Rate Register: Low                                 */
-   __IO uint8_t   C1;                           /*!< 0002: UART Control Register 1                                      */
-   __IO uint8_t   C2;                           /*!< 0003: UART Control Register 2                                      */
-   __I  uint8_t   S1;                           /*!< 0004: UART Status Register 1                                       */
-   __IO uint8_t   S2;                           /*!< 0005: UART Status Register 2                                       */
-   __IO uint8_t   C3;                           /*!< 0006: UART Control Register 3                                      */
-   __IO uint8_t   D;                            /*!< 0007: UART Data Register                                           */
-   __IO uint8_t   MA1;                          /*!< 0008: UART Match Address Registers 1                               */
-   __IO uint8_t   MA2;                          /*!< 0009: UART Match Address Registers 2                               */
-   __IO uint8_t   C4;                           /*!< 000A: UART Control Register 4                                      */
-   __IO uint8_t   C5;                           /*!< 000B: UART Control Register 5                                      */
-   __I  uint8_t   ED;                           /*!< 000C: UART Extended Data Register                                  */
-   __IO uint8_t   MODEM;                        /*!< 000D: UART Modem Register                                          */
-   __IO uint8_t   IR;                           /*!< 000E: UART Infrared Register                                       */
+   __IO uint8_t   BDH;                          /*!< 0000: Baud Rate Register: High                                     */
+   __IO uint8_t   BDL;                          /*!< 0001: Baud Rate Register: Low                                      */
+   __IO uint8_t   C1;                           /*!< 0002: Control Register 1                                           */
+   __IO uint8_t   C2;                           /*!< 0003: Control Register 2                                           */
+   __I  uint8_t   S1;                           /*!< 0004: Status Register 1                                            */
+   __IO uint8_t   S2;                           /*!< 0005: Status Register 2                                            */
+   __IO uint8_t   C3;                           /*!< 0006: Control Register 3                                           */
+   __IO uint8_t   D;                            /*!< 0007: Data Register                                                */
+   __IO uint8_t   MA1;                          /*!< 0008: Match Address Registers 1                                    */
+   __IO uint8_t   MA2;                          /*!< 0009: Match Address Registers 2                                    */
+   __IO uint8_t   C4;                           /*!< 000A: Control Register 4                                           */
+   __IO uint8_t   C5;                           /*!< 000B: Control Register 5                                           */
+   __I  uint8_t   ED;                           /*!< 000C: Extended Data Register                                       */
+   __IO uint8_t   MODEM;                        /*!< 000D: Modem Register                                               */
+   __IO uint8_t   IR;                           /*!< 000E: Infrared Register                                            */
    __I  uint8_t   RESERVED0;                    /*!< 000F:                                                              */
-   __IO uint8_t   PFIFO;                        /*!< 0010: UART FIFO Parameters                                         */
-   __IO uint8_t   CFIFO;                        /*!< 0011: UART FIFO Control Register                                   */
-   __IO uint8_t   SFIFO;                        /*!< 0012: UART FIFO Status Register                                    */
-   __IO uint8_t   TWFIFO;                       /*!< 0013: UART FIFO Transmit Watermark                                 */
-   __I  uint8_t   TCFIFO;                       /*!< 0014: UART FIFO Transmit Count                                     */
-   __IO uint8_t   RWFIFO;                       /*!< 0015: UART FIFO Receive Watermark                                  */
-   __I  uint8_t   RCFIFO;                       /*!< 0016: UART FIFO Receive Count                                      */
+   __IO uint8_t   PFIFO;                        /*!< 0010: FIFO Parameters                                              */
+   __IO uint8_t   CFIFO;                        /*!< 0011: FIFO Control Register                                        */
+   __IO uint8_t   SFIFO;                        /*!< 0012: FIFO Status Register                                         */
+   __IO uint8_t   TWFIFO;                       /*!< 0013: FIFO Transmit Watermark                                      */
+   __I  uint8_t   TCFIFO;                       /*!< 0014: FIFO Transmit Count                                          */
+   __IO uint8_t   RWFIFO;                       /*!< 0015: FIFO Receive Watermark                                       */
+   __I  uint8_t   RCFIFO;                       /*!< 0016: FIFO Receive Count                                           */
    __I  uint8_t   RESERVED1;                    /*!< 0017:                                                              */
-   __IO uint8_t   C7816;                        /*!< 0018: UART 7816 Control Register                                   */
-   __IO uint8_t   IE7816;                       /*!< 0019: UART 7816 Interrupt Enable Register                          */
-   __IO uint8_t   IS7816;                       /*!< 001A: UART 7816 Interrupt Status Register                          */
+   __IO uint8_t   C7816;                        /*!< 0018: 7816 Control Register                                        */
+   __IO uint8_t   IE7816;                       /*!< 0019: 7816 Interrupt Enable Register                               */
+   __IO uint8_t   IS7816;                       /*!< 001A: 7816 Interrupt Status Register                               */
    union {                                      /*!< 0000: (size=0001)                                                  */
-      __IO uint8_t   WP7816T0;                  /*!< 001B: UART 7816 Wait Parameter Register                            */
-      __IO uint8_t   WP7816T1;                  /*!< 001B: UART 7816 Wait Parameter Register                            */
+      __IO uint8_t   WP7816T0;                  /*!< 001B: 7816 Wait Parameter Register                                 */
+      __IO uint8_t   WP7816T1;                  /*!< 001B: 7816 Wait Parameter Register                                 */
    };
-   __IO uint8_t   WN7816;                       /*!< 001C: UART 7816 Wait N Register                                    */
-   __IO uint8_t   WF7816;                       /*!< 001D: UART 7816 Wait FD Register                                   */
-   __IO uint8_t   ET7816;                       /*!< 001E: UART 7816 Error Threshold Register                           */
-   __IO uint8_t   TL7816;                       /*!< 001F: UART 7816 Transmit Length Register                           */
+   __IO uint8_t   WN7816;                       /*!< 001C: 7816 Wait N Register                                         */
+   __IO uint8_t   WF7816;                       /*!< 001D: 7816 Wait FD Register                                        */
+   __IO uint8_t   ET7816;                       /*!< 001E: 7816 Error Threshold Register                                */
+   __IO uint8_t   TL7816;                       /*!< 001F: 7816 Transmit Length Register                                */
 } UART0_Type;
 
 
@@ -9440,7 +9633,7 @@ typedef struct {                                /*!<       UART0 Structure      
 /* ================================================================================ */
 
 /**
- * @brief Universal Asynchronous Receiver/Transmitter (UART)
+ * @brief Universal Asynchronous Receiver/Transmitter
  */
 typedef UART0_Type UART1_Type;  /*!< UART1 Structure                                             */
 
@@ -9486,32 +9679,32 @@ typedef UART0_Type UART1_Type;  /*!< UART1 Structure                            
 /* ================================================================================ */
 
 /**
- * @brief Universal Asynchronous Receiver/Transmitter (UART)
+ * @brief Universal Asynchronous Receiver/Transmitter
  */
 typedef struct {                                /*!<       UART2 Structure                                              */
-   __IO uint8_t   BDH;                          /*!< 0000: UART Baud Rate Register: High                                */
-   __IO uint8_t   BDL;                          /*!< 0001: UART Baud Rate Register: Low                                 */
-   __IO uint8_t   C1;                           /*!< 0002: UART Control Register 1                                      */
-   __IO uint8_t   C2;                           /*!< 0003: UART Control Register 2                                      */
-   __I  uint8_t   S1;                           /*!< 0004: UART Status Register 1                                       */
-   __IO uint8_t   S2;                           /*!< 0005: UART Status Register 2                                       */
-   __IO uint8_t   C3;                           /*!< 0006: UART Control Register 3                                      */
-   __IO uint8_t   D;                            /*!< 0007: UART Data Register                                           */
-   __IO uint8_t   MA1;                          /*!< 0008: UART Match Address Registers 1                               */
-   __IO uint8_t   MA2;                          /*!< 0009: UART Match Address Registers 2                               */
-   __IO uint8_t   C4;                           /*!< 000A: UART Control Register 4                                      */
-   __IO uint8_t   C5;                           /*!< 000B: UART Control Register 5                                      */
-   __I  uint8_t   ED;                           /*!< 000C: UART Extended Data Register                                  */
-   __IO uint8_t   MODEM;                        /*!< 000D: UART Modem Register                                          */
-   __IO uint8_t   IR;                           /*!< 000E: UART Infrared Register                                       */
+   __IO uint8_t   BDH;                          /*!< 0000: Baud Rate Register: High                                     */
+   __IO uint8_t   BDL;                          /*!< 0001: Baud Rate Register: Low                                      */
+   __IO uint8_t   C1;                           /*!< 0002: Control Register 1                                           */
+   __IO uint8_t   C2;                           /*!< 0003: Control Register 2                                           */
+   __I  uint8_t   S1;                           /*!< 0004: Status Register 1                                            */
+   __IO uint8_t   S2;                           /*!< 0005: Status Register 2                                            */
+   __IO uint8_t   C3;                           /*!< 0006: Control Register 3                                           */
+   __IO uint8_t   D;                            /*!< 0007: Data Register                                                */
+   __IO uint8_t   MA1;                          /*!< 0008: Match Address Registers 1                                    */
+   __IO uint8_t   MA2;                          /*!< 0009: Match Address Registers 2                                    */
+   __IO uint8_t   C4;                           /*!< 000A: Control Register 4                                           */
+   __IO uint8_t   C5;                           /*!< 000B: Control Register 5                                           */
+   __I  uint8_t   ED;                           /*!< 000C: Extended Data Register                                       */
+   __IO uint8_t   MODEM;                        /*!< 000D: Modem Register                                               */
+   __IO uint8_t   IR;                           /*!< 000E: Infrared Register                                            */
    __I  uint8_t   RESERVED0;                    /*!< 000F:                                                              */
-   __IO uint8_t   PFIFO;                        /*!< 0010: UART FIFO Parameters                                         */
-   __IO uint8_t   CFIFO;                        /*!< 0011: UART FIFO Control Register                                   */
-   __IO uint8_t   SFIFO;                        /*!< 0012: UART FIFO Status Register                                    */
-   __IO uint8_t   TWFIFO;                       /*!< 0013: UART FIFO Transmit Watermark                                 */
-   __I  uint8_t   TCFIFO;                       /*!< 0014: UART FIFO Transmit Count                                     */
-   __IO uint8_t   RWFIFO;                       /*!< 0015: UART FIFO Receive Watermark                                  */
-   __I  uint8_t   RCFIFO;                       /*!< 0016: UART FIFO Receive Count                                      */
+   __IO uint8_t   PFIFO;                        /*!< 0010: FIFO Parameters                                              */
+   __IO uint8_t   CFIFO;                        /*!< 0011: FIFO Control Register                                        */
+   __IO uint8_t   SFIFO;                        /*!< 0012: FIFO Status Register                                         */
+   __IO uint8_t   TWFIFO;                       /*!< 0013: FIFO Transmit Watermark                                      */
+   __I  uint8_t   TCFIFO;                       /*!< 0014: FIFO Transmit Count                                          */
+   __IO uint8_t   RWFIFO;                       /*!< 0015: FIFO Receive Watermark                                       */
+   __I  uint8_t   RCFIFO;                       /*!< 0016: FIFO Receive Count                                           */
 } UART2_Type;
 
 
@@ -9594,7 +9787,7 @@ typedef struct {                                /*!<       UART2 Structure      
 /* ================================================================================ */
 
 /**
- * @brief Serial Communication Interface (UART3)
+ * @brief Universal Asynchronous Receiver/Transmitter
  */
 typedef UART2_Type UART3_Type;  /*!< UART3 Structure                                             */
 
@@ -9631,7 +9824,7 @@ typedef UART2_Type UART3_Type;  /*!< UART3 Structure                            
 /* ================================================================================ */
 
 /**
- * @brief Serial Communication Interface (UART4)
+ * @brief Universal Asynchronous Receiver/Transmitter
  */
 typedef UART2_Type UART4_Type;  /*!< UART4 Structure                                             */
 
@@ -9668,7 +9861,7 @@ typedef UART2_Type UART4_Type;  /*!< UART4 Structure                            
 /* ================================================================================ */
 
 /**
- * @brief Serial Communication Interface (UART5)
+ * @brief Universal Asynchronous Receiver/Transmitter
  */
 typedef UART2_Type UART5_Type;  /*!< UART5 Structure                                             */
 
@@ -9701,11 +9894,11 @@ typedef UART2_Type UART5_Type;  /*!< UART5 Structure                            
 #define UART5_RCFIFO                   (UART5->RCFIFO)
 
 /* ================================================================================ */
-/* ================           USB0 (file:USB0_CLK_RECOVER)         ================ */
+/* ================           USB0 (file:USB0_MK_MKL)              ================ */
 /* ================================================================================ */
 
 /**
- * @brief Universal Serial Bus, OTG Capable Controller (USB0)
+ * @brief Universal Serial Bus, OTG Capable Controller
  */
 typedef struct {                                /*!<       USB0 Structure                                               */
    __I  uint8_t   PERID;                        /*!< 0000: Peripheral ID Register                                       */
@@ -9765,12 +9958,6 @@ typedef struct {                                /*!<       USB0 Structure       
    __IO uint8_t   USBTRC0;                      /*!< 010C: USB Transceiver Control Register 0                           */
    __I  uint8_t   RESERVED25[7];                /*!< 010D:                                                              */
    __IO uint8_t   USBFRMADJUST;                 /*!< 0114: Frame Adjust Register                                        */
-   __I  uint8_t   RESERVED26[43];               /*!< 0115:                                                              */
-   __IO uint8_t   CLK_RECOVER_CTRL;             /*!< 0140: USB Clock recovery control                                   */
-   __I  uint8_t   RESERVED27[3];                /*!< 0141:                                                              */
-   __IO uint8_t   CLK_RECOVER_IRC_EN;           /*!< 0144: IRC48M oscillator enable register                            */
-   __I  uint8_t   RESERVED28[23];               /*!< 0145:                                                              */
-   __IO uint8_t   CLK_RECOVER_INT_STATUS;       /*!< 015C: Clock recovery separated interrupt status                    */
 } USB0_Type;
 
 
@@ -10042,24 +10229,6 @@ typedef struct {                                /*!<       USB0 Structure       
 #define USB0_USBFRMADJUST_ADJ_SHIFT              0                                                   /*!< USB0_USBFRMADJUST: ADJ Position         */
 #define USB0_USBFRMADJUST_ADJ(x)                 (((x)<<USB0_USBFRMADJUST_ADJ_SHIFT)&USB0_USBFRMADJUST_ADJ_MASK) /*!< USB0_USBFRMADJUST                       */
 
-/* ------- USB0_CLK_RECOVER_CTRL                    ------ */
-#define USB0_CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN_MASK (0x01UL << USB0_CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN_SHIFT) /*!< USB0_CLK_RECOVER_CTRL: RESTART_IFRTRIM_EN Mask*/
-#define USB0_CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN_SHIFT 5                                             /*!< USB0_CLK_RECOVER_CTRL: RESTART_IFRTRIM_EN Position*/
-#define USB0_CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN_MASK (0x01UL << USB0_CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN_SHIFT) /*!< USB0_CLK_RECOVER_CTRL: RESET_RESUME_ROUGH_EN Mask*/
-#define USB0_CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN_SHIFT 6                                          /*!< USB0_CLK_RECOVER_CTRL: RESET_RESUME_ROUGH_EN Position*/
-#define USB0_CLK_RECOVER_CTRL_CLOCK_RECOVER_EN_MASK (0x01UL << USB0_CLK_RECOVER_CTRL_CLOCK_RECOVER_EN_SHIFT) /*!< USB0_CLK_RECOVER_CTRL: CLOCK_RECOVER_EN Mask*/
-#define USB0_CLK_RECOVER_CTRL_CLOCK_RECOVER_EN_SHIFT 7                                               /*!< USB0_CLK_RECOVER_CTRL: CLOCK_RECOVER_EN Position*/
-
-/* ------- USB0_CLK_RECOVER_IRC_EN                  ------ */
-#define USB0_CLK_RECOVER_IRC_EN_REG_EN_MASK      (0x01UL << USB0_CLK_RECOVER_IRC_EN_REG_EN_SHIFT)    /*!< USB0_CLK_RECOVER_IRC_EN: REG_EN Mask    */
-#define USB0_CLK_RECOVER_IRC_EN_REG_EN_SHIFT     0                                                   /*!< USB0_CLK_RECOVER_IRC_EN: REG_EN Position*/
-#define USB0_CLK_RECOVER_IRC_EN_IRC_EN_MASK      (0x01UL << USB0_CLK_RECOVER_IRC_EN_IRC_EN_SHIFT)    /*!< USB0_CLK_RECOVER_IRC_EN: IRC_EN Mask    */
-#define USB0_CLK_RECOVER_IRC_EN_IRC_EN_SHIFT     1                                                   /*!< USB0_CLK_RECOVER_IRC_EN: IRC_EN Position*/
-
-/* ------- USB0_CLK_RECOVER_INT_STATUS              ------ */
-#define USB0_CLK_RECOVER_INT_STATUS_OVF_ERROR_MASK (0x01UL << USB0_CLK_RECOVER_INT_STATUS_OVF_ERROR_SHIFT) /*!< USB0_CLK_RECOVER_INT_STATUS: OVF_ERROR Mask*/
-#define USB0_CLK_RECOVER_INT_STATUS_OVF_ERROR_SHIFT 4                                                /*!< USB0_CLK_RECOVER_INT_STATUS: OVF_ERROR Position*/
-
 /* -------------------------------------------------------------------------------- */
 /* -----------     'USB0' Register Access macros                        ----------- */
 /* -------------------------------------------------------------------------------- */
@@ -10107,9 +10276,6 @@ typedef struct {                                /*!<       USB0 Structure       
 #define USB0_CONTROL                   (USB0->CONTROL)
 #define USB0_USBTRC0                   (USB0->USBTRC0)
 #define USB0_USBFRMADJUST              (USB0->USBFRMADJUST)
-#define USB0_CLK_RECOVER_CTRL          (USB0->CLK_RECOVER_CTRL)
-#define USB0_CLK_RECOVER_IRC_EN        (USB0->CLK_RECOVER_IRC_EN)
-#define USB0_CLK_RECOVER_INT_STATUS    (USB0->CLK_RECOVER_INT_STATUS)
 
 /* ================================================================================ */
 /* ================           USBDCD (file:USBDCD_V1.1)            ================ */
@@ -10207,11 +10373,11 @@ typedef struct {                                /*!<       USBDCD Structure     
 /* ================================================================================ */
 
 /**
- * @brief Voltage Reference (VREF)
+ * @brief Voltage Reference
  */
 typedef struct {                                /*!<       VREF Structure                                               */
-   __IO uint8_t   TRM;                          /*!< 0000: VREF Trim Register                                           */
-   __IO uint8_t   SC;                           /*!< 0001: VREF Status and Control Register                             */
+   __IO uint8_t   TRM;                          /*!< 0000: Trim Register                                                */
+   __IO uint8_t   SC;                           /*!< 0001: Status and Control Register                                  */
 } VREF_Type;
 
 
@@ -10248,36 +10414,36 @@ typedef struct {                                /*!<       VREF Structure       
 /* ================================================================================ */
 
 /**
- * @brief Generation 2008 Watchdog Timer (WDOG)
+ * @brief Generation 2008 Watchdog Timer
  */
 typedef struct {                                /*!<       WDOG Structure                                               */
-   __IO uint16_t  STCTRLH;                      /*!< 0000: Watchdog Status and Control Register High                    */
-   __IO uint16_t  STCTRLL;                      /*!< 0002: Watchdog Status and Control Register Low                     */
+   __IO uint16_t  STCTRLH;                      /*!< 0000: Status and Control Register High                             */
+   __IO uint16_t  STCTRLL;                      /*!< 0002: Status and Control Register Low                              */
    union {                                      /*!< 0000: (size=0004)                                                  */
-      __IO uint32_t  TOVAL;                     /*!< 0004: Watchdog Time-out Value Register High TOVALL:TOVALH          */
+      __IO uint32_t  TOVAL;                     /*!< 0004: Time-out Value Register High TOVALL:TOVALH                   */
       struct {                                  /*!< 0000: (size=0004)                                                  */
-         __IO uint16_t  TOVALH;                 /*!< 0004: Watchdog Time-out Value Register High                        */
-         __IO uint16_t  TOVALL;                 /*!< 0006: Watchdog Time-out Value Register Low                         */
+         __IO uint16_t  TOVALH;                 /*!< 0004: Time-out Value Register High                                 */
+         __IO uint16_t  TOVALL;                 /*!< 0006: Time-out Value Register Low                                  */
       };
    };
    union {                                      /*!< 0000: (size=0004)                                                  */
-      __IO uint32_t  WIN;                       /*!< 0008: Watchdog Window Register (WINL:WINH)                         */
+      __IO uint32_t  WIN;                       /*!< 0008: Window Register (WINL:WINH)                                  */
       struct {                                  /*!< 0000: (size=0004)                                                  */
-         __IO uint16_t  WINH;                   /*!< 0008: Watchdog Window Register High                                */
-         __IO uint16_t  WINL;                   /*!< 000A: Watchdog Window Register Low                                 */
+         __IO uint16_t  WINH;                   /*!< 0008: Window Register High                                         */
+         __IO uint16_t  WINL;                   /*!< 000A: Window Register Low                                          */
       };
    };
-   __IO uint16_t  REFRESH;                      /*!< 000C: Watchdog Refresh Register                                    */
-   __IO uint16_t  UNLOCK;                       /*!< 000E: Watchdog Unlock Register                                     */
+   __IO uint16_t  REFRESH;                      /*!< 000C: Refresh Register                                             */
+   __IO uint16_t  UNLOCK;                       /*!< 000E: Unlock Register                                              */
    union {                                      /*!< 0000: (size=0004)                                                  */
-      __IO uint32_t  TMROUT;                    /*!< 0010: Watchdog Timer Output Register (TMROUTL:TMROUTH)             */
+      __IO uint32_t  TMROUT;                    /*!< 0010: Timer Output Register (TMROUTL:TMROUTH)                      */
       struct {                                  /*!< 0000: (size=0004)                                                  */
-         __IO uint16_t  TMROUTH;                /*!< 0010: Watchdog Timer Output Register High                          */
-         __IO uint16_t  TMROUTL;                /*!< 0012: Watchdog Timer Output Register Low                           */
+         __IO uint16_t  TMROUTH;                /*!< 0010: Timer Output Register High                                   */
+         __IO uint16_t  TMROUTL;                /*!< 0012: Timer Output Register Low                                    */
       };
    };
-   __IO uint16_t  RSTCNT;                       /*!< 0014: Watchdog Reset Count Register                                */
-   __IO uint16_t  PRESC;                        /*!< 0016: Watchdog Prescaler Register                                  */
+   __IO uint16_t  RSTCNT;                       /*!< 0014: Reset Count Register                                         */
+   __IO uint16_t  PRESC;                        /*!< 0016: Prescaler Register                                           */
 } WDOG_Type;
 
 
@@ -10478,6 +10644,7 @@ typedef struct {                                /*!<       WDOG Structure       
 #define SPI0_BASE_PTR                  0x4002C000UL
 #define SPI1_BASE_PTR                  0x4002D000UL
 #define SPI2_BASE_PTR                  0x400AC000UL
+#define SYST_BASE_PTR                  0xE000E010UL
 #define TPIU_BASE_PTR                  0xE0040000UL
 #define UART0_BASE_PTR                 0x4006A000UL
 #define UART1_BASE_PTR                 0x4006B000UL
@@ -10552,6 +10719,7 @@ typedef struct {                                /*!<       WDOG Structure       
 #define SPI0                           ((volatile SPI0_Type   *) SPI0_BASE_PTR)
 #define SPI1                           ((volatile SPI1_Type   *) SPI1_BASE_PTR)
 #define SPI2                           ((volatile SPI2_Type   *) SPI2_BASE_PTR)
+#define SYST                           ((volatile SYST_Type   *) SYST_BASE_PTR)
 #define TPIU                           ((volatile TPIU_Type   *) TPIU_BASE_PTR)
 #define UART0                          ((volatile UART0_Type  *) UART0_BASE_PTR)
 #define UART1                          ((volatile UART1_Type  *) UART1_BASE_PTR)

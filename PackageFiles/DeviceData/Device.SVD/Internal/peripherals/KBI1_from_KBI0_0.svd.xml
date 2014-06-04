@@ -1,0 +1,13 @@
+<!--
+Devices using this peripheral: 
+      MKE02Z2
+      MKE02Z4
+      MKE04Z4
+      MKE04Z8M4
+      MKE06Z4
+-->
+      <peripheral derivedFrom="KBI0">
+         <name>KBI1</name>
+         <prependToName>KBI1</prependToName>
+         <baseAddress>0x4007A000</baseAddress>
+      </peripheral>

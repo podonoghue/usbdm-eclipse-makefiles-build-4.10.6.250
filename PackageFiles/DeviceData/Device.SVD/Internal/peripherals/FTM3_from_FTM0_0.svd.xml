@@ -1,0 +1,21 @@
+<!--
+Devices using this peripheral: 
+      MK10F12
+      MK20F12
+      MK21F12
+      MK22F12
+      MK24F12
+      MK60F12
+      MK60F15
+      MK61F12
+      MK61F15
+      MK63F12
+      MK64F12
+      MK70F12
+      MK70F15
+-->
+      <peripheral derivedFrom="FTM0">
+         <name>FTM3</name>
+         <prependToName>FTM3</prependToName>
+         <baseAddress>0x400B9000</baseAddress>
+      </peripheral>

@@ -1,0 +1,12 @@
+<!--
+Devices using this vector table: 
+   
+   
+   
+   
+-->
+      <interrupts>
+         <name>Empty_VectorTable</name>
+         <description>CortexM3 Generic VectorTable</description>
+      </interrupts>
+

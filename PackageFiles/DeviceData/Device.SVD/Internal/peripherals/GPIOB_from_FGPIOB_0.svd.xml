@@ -1,0 +1,12 @@
+<!--
+Devices using this peripheral: 
+      MKE02Z2
+      MKE02Z4
+      MKE04Z4
+      MKE06Z4
+-->
+      <peripheral derivedFrom="FGPIOB">
+         <name>GPIOB</name>
+         <prependToName>GPIOB</prependToName>
+         <baseAddress>0x400FF040</baseAddress>
+      </peripheral>

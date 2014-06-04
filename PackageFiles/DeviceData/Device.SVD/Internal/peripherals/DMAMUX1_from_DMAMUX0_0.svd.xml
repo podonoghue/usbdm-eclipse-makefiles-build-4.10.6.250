@@ -1,0 +1,18 @@
+<!--
+Devices using this peripheral: 
+      MK10F12
+      MK20F12
+      MK60F12
+      MK60F15
+      MK61F12
+      MK61F15
+      MK70F12
+      MK70F15
+-->
+      <peripheral derivedFrom="DMAMUX0">
+         <name>DMAMUX1</name>
+         <description>DMA channel multiplexor</description>
+         <groupName>DMAMUX</groupName>
+         <prependToName>DMAMUX1_</prependToName>
+         <baseAddress>0x40022000</baseAddress>
+      </peripheral>

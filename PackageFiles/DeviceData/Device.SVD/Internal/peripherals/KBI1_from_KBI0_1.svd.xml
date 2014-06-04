@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+      SKEAZ4
+-->
+      <peripheral derivedFrom="KBI0">
+         <name>KBI1</name>
+         <groupName>KBI</groupName>
+         <prependToName>KBI1_</prependToName>
+         <baseAddress>0x4007A000</baseAddress>
+      </peripheral>

@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+      SKEAZ4
+-->
+      <peripheral derivedFrom="FTM0">
+         <name>FTM1</name>
+         <groupName>FTM</groupName>
+         <prependToName>FTM1_</prependToName>
+         <baseAddress>0x40039000</baseAddress>
+      </peripheral>

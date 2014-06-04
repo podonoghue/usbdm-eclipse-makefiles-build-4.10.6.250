@@ -1,0 +1,9 @@
+<!--
+Devices using this peripheral: 
+      SKEAZ4
+-->
+      <peripheral derivedFrom="FGPIOA">
+         <name>FGPIOB</name>
+         <prependToName>FGPIOB_</prependToName>
+         <baseAddress>0xF8000040</baseAddress>
+      </peripheral>

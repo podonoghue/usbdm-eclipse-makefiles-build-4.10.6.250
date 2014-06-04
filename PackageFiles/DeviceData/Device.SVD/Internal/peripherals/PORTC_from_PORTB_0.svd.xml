@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+      MKV10Z7
+-->
+      <peripheral derivedFrom="PORTB">
+         <name>PORTC</name>
+         <description>Pin Control and Interrupts</description>
+         <prependToName>PORTC</prependToName>
+         <baseAddress>0x4004B000</baseAddress>
+      </peripheral>

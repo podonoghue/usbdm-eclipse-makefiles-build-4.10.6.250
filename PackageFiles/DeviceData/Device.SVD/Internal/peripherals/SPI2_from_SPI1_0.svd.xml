@@ -1,0 +1,13 @@
+<!--
+Devices using this peripheral: 
+      MK22F12
+      MK24F12
+      MK63F12
+      MK64F12
+-->
+      <peripheral derivedFrom="SPI1">
+         <name>SPI2</name>
+         <description>Serial Peripheral Interface</description>
+         <prependToName>SPI2</prependToName>
+         <baseAddress>0x400AC000</baseAddress>
+      </peripheral>
