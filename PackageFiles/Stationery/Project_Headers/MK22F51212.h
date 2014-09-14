@@ -5,7 +5,7 @@
  *           Equivalent: MK22FN512M12, MK22FN256M12
  *
  * @version  V0.0
- * @date     2014/08
+ * @date     2014/09
  *
  *******************************************************************************************************/
 
@@ -7246,6 +7246,33 @@ typedef struct {                                /*!<       SPI1 Structure       
 #define SPI1_RXFR0                     (SPI1->RXFR[0])
 
 /* ================================================================================ */
+/* ================           SPI2 (derived from SPI1)             ================ */
+/* ================================================================================ */
+
+/**
+ * @brief Serial Peripheral Interface
+ */
+typedef SPI1_Type SPI2_Type;  /*!< SPI2 Structure                                              */
+
+
+/* -------------------------------------------------------------------------------- */
+/* -----------     'SPI2' Register Access macros                        ----------- */
+/* -------------------------------------------------------------------------------- */
+
+#define SPI2_MCR                       (SPI2->MCR)
+#define SPI2_TCR                       (SPI2->TCR)
+#define SPI2_CTAR0                     (SPI2->CTAR[0])
+#define SPI2_CTAR1                     (SPI2->CTAR[1])
+#define SPI2_CTAR0_SLAVE               (SPI2->CTAR0_SLAVE)
+#define SPI2_SR                        (SPI2->SR)
+#define SPI2_RSER                      (SPI2->RSER)
+#define SPI2_PUSHR                     (SPI2->PUSHR)
+#define SPI2_PUSHR_SLAVE               (SPI2->PUSHR_SLAVE)
+#define SPI2_POPR                      (SPI2->POPR)
+#define SPI2_TXFR0                     (SPI2->TXFR[0])
+#define SPI2_RXFR0                     (SPI2->RXFR[0])
+
+/* ================================================================================ */
 /* ================           SYST (file:SysTick_0)                ================ */
 /* ================================================================================ */
 
@@ -8755,6 +8782,7 @@ typedef struct {                                /*!<       WDOG Structure       
 #define SMC_BASE_PTR                   0x4007E000UL
 #define SPI0_BASE_PTR                  0x4002C000UL
 #define SPI1_BASE_PTR                  0x4002D000UL
+#define SPI2_BASE_PTR                  0x400AC000UL
 #define SYST_BASE_PTR                  0xE000E010UL
 #define TPIU_BASE_PTR                  0xE0040000UL
 #define UART0_BASE_PTR                 0x4006A000UL
@@ -8819,6 +8847,7 @@ typedef struct {                                /*!<       WDOG Structure       
 #define SMC                            ((volatile SMC_Type    *) SMC_BASE_PTR)
 #define SPI0                           ((volatile SPI0_Type   *) SPI0_BASE_PTR)
 #define SPI1                           ((volatile SPI1_Type   *) SPI1_BASE_PTR)
+#define SPI2                           ((volatile SPI2_Type   *) SPI2_BASE_PTR)
 #define SYST                           ((volatile SYST_Type   *) SYST_BASE_PTR)
 #define TPIU                           ((volatile TPIU_Type   *) TPIU_BASE_PTR)
 #define UART0                          ((volatile UART0_Type  *) UART0_BASE_PTR)

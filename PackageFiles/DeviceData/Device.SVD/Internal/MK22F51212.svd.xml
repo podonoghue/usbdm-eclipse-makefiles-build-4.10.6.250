@@ -60,6 +60,7 @@
 <!ENTITY SMC          SYSTEM "peripherals/SMC_8.svd.xml">
 <!ENTITY SPI0         SYSTEM "peripherals/SPI0_MK.svd.xml">
 <!ENTITY SPI1         SYSTEM "peripherals/SPI1_MK_FIFO_DEPTH1.svd.xml">
+<!ENTITY SPI2         SYSTEM "peripherals/SPI2_from_SPI1_0.svd.xml">
 <!ENTITY SYST         SYSTEM "peripherals/SysTick_0.svd.xml">
 <!ENTITY TPIU         SYSTEM "peripherals/TPIU_0.svd.xml">
 <!ENTITY UART0        SYSTEM "peripherals/UART0_C7816.svd.xml">
@@ -143,6 +144,7 @@
 &SMC;
 &SPI0;
 &SPI1;
+&SPI2;
 &SYST;
 &TPIU;
 &UART0;

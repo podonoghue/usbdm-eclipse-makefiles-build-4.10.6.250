@@ -244,7 +244,7 @@ Daylight Saving function, this bit should be set to 0</description>
                      <description>Software Reset bit.\n
 Self clearing bit. Asserting this field clears the contents of alarm, interrupt (status and enable except
 tamper interrupt enable bit ) registers, STATUS[CMP_DONE], and STATUS[BUS_ERR] and has no effect
-on DST, calendaring,Standby time and tamper detect registers</description>
+on DST, calendaring,Standby time and tamper detect regs</description>
                      <bitOffset>8</bitOffset>
                      <bitWidth>1</bitWidth>
                   </field>
