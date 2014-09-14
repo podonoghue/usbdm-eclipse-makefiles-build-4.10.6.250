@@ -1,0 +1,9 @@
+<!--
+Devices using this peripheral: 
+      MK22F51212
+-->
+      <peripheral derivedFrom="FTM0">
+         <name>FTM3</name>
+         <prependToName>FTM3</prependToName>
+         <baseAddress>0x40026000</baseAddress>
+      </peripheral>

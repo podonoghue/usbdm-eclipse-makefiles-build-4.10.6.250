@@ -318,7 +318,9 @@ void GdbServerWindow::OnQuit(wxCommandEvent& WXUNUSED(event)) {
    Close(false);
 }
 
-void GdbServerWindow::OnCloseWindow(wxCloseEvent& event) {
+/*!   Handler for Close Window
+ *
+ */void GdbServerWindow::OnCloseWindow(wxCloseEvent& event) {
    if (!event.CanVeto() || confirmDropConnection())  {
       dropConnection();
       this->Destroy();
@@ -469,6 +471,9 @@ void GdbServerWindow::OnServerEvent(wxSocketEvent& event) {
  */
 void GdbServerWindow::OnTimer(wxTimerEvent& event) {
    pollTarget();
+   if (clientSocket->IsData()) {
+      Logging::print("OnTimer:: Data available?\n");
+   }
 }
 
 /*! Drop client connection and clean up

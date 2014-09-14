@@ -9,6 +9,7 @@ Devices using this peripheral:
       MK20D7
       MK20D10
       MK21D5
+      MK21F12
       MK22D5
       MK22F12
       MK30D7
@@ -466,7 +467,8 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>CME0</name>
-                     <description>Clock Monitor Enable</description>
+                     <description>Clock Monitor Enable\n
+Enables the loss of clock monitoring circuit for the OSC0 external reference mux select</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -484,7 +486,8 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>PLLS</name>
-                     <description>PLL Select</description>
+                     <description>PLL Select\n
+Controls whether the PLL or FLL output is selected as the MCG source when CLKS[1:0]=00</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -584,7 +587,8 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>IREFST</name>
-                     <description>Internal Reference Status</description>
+                     <description>Internal Reference Status\n
+This bit indicates the current source for the FLL reference clock</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -602,7 +606,8 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>PLLST</name>
-                     <description>PLL Select Status</description>
+                     <description>PLL Select Status\n
+This bit indicates the clock source selected by PLLS</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -620,7 +625,9 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>LOCK0</name>
-                     <description>Lock Status</description>
+                     <description>Lock Status\n
+This bit indicates whether the PLL has acquired lock. Lock detection is only enabled when the PLL is
+enabled (either through clock mode selection or PLLCLKEN0=1 setting)</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -638,7 +645,9 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>LOLS0</name>
-                     <description>Loss of Lock Status</description>
+                     <description>Loss of Lock Status\n
+This bit is a sticky bit indicating the lock status for the PLL. LOLS is set if after acquiring lock, the PLL
+output frequency has fallen outside the lock exit frequency</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -871,7 +880,8 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                <fields>
                   <field>
                      <name>LOCS1</name>
-                     <description>RTC Loss of Clock Status</description>
+                     <description>RTC Loss of Clock Status\n
+This bit indicates when a loss of clock has occurred</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -890,7 +900,8 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>CME1</name>
-                     <description>Clock Monitor Enable1</description>
+                     <description>Clock Monitor Enable1\n
+Enables the loss of clock monitoring circuit for the output of the RTC external reference clock</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -908,7 +919,8 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>LOLRE</name>
-                     <description>PLL Loss of Lock Reset Enable</description>
+                     <description>PLL Loss of Lock Reset Enable\n
+Determines if an interrupt or a reset request is made following a PLL loss of lock</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -926,7 +938,8 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                   </field>
                   <field>
                      <name>LOCRE1</name>
-                     <description>Loss of Clock Reset Enable</description>
+                     <description>Loss of Clock Reset Enable\n
+Determines if a interrupt or a reset request is made following a loss of RTC external reference clock</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

@@ -192,6 +192,7 @@ private:
    USBDM_ErrorCode doBlankCheck(FlashImage *flashImage);
    USBDM_ErrorCode doWriteRam(FlashImage *flashImage);
    USBDM_ErrorCode loadTargetProgram(FlashOperation flashOperation);
+   USBDM_ErrorCode loadTargetProgram(MemoryRegionConstPtr memoryRegionPtr, FlashOperation flashOperation);
    USBDM_ErrorCode loadTargetProgram(FlashProgramConstPtr flashProgram, FlashOperation flashOperation);
    USBDM_ErrorCode loadSmallTargetProgram(memoryElementType   *buffer,
                                           uint32_t             loadAddress,

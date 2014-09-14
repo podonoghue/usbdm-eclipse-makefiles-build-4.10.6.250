@@ -24,10 +24,13 @@
 
     \verbatim
    Change History
-   -============================================================================
-   | 12 Aug 2011 | Changed device directory so avoid need for installation - pgo
-   | 15 June     | Changed to std::tr1::shared_ptr (from boost)            - pgo
-   +============================================================================
+   -====================================================================================================
+   | 29 Aug 2014 | Changes to SDID wildcards                                           - pgo 4.10.6.190
+   | 12 Jul 2014 | Added getCommonFlashProgram(), changed getFlashProgram()            - pgo V4.10.6.170
+   | 12 Jul 2014 | Added extra SDID handling getSDIDs()                                - pgo V4.10.6.170
+   | 12 Aug 2011 | Changed device directory to avoid need for installation when testing- pgo
+   | 15 June     | Changed to std::tr1::shared_ptr (from boost)                        - pgo
+   +====================================================================================================
    \endverbatim
 */
 #include <stddef.h>
@@ -180,6 +183,33 @@ uint32_t DeviceData::getDefaultClockTrimFreq()  const {
    return getDefaultClockTrimFreq(clockType);
 }
 
+/*!
+ * Gets the 'default' flash program
+ * This will either be the common one set or the one from the first memory region found
+ * to contain one.
+ *
+ * @return reference to flash program.
+ */
+FlashProgramConstPtr DeviceData::getFlashProgram() {
+   if (commonFlashProgram) {
+      // Common program set - return it
+      return commonFlashProgram;
+   }
+   // Find the 1st memory region with a program set
+   FlashProgramConstPtr flashProgram;
+   for (int index=0; ; index++) {
+      MemoryRegionConstPtr memoryRegionPtr = getMemoryRegion(index);
+      if (memoryRegionPtr == NULL) {
+         break;
+      }
+      flashProgram = memoryRegionPtr->getFlashprogram();
+      if (flashProgram != NULL) {
+         break;
+      }
+   }
+   return flashProgram;
+}
+
 //! Returns the default clock register address
 //!
 //! @return clock register address
@@ -288,21 +318,37 @@ int sub;
 bool DeviceData::isThisDevice(uint32_t  desiredSDID, bool acceptZero) const {
    unsigned int index;
 
-   if (((targetSDIDs.size() == 0)||(targetSDIDs[0]) == 0) && acceptZero) {
-      // 0x0000 or empty matches all
+#if TARGET==ARM
+   // Some Kinetis devices don't have the SDID programmed correctly
+   if ((acceptZero) && (desiredSDID == 0x000000FF)) {
+      Logging::print("Matching %10s as blank SDID\n", getTargetName().c_str());
       return true;
    }
+#endif
+
+   // Use mask=0 to indicate wild-card
+   if ((targetSDIDs.size() == 0)||(targetSDIDs[0].mask == 0)) {
+      // 0x0000 or empty may match all
+      if (acceptZero) {
+         Logging::print("Matching %10s with Wild-card - %s\n", getTargetName().c_str(), acceptZero?"True":"False");
+      }
+      return acceptZero;
+   }
    for (index=0; index<targetSDIDs.size(); index++) {
-//      Logging::print("Comparing Target=0x%04X with Desired=0x%04X, Mask=0x%04X\n", targetSDIDs[index], desiredSDID, targetSDIDMask);
-      if (((targetSDIDs[index]^desiredSDID)&targetSDIDMask) == 0x0000)
+//      Logging::print("Comparing 0x%08X with (V=0x%08X, M=0x%08X)\n",
+//                     desiredSDID, targetSDIDs[index].value, targetSDIDs[index].mask);
+      if (((targetSDIDs[index].value^desiredSDID)&targetSDIDs[index].mask) == 0x0000) {
+         Logging::print("Matched %10s 0x%08X with (V=0x%08X, M=0x%08X)\n",
+                        getTargetName().c_str(), desiredSDID, targetSDIDs[index].value, targetSDIDs[index].mask);
          return true;
+      }
    }
    return false;
 }
 
 //! Checks if any of the SDIDs provided are used by the device
 //!
-//! @param desiredSDIDs Map of {SDIDaddress,SDIDs} to check against
+//! @param desiredSDIDs map<SDIDaddress,SDID> to check against
 //! @param acceptZero   Accept a zero SDID
 //!
 //! @return true/false result of check
@@ -310,9 +356,13 @@ bool DeviceData::isThisDevice(uint32_t  desiredSDID, bool acceptZero) const {
 bool DeviceData::isThisDevice(std::map<uint32_t,uint32_t> desiredSDIDs, bool acceptZero) const {
    map<uint32_t,uint32_t>::iterator sdidEntry;
 
-   if (((targetSDIDs.size() == 0)||(targetSDIDs[0]) == 0) && acceptZero) {
-      // 0x0000 or empty matches all
-      return true;
+   // Use mask=0 to indicate wild-card
+   if ((targetSDIDs.size() == 0)||(targetSDIDs[0].mask == 0)) {
+      // 0x0000 or empty may match all
+      if (acceptZero) {
+         Logging::print("Matching %10s with Wild-card - %s\n", getTargetName().c_str(), acceptZero?"True":"False");
+      }
+      return acceptZero;
    }
    for (sdidEntry = desiredSDIDs.begin();
         sdidEntry != desiredSDIDs.end();
@@ -489,6 +539,8 @@ void DeviceDataBase::loadDeviceData(void) {
    #define CONFIG_FILEPATH DEVICE_DATABASE_DIRECTORY "/cfv1_devices.xml"
 #elif TARGET == HC12
    #define CONFIG_FILEPATH DEVICE_DATABASE_DIRECTORY "/hcs12_devices.xml"
+#elif TARGET == S12Z
+   #define CONFIG_FILEPATH DEVICE_DATABASE_DIRECTORY "/s12z_devices.xml"
 #elif TARGET == CFVx
    #define CONFIG_FILEPATH DEVICE_DATABASE_DIRECTORY "/cfvx_devices.xml"
 #elif (TARGET == ARM) || (TARGET == ARM_SWD)
@@ -566,7 +618,7 @@ void DeviceDataBase::listDevices() const {
                deviceData->getSDIDAddress(),
                deviceData->getSDID(),
                deviceData->getFlashScripts()?"Yes":"No",
-               deviceData->getFlashProgram()?"Yes":"No"
+               deviceData->getCommonFlashProgram()?"Yes":"No"
          );
 #else
          if (lineCount == 0) {
@@ -585,7 +637,7 @@ void DeviceDataBase::listDevices() const {
                deviceData->getSDIDAddress(),
                deviceData->getSDID(),
                deviceData->getFlashScripts()?"Y":"N",
-               deviceData->getFlashProgram()?"Y":"N"
+               deviceData->getCommonFlashProgram()?"Y":"N"
          );
 #endif
 #if 1

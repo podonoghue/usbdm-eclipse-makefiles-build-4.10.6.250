@@ -528,6 +528,7 @@ public:
    //!         false = start address is not within memory
    //!
    bool findLastContiguous(uint32_t address, uint32_t *lastContinuous, MemorySpace_t memorySpace = MS_None) const {
+      *lastContinuous = address;
       if (!isCompatibleType(memorySpace)) {
          return false;
       }
@@ -624,7 +625,7 @@ public:
          return NULL;
       return &memoryRanges[index];
    }
-   const MemoryRange *getMemoryRangeFor(uint32_t address) {
+   const MemoryRange *getMemoryRangeFor(uint32_t address) const {
       int index = findMemoryRangeIndex(address);
       if (index<0)
          return NULL;
@@ -652,6 +653,13 @@ typedef std::tr1::shared_ptr<const MemoryRegion> MemoryRegionConstPtr;
 class DeviceData;
 typedef std::tr1::shared_ptr<DeviceData> DeviceDataPtr;
 typedef std::tr1::shared_ptr<const DeviceData> DeviceDataConstPtr;
+
+class TargetSDID {
+public:
+   uint32_t mask; // 0 => wildcard
+   uint32_t value;
+   TargetSDID(uint32_t mask, uint32_t value) : mask(mask), value(value) {}
+};
 
 //! Information about a target device
 //!
@@ -684,7 +692,7 @@ public:
       }
       uint8_t eeepromSize;
       uint8_t partionValue;
-   } ;
+   };
 
 private:
    std::string                   targetName;             //!< Name of target
@@ -698,20 +706,18 @@ private:
    unsigned long int             clockTrimFreq;          //!< Trim frequency in Hz of the _internal_ clock e.g. 32.7 kHz (0 => no trim required)
    bool                          connectionFreqGiven;    //!< Use connectionFreq if needed
    unsigned long int             connectionFreq;         //!< BDM connection frequency in Hz
-   uint32_t                      COPCTLAddress;          //!< Address of COPCTL register
-   uint32_t                      SOPTAddress;            //!< Address of SOPT1 register
-   uint32_t                      SDIDAddress;            //!< Address of SDID registers
+   uint32_t                      watchdogAddress;        //!< Address of watchdog (COPCTL, WDOG etc) register
+   uint32_t                      SDIDAddress;            //!< Address of SDID register
    SecurityOptions_t             security;               //!< Determines security options of programmed target (modifies NVFOPT value)
    EraseOptions                  eraseOption;            //!< How to handle erasing of flash before programming
    uint16_t                      clockTrimValue;         //!< Clock trim value calculated for a particular device
-   uint32_t                      targetSDIDMask;         //!< Mask for valid bits in SDID
    std::vector<MemoryRegionPtr>  memoryRegions;          //!< Different memory regions e.g. EEPROM, RAM etc.
    mutable MemoryRegionConstPtr  lastMemoryRegionUsed;   //!< To improve memory searches
    TclScriptConstPtr             flashScripts;           //!< Flash script
-   FlashProgramConstPtr          flashProgram;           //!< Common flash code
+   FlashProgramConstPtr          commonFlashProgram;     //!< Common flash code
    FlexNVMParameters             flexNVMParameters;      //!< FlexNVM partitioning values
    FlexNVMInfoConstPtr           flexNVMInfo;            //!< Table describing FlexNVM partitioning
-   std::vector<uint32_t>         targetSDIDs;            //!< System Device Identification Register values (0=> don't know/care)
+   std::vector<TargetSDID>       targetSDIDs;            //!< System Device Identification Register values (0=> don't know/care)
    RegisterDescriptionConstPtr   registerDescription;    //!< Register description
 
 public:
@@ -733,19 +739,15 @@ public:
    unsigned long                  getConnectionFreq() /*Hz*/   const { return connectionFreq; }
    SecurityOptions_t              getSecurity()                const { return security; }
    EraseOptions                   getEraseOption()             const { return eraseOption; }
-#if (TARGET == HC12)||(TARGET == MC56F80xx)
-   uint32_t                       getCOPCTLAddress()           const { return COPCTLAddress; }
-#else
-   uint32_t                       getSOPTAddress()             const { return SOPTAddress; }
-#endif
+   uint32_t                       getWatchdogAddress()         const { return watchdogAddress; }
    uint32_t                       getSDIDAddress()             const { return SDIDAddress; }
-   uint32_t                       getSDIDMask()                const { return targetSDIDMask; }
    unsigned int                   getBDMtoBUSFactor()          const { return BDMtoBUSFactor; }
-   FlashProgramConstPtr           getFlashProgram()            const { return flashProgram; }
+   FlashProgramConstPtr           getCommonFlashProgram()      const { return commonFlashProgram; }
+   FlashProgramConstPtr           getFlashProgram();
    TclScriptConstPtr              getFlashScripts()            const { return flashScripts; }
    FlexNVMInfoConstPtr            getflexNVMInfo()             const { return flexNVMInfo; }
    FlexNVMParameters              getFlexNVMParameters()       const { return flexNVMParameters; }
-   const std::vector<uint32_t>&   getTargetSDIDs()             const { return targetSDIDs; }
+   const std::vector<TargetSDID>& getTargetSDIDs()             const { return targetSDIDs; }
    bool                           isAlias(void)                const { return !aliasName.empty();}
    RegisterDescriptionConstPtr    getRegisterDescription()     const { return registerDescription; }
 
@@ -764,10 +766,10 @@ public:
    }
 
    MemoryRegionConstPtr getMemoryRegionFor(uint32_t address, MemorySpace_t memorySpace=MS_None) const;
-
-   uint32_t getSDID(unsigned index=0) const {
+   const std::vector<TargetSDID> getSDIDs() const { return targetSDIDs; }
+   TargetSDID getSDID(unsigned index=0) const {
       if (index >= targetSDIDs.size()) {
-         return (uint32_t)-1;
+         return TargetSDID(-1,-1);
       }
       return targetSDIDs[index];
    }
@@ -784,9 +786,10 @@ public:
    MemType_t         getMemoryType(uint32_t address, MemorySpace_t memorySpace=MS_None);
    uint16_t          getPageNo(uint32_t address);
 
-   void  addSDID(uint32_t newSDID) {
-      targetSDIDs.push_back(newSDID);
+   void  addSDID(uint32_t mask, uint32_t value) {
+      targetSDIDs.push_back(TargetSDID(mask, value));
    }
+
    void addMemoryRegion(MemoryRegionPtr pMemoryRegion) {
       memoryRegions.push_back(pMemoryRegion);
       if (((pMemoryRegion->getMemoryType() == MemRAM)||
@@ -818,18 +821,14 @@ public:
    void setSecurity(SecurityOptions_t option)                     { security = option; }
    void setCustomSecurity(const std::string &securityValue);
    void setEraseOption(EraseOptions option)                       { eraseOption = option; }
-#if (TARGET == HC12)||(TARGET == MC56F80xx)
-   void setCOPCTLAddress(uint32_t addr)                           { COPCTLAddress = addr; }
-#else
-   void setSOPTAddress(uint32_t addr)                             { SOPTAddress = addr; }
-#endif
+   void setWatchdogAddress(uint32_t addr)                         { watchdogAddress = addr; }
    void setSDIDAddress(uint32_t addr)                             { SDIDAddress = addr; }
-   void setSDIDMask(uint32_t mask)                                { targetSDIDMask = mask; }
    void setFlashScripts(TclScriptConstPtr script)                 { flashScripts = script; }
-   void setFlashProgram(FlashProgramConstPtr program)             { flashProgram = program; }
+   void setCommonFlashProgram(FlashProgramConstPtr program)       { commonFlashProgram = program; }
    void setflexNVMInfo(FlexNVMInfoConstPtr info)                  { flexNVMInfo = info; }
    void setFlexNVMParameters(const FlexNVMParameters &param)      { flexNVMParameters = param;}
-   void setTargetSDIDs(const std::vector<uint32_t> &list)         { targetSDIDs = list; }
+   void setTargetSDIDs(const std::vector<TargetSDID> &list)       { targetSDIDs = list; }
+
    void setRegisterDescription(RegisterDescriptionConstPtr desc)  { registerDescription = desc; }
 
    DeviceData( const std::string    &targetName,
@@ -841,7 +840,7 @@ public:
                unsigned long int    clockTrimFreq,
                uint32_t             flashStart              = 0,
                uint32_t             flashEnd                = 0,
-               uint32_t             COPCTLAddress           = 0x003C,
+               uint32_t             watchdogAddress         = 0x003C,
                uint32_t             SOPTAddress             = 0,
                uint32_t             SDIDAddress             = 0,
                SecurityOptions_t    security                = SEC_DEFAULT,
@@ -860,13 +859,11 @@ public:
                       clockTrimFreq(clockTrimFreq),
                       connectionFreqGiven(false),
                       connectionFreq(0),
-                      COPCTLAddress(COPCTLAddress),
-                      SOPTAddress(SOPTAddress),
+                      watchdogAddress(watchdogAddress),
                       SDIDAddress(SDIDAddress),
                       security(security),
                       eraseOption(eraseAll),
-                      clockTrimValue(clockTrimValue),
-                      targetSDIDMask(0)
+                      clockTrimValue(clockTrimValue)
                       {
 //      print("DeviceData::DeviceData()\n");
       flexNVMParameters.eeepromSize  = 0xFF;
@@ -883,13 +880,11 @@ public:
                   clockTrimFreq(0),
                   connectionFreqGiven(false),
                   connectionFreq(0),
-                  COPCTLAddress(0),
-                  SOPTAddress(0),
+                  watchdogAddress(0),
                   SDIDAddress(0),
                   security(SEC_DEFAULT),
                   eraseOption(eraseAll),
-                  clockTrimValue(0),
-                  targetSDIDMask(0)
+                  clockTrimValue(0)
                   {
 //      print("DeviceData::DeviceData() - default\n");
       flexNVMParameters.eeepromSize  = 0xFF;

@@ -270,6 +270,11 @@ Devices using this peripheral:
                            <description>Encoding 1 - High frequency range selected for the crystal oscillator</description>
                            <value>0b01</value>
                         </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10</name>
+                           <description>Encoding 2 - Very high frequency range selected for the crystal oscillator</description>
+                           <value>0b01</value>
+                        </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>

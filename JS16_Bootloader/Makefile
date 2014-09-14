@@ -3,15 +3,15 @@ include ../Common.mk
 TARGET = JS16_Bootloader
 
 $(TARGET):
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON"
+	$(MAKE) exe -f Target.mk TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) CDEFS="-DUSE_ICON"
 
 $(TARGET)-debug:
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON" DEBUG="Y"
+	$(MAKE) exe -f Target.mk TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) CDEFS="-DUSE_ICON" DEBUG="Y"
 
 all: $(TARGET) $(TARGET)-debug
 
 clean:
-	${RMDIR} $(TARGET)
-	${RMDIR} $(TARGET)-debug
+	${RMDIR} $(TARGET)$(BUILDDIR_SUFFIX)
+	${RMDIR} $(TARGET)-debug$(BUILDDIR_SUFFIX)
 	
 .PHONY: $(TARGET) $(TARGET)-debug all clean

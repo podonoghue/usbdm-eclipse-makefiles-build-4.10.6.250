@@ -100,6 +100,9 @@ const GdbPacket *GdbInOutWx::getGdbPacket(void) {
          sendAck();
       }
    }
+   else {
+      Logging::print("No packet\n");
+   }
    return packet;
 }
 
@@ -153,4 +156,7 @@ void GdbInOutWx::writeBuffer(unsigned char *buffer, int size) {
       clientSocket->Write(buffer, size);
       bytesWritten += clientSocket->LastCount();
    } while ((bytesWritten < size) && !clientSocket->Error());
+   if (clientSocket->Error()) {
+      errorLogger("clientSocket error");
+   }
 }

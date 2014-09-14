@@ -86,6 +86,7 @@ private:
    DualString   attr_alignment;
    DualString   attr_path;
    DualString   attr_count;
+   DualString   attr_mask;
 
    static char  currentDeviceName[100];
 
@@ -97,7 +98,6 @@ private:
    xercesc::ErrorHandler*    errHandler;
    xercesc::DOMDocument*     document;
 
-
 private:
    RegisterDescriptionPtr             parseRegisterDescription(xercesc::DOMElement *xmlRegisterDescription);
    TclScriptPtr                       parseTCLScript(xercesc::DOMElement *xmlTclScript);
@@ -105,6 +105,7 @@ private:
    void                               parseSharedXML(void);
    void                               parseDeviceXML(void);
    DeviceDataPtr                      parseDevice(xercesc::DOMElement *deviceEl);
+   DeviceDataPtr                      parseAlias(xercesc::DOMElement *deviceEl);
    TclScriptConstPtr                  parseSequence(xercesc::DOMElement *sequence);
    MemoryRegionPtr                    parseMemory(xercesc::DOMElement *currentProperty);
    MemoryRegionPtr                    parseFlashMemoryDetails(xercesc::DOMElement *currentProperty, MemType_t memoryType, uint32_t &defaultSectorSize, uint8_t &defaultAlignment);

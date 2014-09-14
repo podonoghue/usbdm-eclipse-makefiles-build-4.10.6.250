@@ -5,7 +5,7 @@
  *           Equivalent: MKE06Z128M4, MKE06Z64M4
  *
  * @version  V0.0
- * @date     2014/06
+ * @date     2014/08
  *
  *******************************************************************************************************/
 
@@ -102,13 +102,13 @@ extern void MSCAN_TX_IRQHandler(void);
 /* ================================================================================ */
 
 /* ----------------Configuration of the cm4 Processor and Core Peripherals---------------- */
-#define __CM0_REV                0x0100
+#define __CM0PLUS_REV                0x0100
 #define __MPU_PRESENT            0
 #define __NVIC_PRIO_BITS         2
 #define __Vendor_SysTickConfig   0
 #define __FPU_PRESENT            0
 
-#include <core_cm0.h>   /*!< Cortex-M4 processor and core peripherals                              */
+#include <core_cm0plus.h>   /*!< Cortex-M processor and core peripherals                              */
 
 #ifndef __IO
 #define __IO volatile 
@@ -402,7 +402,7 @@ typedef struct {                                /*!<       BP Structure         
 #define BP_CID3                        (BP->CID[3])
 
 /* ================================================================================ */
-/* ================           CRC (file:CRC_0)                     ================ */
+/* ================           CRC (file:CRC)                       ================ */
 /* ================================================================================ */
 
 /**
@@ -451,7 +451,7 @@ typedef struct {                                /*!<       CRC Structure        
       __IO uint32_t  CTRL;                      /*!< 0008: Control register                                             */
       struct {                                  /*!< 0000: (size=0004)                                                  */
          __I  uint8_t   RESERVED0[3];           /*!< 0008:                                                              */
-         __IO uint8_t   CTRLHU;                 /*!< 000B: CTRLHU register                                              */
+         __IO uint8_t   CTRLHU;                 /*!< 000B: Control register (byte access)                               */
       };
    };
 } CRC_Type;
@@ -750,18 +750,102 @@ typedef struct {                                /*!<       FGPIOB Structure     
 
 
 /* ------- FGPIOB_PDOR                              ------ */
+#define GPIO_PDOR_PTE_MASK                       (0xFFUL << GPIO_PDOR_PTE_SHIFT)                     /*!< FGPIOB_PDOR: PTE Mask                   */
+#define GPIO_PDOR_PTE_SHIFT                      0                                                   /*!< FGPIOB_PDOR: PTE Position               */
+#define GPIO_PDOR_PTE(x)                         (((x)<<GPIO_PDOR_PTE_SHIFT)&GPIO_PDOR_PTE_MASK)     /*!< FGPIOB_PDOR                             */
+#define GPIO_PDOR_PTF_MASK                       (0xFFUL << GPIO_PDOR_PTF_SHIFT)                     /*!< FGPIOB_PDOR: PTF Mask                   */
+#define GPIO_PDOR_PTF_SHIFT                      8                                                   /*!< FGPIOB_PDOR: PTF Position               */
+#define GPIO_PDOR_PTF(x)                         (((x)<<GPIO_PDOR_PTF_SHIFT)&GPIO_PDOR_PTF_MASK)     /*!< FGPIOB_PDOR                             */
+#define GPIO_PDOR_PTG_MASK                       (0xFFUL << GPIO_PDOR_PTG_SHIFT)                     /*!< FGPIOB_PDOR: PTG Mask                   */
+#define GPIO_PDOR_PTG_SHIFT                      16                                                  /*!< FGPIOB_PDOR: PTG Position               */
+#define GPIO_PDOR_PTG(x)                         (((x)<<GPIO_PDOR_PTG_SHIFT)&GPIO_PDOR_PTG_MASK)     /*!< FGPIOB_PDOR                             */
+#define GPIO_PDOR_PTH_MASK                       (0xFFUL << GPIO_PDOR_PTH_SHIFT)                     /*!< FGPIOB_PDOR: PTH Mask                   */
+#define GPIO_PDOR_PTH_SHIFT                      24                                                  /*!< FGPIOB_PDOR: PTH Position               */
+#define GPIO_PDOR_PTH(x)                         (((x)<<GPIO_PDOR_PTH_SHIFT)&GPIO_PDOR_PTH_MASK)     /*!< FGPIOB_PDOR                             */
 
 /* ------- FGPIOB_PSOR                              ------ */
+#define GPIO_PSOR_PTE_MASK                       (0xFFUL << GPIO_PSOR_PTE_SHIFT)                     /*!< FGPIOB_PSOR: PTE Mask                   */
+#define GPIO_PSOR_PTE_SHIFT                      0                                                   /*!< FGPIOB_PSOR: PTE Position               */
+#define GPIO_PSOR_PTE(x)                         (((x)<<GPIO_PSOR_PTE_SHIFT)&GPIO_PSOR_PTE_MASK)     /*!< FGPIOB_PSOR                             */
+#define GPIO_PSOR_PTF_MASK                       (0xFFUL << GPIO_PSOR_PTF_SHIFT)                     /*!< FGPIOB_PSOR: PTF Mask                   */
+#define GPIO_PSOR_PTF_SHIFT                      8                                                   /*!< FGPIOB_PSOR: PTF Position               */
+#define GPIO_PSOR_PTF(x)                         (((x)<<GPIO_PSOR_PTF_SHIFT)&GPIO_PSOR_PTF_MASK)     /*!< FGPIOB_PSOR                             */
+#define GPIO_PSOR_PTG_MASK                       (0xFFUL << GPIO_PSOR_PTG_SHIFT)                     /*!< FGPIOB_PSOR: PTG Mask                   */
+#define GPIO_PSOR_PTG_SHIFT                      16                                                  /*!< FGPIOB_PSOR: PTG Position               */
+#define GPIO_PSOR_PTG(x)                         (((x)<<GPIO_PSOR_PTG_SHIFT)&GPIO_PSOR_PTG_MASK)     /*!< FGPIOB_PSOR                             */
+#define GPIO_PSOR_PTH_MASK                       (0xFFUL << GPIO_PSOR_PTH_SHIFT)                     /*!< FGPIOB_PSOR: PTH Mask                   */
+#define GPIO_PSOR_PTH_SHIFT                      24                                                  /*!< FGPIOB_PSOR: PTH Position               */
+#define GPIO_PSOR_PTH(x)                         (((x)<<GPIO_PSOR_PTH_SHIFT)&GPIO_PSOR_PTH_MASK)     /*!< FGPIOB_PSOR                             */
 
 /* ------- FGPIOB_PCOR                              ------ */
+#define GPIO_PCOR_PTE_MASK                       (0xFFUL << GPIO_PCOR_PTE_SHIFT)                     /*!< FGPIOB_PCOR: PTE Mask                   */
+#define GPIO_PCOR_PTE_SHIFT                      0                                                   /*!< FGPIOB_PCOR: PTE Position               */
+#define GPIO_PCOR_PTE(x)                         (((x)<<GPIO_PCOR_PTE_SHIFT)&GPIO_PCOR_PTE_MASK)     /*!< FGPIOB_PCOR                             */
+#define GPIO_PCOR_PTF_MASK                       (0xFFUL << GPIO_PCOR_PTF_SHIFT)                     /*!< FGPIOB_PCOR: PTF Mask                   */
+#define GPIO_PCOR_PTF_SHIFT                      8                                                   /*!< FGPIOB_PCOR: PTF Position               */
+#define GPIO_PCOR_PTF(x)                         (((x)<<GPIO_PCOR_PTF_SHIFT)&GPIO_PCOR_PTF_MASK)     /*!< FGPIOB_PCOR                             */
+#define GPIO_PCOR_PTG_MASK                       (0xFFUL << GPIO_PCOR_PTG_SHIFT)                     /*!< FGPIOB_PCOR: PTG Mask                   */
+#define GPIO_PCOR_PTG_SHIFT                      16                                                  /*!< FGPIOB_PCOR: PTG Position               */
+#define GPIO_PCOR_PTG(x)                         (((x)<<GPIO_PCOR_PTG_SHIFT)&GPIO_PCOR_PTG_MASK)     /*!< FGPIOB_PCOR                             */
+#define GPIO_PCOR_PTH_MASK                       (0xFFUL << GPIO_PCOR_PTH_SHIFT)                     /*!< FGPIOB_PCOR: PTH Mask                   */
+#define GPIO_PCOR_PTH_SHIFT                      24                                                  /*!< FGPIOB_PCOR: PTH Position               */
+#define GPIO_PCOR_PTH(x)                         (((x)<<GPIO_PCOR_PTH_SHIFT)&GPIO_PCOR_PTH_MASK)     /*!< FGPIOB_PCOR                             */
 
 /* ------- FGPIOB_PTOR                              ------ */
+#define GPIO_PTOR_PTE_MASK                       (0xFFUL << GPIO_PTOR_PTE_SHIFT)                     /*!< FGPIOB_PTOR: PTE Mask                   */
+#define GPIO_PTOR_PTE_SHIFT                      0                                                   /*!< FGPIOB_PTOR: PTE Position               */
+#define GPIO_PTOR_PTE(x)                         (((x)<<GPIO_PTOR_PTE_SHIFT)&GPIO_PTOR_PTE_MASK)     /*!< FGPIOB_PTOR                             */
+#define GPIO_PTOR_PTF_MASK                       (0xFFUL << GPIO_PTOR_PTF_SHIFT)                     /*!< FGPIOB_PTOR: PTF Mask                   */
+#define GPIO_PTOR_PTF_SHIFT                      8                                                   /*!< FGPIOB_PTOR: PTF Position               */
+#define GPIO_PTOR_PTF(x)                         (((x)<<GPIO_PTOR_PTF_SHIFT)&GPIO_PTOR_PTF_MASK)     /*!< FGPIOB_PTOR                             */
+#define GPIO_PTOR_PTG_MASK                       (0xFFUL << GPIO_PTOR_PTG_SHIFT)                     /*!< FGPIOB_PTOR: PTG Mask                   */
+#define GPIO_PTOR_PTG_SHIFT                      16                                                  /*!< FGPIOB_PTOR: PTG Position               */
+#define GPIO_PTOR_PTG(x)                         (((x)<<GPIO_PTOR_PTG_SHIFT)&GPIO_PTOR_PTG_MASK)     /*!< FGPIOB_PTOR                             */
+#define GPIO_PTOR_PTH_MASK                       (0xFFUL << GPIO_PTOR_PTH_SHIFT)                     /*!< FGPIOB_PTOR: PTH Mask                   */
+#define GPIO_PTOR_PTH_SHIFT                      24                                                  /*!< FGPIOB_PTOR: PTH Position               */
+#define GPIO_PTOR_PTH(x)                         (((x)<<GPIO_PTOR_PTH_SHIFT)&GPIO_PTOR_PTH_MASK)     /*!< FGPIOB_PTOR                             */
 
 /* ------- FGPIOB_PDIR                              ------ */
+#define GPIO_PDIR_PTE_MASK                       (0xFFUL << GPIO_PDIR_PTE_SHIFT)                     /*!< FGPIOB_PDIR: PTE Mask                   */
+#define GPIO_PDIR_PTE_SHIFT                      0                                                   /*!< FGPIOB_PDIR: PTE Position               */
+#define GPIO_PDIR_PTE(x)                         (((x)<<GPIO_PDIR_PTE_SHIFT)&GPIO_PDIR_PTE_MASK)     /*!< FGPIOB_PDIR                             */
+#define GPIO_PDIR_PTF_MASK                       (0xFFUL << GPIO_PDIR_PTF_SHIFT)                     /*!< FGPIOB_PDIR: PTF Mask                   */
+#define GPIO_PDIR_PTF_SHIFT                      8                                                   /*!< FGPIOB_PDIR: PTF Position               */
+#define GPIO_PDIR_PTF(x)                         (((x)<<GPIO_PDIR_PTF_SHIFT)&GPIO_PDIR_PTF_MASK)     /*!< FGPIOB_PDIR                             */
+#define GPIO_PDIR_PTG_MASK                       (0xFFUL << GPIO_PDIR_PTG_SHIFT)                     /*!< FGPIOB_PDIR: PTG Mask                   */
+#define GPIO_PDIR_PTG_SHIFT                      16                                                  /*!< FGPIOB_PDIR: PTG Position               */
+#define GPIO_PDIR_PTG(x)                         (((x)<<GPIO_PDIR_PTG_SHIFT)&GPIO_PDIR_PTG_MASK)     /*!< FGPIOB_PDIR                             */
+#define GPIO_PDIR_PTH_MASK                       (0xFFUL << GPIO_PDIR_PTH_SHIFT)                     /*!< FGPIOB_PDIR: PTH Mask                   */
+#define GPIO_PDIR_PTH_SHIFT                      24                                                  /*!< FGPIOB_PDIR: PTH Position               */
+#define GPIO_PDIR_PTH(x)                         (((x)<<GPIO_PDIR_PTH_SHIFT)&GPIO_PDIR_PTH_MASK)     /*!< FGPIOB_PDIR                             */
 
 /* ------- FGPIOB_PDDR                              ------ */
+#define GPIO_PDDR_PTE_MASK                       (0xFFUL << GPIO_PDDR_PTE_SHIFT)                     /*!< FGPIOB_PDDR: PTE Mask                   */
+#define GPIO_PDDR_PTE_SHIFT                      0                                                   /*!< FGPIOB_PDDR: PTE Position               */
+#define GPIO_PDDR_PTE(x)                         (((x)<<GPIO_PDDR_PTE_SHIFT)&GPIO_PDDR_PTE_MASK)     /*!< FGPIOB_PDDR                             */
+#define GPIO_PDDR_PTF_MASK                       (0xFFUL << GPIO_PDDR_PTF_SHIFT)                     /*!< FGPIOB_PDDR: PTF Mask                   */
+#define GPIO_PDDR_PTF_SHIFT                      8                                                   /*!< FGPIOB_PDDR: PTF Position               */
+#define GPIO_PDDR_PTF(x)                         (((x)<<GPIO_PDDR_PTF_SHIFT)&GPIO_PDDR_PTF_MASK)     /*!< FGPIOB_PDDR                             */
+#define GPIO_PDDR_PTG_MASK                       (0xFFUL << GPIO_PDDR_PTG_SHIFT)                     /*!< FGPIOB_PDDR: PTG Mask                   */
+#define GPIO_PDDR_PTG_SHIFT                      16                                                  /*!< FGPIOB_PDDR: PTG Position               */
+#define GPIO_PDDR_PTG(x)                         (((x)<<GPIO_PDDR_PTG_SHIFT)&GPIO_PDDR_PTG_MASK)     /*!< FGPIOB_PDDR                             */
+#define GPIO_PDDR_PTH_MASK                       (0xFFUL << GPIO_PDDR_PTH_SHIFT)                     /*!< FGPIOB_PDDR: PTH Mask                   */
+#define GPIO_PDDR_PTH_SHIFT                      24                                                  /*!< FGPIOB_PDDR: PTH Position               */
+#define GPIO_PDDR_PTH(x)                         (((x)<<GPIO_PDDR_PTH_SHIFT)&GPIO_PDDR_PTH_MASK)     /*!< FGPIOB_PDDR                             */
 
 /* ------- FGPIOB_PIDR                              ------ */
+#define GPIO_PIDR_PTE_MASK                       (0xFFUL << GPIO_PIDR_PTE_SHIFT)                     /*!< FGPIOB_PIDR: PTE Mask                   */
+#define GPIO_PIDR_PTE_SHIFT                      0                                                   /*!< FGPIOB_PIDR: PTE Position               */
+#define GPIO_PIDR_PTE(x)                         (((x)<<GPIO_PIDR_PTE_SHIFT)&GPIO_PIDR_PTE_MASK)     /*!< FGPIOB_PIDR                             */
+#define GPIO_PIDR_PTF_MASK                       (0xFFUL << GPIO_PIDR_PTF_SHIFT)                     /*!< FGPIOB_PIDR: PTF Mask                   */
+#define GPIO_PIDR_PTF_SHIFT                      8                                                   /*!< FGPIOB_PIDR: PTF Position               */
+#define GPIO_PIDR_PTF(x)                         (((x)<<GPIO_PIDR_PTF_SHIFT)&GPIO_PIDR_PTF_MASK)     /*!< FGPIOB_PIDR                             */
+#define GPIO_PIDR_PTG_MASK                       (0xFFUL << GPIO_PIDR_PTG_SHIFT)                     /*!< FGPIOB_PIDR: PTG Mask                   */
+#define GPIO_PIDR_PTG_SHIFT                      16                                                  /*!< FGPIOB_PIDR: PTG Position               */
+#define GPIO_PIDR_PTG(x)                         (((x)<<GPIO_PIDR_PTG_SHIFT)&GPIO_PIDR_PTG_MASK)     /*!< FGPIOB_PIDR                             */
+#define GPIO_PIDR_PTH_MASK                       (0xFFUL << GPIO_PIDR_PTH_SHIFT)                     /*!< FGPIOB_PIDR: PTH Mask                   */
+#define GPIO_PIDR_PTH_SHIFT                      24                                                  /*!< FGPIOB_PIDR: PTH Position               */
+#define GPIO_PIDR_PTH(x)                         (((x)<<GPIO_PIDR_PTH_SHIFT)&GPIO_PIDR_PTH_MASK)     /*!< FGPIOB_PIDR                             */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'FGPIOB' Register Access macros                      ----------- */
@@ -799,18 +883,39 @@ typedef struct {                                /*!<       FGPIOC Structure     
 
 
 /* ------- FGPIOC_PDOR                              ------ */
+#define GPIO_PDOR_PTI_MASK                       (0xFFUL << GPIO_PDOR_PTI_SHIFT)                     /*!< FGPIOC_PDOR: PTI Mask                   */
+#define GPIO_PDOR_PTI_SHIFT                      0                                                   /*!< FGPIOC_PDOR: PTI Position               */
+#define GPIO_PDOR_PTI(x)                         (((x)<<GPIO_PDOR_PTI_SHIFT)&GPIO_PDOR_PTI_MASK)     /*!< FGPIOC_PDOR                             */
 
 /* ------- FGPIOC_PSOR                              ------ */
+#define GPIO_PSOR_PTI_MASK                       (0xFFUL << GPIO_PSOR_PTI_SHIFT)                     /*!< FGPIOC_PSOR: PTI Mask                   */
+#define GPIO_PSOR_PTI_SHIFT                      0                                                   /*!< FGPIOC_PSOR: PTI Position               */
+#define GPIO_PSOR_PTI(x)                         (((x)<<GPIO_PSOR_PTI_SHIFT)&GPIO_PSOR_PTI_MASK)     /*!< FGPIOC_PSOR                             */
 
 /* ------- FGPIOC_PCOR                              ------ */
+#define GPIO_PCOR_PTI_MASK                       (0xFFUL << GPIO_PCOR_PTI_SHIFT)                     /*!< FGPIOC_PCOR: PTI Mask                   */
+#define GPIO_PCOR_PTI_SHIFT                      0                                                   /*!< FGPIOC_PCOR: PTI Position               */
+#define GPIO_PCOR_PTI(x)                         (((x)<<GPIO_PCOR_PTI_SHIFT)&GPIO_PCOR_PTI_MASK)     /*!< FGPIOC_PCOR                             */
 
 /* ------- FGPIOC_PTOR                              ------ */
+#define GPIO_PTOR_PTI_MASK                       (0xFFUL << GPIO_PTOR_PTI_SHIFT)                     /*!< FGPIOC_PTOR: PTI Mask                   */
+#define GPIO_PTOR_PTI_SHIFT                      0                                                   /*!< FGPIOC_PTOR: PTI Position               */
+#define GPIO_PTOR_PTI(x)                         (((x)<<GPIO_PTOR_PTI_SHIFT)&GPIO_PTOR_PTI_MASK)     /*!< FGPIOC_PTOR                             */
 
 /* ------- FGPIOC_PDIR                              ------ */
+#define GPIO_PDIR_PTI_MASK                       (0xFFUL << GPIO_PDIR_PTI_SHIFT)                     /*!< FGPIOC_PDIR: PTI Mask                   */
+#define GPIO_PDIR_PTI_SHIFT                      0                                                   /*!< FGPIOC_PDIR: PTI Position               */
+#define GPIO_PDIR_PTI(x)                         (((x)<<GPIO_PDIR_PTI_SHIFT)&GPIO_PDIR_PTI_MASK)     /*!< FGPIOC_PDIR                             */
 
 /* ------- FGPIOC_PDDR                              ------ */
+#define GPIO_PDDR_PTI_MASK                       (0xFFUL << GPIO_PDDR_PTI_SHIFT)                     /*!< FGPIOC_PDDR: PTI Mask                   */
+#define GPIO_PDDR_PTI_SHIFT                      0                                                   /*!< FGPIOC_PDDR: PTI Position               */
+#define GPIO_PDDR_PTI(x)                         (((x)<<GPIO_PDDR_PTI_SHIFT)&GPIO_PDDR_PTI_MASK)     /*!< FGPIOC_PDDR                             */
 
 /* ------- FGPIOC_PIDR                              ------ */
+#define GPIO_PIDR_PTI_MASK                       (0xFFUL << GPIO_PIDR_PTI_SHIFT)                     /*!< FGPIOC_PIDR: PTI Mask                   */
+#define GPIO_PIDR_PTI_SHIFT                      0                                                   /*!< FGPIOC_PIDR: PTI Position               */
+#define GPIO_PIDR_PTI(x)                         (((x)<<GPIO_PIDR_PTI_SHIFT)&GPIO_PIDR_PTI_MASK)     /*!< FGPIOC_PIDR                             */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'FGPIOC' Register Access macros                      ----------- */
@@ -836,9 +941,11 @@ typedef struct {                                /*!<       FTM0 Structure       
    __IO uint32_t  CNT;                          /*!< 0004: Counter                                                      */
    __IO uint32_t  MOD;                          /*!< 0008: Modulo                                                       */
    struct { /* (cluster) */                     /*!< 000C: (size=0x0010, 16)                                            */
-      __IO uint32_t  CnSC;                      /*!< 000C: Channel (%s) Status and Control                              */
-      __IO uint32_t  CnV;                       /*!< 0010: Channel (%s) Value                                           */
+      __IO uint32_t  CnSC;                      /*!< 000C: Channel %s Status and Control                                */
+      __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
    } CONTROLS[2];
+   __I  uint32_t  RESERVED0[20];                /*!< 001C:                                                              */
+   __IO uint32_t  EXTTRIG;                      /*!< 006C: FTM External Trigger                                         */
 } FTM0_Type;
 
 
@@ -890,6 +997,16 @@ typedef struct {                                /*!<       FTM0 Structure       
 #define FTM_CnV_VAL_SHIFT                        0                                                   /*!< FTM0_CnV: VAL Position                  */
 #define FTM_CnV_VAL(x)                           (((x)<<FTM_CnV_VAL_SHIFT)&FTM_CnV_VAL_MASK)         /*!< FTM0_CnV                                */
 
+/* ------- FTM0_EXTTRIG                             ------ */
+#define FTM_EXTTRIG_CH0TRIG_MASK                 (0x01UL << FTM_EXTTRIG_CH0TRIG_SHIFT)               /*!< FTM0_EXTTRIG: CH0TRIG Mask              */
+#define FTM_EXTTRIG_CH0TRIG_SHIFT                4                                                   /*!< FTM0_EXTTRIG: CH0TRIG Position          */
+#define FTM_EXTTRIG_CH1TRIG_MASK                 (0x01UL << FTM_EXTTRIG_CH1TRIG_SHIFT)               /*!< FTM0_EXTTRIG: CH1TRIG Mask              */
+#define FTM_EXTTRIG_CH1TRIG_SHIFT                5                                                   /*!< FTM0_EXTTRIG: CH1TRIG Position          */
+#define FTM_EXTTRIG_INITTRIGEN_MASK              (0x01UL << FTM_EXTTRIG_INITTRIGEN_SHIFT)            /*!< FTM0_EXTTRIG: INITTRIGEN Mask           */
+#define FTM_EXTTRIG_INITTRIGEN_SHIFT             6                                                   /*!< FTM0_EXTTRIG: INITTRIGEN Position       */
+#define FTM_EXTTRIG_TRIGF_MASK                   (0x01UL << FTM_EXTTRIG_TRIGF_SHIFT)                 /*!< FTM0_EXTTRIG: TRIGF Mask                */
+#define FTM_EXTTRIG_TRIGF_SHIFT                  7                                                   /*!< FTM0_EXTTRIG: TRIGF Position            */
+
 /* -------------------------------------------------------------------------------- */
 /* -----------     'FTM0' Register Access macros                        ----------- */
 /* -------------------------------------------------------------------------------- */
@@ -901,6 +1018,7 @@ typedef struct {                                /*!<       FTM0 Structure       
 #define FTM0_C0V                       (FTM0->CONTROLS[0].CnV)
 #define FTM0_C1SC                      (FTM0->CONTROLS[1].CnSC)
 #define FTM0_C1V                       (FTM0->CONTROLS[1].CnV)
+#define FTM0_EXTTRIG                   (FTM0->EXTTRIG)
 
 /* ================================================================================ */
 /* ================           FTM1 (derived from FTM0)             ================ */
@@ -923,6 +1041,7 @@ typedef FTM0_Type FTM1_Type;  /*!< FTM1 Structure                               
 #define FTM1_C0V                       (FTM1->CONTROLS[0].CnV)
 #define FTM1_C1SC                      (FTM1->CONTROLS[1].CnSC)
 #define FTM1_C1V                       (FTM1->CONTROLS[1].CnV)
+#define FTM1_EXTTRIG                   (FTM1->EXTTRIG)
 
 /* ================================================================================ */
 /* ================           FTM2 (file:FTM2_6CH_MKE)             ================ */
@@ -936,8 +1055,8 @@ typedef struct {                                /*!<       FTM2 Structure       
    __IO uint32_t  CNT;                          /*!< 0004: Counter                                                      */
    __IO uint32_t  MOD;                          /*!< 0008: Modulo                                                       */
    struct { /* (cluster) */                     /*!< 000C: (size=0x0030, 48)                                            */
-      __IO uint32_t  CnSC;                      /*!< 000C: Channel (%s) Status and Control                              */
-      __IO uint32_t  CnV;                       /*!< 0010: Channel (%s) Value                                           */
+      __IO uint32_t  CnSC;                      /*!< 000C: Channel %s Status and Control                                */
+      __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
    } CONTROLS[6];
    __I  uint32_t  RESERVED0[4];                 /*!< 003C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
@@ -979,42 +1098,347 @@ typedef struct {                                /*!<       FTM2 Structure       
 /* ------- FTM2_CnV                                 ------ */
 
 /* ------- FTM2_CNTIN                               ------ */
+#define FTM_CNTIN_INIT_MASK                      (0xFFFFUL << FTM_CNTIN_INIT_SHIFT)                  /*!< FTM2_CNTIN: INIT Mask                   */
+#define FTM_CNTIN_INIT_SHIFT                     0                                                   /*!< FTM2_CNTIN: INIT Position               */
+#define FTM_CNTIN_INIT(x)                        (((x)<<FTM_CNTIN_INIT_SHIFT)&FTM_CNTIN_INIT_MASK)   /*!< FTM2_CNTIN                              */
 
 /* ------- FTM2_STATUS                              ------ */
+#define FTM_STATUS_CH0F_MASK                     (0x01UL << FTM_STATUS_CH0F_SHIFT)                   /*!< FTM2_STATUS: CH0F Mask                  */
+#define FTM_STATUS_CH0F_SHIFT                    0                                                   /*!< FTM2_STATUS: CH0F Position              */
+#define FTM_STATUS_CH1F_MASK                     (0x01UL << FTM_STATUS_CH1F_SHIFT)                   /*!< FTM2_STATUS: CH1F Mask                  */
+#define FTM_STATUS_CH1F_SHIFT                    1                                                   /*!< FTM2_STATUS: CH1F Position              */
+#define FTM_STATUS_CH2F_MASK                     (0x01UL << FTM_STATUS_CH2F_SHIFT)                   /*!< FTM2_STATUS: CH2F Mask                  */
+#define FTM_STATUS_CH2F_SHIFT                    2                                                   /*!< FTM2_STATUS: CH2F Position              */
+#define FTM_STATUS_CH3F_MASK                     (0x01UL << FTM_STATUS_CH3F_SHIFT)                   /*!< FTM2_STATUS: CH3F Mask                  */
+#define FTM_STATUS_CH3F_SHIFT                    3                                                   /*!< FTM2_STATUS: CH3F Position              */
+#define FTM_STATUS_CH4F_MASK                     (0x01UL << FTM_STATUS_CH4F_SHIFT)                   /*!< FTM2_STATUS: CH4F Mask                  */
+#define FTM_STATUS_CH4F_SHIFT                    4                                                   /*!< FTM2_STATUS: CH4F Position              */
+#define FTM_STATUS_CH5F_MASK                     (0x01UL << FTM_STATUS_CH5F_SHIFT)                   /*!< FTM2_STATUS: CH5F Mask                  */
+#define FTM_STATUS_CH5F_SHIFT                    5                                                   /*!< FTM2_STATUS: CH5F Position              */
+#define FTM_STATUS_CH6F_MASK                     (0x01UL << FTM_STATUS_CH6F_SHIFT)                   /*!< FTM2_STATUS: CH6F Mask                  */
+#define FTM_STATUS_CH6F_SHIFT                    6                                                   /*!< FTM2_STATUS: CH6F Position              */
+#define FTM_STATUS_CH7F_MASK                     (0x01UL << FTM_STATUS_CH7F_SHIFT)                   /*!< FTM2_STATUS: CH7F Mask                  */
+#define FTM_STATUS_CH7F_SHIFT                    7                                                   /*!< FTM2_STATUS: CH7F Position              */
 
 /* ------- FTM2_MODE                                ------ */
+#define FTM_MODE_FTMEN_MASK                      (0x01UL << FTM_MODE_FTMEN_SHIFT)                    /*!< FTM2_MODE: FTMEN Mask                   */
+#define FTM_MODE_FTMEN_SHIFT                     0                                                   /*!< FTM2_MODE: FTMEN Position               */
+#define FTM_MODE_INIT_MASK                       (0x01UL << FTM_MODE_INIT_SHIFT)                     /*!< FTM2_MODE: INIT Mask                    */
+#define FTM_MODE_INIT_SHIFT                      1                                                   /*!< FTM2_MODE: INIT Position                */
+#define FTM_MODE_WPDIS_MASK                      (0x01UL << FTM_MODE_WPDIS_SHIFT)                    /*!< FTM2_MODE: WPDIS Mask                   */
+#define FTM_MODE_WPDIS_SHIFT                     2                                                   /*!< FTM2_MODE: WPDIS Position               */
+#define FTM_MODE_PWMSYNC_MASK                    (0x01UL << FTM_MODE_PWMSYNC_SHIFT)                  /*!< FTM2_MODE: PWMSYNC Mask                 */
+#define FTM_MODE_PWMSYNC_SHIFT                   3                                                   /*!< FTM2_MODE: PWMSYNC Position             */
+#define FTM_MODE_CAPTEST_MASK                    (0x01UL << FTM_MODE_CAPTEST_SHIFT)                  /*!< FTM2_MODE: CAPTEST Mask                 */
+#define FTM_MODE_CAPTEST_SHIFT                   4                                                   /*!< FTM2_MODE: CAPTEST Position             */
+#define FTM_MODE_FAULTM_MASK                     (0x03UL << FTM_MODE_FAULTM_SHIFT)                   /*!< FTM2_MODE: FAULTM Mask                  */
+#define FTM_MODE_FAULTM_SHIFT                    5                                                   /*!< FTM2_MODE: FAULTM Position              */
+#define FTM_MODE_FAULTM(x)                       (((x)<<FTM_MODE_FAULTM_SHIFT)&FTM_MODE_FAULTM_MASK) /*!< FTM2_MODE                               */
+#define FTM_MODE_FAULTIE_MASK                    (0x01UL << FTM_MODE_FAULTIE_SHIFT)                  /*!< FTM2_MODE: FAULTIE Mask                 */
+#define FTM_MODE_FAULTIE_SHIFT                   7                                                   /*!< FTM2_MODE: FAULTIE Position             */
 
 /* ------- FTM2_SYNC                                ------ */
+#define FTM_SYNC_CNTMIN_MASK                     (0x01UL << FTM_SYNC_CNTMIN_SHIFT)                   /*!< FTM2_SYNC: CNTMIN Mask                  */
+#define FTM_SYNC_CNTMIN_SHIFT                    0                                                   /*!< FTM2_SYNC: CNTMIN Position              */
+#define FTM_SYNC_CNTMAX_MASK                     (0x01UL << FTM_SYNC_CNTMAX_SHIFT)                   /*!< FTM2_SYNC: CNTMAX Mask                  */
+#define FTM_SYNC_CNTMAX_SHIFT                    1                                                   /*!< FTM2_SYNC: CNTMAX Position              */
+#define FTM_SYNC_REINIT_MASK                     (0x01UL << FTM_SYNC_REINIT_SHIFT)                   /*!< FTM2_SYNC: REINIT Mask                  */
+#define FTM_SYNC_REINIT_SHIFT                    2                                                   /*!< FTM2_SYNC: REINIT Position              */
+#define FTM_SYNC_SYNCHOM_MASK                    (0x01UL << FTM_SYNC_SYNCHOM_SHIFT)                  /*!< FTM2_SYNC: SYNCHOM Mask                 */
+#define FTM_SYNC_SYNCHOM_SHIFT                   3                                                   /*!< FTM2_SYNC: SYNCHOM Position             */
+#define FTM_SYNC_TRIG0_MASK                      (0x01UL << FTM_SYNC_TRIG0_SHIFT)                    /*!< FTM2_SYNC: TRIG0 Mask                   */
+#define FTM_SYNC_TRIG0_SHIFT                     4                                                   /*!< FTM2_SYNC: TRIG0 Position               */
+#define FTM_SYNC_TRIG1_MASK                      (0x01UL << FTM_SYNC_TRIG1_SHIFT)                    /*!< FTM2_SYNC: TRIG1 Mask                   */
+#define FTM_SYNC_TRIG1_SHIFT                     5                                                   /*!< FTM2_SYNC: TRIG1 Position               */
+#define FTM_SYNC_TRIG2_MASK                      (0x01UL << FTM_SYNC_TRIG2_SHIFT)                    /*!< FTM2_SYNC: TRIG2 Mask                   */
+#define FTM_SYNC_TRIG2_SHIFT                     6                                                   /*!< FTM2_SYNC: TRIG2 Position               */
+#define FTM_SYNC_SWSYNC_MASK                     (0x01UL << FTM_SYNC_SWSYNC_SHIFT)                   /*!< FTM2_SYNC: SWSYNC Mask                  */
+#define FTM_SYNC_SWSYNC_SHIFT                    7                                                   /*!< FTM2_SYNC: SWSYNC Position              */
 
 /* ------- FTM2_OUTINIT                             ------ */
+#define FTM_OUTINIT_CH0OI_MASK                   (0x01UL << FTM_OUTINIT_CH0OI_SHIFT)                 /*!< FTM2_OUTINIT: CH0OI Mask                */
+#define FTM_OUTINIT_CH0OI_SHIFT                  0                                                   /*!< FTM2_OUTINIT: CH0OI Position            */
+#define FTM_OUTINIT_CH1OI_MASK                   (0x01UL << FTM_OUTINIT_CH1OI_SHIFT)                 /*!< FTM2_OUTINIT: CH1OI Mask                */
+#define FTM_OUTINIT_CH1OI_SHIFT                  1                                                   /*!< FTM2_OUTINIT: CH1OI Position            */
+#define FTM_OUTINIT_CH2OI_MASK                   (0x01UL << FTM_OUTINIT_CH2OI_SHIFT)                 /*!< FTM2_OUTINIT: CH2OI Mask                */
+#define FTM_OUTINIT_CH2OI_SHIFT                  2                                                   /*!< FTM2_OUTINIT: CH2OI Position            */
+#define FTM_OUTINIT_CH3OI_MASK                   (0x01UL << FTM_OUTINIT_CH3OI_SHIFT)                 /*!< FTM2_OUTINIT: CH3OI Mask                */
+#define FTM_OUTINIT_CH3OI_SHIFT                  3                                                   /*!< FTM2_OUTINIT: CH3OI Position            */
+#define FTM_OUTINIT_CH4OI_MASK                   (0x01UL << FTM_OUTINIT_CH4OI_SHIFT)                 /*!< FTM2_OUTINIT: CH4OI Mask                */
+#define FTM_OUTINIT_CH4OI_SHIFT                  4                                                   /*!< FTM2_OUTINIT: CH4OI Position            */
+#define FTM_OUTINIT_CH5OI_MASK                   (0x01UL << FTM_OUTINIT_CH5OI_SHIFT)                 /*!< FTM2_OUTINIT: CH5OI Mask                */
+#define FTM_OUTINIT_CH5OI_SHIFT                  5                                                   /*!< FTM2_OUTINIT: CH5OI Position            */
+#define FTM_OUTINIT_CH6OI_MASK                   (0x01UL << FTM_OUTINIT_CH6OI_SHIFT)                 /*!< FTM2_OUTINIT: CH6OI Mask                */
+#define FTM_OUTINIT_CH6OI_SHIFT                  6                                                   /*!< FTM2_OUTINIT: CH6OI Position            */
+#define FTM_OUTINIT_CH7OI_MASK                   (0x01UL << FTM_OUTINIT_CH7OI_SHIFT)                 /*!< FTM2_OUTINIT: CH7OI Mask                */
+#define FTM_OUTINIT_CH7OI_SHIFT                  7                                                   /*!< FTM2_OUTINIT: CH7OI Position            */
 
 /* ------- FTM2_OUTMASK                             ------ */
+#define FTM_OUTMASK_CH0OM_MASK                   (0x01UL << FTM_OUTMASK_CH0OM_SHIFT)                 /*!< FTM2_OUTMASK: CH0OM Mask                */
+#define FTM_OUTMASK_CH0OM_SHIFT                  0                                                   /*!< FTM2_OUTMASK: CH0OM Position            */
+#define FTM_OUTMASK_CH1OM_MASK                   (0x01UL << FTM_OUTMASK_CH1OM_SHIFT)                 /*!< FTM2_OUTMASK: CH1OM Mask                */
+#define FTM_OUTMASK_CH1OM_SHIFT                  1                                                   /*!< FTM2_OUTMASK: CH1OM Position            */
+#define FTM_OUTMASK_CH2OM_MASK                   (0x01UL << FTM_OUTMASK_CH2OM_SHIFT)                 /*!< FTM2_OUTMASK: CH2OM Mask                */
+#define FTM_OUTMASK_CH2OM_SHIFT                  2                                                   /*!< FTM2_OUTMASK: CH2OM Position            */
+#define FTM_OUTMASK_CH3OM_MASK                   (0x01UL << FTM_OUTMASK_CH3OM_SHIFT)                 /*!< FTM2_OUTMASK: CH3OM Mask                */
+#define FTM_OUTMASK_CH3OM_SHIFT                  3                                                   /*!< FTM2_OUTMASK: CH3OM Position            */
+#define FTM_OUTMASK_CH4OM_MASK                   (0x01UL << FTM_OUTMASK_CH4OM_SHIFT)                 /*!< FTM2_OUTMASK: CH4OM Mask                */
+#define FTM_OUTMASK_CH4OM_SHIFT                  4                                                   /*!< FTM2_OUTMASK: CH4OM Position            */
+#define FTM_OUTMASK_CH5OM_MASK                   (0x01UL << FTM_OUTMASK_CH5OM_SHIFT)                 /*!< FTM2_OUTMASK: CH5OM Mask                */
+#define FTM_OUTMASK_CH5OM_SHIFT                  5                                                   /*!< FTM2_OUTMASK: CH5OM Position            */
+#define FTM_OUTMASK_CH6OM_MASK                   (0x01UL << FTM_OUTMASK_CH6OM_SHIFT)                 /*!< FTM2_OUTMASK: CH6OM Mask                */
+#define FTM_OUTMASK_CH6OM_SHIFT                  6                                                   /*!< FTM2_OUTMASK: CH6OM Position            */
+#define FTM_OUTMASK_CH7OM_MASK                   (0x01UL << FTM_OUTMASK_CH7OM_SHIFT)                 /*!< FTM2_OUTMASK: CH7OM Mask                */
+#define FTM_OUTMASK_CH7OM_SHIFT                  7                                                   /*!< FTM2_OUTMASK: CH7OM Position            */
 
 /* ------- FTM2_COMBINE                             ------ */
+#define FTM_COMBINE_COMBINE0_MASK                (0x01UL << FTM_COMBINE_COMBINE0_SHIFT)              /*!< FTM2_COMBINE: COMBINE0 Mask             */
+#define FTM_COMBINE_COMBINE0_SHIFT               0                                                   /*!< FTM2_COMBINE: COMBINE0 Position         */
+#define FTM_COMBINE_COMP0_MASK                   (0x01UL << FTM_COMBINE_COMP0_SHIFT)                 /*!< FTM2_COMBINE: COMP0 Mask                */
+#define FTM_COMBINE_COMP0_SHIFT                  1                                                   /*!< FTM2_COMBINE: COMP0 Position            */
+#define FTM_COMBINE_DECAPEN0_MASK                (0x01UL << FTM_COMBINE_DECAPEN0_SHIFT)              /*!< FTM2_COMBINE: DECAPEN0 Mask             */
+#define FTM_COMBINE_DECAPEN0_SHIFT               2                                                   /*!< FTM2_COMBINE: DECAPEN0 Position         */
+#define FTM_COMBINE_DECAP0_MASK                  (0x01UL << FTM_COMBINE_DECAP0_SHIFT)                /*!< FTM2_COMBINE: DECAP0 Mask               */
+#define FTM_COMBINE_DECAP0_SHIFT                 3                                                   /*!< FTM2_COMBINE: DECAP0 Position           */
+#define FTM_COMBINE_DTEN0_MASK                   (0x01UL << FTM_COMBINE_DTEN0_SHIFT)                 /*!< FTM2_COMBINE: DTEN0 Mask                */
+#define FTM_COMBINE_DTEN0_SHIFT                  4                                                   /*!< FTM2_COMBINE: DTEN0 Position            */
+#define FTM_COMBINE_SYNCEN0_MASK                 (0x01UL << FTM_COMBINE_SYNCEN0_SHIFT)               /*!< FTM2_COMBINE: SYNCEN0 Mask              */
+#define FTM_COMBINE_SYNCEN0_SHIFT                5                                                   /*!< FTM2_COMBINE: SYNCEN0 Position          */
+#define FTM_COMBINE_FAULTEN0_MASK                (0x01UL << FTM_COMBINE_FAULTEN0_SHIFT)              /*!< FTM2_COMBINE: FAULTEN0 Mask             */
+#define FTM_COMBINE_FAULTEN0_SHIFT               6                                                   /*!< FTM2_COMBINE: FAULTEN0 Position         */
+#define FTM_COMBINE_COMBINE1_MASK                (0x01UL << FTM_COMBINE_COMBINE1_SHIFT)              /*!< FTM2_COMBINE: COMBINE1 Mask             */
+#define FTM_COMBINE_COMBINE1_SHIFT               8                                                   /*!< FTM2_COMBINE: COMBINE1 Position         */
+#define FTM_COMBINE_COMP1_MASK                   (0x01UL << FTM_COMBINE_COMP1_SHIFT)                 /*!< FTM2_COMBINE: COMP1 Mask                */
+#define FTM_COMBINE_COMP1_SHIFT                  9                                                   /*!< FTM2_COMBINE: COMP1 Position            */
+#define FTM_COMBINE_DECAPEN1_MASK                (0x01UL << FTM_COMBINE_DECAPEN1_SHIFT)              /*!< FTM2_COMBINE: DECAPEN1 Mask             */
+#define FTM_COMBINE_DECAPEN1_SHIFT               10                                                  /*!< FTM2_COMBINE: DECAPEN1 Position         */
+#define FTM_COMBINE_DECAP1_MASK                  (0x01UL << FTM_COMBINE_DECAP1_SHIFT)                /*!< FTM2_COMBINE: DECAP1 Mask               */
+#define FTM_COMBINE_DECAP1_SHIFT                 11                                                  /*!< FTM2_COMBINE: DECAP1 Position           */
+#define FTM_COMBINE_DTEN1_MASK                   (0x01UL << FTM_COMBINE_DTEN1_SHIFT)                 /*!< FTM2_COMBINE: DTEN1 Mask                */
+#define FTM_COMBINE_DTEN1_SHIFT                  12                                                  /*!< FTM2_COMBINE: DTEN1 Position            */
+#define FTM_COMBINE_SYNCEN1_MASK                 (0x01UL << FTM_COMBINE_SYNCEN1_SHIFT)               /*!< FTM2_COMBINE: SYNCEN1 Mask              */
+#define FTM_COMBINE_SYNCEN1_SHIFT                13                                                  /*!< FTM2_COMBINE: SYNCEN1 Position          */
+#define FTM_COMBINE_FAULTEN1_MASK                (0x01UL << FTM_COMBINE_FAULTEN1_SHIFT)              /*!< FTM2_COMBINE: FAULTEN1 Mask             */
+#define FTM_COMBINE_FAULTEN1_SHIFT               14                                                  /*!< FTM2_COMBINE: FAULTEN1 Position         */
+#define FTM_COMBINE_COMBINE2_MASK                (0x01UL << FTM_COMBINE_COMBINE2_SHIFT)              /*!< FTM2_COMBINE: COMBINE2 Mask             */
+#define FTM_COMBINE_COMBINE2_SHIFT               16                                                  /*!< FTM2_COMBINE: COMBINE2 Position         */
+#define FTM_COMBINE_COMP2_MASK                   (0x01UL << FTM_COMBINE_COMP2_SHIFT)                 /*!< FTM2_COMBINE: COMP2 Mask                */
+#define FTM_COMBINE_COMP2_SHIFT                  17                                                  /*!< FTM2_COMBINE: COMP2 Position            */
+#define FTM_COMBINE_DECAPEN2_MASK                (0x01UL << FTM_COMBINE_DECAPEN2_SHIFT)              /*!< FTM2_COMBINE: DECAPEN2 Mask             */
+#define FTM_COMBINE_DECAPEN2_SHIFT               18                                                  /*!< FTM2_COMBINE: DECAPEN2 Position         */
+#define FTM_COMBINE_DECAP2_MASK                  (0x01UL << FTM_COMBINE_DECAP2_SHIFT)                /*!< FTM2_COMBINE: DECAP2 Mask               */
+#define FTM_COMBINE_DECAP2_SHIFT                 19                                                  /*!< FTM2_COMBINE: DECAP2 Position           */
+#define FTM_COMBINE_DTEN2_MASK                   (0x01UL << FTM_COMBINE_DTEN2_SHIFT)                 /*!< FTM2_COMBINE: DTEN2 Mask                */
+#define FTM_COMBINE_DTEN2_SHIFT                  20                                                  /*!< FTM2_COMBINE: DTEN2 Position            */
+#define FTM_COMBINE_SYNCEN2_MASK                 (0x01UL << FTM_COMBINE_SYNCEN2_SHIFT)               /*!< FTM2_COMBINE: SYNCEN2 Mask              */
+#define FTM_COMBINE_SYNCEN2_SHIFT                21                                                  /*!< FTM2_COMBINE: SYNCEN2 Position          */
+#define FTM_COMBINE_FAULTEN2_MASK                (0x01UL << FTM_COMBINE_FAULTEN2_SHIFT)              /*!< FTM2_COMBINE: FAULTEN2 Mask             */
+#define FTM_COMBINE_FAULTEN2_SHIFT               22                                                  /*!< FTM2_COMBINE: FAULTEN2 Position         */
 
 /* ------- FTM2_DEADTIME                            ------ */
+#define FTM_DEADTIME_DTVAL_MASK                  (0x3FUL << FTM_DEADTIME_DTVAL_SHIFT)                /*!< FTM2_DEADTIME: DTVAL Mask               */
+#define FTM_DEADTIME_DTVAL_SHIFT                 0                                                   /*!< FTM2_DEADTIME: DTVAL Position           */
+#define FTM_DEADTIME_DTVAL(x)                    (((x)<<FTM_DEADTIME_DTVAL_SHIFT)&FTM_DEADTIME_DTVAL_MASK) /*!< FTM2_DEADTIME                           */
+#define FTM_DEADTIME_DTPS_MASK                   (0x03UL << FTM_DEADTIME_DTPS_SHIFT)                 /*!< FTM2_DEADTIME: DTPS Mask                */
+#define FTM_DEADTIME_DTPS_SHIFT                  6                                                   /*!< FTM2_DEADTIME: DTPS Position            */
+#define FTM_DEADTIME_DTPS(x)                     (((x)<<FTM_DEADTIME_DTPS_SHIFT)&FTM_DEADTIME_DTPS_MASK) /*!< FTM2_DEADTIME                           */
 
 /* ------- FTM2_EXTTRIG                             ------ */
+#define FTM_EXTTRIG_CH2TRIG_MASK                 (0x01UL << FTM_EXTTRIG_CH2TRIG_SHIFT)               /*!< FTM2_EXTTRIG: CH2TRIG Mask              */
+#define FTM_EXTTRIG_CH2TRIG_SHIFT                0                                                   /*!< FTM2_EXTTRIG: CH2TRIG Position          */
+#define FTM_EXTTRIG_CH3TRIG_MASK                 (0x01UL << FTM_EXTTRIG_CH3TRIG_SHIFT)               /*!< FTM2_EXTTRIG: CH3TRIG Mask              */
+#define FTM_EXTTRIG_CH3TRIG_SHIFT                1                                                   /*!< FTM2_EXTTRIG: CH3TRIG Position          */
+#define FTM_EXTTRIG_CH4TRIG_MASK                 (0x01UL << FTM_EXTTRIG_CH4TRIG_SHIFT)               /*!< FTM2_EXTTRIG: CH4TRIG Mask              */
+#define FTM_EXTTRIG_CH4TRIG_SHIFT                2                                                   /*!< FTM2_EXTTRIG: CH4TRIG Position          */
+#define FTM_EXTTRIG_CH5TRIG_MASK                 (0x01UL << FTM_EXTTRIG_CH5TRIG_SHIFT)               /*!< FTM2_EXTTRIG: CH5TRIG Mask              */
+#define FTM_EXTTRIG_CH5TRIG_SHIFT                3                                                   /*!< FTM2_EXTTRIG: CH5TRIG Position          */
 
 /* ------- FTM2_POL                                 ------ */
+#define FTM_POL_POL0_MASK                        (0x01UL << FTM_POL_POL0_SHIFT)                      /*!< FTM2_POL: POL0 Mask                     */
+#define FTM_POL_POL0_SHIFT                       0                                                   /*!< FTM2_POL: POL0 Position                 */
+#define FTM_POL_POL1_MASK                        (0x01UL << FTM_POL_POL1_SHIFT)                      /*!< FTM2_POL: POL1 Mask                     */
+#define FTM_POL_POL1_SHIFT                       1                                                   /*!< FTM2_POL: POL1 Position                 */
+#define FTM_POL_POL2_MASK                        (0x01UL << FTM_POL_POL2_SHIFT)                      /*!< FTM2_POL: POL2 Mask                     */
+#define FTM_POL_POL2_SHIFT                       2                                                   /*!< FTM2_POL: POL2 Position                 */
+#define FTM_POL_POL3_MASK                        (0x01UL << FTM_POL_POL3_SHIFT)                      /*!< FTM2_POL: POL3 Mask                     */
+#define FTM_POL_POL3_SHIFT                       3                                                   /*!< FTM2_POL: POL3 Position                 */
+#define FTM_POL_POL4_MASK                        (0x01UL << FTM_POL_POL4_SHIFT)                      /*!< FTM2_POL: POL4 Mask                     */
+#define FTM_POL_POL4_SHIFT                       4                                                   /*!< FTM2_POL: POL4 Position                 */
+#define FTM_POL_POL5_MASK                        (0x01UL << FTM_POL_POL5_SHIFT)                      /*!< FTM2_POL: POL5 Mask                     */
+#define FTM_POL_POL5_SHIFT                       5                                                   /*!< FTM2_POL: POL5 Position                 */
+#define FTM_POL_POL6_MASK                        (0x01UL << FTM_POL_POL6_SHIFT)                      /*!< FTM2_POL: POL6 Mask                     */
+#define FTM_POL_POL6_SHIFT                       6                                                   /*!< FTM2_POL: POL6 Position                 */
+#define FTM_POL_POL7_MASK                        (0x01UL << FTM_POL_POL7_SHIFT)                      /*!< FTM2_POL: POL7 Mask                     */
+#define FTM_POL_POL7_SHIFT                       7                                                   /*!< FTM2_POL: POL7 Position                 */
 
 /* ------- FTM2_FMS                                 ------ */
+#define FTM_FMS_FAULTF0_MASK                     (0x01UL << FTM_FMS_FAULTF0_SHIFT)                   /*!< FTM2_FMS: FAULTF0 Mask                  */
+#define FTM_FMS_FAULTF0_SHIFT                    0                                                   /*!< FTM2_FMS: FAULTF0 Position              */
+#define FTM_FMS_FAULTF1_MASK                     (0x01UL << FTM_FMS_FAULTF1_SHIFT)                   /*!< FTM2_FMS: FAULTF1 Mask                  */
+#define FTM_FMS_FAULTF1_SHIFT                    1                                                   /*!< FTM2_FMS: FAULTF1 Position              */
+#define FTM_FMS_FAULTF2_MASK                     (0x01UL << FTM_FMS_FAULTF2_SHIFT)                   /*!< FTM2_FMS: FAULTF2 Mask                  */
+#define FTM_FMS_FAULTF2_SHIFT                    2                                                   /*!< FTM2_FMS: FAULTF2 Position              */
+#define FTM_FMS_FAULTF3_MASK                     (0x01UL << FTM_FMS_FAULTF3_SHIFT)                   /*!< FTM2_FMS: FAULTF3 Mask                  */
+#define FTM_FMS_FAULTF3_SHIFT                    3                                                   /*!< FTM2_FMS: FAULTF3 Position              */
+#define FTM_FMS_FAULTIN_MASK                     (0x01UL << FTM_FMS_FAULTIN_SHIFT)                   /*!< FTM2_FMS: FAULTIN Mask                  */
+#define FTM_FMS_FAULTIN_SHIFT                    5                                                   /*!< FTM2_FMS: FAULTIN Position              */
+#define FTM_FMS_WPEN_MASK                        (0x01UL << FTM_FMS_WPEN_SHIFT)                      /*!< FTM2_FMS: WPEN Mask                     */
+#define FTM_FMS_WPEN_SHIFT                       6                                                   /*!< FTM2_FMS: WPEN Position                 */
+#define FTM_FMS_FAULTF_MASK                      (0x01UL << FTM_FMS_FAULTF_SHIFT)                    /*!< FTM2_FMS: FAULTF Mask                   */
+#define FTM_FMS_FAULTF_SHIFT                     7                                                   /*!< FTM2_FMS: FAULTF Position               */
 
 /* ------- FTM2_FILTER                              ------ */
+#define FTM_FILTER_CH0FVAL_MASK                  (0x0FUL << FTM_FILTER_CH0FVAL_SHIFT)                /*!< FTM2_FILTER: CH0FVAL Mask               */
+#define FTM_FILTER_CH0FVAL_SHIFT                 0                                                   /*!< FTM2_FILTER: CH0FVAL Position           */
+#define FTM_FILTER_CH0FVAL(x)                    (((x)<<FTM_FILTER_CH0FVAL_SHIFT)&FTM_FILTER_CH0FVAL_MASK) /*!< FTM2_FILTER                             */
+#define FTM_FILTER_CH1FVAL_MASK                  (0x0FUL << FTM_FILTER_CH1FVAL_SHIFT)                /*!< FTM2_FILTER: CH1FVAL Mask               */
+#define FTM_FILTER_CH1FVAL_SHIFT                 4                                                   /*!< FTM2_FILTER: CH1FVAL Position           */
+#define FTM_FILTER_CH1FVAL(x)                    (((x)<<FTM_FILTER_CH1FVAL_SHIFT)&FTM_FILTER_CH1FVAL_MASK) /*!< FTM2_FILTER                             */
+#define FTM_FILTER_CH2FVAL_MASK                  (0x0FUL << FTM_FILTER_CH2FVAL_SHIFT)                /*!< FTM2_FILTER: CH2FVAL Mask               */
+#define FTM_FILTER_CH2FVAL_SHIFT                 8                                                   /*!< FTM2_FILTER: CH2FVAL Position           */
+#define FTM_FILTER_CH2FVAL(x)                    (((x)<<FTM_FILTER_CH2FVAL_SHIFT)&FTM_FILTER_CH2FVAL_MASK) /*!< FTM2_FILTER                             */
+#define FTM_FILTER_CH3FVAL_MASK                  (0x0FUL << FTM_FILTER_CH3FVAL_SHIFT)                /*!< FTM2_FILTER: CH3FVAL Mask               */
+#define FTM_FILTER_CH3FVAL_SHIFT                 12                                                  /*!< FTM2_FILTER: CH3FVAL Position           */
+#define FTM_FILTER_CH3FVAL(x)                    (((x)<<FTM_FILTER_CH3FVAL_SHIFT)&FTM_FILTER_CH3FVAL_MASK) /*!< FTM2_FILTER                             */
 
 /* ------- FTM2_FLTCTRL                             ------ */
+#define FTM_FLTCTRL_FAULT0EN_MASK                (0x01UL << FTM_FLTCTRL_FAULT0EN_SHIFT)              /*!< FTM2_FLTCTRL: FAULT0EN Mask             */
+#define FTM_FLTCTRL_FAULT0EN_SHIFT               0                                                   /*!< FTM2_FLTCTRL: FAULT0EN Position         */
+#define FTM_FLTCTRL_FAULT1EN_MASK                (0x01UL << FTM_FLTCTRL_FAULT1EN_SHIFT)              /*!< FTM2_FLTCTRL: FAULT1EN Mask             */
+#define FTM_FLTCTRL_FAULT1EN_SHIFT               1                                                   /*!< FTM2_FLTCTRL: FAULT1EN Position         */
+#define FTM_FLTCTRL_FAULT2EN_MASK                (0x01UL << FTM_FLTCTRL_FAULT2EN_SHIFT)              /*!< FTM2_FLTCTRL: FAULT2EN Mask             */
+#define FTM_FLTCTRL_FAULT2EN_SHIFT               2                                                   /*!< FTM2_FLTCTRL: FAULT2EN Position         */
+#define FTM_FLTCTRL_FAULT3EN_MASK                (0x01UL << FTM_FLTCTRL_FAULT3EN_SHIFT)              /*!< FTM2_FLTCTRL: FAULT3EN Mask             */
+#define FTM_FLTCTRL_FAULT3EN_SHIFT               3                                                   /*!< FTM2_FLTCTRL: FAULT3EN Position         */
+#define FTM_FLTCTRL_FFLTR0EN_MASK                (0x01UL << FTM_FLTCTRL_FFLTR0EN_SHIFT)              /*!< FTM2_FLTCTRL: FFLTR0EN Mask             */
+#define FTM_FLTCTRL_FFLTR0EN_SHIFT               4                                                   /*!< FTM2_FLTCTRL: FFLTR0EN Position         */
+#define FTM_FLTCTRL_FFLTR1EN_MASK                (0x01UL << FTM_FLTCTRL_FFLTR1EN_SHIFT)              /*!< FTM2_FLTCTRL: FFLTR1EN Mask             */
+#define FTM_FLTCTRL_FFLTR1EN_SHIFT               5                                                   /*!< FTM2_FLTCTRL: FFLTR1EN Position         */
+#define FTM_FLTCTRL_FFLTR2EN_MASK                (0x01UL << FTM_FLTCTRL_FFLTR2EN_SHIFT)              /*!< FTM2_FLTCTRL: FFLTR2EN Mask             */
+#define FTM_FLTCTRL_FFLTR2EN_SHIFT               6                                                   /*!< FTM2_FLTCTRL: FFLTR2EN Position         */
+#define FTM_FLTCTRL_FFLTR3EN_MASK                (0x01UL << FTM_FLTCTRL_FFLTR3EN_SHIFT)              /*!< FTM2_FLTCTRL: FFLTR3EN Mask             */
+#define FTM_FLTCTRL_FFLTR3EN_SHIFT               7                                                   /*!< FTM2_FLTCTRL: FFLTR3EN Position         */
+#define FTM_FLTCTRL_FFVAL_MASK                   (0x0FUL << FTM_FLTCTRL_FFVAL_SHIFT)                 /*!< FTM2_FLTCTRL: FFVAL Mask                */
+#define FTM_FLTCTRL_FFVAL_SHIFT                  8                                                   /*!< FTM2_FLTCTRL: FFVAL Position            */
+#define FTM_FLTCTRL_FFVAL(x)                     (((x)<<FTM_FLTCTRL_FFVAL_SHIFT)&FTM_FLTCTRL_FFVAL_MASK) /*!< FTM2_FLTCTRL                            */
 
 /* ------- FTM2_CONF                                ------ */
+#define FTM_CONF_NUMTOF_MASK                     (0x1FUL << FTM_CONF_NUMTOF_SHIFT)                   /*!< FTM2_CONF: NUMTOF Mask                  */
+#define FTM_CONF_NUMTOF_SHIFT                    0                                                   /*!< FTM2_CONF: NUMTOF Position              */
+#define FTM_CONF_NUMTOF(x)                       (((x)<<FTM_CONF_NUMTOF_SHIFT)&FTM_CONF_NUMTOF_MASK) /*!< FTM2_CONF                               */
+#define FTM_CONF_BDMMODE_MASK                    (0x03UL << FTM_CONF_BDMMODE_SHIFT)                  /*!< FTM2_CONF: BDMMODE Mask                 */
+#define FTM_CONF_BDMMODE_SHIFT                   6                                                   /*!< FTM2_CONF: BDMMODE Position             */
+#define FTM_CONF_BDMMODE(x)                      (((x)<<FTM_CONF_BDMMODE_SHIFT)&FTM_CONF_BDMMODE_MASK) /*!< FTM2_CONF                               */
+#define FTM_CONF_GTBEEN_MASK                     (0x01UL << FTM_CONF_GTBEEN_SHIFT)                   /*!< FTM2_CONF: GTBEEN Mask                  */
+#define FTM_CONF_GTBEEN_SHIFT                    9                                                   /*!< FTM2_CONF: GTBEEN Position              */
+#define FTM_CONF_GTBEOUT_MASK                    (0x01UL << FTM_CONF_GTBEOUT_SHIFT)                  /*!< FTM2_CONF: GTBEOUT Mask                 */
+#define FTM_CONF_GTBEOUT_SHIFT                   10                                                  /*!< FTM2_CONF: GTBEOUT Position             */
 
 /* ------- FTM2_FLTPOL                              ------ */
+#define FTM_FLTPOL_FLT0POL_MASK                  (0x01UL << FTM_FLTPOL_FLT0POL_SHIFT)                /*!< FTM2_FLTPOL: FLT0POL Mask               */
+#define FTM_FLTPOL_FLT0POL_SHIFT                 0                                                   /*!< FTM2_FLTPOL: FLT0POL Position           */
+#define FTM_FLTPOL_FLT1POL_MASK                  (0x01UL << FTM_FLTPOL_FLT1POL_SHIFT)                /*!< FTM2_FLTPOL: FLT1POL Mask               */
+#define FTM_FLTPOL_FLT1POL_SHIFT                 1                                                   /*!< FTM2_FLTPOL: FLT1POL Position           */
+#define FTM_FLTPOL_FLT2POL_MASK                  (0x01UL << FTM_FLTPOL_FLT2POL_SHIFT)                /*!< FTM2_FLTPOL: FLT2POL Mask               */
+#define FTM_FLTPOL_FLT2POL_SHIFT                 2                                                   /*!< FTM2_FLTPOL: FLT2POL Position           */
+#define FTM_FLTPOL_FLT3POL_MASK                  (0x01UL << FTM_FLTPOL_FLT3POL_SHIFT)                /*!< FTM2_FLTPOL: FLT3POL Mask               */
+#define FTM_FLTPOL_FLT3POL_SHIFT                 3                                                   /*!< FTM2_FLTPOL: FLT3POL Position           */
 
 /* ------- FTM2_SYNCONF                             ------ */
+#define FTM_SYNCONF_HWTRIGMODE_MASK              (0x01UL << FTM_SYNCONF_HWTRIGMODE_SHIFT)            /*!< FTM2_SYNCONF: HWTRIGMODE Mask           */
+#define FTM_SYNCONF_HWTRIGMODE_SHIFT             0                                                   /*!< FTM2_SYNCONF: HWTRIGMODE Position       */
+#define FTM_SYNCONF_CNTINC_MASK                  (0x01UL << FTM_SYNCONF_CNTINC_SHIFT)                /*!< FTM2_SYNCONF: CNTINC Mask               */
+#define FTM_SYNCONF_CNTINC_SHIFT                 2                                                   /*!< FTM2_SYNCONF: CNTINC Position           */
+#define FTM_SYNCONF_INVC_MASK                    (0x01UL << FTM_SYNCONF_INVC_SHIFT)                  /*!< FTM2_SYNCONF: INVC Mask                 */
+#define FTM_SYNCONF_INVC_SHIFT                   4                                                   /*!< FTM2_SYNCONF: INVC Position             */
+#define FTM_SYNCONF_SWOC_MASK                    (0x01UL << FTM_SYNCONF_SWOC_SHIFT)                  /*!< FTM2_SYNCONF: SWOC Mask                 */
+#define FTM_SYNCONF_SWOC_SHIFT                   5                                                   /*!< FTM2_SYNCONF: SWOC Position             */
+#define FTM_SYNCONF_SYNCMODE_MASK                (0x01UL << FTM_SYNCONF_SYNCMODE_SHIFT)              /*!< FTM2_SYNCONF: SYNCMODE Mask             */
+#define FTM_SYNCONF_SYNCMODE_SHIFT               7                                                   /*!< FTM2_SYNCONF: SYNCMODE Position         */
+#define FTM_SYNCONF_SWRSTCNT_MASK                (0x01UL << FTM_SYNCONF_SWRSTCNT_SHIFT)              /*!< FTM2_SYNCONF: SWRSTCNT Mask             */
+#define FTM_SYNCONF_SWRSTCNT_SHIFT               8                                                   /*!< FTM2_SYNCONF: SWRSTCNT Position         */
+#define FTM_SYNCONF_SWWRBUF_MASK                 (0x01UL << FTM_SYNCONF_SWWRBUF_SHIFT)               /*!< FTM2_SYNCONF: SWWRBUF Mask              */
+#define FTM_SYNCONF_SWWRBUF_SHIFT                9                                                   /*!< FTM2_SYNCONF: SWWRBUF Position          */
+#define FTM_SYNCONF_SWOM_MASK                    (0x01UL << FTM_SYNCONF_SWOM_SHIFT)                  /*!< FTM2_SYNCONF: SWOM Mask                 */
+#define FTM_SYNCONF_SWOM_SHIFT                   10                                                  /*!< FTM2_SYNCONF: SWOM Position             */
+#define FTM_SYNCONF_SWINVC_MASK                  (0x01UL << FTM_SYNCONF_SWINVC_SHIFT)                /*!< FTM2_SYNCONF: SWINVC Mask               */
+#define FTM_SYNCONF_SWINVC_SHIFT                 11                                                  /*!< FTM2_SYNCONF: SWINVC Position           */
+#define FTM_SYNCONF_SWSOC_MASK                   (0x01UL << FTM_SYNCONF_SWSOC_SHIFT)                 /*!< FTM2_SYNCONF: SWSOC Mask                */
+#define FTM_SYNCONF_SWSOC_SHIFT                  12                                                  /*!< FTM2_SYNCONF: SWSOC Position            */
+#define FTM_SYNCONF_HWRSTCNT_MASK                (0x01UL << FTM_SYNCONF_HWRSTCNT_SHIFT)              /*!< FTM2_SYNCONF: HWRSTCNT Mask             */
+#define FTM_SYNCONF_HWRSTCNT_SHIFT               16                                                  /*!< FTM2_SYNCONF: HWRSTCNT Position         */
+#define FTM_SYNCONF_HWWRBUF_MASK                 (0x01UL << FTM_SYNCONF_HWWRBUF_SHIFT)               /*!< FTM2_SYNCONF: HWWRBUF Mask              */
+#define FTM_SYNCONF_HWWRBUF_SHIFT                17                                                  /*!< FTM2_SYNCONF: HWWRBUF Position          */
+#define FTM_SYNCONF_HWOM_MASK                    (0x01UL << FTM_SYNCONF_HWOM_SHIFT)                  /*!< FTM2_SYNCONF: HWOM Mask                 */
+#define FTM_SYNCONF_HWOM_SHIFT                   18                                                  /*!< FTM2_SYNCONF: HWOM Position             */
+#define FTM_SYNCONF_HWINVC_MASK                  (0x01UL << FTM_SYNCONF_HWINVC_SHIFT)                /*!< FTM2_SYNCONF: HWINVC Mask               */
+#define FTM_SYNCONF_HWINVC_SHIFT                 19                                                  /*!< FTM2_SYNCONF: HWINVC Position           */
+#define FTM_SYNCONF_HWSOC_MASK                   (0x01UL << FTM_SYNCONF_HWSOC_SHIFT)                 /*!< FTM2_SYNCONF: HWSOC Mask                */
+#define FTM_SYNCONF_HWSOC_SHIFT                  20                                                  /*!< FTM2_SYNCONF: HWSOC Position            */
 
 /* ------- FTM2_INVCTRL                             ------ */
+#define FTM_INVCTRL_INV0EN_MASK                  (0x01UL << FTM_INVCTRL_INV0EN_SHIFT)                /*!< FTM2_INVCTRL: INV0EN Mask               */
+#define FTM_INVCTRL_INV0EN_SHIFT                 0                                                   /*!< FTM2_INVCTRL: INV0EN Position           */
+#define FTM_INVCTRL_INV1EN_MASK                  (0x01UL << FTM_INVCTRL_INV1EN_SHIFT)                /*!< FTM2_INVCTRL: INV1EN Mask               */
+#define FTM_INVCTRL_INV1EN_SHIFT                 1                                                   /*!< FTM2_INVCTRL: INV1EN Position           */
+#define FTM_INVCTRL_INV2EN_MASK                  (0x01UL << FTM_INVCTRL_INV2EN_SHIFT)                /*!< FTM2_INVCTRL: INV2EN Mask               */
+#define FTM_INVCTRL_INV2EN_SHIFT                 2                                                   /*!< FTM2_INVCTRL: INV2EN Position           */
+#define FTM_INVCTRL_INV3EN_MASK                  (0x01UL << FTM_INVCTRL_INV3EN_SHIFT)                /*!< FTM2_INVCTRL: INV3EN Mask               */
+#define FTM_INVCTRL_INV3EN_SHIFT                 3                                                   /*!< FTM2_INVCTRL: INV3EN Position           */
 
 /* ------- FTM2_SWOCTRL                             ------ */
+#define FTM_SWOCTRL_CH0OC_MASK                   (0x01UL << FTM_SWOCTRL_CH0OC_SHIFT)                 /*!< FTM2_SWOCTRL: CH0OC Mask                */
+#define FTM_SWOCTRL_CH0OC_SHIFT                  0                                                   /*!< FTM2_SWOCTRL: CH0OC Position            */
+#define FTM_SWOCTRL_CH1OC_MASK                   (0x01UL << FTM_SWOCTRL_CH1OC_SHIFT)                 /*!< FTM2_SWOCTRL: CH1OC Mask                */
+#define FTM_SWOCTRL_CH1OC_SHIFT                  1                                                   /*!< FTM2_SWOCTRL: CH1OC Position            */
+#define FTM_SWOCTRL_CH2OC_MASK                   (0x01UL << FTM_SWOCTRL_CH2OC_SHIFT)                 /*!< FTM2_SWOCTRL: CH2OC Mask                */
+#define FTM_SWOCTRL_CH2OC_SHIFT                  2                                                   /*!< FTM2_SWOCTRL: CH2OC Position            */
+#define FTM_SWOCTRL_CH3OC_MASK                   (0x01UL << FTM_SWOCTRL_CH3OC_SHIFT)                 /*!< FTM2_SWOCTRL: CH3OC Mask                */
+#define FTM_SWOCTRL_CH3OC_SHIFT                  3                                                   /*!< FTM2_SWOCTRL: CH3OC Position            */
+#define FTM_SWOCTRL_CH4OC_MASK                   (0x01UL << FTM_SWOCTRL_CH4OC_SHIFT)                 /*!< FTM2_SWOCTRL: CH4OC Mask                */
+#define FTM_SWOCTRL_CH4OC_SHIFT                  4                                                   /*!< FTM2_SWOCTRL: CH4OC Position            */
+#define FTM_SWOCTRL_CH5OC_MASK                   (0x01UL << FTM_SWOCTRL_CH5OC_SHIFT)                 /*!< FTM2_SWOCTRL: CH5OC Mask                */
+#define FTM_SWOCTRL_CH5OC_SHIFT                  5                                                   /*!< FTM2_SWOCTRL: CH5OC Position            */
+#define FTM_SWOCTRL_CH6OC_MASK                   (0x01UL << FTM_SWOCTRL_CH6OC_SHIFT)                 /*!< FTM2_SWOCTRL: CH6OC Mask                */
+#define FTM_SWOCTRL_CH6OC_SHIFT                  6                                                   /*!< FTM2_SWOCTRL: CH6OC Position            */
+#define FTM_SWOCTRL_CH7OC_MASK                   (0x01UL << FTM_SWOCTRL_CH7OC_SHIFT)                 /*!< FTM2_SWOCTRL: CH7OC Mask                */
+#define FTM_SWOCTRL_CH7OC_SHIFT                  7                                                   /*!< FTM2_SWOCTRL: CH7OC Position            */
+#define FTM_SWOCTRL_CH0OCV_MASK                  (0x01UL << FTM_SWOCTRL_CH0OCV_SHIFT)                /*!< FTM2_SWOCTRL: CH0OCV Mask               */
+#define FTM_SWOCTRL_CH0OCV_SHIFT                 8                                                   /*!< FTM2_SWOCTRL: CH0OCV Position           */
+#define FTM_SWOCTRL_CH1OCV_MASK                  (0x01UL << FTM_SWOCTRL_CH1OCV_SHIFT)                /*!< FTM2_SWOCTRL: CH1OCV Mask               */
+#define FTM_SWOCTRL_CH1OCV_SHIFT                 9                                                   /*!< FTM2_SWOCTRL: CH1OCV Position           */
+#define FTM_SWOCTRL_CH2OCV_MASK                  (0x01UL << FTM_SWOCTRL_CH2OCV_SHIFT)                /*!< FTM2_SWOCTRL: CH2OCV Mask               */
+#define FTM_SWOCTRL_CH2OCV_SHIFT                 10                                                  /*!< FTM2_SWOCTRL: CH2OCV Position           */
+#define FTM_SWOCTRL_CH3OCV_MASK                  (0x01UL << FTM_SWOCTRL_CH3OCV_SHIFT)                /*!< FTM2_SWOCTRL: CH3OCV Mask               */
+#define FTM_SWOCTRL_CH3OCV_SHIFT                 11                                                  /*!< FTM2_SWOCTRL: CH3OCV Position           */
+#define FTM_SWOCTRL_CH4OCV_MASK                  (0x01UL << FTM_SWOCTRL_CH4OCV_SHIFT)                /*!< FTM2_SWOCTRL: CH4OCV Mask               */
+#define FTM_SWOCTRL_CH4OCV_SHIFT                 12                                                  /*!< FTM2_SWOCTRL: CH4OCV Position           */
+#define FTM_SWOCTRL_CH5OCV_MASK                  (0x01UL << FTM_SWOCTRL_CH5OCV_SHIFT)                /*!< FTM2_SWOCTRL: CH5OCV Mask               */
+#define FTM_SWOCTRL_CH5OCV_SHIFT                 13                                                  /*!< FTM2_SWOCTRL: CH5OCV Position           */
+#define FTM_SWOCTRL_CH6OCV_MASK                  (0x01UL << FTM_SWOCTRL_CH6OCV_SHIFT)                /*!< FTM2_SWOCTRL: CH6OCV Mask               */
+#define FTM_SWOCTRL_CH6OCV_SHIFT                 14                                                  /*!< FTM2_SWOCTRL: CH6OCV Position           */
+#define FTM_SWOCTRL_CH7OCV_MASK                  (0x01UL << FTM_SWOCTRL_CH7OCV_SHIFT)                /*!< FTM2_SWOCTRL: CH7OCV Mask               */
+#define FTM_SWOCTRL_CH7OCV_SHIFT                 15                                                  /*!< FTM2_SWOCTRL: CH7OCV Position           */
 
 /* ------- FTM2_PWMLOAD                             ------ */
+#define FTM_PWMLOAD_CH0SEL_MASK                  (0x01UL << FTM_PWMLOAD_CH0SEL_SHIFT)                /*!< FTM2_PWMLOAD: CH0SEL Mask               */
+#define FTM_PWMLOAD_CH0SEL_SHIFT                 0                                                   /*!< FTM2_PWMLOAD: CH0SEL Position           */
+#define FTM_PWMLOAD_CH1SEL_MASK                  (0x01UL << FTM_PWMLOAD_CH1SEL_SHIFT)                /*!< FTM2_PWMLOAD: CH1SEL Mask               */
+#define FTM_PWMLOAD_CH1SEL_SHIFT                 1                                                   /*!< FTM2_PWMLOAD: CH1SEL Position           */
+#define FTM_PWMLOAD_CH2SEL_MASK                  (0x01UL << FTM_PWMLOAD_CH2SEL_SHIFT)                /*!< FTM2_PWMLOAD: CH2SEL Mask               */
+#define FTM_PWMLOAD_CH2SEL_SHIFT                 2                                                   /*!< FTM2_PWMLOAD: CH2SEL Position           */
+#define FTM_PWMLOAD_CH3SEL_MASK                  (0x01UL << FTM_PWMLOAD_CH3SEL_SHIFT)                /*!< FTM2_PWMLOAD: CH3SEL Mask               */
+#define FTM_PWMLOAD_CH3SEL_SHIFT                 3                                                   /*!< FTM2_PWMLOAD: CH3SEL Position           */
+#define FTM_PWMLOAD_CH4SEL_MASK                  (0x01UL << FTM_PWMLOAD_CH4SEL_SHIFT)                /*!< FTM2_PWMLOAD: CH4SEL Mask               */
+#define FTM_PWMLOAD_CH4SEL_SHIFT                 4                                                   /*!< FTM2_PWMLOAD: CH4SEL Position           */
+#define FTM_PWMLOAD_CH5SEL_MASK                  (0x01UL << FTM_PWMLOAD_CH5SEL_SHIFT)                /*!< FTM2_PWMLOAD: CH5SEL Mask               */
+#define FTM_PWMLOAD_CH5SEL_SHIFT                 5                                                   /*!< FTM2_PWMLOAD: CH5SEL Position           */
+#define FTM_PWMLOAD_CH6SEL_MASK                  (0x01UL << FTM_PWMLOAD_CH6SEL_SHIFT)                /*!< FTM2_PWMLOAD: CH6SEL Mask               */
+#define FTM_PWMLOAD_CH6SEL_SHIFT                 6                                                   /*!< FTM2_PWMLOAD: CH6SEL Position           */
+#define FTM_PWMLOAD_CH7SEL_MASK                  (0x01UL << FTM_PWMLOAD_CH7SEL_SHIFT)                /*!< FTM2_PWMLOAD: CH7SEL Mask               */
+#define FTM_PWMLOAD_CH7SEL_SHIFT                 7                                                   /*!< FTM2_PWMLOAD: CH7SEL Position           */
+#define FTM_PWMLOAD_LDOK_MASK                    (0x01UL << FTM_PWMLOAD_LDOK_SHIFT)                  /*!< FTM2_PWMLOAD: LDOK Mask                 */
+#define FTM_PWMLOAD_LDOK_SHIFT                   9                                                   /*!< FTM2_PWMLOAD: LDOK Position             */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'FTM2' Register Access macros                        ----------- */

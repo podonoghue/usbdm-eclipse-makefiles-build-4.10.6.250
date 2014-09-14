@@ -8,8 +8,11 @@
 <!ENTITY CFV1-Watchdog-flashProgram     SYSTEM "CFV1/ColdfireV1-Watchdog-flash-program.elf.S19">
 <!ENTITY New-ColdfileV1-Devices         SYSTEM "cfv1_newDevices.xml">
 <!ENTITY Custom-Devices                 SYSTEM "Custom/custom-cfv1.xml">
+<!ENTITY ColdfireV1-Project-actions     SYSTEM "CFV1/ColdfireV1-Project-actions.xml">
 ]>
 <!--  Notes
+      V4.10.6.170 - Added features to support more flexible project creation
+      V4.10.6.170 - Split out C project creation
       V4.10.6.110 - Changed to using <projectActionList> tag & related changes
       V4.10.6     - Added GDB register descriptions 
       V4.10.5d    - Changed GNU C information
@@ -28,25 +31,26 @@ Coldfire+
      flexNVM   Flash that may be partitioned between dFlash and emulated EEPROM backing store (A23=1 when programming)
      dFlash    Data flash - as for flash but Block 1 (A23=1 when programming)
  -->
-<root version="4.10.6">
-   <description>Coldfire V1 Device characteristics v4.10.6 31/01/2014</description>
+<root version="4.10.6.170">
+   <description>Coldfire V1 Device characteristics</description>
    <sharedInformation>
-      <flashProgram id="CFV1-default-FlashProgram">
-      &CFV1-default-flashProgram;
-      </flashProgram>
-      <tclScript id="CFV1-default-Scripts">
-      &CFV1-default-flashScripts;
-      </tclScript>
-      <flashProgram id="CFV1Plus-default-FlashProgram">
-      &CFV1Plus-default-flashProgram;
-      </flashProgram>
-      <tclScript id="CFV1Plus-default-Scripts">
-      &CFV1Plus-default-flashScripts;
-      </tclScript>
-      <flashProgram id="CFV1-Watchdog-FlashProgram">
-      &CFV1-Watchdog-flashProgram;
-      </flashProgram>
-      <!-- CFV1 Security Entry -->
+      <!--  
+            Project actions 
+      -->
+      &ColdfireV1-Project-actions;
+      
+      <!-- 
+            Flash Programs & TCL Scripts 
+      -->
+      <flashProgram id="CFV1-default-FlashProgram">       &CFV1-default-flashProgram;       </flashProgram>
+      <tclScript    id="CFV1-default-Scripts">            &CFV1-default-flashScripts;       </tclScript>
+      <flashProgram id="CFV1Plus-default-FlashProgram">   &CFV1Plus-default-flashProgram;   </flashProgram>
+      <tclScript    id="CFV1Plus-default-Scripts">        &CFV1Plus-default-flashScripts;   </tclScript>
+      <flashProgram id="CFV1-Watchdog-FlashProgram">      &CFV1-Watchdog-flashProgram;      </flashProgram>
+      
+      <!-- 
+            Security Entries 
+      -->
       <securityEntry id="CFV1-default-security">
          <securityDescription id="CFV1-default-security-description">
             BACKDOOR\t= %8X\nRES\t\t= %5X\nNVPROT\t= [FPS=%7b, FPOPEN=%b]\nRES \t\t= %1X\nNVOPT\t\t= [KEYEN=%2b, RES=%4b, SEC=%2b]
@@ -147,67 +151,6 @@ Coldfire+
          <memoryRange start="0xFF8000" size="32K"/> <!-- Peripherals -->
       </memory>         
       
-      <!-- GNU Build options -->
-      <projectActionList id="gnuSettings.mcf51">
-         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.51</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-      </projectActionList>
-      
-      <!-- Default files to copy to project -->
-      <projectActionList id="Coldfire-V1-file-list" root="usbdm_resource_path/Stationery/CFV1/" >
-         <copy source="$(externalVectorTable)"                       target="Startup_Code/vectors.c" />
-         <copy source="$(externalLinkerScript)"                      target="Project_Settings/Custom.ld" />
-         <copy source="$(externalHeaderFile)"                        target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/sysinit.c"                       target="Startup_Code/sysinit.c" />
-         <copy source="Startup_Code/vectors.c"                       target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/newlib_stubs.c"                  target="Startup_Code/newlib_stubs.c" />
-         <copy source="Startup_Code/startup_Codesourcery.S"          target="Startup_Code/startup_Codesourcery.S" />
-         <copy source="Startup_Code/startup_Codesourcery_c.c"        target="Startup_Code/startup_Codesourcery_c.c" />
-         <copy source="Project_Settings/Codesourcery-ram.ld"         target="Project_Settings/Codesourcery-ram.ld" />
-         <copy source="Project_Settings/Codesourcery-ram-hosted.ld"  target="Project_Settings/Codesourcery-ram-hosted.ld" />
-         <copy source="Project_Settings/Codesourcery-rom.ld"         target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-hosted.ld"  target="Project_Settings/Codesourcery-rom-hosted.ld" />
-         <copy source="Project_Settings/Debug.launch"                target="Project_Settings/$(projectName)-Debug.launch" />
-         <copy source="Project_Settings/MemoryMap.ld"                target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
-         <copy source="Project_Headers/derivative.h"                 target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/TargetDevice.h"               target="Project_Headers/$(targetDevice).h" />
-         <copy source="Project_Headers/utilities.h"                  target="Project_Headers/utilities.h" />
-         <copy source="Sources/main.c"                               target="Sources/main.c" />
-      </projectActionList>
-
-      <projectActionList id="Coldfire-V1-ProjectActions" >
-      	<projectActionListRef ref="gnuSettings.mcf51" />
-      	<projectActionListRef ref="Coldfire-V1-file-list" />
-      </projectActionList>
-
-      <!-- Extra Optional files for Coldfire V1 -->
-      <projectActionList id="Options-file-list-CFV1" root="usbdm_resource_path/Stationery/CFV1/" >
-         <variable id="Clock-setup-CFV1" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-         <condition variable="Clock-setup-CFV1" >
-            <copy source="Startup_Code/clock-cfv1.c"                  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-cfv1.h"  	  target="Project_Headers/clock_private.h" />
-            <copy source="Project_Headers/clock.h"                        target="Project_Headers/clock.h" />
-         </condition>
-      </projectActionList>
-
-      <!-- Extra Optional files for Coldfire V1+ -->
-      <projectActionList id="Options-file-list-CFV1Plus" root="usbdm_resource_path/Stationery/CFV1/" >
-         <variable id="Clock-setup-CFV1Plus" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-CFV1Plus"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-CFV1Plus" >
-            <copy source="Startup_Code/clock-cfv1plus.c"                  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-cfv1plus.h"  	  target="Project_Headers/clock_private.h" />
-            <copy source="Project_Headers/clock.h"                         target="Project_Headers/clock.h" />
-         </condition>
-         <condition variable="UART-setup-CFV1Plus">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-            <copy source="Sources/main-uart.c"                         target="Sources/main.c" />
-         </condition>
-      </projectActionList>
-
    </sharedInformation>
 		
    <deviceList>
@@ -232,7 +175,7 @@ Coldfire+
          <soptAddress value="0xFF9802" />
          <sdidAddress value="0xFF9806" />
          <sdidMask value="0x0FFF" />
-         <sdid value="0x0000" />
+         <sdid value="0x0000" mask="0x0000"/>
          <tclScriptRef ref="CFV1-default-Scripts" />
          <note>Default CFV1 Device</note>
       </device>

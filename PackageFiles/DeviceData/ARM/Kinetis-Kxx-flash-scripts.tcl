@@ -1,5 +1,7 @@
 ;#<![CDATA[
 ;#
+;# Kinetis-Kxx-flash-scripts.tcl
+;#
 ;######################################################################################
 ;#  This file defines the following flash functions
 ;#  
@@ -273,61 +275,59 @@ proc massEraseTarget { } {
 
    ;# Cycle power if feature available
    if [expr ( [getcap] & $::BDM_CAP_VDDCONTROL) != 0] {
-      ;# puts "Cycling Vdd"
+      puts "massEraseTarget{} - Cycling Vdd"
       settargetvdd off
       after 500
       settargetvdd on
       after 100
    }
-   
    ;# Connect with reset asserted, ignore errors as may be secured
    catch { connect }
-   
-   ;# rcreg $::MDM_AP_Status
 
    ;# Repeatedly try to start erase with core and system reset
    ;# For some reason this appears unreliable on JTAG interface
    ;# with a watchdog timeout or similar reset problem
    set mdmApControlErase [expr $::MDM_AP_C_CORE_HOLD | $::MDM_AP_C_SYSTEM_RESET | $::MDM_AP_C_MASS_ERASE]
    set mdmApControl 0
-   ;# puts "Starting erase"
    for {set retry 0} {$retry < 10} {incr retry} {
       after 50
+      puts "massEraseTarget{} - Starting erase"
       ;# Write Mass Erase + System Reset + Core Reset
       if { [catch { wcreg $::MDM_AP_Control $mdmApControlErase } ] } {
-         ;# puts "wcreg MDM_AP_Control failed"
+         puts "massEraseTarget{} - wcreg MDM_AP_Control failed"
          continue;
       }      
       ;# Check if Mass Erase confirmed
       if { [catch { set mdmApControl [rcreg $::MDM_AP_Control] } ] } {
-         ;# puts "rcreg MDM_AP_Control failed"
+         puts "massEraseTarget{} - rcreg MDM_AP_Control failed"
          continue;
       }
       if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) == 0)] {
-         ;# puts "MDM_AP_C_MASS_ERASE failed"
+         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE failed"
          continue;
       }
       ;# Check if start Mass Erase confirmed
       set mdmApStatus [rcreg $::MDM_AP_Status]
       if [expr (($mdmApStatus & $::MDM_AP_ST_MASS_ERASE_ACK) != 0)] {
-         ;# puts "MDM_AP_ST_MASS_ERASE_ACK success"
+         puts "massEraseTarget{} - MDM_AP_ST_MASS_ERASE_ACK success"
          break;
-      }      
+      }
+      puts "massEraseTarget{} - Starting erase failed"
    }
    
    ;# Wait for erase to complete
-   ;# puts "Waiting for erase to finish"
    for {set retry 0} {$retry < 20} {incr retry} {
+      puts "massEraseTarget{} - Waiting for erase to finish"
       after 50;
       set mdmApControl [rcreg $::MDM_AP_Control]
       if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) != 0)] {
-         ;# puts "MDM_AP_C_MASS_ERASE still set"
+         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE still set - waiting"
          continue;
       }
       ;# Check if Unsecured confirmed
       set mdmApStatus [rcreg $::MDM_AP_Status]
       if [expr (($mdmApStatus & $::MDM_AP_ST_SYSTEM_SECURITY) == 0)] {
-         ;# puts "MDM_AP_ST_SYSTEM_SECURITY success"
+         puts "massEraseTarget{} - MDM_AP_ST_SYSTEM_SECURITY cleared - success"
          break;
       }    
    }
@@ -339,26 +339,33 @@ proc massEraseTarget { } {
    wcreg $::MDM_AP_Control 0
 
    after 50
+
    ;# Apply reset to make sure device is unsecured
    reset s s
    
    ;# Reconnect, ignore any errors
    catch { connect }
 
+   set mdmApStatus [rcreg $::MDM_AP_Status]
    if [expr (($mdmApStatus & $::MDM_AP_ST_SYSTEM_SECURITY) != 0)] {
+      puts "massEraseTarget{} - Device is still secured after reset"
       error "Device is still secured"
    }
+   puts "massEraseTarget{} - success"
    return
 }
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   ;#  puts "Checking if unsecured"
+   puts "isUnsecure{} - Checking if unsecured"
    set securityValue [ rcreg $::MDM_AP_Status ]
+   puts [format "isUnsecure{} - MDM_AP_Status=%X" $securityValue ]
    if [ expr ( $securityValue & $::MDM_AP_ST_SYSTEM_SECURITY ) != 0 ] {
-      return "Target is secured"
+      puts "isUnsecure{} - Target is secured!"
+      error "Target is secured"
    }
+   puts "isUnsecure{} - Target is unsecured"
    return
 }
 

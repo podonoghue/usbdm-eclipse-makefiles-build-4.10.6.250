@@ -36,7 +36,9 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>AVLLS</name>
-                     <description>Allow Very-Low-Leakage Stop Mode</description>
+                     <description>Allow Very-Low-Leakage Stop Mode\n
+Provided the appropriate control bits are set up in PMCTRL, this write once bit allows the MCU to enter
+any very-low-leakage stop mode (VLLSx)</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -54,25 +56,29 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>ALLS</name>
-                     <description>Allow Low-Leakage Stop Mode</description>
+                     <description>Allow Low-Leakage Stop Mode\n
+Provided the appropriate control bits are set up in PMCTRL, this write-once bit allows the MCU to enter
+any low-leakage stop mode (LLS)</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>LLS is not allowed</description>
+                           <description>Any LLSx mode is not allowed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>LLS is allowed</description>
+                           <description>Any LLSx mode is allowed</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>AVLP</name>
-                     <description>Allow Very-Low-Power Modes</description>
+                     <description>Allow Very-Low-Power Modes\n
+Provided the appropriate control bits are set up in PMCTRL, this write-once field allows the MCU to enter
+any very-low-power mode (VLPR, VLPW, and VLPS)</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -99,7 +105,11 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>STOPM</name>
-                     <description>Stop Mode Control</description>
+                     <description>Stop Mode Control\n
+When written, controls entry into the selected stop mode when Sleep-Now or Sleep-On-Exit mode is
+entered with SLEEPDEEP=1 . Writes to this field are blocked if the protection level has not been enabled
+using the PMPROT register. After any system reset, this field is cleared by hardware on any successful
+write to the PMPROT register</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>3</bitWidth>
                      <enumeratedValues>
@@ -120,7 +130,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b011</name>
-                           <description>Low-Leakage Stop (LLS)</description>
+                           <description>Low-Leakage Stop (LLSx)</description>
                            <value>0b011</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -147,7 +157,10 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>STOPA</name>
-                     <description>Stop Aborted</description>
+                     <description>Stop Aborted\n
+When set, this read-only status field indicates an interrupt or reset occured during the previous stop mode
+entry sequence, preventing the system from entering that mode. This field is cleared by hardware at the
+beginning of any stop mode entry sequence and is set if the sequence was aborted</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -166,7 +179,10 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>RUNM</name>
-                     <description>Run Mode Control</description>
+                     <description>Run Mode Control\n
+When written, causes entry into the selected run mode. Writes to this field are blocked if the protection
+level has not been enabled using the PMPROT register. This field is cleared by hardware on any exit to
+normal RUN mode</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -194,7 +210,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>LPWUI</name>
-                     <description>Low-Power Wake Up On Interrupt</description>
+                     <description>Low-Power Wake Up On Interrupt\n
+Causes the SMC to exit to normal RUN mode when any active MCU interrupt occurs while in a VLP mode
+(VLPR, VLPW or VLPS)</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -222,7 +240,8 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>VLLSM</name>
-                     <description>VLLS Mode Control</description>
+                     <description>VLLS Mode Control
+This field controls which VLLS sub-mode to enter if STOPM=VLLSx</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>3</bitWidth>
                      <enumeratedValues>
@@ -299,9 +318,53 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>PMSTAT</name>
-                     <description>When debug is enabled, the PMSTAT will not update to STOP or VLPS</description>
+                     <description>Power Mode Status\n
+When debug is enabled, the PMSTAT will not update to STOP or VLPS\n
+When a PSTOP mode is enabled, the PMSTAT will not update to STOP or VLPS</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>7</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b00000001</name>
+                           <description>Current power mode is RUN</description>
+                           <value>0b00000001</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b00000010</name>
+                           <description>Current power mode is STOP</description>
+                           <value>0b00000010</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b00000100</name>
+                           <description>Current power mode is VLPR</description>
+                           <value>0b00000100</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b00001000</name>
+                           <description>Current power mode is VLPW</description>
+                           <value>0b00001000</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b00010000</name>
+                           <description>Current power mode is VLPS</description>
+                           <value>0b00010000</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b00100000</name>
+                           <description>Current power mode is LLS</description>
+                           <value>0b00100000</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b01000000</name>
+                           <description>Current power mode is VLLS</description>
+                           <value>0b01000000</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10000000</name>
+                           <description>Current power mode is HSRUN</description>
+                           <value>0b10000000</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>

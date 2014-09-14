@@ -23,11 +23,12 @@
 
 \verbatim
  Change History
-+==============================================================================
++==========================================================================================
 | Revision History
-+==============================================================================
++==========================================================================================
+| 12 Jul 14 | Added printing of S0 record                                 - pgo V4.10.6.170
 |  1 Jun 12 | 1.0.0 Created                                               - pgo
-+==============================================================================
++==========================================================================================
 \endverbatim
 */
 #include <ctype.h>
@@ -41,6 +42,9 @@
  * @return - a value in the range 0 to 15
  */
 static unsigned int hex1ToDecimal(const char **ptr) {
+   if ((**ptr == '\0') || (**ptr == '\r') || (**ptr == '\n')) {
+      return 0;
+   }
    uint8_t data = *(*ptr)++;
    if ((data >= '0') && (data <= '9'))
       return data - '0';
@@ -142,8 +146,7 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
    *loadAddr   = 0xFFFFFFFF;
    *loadedSize = 0x0;
 
-//   Logging::print("loadSRec()\n");
-//   Logging::print("loadSRec() - loading:\n%s\n", pSrec);
+//   Logging::print("Loading:\n%s\n", pSrec);
 
    for(;;) {
       // Find first non-blank
@@ -153,19 +156,30 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
       if (*pSrec == '\0') {
          break;
       }
-//      Logging::print("loadSRec() - Doing record starting '%10s...'\n", pSrec);
+//      Logging::print("Doing record starting '%10s...'\n", pSrec);
       // Check if S-record
       if ((*pSrec != 'S') && (*pSrec != 's')) {
-         Logging::print("loadSRec() - Illegal SREC - expected 's' or 'S', found '%10s...'\n", pSrec);
+         Logging::print("Illegal SREC - expected 's' or 'S', found '%10s...'\n", pSrec);
          return BDM_RC_ILLEGAL_PARAMS;
       }
       switch (*(pSrec+1)) {
-         case '0': // Information header
+         case '0': { // Information header
+//            Logging::print("Discarding\n");
+            pSrec +=8; // Skip 'S0nnaaaa'
+            char buff[1000];
+            char *cp=buff;
+            while ((*pSrec != '\n') && (*pSrec != '\0') && (cp < (buff+sizeof(buff)))) {
+               *cp++ = hex2ToDecimal( &pSrec );
+            }
+            *--cp = '\0'; // Terminate & discard last char
+            Logging::print("ID = \'%s\'\n", buff);
+            continue;
+            }
          case '7': // 32-bit start address
          case '8': // 24-bit start address
          case '9': // 16-bit start address
             // Discard S0, S8 & S9 records
-//            Logging::print("loadSRec() - Discarding\n");
+//            Logging::print("Discarding\n");
             while ((*pSrec != '\n') && (*pSrec != '\0')) {
                pSrec++;
             }
@@ -177,7 +191,7 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
             addr = hex4ToDecimal( &pSrec );
             checkSum = (uint8_t)srecSize + (uint8_t)(addr>>8) + (uint8_t)addr;
             srecSize -= 3; // subtract 3 from byte count (size + 2 addr bytes)
-//            Logging::print("loadSRec() - S1: (%2.2X)%4.4lX:\n",srecSize,addr);
+//            Logging::print("S1: (%2.2X)%4.4lX:\n",srecSize,addr);
             break;
          case '2':
             // S2 = 24-bit address, data record
@@ -186,7 +200,7 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
             addr = hex6ToDecimal( &pSrec );
             checkSum = (uint8_t)srecSize + (uint8_t)(addr>>16) + (uint8_t)(addr>>8) + (uint8_t)addr;
             srecSize -= 4; // subtract 4 from byte count (size + 3 addr bytes)
-//            Logging::print("loadSRec() - S2: size=0x%02X, addr=0x%06X\n",srecSize,addr);
+//            Logging::print("S2: size=0x%02X, addr=0x%06X\n",srecSize,addr);
             break;
          case '3':
             // S3 32-bit address, data record
@@ -195,10 +209,10 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
             addr = hex8ToDecimal( &pSrec );
             checkSum = (uint8_t)srecSize + (uint8_t)(addr>>24) + (uint8_t)(addr>>16) + (uint8_t)(addr>>8) + (uint8_t)addr;
             srecSize -= 5; // subtract 5 from byte count (size + 4 addr bytes)
-//            Logging::print("loadSRec() - S3: size=0x%02X, addr=0x%08X, initial chk=0x%02X\n", srecSize, addr, checkSum);
+//            Logging::print("S3: size=0x%02X, addr=0x%08X, initial chk=0x%02X\n", srecSize, addr, checkSum);
             break;
          default:
-            Logging::error("loadSRec() - Illegal SREC - unrecognised record type '%2s'\n", pSrec);
+            Logging::error("Illegal SREC - unrecognised record type '%2s'\n", pSrec);
             return BDM_RC_ILLEGAL_PARAMS;
       }
 #if (TARGET == HC12) || (TARGET == HCS08)
@@ -206,16 +220,16 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
       discardSrec = (addr == 0xFFFE);
 #endif
       if ((*loadAddr == 0xFFFFFFFF) && !discardSrec) {
-         Logging::print("loadSRec() - Load address = 0x%08X\n", addr);
+         Logging::print("Load address = 0x%08X\n", addr);
          *loadAddr = addr;
          nextAddr = addr;
       }
       if ((addr != nextAddr) && !discardSrec) {
-         Logging::error("loadSRec() - SRECs must be consecutive, next addr=0x%08X,  load addr=0x%08X\n", nextAddr, addr);
+         Logging::error("SRECs must be consecutive, next addr=0x%08X,  load addr=0x%08X\n", nextAddr, addr);
          return BDM_RC_ILLEGAL_PARAMS;
       }
       if (sizeof(memoryElementType) == 1) {
-//         Logging::print("loadSRec() - SRECs byte array\n");
+//         Logging::print("SRECs byte array\n");
          while (srecSize>0) {
             unsigned data;
             data      = hex2ToDecimal( &pSrec );
@@ -227,14 +241,14 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
                nextAddr++;
             }
             if (size >= bufferSize) {
-               Logging::error("loadSRec() - SRECs too large\n");
+               Logging::error("SRECs too large\n");
                return BDM_RC_ILLEGAL_PARAMS;
             }
 //         Logging::print("%02X",data);
          }
       }
       else {
-//         Logging::print("loadSRec() - SRECs word array\n");
+//         Logging::print("SRECs word array\n");
          while (srecSize>0) {
             uint16_t data1, data2;
             data1     = hex2ToDecimal( &pSrec );
@@ -249,7 +263,7 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
             }
 //          Logging::print("%02X",data);
             if (size >= bufferSize) {
-               Logging::error("loadSRec() - SRECs too large\n");
+               Logging::error("SRECs too large\n");
                return BDM_RC_ILLEGAL_PARAMS;
             }
          }
@@ -257,11 +271,11 @@ USBDM_ErrorCode loadSRec(const char          *pSrec,
       // Get checksum from record
       unsigned data = hex2ToDecimal( &pSrec );
       if ((uint8_t)~checkSum != data) {
-         Logging::error("loadSRec() - SRECs checksum error, expected 0x%02X, found 0x%02X\n", (uint8_t)~checkSum, data);
+         Logging::error("SRECs checksum error, expected 0x%02X, found 0x%02X\n", (uint8_t)~checkSum, data);
          return BDM_RC_ILLEGAL_PARAMS;
       }
    }
-   Logging::print("loadSRec() - Size         = 0x%08X\n", size);
+   Logging::print("Size         = 0x%08X\n", size);
    *loadedSize = size;
    return BDM_RC_OK;
 }

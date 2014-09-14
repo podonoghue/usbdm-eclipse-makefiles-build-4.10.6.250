@@ -1,6 +1,8 @@
 <!--
 Devices using this peripheral: 
+      MK21F12
       MK22F12
+      MK22F51212
       MK24F12
       MK63F12
       MK64F12
@@ -288,7 +290,10 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>RAM</name>
-                     <description>Range Address Match</description>
+                     <description>Range Address Match\n
+This bit is set by any of the following conditions:\n
+- Any nonzero calling address is received that matches the address in the RA register.\n
+- The RMEN bit is set and the calling address is within the range of values of the A1 and RA register</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

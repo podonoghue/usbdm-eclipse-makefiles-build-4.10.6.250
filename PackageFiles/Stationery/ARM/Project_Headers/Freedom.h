@@ -35,17 +35,29 @@
 #define UART0_TX_PIN_FN        2
 #endif
 
+#if defined(MCU_MKM33Z5)
+//=================================================================================
+// LED Port bit masks
+//
+#define LED_RED_PORT         A   // A0
+#define LED_RED_NUM          0
+
+#define LED_GREEN_PORT       A   // A1
+#define LED_GREEN_NUM        1
+
+#endif
+
 #if defined(MCU_MKE02Z2) || defined(MCU_MKE02Z4)
 //=================================================================================
 // LED Port bit masks
 //
-#define LED_RED_PORT         H
-#define LED_RED_NUM          1
+#define LED_RED_PORT         B   // H1
+#define LED_RED_NUM          25
 
-#define LED_GREEN_PORT       H
-#define LED_GREEN_NUM        2
+#define LED_GREEN_PORT       B   // H2
+#define LED_GREEN_NUM        26
 
-#define LED_BLUE_PORT        E
+#define LED_BLUE_PORT        B   // E7
 #define LED_BLUE_NUM         7
 #endif
 
@@ -53,42 +65,42 @@
 //=================================================================================
 // LED Port bit masks
 //
-#define LED_RED_PORT         C
-#define LED_RED_NUM          5
+#define LED_RED_PORT         A   // C5
+#define LED_RED_NUM          21
 
-#define LED_GREEN_PORT       C
-#define LED_GREEN_NUM        4
+#define LED_GREEN_PORT       A   // C4
+#define LED_GREEN_NUM        20
 
-#define LED_BLUE_PORT        B
-#define LED_BLUE_NUM         3
+#define LED_BLUE_PORT        A   // B3
+#define LED_BLUE_NUM         11
 #endif
 
 #if defined(MCU_MKE06Z4)
 //=================================================================================
 // LED Port bit masks
 //
-#define LED_RED_PORT         G
-#define LED_RED_NUM          5
+#define LED_RED_PORT         B   // G5
+#define LED_RED_NUM          21
 
-#define LED_GREEN_PORT       G
-#define LED_GREEN_NUM        6
+#define LED_GREEN_PORT       B   // G6
+#define LED_GREEN_NUM        22
 
-#define LED_BLUE_PORT        G
-#define LED_BLUE_NUM         7
+#define LED_BLUE_PORT        B   // G7
+#define LED_BLUE_NUM         23
 #endif
 
 #if defined(MCU_MKL02Z4)
 //=================================================================================
 // LED Port bit masks
 //
-#define LED_GREEN_PORT         B
-#define LED_GREEN_NUM          7
+#define LED_GREEN_PORT       B
+#define LED_GREEN_NUM        7
 
-#define LED_RED_PORT           B
-#define LED_RED_NUM            6
+#define LED_RED_PORT         B
+#define LED_RED_NUM          6
 
-#define LED_BLUE_PORT          B
-#define LED_BLUE_NUM           10
+#define LED_BLUE_PORT        B
+#define LED_BLUE_NUM         10
 #endif
 
 #if defined(MCU_MKL04Z4)
@@ -115,7 +127,7 @@
 #define LED_RED_NUM            8
 
 #define LED_BLUE_PORT          B
-#define LED_BLUE_NUM          10
+#define LED_BLUE_NUM           10
 #endif
 
 #if defined(MCU_MKL25Z4)
@@ -154,19 +166,73 @@
 #define WEST_SWITCH_NUM             2
 
 //=================================================================================
-// I2C  pins
+// I2C0  pins
 //
-// PTE24(Fn5) = SCL
-#define I2C_SCL_PORT         E
-#define I2C_SCL_PIN_NUM      24
-#define I2C_SCL_FN           5
-#define I2C_SCL_CLOCK_MASK   SIM_SCGC5_PORTE_MASK
+// PTE24(Fn5) = SCL (PTB0(Fn2), PTB2(Fn2), PTC8(Fn2))
+#define I2C0_SCL_PORT         E  // Accelerometer
+#define I2C0_SCL_PIN_NUM      24
+#define I2C0_SCL_FN           5
 
-// PTE25(Fn5) = SDA
-#define I2C_SDA_PORT         E
-#define I2C_SDA_PIN_NUM      25
-#define I2C_SDA_FN           5
-#define I2C_SDA_CLOCK_MASK   SIM_SCGC5_PORTE_MASK
+// PTE25(Fn5) = SDA (PTB1(Fn2), PTB3(Fn2), PTC9(Fn2))
+#define I2C0_SDA_PORT         E
+#define I2C0_SDA_PIN_NUM      25
+#define I2C0_SDA_FN           5
+
+//=================================================================================
+// I2C1  pins
+//
+// PTE1(Fn6) = SCL (PTE1(Fn1), PTA3(Fn2), PTC1(Fn2), PTC10(Fn2))
+#define I2C1_SCL_PORT         E
+#define I2C1_SCL_PIN_NUM      1
+#define I2C1_SCL_FN           6
+
+// PTE0(Fn6) = SDA (PTE0(Fn0), PTA4(Fn2), PTC2(Fn2), PTC11(Fn2))
+#define I2C1_SDA_PORT         E
+#define I2C1_SDA_PIN_NUM      0
+#define I2C1_SDA_FN           6
+
+// SPI0 Pin definitions
+//============================================================
+// SPI data out pin                                      FRDM
+#define SPI0_SIN_REG           D    // PTA17, PTC7, PTD3 (D12)
+#define SPI0_SIN_NUM           3
+
+// SPI data out pin
+#define SPI0_SOUT_REG          D    // PTA16, PTC6, PTD2 (D11)
+#define SPI0_SOUT_NUM          2
+
+// SPI clock pin
+#define SPI0_SCK_REG           D    // PTA15, PTC5, PTD1 (D13)
+#define SPI0_SCK_NUM           1
+
+// SPI CSn outputs
+#define SPI0_PCS_REG           D    // PTA14, PTC4, PTD0 (D10)
+#define SPI0_PCS_NUM           0
+
+// Pin ALT function for SPI pins (SOUT,SCK,PCSn)
+#define SPI0_ALT_FN            2
+
+// SPI1 Pin definitions
+//============================================================
+// SPI data out pin         FRDM-ACCEL
+#define SPI1_SIN_REG           E    // PTE3, PTB17, PTD7
+#define SPI1_SIN_NUM           3
+
+// SPI data out pin
+#define SPI1_SOUT_REG          E    // PTE1, PTB16, PTD6
+#define SPI1_SOUT_NUM          1
+
+// SPI clock pin
+#define SPI1_SCK_REG           E    // PTE2, PTB11, PTD5
+#define SPI1_SCK_NUM           2
+
+// SPI CSn outputs
+#define SPI1_PCS_REG           E    // PTE4, PTB10, PTD4
+#define SPI1_PCS_NUM           4
+
+// Pin ALT function for SPI pins (SOUT,SCK,PCSn)
+#define SPI1_ALT_FN            2
+
 #endif
 
 #if defined(MCU_MKL26Z4)
@@ -197,7 +263,7 @@
 #define LED_RED_NUM           29
 #endif
 
-#if defined(MCU_MK20D5)
+#if defined(MCU_MK20D5) || defined(MCU_MK22F12)
 //=================================================================================
 // LED Port bit masks
 //
@@ -220,19 +286,50 @@
 #define LED_BLUE_FTM_CHANNEL   7
 
 //=================================================================================
-// I2C Port bit masks
+// I2C0 Port bit masks
 //
-// PTB0(Fn2) = SCL
-#define I2C_SCL_PORT         B
-#define I2C_SCL_PIN_NUM      0
-#define I2C_SCL_FN           2
-#define I2C_SCL_CLOCK_MASK   SIM_SCGC5_PORTB_MASK
+// PTB0(Fn2) = SCL  (PTB2(Fn2))
+#define I2C0_SCL_PORT         B
+#define I2C0_SCL_PIN_NUM      0
+#define I2C0_SCL_FN           2
 
-// PTB1(Fn2) = SDA
-#define I2C_SDA_PORT         B
-#define I2C_SDA_PIN_NUM      1
-#define I2C_SDA_FN           2
-#define I2C_SDA_CLOCK_MASK   SIM_SCGC5_PORTB_MASK
+// PTB1(Fn2) = SDA  (PTB3(Fn2))
+#define I2C0_SDA_PORT         B
+#define I2C0_SDA_PIN_NUM      1
+#define I2C0_SDA_FN           2
+
+// SPI0 Pin definitions
+//============================================================
+// SPI data out pin - PTC7(Fn2), PTD3(Fn2)
+#define SPI0_SIN_REG           D
+#define SPI0_SIN_NUM           3
+
+// SPI data out pin - PTC6(Fn2), PTD2(Fn2)
+#define SPI0_SOUT_REG          D
+#define SPI0_SOUT_NUM          2
+
+// SPI clock pin - PTC5(Fn2), PTD1(Fn2)
+#define SPI0_SCK_REG           D
+#define SPI0_SCK_NUM           1
+
+// SPI CS0 outputs - PTD0(Fn2), PTC4(Fn2)
+#define SPI0_PCS0_REG          C
+#define SPI0_PCS0_NUM          4
+// SPI CS1 outputs - PTD4(Fn2), PTC3(Fn2)
+#define SPI0_PCS1_REG          C
+#define SPI0_PCS1_NUM          3
+// SPI CS2 outputs - PTD5(Fn2), PTC2(Fn2)
+#define SPI0_PCS2_REG          C
+#define SPI0_PCS2_NUM          2
+// SPI CS3 outputs - PTD6(Fn2), PTC1(Fn2)
+#define SPI0_PCS3_REG          C
+#define SPI0_PCS3_NUM          1
+// SPI CS4 outputs - PTD4(Fn2)
+#define SPI0_PCS4_REG          C
+#define SPI0_PCS4_NUM          0
+
+// Pin ALT function for SPI pins (SOUT,SCK,PCSn)
+#define SPI0_ALT_FN     2
 
 //=================================================================================
 // Elec freaks LCD Shield buttons
@@ -253,6 +350,81 @@
 //
 #define ADC_IN_LIGHT_SENSOR (adc_channel_dm0) // Note - No PCR
 #define ADC_IN_TEMP_SENSOR  (adc_channel_dm3) // Note - No PCR
+#endif
+
+#if defined(MCU_MK22F51212)
+//=================================================================================
+// LED Port bit masks
+//
+// PTA2(Fn3) = FTM0_CH7
+#define LED_GREEN_PORT         A
+#define LED_GREEN_NUM          2
+#define LED_GREEN_FTM_FN       3
+#define LED_GREEN_FTM_CHANNEL  7
+
+// PTA1(Fn2) = FTM0_CH6
+#define LED_RED_PORT           A
+#define LED_RED_NUM            1
+#define LED_RED_FTM_FN         2
+#define LED_RED_FTM_CHANNEL    6
+
+// PTD5(Fn4) = FTM0_CH5
+#define LED_BLUE_PORT          D
+#define LED_BLUE_NUM           5
+#define LED_BLUE_FTM_FN        4
+#define LED_BLUE_FTM_CHANNEL   5
+
+//=================================================================================
+// I2C0 Port bit masks
+//
+// PTB2(Fn2) = SCL
+#define I2C0_SCL_PORT         B
+#define I2C0_SCL_PIN_NUM      2
+#define I2C0_SCL_FN           2
+
+// PTB3(Fn2) = SDA
+#define I2C0_SDA_PORT         B
+#define I2C0_SDA_PIN_NUM      3
+#define I2C0_SDA_FN           2
+
+// SPI0 Pin definitions
+//============================================================
+// SPI data out pin - PTD7(Fn2)
+#define SPI1_SIN_REG           D
+#define SPI1_SIN_NUM           7
+
+// SPI data out pin - PTD6(Fn2)
+#define SPI1_SOUT_REG          D
+#define SPI1_SOUT_NUM          6
+
+// SPI clock pin - PTD5(Fn2)
+#define SPI1_SCK_REG           D
+#define SPI1_SCK_NUM           5
+
+//// SPI CS0 outputs - PTD0(Fn2), PTC4(Fn2)
+//#define SPI0_PCS0_REG          C
+//#define SPI0_PCS0_NUM          4
+//// SPI CS1 outputs - PTD4(Fn2), PTC3(Fn2)
+//#define SPI0_PCS1_REG          C
+//#define SPI0_PCS1_NUM          3
+//// SPI CS2 outputs - PTD5(Fn2), PTC2(Fn2)
+//#define SPI0_PCS2_REG          C
+//#define SPI0_PCS2_NUM          2
+//// SPI CS3 outputs - PTD6(Fn2), PTC1(Fn2)
+//#define SPI0_PCS3_REG          C
+//#define SPI0_PCS3_NUM          1
+//// SPI CS4 outputs - PTD4(Fn2)
+//#define SPI0_PCS4_REG          C
+//#define SPI0_PCS4_NUM          0
+
+// Pin ALT function for SPI pins (SOUT,SCK,PCSn)
+//#define SPI0_ALT_FN     2
+
+//=================================================================================
+// ADC Channel numbers
+//
+#define ADC_IN_LIGHT_SENSOR (adc_channel_dm1) // Note - No PCR
+
 #endif
 
 #if defined(MCU_MK10D7) || defined(MCU_MK22D5) || defined(MCU_MK20D7) || defined(MCU_MK22D7)
@@ -316,15 +488,113 @@
 //=================================================================================
 // LED Port bit masks
 //
-#define LED_RED_PORT         C
-#define LED_RED_NUM          0
+#define LED_RED_PORT         B
+#define LED_RED_NUM          22
 
-#define LED_GREEN_PORT       C
-#define LED_GREEN_NUM        1
+#define LED_GREEN_PORT       E
+#define LED_GREEN_NUM        26
 
-#define LED_BLUE_PORT        A
-#define LED_BLUE_NUM        10
+#define LED_BLUE_PORT        B
+#define LED_BLUE_NUM         21
 
+//=================================================================================
+// I2C0 Port bit masks
+//
+// PTE24(Fn5) = SCL  (PTB0(Fn2), PTB2(Fn2), PTD2(Fn7), PTD8(Fn2))
+#define I2C0_SCL_PORT         E
+#define I2C0_SCL_PIN_NUM      24
+#define I2C0_SCL_FN           5
+
+// PTE25(Fn5) = SDA  (PTB1(Fn2), PTB3(Fn2), PTD3(Fn7), PTD9(Fn2))
+#define I2C0_SDA_PORT         E
+#define I2C0_SDA_PIN_NUM      25
+#define I2C0_SDA_FN           5
+
+//=================================================================================
+// I2C1 Port bit masks
+//
+// PTC10(Fn2) = SCL  (PTE1(Fn6))
+#define I2C1_SCL_PORT         C
+#define I2C1_SCL_PIN_NUM      10
+#define I2C1_SCL_FN           2
+
+// PTC11(Fn2) = SDA  (PTE0(Fn6))
+#define I2C1_SDA_PORT         C
+#define I2C1_SDA_PIN_NUM      11
+#define I2C1_SDA_FN           2
+
+//=================================================================================
+// I2C2 Port bit masks
+//
+// PTA12(Fn5) = SCL (PTA14(Fn5))
+#define I2C2_SCL_PORT         A     // A
+#define I2C2_SCL_PIN_NUM      12    // 14
+#define I2C2_SCL_FN           5     // 5
+
+// PTA11(Fn5) = SDA  (PTA13(Fn5))
+#define I2C2_SDA_PORT         A     // A
+#define I2C2_SDA_PIN_NUM      11    // 13
+#define I2C2_SDA_FN           5     // 5
+
+// SPI0 Pin definitions
+//============================================================
+// SPI data out pin
+#define SPI0_SIN_REG           D
+#define SPI0_SIN_NUM           3
+
+// SPI data out pin
+#define SPI0_SOUT_REG          D
+#define SPI0_SOUT_NUM          2
+
+// SPI clock pin
+#define SPI0_SCK_REG           D
+#define SPI0_SCK_NUM           1
+
+// SPI CSn outputs
+#define SPI0_PCS0_REG          C //
+#define SPI0_PCS0_NUM          4
+#define SPI0_PCS1_REG          C // or D4
+#define SPI0_PCS1_NUM          3
+#define SPI0_PCS2_REG          C // or D5
+#define SPI0_PCS2_NUM          2
+#define SPI0_PCS3_REG          C // or D6
+#define SPI0_PCS3_NUM          1
+
+// Pin ALT function for SPI pins (SOUT,SCK,PCSn)
+#define SPI0_ALT_FN     7
+
+// SPI1 Pin definitions
+//============================================================
+// SPI data out pin
+#define SPI1_SIN_REG           D
+#define SPI1_SIN_NUM           7
+
+// SPI data out pin
+#define SPI1_SOUT_REG          D
+#define SPI1_SOUT_NUM          6
+
+// SPI clock pin
+#define SPI1_SCK_REG           D
+#define SPI1_SCK_NUM           5
+
+// SPI CSn outputs
+#define SPI1_PCS0_REG          D
+#define SPI1_PCS0_NUM          4
+#define SPI1_PCS1_REG
+#define SPI1_PCS1_NUM
+#define SPI1_PCS2_REG
+#define SPI1_PCS2_NUM
+#define SPI1_PCS3_REG
+#define SPI1_PCS3_NUM
+
+// Pin ALT function for SPI pins (SOUT,SCK,PCSn)
+#define SPI1_ALT_FN     7
+
+//=================================================================================
+// ADC Channel numbers
+//
+#define ADC_IN_LIGHT_SENSOR (adc_channel_dm0) // Note - No PCR
+#define ADC_IN_TEMP_SENSOR  (adc_channel_dm3) // Note - No PCR
 #endif
 
 #endif /* FREEDOM_H_ */

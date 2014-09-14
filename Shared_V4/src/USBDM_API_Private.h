@@ -56,7 +56,7 @@ typedef enum {
                                           //!    to enable ackn feature, @param [2..3] 16-bit tick count
    CMD_USBDM_GET_SPEED             = 17,  //!< Read speed of the target: @return [1..2] 16-bit tick coun
 
-   CMD_USBDM_CONTROL_INTERFACE     = 18,  //!< Directly control BDM interface levels - deprecated
+   CMD_CUSTOM_COMMAND              = 18,  //!< Custom command
    // Reserved 19
 
    CMD_USBDM_READ_STATUS_REG       = 20,  //!< Get BDM status

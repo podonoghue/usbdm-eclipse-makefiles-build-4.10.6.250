@@ -13,7 +13,6 @@ Devices using this peripheral:
       MK20DZ10
       MK20F12
       MK21D5
-      MK21F12
       MK22D5
       MK30D7
       MK30D10
@@ -323,7 +322,10 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>RAM</name>
-                     <description>Range Address Match</description>
+                     <description>Range Address Match\n
+This bit is set by any of the following conditions:\n
+- Any nonzero calling address is received that matches the address in the RA register.\n
+- The RMEN bit is set and the calling address is within the range of values of the A1 and RA register</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

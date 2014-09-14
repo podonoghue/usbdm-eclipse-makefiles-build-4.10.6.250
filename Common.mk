@@ -5,14 +5,8 @@
 
 MAJOR_VERSION := 4
 MINOR_VERSION := 10
-MICRO_VERSION := 5
+MICRO_VERSION := 6
 USBDM_VERSION := $(MAJOR_VERSION).$(MINOR_VERSION)
-
-ifeq ($(OS),Windows_NT)
-   BITNESS := 32
-else
-   BITNESS := $(shell getconf LONG_BIT)
-endif
 
 #===========================================================
 # Where to find private libraries on linux
@@ -23,30 +17,39 @@ USBDM_LIBDIR64="/usr/lib/x86_64-linux-gnu/usbdm"
 # Shared directories - Relative to child directory
 SHARED_SRC     := ../Shared_V4/src
 SHARED_LIBDIRS := ../Shared_V4/lib
-TARGET_BINDIR  := ../PackageFiles/bin
-TARGET_LIBDIR  := ../PackageFiles/lib
 
-ifeq ($(OS),Windows_NT)
-      TARGET_BINDIR  := ../PackageFiles/bin/win32
-      TARGET_LIBDIR  := ../PackageFiles/bin/win32
-else
-   ifeq ($(BITNESS),32)
-      TARGET_BINDIR  := ../PackageFiles/bin/i386-linux-gnu
-      TARGET_LIBDIR  := ../PackageFiles/lib/i386-linux-gnu
-   endif
-   ifeq ($(BITNESS),64)
-      TARGET_BINDIR  := ../PackageFiles/bin/x86_64-linux-gnu
-      TARGET_LIBDIR  := ../PackageFiles/lib/x86_64-linux-gnu
-   endif
-endif
-
-# Used as prefix with the above when in build directory $(DUMMY_CHILD)/$(SHARED_SRC ) = PackageFiles/src
+# Used as prefix with the above when in build directory $(DUMMY_CHILD)/$(SHARED_SRC) = PackageFiles/src
 DUMMY_CHILD    := PackageFiles
 
 ifeq ($(OS),Windows_NT)
     UNAME_S := Windows
 else
     UNAME_S := $(shell uname -s)
+endif
+
+#===========================================================
+# Where to build
+# These may be forced on the command line
+ifeq ($(UNAME_S),Windows)
+   DIRS = $(COMMON_DIRS) $(WIN_DIRS)
+   BITNESS         ?= 32
+   TARGET_BINDIR   ?= ../PackageFiles/bin/win32
+   TARGET_LIBDIR   ?= ../PackageFiles/bin/win32
+   BUILDDIR_SUFFIX ?=
+else
+   # Assume Linux
+   DIRS = $(COMMON_DIRS)
+   BITNESS ?= $(shell getconf LONG_BIT)
+   ifeq ($(BITNESS),32)
+      TARGET_BINDIR   ?= ../PackageFiles/bin/i386-linux-gnu
+      TARGET_LIBDIR   ?= ../PackageFiles/lib/i386-linux-gnu
+      BUILDDIR_SUFFIX ?= .i386
+   endif
+   ifeq ($(BITNESS),64)
+      TARGET_BINDIR   ?= ../PackageFiles/bin/x86_64-linux-gnu
+      TARGET_LIBDIR   ?= ../PackageFiles/lib/x86_64-linux-gnu
+      BUILDDIR_SUFFIX ?= .x86_64
+   endif
 endif
 
 ifeq ($(UNAME_S),Windows)
@@ -125,16 +128,16 @@ ifeq ($(UNAME_S),Windows)
    TCL_INC        := -IC:/Apps/Tcl/include
    TCL_LIBS       := -ltcl85
 else
-   TCL_INC        :=
+   TCL_INC        := -I/usr/include/tcl8.5
    TCL_LIBS       := -ltcl8.5
 endif
 
 #===========================================================
 # WXWIDGETS
 ifeq ($(UNAME_S),Windows)
-   WXWIDGETS_INSTALL_DIR=C:/Apps/wxWidgets-2.9.5
-   WXWIDGETS_VERSION_NUM=295
-   WXWIDGETS_INC     := -I$(WXWIDGETS_INSTALL_DIR)/lib/gcc_lib/mswu -I$(WXWIDGETS_INSTALL_DIR)/include -IC:\Apps\wxWidgets-2.9.5\lib\gcc_dll\mswu
+   WXWIDGETS_INSTALL_DIR=C:/Apps/wxWidgets-3.0.1
+   WXWIDGETS_VERSION_NUM=30
+   WXWIDGETS_INC     := -I$(WXWIDGETS_INSTALL_DIR)/lib/gcc_lib/mswu -I$(WXWIDGETS_INSTALL_DIR)/include -IC:\Apps\wxWidgets-3.0.1\lib\gcc_dll\mswu
    WXWIDGETS_DEFS    := -DuseWxWidgets -D__WXMSW__ -D__GNUWIN32__ -DUNICODE
 
    # Pick up shared DLLs from Shared_V4/lib
@@ -144,12 +147,12 @@ ifeq ($(UNAME_S),Windows)
    -lwxbase$(WXWIDGETS_VERSION_NUM)u_gcc_custom           \
    -lwxmsw$(WXWIDGETS_VERSION_NUM)u_adv_gcc_custom        
    
-#   -lwxmsw$(WXWIDGETS_VERSION_NUM)u_richtext_gcc_custom   \
-#   -lwxbase$(WXWIDGETS_VERSION_NUM)u_xml_gcc_custom       \
-#   -lwxmsw$(WXWIDGETS_VERSION_NUM)u_html_gcc_custom
-   #-lwxbase$(WXWIDGETS_VERSION_NUM)u_net_gcc_custom            \
-   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_aui_gcc_custom             \
-   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_gl_gcc_custom              \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_richtext_gcc_custom     \
+   #-lwxbase$(WXWIDGETS_VERSION_NUM)u_xml_gcc_custom         \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_html_gcc_custom         \
+   #-lwxbase$(WXWIDGETS_VERSION_NUM)u_net_gcc_custom         \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_aui_gcc_custom          \
+   #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_gl_gcc_custom           \
    #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_media_gcc_custom      -lwxmsw$(WXWIDGETS_VERSION_NUM)u_propgrid_gcc_custom \
    #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_ribbon_gcc_custom     -lwxmsw$(WXWIDGETS_VERSION_NUM)u_richtext_gcc_custom \
    #-lwxmsw$(WXWIDGETS_VERSION_NUM)u_stc_gcc_custom        -lwxmsw$(WXWIDGETS_VERSION_NUM)u_webview_gcc_custom  \
@@ -212,7 +215,7 @@ ifeq ($(UNAME_S),Windows)
    XERCES_STATIC_LIBDIRS := -LC:/Apps/xerces-c-3.1.1/src/.libs
    XERCES_SHARED_LIBS    := -lxerces-c-3-1
    XERCES_STATIC_LIBS    := -lxerces-c
-   else
+else
    XERCES_INC     :=
 
    # Pick up shared DLLs from Shared_V4/lib
@@ -286,7 +289,7 @@ endif
 ifeq ($(UNAME_S),Windows)
    GCC_VISIBILITY_DEFS :=
    THREADS := -mthreads
-   CFLAGS :=
+   CFLAGS  :=
 else
    GCC_VISIBILITY_DEFS :=-fvisibility=hidden -fvisibility-inlines-hidden
    THREADS := 
@@ -309,10 +312,12 @@ endif
 
 ifneq ($(OS),Windows_NT)
    ifeq ($(BITNESS),32)
-      LDFLAGS += -Wl,-rpath,${USBDM_LIBDIR32}
+      CFLAGS  += -m32
+      LDFLAGS += -m32 -Wl,-rpath,${USBDM_LIBDIR32}
    endif
    ifeq ($(BITNESS),64)
-      LDFLAGS += -Wl,-rpath,${USBDM_LIBDIR64}
+      CFLAGS  += -m64
+      LDFLAGS += -m64 -Wl,-rpath,${USBDM_LIBDIR64}
    endif
 endif
 

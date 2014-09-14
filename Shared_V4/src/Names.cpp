@@ -137,7 +137,7 @@ const char *getICPErrorName(unsigned char error) {
 char const *getTargetTypeName( unsigned int type ) {
    static const char *names[] = {
       "HCS12","HCS08","RS08","CFV1","CFVx","JTAG",
-      "EZFlash","MC56F80xx","ARM-JTAG","ARM-SWD","ARM",
+      "EZFlash","MC56F80xx","ARM-JTAG","ARM-SWD","ARM","S12Z"
       };
    const char *typeName = NULL;
    static char unknownBuffer[10];
@@ -588,6 +588,28 @@ char const *getHCS12DebugRegName( unsigned int regAddr ) {
    return getUnknownReg(regAddr);
 }
 
+//! \brief Maps a S12Z register # to a string
+//!
+//! @param regAddr = register address
+//!
+//! @return pointer to static string describing the command
+//!
+char const *getS12ZRegName( unsigned int regAddr ) {
+   static const char *names[] = {
+      "D0","D1","D2","D3","D4","D5","D6","D7",
+      "X","Y","SP","PC","CCR"
+      };
+   const char *regName = NULL;
+
+   if (regAddr < sizeof(names)/sizeof(names[0])) {
+       regName = names[regAddr];
+   }
+   if (regName == NULL) {
+      regName = getUnknownReg(regAddr);
+   }
+   return regName;
+}
+
 //! \brief Maps a HCS12 register # to a string
 //!
 //! @param regAddr = register address
@@ -799,6 +821,8 @@ char const *getRegName( unsigned int targetType,
    switch (targetType) {
       case T_HC12 :
          return getHCS12RegName(regNo);
+      case T_S12Z :
+         return getS12ZRegName(regNo);
       case T_HCS08 :
          return getHCS08RegName(regNo);
       case T_RS08 :
@@ -863,6 +887,28 @@ char const *getCFVx_CSR_Name( unsigned int CSR) {
    return buff;
 }
 
+//! \brief Maps a HCS12ZVM BDMSTS register value to a string
+//!
+//! @param BDMSTS = BDMSTS register value
+//!
+//! @return pointer to static string buffer describing the BDMSTS
+//!
+char const *getHCS12ZVM_BDMSTS_Name( unsigned int BDMSTS) {
+   static char buff[100];
+
+   snprintf(buff, sizeof(buff), "(0x%2.2X) = %s%s%s%s%s%s%s%s",
+                  BDMSTS,
+                 (BDMSTS&(1<<7))?"ENBDM, ":"",
+                 (BDMSTS&(1<<6))?"BDACT, ":"",
+                 (BDMSTS&(1<<5))?"BDCCIS, ":"",
+                 (BDMSTS&(1<<4))?"?, ":"",
+                 (BDMSTS&(1<<3))?"STEAL, ":"",
+                 (BDMSTS&(1<<2))?"CLKSW, ":"",
+                 (BDMSTS&(1<<1))?"UNSEC, ":"",
+                 (BDMSTS&(1<<0))?"ERASE, ":"" );
+   return buff;
+}
+
 //! \brief Maps a HCS12 BDMSTS register value to a string
 //!
 //! @param BDMSTS = BDMSTS register value
@@ -872,7 +918,7 @@ char const *getCFVx_CSR_Name( unsigned int CSR) {
 char const *getHCS12_BDMSTS_Name( unsigned int BDMSTS) {
    static char buff[100];
 
-   snprintf(buff, sizeof(buff), "(0x%2.2X) = %s%s%s%s%s%s%s",
+   snprintf(buff, sizeof(buff), "(0x%2.2X) = %s%s%s%s%s%s%s%s",
                   BDMSTS,
                  (BDMSTS&(1<<7))?"ENBDM, ":"",
                  (BDMSTS&(1<<6))?"BDACT, ":"",
@@ -880,7 +926,8 @@ char const *getHCS12_BDMSTS_Name( unsigned int BDMSTS) {
                  (BDMSTS&(1<<4))?"SDV, ":"",
                  (BDMSTS&(1<<3))?"TRACE, ":"",
                  (BDMSTS&(1<<2))?"CLKSW, ":"",
-                 (BDMSTS&(1<<1))?"UNSEC, ":"" );
+                 (BDMSTS&(1<<1))?"UNSEC, ":"",
+                 (BDMSTS&(1<<0))?"?, ":"" );
    return buff;
 }
 
@@ -958,6 +1005,8 @@ char const *getStatusRegName(unsigned int targetType, unsigned int value) {
    switch (targetType) {
       case T_HC12:
          return getHCS12_BDMSTS_Name(value);
+      case T_S12Z:
+         return getHCS12ZVM_BDMSTS_Name(value);
       case T_HCS08:
          return getHCS08_BDCSCR_Name(value);
       case T_RS08:
@@ -997,6 +1046,7 @@ static const char *capabilityTable[] = {
                                   "PST|",
                                   "CDC|",
                                   "ARM_SWD|",
+                                  "S12Z|"
                                };
    sprintf(buff, "(0x%4.4X) ", capability);
    for (index=0;

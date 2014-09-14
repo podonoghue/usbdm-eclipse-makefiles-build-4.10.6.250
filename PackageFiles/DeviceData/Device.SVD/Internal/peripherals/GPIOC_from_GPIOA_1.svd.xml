@@ -1,0 +1,9 @@
+<!--
+Devices using this peripheral: 
+      MKM33Z5
+-->
+      <peripheral derivedFrom="GPIOA">
+         <name>GPIOC</name>
+         <prependToName>GPIOC</prependToName>
+         <baseAddress>0x400FF002</baseAddress>
+      </peripheral>

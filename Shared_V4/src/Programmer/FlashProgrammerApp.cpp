@@ -56,6 +56,9 @@ const char *logFilename("FlashProgrammer_HCS08.log");
 #elif TARGET==HCS12
 const TargetType_t targetType = T_HC12;
 const char *logFilename("FlashProgrammer_HCS12.log");
+#elif TARGET==S12Z
+const TargetType_t targetType = T_S12Z;
+const char *logFilename("FlashProgrammer_S12Z.log");
 #elif TARGET==RS08
 const TargetType_t targetType = T_RS08;
 const char *logFilename("FlashProgrammer_RS08.log");
@@ -180,7 +183,7 @@ void FlashProgrammerApp::doCommandLineProgram() {
    if (shared->getBdmOptions().leaveTargetPowered) {
 #if (TARGET==HCS08) || (TARGET==RS08) || (TARGET==CFV1)
       USBDM_TargetReset((TargetMode_t)(RESET_SOFTWARE|RESET_NORMAL));
-#elif (TARGET==HCS12) || (TARGET==CFVx) || (TARGET == ARM) ||(TARGET==MC56F80xx)
+#elif (TARGET==HCS12) || (TARGET==S12Z) || (TARGET==CFVx) || (TARGET == ARM) ||(TARGET==MC56F80xx)
       USBDM_TargetReset((TargetMode_t)(RESET_HARDWARE|RESET_NORMAL));
 #else
 #error "TARGET must be set"
@@ -371,7 +374,7 @@ bool FlashProgrammerApp::OnCmdLineParsed(wxCmdLineParser& parser) {
 
 #if (TARGET==HCS08) || (TARGET==RS08) || (TARGET==ARM)
       deviceData->setEraseOption(DeviceData::eraseMass);
-#elif (TARGET==HCS12) || (TARGET==CFV1) || (TARGET==CFVx) || (TARGET==MC56F80xx)
+#elif (TARGET==HCS12) || (TARGET==S12Z) || (TARGET==CFV1) || (TARGET==CFVx) || (TARGET==MC56F80xx)
       deviceData->setEraseOption(DeviceData::eraseAll);
 #else
 #error "TARGET must be set"

@@ -17,25 +17,26 @@
 <!ENTITY CMP2         SYSTEM "peripherals/CMP2_from_CMP0_0.svd.xml">
 <!ENTITY CMP3         SYSTEM "peripherals/CMP3_from_CMP0_0.svd.xml">
 <!ENTITY CMT          SYSTEM "peripherals/CMT_0.svd.xml">
-<!ENTITY CRC          SYSTEM "peripherals/CRC_0.svd.xml">
+<!ENTITY CRC          SYSTEM "peripherals/CRC.svd.xml">
 <!ENTITY CoreDebug    SYSTEM "peripherals/CoreDebug.svd.xml">
-<!ENTITY DAC0         SYSTEM "peripherals/DAC0_MKDZ10.svd.xml">
+<!ENTITY DAC0         SYSTEM "peripherals/DAC0_MKD10.svd.xml">
 <!ENTITY DAC1         SYSTEM "peripherals/DAC1_from_DAC0_0.svd.xml">
 <!ENTITY DMA          SYSTEM "peripherals/DMA_MK_32CH.svd.xml">
 <!ENTITY DMAMUX0      SYSTEM "peripherals/DMAMUX0_16CH.svd.xml">
 <!ENTITY DMAMUX1      SYSTEM "peripherals/DMAMUX1_from_DMAMUX0_0.svd.xml">
-<!ENTITY DWT          SYSTEM "peripherals/DWT_MK.svd.xml">
+<!ENTITY DWT          SYSTEM "peripherals/DWT_CM4.svd.xml">
 <!ENTITY ENET         SYSTEM "peripherals/ENET_0.svd.xml">
 <!ENTITY ETB          SYSTEM "peripherals/ETB_0.svd.xml">
 <!ENTITY ETF          SYSTEM "peripherals/ETF_0.svd.xml">
 <!ENTITY ETM          SYSTEM "peripherals/ETM_0.svd.xml">
-<!ENTITY EWM          SYSTEM "peripherals/EWM_1.svd.xml">
+<!ENTITY EWM          SYSTEM "peripherals/EWM_MK_0.svd.xml">
 <!ENTITY FB           SYSTEM "peripherals/FB_0.svd.xml">
 <!ENTITY FMC          SYSTEM "peripherals/FMC_MKF12.svd.xml">
-<!ENTITY FPB          SYSTEM "peripherals/FPB_0.svd.xml">
+<!ENTITY FPB          SYSTEM "peripherals/FPB.svd.xml">
+<!ENTITY FPU          SYSTEM "peripherals/FPU.svd.xml">
 <!ENTITY FTFE         SYSTEM "peripherals/FTFE.svd.xml">
-<!ENTITY FTM0         SYSTEM "peripherals/FTM0_8CH_0.svd.xml">
-<!ENTITY FTM1         SYSTEM "peripherals/FTM1_2CH_0.svd.xml">
+<!ENTITY FTM0         SYSTEM "peripherals/FTM0_8CH.svd.xml">
+<!ENTITY FTM1         SYSTEM "peripherals/FTM1_2CH.svd.xml">
 <!ENTITY FTM2         SYSTEM "peripherals/FTM2_from_FTM1_0.svd.xml">
 <!ENTITY FTM3         SYSTEM "peripherals/FTM3_from_FTM0_0.svd.xml">
 <!ENTITY GPIOA        SYSTEM "peripherals/GPIOA_0.svd.xml">
@@ -49,7 +50,7 @@
 <!ENTITY I2S0         SYSTEM "peripherals/I2S0_MK.svd.xml">
 <!ENTITY I2S1         SYSTEM "peripherals/I2S1_from_I2S0_0.svd.xml">
 <!ENTITY ITM          SYSTEM "peripherals/ITM_0.svd.xml">
-<!ENTITY LLWU         SYSTEM "peripherals/LLWU_0.svd.xml">
+<!ENTITY LLWU         SYSTEM "peripherals/LLWU_MK.svd.xml">
 <!ENTITY LMEM         SYSTEM "peripherals/LMEM_0.svd.xml">
 <!ENTITY LPTMR0       SYSTEM "peripherals/LPTMR0_0.svd.xml">
 <!ENTITY MCG          SYSTEM "peripherals/MCG_MKF12.svd.xml">
@@ -63,18 +64,18 @@
 <!ENTITY PDB0         SYSTEM "peripherals/PDB0_4CH_2TRIG_4PO.svd.xml">
 <!ENTITY PIT          SYSTEM "peripherals/PIT_4CH.svd.xml">
 <!ENTITY PMC          SYSTEM "peripherals/PMC_1.svd.xml">
-<!ENTITY PORTA        SYSTEM "peripherals/PORTA_0.svd.xml">
+<!ENTITY PORTA        SYSTEM "peripherals/PORTA_FILT.svd.xml">
 <!ENTITY PORTB        SYSTEM "peripherals/PORTB_from_PORTA_0.svd.xml">
 <!ENTITY PORTC        SYSTEM "peripherals/PORTC_from_PORTA_0.svd.xml">
 <!ENTITY PORTD        SYSTEM "peripherals/PORTD_from_PORTA_0.svd.xml">
 <!ENTITY PORTE        SYSTEM "peripherals/PORTE_from_PORTA_0.svd.xml">
 <!ENTITY PORTF        SYSTEM "peripherals/PORTF_from_PORTA_0.svd.xml">
-<!ENTITY RCM          SYSTEM "peripherals/RCM_F.svd.xml">
+<!ENTITY RCM          SYSTEM "peripherals/RCM_MK.svd.xml">
 <!ENTITY RFSYS        SYSTEM "peripherals/RFSYS_0.svd.xml">
 <!ENTITY RFVBAT       SYSTEM "peripherals/RFVBAT_0.svd.xml">
 <!ENTITY RNG          SYSTEM "peripherals/RNG_0.svd.xml">
 <!ENTITY RTC          SYSTEM "peripherals/RTC_TAMPER_F.svd.xml">
-<!ENTITY SCB          SYSTEM "peripherals/SCB_0.svd.xml">
+<!ENTITY SCB          SYSTEM "peripherals/SCB_MK.svd.xml">
 <!ENTITY SDHC         SYSTEM "peripherals/SDHC_1.svd.xml">
 <!ENTITY SIM          SYSTEM "peripherals/SIM_MK60F12.svd.xml">
 <!ENTITY SMC          SYSTEM "peripherals/SMC_MKF.svd.xml">
@@ -143,6 +144,7 @@
 &FB;
 &FMC;
 &FPB;
+&FPU;
 &FTFE;
 &FTM0;
 &FTM1;

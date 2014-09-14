@@ -70,8 +70,10 @@ GdbInOut::GdbInOut() :
    gdbTxPtr(gdbTxBuffer),
    rxBufferIndex(0),
    rxBufferLength(0),
-   ackMode(true) {
-
+   ackMode(true),
+   errorLogger(0),
+   sendLogger(0),
+   receiveLogger(0) {
 }
 
 /*!
@@ -87,7 +89,9 @@ GdbInOut::~GdbInOut() {
  *     - Sets connectionActive false
  */
 void GdbInOut::finish(void) {
-   sendErrorMessage(E_Fatal, "Closing connection");
+   if (connectionActive) {
+      sendErrorMessage(E_Fatal, "Closing connection");
+   }
    connectionActive = false;
 }
 
@@ -149,8 +153,10 @@ int GdbInOut::getChar() {
 //   Logging::print("inBuffIndex = %d, inBuffLength = %d\n", inBuffIndex, inBuffLength);
    if (rxBufferIndex >= rxBufferLength) {
       // Buffer empty - try to read more data
+      Logging::print("Waiting for chars\n");
       int rc = getData(gdbRxBuffer, sizeof(gdbRxBuffer));
       if (rc < 0) {
+         Logging::print("Error %d\n", rc);
          return rc;
       }
       rxBufferLength = rc;
@@ -181,13 +187,16 @@ const GdbPacket *GdbInOut::processRxByte(int byte) {
    static unsigned int   sequenceNum = 0;
 
    if (!connectionActive) {
+      Logging::print("Connection not active\n");
       return NULL;
    }
    if (byte == -GDB_FATAL_ERROR) {
+      Logging::print("-GDB_FATAL_ERROR\n");
       finish();
       return NULL;
    }
    if (byte < 0) {
+      Logging::print("-GDB_NONFATAL_ERROR\n");
       return NULL;
    }
    switch(state) {
@@ -300,17 +309,16 @@ void GdbInOut::putGdbChar(char ch) {
    *gdbTxPtr++      = ch;
 }
 
- /*!  Add bytes to GDB Tx buffer as Hex character pairs
-  *
-  *   @param buff  Buffer to add
-  *   @param size  Size of buffer
-  */
-void GdbInOut::putGdbHex(const unsigned char *buffer, unsigned size) {
-   unsigned index;
-   for (index=0; index<size; index++) {
-      putGdbChar(hexChar(buffer[index]>>4));
-      putGdbChar(hexChar(buffer[index]));
+/*!  Add character to GDB Tx buffer
+ *
+ *   @param ch - char to add
+ */
+void GdbInOut::putGdbEscapedChar(char ch) {
+   if ((ch=='#') || (ch=='$') || (ch=='}') || (ch=='*')) {
+      putGdbChar('}');
+      ch ^= 0x20;
    }
+   putGdbChar(ch);
 }
 
  /*!  Add a string to GDB Tx buffer
@@ -324,6 +332,19 @@ void GdbInOut::putGdbString(const char *s, int size) {
       if (size > 0)
          size--;
    }
+}
+
+/*!  Add bytes to GDB Tx buffer as Hex character pairs
+ *
+ *   @param buff  Buffer to add
+ *   @param size  Size of buffer
+ */
+void GdbInOut::putGdbHex(const unsigned char *buffer, unsigned size) {
+  unsigned index;
+  for (index=0; index<size; index++) {
+     putGdbChar(hexChar(buffer[index]>>4));
+     putGdbChar(hexChar(buffer[index]));
+  }
 }
 
  /*!  Add a string to GDB Tx buffer as a series of hex digit pairs
@@ -472,27 +493,36 @@ void GdbInOut::sendGdbBuffer(void) {
  *  @param msg        Message to send
  */
 void GdbInOut::sendErrorMessage(ErrorType errorType, const char *msg) {
-//   static const char *errStrings[] = {"fatal", "memType"};
-   if (errorType>E_Memory) {
+   static const char *errStrings[] = {"fatal", "memType"};
+   if (errorType>(sizeof(errStrings)/sizeof(errStrings[0]))) {
       errorType = E_Fatal;
    }
-   sendErrorMessage(0xFF,msg);
-//   putGdbPreamble();
-//   putGdbPrintf("E.%s.%s", errStrings[errorType], msg);
-//   putGdbChecksum();
-//   txGdbPkt();
+   if (errorLogger != 0) {
+      char buff[200];
+      snprintf(buff, sizeof(buff), "Error response sent: E.%s.%s", errStrings[errorType], msg);
+      errorLogger(buff);
+   }
+   putGdbPreamble();
+   putGdbPrintf("E.%s.", errStrings[errorType]);
+   while (*msg != '\0') {
+      putGdbEscapedChar(*msg++);
+   }
+   putGdbChecksum();
+   txGdbPkt();
 }
 
 /*!  Immediately send Error message
  *
- *  @param msg        Message to send
+ *  @param value        Error code to send
  */
-void GdbInOut::sendErrorMessage(unsigned value, const char *msg) {
+void GdbInOut::sendErrorMessage(unsigned value) {
+   if (errorLogger != 0) {
+      char buff[200];
+      snprintf(buff, sizeof(buff), "Error response sent: E%2.2X", value);
+      errorLogger(buff);
+   }
    putGdbPreamble();
    putGdbPrintf("E%2.2X", value);
-   if (msg != NULL) {
-      putGdbPrintf(":%s", msg);
-   }
    putGdbChecksum();
    txGdbPkt();
 }

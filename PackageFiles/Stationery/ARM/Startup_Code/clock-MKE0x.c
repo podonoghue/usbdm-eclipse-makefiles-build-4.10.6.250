@@ -7,8 +7,8 @@
  *      Author: podonoghue
  */
 #include "derivative.h" /* include peripheral declarations */
-#include "clock.h"
-#include "clock_private.h"
+#include "system.h"
+#include "clock_configure.h"
 #include "utilities.h"
 
 // Some MCUs call OSC_CR0 just OSC_CR
@@ -19,8 +19,8 @@
 uint32_t SystemCoreClock = SYSTEM_CORE_CLOCK;   // Hz
 uint32_t SystemBusClock  = SYSTEM_BUS_CLOCK; // Hz
 
-/*! Sets up the clock out of RESET
- *!
+/*! @brief Sets up the clock out of RESET
+ *
  */
 void clock_initialise(void) {
 
@@ -82,11 +82,10 @@ void clock_initialise(void) {
    SystemCoreClockUpdate();
 }
 
-/**
- * Update SystemCoreClock variable
+/*!
+ * @brief Update SystemCoreClock variable
  *
- * @brief  Updates the SystemCoreClock with current core Clock
- *         retrieved from CPU registers.
+ * Updates the SystemCoreClock variable with current core Clock retrieved from CPU registers.
  */
 void SystemCoreClockUpdate(void) {
 #if defined(MCU_MKE02Z2) || defined(MCU_MKE02Z4)

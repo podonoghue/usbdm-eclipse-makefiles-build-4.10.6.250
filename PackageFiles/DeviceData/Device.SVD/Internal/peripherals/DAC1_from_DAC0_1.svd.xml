@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+      MK22F51212
+-->
+      <peripheral derivedFrom="DAC0">
+         <name>DAC1</name>
+         <description>12-Bit Digital-to-Analog Converter</description>
+         <prependToName>DAC1</prependToName>
+         <baseAddress>0x4003F000</baseAddress>
+      </peripheral>

@@ -126,6 +126,7 @@
       </ComponentGroup>
       -->
       
+      <!--
       <DirectoryRef Id='D.USBDMDriverDir'>
          <Directory Id="D.JS16_BOOT_DRIVER" Name="JS16_driver">
             <Directory Id="D.JS16_BOOT_DRIVER.amd64" Name="amd64">
@@ -152,7 +153,8 @@
           <ComponentRef Id='C.JS16_BOOT_DRIVER.amd64.WinUSB' />
           <ComponentRef Id='C.JS16_BOOT_DRIVER.drivers'    />
       </ComponentGroup>
-      
+      -->
+      <!--
       <DirectoryRef Id='D.USBDMDriverDir'>
          <Directory Id="D.OLD_BOOT_DRIVER" Name="OLD_driver">
             <Directory Id="D.OLD_BOOT_DRIVER.amd64" Name="amd64">
@@ -179,11 +181,14 @@
           <ComponentRef Id='C.OLD_BOOT_DRIVER.amd64.WinUSB' />
           <ComponentRef Id='C.OLD_BOOT_DRIVER.drivers'    />
       </ComponentGroup>
+      -->
       
       <Feature Id='Complete' Level='1'>
+         <!-- 
          <ComponentGroupRef Id='CG.JS16_BOOT_DRIVER' />
          <ComponentGroupRef Id='CG.OLD_BOOT_DRIVER' />
-         <!-- <ComponentGroupRef Id='CG.JB16_BOOT_DRIVER' /> -->
+         <ComponentGroupRef Id='CG.JB16_BOOT_DRIVER' /> 
+         -->
          <ComponentGroupRef Id='CG.USBDM_BDM_DRIVER' />
          <ComponentRef      Id='C.USBDMSerial' />
       </Feature>

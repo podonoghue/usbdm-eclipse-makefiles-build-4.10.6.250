@@ -13,13 +13,13 @@ COMMON_DIRS = \
   DSC_Interface        \
   HCS08_Interface      \
   HCS12_Interface      \
+  S12Z_Interface       \
   RS08_Interface       \
   Unlocker             \
   FirmwareChanger      \
   JS16_Bootloader      \
   MergeXML             \
   UsbdmJniWrapper_DLL  \
-  CopyFlash            \
   CreateFlashTestImage \
   CreateCTestImage     \
   USBDM_Kinetis_Unlock \
@@ -38,11 +38,35 @@ WIN_DIRS = \
 #	USBDM_DSC_DLL        \
 #	Usbdm_TCL    
 
-ifeq ($(UNAME_S),Windows)
-DIRS = $(COMMON_DIRS) $(WIN_DIRS)
+ifeq ($(OS),Windows_NT)
+    UNAME_S := Windows
 else
-DIRS = $(COMMON_DIRS)
+    UNAME_S := $(shell uname -s)
 endif
+
+ifeq ($(UNAME_S),Windows)
+   DIRS = $(COMMON_DIRS) $(WIN_DIRS)
+   TARGET_BINDIR   := ../PackageFiles/bin/win32
+   TARGET_LIBDIR   := ../PackageFiles/bin/win32
+   BITNESS         := 32
+   BUILDDIR_SUFFIX :=
+else
+   DIRS = $(COMMON_DIRS)
+   # BITNESS can be forced on the command line
+   BITNESS ?= $(shell getconf LONG_BIT)
+   ifeq ($(BITNESS),32)
+      TARGET_BINDIR   := ../PackageFiles/bin/i386-linux-gnu
+      TARGET_LIBDIR   := ../PackageFiles/lib/i386-linux-gnu
+      BUILDDIR_SUFFIX := .i386
+   endif
+   ifeq ($(BITNESS),64)
+      TARGET_BINDIR   := ../PackageFiles/bin/x86_64-linux-gnu
+      TARGET_LIBDIR   := ../PackageFiles/lib/x86_64-linux-gnu
+      BUILDDIR_SUFFIX := .x86_64
+   endif
+endif
+
+export BITNESS TARGET_BINDIR TARGET_LIBDIR BUILDDIR_SUFFIX
 
 BUILD_DIRS = $(DIRS:%=build-%)
 CLEAN_DIRS = $(DIRS:%=clean-%)

@@ -23,8 +23,7 @@ Description: Debugger Hardware & Software for Freescale microcontrollers.
  .
     RS08
     HCS08,
-    HC12,
+    HC12, S12Z,
     Coldfire V1-4,
     Kinetis ARM-cortex,
     MC56F800xx Digital Signal Controllers (very limited range).
-

@@ -4,9 +4,11 @@ Devices using this peripheral:
       MK12D5
       MK21D5
       MK22D5
+      MK22F51212
       MK24F12
       MK63F12
       MK64F12
+      MKV10Z7
 -->
       <peripheral derivedFrom="FTM1">
          <name>FTM2</name>

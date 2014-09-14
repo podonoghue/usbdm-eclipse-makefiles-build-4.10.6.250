@@ -1,9 +1,0 @@
-<!--
-Devices using this peripheral: 
-      MKV10Z7
--->
-      <peripheral derivedFrom="FTM1">
-         <name>FTM2</name>
-         <prependToName>FTM2</prependToName>
-         <baseAddress>0x4003A000</baseAddress>
-      </peripheral>

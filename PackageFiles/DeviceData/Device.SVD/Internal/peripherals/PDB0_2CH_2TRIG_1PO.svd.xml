@@ -433,7 +433,7 @@ Reading this field returns the value that is effective for the current cycle of 
                <addressOffset>0x10</addressOffset>
                <register>
                   <name>C1</name>
-                  <description>Channel n Control Register 1</description>
+                  <description>Channel %s Control Register 1</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
@@ -498,7 +498,7 @@ Only lower M pre-trigger bits are implemented</description>
                </register>
                <register>
                   <name>S</name>
-                  <description>Channel n Status Register</description>
+                  <description>Channel %s Status Register</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
                      <field>

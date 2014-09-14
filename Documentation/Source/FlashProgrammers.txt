@@ -4,7 +4,7 @@
  \section introSection Introduction
    The following suite of programs are intended to be used with USBDM BDM interfaces.\n
    They provide the ability to program the internal Flash memory of the following Freescale microcontrollers:\n
-   - RS08, HCS08, HCS12, Coldfire V1, Coldfire V2, Kinetis and a limited range of MC56F800x microcontrollers.\n
+   - RS08, HCS08, HCS12, S12Z, Coldfire V1, Coldfire V2, Kinetis and a limited range of MC56F800x microcontrollers.\n
   
 \section featuresSection Features
    - GUI usage is available for interactive use.

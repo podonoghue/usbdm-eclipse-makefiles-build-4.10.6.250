@@ -65,6 +65,8 @@
       <device name="MK22DX128M5">      <svdFileName>MK22D5</svdFileName>     </device>
       <device name="MK22DX256M5">      <svdFileName>MK22D5</svdFileName>     </device>
 
+      <device name="MK22FN256M12">     <svdFileName>MK22F51212</svdFileName> </device>
+      <device name="MK22FN512M12">     <svdFileName>MK22F51212</svdFileName> </device>
       <device name="MK22FN1M0M12">     <svdFileName>MK22F12</svdFileName>    </device>
       <device name="MK22FX512M12">     <svdFileName>MK22F12</svdFileName>    </device>
 
@@ -194,7 +196,11 @@
       <device name="MKL46Z128M4">      <svdFileName>MKL46Z4</svdFileName>    </device>
       <device name="MKL46Z256M4">      <svdFileName>MKL46Z4</svdFileName>    </device>
       <device name="MKV10Z32M7">       <svdFileName>MKV10Z7</svdFileName>    </device>
-      <device name="SKEAZ64M4">        <svdFileName>SKEAZ4</svdFileName>    </device>
-      <device name="SKEAZ128M4">       <svdFileName>SKEAZ4</svdFileName>    </device>
+      
+      <device name="MKM33Z64M5">       <svdFileName>MKM33Z5</svdFileName>    </device>
+      <device name="MKM33Z128M5">      <svdFileName>MKM33Z5</svdFileName>    </device>
+
+      <device name="SKEAZ64M4">        <svdFileName>SKEAZ4</svdFileName>     </device>
+      <device name="SKEAZ128M4">       <svdFileName>SKEAZ4</svdFileName>     </device>
    </deviceList>
 </root>

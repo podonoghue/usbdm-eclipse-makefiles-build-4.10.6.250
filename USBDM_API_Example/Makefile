@@ -9,15 +9,15 @@ include Common.mk
 TARGET = USBDM_API_Example
 
 $(TARGET):
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON"
+	$(MAKE) exe -f Target.mk TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) CDEFS="-DUSE_ICON"
 
 $(TARGET)-debug:
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON" DEBUG="Y"
+	$(MAKE) exe -f Target.mk TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) CDEFS="-DUSE_ICON" DEBUG="Y"
 
 all: $(TARGET) $(TARGET)-debug
 
 clean:
-	$(MAKE) clean -f Target.mk BUILDDIR=$(TARGET)
-	$(MAKE) clean -f Target.mk BUILDDIR=$(TARGET)-debug
+	$(MAKE) clean -f Target.mk BUILDDIR=$(TARGET)$(BUILDDIR_SUFFIX)
+	$(MAKE) clean -f Target.mk BUILDDIR=$(TARGET)-debug$(BUILDDIR_SUFFIX)
 	
 .PHONY: $(TARGET) $(TARGET)-debug all clean

@@ -37,7 +37,9 @@ typedef union {
 #define EZFLASH   6     //!< - EzPort Flash interface (SPI?)
 #define MC56F80xx 7     //!< - JTAG target with MC56F80xx optimised subroutines
 #define ARM       8     //!< - Kinetis - either JTAG or SWD
-#define MPC56xx   14    //!< - JTAG target with MPC56xx optimised subroutines
+#define S12Z      11    //!< - S12Z target
+#define MPC56xx   15    //!< - JTAG target with MPC56xx optimised subroutines
+
 #define OFF       0xFF  //!< - Turn off interface (no target)
 
 #if TARGET == MC56F80xx

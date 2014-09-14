@@ -32,6 +32,8 @@
     .syntax unified
     .arch armv6-m
 
+#define __STARTUP_CLEAR_BSS
+
 #if 0
 /*
  *  Stack space
@@ -50,8 +52,6 @@ __StackLimit:
     .size __StackLimit, . - __StackLimit
 __StackTop:
     .size __StackTop, . - __StackTop
-
-#define __STARTUP_CLEAR_BSS
 
 /*
  *  Heap space
@@ -143,6 +143,10 @@ Reset_Handler:
 #ifndef __NO_SYSTEM_INIT
     bl    SystemInit
 #endif
+
+    // Make sure hook is provided for CMSIS (fix for KDS compiler)
+    bl	  	software_init_hook
+
     bl    __START
     .pool
     .size Reset_Handler, . - Reset_Handler

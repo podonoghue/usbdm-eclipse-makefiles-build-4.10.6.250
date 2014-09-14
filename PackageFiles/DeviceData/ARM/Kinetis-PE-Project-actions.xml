@@ -1,0 +1,22 @@
+      <!-- Processor Expert  -->
+      <projectActionList id="Kinetis-PE"  root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Kinetis-PE-enable"  name="Kinetis PE"   description="Run Processor Expert Wizard to add PE features" />
+         <condition variable="Kinetis-PE-enable">
+            <copy           source="com.freescale.processorexpert.core.prefs"          
+                            target=".settings/com.freescale.processorexpert.core.prefs" />
+            <copy           source="com.processorexpert.core.ide.newprojectwizard.prefs"          
+                            target=".settings/com.processorexpert.core.ide.newprojectwizard.prefs" />
+            <copy           source="ProcessorExpert.pe"          
+                            target="ProcessorExpert.pe" />
+            <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"  replace="true" > 
+               <value>ProcessorExpert.ld</value>
+            </projectOption>
+            <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" replace="true"> 
+               <value>ProcessorExpert.ld</value>
+            </projectOption>
+            <excludeSourceFolder target="Startup_Code"     excluded="true" />
+            <excludeSourceFile   target="Sources/main_backupxx.c"   excluded="true" />
+            <excludeSourceFile   target="Sources/main_backupxx.cpp" excluded="true" />
+            <customAction class="net.sourceforge.usbdm.cdt.ui.actions.AddProcessorExpert" />
+         </condition>
+      </projectActionList>

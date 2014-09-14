@@ -24,17 +24,19 @@
 \verbatim
  Change History
 +========================================================================================
-| 20 Oct 12 | Added DSC ELF file support                                    V4.10.3 - pgo
+| 21 Jul 14 | Added S12X ELF file support                               V4.10.6.170 - pgo
 +----------------------------------------------------------------------------------------
-|  7 Sep 12 | Added HCS12 support & device type check                       V4.10.0 - pgo
+| 20 Oct 12 | Added DSC ELF file support                                V4.10.3     - pgo
 +----------------------------------------------------------------------------------------
-|  1 Jun 12 | Changed to template format                                    V4.9.5  - pgo
+|  7 Sep 12 | Added HCS12 support & device type check                   V4.10.0     - pgo
 +----------------------------------------------------------------------------------------
-| 31 May 12 | Changed back to flat format                                   V4.9.5  - pgo
+|  1 Jun 12 | Changed to template format                                V4.9.5      - pgo
 +----------------------------------------------------------------------------------------
-| 17 Apr 12 | Added ELF format loading                                      V4.9.5  - pgo
+| 31 May 12 | Changed back to flat format                               V4.9.5      - pgo
 +----------------------------------------------------------------------------------------
-| 14 Feb 11 | Changed to dynamic memory allocation for buffer               V4.5    - pgo
+| 17 Apr 12 | Added ELF format loading                                  V4.9.5      - pgo
++----------------------------------------------------------------------------------------
+| 14 Feb 11 | Changed to dynamic memory allocation for buffer           V4.5        - pgo
 +----------------------------------------------------------------------------------------
 | 30 Jan 10 | 2.0.0 Changed to C++                                                  - pgo
 |           |       Added paged memory support                                      - pgo
@@ -67,7 +69,7 @@ template <class dataType> class FlashImageT {
 public:
    class Enumerator;
    friend class Enumerator;
-   static const uint32_t DataOffset =  (0x02000000);  // Offset used for DSC Data region
+   static const uint32_t DataOffset    =  (0x02000000);  // Offset used for DSC Data region
 
 private:
    static const int      PageBitOffset =  (15-sizeof(dataType));  // 2**14 = 16K pages
@@ -114,7 +116,7 @@ private:
       }
 
       //=====================================================================
-      //! Sets page[index] to value & marks as valid
+      //! Sets page[index] to 0xFF & marks as invalid
       //!
       void remove(unsigned index) {
          if (index >= PageSize) {
@@ -149,6 +151,13 @@ public:
       Enumerator(FlashImageT &memoryImage) :
          memoryImage(memoryImage),
          address(memoryImage.firstAllocatedAddress) {
+         if (!isValid()) {
+            // firstAllocatedAddress has become invalid
+            if (nextValid()) {
+               // Fix it
+               memoryImage.firstAllocatedAddress = address;
+            }
+         }
       }
 
       //! Construct an enumerator positioned at a given starting address
@@ -181,8 +190,9 @@ public:
       bool setAddress(uint32_t addr) {
 //         Logging::print("enumerator::isValid(0x%06X)\n", address);
          address = addr;
-         if (!memoryImage.isValid(address))
+         if (!memoryImage.isValid(address)) {
             return nextValid();
+         }
          return true;
       }
       bool nextValid();
@@ -992,11 +1002,16 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
 
 #if TARGET == HCS08
    if (elfHeader.e_machine != EM_68HC08) {
-      return SFILE_RC_ELF_FORMAT_ERROR;
+      return SFILE_RC_ELF_WRONG_TARGET;
+   }
+#elif TARGET == S12Z
+   if (elfHeader.e_machine != EM_S12X) {
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid e_machine = %X\n", elfHeader.e_machine);
+      return SFILE_RC_ELF_WRONG_TARGET;
    }
 #elif TARGET == HCS12
    if (elfHeader.e_machine != EM_68HC12) {
-      return SFILE_RC_ELF_FORMAT_ERROR;
+      return SFILE_RC_ELF_WRONG_TARGET;
    }
 #elif TARGET == ARM
    if (elfHeader.e_machine != EM_ARM) {
@@ -1004,17 +1019,17 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
    }
 #elif (TARGET == CFV1) || (TARGET == CFVx)
    if (elfHeader.e_machine != EM_68K) {
-      return SFILE_RC_ELF_FORMAT_ERROR;
+      return SFILE_RC_ELF_WRONG_TARGET;
    }
 #elif TARGET == MC56F80xx
    if (elfHeader.e_machine != EM_56K) {
       return SFILE_RC_ELF_WRONG_TARGET;
    }
 #else
-   return SFILE_RC_UNKNOWN_FILE_FORMAT;
+   return SFILE_RC_ELF_WRONG_TARGET;
 #endif
    if ((elfHeader.e_type != ET_EXEC) || (elfHeader.e_phoff == 0) || (elfHeader.e_phentsize == 0) || (elfHeader.e_phnum == 0)) {
-      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid  format\n", filePath.c_str());
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid format\n", filePath.c_str());
       fclose(fp);
       return SFILE_RC_ELF_FORMAT_ERROR;
    }
@@ -1030,7 +1045,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
       fixElfProgramHeaderSex(&programHeader);
       if ((programHeader.p_type == PT_LOAD) && (programHeader.p_filesz > 0)) {
 //         printElfProgramHeader(&programHeader);
-#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12) || (TARGET == MC56F80xx)
+#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12) || (TARGET == S12Z) || (TARGET == MC56F80xx)
          // These targets use the virtual address as the paged address
          if (loadElfBlock(fp, programHeader.p_offset, programHeader.p_filesz, programHeader.p_vaddr) != SFILE_RC_OK) {
             return SFILE_RC_ELF_FORMAT_ERROR;
@@ -1257,6 +1272,7 @@ bool FlashImageT<dataType>::Enumerator::nextValid() {
          }
          continue;
       }
+      // TODO - advance by size of bitmask
       // Check if valid byte in page
       if (memoryPage->isValid(offset)) {
 //         Logging::print("enumerator::nextValid(end  =0x%06X)\n", address);

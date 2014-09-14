@@ -157,7 +157,7 @@ USBDM_ErrorCode Shared::setCurrentDeviceByIndex(int newDeviceIndex) {
    if (currentDevice->isAlias()) {
       // Keep device name & SDIDs but update device details from real device
       string aliasedName = currentDevice->getTargetName();
-      const std::vector<uint32_t> targetSDIDs = currentDevice->getTargetSDIDs();
+      const std::vector<TargetSDID> targetSDIDs = currentDevice->getTargetSDIDs();
       currentDevice->shallowCopy(*deviceDatabase->findDeviceFromName(aliasedName));
       Logging::print("devIndex=%d, aliased(%s) => %s\n",
                      newDeviceIndex, (const char *)aliasedName.c_str(), (const char *)currentDevice->getTargetName().c_str());
@@ -182,6 +182,7 @@ USBDM_ErrorCode Shared::setCurrentDeviceByName(string deviceName) {
    int newDeviceIndex = deviceDatabase->findDeviceIndexFromName(deviceName);
    if (newDeviceIndex < 0) {
       Logging::print("Device not found (%s)\n", deviceName.c_str());
+      newDeviceIndex = 0;
    }
    return setCurrentDeviceByIndex(newDeviceIndex);
 }

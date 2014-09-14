@@ -174,7 +174,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11010</name>
-                           <description>Temp Sensor (single-ended) is selected as input</description>
+                           <description>Temp sensor (single-ended) is selected as input</description>
                            <value>0b11010</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -299,14 +299,14 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Reserved. Do not set the bitfield to this value</description>
+                           <description>Reserved</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ADLSMP</name>
-                     <description>Sample time configuration</description>
+                     <description>Sample Time Configuration</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -505,12 +505,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Default voltage reference pin pair, that is, external pins VREFH and VREFL</description>
+                           <description>Default voltage reference pin pair (external pins VREFH and VREFL)</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Alternate reference pair, that is, VALTH and VALTL . This pair may be additional external pins or internal sources depending on the MCU configuration. See the chip configuration information for details specific to this MCU</description>
+                           <description>Alternate reference pair (VALTH and VALTL). This pair may be additional external pins or internal sources depending on MCU configuration. Consult the Chip Configuration information for details specific to this MCU</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -762,7 +762,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CLPD</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x34</addressOffset>
                <resetValue>0xA</resetValue>
                <fields>
@@ -776,7 +776,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CLPS</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x38</addressOffset>
                <resetValue>0x20</resetValue>
                <fields>
@@ -790,7 +790,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CLP4</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x3C</addressOffset>
                <resetValue>0x200</resetValue>
                <fields>
@@ -804,7 +804,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CLP3</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x40</addressOffset>
                <resetValue>0x100</resetValue>
                <fields>
@@ -818,7 +818,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CLP2</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x44</addressOffset>
                <resetValue>0x80</resetValue>
                <fields>
@@ -832,7 +832,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CLP1</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x48</addressOffset>
                <resetValue>0x40</resetValue>
                <fields>
@@ -846,7 +846,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CLP0</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x4C</addressOffset>
                <resetValue>0x20</resetValue>
                <fields>

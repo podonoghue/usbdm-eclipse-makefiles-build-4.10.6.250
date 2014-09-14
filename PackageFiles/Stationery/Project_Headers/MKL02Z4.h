@@ -5,7 +5,7 @@
  *           Equivalent: MKL02Z8M4, MKL02Z16M4, MKL02Z32M4
  *
  * @version  V0.0
- * @date     2014/06
+ * @date     2014/08
  *
  *******************************************************************************************************/
 
@@ -78,13 +78,13 @@ extern void PORTB_IRQHandler(void);
 /* ================================================================================ */
 
 /* ----------------Configuration of the cm4 Processor and Core Peripherals---------------- */
-#define __CM0_REV                0x0100
+#define __CM0PLUS_REV                0x0100
 #define __MPU_PRESENT            0
 #define __NVIC_PRIO_BITS         2
 #define __Vendor_SysTickConfig   0
 #define __FPU_PRESENT            0
 
-#include <core_cm0.h>   /*!< Cortex-M4 processor and core peripherals                              */
+#include <core_cm0plus.h>   /*!< Cortex-M processor and core peripherals                              */
 
 #ifndef __IO
 #define __IO volatile 
@@ -142,13 +142,13 @@ typedef struct {                                /*!<       ADC0 Structure       
    __IO uint32_t  OFS;                          /*!< 0028: Offset Correction Register                                   */
    __IO uint32_t  PG;                           /*!< 002C: Plus-Side Gain Register                                      */
    __I  uint32_t  RESERVED0;                    /*!< 0030:                                                              */
-   __IO uint32_t  CLPD;                         /*!< 0034: Plus-Side General Calibration Value Register                 */
-   __IO uint32_t  CLPS;                         /*!< 0038: Plus-Side General Calibration Value Register                 */
-   __IO uint32_t  CLP4;                         /*!< 003C: Plus-Side General Calibration Value Register                 */
-   __IO uint32_t  CLP3;                         /*!< 0040: Plus-Side General Calibration Value Register                 */
-   __IO uint32_t  CLP2;                         /*!< 0044: Plus-Side General Calibration Value Register                 */
-   __IO uint32_t  CLP1;                         /*!< 0048: Plus-Side General Calibration Value Register                 */
-   __IO uint32_t  CLP0;                         /*!< 004C: Plus-Side General Calibration Value Register                 */
+   __IO uint32_t  CLPD;                         /*!< 0034: Plus-Side General Calibration Value                          */
+   __IO uint32_t  CLPS;                         /*!< 0038: Plus-Side General Calibration Value                          */
+   __IO uint32_t  CLP4;                         /*!< 003C: Plus-Side General Calibration Value                          */
+   __IO uint32_t  CLP3;                         /*!< 0040: Plus-Side General Calibration Value                          */
+   __IO uint32_t  CLP2;                         /*!< 0044: Plus-Side General Calibration Value                          */
+   __IO uint32_t  CLP1;                         /*!< 0048: Plus-Side General Calibration Value                          */
+   __IO uint32_t  CLP0;                         /*!< 004C: Plus-Side General Calibration Value                          */
 } ADC0_Type;
 
 
@@ -944,41 +944,41 @@ typedef struct {                                /*!<       LPTMR0 Structure     
 
 
 /* ------- LPTMR0_CSR                               ------ */
-#define LPTMR0_CSR_TEN_MASK                      (0x01UL << LPTMR0_CSR_TEN_SHIFT)                    /*!< LPTMR0_CSR: TEN Mask                    */
-#define LPTMR0_CSR_TEN_SHIFT                     0                                                   /*!< LPTMR0_CSR: TEN Position                */
-#define LPTMR0_CSR_TMS_MASK                      (0x01UL << LPTMR0_CSR_TMS_SHIFT)                    /*!< LPTMR0_CSR: TMS Mask                    */
-#define LPTMR0_CSR_TMS_SHIFT                     1                                                   /*!< LPTMR0_CSR: TMS Position                */
-#define LPTMR0_CSR_TFC_MASK                      (0x01UL << LPTMR0_CSR_TFC_SHIFT)                    /*!< LPTMR0_CSR: TFC Mask                    */
-#define LPTMR0_CSR_TFC_SHIFT                     2                                                   /*!< LPTMR0_CSR: TFC Position                */
-#define LPTMR0_CSR_TPP_MASK                      (0x01UL << LPTMR0_CSR_TPP_SHIFT)                    /*!< LPTMR0_CSR: TPP Mask                    */
-#define LPTMR0_CSR_TPP_SHIFT                     3                                                   /*!< LPTMR0_CSR: TPP Position                */
-#define LPTMR0_CSR_TPS_MASK                      (0x03UL << LPTMR0_CSR_TPS_SHIFT)                    /*!< LPTMR0_CSR: TPS Mask                    */
-#define LPTMR0_CSR_TPS_SHIFT                     4                                                   /*!< LPTMR0_CSR: TPS Position                */
-#define LPTMR0_CSR_TPS(x)                        (((x)<<LPTMR0_CSR_TPS_SHIFT)&LPTMR0_CSR_TPS_MASK)   /*!< LPTMR0_CSR                              */
-#define LPTMR0_CSR_TIE_MASK                      (0x01UL << LPTMR0_CSR_TIE_SHIFT)                    /*!< LPTMR0_CSR: TIE Mask                    */
-#define LPTMR0_CSR_TIE_SHIFT                     6                                                   /*!< LPTMR0_CSR: TIE Position                */
-#define LPTMR0_CSR_TCF_MASK                      (0x01UL << LPTMR0_CSR_TCF_SHIFT)                    /*!< LPTMR0_CSR: TCF Mask                    */
-#define LPTMR0_CSR_TCF_SHIFT                     7                                                   /*!< LPTMR0_CSR: TCF Position                */
+#define LPTMR_CSR_TEN_MASK                       (0x01UL << LPTMR_CSR_TEN_SHIFT)                     /*!< LPTMR0_CSR: TEN Mask                    */
+#define LPTMR_CSR_TEN_SHIFT                      0                                                   /*!< LPTMR0_CSR: TEN Position                */
+#define LPTMR_CSR_TMS_MASK                       (0x01UL << LPTMR_CSR_TMS_SHIFT)                     /*!< LPTMR0_CSR: TMS Mask                    */
+#define LPTMR_CSR_TMS_SHIFT                      1                                                   /*!< LPTMR0_CSR: TMS Position                */
+#define LPTMR_CSR_TFC_MASK                       (0x01UL << LPTMR_CSR_TFC_SHIFT)                     /*!< LPTMR0_CSR: TFC Mask                    */
+#define LPTMR_CSR_TFC_SHIFT                      2                                                   /*!< LPTMR0_CSR: TFC Position                */
+#define LPTMR_CSR_TPP_MASK                       (0x01UL << LPTMR_CSR_TPP_SHIFT)                     /*!< LPTMR0_CSR: TPP Mask                    */
+#define LPTMR_CSR_TPP_SHIFT                      3                                                   /*!< LPTMR0_CSR: TPP Position                */
+#define LPTMR_CSR_TPS_MASK                       (0x03UL << LPTMR_CSR_TPS_SHIFT)                     /*!< LPTMR0_CSR: TPS Mask                    */
+#define LPTMR_CSR_TPS_SHIFT                      4                                                   /*!< LPTMR0_CSR: TPS Position                */
+#define LPTMR_CSR_TPS(x)                         (((x)<<LPTMR_CSR_TPS_SHIFT)&LPTMR_CSR_TPS_MASK)     /*!< LPTMR0_CSR                              */
+#define LPTMR_CSR_TIE_MASK                       (0x01UL << LPTMR_CSR_TIE_SHIFT)                     /*!< LPTMR0_CSR: TIE Mask                    */
+#define LPTMR_CSR_TIE_SHIFT                      6                                                   /*!< LPTMR0_CSR: TIE Position                */
+#define LPTMR_CSR_TCF_MASK                       (0x01UL << LPTMR_CSR_TCF_SHIFT)                     /*!< LPTMR0_CSR: TCF Mask                    */
+#define LPTMR_CSR_TCF_SHIFT                      7                                                   /*!< LPTMR0_CSR: TCF Position                */
 
 /* ------- LPTMR0_PSR                               ------ */
-#define LPTMR0_PSR_PCS_MASK                      (0x03UL << LPTMR0_PSR_PCS_SHIFT)                    /*!< LPTMR0_PSR: PCS Mask                    */
-#define LPTMR0_PSR_PCS_SHIFT                     0                                                   /*!< LPTMR0_PSR: PCS Position                */
-#define LPTMR0_PSR_PCS(x)                        (((x)<<LPTMR0_PSR_PCS_SHIFT)&LPTMR0_PSR_PCS_MASK)   /*!< LPTMR0_PSR                              */
-#define LPTMR0_PSR_PBYP_MASK                     (0x01UL << LPTMR0_PSR_PBYP_SHIFT)                   /*!< LPTMR0_PSR: PBYP Mask                   */
-#define LPTMR0_PSR_PBYP_SHIFT                    2                                                   /*!< LPTMR0_PSR: PBYP Position               */
-#define LPTMR0_PSR_PRESCALE_MASK                 (0x0FUL << LPTMR0_PSR_PRESCALE_SHIFT)               /*!< LPTMR0_PSR: PRESCALE Mask               */
-#define LPTMR0_PSR_PRESCALE_SHIFT                3                                                   /*!< LPTMR0_PSR: PRESCALE Position           */
-#define LPTMR0_PSR_PRESCALE(x)                   (((x)<<LPTMR0_PSR_PRESCALE_SHIFT)&LPTMR0_PSR_PRESCALE_MASK) /*!< LPTMR0_PSR                              */
+#define LPTMR_PSR_PCS_MASK                       (0x03UL << LPTMR_PSR_PCS_SHIFT)                     /*!< LPTMR0_PSR: PCS Mask                    */
+#define LPTMR_PSR_PCS_SHIFT                      0                                                   /*!< LPTMR0_PSR: PCS Position                */
+#define LPTMR_PSR_PCS(x)                         (((x)<<LPTMR_PSR_PCS_SHIFT)&LPTMR_PSR_PCS_MASK)     /*!< LPTMR0_PSR                              */
+#define LPTMR_PSR_PBYP_MASK                      (0x01UL << LPTMR_PSR_PBYP_SHIFT)                    /*!< LPTMR0_PSR: PBYP Mask                   */
+#define LPTMR_PSR_PBYP_SHIFT                     2                                                   /*!< LPTMR0_PSR: PBYP Position               */
+#define LPTMR_PSR_PRESCALE_MASK                  (0x0FUL << LPTMR_PSR_PRESCALE_SHIFT)                /*!< LPTMR0_PSR: PRESCALE Mask               */
+#define LPTMR_PSR_PRESCALE_SHIFT                 3                                                   /*!< LPTMR0_PSR: PRESCALE Position           */
+#define LPTMR_PSR_PRESCALE(x)                    (((x)<<LPTMR_PSR_PRESCALE_SHIFT)&LPTMR_PSR_PRESCALE_MASK) /*!< LPTMR0_PSR                              */
 
 /* ------- LPTMR0_CMR                               ------ */
-#define LPTMR0_CMR_COMPARE_MASK                  (0xFFFFUL << LPTMR0_CMR_COMPARE_SHIFT)              /*!< LPTMR0_CMR: COMPARE Mask                */
-#define LPTMR0_CMR_COMPARE_SHIFT                 0                                                   /*!< LPTMR0_CMR: COMPARE Position            */
-#define LPTMR0_CMR_COMPARE(x)                    (((x)<<LPTMR0_CMR_COMPARE_SHIFT)&LPTMR0_CMR_COMPARE_MASK) /*!< LPTMR0_CMR                              */
+#define LPTMR_CMR_COMPARE_MASK                   (0xFFFFUL << LPTMR_CMR_COMPARE_SHIFT)               /*!< LPTMR0_CMR: COMPARE Mask                */
+#define LPTMR_CMR_COMPARE_SHIFT                  0                                                   /*!< LPTMR0_CMR: COMPARE Position            */
+#define LPTMR_CMR_COMPARE(x)                     (((x)<<LPTMR_CMR_COMPARE_SHIFT)&LPTMR_CMR_COMPARE_MASK) /*!< LPTMR0_CMR                              */
 
 /* ------- LPTMR0_CNR                               ------ */
-#define LPTMR0_CNR_COUNTER_MASK                  (0xFFFFUL << LPTMR0_CNR_COUNTER_SHIFT)              /*!< LPTMR0_CNR: COUNTER Mask                */
-#define LPTMR0_CNR_COUNTER_SHIFT                 0                                                   /*!< LPTMR0_CNR: COUNTER Position            */
-#define LPTMR0_CNR_COUNTER(x)                    (((x)<<LPTMR0_CNR_COUNTER_SHIFT)&LPTMR0_CNR_COUNTER_MASK) /*!< LPTMR0_CNR                              */
+#define LPTMR_CNR_COUNTER_MASK                   (0xFFFFUL << LPTMR_CNR_COUNTER_SHIFT)               /*!< LPTMR0_CNR: COUNTER Mask                */
+#define LPTMR_CNR_COUNTER_SHIFT                  0                                                   /*!< LPTMR0_CNR: COUNTER Position            */
+#define LPTMR_CNR_COUNTER(x)                     (((x)<<LPTMR_CNR_COUNTER_SHIFT)&LPTMR_CNR_COUNTER_MASK) /*!< LPTMR0_CNR                              */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'LPTMR0' Register Access macros                      ----------- */
@@ -1123,7 +1123,7 @@ typedef struct {                                /*!<       MCG Structure        
 #define MCG_ATCVL                      (MCG->ATCVL)
 
 /* ================================================================================ */
-/* ================           MCM (file:MCM_7)                     ================ */
+/* ================           MCM (file:MCM_MKL)                   ================ */
 /* ================================================================================ */
 
 /**
@@ -1677,7 +1677,7 @@ typedef struct {                                /*!<       PMC Structure        
  * @brief Pin Control and Interrupts
  */
 typedef struct {                                /*!<       PORTA Structure                                              */
-   __IO uint32_t  PCR[32];                      /*!< 0000: Pin Control Register n                                       */
+   __IO uint32_t  PCR[32];                      /*!< 0000: Pin Control Register                                         */
    __O  uint32_t  GPCLR;                        /*!< 0080: Global Pin Control Low Register                              */
    __O  uint32_t  GPCHR;                        /*!< 0084: Global Pin Control High Register                             */
    __I  uint32_t  RESERVED0[6];                 /*!< 0088:                                                              */
@@ -1888,7 +1888,7 @@ typedef struct {                                /*!<       RCM Structure        
 #define RCM_RPFW                       (RCM->RPFW)
 
 /* ================================================================================ */
-/* ================           ROM (file:ROM_0)                     ================ */
+/* ================           ROM (file:ROM_MKL)                   ================ */
 /* ================================================================================ */
 
 /**
@@ -2523,7 +2523,7 @@ typedef struct {                                /*!<       UART0 Structure      
    __IO uint8_t   BDL;                          /*!< 0001: Baud Rate Register: Low                                      */
    __IO uint8_t   C1;                           /*!< 0002: Control Register 1                                           */
    __IO uint8_t   C2;                           /*!< 0003: Control Register 2                                           */
-   __I  uint8_t   S1;                           /*!< 0004: Status Register 1                                            */
+   __IO uint8_t   S1;                           /*!< 0004: Status Register 1                                            */
    __IO uint8_t   S2;                           /*!< 0005: Status Register 2                                            */
    __IO uint8_t   C3;                           /*!< 0006: Control Register 3                                           */
    __IO uint8_t   D;                            /*!< 0007: Data Register                                                */

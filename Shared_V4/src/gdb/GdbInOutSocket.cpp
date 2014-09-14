@@ -152,6 +152,9 @@ const GdbPacket *GdbInOutSocket::getGdbPacket(void) {
          sendAck();
       }
    }
+   else {
+      Logging::print("No packet\n");
+   }
    return packet;
 }
 

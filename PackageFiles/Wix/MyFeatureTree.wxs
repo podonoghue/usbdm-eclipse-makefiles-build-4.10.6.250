@@ -62,7 +62,7 @@ Patch dialog sequence:
 
             <!--Publish Dialog="MyCustomizeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish-->
             <!--Publish Dialog="MyCustomizeDlg" Control="Next" Event="DoAction"     Value="CheckingPID">1</Publish-->
-            <Publish Dialog="MyCustomizeDlg" Control="Next" Event="DoAction"    Order="1" Value="CheckCodewarriorPaths">1                            </Publish>
+            <Publish Dialog="MyCustomizeDlg" Control="Next" Event="DoAction"    Order="1" Value="CheckInstallPaths">1                                </Publish>
             <Publish Dialog="MyCustomizeDlg" Control="Next" Event="SpawnDialog" Order="2" Value="NoSuchFileErrorDlg">   CODEWARRIOR_PATHS_EXIST = "0"</Publish>
             <Publish Dialog="MyCustomizeDlg" Control="Next" Event="NewDialog"   Order="3" Value="VerifyReadyDlg">       CODEWARRIOR_PATHS_EXIST = "1"</Publish>
 

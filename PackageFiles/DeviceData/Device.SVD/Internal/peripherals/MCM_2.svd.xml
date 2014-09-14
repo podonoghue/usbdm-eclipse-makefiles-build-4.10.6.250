@@ -34,7 +34,7 @@ Devices using this peripheral:
          <registers>
             <register>
                <name>PLASC</name>
-               <description>Crossbar switch (AXBS) slave configuration</description>
+               <description>Crossbar Switch (AXBS) Slave Configuration</description>
                <addressOffset>0x8</addressOffset>
                <size>16</size>
                <access>read-only</access>
@@ -43,7 +43,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>ASC</name>
-                     <description>Each bit in the ASC field indicates if there is a corresponding connection to the crossbar switch&apos;s slave input port</description>
+                     <description>Each bit in the ASC field indicates whether there is a corresponding connection to the crossbar switch&apos;s slave input port</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
@@ -63,7 +63,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PLAMC</name>
-               <description>Crossbar switch (AXBS) master configuration</description>
+               <description>Crossbar Switch (AXBS) Master Configuration</description>
                <addressOffset>0xA</addressOffset>
                <size>16</size>
                <access>read-only</access>
@@ -72,7 +72,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>AMC</name>
-                     <description>Each bit in the AMC field indicates if there is a corresponding connection to the AXBS master input port</description>
+                     <description>Each bit in the AMC field indicates whether there is a corresponding connection to the AXBS master input port</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
@@ -159,7 +159,7 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>SRAMLWP</name>
-                     <description>SRAM_L write protect</description>
+                     <description>SRAM_L Write Protect</description>
                      <bitOffset>30</bitOffset>
                      <bitWidth>1</bitWidth>
                   </field>

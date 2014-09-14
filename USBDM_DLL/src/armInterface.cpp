@@ -401,6 +401,7 @@ USBDM_ErrorCode resetARM(TargetMode_t targetMode) {
             }
             milliSleep(bdmOptions.resetDuration);
             if (!armDebugInformation.MDM_AP_present) {
+               // Not Kinetis
                Logging::print("armSoftwareReset()- Attempting to disable ST Watchdog\n");
                armWriteMemoryWord(DBGMCU_CR, dbgValue);
             }

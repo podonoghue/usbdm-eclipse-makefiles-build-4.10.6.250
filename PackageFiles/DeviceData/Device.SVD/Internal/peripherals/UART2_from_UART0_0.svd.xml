@@ -4,6 +4,7 @@ Devices using this peripheral:
       MKE02Z4
       MKE04Z4
       MKE06Z4
+      MKM33Z5
       SKEAZ4
 -->
       <peripheral derivedFrom="UART0">

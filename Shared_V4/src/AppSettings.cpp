@@ -59,6 +59,7 @@ string AppSettings::getSettingsFilename(const string &rootFilename, TargetType_t
 #endif
    }
    switch (targetType) {
+      case T_S12Z:         filename += "S12Z.cfg";      break;
       case T_HC12:         filename += "HC12.cfg";      break;
       case T_HCS08:        filename += "HCS08.cfg";     break;
       case T_RS08:         filename += "RS08.cfg";      break;

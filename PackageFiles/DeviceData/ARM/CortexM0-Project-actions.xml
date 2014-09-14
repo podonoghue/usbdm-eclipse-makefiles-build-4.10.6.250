@@ -1,0 +1,283 @@
+      <!-- Cortex-M0 
+         MKE
+         MKL 
+       -->      
+      <!-- GNU Build options Cortex M0 (e.g. MKL, MKE) devices -->
+      <projectActionList id="gnuSettings.cortex.m0" root="usbdm_resource_path/Stationery/ARM/" >
+         <createFolder  target="Sources"                        type="" />
+         <createFolder  target="Startup_Code"                   type="" />
+         <createFolder  target="Project_Headers"                type="include" />
+         <createFolder  target="Project_Settings/Linker_Files"  type="" />
+         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"              > <value>net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM0</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb"            > <value>true</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.buildtools"        > <value>$(buildToolId)</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>$(linkerFile)</value> </projectOption>
+         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>$(linkerFile)</value> </projectOption>
+         <projectOption id="gnu.c.link.option.paths" >                                   <value>&quot;${ProjDirPath}/Project_Settings/Linker_Files&quot;</value> </projectOption>
+         <projectOption id="gnu.cpp.link.option.paths" >                                 <value>&quot;${ProjDirPath}/Project_Settings/Linker_Files&quot;</value> </projectOption>
+      </projectActionList>
+
+      <!-- Freescale Kinetis SDK  -->
+      <projectActionList id="KinetisM0-SDK" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="KinetisM0-SDK-enable"  name="Kinetis SDK"   description="Adds Kinetis SDK features" />
+         <condition variable="KinetisM0-SDK-enable">
+            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
+               <value>&quot;${KSDK_PATH}/platform/utilities&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/drivers/clock&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/drivers/gpio&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/drivers/interrupt&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/hal/sim&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/hal/port&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/hal/gpio&quot;</value>
+               <value>&quot;${KSDK_PATH}/rtos&quot;</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
+               <value>&quot;${KSDK_PATH}/platform/utilities&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/drivers/clock&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/drivers/gpio&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/drivers/interrupt&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/hal/sim&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/hal/port&quot;</value>
+               <value>&quot;${KSDK_PATH}/platform/hal/gpio&quot;</value>
+               <value>&quot;${KSDK_PATH}/rtos&quot;</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
+               <value>__CORTEX_M3</value>
+               <value>__CMSIS_RTOS</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
+               <value>__CORTEX_M3</value>
+               <value>__CMSIS_RTOS</value>
+            </projectOption>            
+         </condition>
+      </projectActionList>
+      
+      <!-- Cortex-M0 CMSIS RTOS -->
+      <projectActionList id="Cortex-M0-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="CMSIS-M0-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
+         <condition variable="CMSIS-M0-rtos">
+            <createFolder                                           target="cmsis"      type="include" />
+            <copy           source="cmsis/Doc/index.html"           target="CMSIS.html" type="link" />
+            <copy           source="cmsis/INC"                      target="cmsis/INC" />
+            <copy           source="cmsis/SRC"                      target="cmsis/SRC" />
+            <copy           source="cmsis/GCC/SVC_Table.S"          target="cmsis/GCC/SVC_Table.S" />
+            <copy           source="cmsis/GCC/HAL_CM0.S"            target="cmsis/GCC/HAL_CM0.S" />
+            <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
+            <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
+            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
+               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
+               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
+               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
+               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
+               <value>__CORTEX_M0</value>
+               <value>__CMSIS_RTOS</value>
+            </projectOption>            
+            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
+               <value>__CORTEX_M0</value>
+               <value>__CMSIS_RTOS</value>
+            </projectOption>            
+         </condition>
+      </projectActionList>
+
+      <!-- Base MKE files -->
+      <projectActionList id="Kinetis-MKE-files" root="usbdm_resource_path/Stationery/ARM/" >
+         <copy source="$(externalVectorTable)"                                   target="Startup_Code/vectors.c" />
+         <copy source="$(externalLinkerScript)"                                  target="Project_Settings/Linker_Files/Custom.ld" />
+         <copy source="$(externalHeaderFile)"                                    target="Project_Headers/$(targetDevice).h" />
+         <copy source="Startup_Code/system-mke.c"                                target="Startup_Code/system.c" />
+         <copy source="Startup_Code/vectors-mke.c"                               target="Startup_Code/vectors.c" />
+         <copy source="Startup_Code/newlib_stubs.c"                              target="Startup_Code/newlib_stubs.c" />
+         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"                target="Startup_Code/startup_ARMLtdGCC.S" />
+         <copy source="Project_Settings/Debug.launch"                            target="Project_Settings/$(projectName)-Debug.launch" />
+         <copy source="Project_Settings/Linker_Files/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/Linker_Files/ARMLtd_GCC-rom.ld" />
+         <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
+         <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
+         <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+         <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
+         <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
+         <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />
+         <copy source="Project_Headers/core_cmInstr.h"                           target="Project_Headers/core_cmInstr.h" />
+         <copy source="Project_Headers/utilities-mke.h"                          target="Project_Headers/utilities.h" />
+         <copy source="Project_Headers/leds.h"                                   target="Project_Headers/leds.h" />
+         <copy source="Project_Headers/Freedom.h"                                target="Project_Headers/Freedom.h" />
+         <copy source="Sources/leds-mke.c"                                       target="Sources/leds.c" />
+         <copy source="Sources/main.c"                                           target="Sources/main.c" />
+      </projectActionList>
+
+      <!-- Base MKL files -->
+      <projectActionList id="Kinetis-MKL-files" root="usbdm_resource_path/Stationery/ARM/" >
+         <copy source="$(externalVectorTable)"                                   target="Startup_Code/vectors.c" />
+         <copy source="$(externalLinkerScript)"                                  target="Project_Settings/Linker_Files/Custom.ld" />
+         <copy source="$(externalHeaderFile)"                                    target="Project_Headers/$(targetDevice).h" />
+         <copy source="Startup_Code/system-mkl.c"                                target="Startup_Code/system.c" />
+         <copy source="Startup_Code/vectors-mkl.c"                               target="Startup_Code/vectors.c" />
+         <copy source="Startup_Code/newlib_stubs.c"                              target="Startup_Code/newlib_stubs.c" />
+         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"                target="Startup_Code/startup_ARMLtdGCC.S" />
+         <copy source="Project_Settings/Debug.launch"                            target="Project_Settings/$(projectName)-Debug.launch" />
+         <copy source="Project_Settings/Linker_Files/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/Linker_Files/ARMLtd_GCC-rom.ld" />
+         <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
+         <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
+         <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+         <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
+         <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
+         <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />
+         <copy source="Project_Headers/core_cmInstr.h"                           target="Project_Headers/core_cmInstr.h" />
+         <copy source="Project_Headers/utilities-mkl.h"                          target="Project_Headers/utilities.h" />
+         <copy source="Project_Headers/leds.h"                                   target="Project_Headers/leds.h" />
+         <copy source="Project_Headers/Freedom.h"                                target="Project_Headers/Freedom.h" />
+         <copy source="Sources/leds.c"                                           target="Sources/leds.c" />
+         <copy source="Sources/main.c"                                           target="Sources/main.c" />
+      </projectActionList>
+
+      <!-- Base MKM files -->
+      <projectActionList id="Kinetis-MKM-files" root="usbdm_resource_path/Stationery/ARM/" >
+         <copy source="$(externalVectorTable)"                                   target="Startup_Code/vectors.c" />
+         <copy source="$(externalLinkerScript)"                                  target="Project_Settings/Linker_Files/Custom.ld" />
+         <copy source="$(externalHeaderFile)"                                    target="Project_Headers/$(targetDevice).h" />
+         <copy source="Startup_Code/system-mkm.c"                                target="Startup_Code/system.c" />
+         <copy source="Startup_Code/vectors-mkm.c"                               target="Startup_Code/vectors.c" />
+         <copy source="Startup_Code/newlib_stubs.c"                              target="Startup_Code/newlib_stubs.c" />
+         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"                target="Startup_Code/startup_ARMLtdGCC.S" />
+         <copy source="Project_Settings/Debug.launch"                            target="Project_Settings/$(projectName)-Debug.launch" />
+         <copy source="Project_Settings/Linker_Files/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/Linker_Files/ARMLtd_GCC-rom.ld" />
+         <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
+         <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
+         <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+         <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
+         <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
+         <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />
+         <copy source="Project_Headers/core_cmInstr.h"                           target="Project_Headers/core_cmInstr.h" />
+         <copy source="Project_Headers/utilities-mkm.h"                          target="Project_Headers/utilities.h" />
+         <copy source="Project_Headers/leds.h"                                   target="Project_Headers/leds.h" />
+         <copy source="Project_Headers/Freedom.h"                                target="Project_Headers/Freedom.h" />
+         <copy source="Sources/leds-mkm.c"                                       target="Sources/leds.c" />
+         <copy source="Sources/main.c"                                           target="Sources/main.c" />
+      </projectActionList>
+
+      <projectActionList id="Kinetis-MKE-ProjectActions" >
+         <projectActionListRef  ref="gnuSettings.cortex.m0" />
+         <projectActionListRef  ref="Cortex-M0-CMSIS" />
+         <projectActionListRef  ref="Kinetis-MKE-files" />
+         <projectActionListRef  ref="Kinetis-PE" />
+         <projectActionListRef  ref="KinetisM0-SDK" />
+      </projectActionList>
+
+      <projectActionList id="Kinetis-MKL-ProjectActions" >
+         <projectActionListRef  ref="gnuSettings.cortex.m0" />
+         <projectActionListRef  ref="Cortex-M0-CMSIS" />
+         <projectActionListRef  ref="Kinetis-MKL-files" />
+         <projectActionListRef  ref="Kinetis-PE" />
+         <projectActionListRef  ref="KinetisM0-SDK" />
+      </projectActionList>
+
+      <projectActionList id="Kinetis-MKM-ProjectActions" >
+         <projectActionListRef  ref="gnuSettings.cortex.m0" />
+         <projectActionListRef  ref="Cortex-M0-CMSIS" />
+         <projectActionListRef  ref="Kinetis-MKM-files" />
+         <projectActionListRef  ref="Kinetis-PE" />
+         <projectActionListRef  ref="KinetisM0-SDK" />
+      </projectActionList>
+
+      <!-- Extra Optional files for MKE02M2 -->
+      <projectActionList id="Options-file-list-MKE02M2" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Clock-setup-MKE02M2" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
+         <variable id="UART-setup-MKE02M2"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
+         <condition variable="Clock-setup-MKE02M2" >
+            <copy source="Startup_Code/clock-MKE0x.c"                     target="Startup_Code/clock.c" />
+            <copy source="Project_Headers/clock_configure-MKE02M2.h"      target="Project_Headers/clock_configure.h" />
+         </condition>
+         <condition variable="UART-setup-MKE02M2">
+            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
+         </condition>
+      </projectActionList>
+      
+      <!-- Extra Optional files for MKE02M4 -->
+      <projectActionList id="Options-file-list-MKE02M4" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Clock-setup-MKE02M4" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
+         <variable id="UART-setup-MKE02M4"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
+         <condition variable="Clock-setup-MKE02M4" >
+            <copy source="Startup_Code/clock-MKE0x.c"                     target="Startup_Code/clock.c" />
+            <copy source="Project_Headers/clock_configure-MKE02M4.h"      target="Project_Headers/clock_configure.h" />
+         </condition>
+         <condition variable="UART-setup-MKE02M4">
+            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
+         </condition>
+      </projectActionList>
+
+      <!-- Extra Optional files for MKE04 -->
+      <projectActionList id="Options-file-list-MKE04" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Clock-setup-MKE04" name="Clock setup code"         description="Adds code for basic clock initialization - check assumptions made" />
+         <variable id="UART-setup-MKE04"  name="UART setup code"          description="Adds C stdio (UART) support for newlib" />
+         <condition variable="Clock-setup-MKE04" >
+            <copy source="Startup_Code/clock-MKE0x.c"                     target="Startup_Code/clock.c" />
+            <copy source="Project_Headers/clock_configure-MKE04.h"        target="Project_Headers/clock_configure.h" />
+         </condition>
+         <condition variable="UART-setup-MKE04">
+            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
+         </condition>
+      </projectActionList>
+
+      <!-- Extra Optional files for MKE06 -->
+      <projectActionList id="Options-file-list-MKE06" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Clock-setup-MKE06" name="Clock setup code"         description="Adds code for basic clock initialization - check assumptions made" />
+         <variable id="UART-setup-MKE06"  name="UART setup code"          description="Adds C stdio (UART) support for newlib" />
+         <condition variable="Clock-setup-MKE06" >
+            <copy source="Startup_Code/clock-MKE0x.c"                     target="Startup_Code/clock.c" />
+            <copy source="Project_Headers/clock_configure-MKE06.h"        target="Project_Headers/clock_configure.h" />
+         </condition>
+         <condition variable="UART-setup-MKE06">
+            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
+         </condition>
+      </projectActionList>
+
+      <!-- Extra Optional files for MKL0x -->
+      <projectActionList id="Options-file-list-MKL0x" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Clock-setup-MKL0x" name="Clock setup code"         description="Adds code for basic clock initialization - check assumptions made" />
+         <variable id="UART-setup-MKL0x"  name="UART setup code"          description="Adds C stdio (UART) support for newlib" />
+         <condition variable="Clock-setup-MKL0x" >
+            <copy source="Startup_Code/clock-MKL0x.c"                     target="Startup_Code/clock.c" />
+            <copy source="Project_Headers/clock_configure-MKL0x.h"        target="Project_Headers/clock_configure.h" />
+         </condition>
+         <condition variable="UART-setup-MKL0x">
+            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
+         </condition>
+      </projectActionList>
+
+      <!-- Extra Optional files for MK1x MKL2x MKL3x -->
+      <projectActionList id="Options-file-list-MKLxx" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Clock-setup-MKL25" name="Clock setup code"         description="Adds code for basic clock initialization - check assumptions made" />
+         <variable id="UART-setup-MKL25"  name="UART setup code"          description="Adds C stdio (UART) support for newlib" />
+         <condition variable="Clock-setup-MKL25" >
+            <copy source="Startup_Code/clock-MKLxx.c"                     target="Startup_Code/clock.c" />
+            <copy source="Project_Headers/clock_configure-MKLxx.h"        target="Project_Headers/clock_configure.h" />
+         </condition>
+         <condition variable="UART-setup-MKL25">
+            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
+         </condition>
+      </projectActionList>
+      
+      <!-- Extra Optional files for MKMxx -->
+      <projectActionList id="Options-file-list-MKMxx" root="usbdm_resource_path/Stationery/ARM/" >
+         <variable id="Clock-setup-MKMxx" name="Clock setup code"         description="Adds code for basic clock initialization - check assumptions made" />
+         <variable id="UART-setup-MKMxx"  name="UART setup code"          description="Adds C stdio (UART) support for newlib" />
+         <condition variable="Clock-setup-MKMxx" >
+            <copy source="Startup_Code/clock-MKMxx.c"                     target="Startup_Code/clock.c" />
+            <copy source="Project_Headers/clock_configure-MKMxx.h"        target="Project_Headers/clock_configure.h" />
+         </condition>
+         <condition variable="UART-setup-MKMxx">
+            <copy source="Startup_Code/uart-mkm.c"                        target="Startup_Code/uart.c" />
+            <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
+         </condition>
+      </projectActionList>
+
+

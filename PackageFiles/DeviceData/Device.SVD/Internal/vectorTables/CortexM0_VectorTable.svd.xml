@@ -1,12 +1,6 @@
 <!--
 Devices using this vector table: 
-   MKL04Z4
-   MKL14Z4
-   MKL15Z4
-   MKL16Z4
-   MKL24Z4
-   MKL34Z4
-   MKL36Z4
+   MKM33Z5
 -->
       <interrupts>
          <name>CortexM0_VectorTable</name>

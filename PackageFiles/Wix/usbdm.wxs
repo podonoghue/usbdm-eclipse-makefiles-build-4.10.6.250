@@ -65,6 +65,8 @@
                   <Directory Id="D.WizardPatchData"  Name='WizardPatches' />
                   <Directory Id="D.FlashImages"      Name='FlashImages' />
                   <Directory Id="D.Examples"         Name='Examples' />
+                  <Directory Id="D.EclipsePlugins"   Name='EclipsePlugins' />
+                  <Directory Id="D.CWEclipsePlugins" Name='CodewarriorPlugins' />
                   <Component Id='C.ApplicationDirectoryKey' Guid='*'>
                      <RegistryValue Root='HKLM' Key="Software\$(var.Manufacturer)\$(var.ProductName)"
                                     Type='string' Name='InstallationDirectory' Value="[INSTALLDIR]" KeyPath='yes' />
@@ -94,10 +96,23 @@
       </Property>
       
       <!--======================================================-->
-      <!-- Custom action to validate install paths -->
-      <CustomAction Id='CheckCodewarriorPaths' BinaryKey='MyCustomAction' DllEntry='CheckCodewarriorPaths@4' />
+      <!-- Binary containing custom actions -->
       <Binary Id='MyCustomAction' SourceFile='bin\MyCustomAction.dll' />
+      
+      <!-- Custom action to validate install paths -->
+      <CustomAction Id='CheckInstallPaths' BinaryKey='MyCustomAction' DllEntry='CheckInstallPaths@4' />
+      
+      <!-- Custom action to write Eclipse plugin link files -->
+      <CustomAction Id='WriteLinkFiles' BinaryKey='MyCustomAction' DllEntry='WriteLinkFiles@4' />      
 
+      <!-- Custom action to remove Eclipse plugin link files -->
+      <CustomAction Id='RemoveLinkFiles' BinaryKey='MyCustomAction' DllEntry='RemoveLinkFiles@4' />      
+
+      <InstallExecuteSequence>
+         <Custom Action='WriteLinkFiles'  After='InstallFiles'/>
+         <Custom Action='RemoveLinkFiles' Before='RemoveFiles'/>
+      </InstallExecuteSequence>
+      
       <!--======================================================-->
       <!--          Menu & Application components               -->
       <!--======================================================-->
@@ -208,6 +223,14 @@
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
             <File Id='HCS12_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\HCS12_FlashProgrammer-debug.exe' />
+         </Component>
+         <Component Id='C.S12ZProgrammer' Guid='e07ac73b-cd3b-46e3-bab8-cc27d2290bef'>
+            <File Id='S12Z_FlashProgrammerEXE' DiskId='1'
+               Source='bin\S12Z_FlashProgrammer.exe' KeyPath='yes'>
+               <Shortcut Id="startmenuUSBDM_1a" Directory="D.UsbdmProgramMenuDir" Name="S12Z Programmer"
+                  WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
+            </File>
+            <File Id='S12Z_FlashProgrammerDebugEXE'   DiskId='1' Source='bin\S12Z_FlashProgrammer-debug.exe' />
          </Component>
          <!--
          <Component Id='C.SRecord.Support' Guid='81c6fbea-67c4-41d5-b455-2c7d26a6f9d7'>
@@ -568,8 +591,6 @@
                Level='1'>
             <FeatureRef Id='F.CODEWARRIOR_COLDFIRE_V7_2' />
             <FeatureRef Id='F.CODEWARRIOR_DSC_V8_3' />
-            <FeatureRef Id='F.CW_FOR_MCU_V10.1'/>
-            <FeatureRef Id='F.CW_FOR_MCU_V10.2'/>
             <FeatureRef Id='F.CW_FOR_MCU_V10.3'/>
             <FeatureRef Id='F.CW_FOR_MCU_V10.4'/>
             <FeatureRef Id='F.CW_FOR_MCU_V10.5'/>
@@ -578,7 +599,9 @@
             <FeatureRef Id='F.CWS12_X_V5_1' />
          </Feature>
          <FeatureRef Id='F.KINETIS_DESIGN_STUDIO' />
-         <FeatureRef Id='F.ECLIPSE_CDT' />
+         <FeatureRef Id='F.ECLIPSE_JUNO_CDT' />
+         <FeatureRef Id='F.ECLIPSE_KEPLER_CDT' />
+         <FeatureRef Id='F.ECLIPSE_LUNA_CDT' />
          <FeatureRef Id='F.FREEMASTER_V1_3' />
          <FeatureRef Id='F.CFFLASHER_V3_1' />
          <Feature Id='F.Programmers'
@@ -639,6 +662,15 @@
                   AllowAdvertise="no"
                   Level='1'>
                <ComponentRef Id='C.HCS12Programmer' />
+               <ComponentRef Id='C.CommonFiles' />
+               <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
+            </Feature>
+            <Feature Id='F.S12ZProgrammer'
+                  Title='S12Z Programmer'
+                  Description='Stand-alone S12Z flash programmer.'
+                  AllowAdvertise="no"
+                  Level='1'>
+               <ComponentRef Id='C.S12ZProgrammer' />
                <ComponentRef Id='C.CommonFiles' />
                <ComponentGroupRef Id='Cg.DeviceDataInstall'/>
             </Feature>

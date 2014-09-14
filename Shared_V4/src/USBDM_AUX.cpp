@@ -573,6 +573,7 @@ USBDM_ErrorCode USBDM_FindBDMs(TargetType_t targetType, vector<BdmInformation> &
    int targetCapabilityMask = 0x0000;
    switch(targetType) {
       case T_HC12      : targetCapabilityMask =  BDM_CAP_HCS12;     break;
+      case T_S12Z      : targetCapabilityMask =  BDM_CAP_S12Z;    break;
       case T_HCS08     : targetCapabilityMask =  BDM_CAP_HCS08;     break;
       case T_RS08      : targetCapabilityMask =  BDM_CAP_RS08;      break;
       case T_MC56F80xx : targetCapabilityMask =  BDM_CAP_DSC ;      break;

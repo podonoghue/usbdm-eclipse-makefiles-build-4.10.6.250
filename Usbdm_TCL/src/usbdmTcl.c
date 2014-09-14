@@ -1,4 +1,15 @@
-// usbdmTcl.c
+/*
+ * usbdmTcl.cpp
+ *
+ *  Created on: 28/07/2011
+ *      Author: podonoghue
+\verbatim
+Change History
+-==================================================================================
+| 14 Sep 2014 | Fixed stdout/stdin in TCL                                     - pgo
++==================================================================================
+\endverbatim
+ */
 
 typedef int bool;
 
@@ -25,12 +36,11 @@ typedef int bool;
 
 #include "ARM_Definitions.h"
 
-#ifdef WIN32
+#ifdef _WIN32
+#include <io.h>
 #include "FindWindow.h"
-#include "tcl.h"
-#else
-#include "tcl8.5/tcl.h"
 #endif
+#include "tcl.h"
 #include "Names.h"
 #include "Common.h"
 #include "Names.h"
@@ -232,6 +242,22 @@ static int reportState(Tcl_Interp *interp) {
    return (TCL_OK);
 }
 
+//! S12Z Mass erase
+static int massEraseCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
+   // massErase
+   if (argc != 1) {
+      Tcl_WrongNumArgs(interp, 1, argv, "massErase");
+      return TCL_ERROR;
+   }
+   if (targetType != T_S12Z) {
+      printf("Illegal command (wrong target)");
+      return TCL_ERROR;
+   }
+   uint8_t s12ZEraseCommand[] = {0x95};
+   USBDM_BDMCommand(sizeof(s12ZEraseCommand), 1, s12ZEraseCommand);
+   return TCL_OK;
+}
+
 //! Set target Vcc - This has no affect until target is set
 static int setTargetVddCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
    // setTargetVdd <0|3|5|on|off>
@@ -400,6 +426,9 @@ static int setTargetCommand(ClientData notneededhere, Tcl_Interp *interp, int ar
    else if (strnicmp(arg, "DSC", 4) == 0) {
       targetType = T_MC56F80xx;
    }
+   else if (strnicmp(arg, "S12Z", 3) == 0) {
+      targetType = T_S12Z;
+   }
    else if (strnicmp(arg, "OFF", 4) == 0) {
       targetType = T_OFF;
    }
@@ -407,6 +436,7 @@ static int setTargetCommand(ClientData notneededhere, Tcl_Interp *interp, int ar
       printf("Unrecogized target\n");
       return TCL_ERROR;
    }
+   USBDM_SetTargetType(T_OFF);
    USBDM_ExtendedOptions_t defaultBdmOptions = {sizeof(USBDM_ExtendedOptions_t), targetType};
    USBDM_GetDefaultExtendedOptions(&defaultBdmOptions);
    defaultBdmOptions.targetVdd  = bdmOptions.targetVdd;
@@ -830,7 +860,25 @@ static int stepCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, T
          USBDM_ReadReg(HCS12_RegPC, &nextPC);
          pUSBDM_ReadMemory(1,4,nextPC,(uint8_t*)&nextInstruction);
          swapEndian32(&nextInstruction);
-         printf(":step, from PC = 0x%08X : 0x%4.4X 0x%4.4X, to PC = 0x%08X : 0x%4.4X 0x%4.4X, \n",
+         printf(":step, from PC = 0x%04X : 0x%4.4X 0x%4.4X, to PC = 0x%08X : 0x%4.4X 0x%4.4X, \n",
+               (int)oldPC,  oldInstruction>>16,  oldInstruction&0xFFFF,
+               (int)nextPC, nextInstruction>>16, nextInstruction&0xFFFF);
+      }
+      break;
+
+   case T_S12Z :
+      while (count-->0) {
+         USBDM_ReadReg(S12Z_RegPC, &oldPC);
+         pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction);
+         swapEndian32(&oldInstruction);
+         if (checkUsbdmRC(interp,  pUSBDM_TargetStep()) != 0) {
+            printf(":step - Failed\n");
+            return TCL_ERROR;
+         }
+         USBDM_ReadReg(S12Z_RegPC, &nextPC);
+         pUSBDM_ReadMemory(1,4,nextPC,(uint8_t*)&nextInstruction);
+         swapEndian32(&nextInstruction);
+         printf(":step, from PC = 0x%06X : 0x%4.4X 0x%4.4X, to PC = 0x%08X : 0x%4.4X 0x%4.4X, \n",
                (int)oldPC,  oldInstruction>>16,  oldInstruction&0xFFFF,
                (int)nextPC, nextInstruction>>16, nextInstruction&0xFFFF);
       }
@@ -848,7 +896,7 @@ static int stepCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, T
          USBDM_ReadReg(HCS08_RegPC, &nextPC);
          pUSBDM_ReadMemory(1,4,nextPC,(uint8_t*)&nextInstruction);
          swapEndian32(&nextInstruction);
-         printf(":step, from PC = 0x%08X : 0x%4.4X 0x%4.4X, to PC = 0x%08X : 0x%4.4X 0x%4.4X, \n",
+         printf(":step, from PC = 0x%04X : 0x%4.4X 0x%4.4X, to PC = 0x%08X : 0x%4.4X 0x%4.4X, \n",
                (int)oldPC,  oldInstruction>>16,  oldInstruction&0xFFFF,
                (int)nextPC, nextInstruction>>16, nextInstruction&0xFFFF);
       }
@@ -1007,12 +1055,14 @@ unsigned long BDMStatus = 0x00;
          data = getData16(value);
          printf("WDOG_RSTCNT    => 0x%8.4X\n", data);
       }
+      Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
       return TCL_OK;
    }
    else if (targetType == T_MC56F80xx) {
       OnceStatus_t status;
       DSC_GetStatus(&status);
       printf("DSC Target status => %s\n", DSC_GetOnceStatusName(status));
+      Tcl_SetObjResult(interp, Tcl_NewIntObj(status));
       return TCL_OK;
    }
    else {
@@ -1021,9 +1071,12 @@ unsigned long BDMStatus = 0x00;
       }
       printf("Target status reg => %s\n",
              getStatusRegName(targetType, BDMStatus));
-      return reportState(interp);
+      reportState(interp);
+      Tcl_SetObjResult(interp, Tcl_NewIntObj(BDMStatus));
+      return TCL_OK;
    }
 }
+
 //! Get last USBDM error code as number
 static int getLastError(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
    Tcl_SetObjResult(interp, Tcl_NewIntObj(lastError));
@@ -1097,6 +1150,13 @@ unsigned long regValue;
 //! Read Registers from Target
 static int regsCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
 static const int HCS12regList[] = {HCS12_RegPC, HCS12_RegD, HCS12_RegX, HCS12_RegY, HCS12_RegSP};
+static const int HCS12ZregList[] = {
+     S12Z_RegD0, S12Z_RegD1, S12Z_RegD2, S12Z_RegD3, S12Z_RegD4, S12Z_RegD5, S12Z_RegD6, S12Z_RegD7,
+     S12Z_RegX, S12Z_RegY, S12Z_RegSP, S12Z_RegPC, S12Z_RegCCR
+};
+static const int HCS12ZregListWidth[] = {
+    1, 1, 2, 2, 2, 2, 4, 4, 3, 3, 3, 3, 2
+};
 static const int HCS08regList[] = {HCS08_RegPC, HCS08_RegA, HCS08_RegHX, HCS08_RegSP};
 static const int RS08regList[]  = {RS08_RegCCR_PC, RS08_RegSPC, RS08_RegA};
 static const int DSCregList[]   = {
@@ -1146,6 +1206,34 @@ int rc = TCL_OK;
             return TCL_ERROR;
          }
          printf("PC = 0x%4.4X : ", (int)oldPC);
+         if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) == BDM_RC_OK) {
+            swapEndian32(&oldInstruction);
+            printf("0x%4.4X 0x%4.4X\n", oldInstruction>>16, oldInstruction&0xFFFF);
+         }
+         else {
+            printf("<invalid>\n");
+         }
+         break;
+      case T_S12Z :
+         for (regIndex =0;
+             (regIndex<sizeof(HCS12ZregList)/sizeof(HCS12ZregList[0])) && (rc == TCL_OK);
+             regIndex++) {
+            regNo = HCS12ZregList[regIndex];
+            if (regNo>=0) {
+               if (checkUsbdmRC(interp,  pUSBDM_ReadReg(regNo, &regVal))) {
+                  return TCL_ERROR;
+               }
+               int width = 2*HCS12ZregListWidth[regIndex];
+               printf("%4s => %.*s%0*X, ", getS12ZRegName(regNo), 8-width, "        ", width, (int)regVal);
+            }
+            if ((regIndex&0x03)== 0x03)
+               printf("\n");
+         }
+         printf("\n");
+         if (checkUsbdmRC(interp,  pUSBDM_ReadReg(S12Z_RegPC, &oldPC))) {
+            return TCL_ERROR;
+         }
+         printf("PC = 0x%06X : ", (int)oldPC);
          if (pUSBDM_ReadMemory(1,4,oldPC,(uint8_t*)&oldInstruction) == BDM_RC_OK) {
             swapEndian32(&oldInstruction);
             printf("0x%4.4X 0x%4.4X\n", oldInstruction>>16, oldInstruction&0xFFFF);
@@ -1613,6 +1701,11 @@ static int wpcCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tc
             return TCL_ERROR;
          }
          break;
+      case T_S12Z:
+         if (checkUsbdmRC(interp,  USBDM_WriteReg(S12Z_RegPC, data))) {
+            return TCL_ERROR;
+         }
+         break;
       case T_ARM:
          if (checkUsbdmRC(interp,  pUSBDM_WriteReg(ARM_RegPC, data))) {
             return TCL_ERROR;
@@ -1876,6 +1969,7 @@ static int rCRegCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, 
    return TCL_OK;
 }
 
+#ifdef INTERACTIVE
 //! Testing
 static int testCregCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
 // test
@@ -1900,6 +1994,7 @@ static int testCregCommand(ClientData notneededhere, Tcl_Interp *interp, int arg
    }
    return TCL_OK;
 }
+#endif
 
 //! Write block to Target memory
 static int wblockCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
@@ -2123,6 +2218,7 @@ static int rlCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl
    return TCL_OK;
 }
 
+#ifdef INTERACTIVE
 //! Test a block of target memory
 static int testBlockCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
 // tBlock <addr> <size> <repeatcount>
@@ -2186,8 +2282,9 @@ static int testBlockCommand(ClientData notneededhere, Tcl_Interp *interp, int ar
       if (((repeatCount%20) == 19) && (repeatCount<maxRepeat))
          printf("\n");
 
-      for (sub = 0; sub <count; sub++)
-         dataWriteBlock[sub] = data++;
+      for (sub = 0; sub <count; sub++) {
+         dataWriteBlock[sub]  = (uint8_t)((255.0 * rand())/(RAND_MAX+1.0));
+      }
       pUSBDM_WriteMemory(4, count, address, dataWriteBlock);
       pUSBDM_ReadMemory(4, count, address, dataReadBlock);
       for (sub = 0; sub <count; sub++)
@@ -2220,6 +2317,7 @@ static int testBlockCommand(ClientData notneededhere, Tcl_Interp *interp, int ar
    }
    return TCL_OK;
 }
+#endif
 
 //! Test Target status command
 static int testStatusCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
@@ -3159,8 +3257,6 @@ const char *name;
       { setByteSexCommand,      "setbytesex" },
       { stepCommand,            "step"},
       { syncCommand,            "sync"},
-      { testBlockCommand,       "tblock"},
-      { testCregCommand,        "testcreg"},
       { regsCommand,            "regs"},
       { testStatusCommand,      "testStatus"},
       { wblockCommand,          "wblock"},
@@ -3177,6 +3273,7 @@ const char *name;
       { setTargetVddCommand,    "settargetvcc" },
       { setTargetVddCommand,    "settargetvdd" },
       { guiDialogue,            "dialogue"},
+      { massEraseCommand,       "massErase"},
 #ifdef INTERACTIVE
       { openBDM,                "openbdm" },
       { closeBDM,               "closebdm" },
@@ -3184,8 +3281,10 @@ const char *name;
       { exitCommand,            "exit"},
       { helpCommand,            "help"},
       { helpCommand,            "?"},
+      { testBlockCommand,       "tblock"},
+      { testCregCommand,        "testcreg"},
 #endif
-      { NULL, NULL } 
+      { NULL, NULL }
 };
 
 
@@ -3237,6 +3336,8 @@ int evalTclScript(UsbdmTclInterp *usbdmTclInterp, const char *script) {
    Tcl_Interp *interp = (Tcl_Interp*)usbdmTclInterp;
    int rc = Tcl_Eval(interp, script);
    if (logFile != NULL) {
+      Tcl_Eval(interp, "flush stdout\n");
+      fflush(logFile);
       if (rc != TCL_OK) {
          Tcl_Obj *options = Tcl_GetReturnOptions(interp, rc);
          Tcl_Obj *key = Tcl_NewStringObj("-errorinfo", -1);
@@ -3270,17 +3371,44 @@ TCL_API
 UsbdmTclInterp *createTclInterpreter(TargetType_t target, FILE *fp) {
    Tcl_FindExecutable("usbdm");
    Tcl_Interp *tclInterp = Tcl_CreateInterp();
-//   if (fp != NULL) {
-//      Tcl_Channel ch = Tcl_MakeFileChannel(fp,TCL_WRITABLE);
-//      Tcl_Channel ch2 = Tcl_MakeFileChannel(fp,TCL_WRITABLE);
-//      Tcl_SetStdChannel(ch, TCL_STDERR);
-//      Tcl_SetStdChannel(ch2, TCL_STDOUT);
-////      Tcl_RegisterChannel(tclInterp, ch);
-////      Tcl_RegisterChannel(tclInterp, ch2);
-//   }
+   if (fp != NULL) {
+//      fprintf(fp, "createTclInterpreter() Doing redirection\n"); fflush(fp);
+#ifdef __WIN32__
+      HANDLE fileHandle = (HANDLE)_get_osfhandle(fileno(fp));
+#endif
+      // Redirect stdout/stderr
+      Tcl_Channel channel;
+      channel = Tcl_GetStdChannel(TCL_STDOUT);
+      if (channel != 0) {
+//         fprintf(fp, "createTclInterpreter() Closing stdout\n"); fflush(fp);
+         Tcl_UnregisterChannel(tclInterp, channel);
+      }
+      channel = Tcl_GetStdChannel(TCL_STDERR);
+      if (channel != 0) {
+//         fprintf(fp, "createTclInterpreter() Closing stderr\n"); fflush(fp);
+         Tcl_UnregisterChannel(tclInterp, channel);
+      }
+      channel = Tcl_MakeFileChannel(fileHandle, TCL_WRITABLE);
+      if (channel != 0) {
+//         fprintf(fp, "createTclInterpreter() Redirecting stdout\n"); fflush(fp);
+         Tcl_SetStdChannel(channel, TCL_STDOUT);
+      }
+      else {
+         fprintf(fp, "createTclInterpreter() stdout == 0!!!!\n"); fflush(fp);
+      }
+      channel = Tcl_MakeFileChannel(fileHandle, TCL_WRITABLE);
+      if (channel != 0) {
+//         fprintf(fp, "createTclInterpreter() Redirecting stderr\n"); fflush(fp);
+         Tcl_SetStdChannel(channel, TCL_STDERR);
+      }
+      else {
+         fprintf(fp, "createTclInterpreter() stderr == 0!!!!\n"); fflush(fp);
+      }
+   }
    logFile = fp;
    registerUSBDMCommands(tclInterp);
    setTargetType(target);
+   Tcl_Eval(tclInterp, "flush stdout");
    return (UsbdmTclInterp *)tclInterp;
 }
 

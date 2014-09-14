@@ -6,15 +6,15 @@
 <!ENTITY ADC1         SYSTEM "peripherals/ADC1_from_ADC0_1.svd.xml">
 <!ENTITY CMP0         SYSTEM "peripherals/CMP0_MKV.svd.xml">
 <!ENTITY CMP1         SYSTEM "peripherals/CMP1_from_CMP0_0.svd.xml">
-<!ENTITY CRC          SYSTEM "peripherals/CRC_0.svd.xml">
+<!ENTITY CRC          SYSTEM "peripherals/CRC.svd.xml">
 <!ENTITY DAC0         SYSTEM "peripherals/DAC0_MKLZ4.svd.xml">
 <!ENTITY DMA          SYSTEM "peripherals/DMA_MKV.svd.xml">
 <!ENTITY DMAMUX       SYSTEM "peripherals/DMAMUX_4CH.svd.xml">
 <!ENTITY EWM          SYSTEM "peripherals/EWM_MKV.svd.xml">
 <!ENTITY FTFA         SYSTEM "peripherals/FTFA.svd.xml">
-<!ENTITY FTM0         SYSTEM "peripherals/FTM0_6CH.svd.xml">
-<!ENTITY FTM1         SYSTEM "peripherals/FTM1_MKV.svd.xml">
-<!ENTITY FTM2         SYSTEM "peripherals/FTM2_from_FTM1_2.svd.xml">
+<!ENTITY FTM0         SYSTEM "peripherals/FTM0_6CH_MKV.svd.xml">
+<!ENTITY FTM1         SYSTEM "peripherals/FTM1_2CH_MKV.svd.xml">
+<!ENTITY FTM2         SYSTEM "peripherals/FTM2_from_FTM1_1.svd.xml">
 <!ENTITY GPIOA        SYSTEM "peripherals/GPIOA_0.svd.xml">
 <!ENTITY GPIOB        SYSTEM "peripherals/GPIOB_from_GPIOA_0.svd.xml">
 <!ENTITY GPIOC        SYSTEM "peripherals/GPIOC_from_GPIOA_0.svd.xml">
@@ -24,7 +24,7 @@
 <!ENTITY LLWU         SYSTEM "peripherals/LLWU_MKL_1.svd.xml">
 <!ENTITY LPTMR0       SYSTEM "peripherals/LPTMR0_0.svd.xml">
 <!ENTITY MCG          SYSTEM "peripherals/MCG_MKV.svd.xml">
-<!ENTITY MCM          SYSTEM "peripherals/MCM_8.svd.xml">
+<!ENTITY MCM          SYSTEM "peripherals/MCM_MKL.svd.xml">
 <!ENTITY MMDVSQ       SYSTEM "peripherals/MMDVSQ_0.svd.xml">
 <!ENTITY MTB          SYSTEM "peripherals/MTB_MKV.svd.xml">
 <!ENTITY MTBDWT       SYSTEM "peripherals/MTBDWT_MKL.svd.xml">
@@ -32,17 +32,18 @@
 <!ENTITY OSC0         SYSTEM "peripherals/OSC_0.svd.xml">
 <!ENTITY PDB0         SYSTEM "peripherals/PDB0_2CH_2TRIG_1PO.svd.xml">
 <!ENTITY PMC          SYSTEM "peripherals/PMC_0.svd.xml">
-<!ENTITY PORTA        SYSTEM "peripherals/PORTA_MKV.svd.xml">
+<!ENTITY PORTA        SYSTEM "peripherals/PORTA_MKL.svd.xml">
 <!ENTITY PORTB        SYSTEM "peripherals/PORTB_from_PORTA_0.svd.xml">
 <!ENTITY PORTC        SYSTEM "peripherals/PORTC_from_PORTB_0.svd.xml">
 <!ENTITY PORTD        SYSTEM "peripherals/PORTD_from_PORTB_0.svd.xml">
 <!ENTITY PORTE        SYSTEM "peripherals/PORTE_from_PORTB_0.svd.xml">
 <!ENTITY RCM          SYSTEM "peripherals/RCM_MKL.svd.xml">
-<!ENTITY ROM          SYSTEM "peripherals/ROM_0.svd.xml">
+<!ENTITY RNG          SYSTEM "peripherals/RNG_1.svd.xml">
+<!ENTITY ROM          SYSTEM "peripherals/ROM_MKL.svd.xml">
 <!ENTITY SIM          SYSTEM "peripherals/SIM_MKV10Z7.svd.xml">
 <!ENTITY SMC          SYSTEM "peripherals/SMC_MKV.svd.xml">
 <!ENTITY SPI0         SYSTEM "peripherals/SPI0_MKV.svd.xml">
-<!ENTITY UART0        SYSTEM "peripherals/UART0_5.svd.xml">
+<!ENTITY UART0        SYSTEM "peripherals/UART0_MKV.svd.xml">
 <!ENTITY UART1        SYSTEM "peripherals/UART1_from_UART0_0.svd.xml">
 <!ENTITY WDOG         SYSTEM "peripherals/WDOG_MK.svd.xml">
 ]>
@@ -98,6 +99,7 @@
 &PORTD;
 &PORTE;
 &RCM;
+&RNG;
 &ROM;
 &SIM;
 &SMC;

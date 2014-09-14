@@ -13,6 +13,7 @@
 <!ENTITY HCS08-alt-load-flash-program     SYSTEM "HCS08/HCS08-default-0xB0-flash-program.abs.s19">
 ]>
 <!-- 
+      V4.10.7 - Changed SDIDs for MC9S08PAxx, MC9S08PTxx and MC9S08PLxx 
       V4.10.6 - Added SDID for MC9S08PT32
       V4.10.6 - Added MC9S08PA4
       V4.10.4 - Changed how security information is expressed
@@ -103,7 +104,7 @@
          <soptAddress value="0x1802" />
          <sdidAddress value="0x1806" />
          <sdidMask value="0xFFF" />
-         <sdid value="0x000" />
+         <sdid value="0x000" mask="0x000"/>
          <tclScriptRef ref="HCS08-default-flash-scripts" />
          <flashProgramRef ref="HCS08-default-flash-program" />
          <note>Default HCS08 Device</note>
@@ -1208,8 +1209,7 @@
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
-         <sdidMask value="0x00FFFF" />
-         <sdid value="0x0000" />
+         <sdid value="0x0000" mask="0x0000"/>
          <flashScripts>
             <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
          </flashScripts>
@@ -1230,37 +1230,12 @@
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
-         <sdidMask value="0x00FFFF" />
          <sdid value="0x0043" />
          <flashScripts>
             <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
          </flashScripts>
       </device>
-      <device family="HCS08Plus" name="MC9S08PA8" alias="MC9S08PT8">
-         <sdid value="0x0000" />
-      </device>
-      <device family="HCS08Plus" name="MC9S08PA16" alias="MC9S08PT16">
-         <sdid value="0x0042" />
-      </device>
-      <device family="HCS08Plus" name="MC9S08PA32" alias="MC9S08PT32">
-         <sdid value="0x0000" />
-      </device>
-      <device family="HCS08Plus" name="MC9S08PA60" alias="MC9S08PT60">
-         <sdid value="0x0000" />
-      </device>
-      <device family="HCS08Plus" name="MC9S08PL8" alias="MC9S08PT8">
-         <sdid value="0x0000" />
-      </device>
-      <device family="HCS08Plus" name="MC9S08PL16" alias="MC9S08PT16">
-         <sdid value="0x0000" />
-      </device>
-      <device family="HCS08Plus" name="MC9S08PL32" alias="MC9S08PT32">
-         <sdid value="0x0000" />
-      </device>
-      <device family="HCS08Plus" name="MC9S08PL60" alias="MC9S08PT60">
-         <sdid value="0x0000" />
-      </device>
-      <device family="HCS08Plus" name="MC9S08PT8">
+      <device family="HCS08Plus" name="MC9S08PA8">
          <clock registerAddress="0x3038" type="S08ICSV4" />
          <memory type="ram">
             <memoryRange start="0x0040" end="0x083F" />
@@ -1274,14 +1249,13 @@
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
-         <sdidMask value="0x00FFFF" />
-         <sdid value="0x0000" />
+         <sdid value="0x0042" />
          <flashScripts>
             <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
          </flashScripts>
          <flashProgramRef ref="HCS08-PTxx-flash-program" />
       </device>
-      <device family="HCS08Plus" name="MC9S08PT16">
+      <device family="HCS08Plus" name="MC9S08PA16">
          <clock registerAddress="0x3038" type="S08ICSV4" />
          <memory type="ram">
             <memoryRange start="0x0040" end="0x083F" />
@@ -1295,14 +1269,13 @@
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
-         <sdidMask value="0x00FFFF" />
-         <sdid value="0x0000" />
+         <sdid value="0x0042" />
          <flashScripts>
             <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
          </flashScripts>
          <flashProgramRef ref="HCS08-PTxx-flash-program" />
       </device>
-      <device family="HCS08Plus" name="MC9S08PT32">
+      <device family="HCS08Plus" name="MC9S08PA32">
          <clock registerAddress="0x3038" type="S08ICSV4" />
          <memory type="ram">
             <memoryRange start="0x0040" end="0x103F" />
@@ -1316,14 +1289,13 @@
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
-         <sdidMask value="0x00FFFF" />
-         <sdid value="0x4040" />
+         <sdid value="0x0040" />
          <flashScripts>
             <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
          </flashScripts>
          <flashProgramRef ref="HCS08-PTxx-flash-program" />
       </device>
-      <device family="HCS08Plus" name="MC9S08PT60">
+      <device family="HCS08Plus" name="MC9S08PA60">
          <clock registerAddress="0x3038" type="S08ICSV4" />
          <memory type="ram">
             <memoryRange start="0x0040" end="0x103F" />
@@ -1338,12 +1310,35 @@
          </memory>
          <soptAddress value="0x3030" />
          <sdidAddress value="0x3002" />
-         <sdidMask value="0x00FFFF" />
-         <sdid value="0x2040" />
+         <sdid value="0x0040" />
          <flashScripts>
             <tclScriptRef ref="HCS08-PTxx-flash-scripts" />
          </flashScripts>
          <flashProgramRef ref="HCS08-PTxx-flash-program" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PT8" alias="MC9S08PA8">
+         <sdid value="0x0042" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PT16" alias="MC9S08PA16">
+         <sdid value="0x0042" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PT32" alias="MC9S08PA32">
+         <sdid value="0x0040" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PT60" alias="MC9S08PA60">
+         <sdid value="0x0040" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PL8" alias="MC9S08PA8">
+         <sdid value="0x0042" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PL16" alias="MC9S08PA16">
+         <sdid value="0x0042" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PL32" alias="MC9S08PA32">
+         <sdid value="0x0040" />
+      </device>
+      <device family="HCS08Plus" name="MC9S08PL60" alias="MC9S08PA60">
+         <sdid value="0x0040" />
       </device>
       <device family="HCS08" name="MC9S08QA2">
          <clock registerAddress="0x0048" type="S08ICSV1" />

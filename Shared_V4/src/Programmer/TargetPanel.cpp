@@ -24,24 +24,27 @@
 
  \verbatim
 Change History
--==============================================================================
-| 10 Apr 2014 | 4.10.20 Fixed .axf extension                              - pgo
-| 30 Jun 2013 | 4.10.6  Added GDB Server code & refactored                - pgo
-| 26 Dec 2012 | 4.10.4  Fixed file change check if file has been deleted  - pgo
-|  4 Nov 2012 | 4.10.4  Fixed filer for file extensions to load           - pgo
-|  4 May 2012 | 4.7.5   More robust error checking                        - pgo
-|    Apr 2012 | 4.7.4   Added Load if changed option                      - pgo
-|  4 Oct 2011 | 4.7.4   Added Extended options                            - pgo
-|  4 Apr 2012 | 4.7.4   Added Load & Go                                   - pgo
+-==========================================================================================
+| 29 Aug 2014 | Changes to SDID wildcards                                 - pgo 4.10.6.190
+| 27 Jul 2014 | Fixed .axf => .afx extension - I'm confused               - pgo 4.10.6.170
+| 10 Apr 2014 | Fixed .afx extension                                      - pgo 4.10.20
+| 30 Jun 2013 | Added GDB Server code & refactored                        - pgo 4.10.6
+| 26 Dec 2012 | Fixed file change check if file has been deleted          - pgo 4.10.4
+|  4 Nov 2012 | Fixed filer for file extensions to load                   - pgo 4.10.4
+|  4 May 2012 | More robust error checking                                - pgo 4.7.5
+|    Apr 2012 | Added Load if changed option                              - pgo 4.7.4
+|  4 Oct 2011 | Added Extended options                                    - pgo 4.7.4
+|  4 Apr 2012 | Added Load & Go                                           - pgo 4.7.4
 |  6 Feb 2011 | Added sound effects + options                             - pgo
 |  1 Feb 2011 | Modified confirmation prompt to allow chain programming   - pgo
 |  1 Jul 2010 | wxWidgets version created                                 - pgo
-+==============================================================================
++==========================================================================================
 \endverbatim
  */
 
 // For compilers that support precompilation, includes <wx/wx.h".
 #include <wx/wxprec.h>
+#include <set>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -78,7 +81,7 @@ Change History
 
 #if (TARGET == CFVx) || (TARGET == MC56F80xx)
 #define MASS_ERASE (MASS_ERASE_NEVER)
-#elif (TARGET==ARM) || (TARGET == CFV1) || (TARGET == HC12) || (TARGET == HCS08)
+#elif (TARGET==ARM) || (TARGET == CFV1) || (TARGET == HC12) || (TARGET == HCS08)|| (TARGET == S12Z)
 #define MASS_ERASE (MASS_ERASE_OPTIONAL)
 #else
 #define MASS_ERASE (MASS_ERASE_ALWAYS)
@@ -311,7 +314,7 @@ USBDM_ErrorCode TargetPanel::hcs12Check(void) {
          // Target speed has been guessed and may be inaccurate.
          // Device is secured so target timing code cannot be used (later).
          // Warn the user to manually set the speed to allow unsecure
-         Logging::print("TargetPanel::autoDetectTargetDevice() - Guessed connection speed (Hz) = %d\n", connectionFrequency);
+         Logging::print("Guessed connection speed (Hz) = %d\n", connectionFrequency);
          needManualFrequencySet = true;
          TransferDataToWindow();
          wxMessageBox(
@@ -366,25 +369,22 @@ USBDM_ErrorCode TargetPanel::progressCallBack(USBDM_ErrorCode status, int percen
 //!
 USBDM_ErrorCode TargetPanel::autoDetectTargetDevice(void) {
 uint32_t targetChipId;
-
-   Logging::print("TargetPanel::autoDetectTargetDevice()\n");
+LOGGING;
 
    if (flashprogrammer == NULL) {
       flashprogrammer = new FlashProgrammer;
    }
    filterChipIds.clear();
-   Logging::print("TargetPanel::autoDetectTargetDevice() =>\n");
+   Logging::print("BDM Options =>\n");
    printBdmOptions(&bdmOptions);
 
    USBDM_ErrorCode flashRc = shared->initBdm();
    if (flashRc != BDM_RC_OK) {
       return flashRc;
    }
-//   Logging::print("TargetPanel::autoDetectTargetDevice()\n");
 #if TARGET == HCS12
    // HCS12 has problems if the target is secured and doesn't support SYNC
    flashRc = hcs12Check();
-//   Logging::print("TargetPanel::autoDetectTargetDevice()#D\n");
    if (flashRc != BDM_RC_OK) {
       wxMessageBox(
             _("Failed to connect to target\n\n"
@@ -394,7 +394,7 @@ uint32_t targetChipId;
             wxOK|wxICON_ERROR|wxSTAY_ON_TOP|wxCENTER,
             this);
       shared->closeBdm();
-      Logging::print("TargetPanel::autoDetectTargetDevice() - Failed to connect to target\n");
+      Logging::print("Failed to connect to target\n");
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
 #elif TARGET == MC56F80xx
@@ -402,7 +402,6 @@ uint32_t targetChipId;
       shared->closeBdm();
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
-//   Logging::print("TargetPanel::autoDetectTargetDevice()\n");
 #elif TARGET == ARM
    flashRc = USBDM_TargetConnectWithRetry((RetryMode)(retryByReset|retryNotPartial));
    if ((flashRc != BDM_RC_OK) && (flashRc != BDM_RC_SECURED)) {
@@ -412,8 +411,10 @@ uint32_t targetChipId;
 #else
    if (USBDM_TargetConnectWithRetry((RetryMode)(retryAlways|retryByReset)) != BDM_RC_OK) {
       shared->closeBdm();
+      Logging::print("Failed to connected\n");
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
+   Logging::print("Connected\n");
 #endif
 //   USBDM_TargetHalt();
 
@@ -421,7 +422,7 @@ uint32_t targetChipId;
    flashRc = flashprogrammer->setDeviceData(*deviceDatabase->getDefaultDevice());
    if (flashRc != PROGRAMMING_RC_OK) {
       shared->closeBdm();
-      Logging::print("TargetPanel::autoDetectTargetDevice() - setDeviceData() failed\n");
+      Logging::print("setDeviceData() failed\n");
       return flashRc;
    }
    // CFV1/Kinetis is a bit unusual in that you can't determine the device type of a secured device.
@@ -470,27 +471,34 @@ uint32_t targetChipId;
 
    USBDM_ErrorCode lastRc = PROGRAMMING_RC_OK;
    vector<DeviceDataPtr>::const_iterator deviceIterator;
+
+   set<uint32_t> probedLocations;
+   bool successfullyProbedALocation = false;
+
    for ( deviceIterator = deviceDatabase->begin();
          deviceIterator < deviceDatabase->end();
          deviceIterator++, deviceCount++ ) {
-
       if (!pd.Update(deviceCount)) {
          break;
       }
-
-//      Logging::print("TargetPanel::autoDetectTargetDevice(): Considering %s\n", (*deviceIterator)->getTargetName().c_str());
-//      Logging::print("TargetPanel::autoDetectTargetDevice() Checking device %s\n", (*deviceIterator)->getTargetName().c_str());
-//      Logging::print("TargetPanel::autoDetectTargetDevice() Checking device Chip ID=0x%X, IDAddress=0x%X\n",
-//           (*deviceIterator)->getSDID(0),(*deviceIterator)->getSDIDAddress());
-      if ((*deviceIterator)->getSDIDAddress() == 0x0000) {
+      Logging::print("Considering %s (A=0x%08X, M=0x%08X, V=0x%08X)",
+                     (*deviceIterator)->getTargetName().c_str(),
+                     (*deviceIterator)->getSDIDAddress(), (*deviceIterator)->getSDID(0).mask, (*deviceIterator)->getSDID(0).value);
+      if ((*deviceIterator)->getSDID().mask == 0x0000) {
+         Logging::printq("- Discarding wildcard device\n");
          continue; // Skip 'match any device'
       }
-//      Logging::print("TargetPanel::autoDetectTargetDevice(): Checking %s\n", (*deviceIterator)->getTargetName().c_str());
-      map<uint32_t,uint32_t>::iterator chipIdEntry;
-      // Check if already probed location
-      chipIdEntry = filterChipIds.find((*deviceIterator)->getSDIDAddress());
-      if (chipIdEntry == filterChipIds.end()) {
-         // Add new entry - if successfully probed
+      // Get location to probe
+      uint32_t sdidAddress = (*deviceIterator)->getSDIDAddress();
+
+      // Check if not already probed location
+      if (probedLocations.find(sdidAddress) == probedLocations.end()) {
+         // New location
+         Logging::printq("- New location\n");
+
+         // Record probe
+         probedLocations.insert(sdidAddress);
+
          USBDM_ErrorCode probeRc = flashprogrammer->setDeviceData(**deviceIterator);
          if (probeRc == PROGRAMMING_RC_OK) {
 #if (TARGET == ARM)
@@ -500,48 +508,67 @@ uint32_t targetChipId;
 #endif
          }
          if (probeRc != PROGRAMMING_RC_OK) {
-            // Ignore errors as may be accessing illegal memory
+            // Failed probe - ignore errors as may be accessing illegal memory
             lastRc = probeRc;
-            Logging::print("TargetPanel::autoDetectTargetDevice() - Failed to read chip ID from target, Reason: %s\n",
-                   USBDM_GetErrorString(probeRc));
-            // Add dummy entry to prevent re-probe
-            filterChipIds.insert ( pair<uint32_t,uint32_t>((*deviceIterator)->getSDIDAddress(), (uint32_t)-1) );
+            Logging::print( "- Failed probe, Reason: %s\n", USBDM_GetErrorString(probeRc));
+            // Add dummy entry to prevent re-probing
+            continue;
          }
-         else {
-            filterChipIds.insert ( pair<uint32_t,uint32_t>((*deviceIterator)->getSDIDAddress(), targetChipId) );
-         }
-//         Logging::print("TargetPanel::autoDetectTargetDevice() - Added chip ID entry (A=0x%6.6X, V=0x%8.8X)\n",
-//               (*deviceIterator)->getSDIDAddress(),
-//               targetChipId);
+         // Record successful probe result
+         Logging::print( "Successful probe, adding probe entry, (A=0x%X,ID=0x%X)\n", sdidAddress, targetChipId);
+         successfullyProbedALocation = true;
+
+         // Add SDID for matching device
+         filterChipIds.insert (pair<uint32_t,uint32_t>(sdidAddress, targetChipId));
+         Logging::print("Added chip ID entry (A=0x%08X, V=0x%08X)\n", sdidAddress, targetChipId);
       }
+      else {
+         Logging::printq("- Already probed location\n");
+      }
+//      // Check if probe value matches current device
+//      if ((*deviceIterator)->isThisDevice(targetChipId, false)) {
+//         // Add SDID for matching device
+//         filterChipIds.insert ( pair<uint32_t,uint32_t>(sdidAddress, targetChipId) );
+//         Logging::print("Added chip ID entry (A=0x%08X, V=0x%08X)\n", sdidAddress, targetChipId);
+//      }
    }
    if (deviceCount != totalDeviceCount) {
       // Just in case - to close dialogue
       pd.Update(totalDeviceCount);
    }
-//   Logging::print("TargetPanel::autoDetectTargetDevice(): Here #2\n");
    shared->closeBdm();
 
-   // Delete dummy and unlikely entries from map (0 and 0xFFFFFFFF)
-   for (map<uint32_t,uint32_t>::iterator it = filterChipIds.begin(); it != filterChipIds.end(); ++it) {
-      if ((it->second == (uint32_t)-1) || (it->second == 0)) {
-         filterChipIds.erase(it);
+   if (!successfullyProbedALocation) {
+      // No successful probes
+      Logging::print("Failed to probe target\n");
+      flashRc = lastRc;
+      if (flashRc == PROGRAMMING_RC_OK) {
+         // Change code to default Fail
+         flashRc = BDM_RC_FAIL;
       }
+      wxMessageBox(
+            _("Failed to probe target\n\n"
+            "Reason: ") +
+            wxString(USBDM_GetErrorString(flashRc), wxConvUTF8),
+            _("Detection error"),
+            wxOK|wxICON_ERROR|wxSTAY_ON_TOP|wxCENTER,
+            this);
    }
-   if (filterChipIds.empty()) {
-      Logging::print("TargetPanel::autoDetectTargetDevice() - Failed to read any chip IDs from target\n");
-      if (lastRc == PROGRAMMING_RC_OK) {
-         // No device IDs found but no error?
-          wxMessageBox(_("Failed to read any Chip IDs from target"),
-                       _("Error"),
-                       wxOK|wxSTAY_ON_TOP|wxCENTER,
-                       this);
-      }
+   else if (filterChipIds.empty()) {
+      // Successful probes but no matching devices
+      Logging::print("Failed to read any matching chip IDs from target\n");
+      wxMessageBox(
+            _("No matching chip ID"),
+            _("Detection error"),
+            wxOK|wxICON_ERROR|wxSTAY_ON_TOP|wxCENTER,
+            this);
+      flashRc = BDM_RC_FAIL;
    }
    else {
-      Logging::print("TargetPanel::autoDetectTargetDevice() - Found %d chips\n", filterChipIds.size());
+      Logging::print("Found %d chips\n", filterChipIds.size());
    }
-   return flashRc;
+   // Returns OK as errors at end have already been reported
+   return BDM_RC_OK;
 }
 
 //========================================================================================================================
@@ -1114,9 +1141,9 @@ void TargetPanel::OnLoadFileButtonClick( wxCommandEvent& event ) {
 //   Logging::print("TargetPanel::OnLoadFileButtonClick()\n");
 
    wxString caption  = _("Select Binary File to Load");
-   wxString wildcard = _("Binary Files(*.s19,*.sx,*.axf,*.elf)|*.s19;*.sx;*.axf;*.elf|"
+   wxString wildcard = _("Binary Files(*.s19,*.sx,*.afx,*.elf)|*.s19;*.sx;*.afx;*.elf|"
                          "SREC Hex files (*.s19,*.sx)|*.s19;*.sx|"
-                         "Elf files (*.axf,*.elf)|*.axf;*.elf|"
+                         "Elf files (*.afx,*.elf)|*.afx;*.elf|"
                          "All Files|*");
    wxString defaultDir = wxEmptyString;
    wxString defaultFilename = wxEmptyString;
@@ -1170,8 +1197,7 @@ void TargetPanel::OnDeviceTypeChoiceSelected( wxCommandEvent& event ) {
  * wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_FILTER_BY_CHIP_ID_CHECKBOX
  */
 void TargetPanel::OnFilterByChipIdCheckboxClick( wxCommandEvent& event ) {
-   doFilterByChipId = event.IsChecked() &&
-                    !filterChipIds.empty();
+   doFilterByChipId = event.IsChecked() && !filterChipIds.empty();
 
    Logging::print("TargetPanel::OnFilterByChipIdCheckboxClick(), currentDeviceIndex=%d\n", shared->getCurrentDeviceIndex());
 
@@ -1186,17 +1212,18 @@ void TargetPanel::OnFilterByChipIdCheckboxClick( wxCommandEvent& event ) {
 void TargetPanel::OnDetectChipButtonClick( wxCommandEvent& event ) {
 
    USBDM_ErrorCode rc = autoDetectTargetDevice();
+
    if (rc != BDM_RC_OK) {
       wxMessageBox(
-            _("Failed to detect chips\n\n"
-              "Reason: ") +
-              wxString(USBDM_GetErrorString(rc), wxConvUTF8),
+            _("Failed to probe target\n\n"
+            "Reason: ") +
+            wxString(USBDM_GetErrorString(rc), wxConvUTF8),
             _("Detection error"),
             wxOK|wxICON_ERROR|wxSTAY_ON_TOP|wxCENTER,
             this);
    }
    // Default to filtered display if valid CHIP_ID
-   doFilterByChipId = !filterChipIds.empty();
+   doFilterByChipId = (rc== BDM_RC_OK) && !filterChipIds.empty();
 
    // Enable filter control checkbox if valid CHIP_ID
    filterByChipIdCheckBoxControl->Set3StateValue(doFilterByChipId?wxCHK_CHECKED:wxCHK_UNCHECKED);

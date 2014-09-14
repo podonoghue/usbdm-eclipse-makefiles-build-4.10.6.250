@@ -1,6 +1,5 @@
 <!--
 Devices using this peripheral: 
-      MK21F12
       MKL16Z4
       MKL26Z4
       MKL34Z4
@@ -106,42 +105,42 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b000</name>
-                           <description>If RANGE 0 = 0 , Divide Factor is 1; for all other RANGE 0 values, Divide Factor is 32</description>
+                           <description>If RANGE0 = 0 , Divide Factor is 1; for all other RANGE0 values, Divide Factor is 32</description>
                            <value>0b000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b001</name>
-                           <description>If RANGE 0 = 0 , Divide Factor is 2; for all other RANGE 0 values, Divide Factor is 64</description>
+                           <description>If RANGE0 = 0 , Divide Factor is 2; for all other RANGE0 values, Divide Factor is 64</description>
                            <value>0b001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b010</name>
-                           <description>If RANGE 0 = 0 , Divide Factor is 4; for all other RANGE 0 values, Divide Factor is 128</description>
+                           <description>If RANGE0 = 0 , Divide Factor is 4; for all other RANGE0 values, Divide Factor is 128</description>
                            <value>0b010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b011</name>
-                           <description>If RANGE 0 = 0 , Divide Factor is 8; for all other RANGE 0 values, Divide Factor is 256</description>
+                           <description>If RANGE0 = 0 , Divide Factor is 8; for all other RANGE0 values, Divide Factor is 256</description>
                            <value>0b011</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b100</name>
-                           <description>If RANGE 0 = 0 , Divide Factor is 16; for all other RANGE 0 values, Divide Factor is 512</description>
+                           <description>If RANGE0 = 0 , Divide Factor is 16; for all other RANGE0 values, Divide Factor is 512</description>
                            <value>0b100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b101</name>
-                           <description>If RANGE 0 = 0 , Divide Factor is 32; for all other RANGE 0 values, Divide Factor is 1024</description>
+                           <description>If RANGE0 = 0 , Divide Factor is 32; for all other RANGE0 values, Divide Factor is 1024</description>
                            <value>0b101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b110</name>
-                           <description>If RANGE 0 = 0 , Divide Factor is 64; for all other RANGE 0 values, Divide Factor is 1280</description>
+                           <description>If RANGE0 = 0 , Divide Factor is 64; for all other RANGE0 values, Divide Factor is 1280</description>
                            <value>0b110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b111</name>
-                           <description>If RANGE 0 = 0 , Divide Factor is 128; for all other RANGE 0 values, Divide Factor is 1536</description>
+                           <description>If RANGE0 = 0 , Divide Factor is 128; for all other RANGE0 values, Divide Factor is 1536</description>
                            <value>0b111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -270,6 +269,11 @@ Devices using this peripheral:
                         <enumeratedValue>
                            <name>0b01</name>
                            <description>Encoding 1 - High frequency range selected for the crystal oscillator</description>
+                           <value>0b01</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10</name>
+                           <description>Encoding 2 - Very high frequency range selected for the crystal oscillator</description>
                            <value>0b01</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -623,7 +627,7 @@ Selects the amount to divide the VCO output of the PLL. Divisor  = N+24</descrip
                      </enumeratedValues>
                   </field>
                   <field>
-                     <name>LOLS</name>
+                     <name>LOLS0</name>
                      <description>Loss of Lock Status</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>

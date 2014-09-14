@@ -16,7 +16,7 @@ Change History
 #include "Log.h"
 
 #ifndef TARGET
-#define TARGET ARM
+#error "TARGET not defined"
 #endif
 
 #include "USBDM_API.h"
@@ -43,6 +43,9 @@ Change History
 #elif (TARGET == ARM)
 #define USBDM_ReadPC(x)                      USBDM_ReadReg(ARM_RegPC, x);
 #define USBDM_WritePC(x)                     USBDM_WriteReg(ARM_RegPC, x);
+#elif (TARGET == HCS12Z)
+#define USBDM_ReadPC(x)                      USBDM_ReadReg(HCS12Z_RegPC, x);
+#define USBDM_WritePC(x)                     USBDM_WriteReg(HCS12Z_RegPC, x);
 #else
 #error "Unhandled TARGET"
 #endif

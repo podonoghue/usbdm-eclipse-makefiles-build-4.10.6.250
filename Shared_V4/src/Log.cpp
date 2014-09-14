@@ -282,6 +282,30 @@ void Logging::error(const char *format, ...) {
    va_end(list);
    fflush(logFile);
 }
+/*! \brief Provides a print function which prints data into a log file.
+ *
+ *  @param format Format and parameters as for printf()
+ */
+void Logging::warning(const char *format, ...) {
+   va_list list;
+   if (logFile == NULL) {
+      return;
+   }
+   if (format == NULL) {
+      format = "error() - Error - empty format string!\n";
+   }
+   if (timestampMode != none) {
+      fprintf(logFile, "%10.2f: ", getTimeStamp());
+   }
+   fprintf(logFile, "%*s", 3*indent, "");
+   if (currentName!=NULL) {
+      fprintf(logFile, "%s(): ", currentName);
+   }
+   va_start(list, format);
+   vfprintf(logFile, format, list);
+   va_end(list);
+   fflush(logFile);
+}
 /*! \brief Print a formatted dump of binary data in Hex
  *
  * @param data         Pointer to data to print

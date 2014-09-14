@@ -64,7 +64,9 @@ static CallbackF metrowerksFeedbackFunction;
 const string processorKey(("com.freescale.cdt.debug.cw.CW_SHADOWED_PREF.RS08 Debugger.processor"));
 #elif TARGET == HCS08
 const string processorKey(("com.freescale.cdt.debug.cw.CW_SHADOWED_PREF.HC08 Debugger.processor"));
-#elif TARGET == HCS12
+#elif (TARGET == HCS12)
+const string processorKey(("com.freescale.cdt.debug.cw.CW_SHADOWED_PREF.S12 Debugger.processor"));
+#elif (TARGET == S12Z)
 const string processorKey(("com.freescale.cdt.debug.cw.CW_SHADOWED_PREF.S12Z Debugger.processor"));
 #elif TARGET == CFV1
 const string processorKey(("com.freescale.cdt.debug.cw.CW_SHADOWED_PREF.CF Debugger.processor"));

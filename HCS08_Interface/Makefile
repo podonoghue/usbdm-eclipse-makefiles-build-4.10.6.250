@@ -4,26 +4,26 @@ TARGET = HCS08
 target = hcs08
 
 $(TARGET)_FlashProgrammer:
-	$(MAKE) exe -f ../ProgrammerTarget.mk   BUILDDIR=$@ MODULE=programmer           CDEFS='$(PROGRAMMER_DEFS)'
+	$(MAKE) exe -f ../ProgrammerTarget.mk   TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) MODULE=programmer        CDEFS='$(PROGRAMMER_DEFS)'
 
 $(TARGET)_FlashProgrammer-debug:
-	$(MAKE) exe -f ../ProgrammerTarget.mk   BUILDDIR=$@ MODULE=programmer           CDEFS='$(PROGRAMMER_DEFS)' DEBUG='Y'
+	$(MAKE) exe -f ../ProgrammerTarget.mk   TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) MODULE=programmer        CDEFS='$(PROGRAMMER_DEFS)' DEBUG='Y'
 
 usbdm-$(target)-gdi:
-	$(MAKE) dll -f ../GdiTarget.mk          BUILDDIR=$@ MODULE=gdi                  CDEFS='$(GDI_DEFS)'
+	$(MAKE) dll -f ../GdiTarget.mk          TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) MODULE=gdi               CDEFS='$(GDI_DEFS)'
 
 usbdm-$(target)-gdi-debug:
-	$(MAKE) dll -f ../GdiTarget.mk          BUILDDIR=$@ MODULE=gdi                  CDEFS='$(GDI_DEFS)' DEBUG='Y'
+	$(MAKE) dll -f ../GdiTarget.mk          TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) MODULE=gdi               CDEFS='$(GDI_DEFS)' DEBUG='Y'
 
 
 allCommon: $(TARGET)_FlashProgrammer        $(TARGET)_FlashProgrammer-debug 
 allCommon: usbdm-$(target)-gdi              usbdm-$(target)-gdi-debug
 
 cleanCommon:
-	${RMDIR} $(TARGET)_FlashProgrammer
-	${RMDIR} $(TARGET)_FlashProgrammer-debug
-	${RMDIR} usbdm-$(target)-gdi
-	${RMDIR} usbdm-$(target)-gdi-debug
+	${RMDIR} $(TARGET)_FlashProgrammer$(BUILDDIR_SUFFIX)
+	${RMDIR} $(TARGET)_FlashProgrammer-debug$(BUILDDIR_SUFFIX)
+	${RMDIR} usbdm-$(target)-gdi$(BUILDDIR_SUFFIX)
+	${RMDIR} usbdm-$(target)-gdi-debug$(BUILDDIR_SUFFIX)
 
 allWindows:
 cleanWindows:

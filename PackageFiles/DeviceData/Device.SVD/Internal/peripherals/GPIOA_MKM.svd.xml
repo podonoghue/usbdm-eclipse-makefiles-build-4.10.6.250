@@ -1,0 +1,194 @@
+<!--
+Devices using this peripheral: 
+      MKM33Z5
+-->
+      <peripheral>
+         <?sourceFile "GPIOA_MKM" ?>
+         <name>GPIOA</name>
+         <description>General Purpose Input/Output</description>
+         <prependToName>GPIOA</prependToName>
+         <baseAddress>0x400FF000</baseAddress>
+         <size>8</size>
+         <access>read-write</access>
+         <resetValue>0x0</resetValue>
+         <resetMask>0xFFFFFFFF</resetMask>
+         <addressBlock>
+            <?width "8" ?>
+            <offset>0x0</offset>
+            <size>0x1</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <?width "8" ?>
+            <offset>0x10</offset>
+            <size>0x1</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <?width "8" ?>
+            <offset>0x14</offset>
+            <size>0x1</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <?width "8" ?>
+            <offset>0x1C</offset>
+            <size>0x1</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <registers>
+            <register>
+               <name>PDOR</name>
+               <description>Port Data Output Register</description>
+               <addressOffset>0x0</addressOffset>
+               <fields>
+                  <field>
+                     <name>PDO</name>
+                     <description>Port Data Output\n
+This register configures the logic levels that are driven on each general-purpose output pins</description>
+                     <bitOffset>0</bitOffset>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Logic level 0 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Logic level 1 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>PDIR</name>
+               <description>Port Data Input Register</description>
+               <addressOffset>0x10</addressOffset>
+               <access>read-only</access>
+               <fields>
+                  <field>
+                     <name>PDI</name>
+                     <description>Port Data Input\n
+Reads 0 at the unimplemented pins for a particular device. Pins that are not configured for a digital
+function read 0. If the Port Control and Interrupt module is disabled, then the corresponding bit in PDIR
+does not update</description>
+                     <bitOffset>0</bitOffset>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin logic level is logic 0 or is not configured for use by digital function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin logic level is logic 1</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>PDDR</name>
+               <description>Port Data Direction Register</description>
+               <addressOffset>0x14</addressOffset>
+               <fields>
+                  <field>
+                     <name>PDD</name>
+                     <description>Port Data Direction\n
+Configures individual port pins for input or output</description>
+                     <bitOffset>0</bitOffset>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>GACR</name>
+               <description>GPIO Attribute Checker Register</description>
+               <addressOffset>0x1C</addressOffset>
+               <fields>
+                  <field>
+                     <name>ACB</name>
+                     <description>Attribute Check Byte\n
+This 3 bit field defines the attributes required to access the corresponding GPIO port&apos;s programming model</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>3</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b000</name>
+                           <description>User nonsecure: Read + Write; User Secure: Read + Write; Privileged Secure: Read + Write</description>
+                           <value>0b000</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b001</name>
+                           <description>User nonsecure: Read; User Secure: Read + Write; Privileged Secure: Read + Write</description>
+                           <value>0b001</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b010</name>
+                           <description>User nonsecure: None; User Secure: Read + Write; Privileged Secure: Read + Write</description>
+                           <value>0b010</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b011</name>
+                           <description>User nonsecure: Read; User Secure: Read; Privileged Secure: Read + Write</description>
+                           <value>0b011</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b100</name>
+                           <description>User nonsecure: None; User Secure: Read; Privileged Secure: Read + Write</description>
+                           <value>0b100</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b101</name>
+                           <description>User nonsecure: None; User Secure: None; Privileged Secure: Read + Write</description>
+                           <value>0b101</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b110</name>
+                           <description>User nonsecure: None; User Secure: None; Privileged Secure: Read</description>
+                           <value>0b110</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b111</name>
+                           <description>User nonsecure: None; User Secure: None; Privileged Secure: None</description>
+                           <value>0b111</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>ROB</name>
+                     <description>Read-Only Byte\n
+This register bit provides a mechanism to &quot;lock&quot; the configuration state defined by ACB. Once asserted,
+this bit remains set and attempted writes to the ACB are ignored until the next system reset clears the flag</description>
+                     <bitOffset>7</bitOffset>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Writes to the ACB are allowed</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Writes to the ACB are ignored</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+         </registers>
+      </peripheral>

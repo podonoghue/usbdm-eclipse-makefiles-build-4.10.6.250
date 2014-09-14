@@ -135,7 +135,7 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Program(unsigned int  addr,
          doBlock = doBlock || (data[temp] != 0xFF);
       }
       if (doBlock) { // Only program non-Blank blocks
-//         print("USBDM_ICP_Program() - Programming block %4.4X-%4.4X\n", addr, addr+dataSize-1);
+         Logging::print("USBDM_ICP_Program() - Programming block %4.4X-%4.4X\n", addr, addr+dataSize-1);
          Logging::printDump(data, dataSize);
 
          rc =  (ICP_ErrorCode_t)bdm_usb_raw_send_ep0(ICP_PROGRAM_ROW,
@@ -206,7 +206,7 @@ USBDM_API ICP_ErrorCode_t USBDM_ICP_Verify(unsigned int  addr,
       if (dataSize > ICP_MAX_DATA_SIZE) {
          dataSize = ICP_MAX_DATA_SIZE;
       }
-//      print("USBDM_ICP_Verify() - Verifying block %4.4X-%4.4X\n", addr, addr+dataSize-1);
+      Logging::print("USBDM_ICP_Verify() - Verifying block %4.4X-%4.4X\n", addr, addr+dataSize-1);
       Logging::printDump(data, dataSize);
 
       rc =  (ICP_ErrorCode_t)bdm_usb_raw_send_ep0(ICP_VERIFY_ROW,

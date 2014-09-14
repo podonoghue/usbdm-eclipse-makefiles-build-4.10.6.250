@@ -101,7 +101,7 @@
          <copctlAddress value="0x003C" />
          <sdidAddress value="0x001A" />
          <sdidMask value="0xFFFF" />
-         <sdid value="0x0000" />
+         <sdid value="0x0000" mask="0x0000"/>
          <flashScripts>
             <tclScriptRef ref="HCS12-FTS-flash-scripts" />
          </flashScripts>

@@ -91,7 +91,7 @@
 #endif
 
 //! USBDM Version this header describes
-#define USBDM_API_VERSION (0x40A03)  // V4.10.3 (in hex xx.xx.xx)
+#define USBDM_API_VERSION (0x40A07)  // V4.10.7 (in hex xx.xx.xx)
 
 //! Capabilities of the hardware
 //!
@@ -112,6 +112,7 @@ typedef enum  {
    BDM_CAP_PST          = (1<<11),  //!< Supports PST signal sensing
    BDM_CAP_CDC          = (1<<12),  //!< Supports CDC Serial over USB interface
    BDM_CAP_ARM_SWD      = (1<<13),  //!< Supports ARM targets via SWD
+   BDM_CAP_S12Z         = (1<<14),  //!< Supports HCS12Z targets via SWD
 } HardwareCapabilities_t;
 
 //==========================================================================================
@@ -157,7 +158,8 @@ typedef enum {
    T_ARM_JTAG  = 8,       //!< ARM target using JTAG
    T_ARM_SWD   = 9,       //!< ARM target using SWD
    T_ARM       = 10,      //!< ARM target using either SWD (preferred) or JTAG as supported
-   T_LAST      = T_ARM,
+   T_S12Z      = 11,      //!< S12Z target
+   T_LAST      = T_S12Z,
    T_ILLEGAL   = 0xFE,    //!< Used to indicate error in selecting target
    T_OFF       = 0xFF,    //!< Turn off interface (no target)
    T_NONE      = 0xFF,
@@ -294,7 +296,6 @@ typedef enum { /* type of reset action required */
 //
 //=======================================================================
 
-
 //! regNo Parameter for USBDM_ReadReg() with HCS12 target
 //!
 //! @note CCR is accessed through USBDM_ReadDReg()
@@ -306,6 +307,25 @@ typedef enum {
    HCS12_RegSP    = 7,    //!< SP reg
    HCS12_RegCCR   = 0x80, //!< CCR reg - redirected to USBDM_ReadDReg()
 } HCS12_Registers_t;
+
+//! regNo Parameter for USBDM_ReadReg() with HCS12 target
+//!
+//! @note CCR is accessed through USBDM_ReadDReg()
+typedef enum {
+   S12Z_RegD0   = 0x0, //!< D0 reg
+   S12Z_RegD1   = 0x1, //!< D1 reg
+   S12Z_RegD2   = 0x2, //!< D2 reg
+   S12Z_RegD3   = 0x3, //!< D3 reg
+   S12Z_RegD4   = 0x4, //!< D4 reg
+   S12Z_RegD5   = 0x5, //!< D5 reg
+   S12Z_RegD6   = 0x6, //!< D6 reg
+   S12Z_RegD7   = 0x7, //!< D7 reg
+   S12Z_RegX    = 0x8, //!< X reg
+   S12Z_RegY    = 0x9, //!< Y reg
+   S12Z_RegSP   = 0xA, //!< SP reg
+   S12Z_RegPC   = 0xB, //!< PC reg
+   S12Z_RegCCR  = 0xC, //!< CCR reg
+} S12Z_Registers_t;
 
 //! regNo Parameter for USBDM_ReadReg() with HCS08 target
 //!
@@ -1205,6 +1225,16 @@ USBDM_ErrorCode USBDM_SetTargetType(TargetType_t targetType);
 //!
 USBDM_API
 USBDM_ErrorCode  USBDM_Debug(unsigned char *usb_data);
+
+/*!
+ * Send Custom BDM command
+ *
+ * @param txSize
+ * @param rxSize
+ * @param data
+ */
+USBDM_API
+USBDM_ErrorCode USBDM_BDMCommand(unsigned int txSize, unsigned int rxSize, unsigned char data[]);
 
 //! Get status of the last command
 //!

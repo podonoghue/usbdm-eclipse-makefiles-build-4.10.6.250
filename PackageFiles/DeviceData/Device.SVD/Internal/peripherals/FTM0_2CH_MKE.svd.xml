@@ -22,6 +22,11 @@ Devices using this peripheral:
             <size>0x1C</size>
             <usage>registers</usage>
          </addressBlock>
+         <addressBlock>
+            <offset>0x6C</offset>
+            <size>0x4</size>
+            <usage>registers</usage>
+         </addressBlock>
          <registers>
             <register>
                <name>SC</name>
@@ -195,7 +200,7 @@ Devices using this peripheral:
                <addressOffset>0xC</addressOffset>
                <register>
                   <name>CnSC</name>
-                  <description>Channel (%s) Status and Control</description>
+                  <description>Channel %s Status and Control</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
@@ -263,7 +268,7 @@ Devices using this peripheral:
                </register>
                <register>
                   <name>CnV</name>
-                  <description>Channel (%s) Value</description>
+                  <description>Channel %s Value</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
                      <field>
@@ -275,5 +280,85 @@ Devices using this peripheral:
                   </fields>
                </register>
             </cluster>
+            <register>
+               <name>EXTTRIG</name>
+               <description>FTM External Trigger</description>
+               <addressOffset>0x6C</addressOffset>
+               <fields>
+                  <field>
+                     <name>CH0TRIG</name>
+                     <description>Channel 0 Trigger Enable</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The generation of channel trigger is disabled</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The generation of channel trigger is enabled</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>CH1TRIG</name>
+                     <description>Channel 1 Trigger Enable</description>
+                     <bitOffset>5</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The generation of channel trigger is disabled</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The generation of channel trigger is enabled</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>INITTRIGEN</name>
+                     <description>Initialization Trigger Enable</description>
+                     <bitOffset>6</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The generation of initialization trigger is disabled</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The generation of initialization trigger is enabled</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>TRIGF</name>
+                     <description>Channel Trigger Flag</description>
+                     <bitOffset>7</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <access>read-only</access>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>No channel trigger was generated</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>A channel trigger was generated</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
          </registers>
       </peripheral>

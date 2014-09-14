@@ -21,7 +21,7 @@ The following software needs to be installed:\n
    -  <b>Eclipse IDE for C/C++ Developers</b> (only add the GDB plugins in next step)\n
    \image html EclipseC++IDELink.png
    .
-   Unzip to a suitable permanent location for the application e.g. "C:\Apps\Eclipse".\n
+   Unzip to a suitable permanent location for the application e.g. "C:\Apps\Eclipse-KEPLER".\n
    Create a program object for the main eclipse application "C:\Apps\Eclipse\eclipse.exe" \n \n
 -  <b>CDT GDB plugins (also CDT if Java only option was chosen above)</b> \n
    Launch Eclipse and select \b "Help->Install New Software..." from the menu.\n

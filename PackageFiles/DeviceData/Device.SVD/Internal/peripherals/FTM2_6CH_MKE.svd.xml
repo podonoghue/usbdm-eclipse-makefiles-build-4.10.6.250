@@ -205,7 +205,7 @@ Devices using this peripheral:
                <addressOffset>0xC</addressOffset>
                <register>
                   <name>CnSC</name>
-                  <description>Channel (%s) Status and Control</description>
+                  <description>Channel %s Status and Control</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
@@ -273,7 +273,7 @@ Devices using this peripheral:
                </register>
                <register>
                   <name>CnV</name>
-                  <description>Channel (%s) Value</description>
+                  <description>Channel %s Value</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
                      <field>
@@ -1042,504 +1042,378 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>COMBINE0</name>
-                     <description>Combine Channels for n = 0</description>
+                     <description>Combine Channels 0 &amp; 1</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Channels (%s) and (n+1) are independent</description>
+                           <description>Channels are independent</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Channels (%s) and (n+1) are combined</description>
+                           <description>Channels are combined</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>COMP0</name>
-                     <description>Complement of Channel (%s) for n = 0</description>
+                     <description>Complement for Channels 0 &amp; 1</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel (n+1) output is the same as the channel (%s) output</description>
+                           <description>Channel 1 output is the same as channel 0 output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel (n+1) output is the complement of the channel (%s) output</description>
+                           <description>Channel 1 output is the complement of channel 0 output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DECAPEN0</name>
-                     <description>Dual Edge Capture Mode Enable for n = 0</description>
+                     <description>Dual Edge Capture Mode Enable for Channels 0 &amp; 1</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The Dual Edge Capture mode in this pair of channels is disabled</description>
+                           <description>Dual Edge Capture mode for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The Dual Edge Capture mode in this pair of channels is enabled</description>
+                           <description>Dual Edge Capture mode for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DECAP0</name>
-                     <description>Dual Edge Capture Mode Captures for n = 0</description>
+                     <description>Dual Edge Capture Mode Captures for Channel 0 &amp; 1</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The dual edge captures are inactive</description>
+                           <description>Dual edge captures are inactive</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The dual edge captures are active</description>
+                           <description>Dual edge captures are active</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DTEN0</name>
-                     <description>Deadtime Enable for n = 0</description>
+                     <description>Deadtime Enable for Channels 0 &amp; 1</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The deadtime insertion in this pair of channels is disabled</description>
+                           <description>Deadtime insertion for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The deadtime insertion in this pair of channels is enabled</description>
+                           <description>Deadtime insertion for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SYNCEN0</name>
-                     <description>Synchronization Enable for n = 0</description>
+                     <description>Synchronization Enable for Channels 0 &amp; 1</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The PWM synchronization in this pair of channels is disabled</description>
+                           <description>PWM synchronization for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The PWM synchronization in this pair of channels is enabled</description>
+                           <description>PWM synchronization for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FAULTEN0</name>
-                     <description>Fault Control Enable for n = 0</description>
+                     <description>Fault Control Enable for Channels 0 &amp; 1</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The fault control in this pair of channels is disabled</description>
+                           <description>Fault control for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The fault control in this pair of channels is enabled</description>
+                           <description>Fault control for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>COMBINE1</name>
-                     <description>Combine Channels for n = 2</description>
+                     <description>Combine Channels 2 &amp; 3</description>
                      <bitOffset>8</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Channels (%s) and (n+1) are independent</description>
+                           <description>Channels are independent</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Channels (%s) and (n+1) are combined</description>
+                           <description>Channels are combined</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>COMP1</name>
-                     <description>Complement of Channel (%s) for n = 2</description>
+                     <description>Complement for Channels 2 &amp; 3</description>
                      <bitOffset>9</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel (n+1) output is the same as the channel (%s) output</description>
+                           <description>Channel 3 output is the same as channel 2 output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel (n+1) output is the complement of the channel (%s) output</description>
+                           <description>Channel 3 output is the complement of channel 2 output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DECAPEN1</name>
-                     <description>Dual Edge Capture Mode Enable for n = 2</description>
+                     <description>Dual Edge Capture Mode Enable for Channels 2 &amp; 3</description>
                      <bitOffset>10</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The Dual Edge Capture mode in this pair of channels is disabled</description>
+                           <description>Dual Edge Capture mode for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The Dual Edge Capture mode in this pair of channels is enabled</description>
+                           <description>Dual Edge Capture mode for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DECAP1</name>
-                     <description>Dual Edge Capture Mode Captures for n = 2</description>
+                     <description>Dual Edge Capture Mode Captures for Channel 2 &amp; 3</description>
                      <bitOffset>11</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The dual edge captures are inactive</description>
+                           <description>Dual edge captures are inactive</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The dual edge captures are active</description>
+                           <description>Dual edge captures are active</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DTEN1</name>
-                     <description>Deadtime Enable for n = 2</description>
+                     <description>Deadtime Enable for Channels 2 &amp; 3</description>
                      <bitOffset>12</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The deadtime insertion in this pair of channels is disabled</description>
+                           <description>Deadtime insertion for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The deadtime insertion in this pair of channels is enabled</description>
+                           <description>Deadtime insertion for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SYNCEN1</name>
-                     <description>Synchronization Enable for n = 2</description>
+                     <description>Synchronization Enable for Channels 2 &amp; 3</description>
                      <bitOffset>13</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The PWM synchronization in this pair of channels is disabled</description>
+                           <description>PWM synchronization for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The PWM synchronization in this pair of channels is enabled</description>
+                           <description>PWM synchronization for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FAULTEN1</name>
-                     <description>Fault Control Enable for n = 2</description>
+                     <description>Fault Control Enable for Channels 2 &amp; 3</description>
                      <bitOffset>14</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The fault control in this pair of channels is disabled</description>
+                           <description>Fault control for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The fault control in this pair of channels is enabled</description>
+                           <description>Fault control for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>COMBINE2</name>
-                     <description>Combine Channels for n = 4</description>
+                     <description>Combine Channels 4 &amp; 5</description>
                      <bitOffset>16</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Channels (%s) and (n+1) are independent</description>
+                           <description>Channels are independent</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Channels (%s) and (n+1) are combined</description>
+                           <description>Channels are combined</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>COMP2</name>
-                     <description>Complement of Channel (%s) for n = 4</description>
+                     <description>Complement for Channels 4 &amp; 5</description>
                      <bitOffset>17</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel (n+1) output is the same as the channel (%s) output</description>
+                           <description>Channel 5 output is the same as channel 4 output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel (n+1) output is the complement of the channel (%s) output</description>
+                           <description>Channel 5 output is the complement of channel 4 output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DECAPEN2</name>
-                     <description>Dual Edge Capture Mode Enable for n = 4</description>
+                     <description>Dual Edge Capture Mode Enable for Channels 4 &amp; 5</description>
                      <bitOffset>18</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The Dual Edge Capture mode in this pair of channels is disabled</description>
+                           <description>Dual Edge Capture mode for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The Dual Edge Capture mode in this pair of channels is enabled</description>
+                           <description>Dual Edge Capture mode for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DECAP2</name>
-                     <description>Dual Edge Capture Mode Captures for n = 4</description>
+                     <description>Dual Edge Capture Mode Captures for Channels 4 &amp; 5</description>
                      <bitOffset>19</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The dual edge captures are inactive</description>
+                           <description>Dual edge captures are inactive</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The dual edge captures are active</description>
+                           <description>Dual edge captures are active</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DTEN2</name>
-                     <description>Deadtime Enable for n = 4</description>
+                     <description>Deadtime Enable for Channels 4 &amp; 5</description>
                      <bitOffset>20</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The deadtime insertion in this pair of channels is disabled</description>
+                           <description>Deadtime insertion for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The deadtime insertion in this pair of channels is enabled</description>
+                           <description>Deadtime insertion for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SYNCEN2</name>
-                     <description>Synchronization Enable for n = 4</description>
+                     <description>Synchronization Enable for Channels 4 &amp; 5</description>
                      <bitOffset>21</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The PWM synchronization in this pair of channels is disabled</description>
+                           <description>PWM synchronization for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The PWM synchronization in this pair of channels is enabled</description>
+                           <description>PWM synchronization for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FAULTEN2</name>
-                     <description>Fault Control Enable for n = 4</description>
+                     <description>Fault Control Enable for Channels 4 &amp; 5</description>
                      <bitOffset>22</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The fault control in this pair of channels is disabled</description>
+                           <description>Fault control for this pair of channels is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The fault control in this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>COMBINE3</name>
-                     <description>Combine Channels for n = 6</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channels (%s) and (n+1) are independent</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channels (%s) and (n+1) are combined</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>COMP3</name>
-                     <description>Complement of Channel (%s) for n = 6</description>
-                     <bitOffset>25</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The channel (n+1) output is the same as the channel (%s) output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The channel (n+1) output is the complement of the channel (%s) output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DECAPEN3</name>
-                     <description>Dual Edge Capture Mode Enable for n = 6</description>
-                     <bitOffset>26</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The Dual Edge Capture mode in this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The Dual Edge Capture mode in this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DECAP3</name>
-                     <description>Dual Edge Capture Mode Captures for n = 6</description>
-                     <bitOffset>27</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The dual edge captures are inactive</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The dual edge captures are active</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DTEN3</name>
-                     <description>Deadtime Enable for n = 6</description>
-                     <bitOffset>28</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The deadtime insertion in this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The deadtime insertion in this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>SYNCEN3</name>
-                     <description>Synchronization Enable for n = 6</description>
-                     <bitOffset>29</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The PWM synchronization in this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The PWM synchronization in this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAULTEN3</name>
-                     <description>Fault Control Enable for n = 6</description>
-                     <bitOffset>30</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The fault control in this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The fault control in this pair of channels is enabled</description>
+                           <description>Fault control for this pair of channels is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1595,12 +1469,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The generation of the channel trigger is disabled</description>
+                           <description>The generation of channel trigger is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The generation of the channel trigger is enabled</description>
+                           <description>The generation of channel trigger is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1613,12 +1487,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The generation of the channel trigger is disabled</description>
+                           <description>The generation of channel trigger is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The generation of the channel trigger is enabled</description>
+                           <description>The generation of channel trigger is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1631,12 +1505,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The generation of the channel trigger is disabled</description>
+                           <description>The generation of channel trigger is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The generation of the channel trigger is enabled</description>
+                           <description>The generation of channel trigger is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1649,12 +1523,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The generation of the channel trigger is disabled</description>
+                           <description>The generation of channel trigger is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The generation of the channel trigger is enabled</description>
+                           <description>The generation of channel trigger is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1667,12 +1541,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The generation of the channel trigger is disabled</description>
+                           <description>The generation of channel trigger is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The generation of the channel trigger is enabled</description>
+                           <description>The generation of channel trigger is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1685,12 +1559,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The generation of the channel trigger is disabled</description>
+                           <description>The generation of channel trigger is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The generation of the channel trigger is enabled</description>
+                           <description>The generation of channel trigger is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1747,12 +1621,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel polarity is active high</description>
+                           <description>Channel polarity is active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel polarity is active low</description>
+                           <description>Channel polarity is active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1765,12 +1639,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel polarity is active high</description>
+                           <description>Channel polarity is active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel polarity is active low</description>
+                           <description>Channel polarity is active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1783,12 +1657,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel polarity is active high</description>
+                           <description>Channel polarity is active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel polarity is active low</description>
+                           <description>Channel polarity is active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1801,12 +1675,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel polarity is active high</description>
+                           <description>Channel polarity is active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel polarity is active low</description>
+                           <description>Channel polarity is active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1819,12 +1693,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel polarity is active high</description>
+                           <description>Channel polarity is active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel polarity is active low</description>
+                           <description>Channel polarity is active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1837,12 +1711,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel polarity is active high</description>
+                           <description>Channel polarity is active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel polarity is active low</description>
+                           <description>Channel polarity is active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1855,12 +1729,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel polarity is active high</description>
+                           <description>Channel polarity is active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel polarity is active low</description>
+                           <description>Channel polarity is active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1873,12 +1747,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel polarity is active high</description>
+                           <description>Channel polarity is active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel polarity is active low</description>
+                           <description>Channel polarity is active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2715,12 +2589,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel output is not affected by software output control</description>
+                           <description>Channel output is not affected by software output control</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel output is affected by software output control</description>
+                           <description>Channel output is affected by software output control</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2733,12 +2607,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel output is not affected by software output control</description>
+                           <description>Channel output is not affected by software output control</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel output is affected by software output control</description>
+                           <description>Channel output is affected by software output control</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2751,12 +2625,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel output is not affected by software output control</description>
+                           <description>Channel output is not affected by software output control</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel output is affected by software output control</description>
+                           <description>Channel output is affected by software output control</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2769,12 +2643,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel output is not affected by software output control</description>
+                           <description>Channel output is not affected by software output control</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel output is affected by software output control</description>
+                           <description>Channel output is affected by software output control</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2787,12 +2661,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel output is not affected by software output control</description>
+                           <description>Channel output is not affected by software output control</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel output is affected by software output control</description>
+                           <description>Channel output is affected by software output control</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2805,12 +2679,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel output is not affected by software output control</description>
+                           <description>Channel output is not affected by software output control</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel output is affected by software output control</description>
+                           <description>Channel output is affected by software output control</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2823,12 +2697,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel output is not affected by software output control</description>
+                           <description>Channel output is not affected by software output control</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel output is affected by software output control</description>
+                           <description>Channel output is affected by software output control</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2841,12 +2715,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The channel output is not affected by software output control</description>
+                           <description>Channel output is not affected by software output control</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The channel output is affected by software output control</description>
+                           <description>Channel output is affected by software output control</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2859,12 +2733,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to the channel output</description>
+                           <description>The software output control forces 0 to channel output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to the channel output</description>
+                           <description>The software output control forces 1 to channel output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2877,12 +2751,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to the channel output</description>
+                           <description>The software output control forces 0 to channel output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to the channel output</description>
+                           <description>The software output control forces 1 to channel output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2895,12 +2769,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to the channel output</description>
+                           <description>The software output control forces 0 to channel output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to the channel output</description>
+                           <description>The software output control forces 1 to channel output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2913,12 +2787,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to the channel output</description>
+                           <description>The software output control forces 0 to channel output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to the channel output</description>
+                           <description>The software output control forces 1 to channel output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2931,12 +2805,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to the channel output</description>
+                           <description>The software output control forces 0 to channel output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to the channel output</description>
+                           <description>The software output control forces 1 to channel output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2949,12 +2823,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to the channel output</description>
+                           <description>The software output control forces 0 to channel output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to the channel output</description>
+                           <description>The software output control forces 1 to channel output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2967,12 +2841,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to the channel output</description>
+                           <description>The software output control forces 0 to channel output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to the channel output</description>
+                           <description>The software output control forces 1 to channel output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2985,12 +2859,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to the channel output</description>
+                           <description>The software output control forces 0 to channel output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to the channel output</description>
+                           <description>The software output control forces 1 to channel output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -3010,12 +2884,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not include the channel in the matching process</description>
+                           <description>Do not include channel in the matching process</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Include the channel in the matching process</description>
+                           <description>Include channel in the matching process</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -3028,12 +2902,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not include the channel in the matching process</description>
+                           <description>Do not include channel in the matching process</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Include the channel in the matching process</description>
+                           <description>Include channel in the matching process</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -3046,12 +2920,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not include the channel in the matching process</description>
+                           <description>Do not include channel in the matching process</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Include the channel in the matching process</description>
+                           <description>Include channel in the matching process</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -3064,12 +2938,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not include the channel in the matching process</description>
+                           <description>Do not include channel in the matching process</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Include the channel in the matching process</description>
+                           <description>Include channel in the matching process</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -3082,12 +2956,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not include the channel in the matching process</description>
+                           <description>Do not include channel in the matching process</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Include the channel in the matching process</description>
+                           <description>Include channel in the matching process</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -3100,12 +2974,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not include the channel in the matching process</description>
+                           <description>Do not include channel in the matching process</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Include the channel in the matching process</description>
+                           <description>Include channel in the matching process</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -3118,12 +2992,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not include the channel in the matching process</description>
+                           <description>Do not include channel in the matching process</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Include the channel in the matching process</description>
+                           <description>Include channel in the matching process</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -3136,12 +3010,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not include the channel in the matching process</description>
+                           <description>Do not include channel in the matching process</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Include the channel in the matching process</description>
+                           <description>Include channel in the matching process</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

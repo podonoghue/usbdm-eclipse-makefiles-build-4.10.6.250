@@ -29,14 +29,17 @@ Devices using this peripheral:
          <registers>
             <register>
                <name>PE1</name>
-               <description>Pin Enable 1 Register</description>
+               <description>Pin Enable 1 Register\n
+LLWU_PE1 contains the field to enable and select the edge detect type for the external
+wakeup input pins LLWU_P3-LLWU_P0</description>
                <addressOffset>0x0</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>WUPE0</name>
-                     <description>Wakeup Pin Enable for LLWU_P0</description>
+                     <description>Wakeup Pin Enable For LLWU_P0\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -64,7 +67,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE1</name>
-                     <description>Wakeup Pin Enable for LLWU_P1</description>
+                     <description>Wakeup Pin Enable For LLWU_P1\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -92,7 +96,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE2</name>
-                     <description>Wakeup Pin Enable for LLWU_P2</description>
+                     <description>Wakeup Pin Enable For LLWU_P2\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -120,7 +125,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE3</name>
-                     <description>Wakeup Pin Enable for LLWU_P3</description>
+                     <description>Wakeup Pin Enable For LLWU_P3\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -150,14 +156,17 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PE2</name>
-               <description>Pin Enable 2 Register</description>
+               <description>Pin Enable 2 Register\n
+LLWU_PE2 contains the field to enable and select the edge detect type for the external
+wakeup input pins LLWU_P7-LLWU_P4</description>
                <addressOffset>0x1</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>WUPE4</name>
-                     <description>Wakeup Pin Enable for LLWU_P4</description>
+                     <description>Wakeup Pin Enable For LLWU_P4\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -185,7 +194,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE5</name>
-                     <description>Wakeup Pin Enable for LLWU_P5</description>
+                     <description>Wakeup Pin Enable For LLWU_P5\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -213,7 +223,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE6</name>
-                     <description>Wakeup Pin Enable for LLWU_P6</description>
+                     <description>Wakeup Pin Enable For LLWU_P6\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -241,7 +252,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE7</name>
-                     <description>Wakeup Pin Enable for LLWU_P7</description>
+                     <description>Wakeup Pin Enable For LLWU_P7\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -271,14 +283,17 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PE3</name>
-               <description>Pin Enable 3 Register</description>
+               <description>Pin Enable 3 Register\n
+LLWU_PE3 contains the field to enable and select the edge detect type for the external
+wakeup input pins LLWU_P11-LLWU_P8</description>
                <addressOffset>0x2</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>WUPE8</name>
-                     <description>Wakeup Pin Enable for LLWU_P8</description>
+                     <description>Wakeup Pin Enable For LLWU_P8\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -306,7 +321,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE9</name>
-                     <description>Wakeup Pin Enable for LLWU_P9</description>
+                     <description>Wakeup Pin Enable For LLWU_P9\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -334,7 +350,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE10</name>
-                     <description>Wakeup Pin Enable for LLWU_P10</description>
+                     <description>Wakeup Pin Enable For LLWU_P10\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -362,7 +379,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE11</name>
-                     <description>Wakeup Pin Enable for LLWU_P11</description>
+                     <description>Wakeup Pin Enable For LLWU_P11\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -392,14 +410,17 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PE4</name>
-               <description>Pin Enable 4 Register</description>
+               <description>Pin Enable 4 Register\n
+LLWU_PE1 contains the field to enable and select the edge detect type for the external
+wakeup input pins LLWU_P15-LLWU_P12</description>
                <addressOffset>0x3</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>WUPE12</name>
-                     <description>Wakeup Pin Enable for LLWU_P12</description>
+                     <description>Wakeup Pin Enable For LLWU_P12\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -427,7 +448,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE13</name>
-                     <description>Wakeup Pin Enable for LLWU_P13</description>
+                     <description>Wakeup Pin Enable For LLWU_P13\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -455,7 +477,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE14</name>
-                     <description>Wakeup Pin Enable for LLWU_P14</description>
+                     <description>Wakeup Pin Enable For LLWU_P14\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -483,7 +506,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>WUPE15</name>
-                     <description>Wakeup Pin Enable for LLWU_P15</description>
+                     <description>Wakeup Pin Enable For LLWU_P15\n
+Enables and configures the edge detection for the wakeup pin</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -513,142 +537,18 @@ Devices using this peripheral:
             </register>
             <register>
                <name>ME</name>
-               <description>Module Enable Register</description>
+               <description>Module Enable Register\n
+LLWU_ME contains the bits to enable the internal module flag as a wakeup input source
+for inputs MWUF7-MWUF0</description>
                <addressOffset>0x4</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
-                     <name>WUME0</name>
-                     <description>Wakeup Module Enable for Module 0</description>
+                     <name>WUME</name>
+                     <description>Wakeup Module Enable For Modules 7-0\n
+Enables an internal module as a wakeup source input</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Internal module flag not used as wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Internal module flag used as wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUME1</name>
-                     <description>Wakeup Module Enable for Module 1</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Internal module flag not used as wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Internal module flag used as wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUME2</name>
-                     <description>Wakeup Module Enable for Module 2</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Internal module flag not used as wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Internal module flag used as wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUME3</name>
-                     <description>Wakeup Module Enable for Module 3</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Internal module flag not used as wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Internal module flag used as wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUME4</name>
-                     <description>Wakeup Module Enable for Module 4</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Internal module flag not used as wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Internal module flag used as wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUME5</name>
-                     <description>Wakeup Module Enable for Module 5</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Internal module flag not used as wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Internal module flag used as wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUME6</name>
-                     <description>Wakeup Module Enable for Module 6</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Internal module flag not used as wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Internal module flag used as wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUME7</name>
-                     <description>Wakeup Module Enable for Module 7</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -666,151 +566,31 @@ Devices using this peripheral:
             </register>
             <register>
                <name>F1</name>
-               <description>Flag 1 Register</description>
+               <description>Flag 1 Register\n
+LLWU_F1 contains the wakeup flags indicating which wakeup source caused the MCU
+to exit VLLS mode. For VLLS, this is the source causing the MCU reset flow.
+The external wakeup flags are read-only and clearing a flag is accomplished by a write of
+a 1 to the corresponding WUFx bit. The wakeup flag (WUFn), if set, will remain set if
+the associated WUPEn bit is cleared</description>
                <addressOffset>0x5</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>WUF0</name>
-                     <description>Wakeup Flag for LLWU_P0</description>
+                     <description>Wakeup Flag For LLWU 7-0\n
+Indicates that an enabled external wakeup pin was a source of exiting a low-leakage power mode. To
+clear the flag, write a 1 to WUFn</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>LLWU_P0 input was not a wakeup source</description>
+                           <description>LLWU_Pn input was not a wakeup source</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>LLWU_P0 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF1</name>
-                     <description>Wakeup Flag for LLWU_P1</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P1 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P1 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF2</name>
-                     <description>Wakeup Flag for LLWU_P2</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P2 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P2 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF3</name>
-                     <description>Wakeup Flag for LLWU_P3</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P3 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P3 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF4</name>
-                     <description>Wakeup Flag for LLWU_P4</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P4 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P4 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF5</name>
-                     <description>Wakeup Flag for LLWU_P5</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P5 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P5 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF6</name>
-                     <description>Wakeup Flag for LLWU_P6</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P6 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P6 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF7</name>
-                     <description>Wakeup Flag for LLWU_P7</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P7 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P7 input was a wakeup source</description>
+                           <description>LLWU_Pn input was a wakeup source</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -819,151 +599,31 @@ Devices using this peripheral:
             </register>
             <register>
                <name>F2</name>
-               <description>Flag 2 Register</description>
+               <description>Flag 2 Register\n
+LLWU_F2 contains the wakeup flags indicating which wakeup source caused the MCU
+to exit VLLS mode. For VLLS, this is the source causing the MCU reset flow.
+The external wakeup flags are read-only and clearing a flag is accomplished by a write of
+a 1 to the corresponding WUFx bit. The wakeup flag (WUFn), if set, will remain set if
+the associated WUPEn bit is cleared</description>
                <addressOffset>0x6</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
-                     <name>WUF8</name>
-                     <description>Wakeup Flag for LLWU_P8</description>
+                     <name>WUFn</name>
+                     <description>Wakeup Flag For LLWU 15-8\n
+Indicates that an enabled external wakeup pin was a source of exiting a low-leakage power mode. To
+clear the flag, write a 1 to WUFn</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>LLWU_P8 input was not a wakeup source</description>
+                           <description>LLWU_Pn input was not a wakeup source</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>LLWU_P8 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF9</name>
-                     <description>Wakeup Flag for LLWU_P9</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P9 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P9 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF10</name>
-                     <description>Wakeup Flag for LLWU_P10</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P10 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P10 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF11</name>
-                     <description>Wakeup Flag for LLWU_P11</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P11 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P11 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF12</name>
-                     <description>Wakeup Flag for LLWU_P12</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P12 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P12 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF13</name>
-                     <description>Wakeup Flag for LLWU_P13</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P13 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P13 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF14</name>
-                     <description>Wakeup Flag for LLWU_P14</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P14 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P14 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>WUF15</name>
-                     <description>Wakeup Flag for LLWU_P15</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LLWU_P15 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LLWU_P15 input was a wakeup source</description>
+                           <description>LLWU_Pn input was a wakeup source</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -972,140 +632,34 @@ Devices using this peripheral:
             </register>
             <register>
                <name>F3</name>
-               <description>Flag 3 Register</description>
+               <description>Flag 3 Register\n
+LLWU_F3 contains the wakeup flags indicating which internal wakeup source caused the
+MCU to exit VLLS mode. For VLLS, this is the source causing the MCU reset flow.
+For internal peripherals that are capable of running in a low-leakage power mode, such as
+a real time clock module or CMP module, the flag from the associated peripheral is
+accessible as the MWUFx bit. The flag will need to be cleared in the peripheral instead of
+writing a 1 to the MWUFx bit</description>
                <addressOffset>0x7</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
-                     <name>MWUF0</name>
-                     <description>Wakeup flag for module 0</description>
+                     <name>MWUFn</name>
+                     <description>Wakeup flag For module N\n
+Indicates that an enabled internal peripheral was a source of exiting a low-leakage power mode. To clear
+the flag, follow the internal peripheral flag clearing mechanism</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>1</bitWidth>
+                     <bitWidth>7</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Module 0 input was not a wakeup source</description>
+                           <description>Module N input was not a wakeup source</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Module 0 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>MWUF1</name>
-                     <description>Wakeup flag for module 1</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Module 1 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Module 1 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>MWUF2</name>
-                     <description>Wakeup flag for module 2</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Module 2 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Module 2 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>MWUF3</name>
-                     <description>Wakeup flag for module 3</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Module 3 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Module 3 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>MWUF4</name>
-                     <description>Wakeup flag for module 4</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Module 4 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Module 4 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>MWUF5</name>
-                     <description>Wakeup flag for module 5</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Module 5 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Module 5 input was a wakeup source</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>MWUF6</name>
-                     <description>Wakeup flag for module 6</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <access>read-only</access>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Module 6 input was not a wakeup source</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Module 6 input was a wakeup source</description>
+                           <description>Module N input was a wakeup source</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

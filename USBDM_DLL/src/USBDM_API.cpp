@@ -628,6 +628,7 @@ static void adaptBdmOptions(USBDM_ExtendedOptions_t *bdmOptions) {
 
    switch (bdmOptions->targetType) {
    case T_HC12:
+   case T_S12Z:
       bdmOptions->useResetSignal = true;
       break;
    case T_ARM_SWD:
@@ -707,7 +708,7 @@ USBDM_ErrorCode USBDM_SetOptions(BDM_Options_t *newBdmOptions) {
 //!
 //! @param bdmOptions : Current options from BDM interface\n
 //!                        Note - bdmOptions.size must be initialised \n
-//!                             - bdmOptions.targetType may be set
+//!                             - bdmOptions.targetType may be set (and is preserved)
 //!
 //! @return \n
 //!     BDM_RC_OK => OK \n
@@ -742,18 +743,18 @@ USBDM_ErrorCode USBDM_GetDefaultExtendedOptions(USBDM_ExtendedOptions_t *bdmOpti
    return BDM_RC_OK;
 }
 
-//! Set BDM interface options
-//!
-//! @param newBdmOptions : Options to pass to BDM interface\n
-//!
-//!
-//! @return \n
-//!     BDM_RC_OK => OK \n
-//!     other     => Error code - see \ref USBDM_ErrorCode
-//!
-//! @note - size field must be initialised
-//! @note - targetType field is treated as a hint i.e. is does NOT set target type
-//!
+/*!  Set BDM interface options
+ *
+ *   @param newBdmOptions : Options to pass to BDM interface\n
+ *
+ *   @return \n
+ *       BDM_RC_OK => OK \n
+ *       other     => Error code - see \ref USBDM_ErrorCode
+ *
+ *   @note - size field must be initialised
+ *   @note - targetType field is treated as a hint i.e. is does NOT set the target type.
+ *           If target type is already set then it is ignored.
+ */
 USBDM_API
 USBDM_ErrorCode USBDM_SetExtendedOptions(const USBDM_ExtendedOptions_t *newBdmOptions) {
    LOGGING;
@@ -794,19 +795,19 @@ USBDM_ErrorCode USBDM_SetExtendedOptions(const USBDM_ExtendedOptions_t *newBdmOp
       Logging::print(" - ERROR - rc = %s\n", USBDM_GetErrorString(rc));
       return rc;
    }
-   TargetType_t currentTargetType = bdmOptions.targetType;
+   // Save current target type (as may already be set)
+   TargetType_t currentTargetType   = bdmOptions.targetType;
    bdmOptions = defaultBdmOptions;
    memcpy(&bdmOptions, newBdmOptions, newBdmOptions->size);
-   if (currentTargetType != T_OFF) {
-      // Change target then adapt
-      bdmOptions.targetType = currentTargetType;
-      adaptBdmOptions(&bdmOptions);
-   }
-   else {
-      // Adapt using the supplied type
-      adaptBdmOptions(&bdmOptions);
+   if ( currentTargetType != T_OFF) {
+      // Override hint with currently set target type
+      // before adapting to target
       bdmOptions.targetType = currentTargetType;
    }
+   adaptBdmOptions(&bdmOptions);
+   // Restore current target type
+   bdmOptions.targetType = currentTargetType;
+
    Logging::print("=> accepted\n");
    printBdmOptions(&bdmOptions);
 
@@ -959,6 +960,7 @@ USBDM_ErrorCode USBDM_ControlInterface(unsigned char duration_10us, unsigned int
       case T_RS08:
       case T_HCS08:
       case T_HCS12:
+      case T_S12Z:
       case T_CFV1:
          switch(control & SI_BKGD) {
          case SI_BKGD_LOW:    controlValue |= PIN_BKGD_LOW;    break;
@@ -995,6 +997,32 @@ USBDM_ErrorCode USBDM_ControlInterface(unsigned char duration_10us, unsigned int
       milliSleep(1); // use 1 ms
       return USBDM_ControlPins(PIN_RELEASE);
    }
+}
+
+/*!
+ * Send Custom BDM command
+ *
+ * @param txSize
+ * @param rxSize
+ * @param data
+ */
+USBDM_API
+USBDM_ErrorCode USBDM_BDMCommand(unsigned int txSize, unsigned int rxSize, unsigned char data[]) {
+   LOGGING;
+
+   if (txSize > MAX_PACKET_SIZE-10) {
+      return BDM_RC_ILLEGAL_PARAMS;
+   }
+   if (rxSize > MAX_PACKET_SIZE-10) {
+      return BDM_RC_ILLEGAL_PARAMS;
+   }
+   Logging::print("s=%d, d=0x%02X, 0x%02X, \n", txSize, data[0], data[1]);
+   usb_data[0] = 0;
+   usb_data[1] = CMD_CUSTOM_COMMAND;
+   memcpy(usb_data+2, data, txSize);
+
+   USBDM_ErrorCode rc = bdm_usb_transaction(txSize+2, rxSize, usb_data);
+   return rc;
 }
 
 //! Directly manipulate interface levels
@@ -1143,6 +1171,7 @@ USBDM_ErrorCode USBDM_SetTargetType(TargetType_t targetType) {
    // Do power on sequence into special mode if possible
    Logging::print("Doing Power-on-reset\n");
    switch (targetType) {
+      case T_S12Z:
       case T_HC12:
          // Specific power/pin sequence to enter BKGD mode
          USBDM_ControlPins(PIN_RESET_LOW|PIN_BKGD_LOW);
@@ -1388,6 +1417,7 @@ USBDM_ErrorCode USBDM_SetSpeed( unsigned long frequency) {
 
    switch (bdmState.targetType) {
       case T_HC12 :
+      case T_S12Z :
       case T_HCS08 :
       case T_RS08 :
       case T_CFV1 :
@@ -1444,6 +1474,7 @@ USBDM_ErrorCode USBDM_GetSpeed(unsigned long *frequency /* kHz */) {
    else {
       switch (bdmState.targetType) {
       case T_HC12 :
+      case T_S12Z :
       case T_HCS08 :
       case T_RS08 :
       case T_CFV1 :
@@ -1527,7 +1558,7 @@ USBDM_ErrorCode USBDM_ReadStatusReg(unsigned long *BDMStatusReg) {
    (void)lastBDMStatusReg;
 
 #ifdef LOG
-                    int dummy              = FALSE;
+   int dummy              = FALSE;
 #endif
 
    if ((bdmState.activityFlag&BDM_STATUSREG) != 0) {
@@ -1631,7 +1662,7 @@ static USBDM_ErrorCode resetHCS(TargetMode_t targetMode) {
    TargetMode_t resetMode   = (TargetMode_t)(targetMode&RESET_MODE_MASK);
    Logging::print("mode=%s\n", getTargetModeName((TargetMode_t)(resetMethod|resetMode)));
    if (resetMethod == RESET_DEFAULT) {
-      if (bdmOptions.targetType == T_HCS12) {
+      if ((bdmOptions.targetType == T_HCS12) || (bdmOptions.targetType == T_S12Z)) {
          resetMethod = RESET_HARDWARE;
       }
       else {
@@ -1827,6 +1858,7 @@ USBDM_ErrorCode USBDM_TargetReset(TargetMode_t target_mode) {
 
    switch (bdmState.targetType) {
    case T_HC12:
+   case T_S12Z:
    case T_HCS08:
    case T_RS08:
    case T_CFV1:

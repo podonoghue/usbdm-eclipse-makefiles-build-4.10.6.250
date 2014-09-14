@@ -1585,7 +1585,7 @@ USBDM_ErrorCode rc;
    if (rc == BDM_RC_OK) {
       rc = USBDM_Connect();
    }
-#elif (TARGET == CFV1) || (TARGET == HCS08) || (TARGET == RS08)
+#elif (TARGET == CFV1) || (TARGET == HCS08) || (TARGET == RS08) || (TARGET == HCS12) || (TARGET == S12Z)
    USBDM_TargetHalt(); // Make sure target is awake - may be sleeping due to STOP/WAIT instruction
    USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
    rc = targetConnect(initialConnectOptions);
@@ -1616,6 +1616,9 @@ USBDM_ErrorCode rc;
 #elif TARGET == HCS08
       Logging::print("Fixing initial PC = 0x%08X\n", pcResetValue);
       USBDM_WriteReg(HCS08_RegPC, pcResetValue);
+#elif TARGET == S12Z
+      Logging::print("Fixing initial PC = 0x%08X\n", pcResetValue);
+      USBDM_WriteReg(S12Z_RegPC, pcResetValue);
 #endif
    }
    return setErrorState(DI_OK);
@@ -2130,6 +2133,8 @@ bool usbdm_gdi_dll_open(void) {
    Logging::openLogFile("GDI_RS08.log");
 #elif TARGET == HCS12
    Logging::openLogFile("GDI_HCS12.log");
+#elif TARGET == S12Z
+   Logging::openLogFile("GDI_HCS12Z.log");
 #elif TARGET == CFV1
    Logging::openLogFile("GDI_CFV1.log");
 #elif TARGET == CFVx
@@ -2181,6 +2186,8 @@ bool usbdm_gdi_dll_close(void) {
 #define GDI_DLL_NAME "usbdm-hcs08-gdi-debug.so"
 #elif TARGET == HCS12
 #define GDI_DLL_NAME "usbdm-hcs12-gdi-debug.so"
+#elif TARGET == S12Z
+#define GDI_DLL_NAME "usbdm-hcs12z-gdi-debug.so"
 #elif TARGET == RS08
 #define GDI_DLL_NAME "usbdm-rs08-gdi-debug.so"
 #endif

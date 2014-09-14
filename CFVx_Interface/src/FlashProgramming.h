@@ -108,6 +108,7 @@ private:
       ADDRESS_LINEAR = 1UL<<31,  //!< Linear address (HCS12)
       ADDRESS_EEPROM = 1UL<<30,  //!< EEPROM
    };
+
    typedef USBDM_ErrorCode (*CallBackT)(USBDM_ErrorCode status, int percent, const char *message);
 
    DeviceData              parameters;                   //!< Parameters describing the target device
@@ -158,6 +159,7 @@ private:
    USBDM_ErrorCode doBlankCheck(FlashImage *flashImage);
    USBDM_ErrorCode doWriteRam(FlashImage *flashImage);
    USBDM_ErrorCode loadTargetProgram(FlashOperation flashOperation);
+   USBDM_ErrorCode loadTargetProgram(MemoryRegionConstPtr memoryRegionPtr, FlashOperation flashOperation);
    USBDM_ErrorCode loadTargetProgram(FlashProgramConstPtr flashProgram, FlashOperation flashOperation);
    USBDM_ErrorCode loadSmallTargetProgram(memoryElementType   *buffer,
                                           uint32_t             loadAddress,

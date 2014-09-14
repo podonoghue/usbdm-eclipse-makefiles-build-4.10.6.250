@@ -344,7 +344,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b111</name>
-                           <description>IRC 48 MHz clock</description>
+                           <description>Reserved</description>
                            <value>0b111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -418,27 +418,17 @@ Controls the output drive strength of the PTD7 pin by selecting either one or tw
                      <name>PLLFLLSEL</name>
                      <description>PLL/FLL clock select</description>
                      <bitOffset>16</bitOffset>
-                     <bitWidth>2</bitWidth>
+                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b00</name>
-                           <description>MCGFLLCLK</description>
-                           <value>0b00</value>
+                           <name>0b0</name>
+                           <description>MCGFLLCLK clock</description>
+                           <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
-                           <name>0b01</name>
-                           <description>MCGPLL0CLK</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Reserved</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>IRC48 MHz clock</description>
-                           <value>0b11</value>
+                           <name>0b1</name>
+                           <description>MCGPLLCLK clock</description>
+                           <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
@@ -456,8 +446,7 @@ Selects the clock source for the USB 48 MHz clock</description>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>MCGFLLCLK, MCGPLLCLK or IRC48M clock as selected by SOPT2[PLLFLLSEL],
-and then divided by the USB fractional divider as configured by SIM_CLKDIV2[USBFRAC, USBDIV]</description>
+                           <description>MCGPLLCLK/MCGFLLCLK clock divided by the USB fractional divider. See the SIM_CLKDIV2[USBFRAC, USBDIV] descriptions</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -476,7 +465,7 @@ Selects the clock source for the SDHC clock</description>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>MCGFLLCLK, or MCGPLLCLK, or IRC48M clock as selected by SOPT2[PLLFLLSEL]</description>
+                           <description>MCGPLLCLK/MCGFLLCLK selected by PLLFLLSEL[1:0]</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -1364,92 +1353,6 @@ Selects the clock source for the SDHC clock</description>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>SUBFAMID</name>
-                     <description>Device revision number</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>4</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0000</name>
-                           <description>Kx0 Subfamily</description>
-                           <value>0b0000</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0001</name>
-                           <description>Kx1 Subfamily(tamper detect)</description>
-                           <value>0b0001</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0010</name>
-                           <description>Kx2 Subfamily</description>
-                           <value>0b0010</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0011</name>
-                           <description>Kx3 Subfamily(tamper detect)</description>
-                           <value>0b0011</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0100</name>
-                           <description>Kx4 Subfamily</description>
-                           <value>0b0100</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0101</name>
-                           <description>Kx5 Subfamily(tamper detect)</description>
-                           <value>0b0101</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0110</name>
-                           <description>Kx6 Subfamily</description>
-                           <value>0b0110</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAMILYID</name>
-                     <description>Device revision number</description>
-                     <bitOffset>28</bitOffset>
-                     <bitWidth>4</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0001</name>
-                           <description>K1x Subfamily(tamper detect)</description>
-                           <value>0b0001</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0010</name>
-                           <description>K2x Subfamily</description>
-                           <value>0b0010</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0011</name>
-                           <description>K3x Subfamily(tamper detect)</description>
-                           <value>0b0011</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0100</name>
-                           <description>K4x Subfamily</description>
-                           <value>0b0100</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0101</name>
-                           <description>K5x Subfamily(tamper detect)</description>
-                           <value>0b0101</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0110</name>
-                           <description>K6x Subfamily</description>
-                           <value>0b0110</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b0111</name>
-                           <description>K7x Subfamily</description>
-                           <value>0b0111</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
                </fields>
             </register>
             <register>
@@ -2022,24 +1925,6 @@ This bit controls the clock gate to the I2C2 module</description>
                      <name>FLEXCAN0</name>
                      <description>FlexCAN0 clock gate control</description>
                      <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Clock is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Clock is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>RNGA</name>
-                     <description>RNGA clock gate control</description>
-                     <bitOffset>9</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
@@ -2717,7 +2602,7 @@ This bit controls the clock gate to the I2C2 module</description>
                <addressOffset>0x1048</addressOffset>
                <fields>
                   <field>
-                     <name>USBFSFRAC</name>
+                     <name>USBFRAC</name>
                      <description>USB clock divider fraction\n
 This field sets the fraction multiply value for the fractional clock divider when the MCGFLLCLK/
 MCGPLLCLK clock is the USB clock source (SOPT2[USBSRC] = 1).\n
@@ -3023,6 +2908,18 @@ For devices with FlexNVM, this bit is always clear.\n
 For devices without FlexNVM, this bit is always set</description>
                      <bitOffset>23</bitOffset>
                      <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Physical flash block 1 is used as FlexNVM - Reserved for devices without FlexNVM</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Physical flash block 1 is used as program flash</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>MAXADDR0</name>
@@ -3039,6 +2936,18 @@ This would be the MAXADDR0 value for a device with 256 KB program flash in flash
 For devices without FlexNVM: Indicates that swap is active</description>
                      <bitOffset>31</bitOffset>
                      <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Swap is not active</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Swap is active</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>

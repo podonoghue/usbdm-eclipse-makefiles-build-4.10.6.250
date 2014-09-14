@@ -45,6 +45,7 @@ class GdbInOut {
 
 public:
    enum ErrorType {E_Fatal, E_Memory};       //!< Type of error message to send to GDB
+   typedef void Logger(const char *msg);
 
 protected:
    enum StateType {hunt, data, escape, checksum1, checksum2};
@@ -61,6 +62,10 @@ protected:
    unsigned         rxBufferLength;                       //! Occupied size of gdbRxBuffer
 
    bool             ackMode;
+
+   Logger *errorLogger;
+   Logger *sendLogger;
+   Logger *receiveLogger;
 
 protected:
    char hexChar(int num);
@@ -85,11 +90,18 @@ public:
       ackMode = value;
    }
 
+   void setLoggers(Logger *errorLogger, Logger *sendLogger, Logger *receiveLogger) {
+      this->errorLogger   = errorLogger;
+      this->sendLogger    = sendLogger;
+      this->receiveLogger = receiveLogger;
+   }
+
    // Output functions (to GDB)
 
    // Add values to output buffer (gdbBuffer)
    void putGdbPreamble(char marker='$');
    void putGdbChar(char ch);
+   void putGdbEscapedChar(char ch);
    void putGdbHex(const unsigned char *buffer, unsigned size);
    void putGdbString(const char *s, int size=-1);
    void putGdbHexString(const char *s, int size=-1);
@@ -105,7 +117,7 @@ public:
    void sendGdbHexString(const char *id, const char *buffer, int size=-1);
    void sendGdbNotification(const char *buffer, int size=-1);
    void sendErrorMessage(ErrorType errorType, const char *msg);
-   void sendErrorMessage(unsigned value, const char *msg=NULL);
+   void sendErrorMessage(unsigned value);
    void sendAck(char ackValue='+');
 
    void txGdbPkt(void);

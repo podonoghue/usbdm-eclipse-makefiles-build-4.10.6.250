@@ -14,32 +14,18 @@
 
 $(cDeviceParameters)
 
+
 /*----------------------------------------------------------------------------
   Clock Variable definitions
  *----------------------------------------------------------------------------*/
-//uint32_t SystemCoreClock = 48000000UL; /*!< System Clock Frequency (Core Clock)*/
 
-/**
- * Update SystemCoreClock variable
- *
- * @param  none
- * @return none
- *
- * @brief  Updates the SystemCoreClock with current core Clock
- *         retrieved from cpu registers.
- */
 /* This definition is overridden if Clock initialisation is provided */
 __attribute__((__weak__))
-void SystemCoreClockUpdate(void) {           /* Get Core Clock Frequency      */
+void SystemCoreClockUpdate(void) {
 }
 
 /* Actual Vector table */
 extern int const __vector_table[];
-
-/* This definition is overridden if FPU is present */
-__attribute__((__weak__))
-void fpu_init() {
-}
 
 #ifndef SCB_VTOR
 #define SCB_VTOR (*(uint32_t *)0xE000ED08)
@@ -58,16 +44,25 @@ void clock_initialise() {
 
 /* This definition is overridden if UART initialisation is provided */
 __attribute__((__weak__))
-void uart_initialise(int baudRate) {
-   (void)baudRate;
+void uart_initialise(int baudRate __attribute__((__unused__))) {
 }
 
-/**
- * Initialize the system
+/* This definition is overridden if RTC initialisation is provided */
+__attribute__((__weak__))
+void rtc_initialise(void) {
+}
+
+// Dummy hook routine for when CMSIS is not used.
+__attribute__((naked, weak)) 
+void software_init_hook (void) {
+}
+
+/*!
+ *  @brief Low-level initialize the system
  *
- * @brief  Low level setup of the microcontroller system.
- *         Called very early in the initialisation.
- *         May NOT use globals etc (as will be overwritten)
+ *  Low level setup of the microcontroller system. \n
+ *  Called very early in the initialisation. \n
+ *  May NOT use globals etc (as will be overwritten by BSS initialization)
  */
 void SystemInitLowLevel(void) {
    /* This is generic initialization code */
@@ -77,26 +72,38 @@ void SystemInitLowLevel(void) {
    SCB_VTOR = (uint32_t)__vector_table;
 
    // Enable trapping of divide by zero and unaligned access
-   SCB_CCR |= SCB_CCR_DIV_0_TRP_MASK|SCB_CCR_UNALIGN_TRP_MASK;
+   SCB_CCR |= SCB_CCR_DIV_0_TRP_MASK;
 }
 
 /**
- * Initialize the system
+ * @brief Initialize the system
  *
- * @brief  Setup the microcontroller system.
- *         Initialize the System.
+ * Setup the microcontroller system.
  */
 void SystemInit(void) {
    /* This is generic initialization code */
    /* It may not be correct for a specific target */
 
-   /* Use FPU initialisation - if present */
-   fpu_init();
-   
    /* Use Clock initialisation - if present */
    clock_initialise();
 
    /* Use UART initialisation - if present */
    uart_initialise(19200);
-}
 
+   /* Use RTC initialisation - if present */
+   rtc_initialise();
+
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+   /* Initialise FPU if present & in use */
+   asm (
+         "  .equ CPACR, 0xE000ED88     \n"
+         "                             \n"
+         "  LDR.W R0, =CPACR           \n"  // CPACR address
+         "  LDR R1, [R0]               \n"  // Read CPACR
+         "  ORR R1, R1, #(0xF << 20)   \n"  // Enable CP10 and CP11 coprocessors
+         "  STR R1, [R0]               \n"  // Write back the modified value to the CPACR
+         "  DSB                        \n"  // Wait for store to complete"
+         "  ISB                        \n"  // Reset pipeline now the FPU is enabled
+   );
+#endif
+}

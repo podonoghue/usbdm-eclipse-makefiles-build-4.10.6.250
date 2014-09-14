@@ -4,8 +4,11 @@
 <!ENTITY CFV2-default-flashProgram      SYSTEM "CFVx/ColdfireV2-default-flash-program.elf.S19">
 <!ENTITY CFV2-default-flashScripts      SYSTEM "CFVx/ColdfireV2-default-flash-scripts.tcl">
 <!ENTITY Custom-Devices                 SYSTEM "Custom/custom-cfvx.xml">
+<!ENTITY ColdfireVx-Project-actions     SYSTEM "CFVx/ColdfireVx-Project-actions.xml">
 ]>
 <!--  Notes
+      V4.10.6.170 - Added features to support more flexible project creation
+      V4.10.6.170 - Split out C project creation
       V4.10.6.110 - Changed to using <projectActionList> tag & related changes
       V4.10.6     - Added GDB register descriptions 
       V4.10.5d    - Changed GNU C information
@@ -13,19 +16,27 @@
       V4.10.4     - Changed how security information is expressed
       V4.10.4     - Added I/O space 
  -->
-<root version="4.10.4">
-   <description>Coldfire V2,3,4 device characteristics v4.10.6 31/01/2014</description>
+<root version="4.10.6.170">
+   <description>Coldfire V2, 3 and 4 Device characteristics</description>
    <sharedInformation>
-      <flashProgram id="default-CFV2-FlashProgram">
-         &CFV2-default-flashProgram;
-      </flashProgram>
-      <tclScript id="default-CFV2-Scripts">
-         &CFV2-default-flashScripts;
-      </tclScript>
+      <!--  
+            Project actions 
+      -->
+      &ColdfireVx-Project-actions;
+      
+      <!-- 
+            Flash Programs & TCL Scripts 
+      -->
+      <flashProgram id="default-CFV2-FlashProgram">    &CFV2-default-flashProgram;    </flashProgram>
+      <tclScript    id="default-CFV2-Scripts">         &CFV2-default-flashScripts;    </tclScript>
 
+      <!-- 
+            Security Entries 
+      -->
       <securityEntry id="CFV2-default-security">
          <securityDescription id="CFV1-default-security-description">
-            BACKDOOR\t= %8X\nCMPROT\t= %4X\nCMSACC\t= %4X\nCMDACC\t= %4X\nCFMSEC\t= [KEYEN=%b, RES=%1X, SEC=%2X]</securityDescription>
+            BACKDOOR\t= %8X\nCMPROT\t= %4X\nCMSACC\t= %4X\nCMDACC\t= %4X\nCFMSEC\t= [KEYEN=%b, RES=%1X, SEC=%2X]
+         </securityDescription>
          <!-- CFV2 Unsecured value = backdoor[8],CFMPROT[4],CFMSACC[4],CFMDACC[4],CFMSEC[4] -->
          <securityInfo size="24" type="unsecure" id="CFV2-default-security-off">
             0000000000000000 00000000 00000000 00000000 00000000
@@ -76,79 +87,12 @@
          <memoryRange start="0x000000" size="512K" />
       </memory>
       
-      <!-- GNU Build options -->
-      <projectActionList id="gnuSettings.mcf52213">
-         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52213</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-      </projectActionList>
-      <projectActionList id="gnuSettings.mcf52223">
-         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52223</value> </projectOption> 
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-      </projectActionList>
-      <projectActionList id="gnuSettings.mcf52235">
-         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52235</value> </projectOption> 
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-      </projectActionList>
-      <projectActionList id="gnuSettings.mcf52259">
-         <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu"> <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.52259</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-      </projectActionList>
-      
-      <!-- Default files to copy to project -->
-      <projectActionList id="Coldfire-Vx-file-list" root="usbdm_resource_path/Stationery/CFVx/" >
-         <copy source="$(externalVectorTable)"                       target="Startup_Code/vectors.c" />
-         <copy source="$(externalLinkerScript)"                      target="Project_Settings/Custom.ld" />
-         <copy source="$(externalHeaderFile)"                        target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/sysinit.c"                       target="Startup_Code/sysinit.c" />
-         <copy source="Startup_Code/vectors.c"                       target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/startup_Codesourcery.S"          target="Startup_Code/startup_Codesourcery.S" />
-         <copy source="Startup_Code/startup_Codesourcery_c.c"        target="Startup_Code/startup_Codesourcery_c.c" />
-         <copy source="Project_Settings/Codesourcery-ram.ld"         target="Project_Settings/Codesourcery-ram.ld" />
-         <copy source="Project_Settings/Codesourcery-ram-hosted.ld"  target="Project_Settings/Codesourcery-ram-hosted.ld" />
-         <copy source="Project_Settings/Codesourcery-rom.ld"         target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-hosted.ld"  target="Project_Settings/Codesourcery-rom-hosted.ld" />
-         <copy source="Project_Settings/Debug.launch"                target="Project_Settings/$(projectName)-Debug.launch" />
-         <copy source="Project_Settings/MemoryMap.ld"                target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
-         <copy source="Project_Headers/derivative.h"                 target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/TargetDevice.h"               target="Project_Headers/$(targetDevice).h" />
-         <copy source="Project_Headers/utilities.h"                  target="Project_Headers/utilities.h" />
-         <copy source="Sources/main.c"                               target="Sources/main.c" />
-      </projectActionList>
-
-
-      <projectActionList id="Coldfire-mcf52213-ProjectActions">
-          <projectActionListRef ref="gnuSettings.mcf52213" />
-          <projectActionListRef ref="Coldfire-Vx-file-list" />
-      </projectActionList>
- 
-      <projectActionList id="Coldfire-mcf52223-ProjectActions">
-          <projectActionListRef ref="gnuSettings.mcf52223" />
-          <projectActionListRef ref="Coldfire-Vx-file-list" />
-      </projectActionList>
- 
-      <projectActionList id="Coldfire-mcf52235-ProjectActions">
-         <projectActionListRef ref="gnuSettings.mcf52235" />
-          <projectActionListRef ref="Coldfire-Vx-file-list" />
-      </projectActionList>
- 
-      <projectActionList id="Coldfire-mcf52259-ProjectActions">
-         <projectActionListRef ref="gnuSettings.mcf52259" />
-         <projectActionListRef ref="Coldfire-Vx-file-list" />
-      </projectActionList>
-
-      <!-- Extra Optional -->
-      <projectActionList id="Options-file-list-CFVx" >
-      </projectActionList>
-
    </sharedInformation>
-
+		
    <deviceList>
+   <!-- Default -->
       <device family="CFV2" name="_Default" isDefault="true">
-         <clock type="External" registerAddress="0" />
+         <clock type="External" />
          <memory type="ram">
             <memoryRange start="0x20000000" size="4K" />
          </memory>
@@ -158,12 +102,12 @@
          </memory>
          <sdidAddress value="0x4011000A" />
          <sdidMask value="0xFFC0" />
-         <sdid value="0x0000" />
+         <sdid value="0x0000" mask="0x0000"/>
          <tclScriptRef ref="default-CFV2-Scripts" />
          <flashProgramRef ref="default-CFV2-FlashProgram" />
          <note>Default CFV1 Device</note>
       </device>
-      &Custom-Devices;
+&Custom-Devices;
       <device family="CFV2" name="MCF52221">
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire16K_Ram" />
@@ -200,7 +144,7 @@
          <clock type="External" registerAddress="0" />
          <memoryRef ref="coldfire32K_Ram" />
          <memoryRef ref="coldfire128K_Flash" />
-         <sdid value="0x0000" />
+         <sdid value="0x0000" mask="0x0000"/>
          <projectActionListRef ref="Options-file-list-CFVx" />
          <projectActionListRef ref="Coldfire-mcf52235-ProjectActions" />
       </device>

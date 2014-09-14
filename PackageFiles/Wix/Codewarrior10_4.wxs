@@ -141,26 +141,26 @@
 
       <InstallExecuteSequence>
           <!-- These actions set Properties used by later actions -->
-          <Custom Action="Ca.CreateEclipseMergeNewProjectWizardCommand_$(var.CW_VER_UC)"          After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
-          <Custom Action="Ca.CreateEclipseUnMergeNewProjectWizardCommand_$(var.CW_VER_UC)"        After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
-             <!-- Ver 10.3 -->
-          <Custom Action="Ca.CreateEclipseMergeElfImporterWizardCommand_$(var.CW_VER_UC)"         After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
-          <Custom Action="Ca.CreateEclipseUnMergeElfImporterWizardCommand_$(var.CW_VER_UC)"       After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
-          <Custom Action="Ca.CreateEclipseMergeMQXLiteNewProjectWizardCommand_$(var.CW_VER_UC)"   After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
-          <Custom Action="Ca.CreateEclipseUnMergeMQXLiteNewProjectWizardCommand_$(var.CW_VER_UC)" After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
+          <Custom Action="Ca.CreateEclipseMergeNewProjectWizardCommand_$(var.CW_VER_UC)"           After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
+          <Custom Action="Ca.CreateEclipseUnMergeNewProjectWizardCommand_$(var.CW_VER_UC)"         After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
+             <!-- Ver 10.3 -->                                                                     
+          <Custom Action="Ca.CreateEclipseMergeElfImporterWizardCommand_$(var.CW_VER_UC)"          After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
+          <Custom Action="Ca.CreateEclipseUnMergeElfImporterWizardCommand_$(var.CW_VER_UC)"        After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
+          <Custom Action="Ca.CreateEclipseMergeMQXLiteNewProjectWizardCommand_$(var.CW_VER_UC)"    After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
+          <Custom Action="Ca.CreateEclipseUnMergeMQXLiteNewProjectWizardCommand_$(var.CW_VER_UC)"  After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
           
-          <Custom Action="Ca.CreateEclipseRefreshPluginsCommand_$(var.CW_VER_UC)_$(var.CW_VER_UC)"   After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
+          <Custom Action="Ca.CreateEclipseRefreshPluginsCommand_$(var.CW_VER_UC)_$(var.CW_VER_UC)" After="CostFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
 
           <!-- These actions patch or restore the various Codewarrior XML files -->
-          <Custom Action="Ca.MergeNewProjectWizardEclipseCommand_$(var.CW_VER_UC)"                After="PublishProduct"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
-          <Custom Action="Ca.UnMergeNewProjectWizardEclipseCommand_$(var.CW_VER_UC)"              Before="RemoveFiles">  <![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
-             <!-- Ver 10.3 -->
-          <Custom Action="Ca.MergeElfImporterWizardEclipseCommand_$(var.CW_VER_UC)"               After="PublishProduct"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
-          <Custom Action="Ca.UnMergeElfImporterWizardEclipseCommand_$(var.CW_VER_UC)"             Before="RemoveFiles">  <![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
-          <Custom Action="Ca.MergeMQXLiteNewProjectWizardEclipseCommand_$(var.CW_VER_UC)"         After="PublishProduct"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
-          <Custom Action="Ca.UnMergeMQXLiteNewProjectWizardEclipseCommand_$(var.CW_VER_UC)"       Before="RemoveFiles">  <![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
+          <Custom Action="Ca.MergeNewProjectWizardEclipseCommand_$(var.CW_VER_UC)"                 After="PublishProduct"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
+          <Custom Action="Ca.UnMergeNewProjectWizardEclipseCommand_$(var.CW_VER_UC)"               Before="RemoveFiles">  <![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
+             <!-- Ver 10.3 -->                                                                     
+          <Custom Action="Ca.MergeElfImporterWizardEclipseCommand_$(var.CW_VER_UC)"                After="PublishProduct"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
+          <Custom Action="Ca.UnMergeElfImporterWizardEclipseCommand_$(var.CW_VER_UC)"              Before="RemoveFiles">  <![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
+          <Custom Action="Ca.MergeMQXLiteNewProjectWizardEclipseCommand_$(var.CW_VER_UC)"          After="PublishProduct"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
+          <Custom Action="Ca.UnMergeMQXLiteNewProjectWizardEclipseCommand_$(var.CW_VER_UC)"        Before="RemoveFiles">  <![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles=2]]></Custom>
 
-          <Custom Action="Ca.EclipseRefreshPluginsCommand_$(var.CW_VER_UC)" Before="InstallFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
+          <Custom Action="Ca.EclipseRefreshPluginsCommand_$(var.CW_VER_UC)"                        Before="InstallFinalize"><![CDATA[$C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles>2]]></Custom>
       </InstallExecuteSequence>
       
       <!--======================================================
@@ -303,13 +303,13 @@
             <File Id='EclipseS12ZFiles6_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdmTCL.4.dll' />
             <File Id='EclipseS12ZFiles7_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-dsc.4.dll' />
             <File Id='EclipseS12ZFiles8_$(var.CW_VER_UC)'  DiskId='1' Source='bin\usbdm-arm.4.dll' />
-            <File Id='EclipseS12ZFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-hcs12-gdi.dll' KeyPath='yes' />
+            <File Id='EclipseS12ZFiles9_$(var.CW_VER_UC)'  DiskId='1' Source='Install\CW_10_x\usbdm-s12z-gdi.dll' KeyPath='yes' />
 
             <File Id='EclipseS12ZFiles10_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-debug.4.dll'/>
             <File Id='EclipseS12ZFiles11_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdmTCL-debug.4.dll' />
             <File Id='EclipseS12ZFiles12_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-dsc-debug.4.dll' />
             <File Id='EclipseS12ZFiles13_$(var.CW_VER_UC)' DiskId='1' Source='bin\usbdm-arm-debug.4.dll' />
-            <File Id='EclipseS12ZFiles14_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_x\usbdm-hcs12-gdi-debug.dll'/>
+            <File Id='EclipseS12ZFiles14_$(var.CW_VER_UC)' DiskId='1' Source='Install\CW_10_x\usbdm-s12z-gdi-debug.dll'/>
 
             <File Id='EclipseS12ZFiles15_$(var.CW_VER_UC)' DiskId='1' Source='bin\libgcc_s_dw2-1.dll' />
             <File Id='EclipseS12ZFiles16_$(var.CW_VER_UC)' DiskId='1' Source='bin\libstdc++-6.dll' />
@@ -384,7 +384,7 @@
          <ComponentRef Id='C.CW_FOR_MCU_$(var.CW_VER_UC).HCS12Files' />
              <!--    -->
          <ComponentRef Id='C.CW_FOR_MCU_$(var.CW_VER_UC).LaunchFiles' />
-         <ComponentGroupRef Id='Cg.EclipsePlugin_$(var.CW_VER_UC)' />
+         <ComponentGroupRef Id='Cg.CWEclipsePlugin' />
          <ComponentGroupRef Id='Cg.DeviceDataInstall' />
          <ComponentGroupRef Id='Cg.PatchCodewarriorWizardsCommon'/>
          <ComponentRef Id='C.PatchCodewarriorWizardsMenu_$(var.CW_VER_UC)' />

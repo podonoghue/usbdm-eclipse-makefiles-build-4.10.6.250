@@ -1,7 +1,7 @@
 @echo off
 cls
-set VERSION=1_2_0
-set VERSIONn=1.2.0
+set VERSION=1_3_0
+set VERSIONn=1.3.0
 
 set WIX_DIR="C:\Program Files (x86)\WiX Toolset v3.7\bin"
 if not exist %WIX_DIR% set WIX_DIR="C:\Program Files\WiX Toolset v3.7\bin"
@@ -17,7 +17,8 @@ set WIX_BUILD_DIR=wixBuildDir
 set CANDLE_OPTIONS=-ext WixUIExtension -ext WixDifxAppExtension.dll
 
 set LIGHT_OPTIONS=-ext WixUIExtension -ext WixUtilExtension -ext WixDifxAppExtension.dll -sw0204 
-set LIGHT_DIRS=-b bin\DeviceData -b bin\FlashImages -b WizardPatches -b plugins -b USBDM_Drivers 
+set LIGHT_DIRS=
+rem -b bin\DeviceData 
 
 set HEAT_OPTIONS=-srd -ke -gg -sfrag -template fragment -sw5150
 set MSI_FILE=USBDM_Drivers_%VERSION%_Win

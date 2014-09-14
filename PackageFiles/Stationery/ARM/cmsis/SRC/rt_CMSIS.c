@@ -39,7 +39,7 @@
 #elif defined (__CORTEX_M3)
   #include "core_cm3.h"
 #elif defined (__CORTEX_M0)
-  #include "core_cm0.h"
+  #include "core_cm0plus.h"
 #else
   #error "Missing __CORTEX_Mx definition"
 #endif

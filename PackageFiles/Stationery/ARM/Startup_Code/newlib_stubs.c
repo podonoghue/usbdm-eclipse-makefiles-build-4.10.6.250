@@ -13,77 +13,86 @@
 #undef errno
 extern int errno;
 
-// Overridden by actual routine if present
+/**
+ * Overridden by actual routine if present
+ */
 __attribute__((__weak__))
 void uart_txChar(int ch) {
    (void)ch;
 }
 
-// Overridden by actual routine if present
+/**
+ * Overridden by actual routine if present
+ */
 __attribute__((__weak__))
 int uart_rxChar(void) {
    return 0;
 }
 
-/*
- environ
- A pointer to a list of environment variables and their values.
- For a minimal environment, this empty list is adequate:
+/**
+ *  environ
+ *
+ *  A pointer to a list of environment variables and their values.
+ *  For a minimal environment, this empty list is adequate:
  */
 char *__env[1] = { 0 };
 char **environ = __env;
 
-int _write(int file, char *ptr, int len);
-
-int _close(int file) {
-   (void)file;
+/*
+ *  close
+ *
+ *  Close file
+ */
+int _close(int file __attribute__((unused))) {
    return -1;
 }
+
 /*
- execve
- Transfer control to a new process. Minimal implementation (for a system without processes):
+ *  execve
+ *
+ *  Transfer control to a new process. Minimal implementation (for a system without processes):
  */
-int _execve(char *name, char **argv, char **env) {
-   (void)name;
-   (void)argv;
-   (void)env;
+int _execve(char *name __attribute__((unused)), char **argv __attribute__((unused)), char **env __attribute__((unused))) {
    errno = ENOMEM;
    return -1;
 }
-/*
- fork
- Create a new process. Minimal implementation (for a system without processes):
+
+/**
+ *  fork
+ *
+ *  Create a new process. Minimal implementation (for a system without processes):
  */
 
 int _fork() {
    errno = EAGAIN;
    return -1;
 }
+
 /*
- fstat
- Status of an open file. For consistency with other minimal implementations in these examples,
- all files are regarded as character special devices.
- The `sys/stat.h' header file required is distributed in the `include' subdirectory for this C library.
+ *  fstat
+ *
+ *  Status of an open file. For consistency with other minimal implementations in these examples,
+ *   all files are regarded as character special devices.
+ *   The `sys/stat.h' header file required is distributed in the `include' subdirectory for this C library.
  */
-int _fstat(int file, struct stat *st) {
-   (void)file;
-   (void)st;
+int _fstat(int file __attribute__((unused)), struct stat *st __attribute__((unused))) {
    st->st_mode = S_IFCHR;
    return 0;
 }
 
-/*
- getpid
- Process-ID; this is sometimes used to generate strings unlikely to conflict with other processes. Minimal implementation, for a system without processes:
+/**
+ *  getpid
+ *
+ *  Process-ID; this is sometimes used to generate strings unlikely to conflict with other processes. Minimal implementation, for a system without processes:
  */
-
 int _getpid() {
    return 1;
 }
 
-/*
- isatty
- Query whether output stream is a terminal. For consistency with the other minimal implementations,
+/**
+ *  isatty
+ *
+ *  Query whether output stream is a terminal. For consistency with the other minimal implementations,
  */
 int _isatty(int file) {
    switch (file){
@@ -99,38 +108,38 @@ int _isatty(int file) {
 }
 
 /*
- kill
- Send a signal. Minimal implementation:
+ *  kill
+ *
+ *  Send a signal. Minimal implementation:
  */
-int _kill(int pid, int sig) {
-   (void)pid;
-   (void)sig;
+int _kill(int pid __attribute__((unused)), int sig __attribute__((unused))) {
    errno = EINVAL;
    return (-1);
 }
 
 /*
- link
- Establish a new name for an existing file. Minimal implementation:
+ *  link
+ *
+ *   Establish a new name for an existing file. Minimal implementation:
  */
 
-int _link(char *old, char *new) {
-   (void)old;
-   (void)new;
+int _link(char *old __attribute__((unused)), char *new __attribute__((unused))) {
    errno = EMLINK;
    return -1;
 }
 
-/*
- lseek
- Set position in a file. Minimal implementation:
+/** lseek
+ *
+ *  Set position in a file. Minimal implementation:
  */
-int _lseek(int file, int ptr, int dir) {
-   (void)file;
-   (void)ptr;
-   (void)dir;
+int _lseek(int file __attribute__((unused)), int ptr __attribute__((unused)), int dir __attribute__((unused))) {
    return 0;
 }
+
+/*
+ * Used by sbrk
+ */
+static caddr_t heap_end = NULL;
 
 /**
  *  sbrk
@@ -138,8 +147,6 @@ int _lseek(int file, int ptr, int dir) {
  *   Increase program data space.
  *   Malloc and related functions depend on this
  */
-static caddr_t heap_end = NULL;
-
 caddr_t _sbrk(int incr) {
    extern char __HeapBottom; /* Defined by the linker */
    extern char __HeapLimit;  /* Defined by the linker */
@@ -162,71 +169,78 @@ caddr_t _sbrk(int incr) {
    return prev_heap_end;
 }
 
-/*
- read
- Read a character to a file. `libc' subroutines will use this system routine for input from all files, including stdin
- Returns -1 on error or blocks until the number of characters have been read.
+/**
+ * read
+ *
+ * Reads characters from a file.
+ * 'libc' subroutines will use this system routine for input from all files, including STDIN
+ * Blocks until len characters are read or a '\n' is encountered
+ *
+ * @param file - File to read from (not used - assumed UART=STDIN)
+ * @param ptr  - Pointer to buffer for characters
+ * @param len  - Maximum number of characters to read
+ *
+ * @return -1 on error or the number of characters read
  */
 int _read(int file, char *ptr, int len) {
-   (void)file;
-   (void)ptr;
-   (void)len;
-   int todo;
-   if(len == 0) {
-      return 0;
+   if (file != STDIN_FILENO) {
+      errno = EBADF;
+      return -1;
    }
-   *ptr++ = uart_rxChar();
-   for(todo = 1; todo < len; todo++) {
-      *ptr++ = uart_rxChar();
-   }
-   return todo;
+   int done=0; // Characters read
+   int ch;
+   do {
+      ch = uart_rxChar();
+      *ptr++ = ch;
+   } while ((++done<len) && (ch != '\n'));
+   return done;
 }
 
-/*
- stat
- Status of a file (by name). Minimal implementation:
- int    _EXFUN(stat,( const char *__path, struct stat *__sbuf ));
+/**
+ * stat
+ *
+ * Status of a file (by name). Minimal implementation.
+ *
  */
-int _stat(const char *filepath, struct stat *st) {
-   (void)filepath;
-   (void)st;
+int _stat(const char *filepath __attribute__((unused)), struct stat *st __attribute__((unused))) {
    st->st_mode = S_IFCHR;
    return 0;
 }
 
-/*
- times
- Timing information for current process. Minimal implementation:
+/**
+ * times
+ * Timing information for current process. Minimal implementation:
  */
-clock_t _times(struct tms *buf) {
-   (void)buf;
+clock_t _times(struct tms *buf __attribute__((unused))) {
    return -1;
 }
 
-/*
- unlink
- Remove a file's directory entry. Minimal implementation:
+/**
+ * unlink
+ *
+ * Remove a file's directory entry. Minimal implementation:
  */
-int _unlink(char *name) {
-   (void)name;
+int _unlink(char *name __attribute__((unused))) {
    errno = ENOENT;
    return -1;
 }
 
-/*
- wait
- Wait for a child process. Minimal implementation:
+/**
+ *  wait
+ *
+ *  Wait for a child process. Minimal implementation:
  */
-int _wait(int *status) {
-   (void)status;
+int _wait(int *status __attribute__((unused))) {
    errno = ECHILD;
    return -1;
 }
 
 /*
- write
- Write a character to a file. `libc' subroutines will use this system routine for output to all files, including stdout
- Returns -1 on error or number of bytes sent
+ *  write
+ *
+ *  Write a character to a file. `libc' subroutines will use this system routine for output to all files, including stdout
+ *
+ *  @return -1 on error or number of bytes sent
  */
 int _write(int file, char *ptr, int len) {
    int n;
@@ -247,14 +261,22 @@ int _write(int file, char *ptr, int len) {
    return len;
 }
 
-// cmsis-os optional routine
-void os_tmr_call(uint16_t  info) {
+/*
+ * cmsis-os optional routine
+ */
+void os_tmr_call(uint16_t  info __attribute__((unused))) {
    (void)info;
 }
 
-void _exit(int i) {
-   (void)i;
-   while (1) {
+/**
+ * exit
+ *
+ * Exit process
+ *
+ * @param rc - Return code from process
+ */
+void _exit(int rc __attribute__((unused))) {
+   for(;;) {
       asm("bkpt #0");
    }
 }

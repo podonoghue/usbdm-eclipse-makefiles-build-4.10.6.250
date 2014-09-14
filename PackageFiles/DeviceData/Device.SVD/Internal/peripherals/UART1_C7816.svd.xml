@@ -426,7 +426,9 @@ Normally, hardware wakes the receiver by automatically clearing RWU</description
                <fields>
                   <field>
                      <name>PF</name>
-                     <description>Parity Error Flag</description>
+                     <description>Parity Error Flag\n
+PF is set when PE is set, S2[LBKDE] is disabled, and the parity of the received data does not match its parity bit.\n
+To clear PF, read S1 with PF set and then read D</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -445,7 +447,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>FE</name>
-                     <description>Framing Error Flag</description>
+                     <description>Framing Error Flag\n
+FE is set when a logic 0 is accepted as the stop bit.\n
+To clear FE, read S1 with FE set and then read D</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -463,7 +467,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>NF</name>
-                     <description>Noise Flag</description>
+                     <description>Noise Flag\n
+NF is set when the UART detects noise on the receiver input.\n
+To clear NF, read S1 and then read D. When EN709 is enabled, noise flag is not set</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -482,7 +488,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>OR</name>
-                     <description>Receiver Overrun Flag</description>
+                     <description>Receiver Overrun Flag\n
+OR is set when software fails to prevent the receive data register from overflowing with data.\n
+To clear OR, read S1 when OR is set and then read D</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -500,7 +508,10 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>IDLE</name>
-                     <description>Idle Line Flag</description>
+                     <description>Idle Line Flag\n
+After the IDLE flag is cleared, a frame must be received or a LIN break character must set the S2[LBKDIF] flag before an idle
+condition can set the IDLE flag.\n
+To clear IDLE, read UART status S1 with IDLE set and then read D</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -518,7 +529,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>RDRF</name>
-                     <description>Receive Data Register Full Flag</description>
+                     <description>Receive Data Register Full Flag\n
+RDRF is set when the number of datawords in the receive buffer is equal to or more than the number indicated by RWFIFO[RXWATER].\n
+To clear RDRF, read S1 when RDRF is set and then read D</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -536,7 +549,13 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>TC</name>
-                     <description>Transmit Complete Flag</description>
+                     <description>Transmit Complete Flag\n
+TC is cleared when there is a transmission in progress or when a preamble or break character is loaded.\n
+TC is set when the transmit buffer is empty and no data, preamble, or break character is being transmitted.\n
+TC is cleared by reading S1 with TC set and then doing one of the following:\n
+- Writing to D to transmit new data.\n
+- Queuing a preamble by clearing and then setting C2[TE].\n
+- Queuing a break character by writing 1 to SBK in C2</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -554,7 +573,10 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>TDRE</name>
-                     <description>Transmit Data Register Empty Flag</description>
+                     <description>Transmit Data Register Empty Flag\n
+TDRE will set when the number of datawords in the transmit buffer (D and C3[T8])is equal to or less than
+the number indicated by TWFIFO[TXWATER].\n
+To clear TDRE, read S1 when TDRE is set and then write to the UART data register</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -581,7 +603,10 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                <fields>
                   <field>
                      <name>RAF</name>
-                     <description>Receiver Active Flag</description>
+                     <description>Receiver Active Flag\n
+RAF is set when the UART receiver detects a logic 0 during the RT1 time period of the start bit search.\n
+RAF is cleared when the receiver detects an idle character when C7816[ISO7816E] is cleared/disabled.\n
+When C7816[ISO7816E] is enabled, the RAF is cleared if the C7816[TTYPE] = 0 expires or the C7816[TTYPE] = 1 expires</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -600,7 +625,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>LBKDE</name>
-                     <description>LIN Break Detection Enable</description>
+                     <description>LIN Break Detection Enable\n
+Selects a longer break character detection length.\n
+While LBKDE is set, S1[RDRF], S1[NF], S1[FE], and S1[PF] are prevented from setting</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -618,7 +645,8 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>BRK13</name>
-                     <description>Break Transmit Character Length</description>
+                     <description>Break Transmit Character Length\n
+Determines whether the transmit break character is 10, 11, or 12 bits long, or 13 or 14 bits long</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -636,7 +664,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>RWUID</name>
-                     <description>Receive Wakeup Idle Detect</description>
+                     <description>Receive Wakeup Idle Detect\n
+When RWU is set and WAKE is cleared, this field controls whether the idle character that wakes the
+receiver sets S1[IDLE]. This field must be cleared when C7816[ISO7816E] is set/enabled</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -654,7 +684,8 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>RXINV</name>
-                     <description>Receive Data Inversion</description>
+                     <description>Receive Data Inversion\n
+Setting this field reverses the polarity of the received data input</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -672,7 +703,8 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>MSBF</name>
-                     <description>Most Significant Bit First</description>
+                     <description>Most Significant Bit First\n
+Setting this field reverses the order of the bits that are transmitted and received on the wire</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -690,7 +722,10 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>RXEDGIF</name>
-                     <description>RxD Pin Active Edge Interrupt Flag</description>
+                     <description>RxD Pin Active Edge Interrupt Flag\n
+RXEDGIF is set when an active edge occurs on the RxD pin.\n
+The active edge is falling if RXINV = 0, and rising if RXINV=1.\n
+RXEDGIF is cleared by writing a 1 to it</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -708,7 +743,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>LBKDIF</name>
-                     <description>LIN Break Detect Interrupt Flag</description>
+                     <description>LIN Break Detect Interrupt Flag\n
+LBKDIF is set when LBKDE is set and a LIN break character is detected on the receiver input.\n
+LBKDIF is cleared by writing a 1 to it</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

@@ -48,7 +48,7 @@ typedef void( *const intfunc )( void );
 __attribute__((__interrupt__))
 void Default_Handler(void) {
 
-   uint32_t vectorNum = SCB_ICSR;
+   uint32_t vectorNum = (SCB_ICSR&SCB_ICSR_VECTPENDING_Msk)>>SCB_ICSR_VECTPENDING_Pos;
 
    (void)vectorNum;
 

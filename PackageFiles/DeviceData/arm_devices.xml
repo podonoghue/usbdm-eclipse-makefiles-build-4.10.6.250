@@ -4,27 +4,42 @@
 <!ENTITY STM32F100xx-default-flashProgram  SYSTEM "ARM/STM32F100xx-default-flash-program.afx.S19">
 <!ENTITY STM32F100xx-default-flashScripts  SYSTEM "ARM/STM32F100xx-default-flash-scripts.tcl">
 <!ENTITY Kinetis-FTFL-flash-program        SYSTEM "ARM/Kinetis-FTFL-flash-program-gcc.hex">
-<!ENTITY Kinetis-FTFA-flash-program        SYSTEM "ARM/Kinetis-FTFA-flash-program-gcc.hex">
+<!ENTITY Kinetis-MK-FTFA-flash-program     SYSTEM "ARM/Kinetis-MK-FTFA-flash-program-gcc.hex">
+<!ENTITY Kinetis-MKL-FTFA-flash-program    SYSTEM "ARM/Kinetis-MKL-FTFA-flash-program-gcc.hex">
+<!ENTITY Kinetis-MKM-FTFA-flash-program    SYSTEM "ARM/Kinetis-MKM-FTFA-flash-program-gcc.hex">
 <!ENTITY Kinetis-FTFE-flash-program        SYSTEM "ARM/Kinetis-FTFE-flash-program-gcc.hex">
 <!ENTITY Kinetis-FTMRH-flash-program       SYSTEM "ARM/Kinetis-FTMRH-flash-program-gcc.hex">
+<!ENTITY Kinetis-FTMRH-eeprom-program      SYSTEM "ARM/Kinetis-FTMRH-eeprom-program-gcc.hex">
 <!ENTITY Kinetis-FTMRE-flash-program       SYSTEM "ARM/Kinetis-FTMRE-flash-program-gcc.hex">
 <!ENTITY Kinetis-Kxx-flashScripts          SYSTEM "ARM/Kinetis-Kxx-flash-scripts.tcl">
 <!ENTITY Kinetis-KExx-flashScripts         SYSTEM "ARM/Kinetis-KExx-flash-scripts.tcl">
 <!ENTITY Kinetis-KLxx-flashScripts         SYSTEM "ARM/Kinetis-KLxx-flash-scripts.tcl">
+<!ENTITY Kinetis-KMxx-flashScripts         SYSTEM "ARM/Kinetis-KMxx-flash-scripts.tcl">
 <!ENTITY Old-Kinetis-Devices               SYSTEM "arm_old_kinetis_devices.xml">
 <!ENTITY STM-Devices                       SYSTEM "arm_stm_devices.xml">
 <!ENTITY NXP-Devices                       SYSTEM "arm_nxp_devices.xml">
 <!ENTITY Custom-Devices                    SYSTEM "Custom/custom-arm.xml">
 <!ENTITY CortexM-base-register-description SYSTEM "ARM/CortexM-base-register-description.xml">
 <!ENTITY CortexM-sfpu-register-description SYSTEM "ARM/CortexM-sfpu-register-description.xml">
+<!ENTITY CortexM0-Project-actions          SYSTEM "ARM/CortexM0-Project-actions.xml">
+<!ENTITY CortexM3-Project-actions          SYSTEM "ARM/CortexM3-Project-actions.xml">
+<!ENTITY CortexM4-Project-actions          SYSTEM "ARM/CortexM4-Project-actions.xml">
+<!ENTITY Kinetis-PE-Project-actions        SYSTEM "ARM/Kinetis-PE-Project-actions.xml">
 ]>
 <!-- 
 ToDo - review flash block sizes for MK20-MK70
+      V4.10.6.190 - Added SDID M=0 when V=0 to indicate wild-card
+      V4.10.6.180 - Added MKMxx
+      V4.10.6.180 - Added MK22FN256, MK22FN512
+      V4.10.6.170 - Corrected MKE04Z128M4 SDID
+      V4.10.6.170 - Added features to support more flexible project creation
+      V4.10.6.170 - Split out C project creation
+      V4.10.6.170 - Added support for MKE02 EEPROM
       V4.10.6.140 - Added support for MK64F
       V4.10.6.140 - Added support for FTMRE Flash (MKE04, MKE06 devices)
       V4.10.6.110 - Changed to using <projectActionList> tag & related changes
       V4.10.6.110 - Updated MKE/MKL Memory maps
-      V4.10.6.110 - Added MK22FX512M12 & MK22FN1M0M12devices
+      V4.10.6.110 - Added MK22FX512M12 & MK22FN1M0M12 devices
       V4.10.6.100 - Added MKL16 device
       V4.10.6.40  - Fixed kinetisL32K_Ram size
       V4.10.6.20  - Added MKL46 devices
@@ -35,40 +50,43 @@ ToDo - review flash block sizes for MK20-MK70
       V4.10.5     - Added GNU C information
       V4.10.4     - Changed how security information is expressed
       V4.10.4     - Added I/O space 
+ 
+NOTES:
+   subfamily="XXX" is used to determine header file
+   
  -->
-<root version="4.10.6">
-   <description>ARM device characteristics 4/6/2014</description>
+<root version="4.10.6.170">
+   <description>ARM device characteristics 21/6/2014</description>
    <sharedInformation>
-      <flashProgram id="STM32F100xx-default-FlashProgram">
-      &STM32F100xx-default-flashProgram;
-      </flashProgram>
-      <tclScript id="STM32F100xx-default-Scripts">
-      &STM32F100xx-default-flashScripts;
-      </tclScript>
-      <tclScript id="Kinetis-Kxx-Scripts">
-      &Kinetis-Kxx-flashScripts;
-      </tclScript>
-      <tclScript id="Kinetis-KExx-Scripts">
-      &Kinetis-KExx-flashScripts;
-      </tclScript>
-      <tclScript id="Kinetis-KLxx-Scripts">
-      &Kinetis-KLxx-flashScripts;
-      </tclScript>
-      <flashProgram id="Kinetis-FTMRH-flash-program">
-      &Kinetis-FTMRH-flash-program;
-      </flashProgram>
-      <flashProgram id="Kinetis-FTMRE-flash-program">
-      &Kinetis-FTMRE-flash-program;
-      </flashProgram>
-      <flashProgram id="Kinetis-FTFL-flash-program">
-      &Kinetis-FTFL-flash-program;
-      </flashProgram>
-      <flashProgram id="Kinetis-FTFA-flash-program">
-      &Kinetis-FTFA-flash-program;
-      </flashProgram>
-      <flashProgram id="Kinetis-FTFE-flash-program">
-      &Kinetis-FTFE-flash-program;
-      </flashProgram>
+      <!--  
+            Project actions 
+      -->
+      &Kinetis-PE-Project-actions;
+      &CortexM0-Project-actions;
+      &CortexM3-Project-actions;
+      &CortexM4-Project-actions;
+      
+      <!-- 
+            Flash Programs & TCL Scripts 
+      -->
+      <flashProgram id="STM32F100xx-default-FlashProgram">  &STM32F100xx-default-flashProgram;  </flashProgram>
+      <tclScript    id="STM32F100xx-default-Scripts">       &STM32F100xx-default-flashScripts;  </tclScript>
+      <tclScript    id="Kinetis-Kxx-Scripts">               &Kinetis-Kxx-flashScripts;          </tclScript>
+      <tclScript    id="Kinetis-KExx-Scripts">              &Kinetis-KExx-flashScripts;         </tclScript>
+      <tclScript    id="Kinetis-KLxx-Scripts">              &Kinetis-KLxx-flashScripts;         </tclScript>
+      <tclScript    id="Kinetis-KMxx-Scripts">              &Kinetis-KMxx-flashScripts;         </tclScript>
+      <flashProgram id="Kinetis-FTMRH-eeprom-program">      &Kinetis-FTMRH-eeprom-program;      </flashProgram>
+      <flashProgram id="Kinetis-FTMRH-flash-program">       &Kinetis-FTMRH-flash-program;       </flashProgram>
+      <flashProgram id="Kinetis-FTMRE-flash-program">       &Kinetis-FTMRE-flash-program;       </flashProgram>
+      <flashProgram id="Kinetis-FTFL-flash-program">        &Kinetis-FTFL-flash-program;        </flashProgram>
+      <flashProgram id="Kinetis-MK-FTFA-flash-program">     &Kinetis-MK-FTFA-flash-program;     </flashProgram>
+      <flashProgram id="Kinetis-MKL-FTFA-flash-program">    &Kinetis-MKL-FTFA-flash-program;    </flashProgram>
+      <flashProgram id="Kinetis-MKM-FTFA-flash-program">    &Kinetis-MKM-FTFA-flash-program;    </flashProgram>
+      <flashProgram id="Kinetis-FTFE-flash-program">        &Kinetis-FTFE-flash-program;        </flashProgram>
+      
+      <!-- 
+            Security Entries 
+      -->
       <securityEntry id="Kinetis-KE-security">
          <securityDescription id="Kinetis-KE-security-description">
             BACKDOOR\t= 0x%8X\n*\t\t= 0x%4X\nEEPROT\t\t= [DPOPEN=%b, *=%4b, DPS=%3b]\tFPROT\t\t= [OP=%b,*=%b,HDIS=%b,HS=%2b,LDIS=%b,LS=%2b]\nFSEC\t\t= [KEYEN=%2b, *=%4b, SEC=%2b]\nFOPT\t\t= [-=%6b, EZPORT_DIS=%b, LPBOOT=%b]\n\t
@@ -108,6 +126,10 @@ ToDo - review flash block sizes for MK20-MK70
             0123456789ABCDEFFFFFFFFFBFFFFFFF
          </securityInfo>  
       </securityEntry>
+      
+      <!-- 
+            FlexNVM Partition Tables 
+      -->
       <flexNVMInfo id="kinetis32K_FlexPartitionInfo" backingRatio="16">
          <eeepromEntry   description="Unchanged/None"         eeeSize="0"     value="0xFF" />
          <eeepromEntry   description="32"                     eeeSize="32"    value="0x39" />
@@ -259,7 +281,10 @@ ToDo - review flash block sizes for MK20-MK70
          <partitionEntry description="DFlash=64, EEPROM=448"  eeSize="448K"   value="0x0C" />
          <partitionEntry description="No DFlash, EEPROM=512"  eeSize="512K"   value="0x08" />
       </flexNVMInfo>      
-      <!--  Ram -->
+      
+      <!-- 
+            RAM Memory
+      -->
       <!-- KE -->
       <memory id="kinetisE1K_Ram" type="ram">
          <memoryRange start="0x1FFFFF00" size="1K" />
@@ -305,6 +330,9 @@ ToDo - review flash block sizes for MK20-MK70
       <memory id="kinetis32K_Ram" type="ram">
          <memoryRange middle="0x20000000" size="32K" />
       </memory>
+      <memory id="kinetis48K_Ram" type="ram">
+         <memoryRange start="0x1FFFC000" size="48K" />
+      </memory>
       <memory id="kinetis64K_Ram" type="ram">
          <memoryRange middle="0x20000000" size="64K" />
       </memory>
@@ -314,33 +342,89 @@ ToDo - review flash block sizes for MK20-MK70
       <memory id="kinetis256K_Ram" type="ram">
          <memoryRange middle="0x20000000" size="256K" />
       </memory>
-      <!--  Flash Block (Kinetis-E) - 512 byte sector size -->
+      
+      <!-- 
+            Flash Memory
+      -->
+      <!--  
+         EEPROM Block (Kinetis-E02) - 512 byte sector size 
+      -->
+      <!--  A Single Block of small sector EEPROM -->     
+      <memory id="FTMRH_EEPROM_256b_2bS" type="eeprom" registerAddress="0x40020000" sectorSize="2" alignment="1" >
+         <flashProgramRef ref="Kinetis-FTMRH-eeprom-program" />
+         <memoryRange start="0x10000000" size="256" />
+      </memory>
+      <!--  
+         Flash Block (Kinetis-E02) - 512 byte sector size 
+      -->
       <!--  A Single Block containing  the security info -->	  
       <memory id="FTMRH_PFlash0_SEC_8K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <securityEntryRef ref="Kinetis-KE-security" />
          <memoryRange start="0x00000000" size="8K" />
       </memory>
       <memory id="FTMRH_PFlash0_SEC_16K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <securityEntryRef ref="Kinetis-KE-security" />
          <memoryRange start="0x00000000" size="16K" />
       </memory>
       <memory id="FTMRH_PFlash0_SEC_32K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <securityEntryRef ref="Kinetis-KE-security" />
          <memoryRange start="0x00000000" size="32K" />
       </memory>
       <memory id="FTMRH_PFlash0_SEC_64K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <securityEntryRef ref="Kinetis-KE-security" />
          <memoryRange start="0x00000000" size="64K" />
       </memory>
       <memory id="FTMRH_PFlash0_SEC_128K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <securityEntryRef ref="Kinetis-KE-security" />
          <memoryRange start="0x00000000" size="128K" />
       </memory>
       <memory id="FTMRH_PFlash0_SEC_256K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <securityEntryRef ref="Kinetis-KE-security" />
          <memoryRange start="0x00000000" size="256K" />
       </memory>
-      <!--  Flash Block (Kinetis-L) - 1K sector size -->
+      <!--  
+         Flash Block (Kinetis-E0x) - 512 byte sector size 
+      -->
+      <!--  A Single Block containing  the security info -->     
+      <memory id="FTMRE_PFlash0_SEC_8K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="8K" />
+      </memory>
+      <memory id="FTMRE_PFlash0_SEC_16K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="16K" />
+      </memory>
+      <memory id="FTMRE_PFlash0_SEC_32K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="32K" />
+      </memory>
+      <memory id="FTMRE_PFlash0_SEC_64K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="64K" />
+      </memory>
+      <memory id="FTMRE_PFlash0_SEC_128K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="128K" />
+      </memory>
+      <memory id="FTMRE_PFlash0_SEC_256K_512bS" type="flash" registerAddress="0x40020000" sectorSize="512" alignment="4" securityAddress="0x0400">
+         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
+         <securityEntryRef ref="Kinetis-KE-security" />
+         <memoryRange start="0x00000000" size="256K" />
+      </memory>
+      <!--  
+         Flash Block (Kinetis-L) - 1K sector size 
+      -->
       <!--  A Single Block containing  the security info -->	  
       <memory id="FTFA_PFlash0_SEC_8K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
          <securityEntryRef ref="Kinetis-KL-security" />
@@ -366,7 +450,47 @@ ToDo - review flash block sizes for MK20-MK70
          <securityEntryRef ref="Kinetis-KL-security" />
          <memoryRange start="0x00000000" size="256K" />
       </memory>
-      <!--  Flash Block - FTFL 1K sector size -->
+      <!--  
+         Flash Block (Kinetis-K) - 2K sector size 
+      -->
+      <!--  A Single Block containing  the security info -->     
+      <memory id="FTFA_PFlash0_SEC_8K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KL-security" />
+         <memoryRange start="0x00000000" size="8K" />
+      </memory>
+      <memory id="FTFA_PFlash0_SEC_16K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KL-security" />
+         <memoryRange start="0x00000000" size="16K" />
+      </memory>
+      <memory id="FTFA_PFlash0_SEC_32K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KL-security" />
+         <memoryRange start="0x00000000" size="32K" />
+      </memory>
+      <memory id="FTFA_PFlash0_SEC_64K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KL-security" />
+         <memoryRange start="0x00000000" size="64K" />
+      </memory>
+      <memory id="FTFA_PFlash0_SEC_128K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KL-security" />
+         <memoryRange start="0x00000000" size="128K" />
+      </memory>
+      <memory id="FTFA_PFlash0_SEC_256K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
+         <securityEntryRef ref="Kinetis-KL-security" />
+         <memoryRange start="0x00000000" size="256K" />
+      </memory>
+      <memory id="FTFA_PFlash1_256K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4">
+         <memoryRange start="0x00040000" size="256K" />
+      </memory>
+      <memory id="FTFA_PFlash2_256K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4">
+         <memoryRange start="0x00080000" size="256K" />
+      </memory>
+      <memory id="FTFA_PFlash3_256K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4">
+         <memoryRange start="0x000C0000" size="256K" />
+      </memory>
+      
+      <!--  
+         Flash Block - FTFL 1K sector size 
+      -->
       <!--  It appears that only the lowest block determines the security - ignoring flash swap -->	  
       <memory id="FTFL_PFlash0_SEC_32K_1KS" type="flash" registerAddress="0x40020000" sectorSize="1024" alignment="4" securityAddress="0x0400">
          <securityEntryRef ref="Kinetis-K-security" />
@@ -384,7 +508,9 @@ ToDo - review flash block sizes for MK20-MK70
          <securityEntryRef ref="Kinetis-K-security" />
          <memoryRange start="0x00000000" size="1M" />
       </memory>
-      <!--  Flash Block - FTFL 2K sector size -->
+      <!--  
+         Flash Block - FTFL 2K sector size 
+      -->
       <!--  It appears that only the lowest block determines the security - ignoring flash swap -->	  
       <memory id="FTFL_PFlash0_SEC_128K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" securityAddress="0x0400">
          <securityEntryRef ref="Kinetis-K-security" />
@@ -404,7 +530,9 @@ ToDo - review flash block sizes for MK20-MK70
       <memory id="FTFL_PFlash0_128K_2KS" type="flash" registerAddress="0x40020000" sectorSize="2048" alignment="4" >
          <memoryRange start="0x00020000" size="128K" />
       </memory>
-      <!--  flexNVM - FTFL 1K sector size -->
+      <!--  
+         FlexNVM - FTFL 1K sector size 
+      -->
       <memory id="FTFL_DFlash0_32K_1KS" type="flexNVM" registerAddress="0x40020000"  sectorSize="1024" alignment="4">
          <flexNVMInfoRef ref="kinetis32K_FlexPartitionInfo" />
          <memoryRange start="0x10000000" size="32K" />
@@ -413,7 +541,9 @@ ToDo - review flash block sizes for MK20-MK70
          <flexNVMInfoRef ref="kinetis512K_FlexPartitionInfo" />
          <memoryRange start="0x10000000" size="512K" />
       </memory>
-      <!--  flexNVM - FTFL 2K sector size -->
+      <!--  
+         FlexNVM - FTFL 2K sector size 
+      -->
       <memory id="FTFL_DFlash0_64K_2KS" type="flexNVM" registerAddress="0x40020000"  sectorSize="2048" alignment="4">
          <flexNVMInfoRef ref="kinetis64K_FlexPartitionInfo" />
          <memoryRange start="0x10000000" size="64K" />
@@ -430,7 +560,9 @@ ToDo - review flash block sizes for MK20-MK70
          <flexNVMInfoRef ref="kinetis512K_FlexPartitionInfo" />
          <memoryRange start="0x10000000" size="512K" />
       </memory>
-      <!--  Flash Block - FTFE 4K sector size -->
+      <!--  
+         Flash Block - FTFE 4K sector size 
+      -->
       <!--  It appears that only the lowest block determines the security - ignoring flash swap -->	  
       <memory id="FTFE_PFlash0_SEC_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8" securityAddress="0x0400">
          <securityEntryRef ref="Kinetis-K-security" />
@@ -453,7 +585,9 @@ ToDo - review flash block sizes for MK20-MK70
       <memory id="FTFE_PFlash3_256K_4KS" type="flash" registerAddress="0x40020000" sectorSize="4096" alignment="8">
          <memoryRange start="0x000C0000" size="256K" />
       </memory>
-      <!--  flexNVM - FTFE 4K sector size -->
+      <!--  
+         FlexNVM - FTFE 4K sector size 
+      -->
       <memory id="FTFE_DFlash0_256K_4KS" type="flexNVM" registerAddress="0x40020000"  sectorSize="4096" alignment="8">
          <flexNVMInfoRef ref="kinetis512K_FlexPartitionInfo" />
          <memoryRange start="0x10000000" size="512K" />
@@ -463,7 +597,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRange start="0x10000000" size="512K" />
       </memory>
 
-      <!-- Kinetis I/O space -->
+      <!-- 
+            Kinetis I/O space 
+      -->
       <memory id="kinetisIO_MKE" type="io">
          <memoryRange start="0x40000000" end="0x4007FFFF" />  <!-- AIPS Peripherals -->
          <memoryRange start="0x400FF000" end="0x400FFFFF" />  <!-- General purpose input/output (GPIO) -->
@@ -496,8 +632,11 @@ ToDo - review flash block sizes for MK20-MK70
       <memory id="STM32_IO" type="io">
          <memoryRange start="0x40000000" end="0x43FFFFFF" />  <!-- Bit-band Peripheral -->
          <memoryRange start="0xE0000000" end="0xE03FFFFF" />  <!-- Private Peripherals -->
-      </memory>     
-      <!--  Register sets -->
+      </memory>
+           
+      <!--  
+            Register sets 
+      -->
       <registerDescription id="CortexM0-register-description"  count="20" >
          &CortexM-base-register-description;
       </registerDescription>
@@ -513,613 +652,6 @@ ToDo - review flash block sizes for MK20-MK70
       <registerDescription id="CortexM4F-register-description" count="53" >
          &CortexM-sfpu-register-description;
       </registerDescription>
-      
-      <!-- GNU Build options Cortex M0 (e.g. MKL, MKE) devices -->
-      <projectActionList id="gnuSettings.cortex.m0" >
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"              > <value>net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM0</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb"            > <value>true</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.buildtools"        > <value>$(buildToolId)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-      </projectActionList>
-      <!-- GNU Build options Cortex M3 (e.g. lpc, stm) devices -->
-      <projectActionList id="gnuSettings.cortex.m3" >
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"              > <value>net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM3</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb"            > <value>true</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.buildtools"        > <value>$(buildToolId)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-      </projectActionList>
-      <!-- GNU Build options Cortex M4 (e.g. MK) devices -->
-      <projectActionList id="gnuSettings.cortex.m4" >
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mcpu"              > <value>net.sourceforge.usbdm.cdt.arm.toolchain.mcpu.cortexM4</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.mthumb"            > <value>true</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.buildtools"        > <value>$(buildToolId)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile"   > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-         <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile" > <value>${ProjDirPath}/Project_Settings/$(linkerFile)</value> </projectOption>
-      </projectActionList>
-      <!-- Cortex-M0 CMSIS RTOS -->
-      <projectActionList id="Cortex-M0-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="CMSIS-M0-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
-         <condition variable="CMSIS-M0-rtos">
-            <createFolder                                           target="cmsis"      type="include" />
-            <copy           source="cmsis/Doc/index.html"           target="CMSIS.html" type="link" />
-            <copy           source="cmsis/INC"                      target="cmsis/INC" />
-            <copy           source="cmsis/SRC"                      target="cmsis/SRC" />
-            <copy           source="cmsis/GCC/SVC_Table.S"          target="cmsis/GCC/SVC_Table.S" />
-            <copy           source="cmsis/GCC/HAL_CM0.S"            target="cmsis/GCC/HAL_CM0.S" />
-            <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
-            <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M0</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M0</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-         </condition>
-      </projectActionList>
-      <!-- Cortex-M3 CMSIS RTOS -->
-      <projectActionList id="Cortex-M3-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="CMSIS-M3-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
-         <condition variable="CMSIS-M3-rtos">
-            <createFolder                                           target="cmsis"      type="include" />
-            <copy           source="cmsis/Doc/index.html"           target="CMSIS.html" type="link" />
-            <copy           source="cmsis/INC"                      target="cmsis/INC" />
-            <copy           source="cmsis/SRC"                      target="cmsis/SRC" />
-            <copy           source="cmsis/GCC/SVC_Table.S"          target="cmsis/GCC/SVC_Table.S" />
-            <copy           source="cmsis/GCC/HAL_CM3.S"            target="cmsis/GCC/HAL_CM3.S" />
-            <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
-            <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M3</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M3</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-         </condition>
-      </projectActionList>
-      <!-- Cortex-M4 CMSIS RTOS -->
-      <projectActionList id="Cortex-M4-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="CMSIS-M4-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
-         <condition variable="CMSIS-M4-rtos">
-            <createFolder                                           target="cmsis"      type="include" />
-            <copy           source="cmsis/Doc/index.html"           target="CMSIS.html" type="link" />
-            <copy           source="cmsis/INC"                      target="cmsis/INC" />
-            <copy           source="cmsis/SRC"                      target="cmsis/SRC" />
-            <copy           source="cmsis/GCC/SVC_Table.S"          target="cmsis/GCC/SVC_Table.S" />
-            <copy           source="cmsis/GCC/HAL_CM4.S"            target="cmsis/GCC/HAL_CM4.S" />
-            <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
-            <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M4</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M4</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-         </condition>
-      </projectActionList>
-      <!-- Cortex-M4F CMSIS RTOS -->
-      <projectActionList id="Cortex-M4F-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="CMSIS-M4F-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
-         <condition variable="CMSIS-M4F-rtos">
-            <createFolder                                           target="cmsis"      type="include" />
-            <copy           source="cmsis/Doc/index.html"           target="CMSIS.html" type="link" />
-            <copy           source="cmsis/INC"                      target="cmsis/INC" />
-            <copy           source="cmsis/SRC"                      target="cmsis/SRC" />
-            <copy           source="cmsis/GCC/SVC_Table.S"          target="cmsis/GCC/SVC_Table.S" />
-            <copy           source="cmsis/GCC/HAL_CM4.S"            target="cmsis/GCC/HAL_CM4.S" />
-            <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
-            <copy           source="Sources/RTX_Main.c"             target="Sources/main.c" />
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M4F</value>
-               <value>__CMSIS_RTOS</value>
-               <value>__FPU_PRESENT</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M4F</value>
-               <value>__CMSIS_RTOS</value>
-               <value>__FPU_PRESENT</value>
-            </projectOption>            
-         </condition>
-      </projectActionList>
-      <!-- Base MKE files -->
-      <projectActionList id="Kinetis-MKE-files" root="usbdm_resource_path/Stationery/ARM/" >
-         <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
-         <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
-         <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/system_mke.c"                   target="Startup_Code/system_mke.c" />
-         <copy source="Startup_Code/vectors-mke.c"                  target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
-         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
-         <!--copy source="Startup_Code/startup_Codesourcery_c.c"     target="Startup_Code/startup_Codesourcery_c.c" />
-         <copy source="Startup_Code/startup_Codesourcery.S"       target="Startup_Code/startup_Codesourcery.S" /-->
-         <copy source="Project_Settings/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/ARMLtd_GCC-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-mk.ld"     target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Settings/Debug.launch"               target="Project_Settings/$(projectName)-Debug.launch" />
-         <copy source="Project_Settings/MemoryMap.ld"               target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
-         <copy source="Project_Headers/derivative.h"                target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/TargetDevice.h"              target="Project_Headers/$(targetDevice).h" />
-         <copy source="Project_Headers/clock.h"                     target="Project_Headers/clock.h" />
-         <copy source="Project_Headers/core_cm0.h"                  target="Project_Headers/core_cm0.h" />
-         <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
-         <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
-         <copy source="Project_Headers/utilities-mke.h"             target="Project_Headers/utilities.h" />
-         <copy source="Sources/main.c"                              target="Sources/main.c" />
-      </projectActionList>
-      <!-- Base MKL files -->
-      <projectActionList id="Kinetis-MKL-files" root="usbdm_resource_path/Stationery/ARM/" >
-         <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
-         <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
-         <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/system_mkl.c"                   target="Startup_Code/system_mkl.c" />
-         <copy source="Startup_Code/vectors-mkl.c"                  target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
-         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
-         <!--copy source="Startup_Code/startup_Codesourcery_c.c"     target="Startup_Code/startup_Codesourcery_c.c" />
-         <copy source="Startup_Code/startup_Codesourcery.S"       target="Startup_Code/startup_Codesourcery.S" /-->
-         <copy source="Project_Settings/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/ARMLtd_GCC-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-mk.ld"     target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Settings/Debug.launch"               target="Project_Settings/$(projectName)-Debug.launch" />
-         <copy source="Project_Settings/MemoryMap.ld"               target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
-         <copy source="Project_Headers/derivative.h"                target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/TargetDevice.h"              target="Project_Headers/$(targetDevice).h" />
-         <copy source="Project_Headers/clock.h"                     target="Project_Headers/clock.h" />
-         <copy source="Project_Headers/core_cm0.h"                  target="Project_Headers/core_cm0.h" />
-         <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
-         <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
-         <copy source="Project_Headers/utilities-mkl.h"             target="Project_Headers/utilities.h" />
-         <copy source="Sources/main.c"                              target="Sources/main.c" />
-      </projectActionList>
-      <!-- Base NXP-LPC files -->
-      <projectActionList id="NXP-LPC-file-list" root="usbdm_resource_path/Stationery/ARM/" >
-         <copy source="Startup_Code/system_lpc.c"                   target="Startup_Code/system_lpc.c" />
-         <copy source="Startup_Code/vectors-lpc.c"                  target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
-         <copy source="Project_Settings/ARMLtd_GCC-rom-lpc.ld"      target="Project_Settings/ARMLtd_GCC-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-lpc.ld"    target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Headers/derivative.h"                target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/TargetDevice.h"              target="Project_Headers/$(targetDevice).h" />
-         <copy source="Project_Headers/core_cm3.h"                  target="Project_Headers/core_cm3.h" />
-         <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
-         <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
-      </projectActionList>
-      <!-- Base STM32 files -->
-      <projectActionList id="STM32F10xx-files" root="usbdm_resource_path/Stationery/ARM/" >
-         <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
-         <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
-         <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/system_stm32f10x.c"             target="Startup_Code/system_stm32f10x.c" />
-         <copy source="Startup_Code/vectors-stm32.c"                target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
-         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM3.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
-         <!--copy source="Startup_Code/startup_Codesourcery_c.c"     target="Startup_Code/startup_Codesourcery_c.c" />
-         <copy source="Startup_Code/startup_Codesourcery.S"       target="Startup_Code/startup_Codesourcery.S" /-->
-         <copy source="Project_Settings/ARMLtd_GCC-rom-stm32.ld"    target="Project_Settings/ARMLtd_GCC-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-stm32.ld"  target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Settings/Debug.launch"               target="Project_Settings/$(projectName)-Debug.launch" />
-         <copy source="Project_Settings/MemoryMap.ld"               target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
-         <copy source="Project_Headers/derivative-STM32xx.h"        target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/core_cm3.h"                  target="Project_Headers/core_cm3.h" />
-         <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
-         <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
-         <copy source="Project_Headers/stm32f10x.h"                 target="Project_Headers/stm32f10x.h" />
-         <copy source="Project_Headers/system_stm32f10x.h"          target="Project_Headers/system_stm32f10x.h" />
-         <copy source="Project_Headers/utilities-stm32.h"           target="Project_Headers/utilities.h" />
-         <copy source="Sources/main.c"                              target="Sources/main.c" />
-           <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
-              <value>STM32F10X_LD</value>
-           </projectOption>            
-           <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
-              <value>STM32F10X_LD</value>
-           </projectOption>            
-      </projectActionList>
-      <!-- Additions for STM32xx SPL -->
-      <projectActionList id="STM32-spl-files" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="STM32-spl" name="Standard Peripheral Library"      description="Adds code for the STM32 Standard peripheral Library - check assumptions made" />
-         <condition variable="STM32-spl" >
-           <createFolder                                              target="spl"          type="include" />
-           <copy source="spl/inc"                                     target="spl/inc" />
-           <copy source="spl/src"                                     target="spl/src" />
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/spl/inc&quot;</value>
-               <value>&quot;${ProjDirPath}/spl/src&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/spl/inc&quot;</value>
-               <value>&quot;${ProjDirPath}/spl/src&quot;</value>
-            </projectOption>            
-           <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
-              <value>USE_STDPERIPH_DRIVER</value>	    
-           </projectOption>            
-           <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
-              <value>USE_STDPERIPH_DRIVER</value>
-           </projectOption>            
-         </condition>
-      </projectActionList>
-      
-      <!-- Cortex-M4 CMSIS RTOS -->
-      <projectActionList id="Cortex-STM32xx-CMSIS" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="CMSIS-STM32xx-rtos"  name="CMSIS RTOS framework"   description="Adds CMSIS-RTOS framework" />
-         <condition variable="CMSIS-STM32xx-rtos">
-            <createFolder                                           target="cmsis"      type="include" />
-            <copy           source="cmsis/Doc/index.html"           target="CMSIS.html" type="link" />
-            <copy           source="cmsis/INC"                      target="cmsis/INC" />
-            <copy           source="cmsis/SRC"                      target="cmsis/SRC" />
-            <copy           source="cmsis/GCC/SVC_Table.S"          target="cmsis/GCC/SVC_Table.S" />
-            <copy           source="cmsis/GCC/HAL_CM3.S"            target="cmsis/GCC/HAL_CM3.S" />
-            <copy           source="Sources/RTX_Conf_CM.c"          target="Sources/RTX_Conf_CM.c" />
-            <copy           source="Sources/RTX_Main.c"     target="Sources/main.c" />
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${ProjDirPath}/cmsis/INC&quot;</value>
-               <value>&quot;${ProjDirPath}/cmsis/SRC&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M3</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M3</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-         </condition>
-      </projectActionList>
-      
-      <!-- Base MK files -->
-      <projectActionList id="Kinetis-MK-files" root="usbdm_resource_path/Stationery/ARM/" >
-         <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
-         <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
-         <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/system_mk.c"                    target="Startup_Code/system_mk.c" />
-         <copy source="Startup_Code/vectors-mk.c"                   target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
-         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM4.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
-         <!--copy source="Startup_Code/startup_Codesourcery_c.c"     target="Startup_Code/startup_Codesourcery_c.c" />
-         <copy source="Startup_Code/startup_Codesourcery.S"       target="Startup_Code/startup_Codesourcery.S" /-->
-         <copy source="Project_Settings/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/ARMLtd_GCC-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-mk.ld"     target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Settings/Debug.launch"               target="Project_Settings/$(projectName)-Debug.launch" />
-         <copy source="Project_Settings/MemoryMap.ld"               target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
-         <copy source="Project_Headers/derivative.h"                target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/TargetDevice.h"              target="Project_Headers/$(targetDevice).h" />
-         <copy source="Project_Headers/clock.h"                     target="Project_Headers/clock.h" />
-         <copy source="Project_Headers/core_cm4.h"                  target="Project_Headers/core_cm4.h" />
-         <copy source="Project_Headers/core_cm4_simd.h"             target="Project_Headers/core_cm4_simd.h" />
-         <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
-         <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
-         <copy source="Project_Headers/utilities-mk.h"              target="Project_Headers/utilities.h" />
-         <copy source="Sources/main.c"                              target="Sources/main.c" />
-      </projectActionList>
-      
-      <!-- Base MK-F files -->
-      <projectActionList id="Kinetis-MK-F-files" root="usbdm_resource_path/Stationery/ARM/" >
-         <copy source="$(externalVectorTable)"                      target="Startup_Code/vectors.c" />
-         <copy source="$(externalLinkerScript)"                     target="Project_Settings/Custom.ld" />
-         <copy source="$(externalHeaderFile)"                       target="Project_Headers/$(targetDevice).h" />
-         <copy source="Startup_Code/fp_init.c"                      target="Startup_Code/fp_init.c" />
-         <copy source="Startup_Code/system_mk.c"                    target="Startup_Code/system_mk.c" />
-         <copy source="Startup_Code/vectors-mk.c"                   target="Startup_Code/vectors.c" />
-         <copy source="Startup_Code/newlib_stubs.c"                 target="Startup_Code/newlib_stubs.c" />
-         <copy source="Startup_Code/startup_ARMLtdGCC_CortexM4.S"   target="Startup_Code/startup_ARMLtdGCC.S" />
-         <!--copy source="Startup_Code/startup_Codesourcery_c.c"     target="Startup_Code/startup_Codesourcery_c.c" />
-         <copy source="Startup_Code/startup_Codesourcery.S"       target="Startup_Code/startup_Codesourcery.S" /-->
-         <copy source="Project_Settings/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/ARMLtd_GCC-rom.ld" />
-         <copy source="Project_Settings/Codesourcery-rom-mk.ld"     target="Project_Settings/Codesourcery-rom.ld" />
-         <copy source="Project_Settings/Debug.launch"               target="Project_Settings/$(projectName)-Debug.launch" />
-         <copy source="Project_Settings/MemoryMap.ld"               target="Project_Settings/MemoryMap-$(targetDeviceName).ld" />
-         <copy source="Project_Headers/derivative.h"                target="Project_Headers/derivative.h" />
-         <copy source="Project_Headers/TargetDevice.h"              target="Project_Headers/$(targetDevice).h" />
-         <copy source="Project_Headers/clock.h"                     target="Project_Headers/clock.h" />
-         <copy source="Project_Headers/core_cm4.h"                  target="Project_Headers/core_cm4.h" />
-         <copy source="Project_Headers/core_cm4_simd.h"             target="Project_Headers/core_cm4_simd.h" />
-         <copy source="Project_Headers/core_cmFunc.h"               target="Project_Headers/core_cmFunc.h" />
-         <copy source="Project_Headers/core_cmInstr.h"              target="Project_Headers/core_cmInstr.h" />
-         <copy source="Project_Headers/utilities-mk.h"              target="Project_Headers/utilities.h" />
-         <copy source="Sources/main.c"                              target="Sources/main.c" />
-      </projectActionList>
-
-      <!-- Freescale Kinetis SDK  -->
-      <projectActionList id="Kinetis-SDK" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Kinetis-SDK-enable"  name="Kinetis SDK"   description="Adds Kinetis SDK features" />
-         <condition variable="Kinetis-SDK-enable">
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths" >
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/utilities&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/drivers/clock&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/drivers/gpio&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/drivers/interrupt&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/hal/sim&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/hal/port&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/hal/gpio&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/rtos&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths" >
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/utilities&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/drivers/clock&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/drivers/gpio&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/drivers/interrupt&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/hal/sim&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/hal/port&quot;</value>
-               <value>&quot;${KSDK_PATH_1_0_0_BETA}/platform/hal/gpio&quot;</value>
-            <value>&quot;${KSDK_PATH_1_0_0_BETA}/rtos&quot;</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M3</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-            <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols" >
-               <value>__CORTEX_M3</value>
-               <value>__CMSIS_RTOS</value>
-            </projectOption>            
-         </condition>
-      </projectActionList>
-      
-      <!--  Standard actions -->
-      <projectActionList id="Kinetis-MKE-ProjectActions" >
-         <projectActionListRef  ref="gnuSettings.cortex.m0" />
-         <projectActionListRef  ref="Cortex-M0-CMSIS" />
-         <projectActionListRef  ref="Kinetis-MKE-files" />
-         <projectActionListRef  ref="Kinetis-SDK" />
-      </projectActionList>
-      <projectActionList id="Kinetis-MKL-ProjectActions" >
-         <projectActionListRef  ref="gnuSettings.cortex.m0" />
-         <projectActionListRef  ref="Cortex-M0-CMSIS" />
-         <projectActionListRef  ref="Kinetis-MKL-files" />
-         <projectActionListRef  ref="Kinetis-SDK" />
-      </projectActionList>
-      <projectActionList id="Kinetis-MK-ProjectActions" >
-         <projectActionListRef  ref="gnuSettings.cortex.m4" />
-         <projectActionListRef  ref="Cortex-M4-CMSIS" />
-         <projectActionListRef  ref="Kinetis-MK-files" />
-         <projectActionListRef  ref="Kinetis-SDK" />
-      </projectActionList>
-      <projectActionList id="Kinetis-MK-F-ProjectActions" >
-         <projectActionListRef  ref="gnuSettings.cortex.m4" />
-         <projectActionListRef  ref="Cortex-M4F-CMSIS" />
-         <projectActionListRef  ref="Kinetis-MK-F-files" />
-         <projectActionListRef  ref="Kinetis-SDK" />
-      </projectActionList>
-      <projectActionList id="STM32Fxxx-ProjectActions" >
-         <projectActionListRef  ref="gnuSettings.cortex.m3" />
-         <projectActionListRef  ref="Cortex-STM32xx-CMSIS" />
-         <projectActionListRef  ref="STM32-spl-files" />
-         <projectActionListRef  ref="STM32F10xx-files" />
-      </projectActionList>
-
-      <!-- Extra Optional files for MKE02M2 -->
-      <projectActionList id="Options-file-list-MKE02M2" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKE02M2" name="Clock setup code"    description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKE02M2"  name="UART setup code"     description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKE02M2" >
-            <copy source="Startup_Code/clock-MKE0x.c"                  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKE02M2.h"     target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKE02M2">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-      
-      <!-- Extra Optional files for MKE02M4 -->
-      <projectActionList id="Options-file-list-MKE02M4" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKE02M4" name="Clock setup code"    description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKE02M4"  name="UART setup code"     description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKE02M4" >
-            <copy source="Startup_Code/clock-MKE0x.c"                  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKE02M4.h"     target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKE02M4">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-      
-      <!-- Extra Optional files for MKE04 -->
-      <projectActionList id="Options-file-list-MKE04" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKE04" name="Clock setup code"      description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKE04"  name="UART setup code"       description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKE04" >
-            <copy source="Startup_Code/clock-MKE0x.c"                  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKE04.h"       target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKE04">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-      
-      <!-- Extra Optional files for MKE06 -->
-      <projectActionList id="Options-file-list-MKE06" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKE06" name="Clock setup code"      description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKE06"  name="UART setup code"       description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKE06" >
-            <copy source="Startup_Code/clock-MKE0x.c"                  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKE06.h"       target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKE06">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-      
-      <!-- Extra Optional files for MKL0x -->
-      <projectActionList id="Options-file-list-MKL0x" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKL0x" name="Clock setup code"      description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKL0x"  name="UART setup code"       description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKL0x" >
-            <copy source="Startup_Code/clock-MKL0x.c"                  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKL0x.h"       target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKL0x">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-      
-      <!-- Extra Optional files for MK1x MKL2x MKL3x -->
-      <projectActionList id="Options-file-list-MKLxx" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKL25" name="Clock setup code"      description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKL25"  name="UART setup code"       description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKL25" >
-            <copy source="Startup_Code/clock-MKLxx.c"                  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKLxx.h"       target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKL25">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-
-      <!-- Extra Optional files for MKxxM5 -->
-      <projectActionList id="Options-file-list-MKxxM5" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKxxM5" name="Clock setup code"     description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKxxM5"  name="UART setup code"      description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKxxM5" >
-            <copy source="Startup_Code/clock-MKxx.c"                	  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKxxM5.h"   	  target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKxxM5">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-
-      <!-- Extra Optional files for MKxxM7 -->
-      <projectActionList id="Options-file-list-MKxxM7" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKxxM7" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKxxM7"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKxxM7" >
-            <copy source="Startup_Code/clock-MKxx.c"                	  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKxxM7.h"   	  target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKxxM7">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-
-      <!-- Extra Optional files for MKxxM10 -->
-      <projectActionList id="Options-file-list-MKxxM10" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKxxM10" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKxxM10"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKxxM10" >
-            <copy source="Startup_Code/clock-MKxx.c"                	  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKxxM10.h"  	  target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKxxM10">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-
-      <!-- Extra Optional files for MKxx10Z -->
-      <projectActionList id="Options-file-list-MKxxM10Z" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKxxM10Z" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKxxM10Z"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKxxM10Z" >
-            <copy source="Startup_Code/clock-MKxxZ.c"                	  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKxxM10Z.h"   	  target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKxxM10Z">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-
-      <!-- Extra Optional files for MKxxM12 -->
-      <projectActionList id="Options-file-list-MKxxM12" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKxxM12" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKxxM12"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKxxM12" >
-            <copy source="Startup_Code/clock-MKxx.c"                	  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKxxM12.h"  	  target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKxxM12">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-
-      <!-- Extra Optional files for MKxxM12 with Dual PLLs -->
-      <projectActionList id="Options-file-list-MKxxM12-DualPLL" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MKxxM12-DualPLL" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MKxxM12-DualPLL"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MKxxM12-DualPLL" >
-            <copy source="Startup_Code/clock_private-MKxxM12-DualPLL.c"  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MKxxM12.h"  	    target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MKxxM12-DualPLL">
-            <copy source="Startup_Code/uart.c"                           target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                        target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                     target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
-
-      <!-- Extra Optional files for MK64M12 -->
-      <projectActionList id="Options-file-list-MK64M12" root="usbdm_resource_path/Stationery/ARM/" >
-         <variable id="Clock-setup-MK64M12" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-         <variable id="UART-setup-MK64M12"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
-         <condition variable="Clock-setup-MK64M12" >
-            <copy source="Startup_Code/clock-MK64M12.c"                	  target="Startup_Code/clock.c" />
-            <copy source="Project_Headers/clock_private-MK64M12.h"  	  target="Project_Headers/clock_private.h" />
-         </condition>
-         <condition variable="UART-setup-MK64M12">
-            <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
-            <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
-            <copy source="Project_Headers/Freedom.h"                   target="Project_Headers/Freedom.h" />
-         </condition>
-      </projectActionList>
 
    </sharedInformation>
    
@@ -1176,7 +708,7 @@ ToDo - review flash block sizes for MK20-MK70
          mask 0xFFFF0000
 
          // K series
-         SDID[3..0]   = Pin ID         0,1,2,4,5,6,8 => 16,24,32,48,64,80,100p
+         SDID[3..0]   = Pin ID         0-15 => 16,24,32,-,48,64,80,81 or 121,100,121,144,WLCSP,169,-,256,-
          SDID[6..4]   = Family ID      0=K10/12,1=K20/K22,2=K30/K11/K61,3=K40/K21,4=K60/K62,5=K70,6=KW24
                000 K10 or K12 Family
                001 K20 or K22 Family
@@ -1190,9 +722,42 @@ ToDo - review flash block sizes for MK20-MK70
          SDID[15..12] = Rev ID
          SDID[31..16] = 0
          mask 0x0xFFFF0FF0
+         
+         // New UNIFIED????? System
+         // KL series
+         SDID[3..0]   = Pin ID  0-15 => 16,24,32,44,48,64,80,81 or 121,100,121,144,WLCSP,169,-,256,-
+         SDID[6..4]   = Family ID (legacy) - ignored
+         SDID[11..7]  = Die ID - ignored     
+         SDID[15..12] = Rev ID - ignored
+         SDID[19..16] = ATTR??
+         SDID[23..20] = Series ID      
+            0000 => Kinetis K series
+            0001 => Kinetis L series
+            0011 => Kinetis M Metering series
+            0101 => Kinetis W series
+            0110 => Kinetis V series
+         SDID[27..24] = Sub-family ID  2,4..7 => KLx2,KLx4..KLx7
+               0000 Kxx0 Subfamily (low end)
+               0001 Kxx1 Subfamily (low end)
+               0010 Kxx2 Subfamily (low end)
+               0100 Kxx4 Subfamily (basic analog)
+               0101 Kxx5 Subfamily (advanced analog)
+               0110 Kxx6 Subfamily (advanced analog with I2S)
+               0111 Kxx7 Subfamily (advanced analog with I2S and extended RAM)
+         SDID[31..28] = Family ID      0..4 => KL0x..KL4x
+               0000 Kx0x Family e.g. KE02
+               0001 Kx1x Family e.g. KL14
+               0010 Kx2x Family
+               0011 Kx3x Family
+               0100 Kx4x Family
+               0100 Kx5x Family
+               0100 Kx6x Family
+               0100 Kx7x Family
+               
+         mask 0xFFFF0F80
          -->
          <sdidMask value="0xFFFF0FF0" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef ref="Kinetis-MK-ProjectActions" />
@@ -1200,81 +765,82 @@ ToDo - review flash block sizes for MK20-MK70
          <note>Default ARM Device</note>
       </device>
 	  
+<!-- ===================================================================================== -->
 <!-- MKE02Z2 -->
       <device name="MKE02Z16M2" family="CortexM0" subfamily="MKE02Z2">
          <memoryRef ref="kinetisE2K_Ram" />
+         <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x02070000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE02M2" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE02Z32M2" family="CortexM0" subfamily="MKE02Z2">
          <memoryRef ref="kinetisE4K_Ram" />
+         <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x02070000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE02M2" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE02Z64M2" family="CortexM0" subfamily="MKE02Z2">
          <memoryRef ref="kinetisE4K_Ram" />
+         <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x02040000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE02M2" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE02Z16M4" family="CortexM0" subfamily="MKE02Z2">
          <memoryRef ref="kinetisE2K_Ram" />
+         <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x02070000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE02M4" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE02Z32M4" family="CortexM0" subfamily="MKE02Z2">
          <memoryRef ref="kinetisE4K_Ram" />
+         <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x02070000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE02M4" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE02Z64M4" family="CortexM0" subfamily="MKE02Z2">
          <memoryRef ref="kinetisE4K_Ram" />
+         <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x02040000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRH-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE02M4" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1282,39 +848,36 @@ ToDo - review flash block sizes for MK20-MK70
 <!-- MKE04Z4 -->
       <device name="MKE04Z8M4" family="CortexM0" subfamily="MKE04Z4">
          <memoryRef ref="kinetisE1K_Ram" />
-         <memoryRef ref="FTMRH_PFlash0_SEC_8K_512bS" />
+         <memoryRef ref="FTMRE_PFlash0_SEC_8K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x04070000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE04" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE04Z64M4" family="CortexM0" subfamily="MKE04Z4">
          <memoryRef ref="kinetisE8K_Ram" />
-         <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
+         <memoryRef ref="FTMRE_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x04040000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE04" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE04Z128M4" family="CortexM0" subfamily="MKE04Z4">
          <memoryRef ref="kinetisE16K_Ram" />
-         <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
+         <memoryRef ref="FTMRE_PFlash0_SEC_128K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
-         <sdid value="0x06040000" />
+         <sdid value="0x04040000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE04" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1322,30 +885,30 @@ ToDo - review flash block sizes for MK20-MK70
 <!-- MKE06Z4 -->
       <device name="MKE06Z64M4" family="CortexM0" subfamily="MKE06Z4">
          <memoryRef ref="kinetisE8K_Ram" />
-         <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
+         <memoryRef ref="FTMRE_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x06040000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE06" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE06Z128M4" family="CortexM0" subfamily="MKE06Z4">
          <memoryRef ref="kinetisE16K_Ram" />
-         <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
+         <memoryRef ref="FTMRE_PFlash0_SEC_128K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
          <sdidMask value="0xFF000000" />
          <sdid value="0x06040000" />
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTMRE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKE06" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
+
+<!-- ===================================================================================== -->
 <!-- MKL02Z4 -->
       <device name="MKL02Z8M4"  family="CortexM0" subfamily="MKL02Z4">
          <memoryRef ref="kinetisL1K_Ram" />
@@ -1354,7 +917,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x02130602" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1366,7 +929,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x02130602" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1378,7 +941,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x02130602" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1391,7 +954,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x04110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1403,7 +966,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x04120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1415,7 +978,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x04130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1428,7 +991,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x05110480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1440,7 +1003,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x05120480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1452,7 +1015,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x05130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1465,7 +1028,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x14130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1477,7 +1040,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x14140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1490,7 +1053,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x15130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1502,7 +1065,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x15140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1514,7 +1077,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x15150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1527,7 +1090,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x16130000" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1539,7 +1102,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x16140000" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1551,7 +1114,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x16150000" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1563,7 +1126,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x16160480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1576,7 +1139,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x24130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1588,7 +1151,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x24140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1598,10 +1161,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x25130480" />
+         <sdid value="0x25100480" mask="0xFFF00F80" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef ref="Options-file-list-MKLxx" />
          <projectActionListRef   ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1611,9 +1173,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
          <sdidMask value="0xFFFF0000" />
-         <sdid value="0x25140480" />
+         <sdid value="0x25100480" mask="0xFFF00F80" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1622,10 +1184,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x25150480" />
+         <sdid value="0x25100480" mask="0xFFF00F80" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1638,7 +1199,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x26130480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1650,7 +1211,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x26140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1662,7 +1223,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x26150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1674,7 +1235,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x26160480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1688,7 +1249,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x34140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1702,7 +1263,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x36140480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1715,7 +1276,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x36150480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1727,7 +1288,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x36160480" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1740,7 +1301,7 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x46150588" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
@@ -1752,17 +1313,91 @@ ToDo - review flash block sizes for MK20-MK70
          <sdidMask value="0xFFFF0000" />
          <sdid value="0x46160588" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFA-flash-program" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
          <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
+
+<!-- ===================================================================================== -->
+<!-- MKM14Z5 -->
+      <device name="MKM14Z64M5" family="CortexM0" subfamily="MKM14Z5">
+         <memoryRef ref="kinetisL16K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdidAddress value="0x4003F024" />
+         <sdid value="0x10300000" mask="0xF0F00000"/>
+         <tclScriptRef ref="Kinetis-KMxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKMxx" />
+         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <note>No LCD</note>
+      </device>
+      <device name="MKM14Z128M5" family="CortexM0" subfamily="MKM14Z5">
+         <memoryRef ref="kinetisL16K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdidAddress value="0x4003F024" />
+         <sdid value="0x10300000" mask="0xF0F00000"/>
+         <tclScriptRef ref="Kinetis-KMxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKMxx" />
+         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <note>No LCD</note>
+      </device>
+<!-- MKM33Z5 -->
+      <device name="MKM33Z64M5" family="CortexM0" subfamily="MKM33Z5">
+         <memoryRef ref="kinetisL16K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdidAddress value="0x4003F024" />
+         <sdid value="0x30300000" mask="0xF0F00000"/>
+         <tclScriptRef ref="Kinetis-KMxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKMxx" />
+         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <note>8x17 LCD</note>
+      </device>
+      <device name="MKM33Z128M5" family="CortexM0" subfamily="MKM33Z5">
+         <memoryRef ref="kinetisL16K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdidAddress value="0x4003F024" />
+         <sdid value="0x30300000" mask="0xF0F00000"/>
+         <tclScriptRef ref="Kinetis-KMxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKMxx" />
+         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <note>8x17 LCD</note>
+      </device>
+<!-- MKM34Z5 -->
+      <device name="MKM34Z128M5" family="CortexM0" subfamily="MKM34Z5">
+         <memoryRef ref="kinetisL16K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdidAddress value="0x4003F024" />
+         <sdid value="0x30300000" mask="0xF0F00000"/>
+         <tclScriptRef ref="Kinetis-KMxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKMxx" />
+         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+         <note>8x17 LCD</note>
+      </device>
+
+<!-- ===================================================================================== -->
 <!-- MK10-M5-->
       <device name="MK10DN32M5"  family="CortexM4" subfamily="MK10D5">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1771,7 +1406,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1780,7 +1417,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1790,7 +1429,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1800,7 +1441,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1810,7 +1453,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1821,7 +1466,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1831,7 +1478,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1841,7 +1490,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1852,7 +1503,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_PFlash1_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1862,7 +1515,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_PFlash1_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1872,7 +1527,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_2KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1882,7 +1539,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_2KS" />
          <memoryRef ref="FTFL_DFlash0_128K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1892,7 +1551,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1903,7 +1564,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash1_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1916,11 +1579,13 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x318A" />
+         <sdid value="0x00000180" mask="0x00000FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K10P144M120SF3RM</note>
       </device>
       <device name="MK10FX512M12" family="CortexM4F" subfamily="MK10F12">
          <memoryRef ref="kinetis128K_Ram" />
@@ -1928,69 +1593,89 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash1_256K_4KS" />
          <memoryRef ref="FTFE_DFlash0_512K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x318A" />
+         <sdid value="0x00000180" mask="0x00000FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K10P144M120SF3RM</note>
       </device>
 <!-- MK20-M5 -->
       <device name="MK20DN32M5"  family="CortexM4" subfamily="MK20D5">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000010" mask="0xFFFF0FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K20P32M50SF0RM</note>
       </device>
       <device name="MK20DN64M5"  family="CortexM4" subfamily="MK20D5">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000010" mask="0xFFFF0FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K20P32M50SF0RM</note>
       </device>
       <device name="MK20DN128M5" family="CortexM4" subfamily="MK20D5">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000010" mask="0xFFFF0FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K20P32M50SF0RM</note>
       </device>
       <device name="MK20DX32M5"  family="CortexM4" subfamily="MK20D5">
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000010" mask="0xFFFF0FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K20P32M50SF0RM</note>
      </device>
       <device name="MK20DX64M5"  family="CortexM4" subfamily="MK20D5">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000010" mask="0xFFFF0FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K20P32M50SF0RM</note>
       </device>
       <device name="MK20DX128M5" family="CortexM4" subfamily="MK20D5">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00001015" />
+         <sdid value="0x00000010" mask="0xFFFF0FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K20P32M50SF0RM</note>
       </device>
 <!-- MK20-M7 -->
       <device name="MK20DX64M7"  family="CortexM4" subfamily="MK20D7">
@@ -1998,7 +1683,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2008,7 +1695,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2020,7 +1709,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_128K_2KS" /-->
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2030,7 +1721,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2039,7 +1732,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2049,7 +1744,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2059,7 +1756,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2069,7 +1768,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2079,7 +1780,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2092,7 +1795,8 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
@@ -2103,7 +1807,8 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash0_SEC_512K_4KS" />
          <memoryRef ref="FTFE_DFlash0_512K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
@@ -2114,30 +1819,39 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00002300" mask="0x00000FF0"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K21P80M50SF4RM</note>
       </device>
       <device name="MK21DX128M5" family="CortexM4" subfamily="MK21D5">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00001015" />
+         <sdid value="0x00002300" mask="0x00000FF0"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K21P80M50SF4RM</note>
       </device>
       <device name="MK21DX256M5" family="CortexM4" subfamily="MK21D5">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00002300" mask="0x00000FF0"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K21P80M50SF4RM</note>
       </device>
 <!-- MK21-M12 -->
       <device name="MK21FN1M0M12" family="CortexM4F" subfamily="MK21F12">
@@ -2147,7 +1861,8 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
@@ -2158,7 +1873,8 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash0_SEC_512K_4KS" />
          <memoryRef ref="FTFE_DFlash0_512K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
@@ -2169,32 +1885,66 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00001215" />
+         <sdid value="0x00000210" mask="0x00000FF0"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K22P80M50SF4RM,K22P64M50SF4RM,K22P121M50SF4RM</note>
       </device>
       <device name="MK22DX128M5" family="CortexM4" subfamily="MK22D5">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_2KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000210" mask="0x00000FF0"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K22P48M50SF4RM,K22P64M50SF4RM,K22P80M50SF4RM,K22P121M50SF4RM</note>
       </device>
       <device name="MK22DX256M5" family="CortexM4" subfamily="MK22D5">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000210" mask="0x00000FF0"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
+         <note>K22P48M50SF4RM,K22P64M50SF4RM,K22P80M50SF4RM,K22P121M50SF4RM</note>
       </device>
 <!-- MK22-M12 -->
+      <device name="MK22FN256M12" family="CortexM4F" subfamily="MK22F51212">
+         <memoryRef ref="kinetis48K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_256K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x22000A80" mask="0xFFF00F80"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MK-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
+         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K22P121M120SF8RM</note>
+      </device>
+      <device name="MK22FN512M12" family="CortexM4F" subfamily="MK22F51212">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_256K_2KS" />
+         <memoryRef ref="FTFA_PFlash1_256K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x22000E80" mask="0xFFF00F80"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MK-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
+         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K22P121M120SF7RM</note>
+      </device>
       <device name="MK22FN1M0M12" family="CortexM4F" subfamily="MK22F12">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFE_PFlash0_SEC_256K_4KS" />
@@ -2202,11 +1952,13 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000310" />
+         <sdid value="0x00000310" mask="0xFFF00FF0"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K22P64M120SF5RM,K22P80M120SF5RM,K22P100M120SF5RM,K22P121M120SF5RM,K22P144M120SF5RM</note>
       </device>
       <device name="MK22FX512M12" family="CortexM4F" subfamily="MK22F12">
          <memoryRef ref="kinetis128K_Ram" />
@@ -2214,11 +1966,13 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash1_256K_4KS" />
          <memoryRef ref="FTFE_DFlash0_512K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000310" />
+         <sdid value="0x00000310" mask="0xFFF00FF0"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K22P64M120SF5RM,K22P80M120SF5RM,K22P100M120SF5RM,K22P121M120SF5RM,K22P144M120SF5RM</note>
       </device>
 <!-- MK24-M12 -->
       <device name="MK24FN1M0M12" family="CortexM4F" subfamily="MK24F12">
@@ -2228,23 +1982,13 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000310" />
+         <sdid value="0x24000000" mask="0xFFF00F80"/>
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
-      </device>
-      <device name="MK24FX512M12" family="CortexM4F" subfamily="MK24F12">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFE_PFlash0_SEC_256K_4KS" />
-         <memoryRef ref="FTFE_PFlash1_256K_4KS" />
-         <memoryRef ref="FTFE_DFlash0_512K_4KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000310" />
-         <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K24P144M120SF5RM</note>
       </device>
 <!-- MK30-M7 -->
       <device name="MK30DX64M7" family="CortexM4" subfamily="MK30D7">
@@ -2252,7 +1996,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2262,7 +2008,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2272,18 +2020,33 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK30-M10 -->
+      <device name="MK30DN512ZM10" family="CortexM4"  subfamily="MK30DZ10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
       <device name="MK30DX64M10" family="CortexM4" subfamily="MK30D">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2293,7 +2056,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2303,7 +2068,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2313,7 +2080,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2323,16 +2092,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-      <device name="MK30DN512ZM10" family="CortexM4"  subfamily="MK30DZ10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2343,7 +2105,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2353,7 +2117,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2363,18 +2129,33 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK40-M10 -->
+      <device name="MK40DN512ZM10" family="CortexM4" subfamily="MK40DZ10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
       <device name="MK40DX64M10"   family="CortexM4" subfamily="MK40D10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2384,7 +2165,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2394,7 +2177,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_64K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2404,7 +2189,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2414,16 +2201,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-      <device name="MK40DN512ZM10" family="CortexM4" subfamily="MK40DZ10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2434,7 +2214,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef   ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2444,18 +2226,44 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef   ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK50-M10 -->
+      <device name="MK50DN512M10"  family="CortexM4" subfamily="MK50D10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
+      <device name="MK50DN512ZM10" family="CortexM4" subfamily="MK50DZ10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
       <device name="MK50DX128M10" family="CortexM4"  subfamily="MK50D10">
          <memoryRef ref="kinetis32K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2465,7 +2273,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2475,25 +2285,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-      <device name="MK50DN512M10"  family="CortexM4" subfamily="MK50D10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-      <device name="MK50DN512ZM10" family="CortexM4" subfamily="MK50DZ10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2504,7 +2298,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM7" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2514,19 +2310,33 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM5" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK51-M10 -->
-      <device name="MK51DX128M10"  family="CortexM4" subfamily="MK51D10">
-         <memoryRef ref="kinetis32K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
-         <memoryRef ref="FTFL_DFlash0_32K_1KS" />
+      <device name="MK51DN512M10"  family="CortexM4" subfamily="MK51D10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
+      <device name="MK51DN512ZM10" family="CortexM4" subfamily="MK51DZ10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
@@ -2534,7 +2344,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2543,8 +2355,22 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
+      <device name="MK51DX128M10"  family="CortexM4" subfamily="MK51D10">
+         <memoryRef ref="kinetis32K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
+         <memoryRef ref="FTFL_DFlash0_32K_1KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
@@ -2553,7 +2379,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2563,25 +2391,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-      <device name="MK51DN512M10"  family="CortexM4" subfamily="MK51D10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-      <device name="MK51DN512ZM10" family="CortexM4" subfamily="MK51DZ10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2591,7 +2403,9 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2600,18 +2414,44 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK53-M10 -->
+      <device name="MK53DN512M10"  family="CortexM4" subfamily="MK53D10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
+      <device name="MK53DN512ZM10" family="CortexM4" subfamily="MK53DZ10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
       <device name="MK53DX256M10" family="CortexM4"  subfamily="MK53D10">
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2621,26 +2461,10 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-      <device name="MK53DN512M10"  family="CortexM4" subfamily="MK53D10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-      <device name="MK53DN512ZM10" family="CortexM4" subfamily="MK53DZ10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
@@ -2649,7 +2473,20 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="kinetis64K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
+         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
+         <registerDescriptionRef ref="CortexM4-register-description" />
+      </device>
+      <device name="MK60DN512ZM10" family="CortexM4" subfamily="MK60DZ10">
+         <memoryRef ref="kinetis128K_Ram" />
+         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
+         <memoryRef ref="kinetisIO_MK" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2659,31 +2496,26 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFL_PFlash0_SEC_256K_2KS" />
          <memoryRef ref="FTFL_DFlash0_256K_2KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
          <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
-      <device name="MK60DN512ZM10" family="CortexM4" subfamily="MK60DZ10">
-         <memoryRef ref="kinetis128K_Ram" />
-         <memoryRef ref="FTFL_PFlash0_SEC_512K_2KS" />
-         <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
-         <registerDescriptionRef ref="CortexM4-register-description" />
-      </device>
-<!-- MK60-M12 -->
+<!-- MK60-M12-M15 -->
       <device name="MK60FX512M12" family="CortexM4F" subfamily="MK60F12">
          <memoryRef ref="kinetis128K_Ram" />
          <memoryRef ref="FTFE_PFlash0_SEC_512K_4KS" />
          <memoryRef ref="FTFE_DFlash0_512K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x000001C0" mask="0x00000FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12-DualPLL" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K60P144M150SF3RM</note>
       </device>
       <device name="MK60FX512M15"      alias="MK60FX512M12" /> <!-- These are identical apart from speed grade -->
       <device name="MK60FN1M0M12" family="CortexM4F" subfamily="MK60F12">
@@ -2693,11 +2525,13 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x000031CA" />
+         <sdid value="0x000001C0" mask="0x00000FF0" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12-DualPLL" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K60P144M150SF3RM</note>
       </device>
       <device name="MK60FN1M0M15"      alias="MK60FN1M0M12" /> <!-- These are identical apart from speed grade -->
 <!-- MK61-M12 -->
@@ -2706,7 +2540,8 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash0_SEC_512K_4KS" />
          <memoryRef ref="FTFE_DFlash0_512K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
@@ -2720,7 +2555,8 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
@@ -2735,11 +2571,13 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x62001348" />
+         <sdid value="0x63000000" mask="0xFFF00F80" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MK64M12" />
+         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K63P144M120SF5RM</note>
       </device>
 <!-- MK64-M12 -->
       <device name="MK64FX512M12" family="CortexM4F" subfamily="MK64F12">
@@ -2747,11 +2585,14 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash0_SEC_512K_4KS" />
          <memoryRef ref="FTFE_DFlash0_512K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x62001348" />
+         <sdid value="0x64000000" mask="0xFFF00F80" />
+         <sdid value="0x62001348" mask="0xFFF00F80" /> <!-- Buggy device code -->
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MK64M12" />
+         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K64P144M120SF5RM</note>
       </device>
       <device name="MK64FN1M0M12" family="CortexM4F" subfamily="MK64F12">
          <memoryRef ref="kinetis128K_Ram" />
@@ -2760,11 +2601,14 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x62001348" />
+         <sdid value="0x64000000" mask="0xFFF00F80" />
+         <sdid value="0x62001348" mask="0xFFF00F80" /> <!-- Buggy device code -->
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MK64M12" />
+         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
+         <note>K64P144M120SF5RM</note>
       </device>
       
 <!-- MK70-M12 -->
@@ -2773,7 +2617,8 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash0_SEC_512K_4KS" />
          <memoryRef ref="FTFE_DFlash0_512K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
@@ -2787,7 +2632,8 @@ ToDo - review flash block sizes for MK20-MK70
          <memoryRef ref="FTFE_PFlash2_256K_4KS" />
          <memoryRef ref="FTFE_PFlash3_256K_4KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000000" />
+         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKxxM12" />
          <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
@@ -2795,7 +2641,11 @@ ToDo - review flash block sizes for MK20-MK70
       </device>
       <device name="MK70FN1M0M15"      alias="MK70FN1M0M12" /> <!-- These are identical apart from speed grade -->
       
-<!-- Aliases -->     
+<!-- Aliases 
+
+   Aliases may set <sdid>, <sdidAddress> and <sdidMask> otherwise they are inherited from aliased device.
+   If re-using a device description for a _different_ device then SDID should be set (use 0 if necessary)
+-->     
 
 <!-- Codewarrior IDE aliases -->
       <device name="K10DN32"           alias="MK10DN32M5"        hidden="true"/>
@@ -2958,12 +2808,12 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="KL46Z256M4"        alias="MKL46Z256M4"       hidden="true"/>
       
       <!-- device name="KM13Z64M5"         alias="MKM13Z64M5"        hidden="true"/-->
-      <!-- device name="KM14Z64M5"         alias="MKM14Z64M5"        hidden="true"/-->
-      <!-- device name="KM14Z128M5"        alias="MKM14Z128M5"       hidden="true"/-->
+      <device name="KM14Z64M5"         alias="MKM14Z64M5"        hidden="true"/>
+      <device name="KM14Z128M5"        alias="MKM14Z128M5"       hidden="true"/>
       <!-- device name="KM32Z64M5"         alias="MKM32Z64M5"        hidden="true"/-->
-      <!-- device name="KM33Z64M5"         alias="MKM33Z64M5"        hidden="true"/-->
-      <!-- device name="KM33Z128M5"        alias="MKM33Z128M5"       hidden="true"/-->
-      <!-- device name="KM34Z128M5"        alias="MKM34Z128M5"       hidden="true"/-->
+      <device name="KM33Z64M5"         alias="MKM33Z64M5"        hidden="true"/>
+      <device name="KM33Z128M5"        alias="MKM33Z128M5"       hidden="true"/>
+      <device name="KM34Z128M5"        alias="MKM34Z128M5"       hidden="true"/>
       <!-- device name="KM38Z128M5"        alias="MKM38Z128M5"       hidden="true"/-->
 <!-- End of Codewarrior IDE aliases -->
 
@@ -2980,11 +2830,11 @@ ToDo - review flash block sizes for MK20-MK70
       <device name="PK40N512"          alias="MK40DN512ZM10"/>
       <device name="PK40X128"          alias="MK40DX128ZM10"/>
       <device name="PK40X256"          alias="MK40DX256ZM10">
-         <sdid value="0x00000120" />
+         <sdid value="0x00000120" mask="0xFFFF0FF0"/>
       </device>
       <device name="PK60N256"          alias="MK60DN256ZM10"/>
       <device name="PK60N512"          alias="MK60DN512ZM10">
-         <sdid value="0x00000140" />
+         <sdid value="0x00000140"  mask="0xFFFF0FF0"/>
       </device>
       <device name="PK60X256"          alias="MK60DX256ZM10"     hidden="true"/>
 <!-- End of Pre-qualification aliases -->

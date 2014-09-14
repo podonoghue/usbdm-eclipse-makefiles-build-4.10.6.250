@@ -57,7 +57,7 @@ Change History
 #include "Conversion.h"
 #include "TargetDefines.h"
 
-const TargetType_t targetType = T_HC12;
+const TargetType_t targetType = T_HCS12;
 
 const DiFeaturesT diFeatures = {
   /* .szIdentification                 = */ (DiStringT)"USBDM HCS12",
@@ -431,7 +431,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
    static DiExitCauseT lastStatus = DI_WAIT_USER;
 
    // Defaults
-   pdesExitStatus->dscCause = DI_WAIT_UNKNOWN;
+   pdesExitStatus->dscCause = DI_WAIT_RUNNING; //DI_WAIT_UNKNOWN;
    pdesExitStatus->dwBpId   = 0x1000400; // bkpt ID?
    pdesExitStatus->szReason = (DiStringT)"unknown state";
 

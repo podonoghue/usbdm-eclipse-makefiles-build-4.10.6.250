@@ -1,14 +1,31 @@
 /*
  ============================================================================
- Name        : main.cpp
- Author      : $(author)
- Version     :
- Copyright   : $(copyright)
- Description : Basic CPP Main
+ * main.c
+ *
+ *  Created on: 04/12/2012
+ *      Author: podonoghue
  ============================================================================
  */
 #include "derivative.h"
 #include "utilities.h"
+#include "leds.h"
+
+// Dummy routines in case LED code not provided
+__attribute__((__weak__))
+void led_initialise(void) {
+}
+
+__attribute__((__weak__))
+void greenLedToggle(void) {
+}
+
+// Simple delay - not for real programs!
+void delay(void) {
+   volatile unsigned long i;
+   for (i=400000; i>0; i--) {
+      __asm__("nop");
+   }
+}
 
 /* Example use of interrupt handler
  *
@@ -18,17 +35,21 @@
  */
 void SysTick_Handler(void) {
    __asm__("nop");
-   __asm__("nop");
 }
-
 
 int main(void) {
 
-   // Configure the system timer to generate interrupt every 1000 ticks
+   volatile int count = 0;
+
    SysTick_Config(1000);
+
+   led_initialise();
 
    // Real programs never die!
    for(;;) {
-      __asm__("nop");
+      count++;
+      greenLedToggle();
+      delay();
    }
+   return 0;
 }

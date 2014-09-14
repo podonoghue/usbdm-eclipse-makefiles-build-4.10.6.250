@@ -2,6 +2,8 @@
 Devices using this peripheral: 
       MK11D5
       MK12D5
+      MK21D5
+      MK22D5
 -->
       <peripheral>
          <?sourceFile "MCM_4" ?>
@@ -60,7 +62,6 @@ Devices using this peripheral:
                <addressOffset>0xA</addressOffset>
                <size>16</size>
                <access>read-only</access>
-               <resetValue>0x13</resetValue>
                <resetMask>0xFFFF</resetMask>
                <fields>
                   <field>

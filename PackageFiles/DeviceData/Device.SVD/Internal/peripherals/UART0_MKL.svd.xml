@@ -204,12 +204,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Normal - start + 8 data bits (MSB/LSB first as determined by MSBF) + stop</description>
+                           <description>Normal - start + 8 data bits + stop</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Use - start + 9 data bits (MSB/LSB first as determined by MSBF) + stop</description>
+                           <description>Receiver and transmitter use 9-bit data characters start + 8 data bits + 9th data bit + stop</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -227,7 +227,7 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Single-wire UART mode where the receiver input is connected to the transmit pin input signal</description>
+                           <description>Single-wire UART mode where the TxD pin is connected to the transmitter output and receiver input</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -240,12 +240,12 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>is enabled in Wait mode</description>
+                           <description>Enabled in Wait mode</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>is disabled in Wait mode</description>
+                           <description>Disabled in Wait mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -429,15 +429,15 @@ This field can be set to place the UART receiver in a standby state</description
                <description>Status Register 1</description>
                <addressOffset>0x4</addressOffset>
                <size>8</size>
-               <access>read-only</access>
                <resetValue>0xC0</resetValue>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>PF</name>
                      <description>Parity Error Flag\n
-PF is set at the same time as RDRF when parity is enabled (PE = 1) and the parity bit in the received
-character does not agree with the expected parity value</description>
+PF is set at the same time as RDRF when parity is enabled (PE = 1) and the parity bit in the received 
+character does not agree with the expected parity value\n
+Write 1 to PF to clear</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -455,7 +455,10 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>FE</name>
-                     <description>Framing Error Flag</description>
+                     <description>Framing Error Flag\n
+FE is set at the same time as RDRF when the receiver detects a logic 0 where a stop bit was expected.\n
+This suggests the receiver was not properly aligned to a character frame.\n
+Write 1 to FE to clear</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -473,7 +476,11 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>NF</name>
-                     <description>Noise Flag</description>
+                     <description>Noise Flag\n
+The advanced sampling technique used in the receiver takes three samples in each of the received bits.\n
+If any of these samples disagrees with the rest of the samples within any bit time in the frame, the flag NF is 
+set at the same time as RDRF is set for the character.\n
+To clear NF, write logic one to the NF</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -491,7 +498,12 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>OR</name>
-                     <description>Receiver Overrun Flag</description>
+                     <description>Receiver Overrun Flag\n
+OR is set when a new serial character is ready to be transferred to the receive data buffer, but the 
+previously received character has not been read from UART _D yet.\n
+In this case, the new character, and all associated error information, is lost because there is no 
+room to move it into UART _D. \n
+To clear OR, write a logic 1 to OR</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -509,7 +521,10 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>IDLE</name>
-                     <description>Idle Line Flag</description>
+                     <description>Idle Line Flag\n
+IDLE is set when the UART receive line becomes idle for a full character time after a period of activity.\n
+To clear IDLE, write logic 1 to the IDLE flag.\n
+After IDLE has been cleared, it cannot become set again until after a new character has been received and RDRF has been set</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -527,7 +542,8 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>RDRF</name>
-                     <description>Receive Data Register Full Flag</description>
+                     <description>Receive Data Register Full Flag\n
+RDRF becomes set whenever the receive data buffer is full. To clear RDRF, read the UART data register</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -545,7 +561,12 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>TC</name>
-                     <description>Transmission Complete Flag</description>
+                     <description>Transmission Complete Flag\n
+TC is set out of reset and when TDRE is set and no data, preamble, or break character is being transmitted.\n
+TC is cleared automatically by one of the following:\n
+- Write to the UART data register ( UART _D) to transmit new data\n
+- Queue a preamble by changing TE from 0 to 1\n
+- Queue a break character by writing 1 to UART _C2[SBK]</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -563,7 +584,9 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>TDRE</name>
-                     <description>Transmit Data Register Empty Flag</description>
+                     <description>Transmit Data Register Empty Flag\n
+TDRE is set out of reset and whenever there is room to write data to the transmit data buffer.\n
+To clear TDRE, write to the UART data register</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -590,7 +613,9 @@ character does not agree with the expected parity value</description>
                <fields>
                   <field>
                      <name>RAF</name>
-                     <description>Receiver Active Flag</description>
+                     <description>Receiver Active Flag\n
+RAF is set when the UART receiver detects the beginning of a valid start bit, and RAF is cleared
+automatically when the receiver detects an idle line</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -609,7 +634,9 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>LBKDE</name>
-                     <description>LIN Break Detection Enable</description>
+                     <description>LIN Break Detection Enable\n
+LBKDE selects a longer break character detection length. While LBKDE is set, framing error (FE) and
+receive data register full (RDRF) flags are prevented from setting</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -627,7 +654,9 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>BRK13</name>
-                     <description>Break Character Generation Length</description>
+                     <description>Break Character Generation Length\n
+BRK13 selects a longer transmitted break character length. Detection of a framing error is not affected by
+the state of this bit. This bit should only be changed when the transmitter is disabled</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -645,7 +674,9 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>RWUID</name>
-                     <description>Receive Wake Up Idle Detect</description>
+                     <description>Receive Wake Up Idle Detect\n
+RWUID controls whether the idle character that wakes up the receiver sets the IDLE bit. This bit should
+only be changed when the receiver is disabled</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -663,7 +694,8 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>RXINV</name>
-                     <description>Receive Data Inversion</description>
+                     <description>Receive Data Inversion\n
+Setting this bit reverses the polarity of the received data input</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -681,7 +713,8 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>MSBF</name>
-                     <description>Most Significant Bit First</description>
+                     <description>Most Significant Bit First\n
+Setting this bit reverses the order of the bits that are transmitted and received on the wire</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -699,7 +732,9 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>RXEDGIF</name>
-                     <description>RxD Pin Active Edge Interrupt Flag</description>
+                     <description>RxD Pin Active Edge Interrupt Flag\n
+RXEDGIF is set when an active edge, falling if RXINV = 0, rising if RXINV=1, on the UART _RX pin occurs.\n
+RXEDGIF is cleared by writing a 1 to it</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -717,7 +752,9 @@ character does not agree with the expected parity value</description>
                   </field>
                   <field>
                      <name>LBKDIF</name>
-                     <description>LIN Break Detect Interrupt Flag</description>
+                     <description>LIN Break Detect Interrupt Flag\n
+LBKDIF is set when the LIN break detect circuitry is enabled and a LIN break character is detected.\n
+LBKDIF is cleared by writing a 1 to it</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

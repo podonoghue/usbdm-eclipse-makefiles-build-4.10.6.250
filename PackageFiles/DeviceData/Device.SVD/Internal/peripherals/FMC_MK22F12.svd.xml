@@ -1,6 +1,8 @@
 <!--
 Devices using this peripheral: 
+      MK21F12
       MK22F12
+      MK22F51212
 -->
       <peripheral>
          <?sourceFile "FMC_MK22F12" ?>

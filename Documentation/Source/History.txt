@@ -3,9 +3,44 @@
 
 \section sectionHistory Revision History
 
-V4.1.6.150 (April 2014)
+V4.1.6.200 (??? 2014)
 ======================================================================================= 
-   - Initial support for Keil with ARM targets
+   - Initial support for Keil with ARM targets (Partially done)
+
+V4.10.6.180 (August 2014)
+======================================================================================= 
+   - Updated installer for KDS release
+   - Added MK22FN128M12, MK22FN512M12 (new prog algorithm)
+   - Corrected SDIDs for several devices
+   - Added OpenSDAV2.1 Flash driver
+   - Fixes for Processor Expert in Eclipse & KDS (linker options, default build options)
+   - Fixes for Linux builds 
+   - Fixes for 9S08P8 etc devices (SDIDs)
+   - CMSIS link now uses variable
+	
+V4.10.6.170 (July 2014)
+======================================================================================= 
+   - Added External SVD files
+   - Updated internal SVD files (additional devices, vector tables now complete)
+   - Updated header files for Kinetis
+   - Peripheral Register view now displays additional information
+   - Added Target Reset function
+   - Updated Eclipse examples
+   - Updated Eclipse new project wizard (more options for clock etc)
+   - Added support for s12z devices (S12Z programmer & Codewarrior 10.x)
+
+V4.10.6.160 (May 2014)
+======================================================================================= 
+   - Added option to select external SVD files for peripheral browser in Eclipse (KDS mostly)
+   - Drivers have been moved to a different directory on Sourceforge (getting lost amongst other files)
+
+V4.10.6.150 (April 2014)
+======================================================================================= 
+   - Added Freescale Kinetis Design Studio to Installer options
+   - Updated Eclipse debuggers to use DSF interface (existing projects continue to use MI)
+   - Peripheral Register now supports DSF
+   - Corrected some errors in device header files etc.
+   - Added support for new Kinetis devices MK64FN MK22FN
 
 V4.1.6.140 (April 2014)
 ======================================================================================= 

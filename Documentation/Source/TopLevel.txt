@@ -329,6 +329,7 @@ The table below shows the support provided by each version and provides links to
    - @htmlonly <a href="http://www.technologicalarts.ca">Technological Arts</a> @endhtmlonly \n
    - @htmlonly <a href="http://www.witztronics.com">Witztronics</a> @endhtmlonly \n
    - @htmlonly <a href="http://www.evbplus.com/">Wytec's Motorola/Freescale software development tools</a> @endhtmlonly \n
+   - @htmlonly <a href="http://www.usbdm.com.br/">Gravador para Microcontroladores Freescale (Gravador USBDM)</a> @endhtmlonly \n
    
 The software may be used to "upgrade" the Axiom MC56F8006 Demo board to enable the on-board BDM. 
    - @htmlonly <a href="http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=MC56F8006DEMO">Axiom MC56F8006 Demo board</a> @endhtmlonly. \n

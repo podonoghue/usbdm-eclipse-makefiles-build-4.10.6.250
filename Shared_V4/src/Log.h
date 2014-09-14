@@ -29,6 +29,7 @@ public:
    static void setLoggingLevel(int level) {}
    static int  getLoggingLevel() { return 0; }
    static void error(const char *format, ...) {}
+   static void warning(const char *format, ...) {}
    static void print(const char *format, ...) {}
    static void printq(const char *format, ...) {}
    static void printDump(unsigned const char *data,
@@ -70,6 +71,7 @@ public:
    static double getCurrentTime();
    static double getTimeStamp();
    static void error(const char *format, ...);
+   static void warning(const char *format, ...);
    static void print(const char *format, ...);
    static void printq(const char *format, ...);
    static void printDump(unsigned const char *data,

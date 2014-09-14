@@ -33,7 +33,8 @@ Devices using this peripheral:
          <registers>
             <register>
                <name>PLASC</name>
-               <description>Crossbar Switch (AXBS) Slave Configuration</description>
+               <description>Crossbar Switch (AXBS) Slave Configuration\n
+PLASC is a 16-bit read-only register identifying the presence/absence of bus slave connections to the device&apos;s crossbar switch</description>
                <addressOffset>0x8</addressOffset>
                <size>16</size>
                <access>read-only</access>
@@ -62,7 +63,8 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PLAMC</name>
-               <description>Crossbar Switch (AXBS) Master Configuration</description>
+               <description>Crossbar Switch (AXBS) Master Configuration\n
+PLAMC is a 16-bit read-only register identifying the presence/absence of bus master connections to the device&apos;s crossbar switch</description>
                <addressOffset>0xA</addressOffset>
                <size>16</size>
                <access>read-only</access>
@@ -226,7 +228,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>FIOC</name>
-                     <description>FPU invalid operation interrupt status</description>
+                     <description>FPU invalid operation interrupt status\n
+This read-only bit is a copy of the core&apos;s FPSCR[IOC] bit and signals an illegal operation has been
+detected in the processor&apos;s FPU. Once set, this bit remains set until software clears the FPSCR[IOC] bit</description>
                      <bitOffset>8</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -245,7 +249,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>FDZC</name>
-                     <description>FPU divide-by-zero interrupt status</description>
+                     <description>FPU divide-by-zero interrupt status\n
+This read-only bit is a copy of the core&apos;s FPSCR[DZC] bit and signals a divide by zero has been detected
+in the processor&apos;s FPU. Once set, this bit remains set until software clears the FPSCR[DZC] bit</description>
                      <bitOffset>9</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -264,7 +270,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>FOFC</name>
-                     <description>FPU overflow interrupt status</description>
+                     <description>FPU overflow interrupt status\n
+This read-only bit is a copy of the core&apos;s FPSCR[OFC] bit and signals an overflow has been detected in
+the processor&apos;s FPU. Once set, this bit remains set until software clears the FPSCR[OFC] bit</description>
                      <bitOffset>10</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -283,7 +291,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>FUFC</name>
-                     <description>FPU underflow interrupt status</description>
+                     <description>FPU underflow interrupt status\n
+This read-only bit is a copy of the core&apos;s FPSCR[UFC] bit and signals an underflow has been detected in
+the processor&apos;s FPU. Once set, this bit remains set until software clears the FPSCR[UFC] bit</description>
                      <bitOffset>11</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -302,7 +312,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>FIXC</name>
-                     <description>FPU inexact interrupt status</description>
+                     <description>FPU inexact interrupt status\n
+This read-only bit is a copy of the core&apos;s FPSCR[IXC] bit and signals an inexact number has been
+detected in the processor&apos;s FPU. Once set, this bit remains set until software clears the FPSCR[IXC] bit</description>
                      <bitOffset>12</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -321,7 +333,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>FIDC</name>
-                     <description>FPU input denormal interrupt status</description>
+                     <description>FPU input denormal interrupt status\n
+This read-only bit is a copy of the core&apos;s FPSCR[IDC] bit and signals input denormalized number has been
+detected in the processor&apos;s FPU. Once set, this bit remains set until software clears the FPSCR[IDC] bit</description>
                      <bitOffset>15</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>

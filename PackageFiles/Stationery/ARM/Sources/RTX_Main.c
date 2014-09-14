@@ -12,6 +12,7 @@
 #include "derivative.h"
 #include "utilities.h"
 #include "cmsis_os.h"
+#include "leds.h"
 
 // Forward references
 void threadFunction(void const *argument);    // prototype for thread function
@@ -38,7 +39,7 @@ void threadFunction(void const *argument) {
    // Signal to main thread
    osSignalSet(mainFunctionId, SIGNAL_MASK);
 
-   // Pause for 2 s
+   // Pause for 1 s
    osDelay(1000);
    }
 }
@@ -58,14 +59,17 @@ int main(void) {
       __asm("bkpt");
    }
 
-   printf("Main thread ID = %d\n", (int)mainFunctionId);
-   printf("Thread ID      = %d\n", (int)threadFunctionId);
+//   printf("Main thread ID = %d\n", (int)mainFunctionId);
+//   printf("Thread ID      = %d\n", (int)threadFunctionId);
+
+   led_initialise();
 
    for (;;) {
       // Wait for signal from thread
       osSignalWait(SIGNAL_MASK, osWaitForever);
 
-      printf("Thread signaled\n");
+//      printf("Thread signaled\n");
+      greenLedToggle();
    }
 
 }

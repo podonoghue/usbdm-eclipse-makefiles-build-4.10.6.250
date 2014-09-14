@@ -10,6 +10,7 @@ Devices using this peripheral:
       MK21F12
       MK22D5
       MK22F12
+      MK22F51212
       MK24F12
       MK63F12
       MK64F12
@@ -48,7 +49,7 @@ Devices using this peripheral:
                <dimIncrement>4</dimIncrement>
                <dimIndex>A,B</dimIndex>
                <name>SC1%s</name>
-               <description>Status and Control Registers 1</description>
+               <description>Status and Control Register</description>
                <addressOffset>0x0</addressOffset>
                <resetValue>0x1F</resetValue>
                <fields>
@@ -312,8 +313,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>MODE</name>
-                     <description>Conversion mode selection
-DIFF mode not supported on all devices</description>
+                     <description>Conversion mode selection\n
+DIFF mode is not supported on all devices</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -811,7 +812,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLPD</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x34</addressOffset>
                <resetValue>0xA</resetValue>
                <fields>
@@ -825,7 +826,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLPS</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x38</addressOffset>
                <resetValue>0x20</resetValue>
                <fields>
@@ -839,7 +840,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLP4</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x3C</addressOffset>
                <resetValue>0x200</resetValue>
                <fields>
@@ -853,7 +854,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLP3</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x40</addressOffset>
                <resetValue>0x100</resetValue>
                <fields>
@@ -867,7 +868,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLP2</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x44</addressOffset>
                <resetValue>0x80</resetValue>
                <fields>
@@ -881,7 +882,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLP1</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x48</addressOffset>
                <resetValue>0x40</resetValue>
                <fields>
@@ -895,7 +896,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLP0</name>
-               <description>Plus-Side General Calibration Value Register</description>
+               <description>Plus-Side General Calibration Value</description>
                <addressOffset>0x4C</addressOffset>
                <resetValue>0x20</resetValue>
                <fields>
@@ -909,7 +910,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLMD</name>
-               <description>Minus-Side General Calibration Value Register</description>
+               <description>Minus-Side General Calibration Value</description>
                <addressOffset>0x54</addressOffset>
                <resetValue>0xA</resetValue>
                <fields>
@@ -923,7 +924,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLMS</name>
-               <description>Minus-Side General Calibration Value Register</description>
+               <description>Minus-Side General Calibration Value</description>
                <addressOffset>0x58</addressOffset>
                <resetValue>0x20</resetValue>
                <fields>
@@ -937,7 +938,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLM4</name>
-               <description>Minus-Side General Calibration Value Register</description>
+               <description>Minus-Side General Calibration Value</description>
                <addressOffset>0x5C</addressOffset>
                <resetValue>0x200</resetValue>
                <fields>
@@ -951,7 +952,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLM3</name>
-               <description>Minus-Side General Calibration Value Register</description>
+               <description>Minus-Side General Calibration Value</description>
                <addressOffset>0x60</addressOffset>
                <resetValue>0x100</resetValue>
                <fields>
@@ -965,7 +966,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLM2</name>
-               <description>Minus-Side General Calibration Value Register</description>
+               <description>Minus-Side General Calibration Value</description>
                <addressOffset>0x64</addressOffset>
                <resetValue>0x80</resetValue>
                <fields>
@@ -979,7 +980,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLM1</name>
-               <description>Minus-Side General Calibration Value Register</description>
+               <description>Minus-Side General Calibration Value</description>
                <addressOffset>0x68</addressOffset>
                <resetValue>0x40</resetValue>
                <fields>
@@ -993,7 +994,7 @@ DIFF mode not supported on all devices</description>
             </register>
             <register>
                <name>CLM0</name>
-               <description>Minus-Side General Calibration Value Register</description>
+               <description>Minus-Side General Calibration Value</description>
                <addressOffset>0x6C</addressOffset>
                <resetValue>0x20</resetValue>
                <fields>

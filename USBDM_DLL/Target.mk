@@ -3,6 +3,7 @@
 #CDEFS     = -DLOG
 #MODULE    = module
 #TARGET    = BUILDDIR
+#LFLAGS    = 
 
 # default to 'module'
 MODULE ?= module
@@ -21,6 +22,8 @@ CC = $(GPP)
 # Extra Compiler flags
 CFLAGS +=
 
+LDFLAGS += $(LFLAGS)
+
 # Extra C Definitions
 DEFS += $(CDEFS)  # From command line
 DEFS += 
@@ -34,7 +37,6 @@ LIBDIRS +=
 
 # Extra libraries
 LIBS += -l$(LIB_USB)
-LIBS += 
 
 # Each module will add to this
 SRC :=

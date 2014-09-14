@@ -3,11 +3,11 @@ include ../Common.mk
 TARGET = CreateCTestImage
 
 $(TARGET):
-	$(MAKE) exe -f Target.mk BUILDDIR=$@ CDEFS="-DUSE_ICON"
+	$(MAKE) exe -f Target.mk TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) CDEFS="-DUSE_ICON"
 
 all: $(TARGET)
 
 clean:
-	${RMDIR} $(TARGET)
+	${RMDIR} $(TARGET)$(BUILDDIR_SUFFIX)
 	
 .PHONY: $(TARGET) all clean

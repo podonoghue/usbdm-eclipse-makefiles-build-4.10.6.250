@@ -1,0 +1,10 @@
+<!--
+Devices using this peripheral: 
+      MKM33Z5
+-->
+      <peripheral derivedFrom="PORTA">
+         <name>PORTB</name>
+         <description>Pin Control and Interrupts</description>
+         <prependToName>PORTB</prependToName>
+         <baseAddress>0x40047000</baseAddress>
+      </peripheral>

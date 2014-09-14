@@ -25,14 +25,14 @@
                   note*)>
      <!ATTLIST device name ID #REQUIRED>
      <!ATTLIST device alias IDREF #IMPLIED>
-     <!ATTLIST device family (RS08|HCS08|HCS08Plus|HCS12|CFV1|CFV1Plus|CFV2|CFV3|CFV4|ARM|DSC|CortexM0|CortexM3|CortexM3F|CortexM4|CortexM4F) #IMPLIED>
+     <!ATTLIST device family (RS08|HCS08|HCS08Plus|HCS12|S12Z|CFV1|CFV1Plus|CFV2|CFV3|CFV4|ARM|DSC|CortexM0|CortexM3|CortexM3F|CortexM4|CortexM4F) #IMPLIED>
      <!ATTLIST device isDefault (true) #IMPLIED>
      <!ATTLIST device speed CDATA #IMPLIED>
      <!ATTLIST device subfamily CDATA #IMPLIED>
      <!ATTLIST device hidden (true) #IMPLIED>
 
   <!-- List of actions to be applied to a project -->
-<!ELEMENT projectActionList (projectActionListRef|projectActionList|copy|variable|condition|projectOption)*>
+<!ELEMENT projectActionList (projectActionListRef|projectActionList|variable|condition|excludeSourceFile|excludeSourceFolder|createFolder|copy|projectOption|customAction)*>
      <!ATTLIST projectActionList id    ID     #IMPLIED>
      <!ATTLIST projectActionList root  CDATA  #IMPLIED>
      
@@ -54,8 +54,12 @@
      <!ATTLIST variable type         CDATA #IMPLIED>
      <!ATTLIST variable values       CDATA #IMPLIED>
      
+ <!-- Custom build action -->
+<!ELEMENT customAction (value)* >
+     <!ATTLIST customAction class         CDATA #REQUIRED>
+     
  <!-- Condition controlling actions -->
-<!ELEMENT condition (createFolder|copy|projectOption)*>
+<!ELEMENT condition (excludeSourceFile|excludeSourceFolder|createFolder|copy|projectOption|customAction)*>
      <!ATTLIST condition variable    IDREF #REQUIRED>
      <!ATTLIST condition negated    (true) #IMPLIED>
      
@@ -73,6 +77,17 @@
   <!-- Eclipse project options (for gcc, gdb etc) -->
 <!ELEMENT projectOption (value*)>
      <!ATTLIST projectOption id        CDATA #REQUIRED>
+     <!ATTLIST projectOption replace   (true|false) #IMPLIED>
+
+  <!-- Exclude/include source folder in Eclipse project -->
+<!ELEMENT excludeSourceFolder EMPTY >
+     <!ATTLIST excludeSourceFolder target  CDATA #REQUIRED>
+     <!ATTLIST excludeSourceFolder excluded (true|false) #IMPLIED>
+
+  <!-- Exclude/include source file in Eclipse project -->
+<!ELEMENT excludeSourceFile EMPTY >
+     <!ATTLIST excludeSourceFile target  CDATA #REQUIRED>
+     <!ATTLIST excludeSourceFile excluded (true|false) #IMPLIED>
 
   <!-- Attribute value for projectOption --> 
 <!ELEMENT value (#PCDATA)>  
@@ -125,6 +140,7 @@
   <!-- Device SDID used to identify device -->
 <!ELEMENT sdid EMPTY>
      <!ATTLIST sdid value CDATA #REQUIRED>
+     <!ATTLIST sdid mask  CDATA #IMPLIED>
   <!--NVOPT memory address-->
 <!ELEMENT nvoptAddress EMPTY>
      <!ATTLIST nvoptAddress value CDATA #REQUIRED>

@@ -7,11 +7,11 @@
  *      Author: podonoghue
  */
 #include "derivative.h" /* include peripheral declarations */
-#include "clock.h"
-#include "clock_private.h"
+#include "system.h"
+#include "clock_configure.h"
 #include "utilities.h"
 
-// Some MCU call OSC_CR0 just OSC_CR
+// Some MCUs call OSC_CR0 just OSC_CR
 #ifndef OSC0_CR
 #define OSC0_CR OSC_CR
 #endif
@@ -19,12 +19,12 @@
 uint32_t SystemCoreClock = SYSTEM_CORE_CLOCK;   // Hz
 uint32_t SystemBusClock  = SYSTEM_BUS_CLOCK; // Hz
 
-/*! Sets up the clock out of RESET
- *!
+/*! @brief Sets up the clock out of RESET
+ *
  */
 void clock_initialise(void) {
 
-#if (CLOCK_MODE == CLOCK_MODE_RESET)
+#if (CLOCK_MODE == CLOCK_MODE_NONE)
    // No clock setup
 #else
    // XTAL/EXTAL Pins
@@ -79,11 +79,10 @@ void clock_initialise(void) {
    SystemCoreClockUpdate();
 }
 
-/**
- * Update SystemCoreClock variable
+/*!
+ * @brief Update SystemCoreClock variable
  *
- * @brief  Updates the SystemCoreClock with current core Clock
- *         retrieved from CPU registers.
+ * Updates the SystemCoreClock variable with current core Clock retrieved from CPU registers.
  */
 void SystemCoreClockUpdate(void) {
    switch (ICS_C1&ICS_C1_CLKS_MASK) {

@@ -110,15 +110,15 @@ USBDM_ErrorCode (*gdbCallBackPtr)(const char *msg, GdbMessageLevel level, USBDM_
  *   @note assumes BDM_RC_OK error code (i.e. no error)
  */
 USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, USBDM_ErrorCode rc, const char *format, ...) {
-  char buff[200];
-  va_list list;
-  va_start(list, format);
-  vsnprintf(buff, sizeof(buff), format, list);
+   if (gdbCallBackPtr != NULL) {
+      char buff[200];
+      va_list list;
+      va_start(list, format);
+      vsnprintf(buff, sizeof(buff), format, list);
 
-  if (gdbCallBackPtr != NULL) {
-     return (*gdbCallBackPtr)(buff, level, rc);
-  }
-  return BDM_RC_OK;
+      return (*gdbCallBackPtr)(buff, level, rc);
+   }
+   return BDM_RC_OK;
 }
 
 /*!  Writes status message in 'printf' manner
@@ -132,14 +132,14 @@ USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, USBDM_ErrorCode rc, const
  *   @note assumes BDM_RC_OK error code (i.e. no error)
  */
 USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, const char *format, ...) {
-  char buff[200];
-  va_list list;
-  va_start(list, format);
-  vsnprintf(buff, sizeof(buff), format, list);
-  if (gdbCallBackPtr != NULL) {
-     return (*gdbCallBackPtr)(buff, level, BDM_RC_OK);
-  }
-  return BDM_RC_OK;
+   if (gdbCallBackPtr != NULL) {
+      char buff[200];
+      va_list list;
+      va_start(list, format);
+      vsnprintf(buff, sizeof(buff), format, list);
+      return (*gdbCallBackPtr)(buff, level, BDM_RC_OK);
+   }
+   return BDM_RC_OK;
 }
 
 /*!  Writes status message in 'printf' manner
@@ -153,12 +153,12 @@ USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, const char *format, ...) 
  *   @note assumed M_BORINGINFO interest level
  */
 USBDM_ErrorCode reportGdbPrintf(const char *format, ...) {
-   char buff[200];
-   va_list list;
-   va_start(list, format);
-   vsnprintf(buff, sizeof(buff), format, list);
-
    if (gdbCallBackPtr != NULL) {
+      char buff[200];
+      va_list list;
+      va_start(list, format);
+      vsnprintf(buff, sizeof(buff), format, list);
+
       return (*gdbCallBackPtr)(buff, M_BORINGINFO, BDM_RC_OK);
    }
    return BDM_RC_OK;
@@ -657,8 +657,13 @@ static USBDM_ErrorCode readRegs(void) {
 //!
 static void sendRegs(void) {
    reportGdbPrintf("Reading Registers\n");
+   USBDM_ErrorCode rc = BDM_RC_OK;
    if (registerBufferSize == 0) {
-      readRegs();
+      rc = readRegs();
+   }
+   if ((rc != BDM_RC_OK) || (registerBufferSize == 0)) {
+      gdbInOut->sendErrorMessage(GdbInOut::E_Fatal, "Register read failed");
+      return;
    }
    gdbInOut->sendGdbHex(registerBuffer, registerBufferSize);
    registerBufferSize = 0;
@@ -1134,6 +1139,14 @@ static USBDM_ErrorCode doMonitorCommand(const char *cmd) {
       gdbInOut->sendGdbString("OK");
       registerBufferSize = 0;
    }
+   else if (strneq(command, "run", sizeof("halt")-1)) {
+      // ignore any parameters
+      reportGdbPrintf(M_INFO, "User run of target\n");
+      USBDM_TargetGo();
+      gdbInOut->sendGdbHexString("O", "User run of target\n", -1);
+      gdbInOut->sendGdbString("OK");
+      registerBufferSize = 0;
+   }
    else if (strneq(command, "halt", sizeof("halt")-1)) {
       // ignore any parameters
       reportGdbPrintf(M_INFO, "User halt of target\n");
@@ -1143,9 +1156,18 @@ static USBDM_ErrorCode doMonitorCommand(const char *cmd) {
       registerBufferSize = 0;
    }
    else if (strneq(command, "speed", sizeof("speed")-1)) {
-      // ignore any parameters
-      reportGdbPrintf(M_INFO, "Setting speed\n");
+      int speedValue = 1000 * atoi(command+sizeof("speed"));
+      USBDM_SetSpeed(speedValue);
+      reportGdbPrintf(M_INFO, "Setting speed %d\n", speedValue);
       USBDM_SetSpeed(12000 /* kHz */);
+      gdbInOut->sendGdbHexString("O", "Done", -1);
+      gdbInOut->sendGdbString("OK");
+   }
+   else if (strneq(command, "delay", sizeof("delay")-1)) {
+      // Ignored
+      int delayValue = atoi(command+sizeof("delay"));
+      reportGdbPrintf(M_INFO, "Executing delay %d ms\n", delayValue);
+      milliSleep(delayValue);
       gdbInOut->sendGdbHexString("O", "Done", -1);
       gdbInOut->sendGdbString("OK");
    }
@@ -1438,7 +1460,7 @@ static USBDM_ErrorCode doVCommands(const GdbPacket *pkt) {
          if (rc != PROGRAMMING_RC_OK) {
             Logging::print("vFlashDone: Programming failed, rc=%s\n", USBDM_GetErrorString(rc));
             reportGdbPrintf(M_FATAL, rc,"Programming Flash Image failed: ");
-            gdbInOut->sendErrorMessage(1, "Flash programming failed");
+            gdbInOut->sendErrorMessage(GdbInOut::E_Fatal, "Flash programming failed");
             return rc;
          }
          else {
@@ -1818,8 +1840,11 @@ GdbTargetStatus gdbPollTarget(void) {
 }
 
 USBDM_ErrorCode dummyCallback(const char *msg, GdbMessageLevel level, USBDM_ErrorCode rc) {
-
    return BDM_RC_FAIL;
+}
+
+void errorLogger(const char *msg) {
+   reportGdbPrintf(M_ERROR, "%s\n", msg);
 }
 
 //! Handle GDB communication
@@ -1835,6 +1860,8 @@ USBDM_ErrorCode gdbHandlerInit(GdbInOut *gdbInOut, DeviceData &deviceData, GdbCa
       callBack = dummyCallback;
    }
    ::gdbCallBackPtr      = callBack;
+
+   gdbInOut->setLoggers(errorLogger, 0, 0);
 
    initRegisterDescription();
 

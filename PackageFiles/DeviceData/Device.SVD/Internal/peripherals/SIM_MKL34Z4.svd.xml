@@ -72,7 +72,7 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>System oscillator (OSC32KCLK)</description>
+                           <description>System Oscillator (using 32kHz xtal)(OSC32KCLK)</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -87,7 +87,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>LPO 1kHz</description>
+                           <description>Internal 1kHz Low power oscillator (LPO)</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>

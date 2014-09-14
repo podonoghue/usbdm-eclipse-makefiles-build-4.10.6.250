@@ -26,6 +26,7 @@
 +================================================================================
 | Revision History
 +================================================================================
+| 17 Aug 14 | Changed SDID structure to support multiple masks              - pgo V4.10.6.180
 | 28 Dec 12 | 4.10.4 Changed handling of security area (& erasing)          - pgo
 | 28 Dec 12 | 4.10.4 Changed TCL interface error handling                   - pgo
 | 16 Dec 12 | 4.10.4 Moved Check of SDID to before Mass erase (HCS08)       - pgo
@@ -135,7 +136,7 @@
 #define TargetGo()        USBDM_TargetGo()
 #define TargetHalt()      USBDM_TargetHalt()
 #define TARGET_TYPE T_CFV1
-#elif TARGET == HCS12
+#elif (TARGET == HCS12)
 #define WriteMemory(elementSize, byteCount, address, data) USBDM_WriteMemory((elementSize), (byteCount), (address), (data))
 #define ReadMemory(elementSize, byteCount, address, data)  USBDM_ReadMemory((elementSize), (byteCount), (address), (data))
 #define WritePC(regValue) USBDM_WriteReg(HCS12_RegPC, (regValue))
@@ -143,6 +144,14 @@
 #define TargetGo()        USBDM_TargetGo()
 #define TargetHalt()      USBDM_TargetHalt()
 #define TARGET_TYPE T_HCS12
+#elif (TARGET == S12Z)
+#define WriteMemory(elementSize, byteCount, address, data) USBDM_WriteMemory((elementSize), (byteCount), (address), (data))
+#define ReadMemory(elementSize, byteCount, address, data)  USBDM_ReadMemory((elementSize), (byteCount), (address), (data))
+#define WritePC(regValue) USBDM_WriteReg(S12Z_RegPC, (regValue))
+#define ReadPC(regValue)  USBDM_ReadReg(S12Z_RegPC,  (regValue))
+#define TargetGo()        USBDM_TargetGo()
+#define TargetHalt()      USBDM_TargetHalt()
+#define TARGET_TYPE T_S12Z
 #elif TARGET == HCS08
 #define WriteMemory(elementSize, byteCount, address, data) USBDM_WriteMemory((elementSize), (byteCount), (address), (data))
 #define ReadMemory(elementSize, byteCount, address, data)  USBDM_ReadMemory((elementSize), (byteCount), (address), (data))
@@ -182,7 +191,7 @@ inline uint32_t getData16Be(uint8_t *data) {
    return (data[0]<<8)+data[1];
 }
 inline uint32_t getData16Le(uint8_t *data) {
-   return data[0]+(data[1]<<8);
+   return (data[1]<<8)+data[0];
 }
 inline uint32_t getData32Be(uint16_t *data) {
    return (data[0]<<16)+data[1];
@@ -384,12 +393,12 @@ USBDM_ErrorCode FlashProgrammer::readTargetChipId(uint32_t *targetSDID, bool doI
    const int SDIDLength = 2;
    uint8_t SDIDValue[SDIDLength];
 
+   *targetSDID = 0x0000;
+
    if (parameters.getTargetName().empty()) {
       Logging::error("Target name not set\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-   *targetSDID = 0x0000;
-
    if (doInit) {
       USBDM_ErrorCode rc = resetAndConnectTarget();
       if (rc != PROGRAMMING_RC_OK) {
@@ -401,14 +410,21 @@ USBDM_ErrorCode FlashProgrammer::readTargetChipId(uint32_t *targetSDID, bool doI
       Logging::error("A=0x%06X - Failed ReadMemory()\n", parameters.getSDIDAddress());
       return PROGRAMMING_RC_ERROR_BDM_READ;
    }
-   *targetSDID = getData16Target(SDIDValue);
-
+   uint32_t testValue;
+   if (SDIDLength == 4) {
+      *targetSDID = getData32Target(SDIDValue);
+      testValue = *targetSDID;
+   }
+   else {
+      *targetSDID = getData16Target(SDIDValue);
+      testValue   = (uint32_t)(int32_t)(int16_t)*targetSDID;
+   }
    // Do a sanity check on SDID (may get these values if secured w/o any error being signaled)
-   if ((*targetSDID == 0xFFFF) || (*targetSDID == 0x0000)) {
-      Logging::error("A=0x%06X - Value invalid (0x%04X)\n", parameters.getSDIDAddress(), *targetSDID);
+   if ((testValue == 0xFFFFFFFF) || (testValue == 0x0)) {
+      Logging::error("A=0x%06X - Value invalid (0x%08X)\n", parameters.getSDIDAddress(), testValue);
       return PROGRAMMING_RC_ERROR_BDM_READ;
    }
-   Logging::print("A=0x%06X => 0x%04X\n", parameters.getSDIDAddress(), *targetSDID);
+   Logging::print("A=0x%06X => 0x%08X\n", parameters.getSDIDAddress(), testValue);
    return PROGRAMMING_RC_OK;
 }
 
@@ -431,23 +447,24 @@ USBDM_ErrorCode FlashProgrammer::confirmSDID() {
    }
 //   mtwksDisplayLine("confirmSDID() - #2\n");
    // Don't check Target SDID if zero
-   if (parameters.getSDID() == 0x0000) {
+   if ((parameters.getSDID().mask == 0x0000) || (parameters.getSDID().value == 0x0000)) {
       Logging::print("V=0x0000 => Skipping check\n");
       return PROGRAMMING_RC_OK;
    }
    // Get SDID from target
    rc = readTargetChipId(&targetSDID);
    if (rc != PROGRAMMING_RC_OK) {
-      Logging::error("V=%4.4X => Failed, error reading SDID, reason = %s\n",
-            parameters.getSDID(),
+      Logging::error("M=0x%4.4X, V=0x%4.4X => Failed, error reading SDID, reason = %s\n",
+                     parameters.getSDID().mask,
+                     parameters.getSDID().value,
             USBDM_GetErrorString(rc));
       // Return this error even though the cause may be different
       return PROGRAMMING_RC_ERROR_WRONG_SDID;
    }
    if (!parameters.isThisDevice(targetSDID)) {
-      Logging::error("V=0x%4.4X, Mask=0x%4.4X => Failed (Target SDID=0x%4.4X)\n",
-            parameters.getSDID(),
-            parameters.getSDIDMask(),
+      Logging::error("M=0x%4.4X, V=0x%4.4X => Failed (Target SDID=0x%4.4X)\n",
+            parameters.getSDID().mask,
+            parameters.getSDID().value,
             targetSDID);
       return PROGRAMMING_RC_ERROR_WRONG_SDID;
    }
@@ -490,7 +507,7 @@ USBDM_ErrorCode FlashProgrammer::initialiseTarget() {
    }
    *argPtr++ = '\"';
    *argPtr++ = '\0';
-#elif (TARGET == HCS12)
+#elif (TARGET == HCS12) || (TARGET == S12Z)
    char args[200] = "initTarget \"";
    char *argPtr = args+strlen(args);
 
@@ -514,7 +531,7 @@ USBDM_ErrorCode FlashProgrammer::initialiseTarget() {
    char args[200] = "initTarget ";
    char *argPtr = args+strlen(args);
    sprintf(argPtr, "0x%04X 0x%04X 0x%04X",
-         parameters.getSOPTAddress(),
+         parameters.getWatchdogAddress(),
          flashMemoryRegionPtr->getFOPTAddress(),
          flashMemoryRegionPtr->getFLCRAddress()
          );
@@ -547,15 +564,14 @@ USBDM_ErrorCode FlashProgrammer::initialiseTargetFlash() {
    if (flashReady) {
       return PROGRAMMING_RC_OK;
    }
-#if (TARGET==RS08) || (TARGET==HCS08) || (TARGET==HCS12) || (TARGET==CFV1)
-   unsigned long busFrequency;
+#if (TARGET==RS08) || (TARGET==HCS08) || (TARGET==HCS12) || (TARGET==S12Z) || (TARGET==CFV1)
+   unsigned long busFrequency = 0;
 #if (TARGET==RS08) || (TARGET==HCS08) || (TARGET==CFV1)
    // Configure the target clock for Flash programming
    rc = configureTargetClock(&busFrequency);
-#elif (TARGET==HCS12)   
+#elif (TARGET==HCS12)  || (TARGET==S12Z)
    // Configure the target clock for Flash programming
    rc = getTargetBusSpeed(&busFrequency);
-
    if (rc == PROGRAMMING_RC_ERROR_SPEED_APPROX) {
       // Estimated speed is not sufficiently accurate for programming
 

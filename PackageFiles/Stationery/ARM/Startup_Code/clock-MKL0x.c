@@ -8,12 +8,12 @@
  */
 #include "string.h"
 #include "derivative.h" /* include peripheral declarations */
-#include "clock.h"
-#include "clock_private.h"
+#include "system.h"
+#include "clock_configure.h"
 #include "utilities.h"
 #include "stdbool.h"
 
-// Some MCU call OSC_CR0 just OSC_CR
+// Some MCUs call OSC_CR0 just OSC_CR
 #ifndef OSC0_CR
 #define OSC0_CR OSC_CR
 #endif
@@ -21,8 +21,8 @@
 uint32_t SystemCoreClock = SYSTEM_CORE_CLOCK;   // Hz
 uint32_t SystemBusClock  = SYSTEM_BUS_CLOCK; // Hz
 
-/*! Sets up the clock out of RESET
- *!
+/*! @brief Sets up the clock out of RESET
+ *
  */
 void clock_initialise(void) {
 
@@ -50,7 +50,7 @@ void clock_initialise(void) {
 
    // Set up crystal or external clock source
    MCG_C2 =
-            MCG_C2_LOCRE0_M     | // LOCRE0 = 0,1   -> Loss of clock reset
+            MCG_C2_LOCRE0_M     | // LOCRE0 = 0,1   -> Loss of clock reset enable
             MCG_C2_RANGE0_M     | // RANGE0 = 0,1,2 -> Oscillator low/high/very high clock range
             MCG_C2_HGO0_M       | // HGO0   = 0,1   -> Oscillator low power/high gain
             MCG_C2_EREFS0_M     | // EREFS0 = 0,1   -> Select external clock/crystal oscillator
@@ -60,7 +60,7 @@ void clock_initialise(void) {
    // Transition via FBI
    //=====================================
 #define BYPASS (1) // CLKS value used while FLL locks
-   MCG_C1 =  MCG_C1_CLKS(BYPASS)     | // CLKS     = 2     -> External reference source while PLL locks
+   MCG_C1 =  MCG_C1_CLKS(BYPASS)     | // CLKS     = X     -> External reference source while PLL locks
              MCG_C1_FRDIV_M          | // FRDIV    = N     -> XTAL/2^n ~ 31.25 kHz
              MCG_C1_IREFS_M          | // IREFS    = 0,1   -> External/Slow IRC for FLL source
              MCG_C1_IRCLKEN_M        | // IRCLKEN  = 0,1   -> IRCLK disable/enable
@@ -149,43 +149,70 @@ void clock_initialise(void) {
             MCG_C2_IRCS_M;         // IRCS   = 0,1   -> Select slow/fast internal clock for internal reference
 
 #endif // (CLOCK_MODE == CLOCK_MODE_BLPE) || (CLOCK_MODE == CLOCK_MODE_BLPI)
-#endif // (CLOCK_MODE == CLOCK_MODE_RESET)
+#endif // (CLOCK_MODE == CLOCK_MODE_NONE)
 
-   // Basic clock multiplexing
-#if defined(MCU_MK20D5) || defined(MCU_MK20D7) || defined(MCU_MK40D10) || defined(MCU_MK40DZ10)
-   // Peripheral clock choice (incl. USB), USBCLK = MCGCLK
-   SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_M    | // PLL rather than FLL for peripheral clock
-                SIM_SOPT2_USBSRC_MASK;     // MCGPLLCLK/2 Source as USB clock (48MHz req.)
-   SIM_SOPT1 = (SIM_SOPT1&~SIM_SOPT1_OSC32KSEL_MASK)|SIM_SOPT1_OSC32KSEL_M; // ERCLK32K source
-#elif defined(MCU_MK60D10) || defined(MCU_MK60DZ10)
-   // Peripheral clock choice (incl. USB), USBCLK = MCGCLK
-   SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK | // PLL rather than FLL for peripheral clock
-                SIM_SOPT2_USBSRC_MASK;     // MCGPLLCLK/2 Source as USB clock (48MHz req.)
-#elif defined(MCU_MKL24Z4) || defined(MCU_MKL25Z4) || defined(MCU_MKL26Z4) || defined(MCU_MKL46Z4)
-   SIM_SOPT2 = SIM_SOPT2_UART0SRC_M      | // UART0 clock - 0,1,2,3 -> Disabled, (MCGFLLCLK, MCGPLLCLK/2),  OSCERCLK, MCGIRCLK
-               SIM_SOPT2_TPMSRC_M        | // TPM clock - 0,1,2,3 -> Disabled, (MCGFLLCLK, MCGPLLCLK/2),  OSCERCLK, MCGIRCLK
-               SIM_SOPT2_PLLFLLSEL_M     | // Peripheral clock - 0,1 -> MCGFLLCLK,MCGPLLCLK/2
-               SIM_SOPT2_USBSRC_MASK;      // MCGPLLCLK/2 Source as USB clock (48MHz req.)
-   SIM_SOPT1 = (SIM_SOPT1&~SIM_SOPT1_OSC32KSEL_MASK)|SIM_SOPT1_OSC32KSEL_M; // ERCLK32K clock - 0,1,2,3 -> OSC32KCLK, - , RTC_CLKIN, LPO (1kHz)
-#elif defined(MCU_MKL14Z4) || defined(MCU_MKL15Z4) || defined(MCU_MKL16Z4) || defined(MCU_MKL34Z4) || defined(MCU_MKL36Z4)
-   SIM_SOPT2 = SIM_SOPT2_UART0SRC_M      | // UART0 clock - 0,1,2,3 -> Disabled, (MCGFLLCLK, MCGPLLCLK/2),  OSCERCLK, MCGIRCLK
-               SIM_SOPT2_TPMSRC_M        | // TPM clock - 0,1,2,3 -> Disabled, (MCGFLLCLK, MCGPLLCLK/2),  OSCERCLK, MCGIRCLK
-               SIM_SOPT2_PLLFLLSEL_M;      // Peripheral clock - 0,1 -> MCGFLLCLK,MCGPLLCLK/2
-   SIM_SOPT1 = (SIM_SOPT1&~SIM_SOPT1_OSC32KSEL_MASK)|SIM_SOPT1_OSC32KSEL_M; // ERCLK32K clock - 0,1,2,3 -> OSC32KCLK, - , RTC_CLKIN, LPO (1kHz)
-#elif defined(MCU_MKL02Z4) || defined(MCU_MKL04Z4) || defined(MCU_MKL05Z4)
-   SIM_SOPT2 = SIM_SOPT2_UART0SRC_M      | // UART0 clock - 0,1,2,3 -> Disabled, (MCGFLLCLK, MCGPLLCLK/2),  OSCERCLK, MCGIRCLK
-               SIM_SOPT2_TPMSRC_M ;        // TPM2 source
-#else
-   #error "CPU not set"
+
+   /*!
+    * SOPT1 Clock multiplexing
+    */
+#if defined(SIM_SOPT1_OSC32KSEL_MASK) && defined(SIM_SOPT1_OSC32KSEL_M) // ERCLK32K source
+   SIM_SOPT1 = (SIM_SOPT1&~SIM_SOPT1_OSC32KSEL_MASK)|SIM_SOPT1_OSC32KSEL_M;
 #endif
+
+   /*!
+    * SOPT2 Clock multiplexing
+    */
+#if defined(SIM_SOPT2_SDHCSRC_MASK) && defined(SIM_SOPT2_SDHCSRC_M) // SDHC clock
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_SDHCSRC_MASK)|SIM_SOPT2_SDHCSRC_M;
+#endif
+
+#if defined(SIM_SOPT2_TIMESRC_MASK) && defined(SIM_SOPT2_TIMESRC_M) // Ethernet time-stamp clock
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_TIMESRC_MASK)|SIM_SOPT2_TIMESRC_M;
+#endif
+
+#if defined(SIM_SOPT2_RMIISRC_MASK) && defined(SIM_SOPT2_RMIISRC_M) // RMII clock
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_RMIISRC_MASK)|SIM_SOPT2_RMIISRC_M;
+#endif
+
+#if defined(SIM_SOPT2_USBSRC_MASK) && defined(SIM_SOPT2_USBSRC_M) // USB clock (48MHz req.)
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_USBSRC_MASK)|SIM_SOPT2_USBSRC_M;
+#endif
+
+#if defined(SIM_SOPT2_USBFSRC_MASK) && defined(SIM_SOPT2_USBFSRC_M) // USB clock (48MHz req.)
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_USBFSRC_MASK)|SIM_SOPT2_USBFSRC_M;
+#endif
+
+#if defined(SIM_SOPT2_PLLFLLSEL_MASK) && defined(SIM_SOPT2_PLLFLLSEL_M) // Peripheral clock
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_PLLFLLSEL_MASK)|SIM_SOPT2_PLLFLLSEL_M;
+#endif
+
+#if defined(SIM_SOPT2_UART0SRC_MASK) && defined(SIM_SOPT2_UART0SRC_M) // UART0 clock
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_UART0SRC_MASK)|SIM_SOPT2_UART0SRC_M;
+#endif
+
+#if defined(SIM_SOPT2_TPMSRC_MASK) && defined(SIM_SOPT2_TPMSRC_M) // TPM clock
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_TPMSRC_MASK)|SIM_SOPT2_TPMSRC_M;
+#endif
+
+#if defined(SIM_SOPT2_CLKOUTSEL_MASK) && defined(SIM_SOPT2_CLKOUTSEL_M)
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_CLKOUTSEL_MASK)|SIM_SOPT2_CLKOUTSEL_M;
+#endif
+
+#if defined(SIM_SOPT2_RTCCLKOUTSEL_MASK) && defined(SIM_SOPT2_RTCCLKOUTSEL_M)
+   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_RTCCLKOUTSEL_MASK)|SIM_SOPT2_RTCCLKOUTSEL_M;
+#endif
+
+#if defined(SIM_CLKDIV2_USBDIV_MASK) && defined(SIM_CLKDIV2_USBFRAC_MASK) && defined(SIM_CLKDIV2_USB_M)
+   SIM_CLKDIV2 = (SIM_CLKDIV2&~(SIM_CLKDIV2_USBDIV_MASK|SIM_CLKDIV2_USBFRAC_MASK)) | SIM_CLKDIV2_USB_M;
+#endif
+
    SystemCoreClockUpdate();
 }
 
-/**
- * Update SystemCoreClock variable
+/*!
+ * @brief Update SystemCoreClock variable
  *
- * @brief  Updates the SystemCoreClock with current core Clock
- *         retrieved from CPU registers.
+ * Updates the SystemCoreClock variable with current core Clock retrieved from CPU registers.
  */
 void SystemCoreClockUpdate(void) {
    uint32_t oscerclk = OSCCLK_CLOCK;
@@ -194,10 +221,10 @@ void SystemCoreClockUpdate(void) {
          if ((MCG_C1&MCG_C1_IREFS_MASK) == 0) {
             SystemCoreClock = oscerclk/(1<<((MCG_C1&MCG_C1_FRDIV_MASK)>>MCG_C1_FRDIV_SHIFT));
             if ((MCG_C2&MCG_C2_RANGE0_MASK) != 0) {
-               if ((MCG_C1&MCG_C1_FRDIV_M) == MCG_C1_FRDIV(6)) {
+               if ((MCG_C1&MCG_C1_FRDIV_MASK) == MCG_C1_FRDIV(6)) {
                   SystemCoreClock /= 20;
                }
-               else if ((MCG_C1&MCG_C1_FRDIV_M) == MCG_C1_FRDIV(7)) {
+               else if ((MCG_C1&MCG_C1_FRDIV_MASK) == MCG_C1_FRDIV(7)) {
                   SystemCoreClock /= 12;
                }
                else {

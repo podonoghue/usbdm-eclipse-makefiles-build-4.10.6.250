@@ -18,17 +18,13 @@ const int maxSrecSize = 32; // Maximum number of bytes per data S-record
 bool wordAddresses = false;
 bool altName       = false;
 
-uint32_t securityStartAddress = 0xFF0F;
-uint32_t securitySize         = 0;
-uint8_t  securityValues[16]   = {
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+      uint32_t  securityStartAddress = 0xFF0F;
+      uint32_t  securitySize         = 0;
+const uint8_t  *securityValues       = NULL;
 
-uint32_t resetStartAddress = 0xFF0F;
-uint32_t resetSize         = 0;
-uint8_t  resetValues[16]   = {
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+      uint32_t  resetStartAddress = 0xFF0F;
+      uint32_t  resetSize         = 0;
+const uint8_t  *resetValues       = NULL;
 
 // From http://www.amelek.gda.pl/avr/uisp/srecord.htm
 //  S0 Record.
@@ -188,6 +184,7 @@ void usage(void) {
                    "CreateDummyImage [-word] [-hcs08|-hcs12|-kin|-cfv1] imageFile.s19 [startAddress endAddress]*\n\n"
                    "-word - create image with word addresses (DSC)\n"
                    "-hcs08 - set image as unsecured for hcs08 devices\n"
+                   "-s12z  - set image as unsecured for s12z devices\n"
                    "-hcs12 - set image as unsecured for hcs12 devices\n"
                    "-kin   - set image as unsecured for kinetis devices\n"
                    "-cfv1  - set image as unsecured for coldfire V1 devices\n\n"
@@ -212,16 +209,15 @@ int main(int argc, char *argv[]) {
          static const uint8_t  newSecurityValues[]   = {
                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE };
-
          securityStartAddress = 0xFFB0;
          securitySize         = sizeof(newSecurityValues);
-         memcpy(securityValues, newSecurityValues, securitySize);
+         securityValues       = newSecurityValues;
 
          static const uint8_t  newResetValues[]   = {
                0xFF, 0xFF,};
          resetStartAddress = 0xFFFE;
          resetSize         = sizeof(newResetValues);
-         memcpy(resetValues, newResetValues, resetSize);
+         resetValues       = newResetValues;
 
          argNum++;
       }
@@ -231,12 +227,30 @@ int main(int argc, char *argv[]) {
                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE };
          securityStartAddress = 0xFF00;
          securitySize         = sizeof(newSecurityValues);
+         securityValues       = newSecurityValues;
+
          static const uint8_t  newResetValues[]   = {
                0xFF, 0xFF,};
          resetStartAddress = 0xFFFE;
          resetSize         = sizeof(newResetValues);
-         memcpy(resetValues, newResetValues, resetSize);
-         memcpy(securityValues, newSecurityValues, securitySize);
+         resetValues       = newResetValues;
+
+         argNum++;
+      }
+      else if (stricmp(argv[argNum], "-s12z") == 0) {
+         static const uint8_t  newSecurityValues[]   = {
+               0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+               0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE };
+         securityStartAddress = 0xFFFE00;
+         securitySize         = sizeof(newSecurityValues);
+         securityValues       = newSecurityValues;
+
+         static const uint8_t  newResetValues[]   = {
+               0xFF, 0xFF,};
+         resetStartAddress = 0xFFFFFE;
+         resetSize         = sizeof(newResetValues);
+         resetValues       = newResetValues;
+
          argNum++;
       }
       else if (stricmp(argv[argNum], "-kin") == 0) {
@@ -245,12 +259,14 @@ int main(int argc, char *argv[]) {
                0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF };
          securityStartAddress = 0x0400;
          securitySize         = sizeof(newSecurityValues);
-         memcpy(securityValues, newSecurityValues, securitySize);
+         securityValues       = newSecurityValues;
+
          static const uint8_t  newResetValues[]   = {
                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,};
          resetStartAddress = 0x00000000;
          resetSize         = sizeof(newResetValues);
-         memcpy(resetValues, newResetValues, resetSize);
+         resetValues       = newResetValues;
+
          argNum++;
       }
       else if (stricmp(argv[argNum], "-cfv1") == 0) {
@@ -259,12 +275,14 @@ int main(int argc, char *argv[]) {
                0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF };
          securityStartAddress = 0x0400;
          securitySize         = sizeof(newSecurityValues);
-         memcpy(securityValues, newSecurityValues, securitySize);
+         securityValues       = newSecurityValues;
+
          static const uint8_t  newResetValues[]   = {
                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,};
          resetStartAddress = 0x00000000;
          resetSize         = sizeof(newResetValues);
-         memcpy(resetValues, newResetValues, resetSize);
+         resetValues       = newResetValues;
+
          argNum++;
       }
       else if (stricmp(argv[argNum], "-cfvx") == 0) {

@@ -83,7 +83,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0101</name>
-                           <description>Undefined</description>
+                           <description>32 KBytes</description>
                            <value>0b0101</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -93,7 +93,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0111</name>
-                           <description>Undefined</description>
+                           <description>64 KBytes</description>
                            <value>0b0111</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -1513,7 +1513,9 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>OUTDIV4</name>
-                     <description>Clock 4 output divider value</description>
+                     <description>Clock 4 output divider value\n
+This field sets the divide value for the flash clock.\n
+At the end of reset, it is loaded with either 0001 or 1111 depending on FTFL_FOPT[LPBOOT]</description>
                      <bitOffset>16</bitOffset>
                      <bitWidth>4</bitWidth>
                      <enumeratedValues>
@@ -1601,7 +1603,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>OUTDIV2</name>
-                     <description>Clock 2 output divider value</description>
+                     <description>Clock 2 output divider value\n
+This field sets the divide value for the peripheral clock.\n
+At the end of reset, it is loaded with either 0000 or 0111 depending on FTFL_FOPT[LPBOOT]</description>
                      <bitOffset>24</bitOffset>
                      <bitWidth>4</bitWidth>
                      <enumeratedValues>
@@ -1689,7 +1693,9 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>OUTDIV1</name>
-                     <description>Clock 1 output divider value</description>
+                     <description>Clock 1 output divider value\n
+This field sets the divide value for the core/system clock.\n
+At the end of reset, it is loaded with either 0000 or 0111 depending on FTFL_FOPT[LPBOOT]</description>
                      <bitOffset>28</bitOffset>
                      <bitWidth>4</bitWidth>
                      <enumeratedValues>
@@ -1779,7 +1785,9 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CLKDIV2</name>
-               <description>System Clock Divider Register 2</description>
+               <description>System Clock Divider Register 2\n
+This register sets the clock divider when the USB clock source is MCGFLLCLK/MCGPLLCLK (SOPT2[USBSRC]).\n
+Output clock = Input clock x [ (USBFRAC+1) / (USBDIV+1) ]</description>
                <addressOffset>0x1048</addressOffset>
                <fields>
                   <field>
@@ -1929,6 +1937,11 @@ Devices using this peripheral:
                            <name>0b0111</name>
                            <description>128 KB of program flash, 4 KB protection region</description>
                            <value>0b0111</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1001</name>
+                           <description>256 KB of program flash, 8 KB protection region</description>
+                           <value>0b1001</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>

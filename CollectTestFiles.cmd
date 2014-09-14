@@ -25,5 +25,6 @@ xcopy /E /I /Y /Q "%PACKAGE_FILES%\Miscellaneous\"*.tcl  "%TEST_DIR%"
 
 echo "Copying Device data"
 xcopy /S /Y /I "%DEVICE_DATA%"      "%TEST_DIR%\DeviceData"
-pause
+
+rem pause
  

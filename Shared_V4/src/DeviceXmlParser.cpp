@@ -24,15 +24,17 @@
 
     \verbatim
    Change History
-   -=====================================================================================
-   |    Jan 2014 | Added <projectActions> and removed obsolete elements     - pgo 4.10.6
-   |  6 Jul 2013 | Added Register description parsing                       - pgo 4.10.6
-   |        2013 | Added GNU information parsing (incomplete)               - pgo 4.10.4?
-   |  6 Oct 2012 | Fixed default SDID etc                                   - pgo 4.10.2
-   |    Aug 2011 | Added I/O memory type                                    - pgo
-   |    Aug 2011 | Removed Boost                                            - pgo
-   |    Apr 2011 | Added TCL scripts etc                                    - pgo
-   +======================================================================================
+   -=========================================================================================
+   | 12 Jul 14 | Added getCommonFlashProgram(), changed getFlashProgram() etc  - pgo V4.10.6.170
+   | 12 Jul 2014 | Changed alias handling to be better defined                 - pgo 4.10.6.170
+   |    Jan 2014 | Added <projectActions> and removed obsolete elements        - pgo 4.10.6
+   |  6 Jul 2013 | Added Register description parsing                          - pgo 4.10.6
+   |        2013 | Added GNU information parsing (incomplete)                  - pgo 4.10.4?
+   |  6 Oct 2012 | Fixed default SDID etc                                      - pgo 4.10.2
+   |    Aug 2011 | Added I/O memory type                                       - pgo
+   |    Aug 2011 | Removed Boost                                               - pgo
+   |    Apr 2011 | Added TCL scripts etc                                       - pgo
+   +=========================================================================================
    \endverbatim
 */
 
@@ -423,6 +425,7 @@ DeviceXmlParser::DeviceXmlParser(DeviceDataBase *deviceDataBase)
    attr_alignment("alignment"),
    attr_path("path"),
    attr_count("count"),
+   attr_mask("mask"),
 
    isDefault(false),
    deviceDataBase(deviceDataBase),
@@ -513,7 +516,8 @@ RegisterDescriptionPtr DeviceXmlParser::parseRegisterDescription(DOMElement *xml
    return registerDescriptionPtr;
 }
 
-// Create a flashProgram from XML element
+//! Create a flashProgram from XML element
+//!
 FlashProgramPtr DeviceXmlParser::parseFlashProgram(DOMElement *xmlFlashProgram) {
    // Type of node (must be a flashProgram)
    DualString sTag (xmlFlashProgram->getTagName());
@@ -1215,7 +1219,7 @@ MemoryRegionPtr DeviceXmlParser::parseMemory(DOMElement *currentProperty) {
  *          != 0 - fail
  */
 DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
-   Logging log("DeviceXmlParser::parseDeviceXML", Logging::neither);
+   Logging log("DeviceXmlParser::parseDevice", Logging::neither);
 
    // Default device characteristics
    // These are initialized from the default device (if any) in the XML
@@ -1225,50 +1229,46 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
    static FlexNVMInfoConstPtr          defaultFlexNVMInfo;
 
 #if TARGET == HCS08
-   static uint32_t         defSOPTAddress = 0x1802;
+   static uint32_t         defWatchdogAddress = 0x1802;
    static uint32_t         defSDIDAddress = 0x1806;
    static uint32_t         defSDIDMask    = 0xFFF;
 #elif TARGET == RS08
-   static uint32_t         defSOPTAddress = 0x00000000;
+   static uint32_t         defWatchdogAddress = 0x00000000;
    static uint32_t         defSDIDAddress = 0x00000000;
    static uint32_t         defSDIDMask    = 0xFFF;
 #elif TARGET == CFV1
-   static uint32_t         defSOPTAddress = 0x00000000;
+   static uint32_t         defWatchdogAddress = 0x00000000;
    static uint32_t         defSDIDAddress = 0x00000000;
    static uint32_t         defSDIDMask    = 0xFFF;
 #elif TARGET == CFVx
-   static uint32_t         defSOPTAddress = 0x00000000;
+   static uint32_t         defWatchdogAddress = 0x00000000;
    static uint32_t         defSDIDAddress = 0x4011000A;
    static uint32_t         defSDIDMask    = 0xFFC0;
-#elif TARGET == HC12
-   static uint32_t         defCOPCTLAddress = 0x003C;
+#elif (TARGET == HC12) || (TARGET == S12Z)
+   static uint32_t         defWatchdogAddress = 0x003C;
    static uint32_t         defSDIDAddress = 0x001A;  // actually partid;
    static uint32_t         defSDIDMask    = 0xFFFF;
 #elif TARGET == ARM
-   static uint32_t         defSOPTAddress = 0x00000000;
-   static uint32_t         defSDIDAddress = 0x00000000;
-   static uint32_t         defSDIDMask    = 0x00000000;
+   static uint32_t         defWatchdogAddress = 0x00000000;
+   static uint32_t         defSDIDAddress     = 0x00000000;
+   static uint32_t         defSDIDMask        = 0xFFFFFFFF;
 #elif TARGET == MC56F80xx
-   static uint32_t         defCOPCTLAddress = 0x00000000;
+   static uint32_t         defWatchdogAddress = 0x00000000;
    static uint32_t         defSDIDAddress   = 0x00000000;
    static uint32_t         defSDIDMask      = 0xFFFFFFFF; // SDID Not used
 #endif
+
+   static uint32_t         currentSDIDMask  = defSDIDMask; // SDID mask to apply to current SDIDs
 
    // Create new device
    DeviceDataPtr itDev = DeviceDataPtr(new DeviceData());
 
    // Set default values
-#if (TARGET == HC12)||(TARGET == MC56F80xx)
-   itDev->setCOPCTLAddress(defCOPCTLAddress);
-#else
-   itDev->setSOPTAddress(defSOPTAddress);
-#endif
+   itDev->setWatchdogAddress(defWatchdogAddress);
 
    itDev->setFlashScripts(defaultTCLScript);
    itDev->setRegisterDescription(defaultRegisterDescription);
-   itDev->setFlashProgram(defFlashProgram);
    itDev->setSDIDAddress(defSDIDAddress);
-   itDev->setSDIDMask(defSDIDMask);
 
    DOMChildIterator propertyIt(deviceEl);
    for (;
@@ -1304,13 +1304,20 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          itDev->addMemoryRegion(deviceDataBase->getMemoryRegion(sRef.asCString()));
       }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_sdid.asXMLString())) {
-         // <sdid>
-         DualString sSdidValue(currentProperty->getAttribute(attr_value.asXMLString()));
+         // <sdid value="vv" mask="mm">
          long sdidValue;
-         if (!strToULong(sSdidValue.asCString(), NULL, &sdidValue)) {
-            throw MyException(string("DeviceXmlParser::parseDevice() - Illegal Clock SDID address ")+sSdidValue.asCString());
+         long sdidMask = currentSDIDMask;
+         if (currentProperty->hasAttribute(attr_mask.asXMLString())) {
+            DualString sSdidMask(currentProperty->getAttribute(attr_mask.asXMLString()));
+            if (!strToULong(sSdidMask.asCString(), NULL, &sdidMask)) {
+               throw MyException(string("DeviceXmlParser::parseDevice() - Illegal SDID mask ")+sSdidMask.asCString());
+            }
          }
-         itDev->addSDID(sdidValue);
+         DualString sSdidValue(currentProperty->getAttribute(attr_value.asXMLString()));
+         if (!strToULong(sSdidValue.asCString(), NULL, &sdidValue)) {
+            throw MyException(string("DeviceXmlParser::parseDevice() - Illegal SDID address ")+sSdidValue.asCString());
+         }
+         itDev->addSDID(sdidMask, sdidValue);
       }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_sdidAddress.asXMLString())) {
          // <sdidAddress>
@@ -1321,7 +1328,7 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          }
          itDev->setSDIDAddress(sdidAddress);
          if (isDefault) {
-            Logging::print("Setting default SDID Address 0x%06X \n", sdidAddress);
+            Logging::warning("Setting default SDID Address 0x%06X \n", sdidAddress);
             defSDIDAddress = sdidAddress;
          }
       }
@@ -1332,13 +1339,12 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          if (!strToULong(sSdidMask.asCString(), NULL, &sdidMask)) {
             throw MyException(string("DeviceXmlParser::parseDevice() - Illegal SDID mask ")+sSdidMask.asCString());
          }
-         itDev->setSDIDMask(sdidMask);
+         currentSDIDMask = sdidMask;
          if (isDefault) {
-            Logging::print("Setting default SDID mask 0x%04X \n", sdidMask);
+            Logging::warning("Setting default SDID mask 0x%04X \n", sdidMask);
             defSDIDMask = sdidMask;
          }
       }
-#if (TARGET == HC12)||(TARGET == MC56F80xx)
       else if (XMLString::equals(propertyTag.asXMLString(), tag_copctlAddress.asXMLString())) {
          // <copctlAddress>
          DualString sCopctlAddress(currentProperty->getAttribute(attr_value.asXMLString()));
@@ -1346,11 +1352,11 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          if (!strToULong(sCopctlAddress.asCString(), NULL, &copctlAddress)) {
             throw MyException("DeviceXmlParser::parseDevice() - Illegal COPCTL address");
          }
-         itDev->setCOPCTLAddress(copctlAddress);
+         itDev->setWatchdogAddress(copctlAddress);
          if (isDefault)
-            defCOPCTLAddress = copctlAddress;
+            Logging::warning("Setting default WatchdogAddress Address 0x%06X \n", copctlAddress);
+            defWatchdogAddress = copctlAddress;
       }
-#else
       else if (XMLString::equals(propertyTag.asXMLString(), tag_soptAddress.asXMLString())) {
          // <soptAddress>
          DualString sSoptAddress(currentProperty->getAttribute(attr_value.asXMLString()));
@@ -1358,13 +1364,12 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          if (!strToULong(sSoptAddress.asCString(), NULL, &soptAddress)) {
             throw MyException(string("DeviceXmlParser::parseDevice() - Illegal SPOT address ")+sSoptAddress.asCString());
          }
-         itDev->setSOPTAddress(soptAddress);
+         itDev->setWatchdogAddress(soptAddress);
          if (isDefault) {
-            Logging::print("Setting default SOPT Address 0x%06X \n", soptAddress);
-            defSOPTAddress = soptAddress;
+            Logging::warning("Setting default WatchdogAddress Address 0x%06X \n", soptAddress);
+            defWatchdogAddress = soptAddress;
          }
       }
-#endif
       else if (XMLString::equals(propertyTag.asXMLString(), tag_tclScript.asXMLString())) {
          // <tclScript>
          itDev->setFlashScripts(parseTCLScript(currentProperty));
@@ -1407,19 +1412,19 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
       }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_flashProgram.asXMLString())) {
          // <flashProgram>
-         itDev->setFlashProgram(parseFlashProgram(currentProperty));
+         itDev->setCommonFlashProgram(parseFlashProgram(currentProperty));
          if (isDefault) {
             Logging::print("Setting default flash program (non-shared)\n");
-            defFlashProgram = itDev->getFlashProgram();
+            defFlashProgram = itDev->getCommonFlashProgram();
          }
       }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_flashProgramRef.asXMLString())) {
          // <flashProgramRef>
          DualString sRef(currentProperty->getAttribute(attr_ref.asXMLString()));
-         itDev->setFlashProgram(deviceDataBase->getFlashProgram(sRef.asCString()));
+         itDev->setCommonFlashProgram(deviceDataBase->getFlashProgram(sRef.asCString()));
          if (isDefault) {
             Logging::print("Setting default flash program: \"%s\" \n", sRef.asCString());
-            defFlashProgram = itDev->getFlashProgram();
+            defFlashProgram = itDev->getCommonFlashProgram();
          }
       }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_flexNvmInfo.asXMLString())) {
@@ -1435,8 +1440,8 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          DualString sRef(currentProperty->getAttribute(attr_ref.asXMLString()));
          itDev->setflexNVMInfo(deviceDataBase->getFlexNVMInfo(sRef.asCString()));
          if (isDefault) {
-            Logging::print("Setting default flash program: \"%s\" \n", sRef.asCString());
-            defFlashProgram = itDev->getFlashProgram();
+            Logging::print("Setting default flexNVMInfo (non-shared)\n");
+            defaultFlexNVMInfo = itDev->getflexNVMInfo();
          }
       }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_projectActionList.asXMLString())) {
@@ -1447,6 +1452,92 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
       }
       else {
          throw MyException(string("DeviceXmlParser::parseDevice() - Unknown tag - ")+propertyTag.asCString());
+      }
+   }
+   if (!itDev->getFlashProgram()) {
+      // Set default flash program if none available from device
+      Logging::error("WARNING: Setting default programming code for %s\n", currentDeviceName);
+      itDev->setCommonFlashProgram(defFlashProgram);
+   }
+   return itDev;
+}
+
+/*!
+ *    Create device description from node
+ *
+ *   !ELEMENT device ((sdid*|
+ *                     (clock?,
+ *                      (memory|memoryRef)+,
+ *                      (soptAddress|copctlAddress)?,
+ *                      sdidAddress?,
+ *                      sdidMask?,
+ *                      sdid+,
+ *                      flashScripts?,
+ *                      (tclScript|tclScriptRef)?,
+ *                      (flashProgram|flashProgramRef)?,
+ *                      flashProgramData?,
+ *                      (flexNVMInfo|flexNVMInfoRef)?,
+ *                      (projectActionList|projectActionListRef)*,
+ *                      (registerDescription|registerDescriptionRef)?
+ *                      )
+ *                     ),
+ *                    note*)>
+ *
+ *  @param deviceEl - Present position in XML parse
+ *  @return == 0 - success\n
+ *          != 0 - fail
+ */
+DeviceDataPtr DeviceXmlParser::parseAlias(DOMElement *deviceEl) {
+   Logging log("DeviceXmlParser::parseAlias", Logging::neither);
+
+   // Create new device
+   DeviceDataPtr itDev = DeviceDataPtr(new DeviceData());
+
+   long currentSDIDMask = 0;
+
+   DOMChildIterator propertyIt(deviceEl);
+   for (;
+         propertyIt.getCurrentElement() != NULL;
+         propertyIt.advanceElement()) {
+
+      DOMElement *currentProperty = propertyIt.getCurrentElement();
+      DualString propertyTag(currentProperty->getTagName());
+      if (XMLString::equals(propertyTag.asXMLString(), tag_sdidMask.asXMLString())) {
+         // <sdidMask value="vvv">
+         DualString sSdidMask(currentProperty->getAttribute(attr_value.asXMLString()));
+         long sdidMask;
+         if (!strToULong(sSdidMask.asCString(), NULL, &sdidMask)) {
+            throw MyException(string("DeviceXmlParser::parseAlias() - Illegal SDID mask ")+sSdidMask.asCString());
+         }
+         currentSDIDMask = sdidMask;
+      }
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_sdid.asXMLString())) {
+         // <sdid value="vv" mask="mm">
+         long sdidValue;
+         long sdidMask = currentSDIDMask;
+         if (currentProperty->hasAttribute(attr_mask.asXMLString())) {
+            DualString sSdidMask(currentProperty->getAttribute(attr_mask.asXMLString()));
+            if (!strToULong(sSdidMask.asCString(), NULL, &sdidMask)) {
+               throw MyException(string("DeviceXmlParser::parseDevice() - Illegal SDID mask ")+sSdidMask.asCString());
+            }
+         }
+         DualString sSdidValue(currentProperty->getAttribute(attr_value.asXMLString()));
+         if (!strToULong(sSdidValue.asCString(), NULL, &sdidValue)) {
+            throw MyException(string("DeviceXmlParser::parseDevice() - Illegal SDID address ")+sSdidValue.asCString());
+         }
+         itDev->addSDID(sdidMask, sdidValue);
+      }
+      else if (XMLString::equals(propertyTag.asXMLString(), tag_sdidAddress.asXMLString())) {
+         // <sdidAddress>
+         DualString sSdidAddress(currentProperty->getAttribute(attr_value.asXMLString()));
+         long sdidAddress;
+         if (!strToULong(sSdidAddress.asCString(), NULL, &sdidAddress)) {
+            throw MyException(string("DeviceXmlParser::parseAlias() - Illegal Clock SDID value ")+sSdidAddress.asCString());
+         }
+         itDev->setSDIDAddress(sdidAddress);
+      }
+      else {
+         throw MyException(string("DeviceXmlParser::parseAlias() - Unknown tag - ")+propertyTag.asCString());
       }
    }
    return itDev;
@@ -1529,11 +1620,22 @@ void DeviceXmlParser::parseDeviceXML(void) {
          if (strlen(buff) == 0) {
             throw MyException(string("DeviceXmlParser::parseDeviceXML() - Alias name missing or invalid"));
          }
-         DeviceDataPtr itDev = parseDevice(deviceEl);
+         DeviceDataPtr itDev = parseAlias(deviceEl);
          itDev->setTargetName(currentDeviceName);
          itDev->setAliasName(buff);
          if (deviceEl->hasAttribute(attr_hidden.asXMLString())) {
             itDev->setHidden();
+         }
+
+         DeviceDataConstPtr aliasedDevice = deviceDataBase->findDeviceFromName(itDev->getAliasName());
+         if (aliasedDevice == NULL) {
+            throw MyException(string("DeviceXmlParser::parseDeviceXML() - Alias refers to non-existent device"));
+         }
+         if (itDev->getSDIDs().empty()) {
+            itDev->setTargetSDIDs(aliasedDevice->getSDIDs());
+         }
+         if (itDev->getSDIDAddress() == 0x0) {
+            itDev->setSDIDAddress(aliasedDevice->getSDIDAddress());
          }
          Logging::print("Adding Alias Device %s\n", targetName.asCString());
          deviceDataBase->addDevice(itDev);

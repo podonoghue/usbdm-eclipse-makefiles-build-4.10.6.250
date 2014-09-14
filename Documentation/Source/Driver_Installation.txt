@@ -15,6 +15,13 @@ of this you may see references to winusb in the following.\n
 
 Please install the drivers before plugging in a BDM. \n
 
+Steps to follow undex Windows-8
+	- Before installation it is necessary to enable the use of unsigned drivers.  This is necessary because I have not paid 
+	for them to be signed.\n
+	- Please follow the steps outlined here:\n 
+	https://learn.sparkfun.com/tutorials/disabling-driver-signature-on-windows-8/disabling-signed-driver-enforcement-on-windows-8
+	- After this you should be able to follow the steps given below for WIN-7 to install the drivers.
+	
 Steps to follow under WIN-7 (its similar for WIN-XP but there will be other confirmation dialogues)
    - Download the appropriate driver installation file (as above) from Sourceforge:
    <A HREF="http://sourceforge.net/projects/usbdm/files/Version 4.10.6/Software/">USBDM Sourceforge</A>\n

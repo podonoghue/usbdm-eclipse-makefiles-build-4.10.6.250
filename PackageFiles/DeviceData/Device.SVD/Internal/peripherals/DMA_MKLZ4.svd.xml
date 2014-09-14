@@ -76,7 +76,7 @@ Devices using this peripheral:
                <dim>4</dim>
                <dimIncrement>16</dimIncrement>
                <dimIndex>0,1,2,3</dimIndex>
-               <name>DMA,@p@f@i</name>
+               <name>CHANNEL,@p@f@i</name>
                <addressOffset>0x100</addressOffset>
                <register>
                   <name>SAR</name>

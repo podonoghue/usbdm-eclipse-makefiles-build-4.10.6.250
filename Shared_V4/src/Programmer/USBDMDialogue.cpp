@@ -405,6 +405,9 @@ bool UsbdmDialogue::Create( wxWindow* parent, long style) {
       case T_HC12 :
          completeCaption  += _(" - HCS12");
          break;
+      case T_S12Z :
+         completeCaption  += _(" - S12Z");
+         break;
       case T_HCS08 :
          completeCaption  += _(" - HCS08");
          break;

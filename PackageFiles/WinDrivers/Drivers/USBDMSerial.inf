@@ -4,23 +4,23 @@
 ; 
 ;
 ;------------------------------------------------------------------------------
-[Version]
-Signature  =  "$Windows NT$"
-Class      =  Ports
-ClassGuid  =  {4D36E978-E325-11CE-BFC1-08002BE10318}
-Provider   =  %Provider%
-CatalogFile = USBDMSerial.cat
-DriverVer  =  10/13/2011, 2.2.0.0
-
 [Strings]
-DeviceName     = "USBDM Serial Port"
-DeviceID       = "VID_16D0&PID_0567&MI_01"
-Provider       = "pgo"
-Manufacturer   = "pgo"
-DriverFilename = "usbser"
+DeviceName        = "USBDM Serial Port"
+VendorName        = "pgo"
+Provider          = "pgo"
+DeviceID          = "VID_16D0&PID_0567&MI_01"
+
+[Version]
+Signature   =  "$Windows NT$"
+Class       =  Ports
+ClassGuid   =  {4D36E978-E325-11CE-BFC1-08002BE10318}
+Provider    =  %Provider%
+CatalogFile =  USBDMSerial.cat
+DriverVer   =  07/26/2014, 2.2.0.0
+
 
 [Manufacturer]
-%Manufacturer% = DeviceList, NT, NTx86, NTamd64
+%VendorName% = DeviceList, NT, NTx86, NTamd64
 
 ;------------------------------------------------------------------------------
 ;             Windows 32-bit Support
