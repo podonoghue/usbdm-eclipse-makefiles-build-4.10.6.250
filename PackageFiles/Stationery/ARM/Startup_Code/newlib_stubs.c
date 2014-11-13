@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <sys/times.h>
 #include <sys/unistd.h>
+#include "derivative.h"
 
 #undef errno
 extern int errno;
@@ -162,7 +163,7 @@ caddr_t _sbrk(int incr) {
    next_heap_end = (caddr_t)(((int)prev_heap_end + incr + 7) & ~7);
    if (next_heap_end > &__HeapLimit) {
       /* Heap and stack collision */
-      __asm("bkpt");
+      __BKPT(0);
       return NULL;
    }
    heap_end = next_heap_end;
@@ -277,7 +278,7 @@ void os_tmr_call(uint16_t  info __attribute__((unused))) {
  */
 void _exit(int rc __attribute__((unused))) {
    for(;;) {
-      asm("bkpt #0");
+      __BKPT(0);
    }
 }
 

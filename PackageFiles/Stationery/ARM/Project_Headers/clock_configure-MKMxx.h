@@ -39,6 +39,7 @@ extern "C" {
 //
 //   <o> Frequency of Main External Clock or Crystal (Hz)  <name=oscclk_clock> <0-48000000>
 //   <i> Frequency of external crystal or clock on XTAL/EXTAL
+//   <i> See MCG_C2_EREFS0 for XTAL/Clock selection
 #define OSCCLK_CLOCK (8000000UL)
 
 // SYSTEM_ERCLK32_CLOCK =============================
@@ -283,9 +284,62 @@ extern "C" {
 //     <0=>
 //     <1=> +16pF
 
-#define OSC_CR_SCP_M ((0<<OSC_CR_SC2P_SHIFT)|(0<<OSC_CR_SC4P_SHIFT)|(0<<OSC_CR_SC8P_SHIFT)|(0<<OSC_CR_SC16P_SHIFT))
+#define OSC_CR_SCP_M ((0<<OSC_CR_SC2P_SHIFT)|(1<<OSC_CR_SC4P_SHIFT)|(1<<OSC_CR_SC8P_SHIFT)|(0<<OSC_CR_SC16P_SHIFT))
 // </h>
 
+//========================================================================================
+//========================================================================================
+// <h> RTC OSC Control Register (RTC_GP_DATA_REG = RTC_OSC) 
+
+// RTC_OSC_OSC_DISABLE ===============================
+//
+//   <q> External Reference Enable (OSC_DISABLE) 
+//   <i> Enables external reference clock [RTC_OSC_OSC_DISABLE]
+//     <0=> Enabled
+//     <1=> Disabled
+#define RTC_OSC_OSC_DISABLE_V 0
+#define RTC_OSC_OSC_DISABLE_M (RTC_OSC_OSC_DISABLE_V<<RTC_OSC_OSC_DISABLE_SHIFT)
+
+// RTC_OSC_SC2P ===============================
+//
+//   <q0> Oscillator Capacitor Load Configure
+//   <i> Configures the oscillator load capacitance [RTC_OSC_SC2P]
+//     <0=>
+//     <1=> +2pF
+
+// RTC_OSC_SC4P ===============================
+//
+//   <q1> Oscillator Capacitor Load Configure
+//   <i> Configures the oscillator load capacitance [RTC_OSC_SC4P]
+//     <0=>
+//     <1=> +4pF
+
+// RTC_OSC_SC8P ===============================
+//
+//   <q2> Oscillator Capacitor Load Configure
+//   <i> Configures the oscillator load capacitance [RTC_OSC_SC8P]
+//     <0=>
+//     <1=> +8pF
+
+// RTC_OSC_SC16P ===============================
+//
+//   <q3> Oscillator Capacitor Load Configure
+//   <i> Configures the oscillator load capacitance [RTC_OSC_SC16P]
+//     <0=>
+//     <1=> +16pF
+
+#define RTC_OSC_SCP_M ((0<<RTC_OSC_SC2P_SHIFT)|(1<<RTC_OSC_SC4P_SHIFT)|(1<<RTC_OSC_SC8P_SHIFT)|(0<<RTC_OSC_SC16P_SHIFT))
+
+// RTC_OSC_BOOT_MODE ===============================
+//
+//   <q> Boot mode override bit (BOOT_MODE) 
+//   <i> This bit can be used to override the boot to happen in VLPR mode. [RTC_OSC_BOOT_MODE]
+//     <0=> Boot in RUN mode
+//     <1=> Boot in VLPR mode
+#define RTC_OSC_BOOT_MODE_V 0
+#define RTC_OSC_BOOT_MODE_M (RTC_OSC_BOOT_MODE_V<<RTC_OSC_BOOT_MODE_SHIFT)
+
+// </h>
 //========================================================================================
 //========================================================================================
 // <h> MCG Control Register 1 (MCG_C1)
@@ -534,11 +588,6 @@ extern "C" {
 #define MCG_C7_PLL32KREFSEL_V  0
 #define MCG_C7_PLL32KREFSEL_M MCG_C7_PLL32KREFSEL(MCG_C7_PLL32KREFSEL_V)
 
-// Check if 32kHz clock is available
-#if (RTC_CR_CLKO_V != 0) && (MCG_C7_OSCSEL_V == 1)
-#error "RTC Clock should be enabled to external devices for selection as MCG clock source"
-#endif
-
 // MCG_C7_OSCSEL ==============================
 //
 //   <q> MCG OSC Clock Select (OSCSEL) <name=mcg_c7_oscsel>
@@ -559,44 +608,44 @@ extern "C" {
 //========================================================================================
 // <h> MCG Control Register 8 (MCG_C8)
 
-// MCG_C7_LOCRE1 ==============================
+// MCG_C8_LOCRE1 ==============================
 //
 //   <q> Loss of Clock Reset Enable (LOCRE1)
-//   <i> Determines if interrupt or a reset follows a loss of RTC clock [MCG_C7_LOCRE1]
-//   <i> Requires MCG_C7_CME1 to have effect
+//   <i> Determines if interrupt or a reset follows a loss of RTC clock [MCG_C8_LOCRE1]
+//   <i> Requires MCG_C8_CME1 to have effect
 //     <0=> Interrupt request
 //     <1=> Reset request
-#define MCG_C7_LOCRE1_V  0
-#define MCG_C7_LOCRE1_M (MCG_C7_LOCRE1_V<<MCG_C7_LOCRE1_SHIFT)
+#define MCG_C8_LOCRE1_V  0
+#define MCG_C8_LOCRE1_M (MCG_C8_LOCRE1_V<<MCG_C8_LOCRE1_SHIFT)
 
-// MCG_C7_LOLRE ==============================
+// MCG_C8_LOLRE ==============================
 //
 //   <q> PLL Loss of Lock Reset Enable (LOLRE)
-//   <i> Determines if an interrupt or a reset request follows a PLL loss of lock. [MCG_C7_LOLRE]
+//   <i> Determines if an interrupt or a reset request follows a PLL loss of lock. [MCG_C8_LOLRE]
 //     <0=> Interrupt request
 //     <1=> Reset request
-#define MCG_C7_LOLRE_V  0
-#define MCG_C7_LOLRE_M (MCG_C7_LOLRE_V<<MCG_C7_LOLRE_SHIFT)
+#define MCG_C8_LOLRE_V  0
+#define MCG_C8_LOLRE_M (MCG_C8_LOLRE_V<<MCG_C8_LOLRE_SHIFT)
 
-// MCG_C7_CME1 ==============================
+// MCG_C8_CME1 ==============================
 //
 //   <q> Clock Monitor Enable 1 (CME1)
 //   <i> Enables the loss of clock monitoring circuit for the output of the RTC. [MCG_C6_CME0]
-//   <i> The MCG_C7_LOCRE1 determines action (interrupt/reset) 
+//   <i> The MCG_C8_LOCRE1 determines action (interrupt/reset) 
 //   <i> This field should be set to a logic 1 only when the MCG or RTC is in an operational mode that uses the external clock (FEE, FBE, or FBELP).
 //      <0=> RTC clock monitor is disabled.
 //      <1=> RTC clock monitor is enabled.
-#define MCG_C6_CME0_V (0)
-#define MCG_C6_CME0_M (MCG_C6_CME0_V<<MCG_C6_CME0_SHIFT)
+#define MCG_C8_CME1_V (0)
+#define MCG_C8_CME1_M (MCG_C8_CME1_V<<MCG_C8_CME1_SHIFT)
 
-// MCG_C7_COARSE_LOLIE ==============================
+// MCG_C8_COARSE_LOLIE ==============================
 //
 //   <q> Loss of Coarse Lock Interrrupt Enable (COARSE_LOLIE) 
-//   <i> Determines if an interrupt or reset follows a course loss of lock. [MCG_C7_COARSE_LOLIE]
+//   <i> Determines if an interrupt or reset follows a course loss of lock. [MCG_C8_COARSE_LOLIE]
 //     <0=> Interrupt request
 //     <1=> No interrupt request
-#define MCG_C7_COARSE_LOLIE_V  0
-#define MCG_C7_COARSE_LOLIE_M (MCG_C7_COARSE_LOLIE_V<<MCG_C7_COARSE_LOLIE_SHIFT)
+#define MCG_C8_COARSE_LOLIE_V  0
+#define MCG_C8_COARSE_LOLIE_M (MCG_C8_COARSE_LOLIE_V<<MCG_C8_COARSE_LOLIE_SHIFT)
 
 // </h>
 
@@ -624,13 +673,13 @@ extern "C" {
 
 // SIM_SOPT1_OSC32KSEL ================================
 //
-//   <o> 32kHz Clock Source for some peroipherals (OSC32KSEL)
+//   <o> 32kHz Clock Source for some peripherals (OSC32KSEL)
 //   <i> Source for nominal 32K clock for peripherals [SIM_SOPT1_OSC32KSEL]
 //     <0=> System 32kHz Oscillator (OSC32KCLK)
 //     <1=> External 32kHz reference clock (ERCLK32K)
 //     <2=> MCG Internal reference clock (MCGIRCLK)
 //     <3=> Low power oscillator (LPO)
-#define SIM_SOPT1_OSC32KSEL_V 3
+#define SIM_SOPT1_OSC32KSEL_V 0
 #define SIM_SOPT1_OSC32KSEL_M (SIM_SOPT1_OSC32KSEL_V<<SIM_SOPT1_OSC32KSEL_SHIFT)
 
 #if SIM_SOPT1_OSC32KSEL_V == 0

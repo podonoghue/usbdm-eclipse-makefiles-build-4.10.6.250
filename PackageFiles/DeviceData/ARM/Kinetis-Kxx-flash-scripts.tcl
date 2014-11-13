@@ -22,6 +22,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.10.4.190 - Simplified Mass erase sequence according to App note AN4835
 ;#  V4.10.4.130 - Changed Mass erase sequence (added retry etc.)
 ;#  V4.10.4     - Changed return code handling
 ;#              - Changed Mass erase reset to special-software (FDPROT etc wasn't unprotected)
@@ -269,6 +270,151 @@ proc initFlash { frequency } {
 ;#  Target is mass erased and left unsecured (non-blank!)
 ;#
 proc massEraseTarget { } {
+   ;# MK64FX512M12 - SWD
+   ;# Confirmed with blank secured chip (~47us solid reset pulsing) 
+   ;# Required final reset to unsecure
+   ;# Status before sequence (secured)
+   ;#    MDM-AP.Status  => 0x00000034 SECURE|MASS_ERASE_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;# Status after sequence (still secured) 
+   ;#    MDM-AP.Status  => 0x00000035 MASS_ERASE_ACK|SECURE|MASS_ERASE_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;# After reset sh (unsecured)
+   ;#    MDM-AP.Status  => 0x0001003A FLASH_READY|RESET|MASS_ERASE_EN|HALT|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
+   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|
+   ;# Cycle power - oscillates as above
+   ;# Opening mass erased chip stops oscillation
+   
+   ;# MK22FN512M12 - SWD
+   ;# Confirmed with blank secured chip (~96us solid reset pulsing) 
+   ;# Status before sequence (secured)
+   ;#    MDM-AP.Status  => 0x00000074 SECURE|MASS_ERASE_EN|BACKDOOR_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;# Status after sequence (unsecured) 
+   ;#    MDM-AP.Status  => 0x00000031 MASS_ERASE_ACK|MASS_ERASE_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x02010000 S_RESET|S_REGRDY|
+   ;#    DEMCR          => 0x00000000
+   ;#    MC_SRSH        => 0x      00
+   ;#    MC_SRSL        => 0x      00
+   ;#    WDOG_RSTCNT    => Failed
+   ;# After reset sh (unsecured)
+   ;#    MDM-AP.Status  => 0x0001003A FLASH_READY|RESET|MASS_ERASE_EN|HALT|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
+   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|
+   ;# Cycle power - oscillates as above
+   ;# Opening mass erased chip stops oscillation
+   
+   ;# MKL25Z128M4 - SWD
+   ;# Confirmed with blank secured chip (~1us minor reset pulsing) 
+   ;# Status before sequence (secured)
+   ;#    MDM-AP.Status  => 0x00000076 FLASH_READY|SECURE|MASS_ERASE_EN|BACKDOOR_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;# Status after sequence (unsecured) 
+   ;#    MDM-AP.Status  => 0x00000073 MASS_ERASE_ACK|FLASH_READY|MASS_ERASE_EN|BACKDOOR_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x02000000 S_RESET|
+   ;#    DEMCR          => 0x00000000
+   ;# After reset sh (unsecured)
+   ;#    MDM-AP.Status  => 0x0001003B MASS_ERASE_ACK|FLASH_READY|RESET|MASS_ERASE_EN|HALT|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
+   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|   ;# After reset sh (unsecured)
+   ;# Cycle power - oscillates as above
+   ;# Opening mass erased chip stops oscillation
+   
+   ;# MK20DX128M5 - SWD
+   ;# Confirmed with blank secured chip (~1.4us minor reset pulsing) 
+   ;# Status before sequence (secured)
+   ;#    MDM-AP.Status  => 0x00000034 SECURE|MASS_ERASE_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;# Status after sequence (unsecured) 
+   ;#    MDM-AP.Status  => 0x00000073 MASS_ERASE_ACK|FLASH_READY|MASS_ERASE_EN|BACKDOOR_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x02010000 S_RESET|S_REGRDY|
+   ;#    DEMCR          => 0x00000000
+   ;# After reset sh (unsecured)
+   ;#    MDM-AP.Status  => 0x0001003A FLASH_READY|RESET|MASS_ERASE_EN|HALT|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
+   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|
+   ;# Cycle power - oscillates as above
+   ;# Opening mass erased chip stops oscillation
+   
+    ;# PK40X256/PK60N512 - JTAG & SWD
+   ;# Confirmed with blank secured chip (~460us minor reset pulsing) 
+   ;# Status before sequence (secured)
+   ;#    MDM-AP.Status  => 0x00000034 SECURE|MASS_ERASE_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;# Status after sequence (unsecured) 
+   ;#    MDM-AP.Status  => 0x00000073 MASS_ERASE_ACK|FLASH_READY|MASS_ERASE_EN|BACKDOOR_EN|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x02010000 S_RESET|S_REGRDY|
+   ;#    DEMCR          => 0x00000000
+   ;# After reset sh (unsecured)
+   ;#    MDM-AP.Status  => 0x0001003A FLASH_READY|RESET|MASS_ERASE_EN|HALT|
+   ;#    MDM-AP.Control => 0x00000000
+   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
+   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|
+   ;# Cycle power - oscillates as above
+   ;# Opening mass erased chip stops oscillation
+   
+   ;# hold target reset to be sure
+   pinSet rst=0
+
+   ;# Cycle power if feature available
+   if [expr ( [getcap] & $::BDM_CAP_VDDCONTROL) != 0] {
+      puts "massEraseTarget{} - Cycling Vdd"
+      settargetvdd off
+      after 200
+      settargetvdd on
+      after 100
+   }
+   ;# Connect with reset asserted, ignore errors as may be secured
+   puts "massEraseTarget{} - Connecting (Ignoring errors)"
+   catch { connect }
+   
+   ;# Wait for Flash ready
+   for {set retry 0} {$retry < 20} {incr retry} {
+      puts "massEraseTarget{} - Waiting for Flash ready"
+      set mdmApStatus [rcreg $::MDM_AP_Status]
+      if [expr (($mdmApStatus & $::MDM_AP_ST_MASS_FLASH_RDY) != 0)] {
+         puts "massEraseTarget{} - MDM_AP_ST_MASS_FLASH_RDY success"
+         break;
+      }
+      after 50
+   }
+   
+   puts "massEraseTarget{} - Applying MDM_AP_C_DEBUG_REQUEST"
+   wcreg $::MDM_AP_Control $::MDM_AP_C_DEBUG_REQUEST
+   rcreg $::MDM_AP_Control
+   
+   puts "massEraseTarget{} - Applying MDM_AP_C_DEBUG_REQUEST|MDM_AP_C_MASS_ERASE"
+   wcreg $::MDM_AP_Control [expr $::MDM_AP_C_DEBUG_REQUEST | $::MDM_AP_C_MASS_ERASE]
+   rcreg $::MDM_AP_Control
+   
+   ;# Wait for Flash Mass Erase to complete
+   for {set retry 0} {$retry < 20} {incr retry} {
+      puts "massEraseTarget{} - Waiting for Flash Mass Erase to complete"
+      set mdmApControl [rcreg $::MDM_AP_Control]
+      if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) == 0)] {
+         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE cleared - OK"
+         break;
+      }
+      after 50
+   }
+   puts "massEraseTarget{} - Doing reset sh"
+   reset sh
+   return
+}
+
+;######################################################################################
+;#  Target is mass erased and left unsecured (non-blank!)
+;#
+proc massEraseTargetOld { } {
 
    ;# hold target reset to be sure
    pinSet rst=0
@@ -277,11 +423,12 @@ proc massEraseTarget { } {
    if [expr ( [getcap] & $::BDM_CAP_VDDCONTROL) != 0] {
       puts "massEraseTarget{} - Cycling Vdd"
       settargetvdd off
-      after 500
+      after 200
       settargetvdd on
       after 100
    }
    ;# Connect with reset asserted, ignore errors as may be secured
+   puts "massEraseTarget{} - Connecting (Ignoring errors)"
    catch { connect }
 
    ;# Repeatedly try to start erase with core and system reset
@@ -303,7 +450,7 @@ proc massEraseTarget { } {
          continue;
       }
       if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) == 0)] {
-         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE failed"
+         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE failed - retry"
          continue;
       }
       ;# Check if start Mass Erase confirmed
@@ -358,6 +505,7 @@ proc massEraseTarget { } {
 ;######################################################################################
 ;#
 proc isUnsecure { } {
+   ;#pinSet rst=0
    puts "isUnsecure{} - Checking if unsecured"
    set securityValue [ rcreg $::MDM_AP_Status ]
    puts [format "isUnsecure{} - MDM_AP_Status=%X" $securityValue ]
@@ -366,6 +514,7 @@ proc isUnsecure { } {
       error "Target is secured"
    }
    puts "isUnsecure{} - Target is unsecured"
+   ;#pinSet
    return
 }
 

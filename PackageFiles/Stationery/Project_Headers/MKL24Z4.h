@@ -5,7 +5,7 @@
  *           Equivalent: MKL24Z64M4, MKL24Z32M4
  *
  * @version  V0.0
- * @date     2014/09
+ * @date     2014/10
  *
  *******************************************************************************************************/
 
@@ -1106,7 +1106,7 @@ typedef GPIOA_Type GPIOE_Type;  /*!< GPIOE Structure                            
 #define GPIOE_PDDR                     (GPIOE->PDDR)
 
 /* ================================================================================ */
-/* ================           I2C0 (file:I2C0_MKL)                 ================ */
+/* ================           I2C0 (file:I2C0_MKL_SMB)             ================ */
 /* ================================================================================ */
 
 /**
@@ -1310,7 +1310,7 @@ typedef struct {                                /*!<       LLWU Structure       
    __IO uint8_t   ME;                           /*!< 0004: Module Enable Register                                       */
    __IO uint8_t   F1;                           /*!< 0005: Flag 1 Register                                              */
    __IO uint8_t   F2;                           /*!< 0006: Flag 2 Register                                              */
-   __I  uint8_t   F3;                           /*!< 0007: Flag 3 Register                                              */
+   __IO uint8_t   F3;                           /*!< 0007: Flag 3 Register                                              */
    __IO uint8_t   FILT1;                        /*!< 0008: Pin Filter 1 register                                        */
    __IO uint8_t   FILT2;                        /*!< 0009: Pin Filter 2 register                                        */
 } LLWU_Type;
@@ -3764,7 +3764,7 @@ typedef struct {                                /*!<       UART1 Structure      
    __IO uint8_t   BDL;                          /*!< 0001: Baud Rate Register: Low                                      */
    __IO uint8_t   C1;                           /*!< 0002: Control Register 1                                           */
    __IO uint8_t   C2;                           /*!< 0003: Control Register 2                                           */
-   __IO uint8_t   S1;                           /*!< 0004: Status Register 1                                            */
+   __I  uint8_t   S1;                           /*!< 0004: Status Register 1                                            */
    __IO uint8_t   S2;                           /*!< 0005: Status Register 2                                            */
    __IO uint8_t   C3;                           /*!< 0006: Control Register 3                                           */
    __IO uint8_t   D;                            /*!< 0007: Data Register                                                */

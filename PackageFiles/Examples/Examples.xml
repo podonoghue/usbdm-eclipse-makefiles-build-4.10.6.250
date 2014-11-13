@@ -16,6 +16,10 @@ Uses C++ classes to create a basic 'Arduino' style hardware interface.
 Example project for Freedom K20D50M board
 Uses C++ classes to create a basic 'Arduino' style hardware interface.
       </example>
+      <example description="Freedom K22F Arduino Demo"    family="ARM" path="ArduinoMK22.zip"     buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
+Example project for Freedom K22F board
+Uses C++ classes to create a basic 'Arduino' style hardware interface.
+      </example>
       <example description="Freedom K64F Arduino Demo"    family="ARM" path="ArduinoMK64.zip"     buildTool="net.sourceforge.usbdm.cdt.toolchain.processor.usbdmConfigure.armLtdGnuToolsForARM">
 Example project for Freedom K64F board
 Uses C++ classes to create a basic 'Arduino' style hardware interface.

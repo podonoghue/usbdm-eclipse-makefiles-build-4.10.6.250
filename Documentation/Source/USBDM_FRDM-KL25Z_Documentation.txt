@@ -7,10 +7,10 @@
    the connector necessary to allow programming of external devices as well as the target device on the board.  
    
    Unfortunately the existing debugger firmware available with the FRDM-xxxx boards is specifically tied to the target chip on the board 
-   (e.g. MKL25Z128M4).  In fact, it is tied to the <b>individual</b> serial number of the <b>chip</b> on the board and cannot be even used to program other
-   otherwise identical devices.  Changing the chip on the board renders the debugging interface useless. 
+   (e.g. MKL25Z128M4).  In fact, it is tied to the <b>individual</b> serial number of the <b>chip</b> on the board and cannot even be used to 
+   program other otherwise identical devices.  Changing the chip on the board renders the debugging interface useless. 
    
-   This manual describes a version of the USBDM firmware that can be loaded into the KL20 based debugging interface of the FRDM boards.
+   This manual describes a version of the USBDM firmware that can be loaded into the KL20 based debugging interface on any of the FRDM boards.
    This allows its use as a general purpose programmer and debugger for Kinetis devices (including the on board target chip e.g. KL25 on the board).
    This provides a very inexpensive debugging tool.
     
@@ -23,16 +23,17 @@
    -  Both the on-board target device (e.g. MKL25Z128M4) and external devices may be programmed.
    -  Installation of the USBDM software does not require any tools other than the FRDM-KL25Z board.
    -  Compatible IDEs
-      - Codewarrior V10.x (Eclipse version)
-         - Kinetis <i>USBDM debug interface</i>
-      - Eclipse Kepler
+      - Codewarrior V10.x (Eclipse version). The following features are provided:
+         - Kinetis - Integration of <i>USBDM debug interface</i> in wizards and debug functions.
+      - Eclipse (including Freescale Kinetis Design Studio). The following features are provided:
          - Kinetis <i>New Project Wizard</i>
          - Kinetis <i>USBDM debug target</i>
-         - Integration of GNU tools for ARM
+         - Integration of GCC tools (GNU tools for ARM or KDS tools)
+         - Peripheral Register view tailored for Kinetis devices.
    -  Stand-alone Kinetis programmer utility.
    -  Linux compatible
    -  Windows compatible
-   -  The Firmware in the BDM may be updated using the FRDM-KL25 Bootloader function.
+   -  The Firmware in the BDM may be updated using the usual FRDM-KL25 Bootloader function.
    -  The original board software may be restored if USBDM is not found suitable.  
 
 <b>The capabilities and features of the USBDM interface varies between the different versions of hardware. 
@@ -68,7 +69,7 @@ Not all of the functionality described in the following pages may apply to this 
    -  Xerces XML parser - http://xerces.apache.org/xerces-c
    
  \section sectionQueries Queries
-   Any queries please post on the Freescale @htmlonly <a href="http://forums.freescale.com/freescale/board?board.id=OSBDM08">OSBDM Discussion Board</a>. @endhtmlonly \n
+   Any queries please post on the Freescale @htmlonly <a href="https://community.freescale.com/community/bdm">OSBDM and TBDML Discussion Board</a>. @endhtmlonly \n
    
  \section licenseSection License
    \verbatim

@@ -30,7 +30,9 @@
 \verbatim
  Change History
 +==================================================================================================
-| 23 Mar 2014 | Changes to handling pendingResetRelease                             - pgo - V4.10.6.130
+| 12 Nov 2014 | Added armDisconnect() to allow reset behaviour to be restored       - pgo - V4.10.6.220
+| 12 Nov 2014 | Refactored armConnect()                                             - pgo - V4.10.6.220
+| 23 Mar 2014 | Changes to handling pendingResetRelease                             - pgo - V4.10.6.220
 | 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo - V4.10.4
 |  1 Dec 2012 | Changed logging                                                     - pgo - V4.10.4
 | 18 Nov 2012 | resetARM() now connects with reset pin asserted for H/W reset       - pgo - V4.10.4
@@ -443,7 +445,7 @@ USBDM_ErrorCode resetARM(TargetMode_t targetMode) {
    return rc;
 }
 
-//! Read Information that describes the APs present
+//! Read information that describes the APs present
 //!
 static USBDM_ErrorCode armCheckAPs(void) {
    LOGGING_Q;
@@ -634,13 +636,22 @@ USBDM_ErrorCode targetDebugEnable() {
       unsigned long mdm_ap_status;
       USBDM_ErrorCode rc = USBDM_ReadCReg(ARM_CRegMDM_AP_Status, &mdm_ap_status);
       if (rc != BDM_RC_OK) {
-         Logging::error("Checking Freescale MDM-AP - failed read\n");
+         Logging::error("Checking Freescale MDM-AP.Status - failed read\n");
          return rc;
       }
       if ((mdm_ap_status & MDM_AP_Status_System_Security) != 0) {
-         Logging::error("Checking Freescale MDM-AP - device is secured\n");
+         Logging::error("Checking Freescale MDM-AP.Status - device is secured\n");
          return BDM_RC_SECURED;
       }
+      // Make sure not suspended by MDM_AP
+      unsigned long mdm_ap_control;
+      rc = USBDM_ReadCReg(ARM_CRegMDM_AP_Control, &mdm_ap_control);
+      if (rc != BDM_RC_OK) {
+         Logging::error("Checking Freescale MDM-AP.Control - failed read\n");
+         return rc;
+      }
+      mdm_ap_control = 0;
+      rc = USBDM_WriteCReg(ARM_CRegMDM_AP_Control, mdm_ap_control);
    }
    USBDM_ErrorCode rc;
    int retry = 4;
@@ -683,6 +694,7 @@ USBDM_ErrorCode targetDebugEnable() {
    if (retry == 0) {
       return BDM_RC_BDM_EN_FAILED;
    }
+#if 0 // Disabled in 4.10.6.220 - May affect ability to connect???
    // Set halt on reset
    unsigned long demcrValue;
    armReadMemoryWord(DEMCR, &demcrValue);
@@ -691,6 +703,7 @@ USBDM_ErrorCode targetDebugEnable() {
       demcrValue |= DEMCR_VC_CORERESET;
       armWriteMemoryWord(DEMCR, demcrValue);
    }
+#endif
    return BDM_RC_OK;
 }
 
@@ -698,8 +711,7 @@ USBDM_ErrorCode targetDebugEnable() {
 //!
 //! @note Assumes low-level SWD connection has been done
 //!
-DLL_LOCAL
-USBDM_ErrorCode armSwdConnect() {
+static USBDM_ErrorCode armSwdConnect() {
    LOGGING;
    USBDM_ErrorCode rc;
    if (!armInitialiseDone) {
@@ -876,6 +888,43 @@ USBDM_ErrorCode armJtagConnect() {
       rc = targetDebugEnable();
    }
    return rc;
+}
+
+//! Connect to ARM Target
+//!
+//! @note Assumes low-level SWD connection has been done
+//!
+DLL_LOCAL
+USBDM_ErrorCode armConnect(TargetType_t targetType) {
+   USBDM_ErrorCode rc;
+
+   switch(targetType) {
+   case T_ARM_JTAG:
+      rc = armJtagConnect();
+      break;
+   case T_ARM_SWD:
+      rc = armSwdConnect();
+      break;
+   default:
+      // Ignore
+      rc = BDM_RC_ILLEGAL_PARAMS;
+      break;
+   }
+   return rc;
+}
+
+//! Disconnect from ARM Target
+//!
+//! @note Ignores errors
+//!
+DLL_LOCAL
+USBDM_ErrorCode armDisconnect(TargetType_t targetType) {
+   if (armInitialiseDone) {
+      // Clear reset captures (ignore errors)
+      armWriteMemoryWord(DEMCR, demcrBaseValue);
+   }
+   armInitialiseDone = false;
+   return BDM_RC_OK;
 }
 
 ////! Get ARM target status

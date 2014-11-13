@@ -1,7 +1,7 @@
 /*!
-\page codeSourceryNewProject Eclipse - New Project Wizard
+\page codeSourceryNewProject Eclipse - USBDM Features
 
-\section usbdmForEclipse USBDM Functions in Eclipse
+\section usbdmForEclipse USBDM Functions in Eclipse (including Kinetis Design Studio)
 
 The following sections assume that the required software has been installed \ref codeSourceryInstallPage
    
@@ -51,7 +51,7 @@ The following example is for an Kinetis target but a similar process is followed
 <b>Select project options</b>         	
 	- This page is specific to a particular device and the options will vary.			
 	- Choose which optional components (files) to add to the project.  Some of these will require manual customization upon completion of the Wizard.
-	This is often the case for CMSIS on smaller devices where the heap and stack sizes as well as the CMSIS options will need to be adjusted for the 
+	This is often the case for CMSIS on smaller devices where the heap and stack sizes as well as CMSIS options will need to be adjusted for the 
 	very limited amount of RAM available.
 	- Click <i>Next</i> 
 	
@@ -62,12 +62,12 @@ The following example is for an Kinetis target but a similar process is followed
 These values are used to update system-level settings and affect all existing and new projects.  It is usually
 only necessary to set these value once for Eclipse.  These values may also be accessed from the USBDM menu.
 - ARM Ltd GNU Tools for ARM
-- Codesourcery Tools for ARM
 - Codesourcery Tools for Coldfire
    - The Eclipse tools need to know the target-specific tool prefix.\n
-     The prefix <b>m68k-elf-</b> is usual for M68K (Coldfire etc) targets.\n
      The prefix <b>arm-eabi-</b> is usual for ARM targets.\n
-   - Eclipse needs to know where to find the GCC Tools.  
+     The prefix <b>m68k-elf-</b> is usual for M68K (Coldfire etc) targets.\n
+   - Eclipse needs to know where to find the GCC Tools.\n  
+   
    These two options can be conveniently set by using the Browse Button to browse to the 
    installation location of the XXXXXgcc.exe program included with the tools e.g. arm-eabi-gcc.exe.\n
    If a particular toolchain is not being used then the entries should be cleared.  
@@ -214,31 +214,67 @@ by the USBDM Wizard.\n
 
 \image html DebuggerTabColdfire.png
 
-- <b>Startup</b> Tab in the dialogue. Check the following settings:
-    - Initialization Commands
-       - Reset and Delay - Not used (Not supported by USBDM interface)
-       - Halt -  Not used (Not supported by USBDM interface)
-       - (Empty box - This is a list of initial commands) - Not used
-    - Load Image and Symbols
-       - Selected to <i>load image</i> from the project binary since the USBDM GDB server supports target 
-         programming.  Alternatively, the target can be programmed beforehand.
-       - Select to <i>load symbols</i> from the project binary as well.
-    - Runtime Options
-       - <i>Sets a breakpoint</i> at main()and to <i>resume</i> execution.  This will cause the debugger 
-         session to stop at the first line of the main() routine when debugging is started. \n
+- <b>Startup</b> Tab in the dialogue. 
+	 - Program target before debugging - This option enables programming the target at the start of a debugging session.
+	 - Startup options
+	 	- Load external file - If selected these options may be used to select a external file to load code and symbols from.
+	 	- Set initial program counter to - If selected the program counter is set after loading.  This is useful if debugging a RAM image where
+	 	the reset vector will usually be invalid.
+	 	- Set temporary breakpoint at - If selected this option sets a temporary breakpoint at the given address.  This is usually used
+	 	in conjunction with <b>Start execution after load</b>.
+	 	- Start execution after load - The execution is commenced after loading.
+	 
+	 - Connect to running target - This option allows debugging a target without re-programming the flash.
+	 - Connection options
+	 	- Load external symbol file - If selected these options may be used to select a external file to load symbols from.
+	 	- Reset Target	- The target is reset after connection
+	 	- Reset Target and Continue - The target is reset and then execution resumed
+	 	- Halt Target - The target is halted
+	 	- Target execution is unaffected - The target remains in a halted or executing state.
+	 	- Set temporary breakpoint at - If selected this option sets a temporary breakpoint at the given address.  This is usually used
+	 	in conjunction with <b>Reset Target and Continue</b>.
+	
+	 - Restart options - These options apply when using the restart button during a debugging session.
+	   - Use startup options - If selected the the same options are used for restart and for the initial program load.
+	   - Set initial program counter to - If selected the program counter is set after loading.  This is useful if debugging a RAM image where
+	 	the reset vector will usually be invalid.
+	 	- Set temporary breakpoint at - If selected this option sets a temporary breakpoint at the given address.  This is usually used
+	 	in conjunction with <b>Start execution after restart</b>.
+	 	- Start execution after restart - The execution is commenced after loading.
 
+	 - Initialisation Commands - done before target Execution - This may be used to run custom GDB commands
+	 
+	 - Run Commands - done after Target Execution - This may be used to run custom GDB commands
+	 
 \image html StartupTab.png
 
 \section debugging Debugging
 
 - You can now start a debugging session using the launch configuration above. \n
-  You should find that the follow steps occurring:
-   - Session starts
-   - The program is down-loaded to the target
-   - Execution commences at the program entry point
-   - Execution stops at the first line of main()
+   \image html LaunchDebug.png 
+   - With the default launch settings you should find that the follow steps occurring:
+	   - Session starts
+	   - The program is down-loaded to the target
+	   - Execution commences at the program reset location
+	   - Execution stops at the first line of main()
    
+   - When using the Restart button during a session \image html RestartButton.png 
+   the following sub-sequence will occur:
+	   - The target is reset
+	   - Execution commences at the program reset location
+	   - Execution stops at the first line of main()
+	  
    You should be able to debug in the usual fashion with breakpoints, single-stepping etc.
+
+\section running Running
+- You may also use the same launch configuration to start a run session.  Its main use is to do a 
+  quick check on programming the target and checking program execution. \n
+   \image html LaunchRun.png 
+	- This differs from the Debugging session by doing the following sequence without any interaction:
+	   - Session starts
+	   - The program is down-loaded to the target
+	   - Execution commences at the program reset location
+	   - The session ends.
 
 \section debugPeripheralView Debug Peripheral View (ARM Targets only)
 
@@ -266,4 +302,17 @@ by the USBDM Wizard.\n
 	value which	always reads as zero.  It will however change the values of the GPIOA_PDOR register and 
 	probably the GPIOA_PDIR register.  This will be reflected in the view since these register are all re-read.
 
+\section faultStatusDialogue Fault Status Dialogue (ARM Targets only)
+
+- The Fault Status dialogue provides a convenient summary of the fault status of a target being debugged.
+  Its main use would be after the unexpected execution of a fault handler.   \n 
+  This dialogue is opened from the icon bar of the peripheral view.  The same information is available in the 
+  appropriate SCB registers (CFSR, HFSR, DFSR, MMFAR, BFAR) although not in as convenient a form \image html OpenFaultReport.png
+  	
+         \image html FaultStatusDialogue.png
+
+- A couple of useful references relating to handling faults are:
+   - @htmlonly <a href="http://www.keil.com/appnotes/files/apnt209.pdf"><b>Application Note 209 Abstract Introduction - Keil</b></a> @endhtmlonly
+   - @htmlonly <a href="http://community.arm.com/servlet/JiveServlet/previewBody/7835-102-2-12371/Developing%20a%20Generic%20Hard%20Fault%20handler%20for%20ARM.pdf">
+     <b>Developing a Generic Hard Fault handler for ARM.pdf</b></a> @endhtmlonly
 */

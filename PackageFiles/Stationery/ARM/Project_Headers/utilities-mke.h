@@ -24,37 +24,8 @@ extern "C" {
 #define PTOR(port)             CONCAT3_(GPIO,port,_PTOR)
 #define PDIR(port)             CONCAT3_(GPIO,port,_PDIR)
 #define PDDR(port)             CONCAT3_(GPIO,port,_PDDR)
+#define GPIO(port)             CONCAT2_(GPIO,port)
 #define PORT_CLOCK_MASK(port)  CONCAT4_(SIM_SCGC5,_PORT,port,_MASK)
-
-/*!
- *  Wait for interrupt event - used to reduce power
- */
-#define __wait_for_interrupt() __asm__("wfi")
-
-/*!
- *  Debug breakpoint
- */
-#define __breakpoint() __asm__("bkpt")
-
-/*!
- *  Enable interrupts
- */
-#define __enable_interrupt() __asm__("cpsie I")
-
-/*!
- *  Disable interrupts
- */
-#define __disable_interrupt() __asm__("cpsid I")
-
-/*!
- *  Enable fault interrupts
- */
-#define __enable_fault_interrupt() __asm__("cpsie F")
-
-/*!
- *  Disable fault interrupts
- */
-#define __disable_fault_interrupt() __asm__("cpsid F")
 
 #define IOANDW(ADDR,WDATA) \
       __asm("ldr r3, =(1<<26);" \

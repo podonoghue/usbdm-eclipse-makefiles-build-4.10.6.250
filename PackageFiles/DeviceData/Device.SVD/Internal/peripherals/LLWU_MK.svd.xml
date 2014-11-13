@@ -666,7 +666,6 @@ accessible as the MWUFx bit. The flag will need to be cleared in the peripheral 
 writing a 1 to the MWUFx bit</description>
                <addressOffset>0x7</addressOffset>
                <size>8</size>
-               <access>read-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>

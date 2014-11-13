@@ -64,7 +64,7 @@ SECTIONS
 
     /* Emit a Security field */
     . = __cs3_region_start_rom + 0x400;
-    *(.security_information)
+    KEEP(*(.security_information))
     ASSERT (. == __cs3_region_start_rom + 0x410, "No security information");
 
     *(.cs3.reset)

@@ -5,7 +5,7 @@
  *           Equivalent: MK22FN512M12, MK22FN256M12
  *
  * @version  V0.0
- * @date     2014/09
+ * @date     2014/10
  *
  *******************************************************************************************************/
 
@@ -50,8 +50,8 @@ typedef enum {
   DMA15_IRQn                    =  15,   /*!<  31 DMA channel 15 transfer complete interrupt                                       */
   DMA_Error_IRQn                =  16,   /*!<  32 DMA error interrupt all channels                                                 */
   MCM_IRQn                      =  17,   /*!<  33 Normal Interrupt                                                                 */
-  FTFA_Command_IRQn             =  18,   /*!<  34 FTFE interrupt                                                                   */
-  FTFA_Collision_IRQn           =  19,   /*!<  35 FTFE Read collision interrupt                                                    */
+  FTFA_Command_IRQn             =  18,   /*!<  34 FTFA interrupt                                                                   */
+  FTFA_Collision_IRQn           =  19,   /*!<  35 FTFA Read collision interrupt                                                    */
   PMC_IRQn                      =  20,   /*!<  36 PMC Low Voltage Detect, Low Voltage Warning                                      */
   LLWU_IRQn                     =  21,   /*!<  37 LLWU Low Leakage Wakeup                                                          */
   WDOG_IRQn                     =  22,   /*!<  38 WDOG interrupt                                                                   */
@@ -456,6 +456,48 @@ typedef struct {                                /*!<       ADC0 Structure       
 #define ADC0_CLM2                      (ADC0->CLM2)
 #define ADC0_CLM1                      (ADC0->CLM1)
 #define ADC0_CLM0                      (ADC0->CLM0)
+
+/* ================================================================================ */
+/* ================           ADC1 (derived from ADC0)             ================ */
+/* ================================================================================ */
+
+/**
+ * @brief Analog-to-Digital Converter
+ */
+typedef ADC0_Type ADC1_Type;  /*!< ADC1 Structure                                              */
+
+
+/* -------------------------------------------------------------------------------- */
+/* -----------     'ADC1' Register Access macros                        ----------- */
+/* -------------------------------------------------------------------------------- */
+
+#define ADC1_SC1A                      (ADC1->SC1A)
+#define ADC1_SC1B                      (ADC1->SC1B)
+#define ADC1_CFG1                      (ADC1->CFG1)
+#define ADC1_CFG2                      (ADC1->CFG2)
+#define ADC1_RA                        (ADC1->RA)
+#define ADC1_RB                        (ADC1->RB)
+#define ADC1_CV1                       (ADC1->CV1)
+#define ADC1_CV2                       (ADC1->CV2)
+#define ADC1_SC2                       (ADC1->SC2)
+#define ADC1_SC3                       (ADC1->SC3)
+#define ADC1_OFS                       (ADC1->OFS)
+#define ADC1_PG                        (ADC1->PG)
+#define ADC1_MG                        (ADC1->MG)
+#define ADC1_CLPD                      (ADC1->CLPD)
+#define ADC1_CLPS                      (ADC1->CLPS)
+#define ADC1_CLP4                      (ADC1->CLP4)
+#define ADC1_CLP3                      (ADC1->CLP3)
+#define ADC1_CLP2                      (ADC1->CLP2)
+#define ADC1_CLP1                      (ADC1->CLP1)
+#define ADC1_CLP0                      (ADC1->CLP0)
+#define ADC1_CLMD                      (ADC1->CLMD)
+#define ADC1_CLMS                      (ADC1->CLMS)
+#define ADC1_CLM4                      (ADC1->CLM4)
+#define ADC1_CLM3                      (ADC1->CLM3)
+#define ADC1_CLM2                      (ADC1->CLM2)
+#define ADC1_CLM1                      (ADC1->CLM1)
+#define ADC1_CLM0                      (ADC1->CLM0)
 
 /* ================================================================================ */
 /* ================           CMP0 (file:CMP0_MK)                  ================ */
@@ -3335,7 +3377,7 @@ typedef struct {                                /*!<       FTM0 Structure       
       __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
    } CONTROLS[8];
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
-   __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
+   __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
    __IO uint32_t  MODE;                         /*!< 0054: Features Mode Selection                                      */
    __IO uint32_t  SYNC;                         /*!< 0058: Synchronization                                              */
    __IO uint32_t  OUTINIT;                      /*!< 005C: Initial State for Channels Output                            */
@@ -3851,7 +3893,7 @@ typedef struct {                                /*!<       FTM1 Structure       
    } CONTROLS[2];
    __I  uint32_t  RESERVED0[12];                /*!< 001C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
-   __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
+   __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
    __IO uint32_t  MODE;                         /*!< 0054: Features Mode Selection                                      */
    __IO uint32_t  SYNC;                         /*!< 0058: Synchronization                                              */
    __IO uint32_t  OUTINIT;                      /*!< 005C: Initial State for Channels Output                            */
@@ -4724,7 +4766,7 @@ typedef struct {                                /*!<       LLWU Structure       
    __IO uint8_t   ME;                           /*!< 0004: Module Enable Register                                       */
    __IO uint8_t   F1;                           /*!< 0005: Flag 1 Register                                              */
    __IO uint8_t   F2;                           /*!< 0006: Flag 2 Register                                              */
-   __I  uint8_t   F3;                           /*!< 0007: Flag 3 Register                                              */
+   __IO uint8_t   F3;                           /*!< 0007: Flag 3 Register                                              */
    __IO uint8_t   FILT1;                        /*!< 0008: Pin Filter 1 register                                        */
    __IO uint8_t   FILT2;                        /*!< 0009: Pin Filter 2 register                                        */
 } LLWU_Type;
@@ -7608,7 +7650,7 @@ typedef struct {                                /*!<       TPIU Structure       
 #define TPIU_CID3                      (TPIU->CID3)
 
 /* ================================================================================ */
-/* ================           UART0 (file:UART0_C7816)             ================ */
+/* ================           UART0 (file:UART0_MK_C7816)          ================ */
 /* ================================================================================ */
 
 /**
@@ -8130,7 +8172,7 @@ typedef UART1_Type UART2_Type;  /*!< UART2 Structure                            
 #define UART2_RCFIFO                   (UART2->RCFIFO)
 
 /* ================================================================================ */
-/* ================           USB0 (file:USB0_MK_MKL)              ================ */
+/* ================           USB0 (file:USB0_CLK_RECOVER)         ================ */
 /* ================================================================================ */
 
 /**
@@ -8163,7 +8205,7 @@ typedef struct {                                /*!<       USB0 Structure       
    __I  uint8_t   RESERVED11[3];                /*!< 008D:                                                              */
    __I  uint8_t   STAT;                         /*!< 0090: Status Register                                              */
    __I  uint8_t   RESERVED12[3];                /*!< 0091:                                                              */
-   __IO uint8_t   CTL;                          /*!< 0094: Control register                                             */
+   __IO uint8_t   CTL;                          /*!< 0094: Control Register                                             */
    __I  uint8_t   RESERVED13[3];                /*!< 0095:                                                              */
    __IO uint8_t   ADDR;                         /*!< 0098: Address Register                                             */
    __I  uint8_t   RESERVED14[3];                /*!< 0099:                                                              */
@@ -8194,6 +8236,12 @@ typedef struct {                                /*!<       USB0 Structure       
    __IO uint8_t   USBTRC0;                      /*!< 010C: USB Transceiver Control Register 0                           */
    __I  uint8_t   RESERVED25[7];                /*!< 010D:                                                              */
    __IO uint8_t   USBFRMADJUST;                 /*!< 0114: Frame Adjust Register                                        */
+   __I  uint8_t   RESERVED26[43];               /*!< 0115:                                                              */
+   __IO uint8_t   CLK_RECOVER_CTRL;             /*!< 0140: USB Clock recovery control                                   */
+   __I  uint8_t   RESERVED27[3];                /*!< 0141:                                                              */
+   __IO uint8_t   CLK_RECOVER_IRC_EN;           /*!< 0144: IRC48M oscillator enable register                            */
+   __I  uint8_t   RESERVED28[23];               /*!< 0145:                                                              */
+   __IO uint8_t   CLK_RECOVER_INT_STATUS;       /*!< 015C: Clock recovery separated interrupt status                    */
 } USB0_Type;
 
 
@@ -8455,6 +8503,8 @@ typedef struct {                                /*!<       USB0 Structure       
 #define USB_USBTRC0_USB_RESUME_INT_SHIFT         0                                                   /*!< USB0_USBTRC0: USB_RESUME_INT Position   */
 #define USB_USBTRC0_SYNC_DET_MASK                (0x01UL << USB_USBTRC0_SYNC_DET_SHIFT)              /*!< USB0_USBTRC0: SYNC_DET Mask             */
 #define USB_USBTRC0_SYNC_DET_SHIFT               1                                                   /*!< USB0_USBTRC0: SYNC_DET Position         */
+#define USB_USBTRC0_USB_CLK_RECOVERY_INT_MASK    (0x01UL << USB_USBTRC0_USB_CLK_RECOVERY_INT_SHIFT)  /*!< USB0_USBTRC0: USB_CLK_RECOVERY_INT Mask */
+#define USB_USBTRC0_USB_CLK_RECOVERY_INT_SHIFT   2                                                   /*!< USB0_USBTRC0: USB_CLK_RECOVERY_INT Position*/
 #define USB_USBTRC0_USBRESMEN_MASK               (0x01UL << USB_USBTRC0_USBRESMEN_SHIFT)             /*!< USB0_USBTRC0: USBRESMEN Mask            */
 #define USB_USBTRC0_USBRESMEN_SHIFT              5                                                   /*!< USB0_USBTRC0: USBRESMEN Position        */
 #define USB_USBTRC0_USBRESET_MASK                (0x01UL << USB_USBTRC0_USBRESET_SHIFT)              /*!< USB0_USBTRC0: USBRESET Mask             */
@@ -8464,6 +8514,24 @@ typedef struct {                                /*!<       USB0 Structure       
 #define USB_USBFRMADJUST_ADJ_MASK                (0xFFUL << USB_USBFRMADJUST_ADJ_SHIFT)              /*!< USB0_USBFRMADJUST: ADJ Mask             */
 #define USB_USBFRMADJUST_ADJ_SHIFT               0                                                   /*!< USB0_USBFRMADJUST: ADJ Position         */
 #define USB_USBFRMADJUST_ADJ(x)                  (((x)<<USB_USBFRMADJUST_ADJ_SHIFT)&USB_USBFRMADJUST_ADJ_MASK) /*!< USB0_USBFRMADJUST                       */
+
+/* ------- USB0_CLK_RECOVER_CTRL                    ------ */
+#define USB_CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN_MASK (0x01UL << USB_CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN_SHIFT) /*!< USB0_CLK_RECOVER_CTRL: RESTART_IFRTRIM_EN Mask*/
+#define USB_CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN_SHIFT 5                                              /*!< USB0_CLK_RECOVER_CTRL: RESTART_IFRTRIM_EN Position*/
+#define USB_CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN_MASK (0x01UL << USB_CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN_SHIFT) /*!< USB0_CLK_RECOVER_CTRL: RESET_RESUME_ROUGH_EN Mask*/
+#define USB_CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN_SHIFT 6                                           /*!< USB0_CLK_RECOVER_CTRL: RESET_RESUME_ROUGH_EN Position*/
+#define USB_CLK_RECOVER_CTRL_CLOCK_RECOVER_EN_MASK (0x01UL << USB_CLK_RECOVER_CTRL_CLOCK_RECOVER_EN_SHIFT) /*!< USB0_CLK_RECOVER_CTRL: CLOCK_RECOVER_EN Mask*/
+#define USB_CLK_RECOVER_CTRL_CLOCK_RECOVER_EN_SHIFT 7                                                /*!< USB0_CLK_RECOVER_CTRL: CLOCK_RECOVER_EN Position*/
+
+/* ------- USB0_CLK_RECOVER_IRC_EN                  ------ */
+#define USB_CLK_RECOVER_IRC_EN_REG_EN_MASK       (0x01UL << USB_CLK_RECOVER_IRC_EN_REG_EN_SHIFT)     /*!< USB0_CLK_RECOVER_IRC_EN: REG_EN Mask    */
+#define USB_CLK_RECOVER_IRC_EN_REG_EN_SHIFT      0                                                   /*!< USB0_CLK_RECOVER_IRC_EN: REG_EN Position*/
+#define USB_CLK_RECOVER_IRC_EN_IRC_EN_MASK       (0x01UL << USB_CLK_RECOVER_IRC_EN_IRC_EN_SHIFT)     /*!< USB0_CLK_RECOVER_IRC_EN: IRC_EN Mask    */
+#define USB_CLK_RECOVER_IRC_EN_IRC_EN_SHIFT      1                                                   /*!< USB0_CLK_RECOVER_IRC_EN: IRC_EN Position*/
+
+/* ------- USB0_CLK_RECOVER_INT_STATUS              ------ */
+#define USB_CLK_RECOVER_INT_STATUS_OVF_ERROR_MASK (0x01UL << USB_CLK_RECOVER_INT_STATUS_OVF_ERROR_SHIFT) /*!< USB0_CLK_RECOVER_INT_STATUS: OVF_ERROR Mask*/
+#define USB_CLK_RECOVER_INT_STATUS_OVF_ERROR_SHIFT 4                                                 /*!< USB0_CLK_RECOVER_INT_STATUS: OVF_ERROR Position*/
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'USB0' Register Access macros                        ----------- */
@@ -8512,6 +8580,9 @@ typedef struct {                                /*!<       USB0 Structure       
 #define USB0_CONTROL                   (USB0->CONTROL)
 #define USB0_USBTRC0                   (USB0->USBTRC0)
 #define USB0_USBFRMADJUST              (USB0->USBFRMADJUST)
+#define USB0_CLK_RECOVER_CTRL          (USB0->CLK_RECOVER_CTRL)
+#define USB0_CLK_RECOVER_IRC_EN        (USB0->CLK_RECOVER_IRC_EN)
+#define USB0_CLK_RECOVER_INT_STATUS    (USB0->CLK_RECOVER_INT_STATUS)
 
 /* ================================================================================ */
 /* ================           VREF (file:VREF_MK_3)                ================ */
@@ -8732,6 +8803,7 @@ typedef struct {                                /*!<       WDOG Structure       
 /* ================================================================================ */
 
 #define ADC0_BASE_PTR                  0x4003B000UL
+#define ADC1_BASE_PTR                  0x40027000UL
 #define CMP0_BASE_PTR                  0x40073000UL
 #define CMP1_BASE_PTR                  0x40073008UL
 #define CRC_BASE_PTR                   0x40032000UL
@@ -8797,6 +8869,7 @@ typedef struct {                                /*!<       WDOG Structure       
 /* ================================================================================ */
 
 #define ADC0                           ((volatile ADC0_Type   *) ADC0_BASE_PTR)
+#define ADC1                           ((volatile ADC1_Type   *) ADC1_BASE_PTR)
 #define CMP0                           ((volatile CMP0_Type   *) CMP0_BASE_PTR)
 #define CMP1                           ((volatile CMP1_Type   *) CMP1_BASE_PTR)
 #define CRC                            ((volatile CRC_Type    *) CRC_BASE_PTR)

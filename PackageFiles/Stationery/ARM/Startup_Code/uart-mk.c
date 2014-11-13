@@ -11,6 +11,8 @@
 #include "uart.h"
 #include "Freedom.h"
 
+//#define USE_IRQ
+
 #if defined(MCU_MK22F51212)
 //=================================================================================
 // UART to use
@@ -226,9 +228,9 @@ void uart_txChar(int ch) {
 }
 
 #ifdef USE_IRQ
-uint8_t rxBuffer[100];
-uint8_t *rxPutPtr = rxBuffer;
-uint8_t *rxGetPtr = rxBuffer;
+static uint8_t rxBuffer[100];
+static uint8_t *rxPutPtr = rxBuffer;
+static uint8_t *rxGetPtr = rxBuffer;
 
 void UART0_RxTx_IRQHandler() {
    // Ignores overflow
@@ -278,9 +280,10 @@ int uart_rxChar(void) {
  */
 int uart_rxChar(void) {
    uint8_t status;
+   // Wait for Rx buffer full
    do {
       status = UART->S1;
-      // Clear & ignore and pending errors
+      // Clear & ignore pending errors
       if ((status & (UART_S1_FE_MASK|UART_S1_OR_MASK|UART_S1_PF_MASK|UART_S1_NF_MASK)) != 0) {
          (void)UART->D;
       }

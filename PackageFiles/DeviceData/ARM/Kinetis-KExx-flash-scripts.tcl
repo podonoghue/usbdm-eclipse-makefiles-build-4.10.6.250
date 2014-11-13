@@ -276,76 +276,52 @@ proc massEraseTarget { } {
    if [expr ( [getcap] & $::BDM_CAP_VDDCONTROL) != 0] {
       puts "massEraseTarget{} - Cycling Vdd"
       settargetvdd off
-      after 500
+      after 200
       settargetvdd on
       after 100
    }
    ;# Connect with reset asserted, ignore errors as may be secured
+   puts "massEraseTarget{} - Connecting (Ignoring errors)"
    catch { connect }
 
-   ;# Repeatedly try to start erase with core and system reset
-   set mdmApControlErase [expr $::MDM_AP_C_CORE_HOLD | $::MDM_AP_C_SYSTEM_RESET | $::MDM_AP_C_MASS_ERASE]
-   set mdmApControl 0
-   for {set retry 0} {$retry < 10} {incr retry} {
-      after 50
-      puts "massEraseTarget{} - Starting erase"
-      ;# Write Mass Erase + System Reset + Core Reset
-      if { [catch { wcreg $::MDM_AP_Control $mdmApControlErase } ] } {
-         puts "massEraseTarget{} - wcreg MDM_AP_Control failed"
-         continue;
-      }      
-      ;# Check if Mass Erase confirmed
-      if { [catch { set mdmApControl [rcreg $::MDM_AP_Control] } ] } {
-         puts "massEraseTarget{} - rcreg MDM_AP_Control failed"
-         continue;
-      }
-      if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) != 0)] {
-         break;
-      }
-      puts "massEraseTarget{} - Starting erase failed"
-   }
-   
-   ;# Release external reset
+   puts "massEraseTarget{} - Writing MDM_AP_C_SYSTEM_RESET"
+   wcreg $::MDM_AP_Control $::MDM_AP_C_SYSTEM_RESET
+
+   puts "massEraseTarget{} - Releasing external reset"
    pinSet
-   ;# Release MDM-AP Reset
-   set mdmApControlErase [expr $::MDM_AP_C_MASS_ERASE]
-   wcreg $::MDM_AP_Control $mdmApControlErase
-   rcreg $::MDM_AP_Control
-   rcreg $::MDM_AP_Status
-   after 50
-   rcreg $::MDM_AP_Control
-   rcreg $::MDM_AP_Status
    
-   ;# Wait for erase to complete
+   ;# Wait for Flash ready
    for {set retry 0} {$retry < 20} {incr retry} {
-      puts "massEraseTarget{} - Waiting for erase to finish"
-      after 50;
-      set mdmApControl [rcreg $::MDM_AP_Control]
-      if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) != 0)] {
-         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE still set - waiting"
-         continue;
-      }
-      ;# Check if Unsecured confirmed
+      puts "massEraseTarget{} - Waiting for Flash ready"
       set mdmApStatus [rcreg $::MDM_AP_Status]
-      if [expr (($mdmApStatus & $::MDM_AP_ST_SYSTEM_SECURITY) == 0)] {
-         puts "massEraseTarget{} - MDM_AP_ST_SYSTEM_SECURITY cleared - success"
+      if [expr (($mdmApStatus & $::MDM_AP_ST_MASS_FLASH_RDY) != 0)] {
+         puts "massEraseTarget{} - MDM_AP_ST_MASS_FLASH_RDY success"
          break;
-      }    
+      }
+      after 50
    }
-   after 50
-
-   ;# Apply reset to make sure device is unsecured
-   reset s s
+   puts "massEraseTarget{} - Applying MDM_AP_C_DEBUG_REQUEST"
+   wcreg $::MDM_AP_Control $::MDM_AP_C_DEBUG_REQUEST
+   rcreg $::MDM_AP_Control
    
-   ;# Reconnect, ignore any errors
-   catch { connect }
-
-   set mdmApStatus [rcreg $::MDM_AP_Status]
-   if [expr (($mdmApStatus & $::MDM_AP_ST_SYSTEM_SECURITY) != 0)] {
-      puts "massEraseTarget{} - Device is still secured after reset"
-      error "Device is still secured"
+   puts "massEraseTarget{} - Applying MDM_AP_C_DEBUG_REQUEST|MDM_AP_C_MASS_ERASE"
+   wcreg $::MDM_AP_Control [expr $::MDM_AP_C_DEBUG_REQUEST | $::MDM_AP_C_MASS_ERASE]
+   rcreg $::MDM_AP_Control
+   
+   ;# Wait for Flash Mass Erase to complete
+   for {set retry 0} {$retry < 20} {incr retry} {
+      puts "massEraseTarget{} - Waiting for Flash Mass Erase to complete"
+      set mdmApControl [rcreg $::MDM_AP_Control]
+      if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) == 0)] {
+         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE cleared - OK"
+         break;
+      }
+      after 50
    }
-   puts "massEraseTarget{} - success"
+   
+   puts "massEraseTarget{} - Doing reset sh"
+   reset sh
+   
    return
 }
 

@@ -5,9 +5,9 @@
 
 Under Windows, installation is done with a standard Windows MSI file <b>USBDM_X_X_X_X_Win.msi. </b>\n
 Download from: <A HREF="http://sourceforge.net/projects/usbdm/files/Version 4.10.6/Software/">USBDM Sourceforge</A>\n
+Note that there is a separate installation for the device drivers and you must select the version appropriate to your operating system see \ref driverPage.\n \n
 \image html MSI_Installer.png
 
-Note that there is a separate installation for the device drivers and you must select the version appropriate to your operating system see \ref driverPage.\n \n
 The USBDM installation will do the following:
   - Install stand-alone programmers for various targets
      - Kinetis
@@ -33,7 +33,8 @@ The USBDM installation will do the following:
      - CodeWarrior Development Studio for S12(X) V5.1
      - CodeWarrior Development Studio for Microcontrollers V6.3\n
      - CW for MCU v10.1/v10.2/v10.3
-     - Eclipse Juno or Kepler (need to manually select the installation directory)
+     - Eclipse Juno, Kepler or Luna (need to manually select the installation directory)
+     - Kinetis Design Studio
      - FreeMASTER V1.3
      - CF Flasher V3.1
 
@@ -49,6 +50,7 @@ Under Linux, installation is done by standard Debian archive.
   - Modify various other applications that USBDM is designed to work with.  These applications need to be installed <b>before</b> USBDM.\n
      - CW for MCU v10.1/v10.2
      - Eclipse
+     - Kinetis Design Studio
   - A <b>.usbdm</b> directory will be created in the user's root directory when any programs are run.
 
  Various programs are then available in the installation directory.

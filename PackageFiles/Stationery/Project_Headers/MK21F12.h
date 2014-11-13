@@ -5,7 +5,7 @@
  *           Equivalent: MK21FX512M12, MK21FN1M0M12
  *
  * @version  V0.0
- * @date     2014/09
+ * @date     2014/10
  *
  *******************************************************************************************************/
 
@@ -4634,7 +4634,7 @@ typedef struct {                                /*!<       FTM0 Structure       
       __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
    } CONTROLS[8];
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
-   __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
+   __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
    __IO uint32_t  MODE;                         /*!< 0054: Features Mode Selection                                      */
    __IO uint32_t  SYNC;                         /*!< 0058: Synchronization                                              */
    __IO uint32_t  OUTINIT;                      /*!< 005C: Initial State for Channels Output                            */
@@ -5150,7 +5150,7 @@ typedef struct {                                /*!<       FTM1 Structure       
    } CONTROLS[2];
    __I  uint32_t  RESERVED0[12];                /*!< 001C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
-   __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
+   __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
    __IO uint32_t  MODE;                         /*!< 0054: Features Mode Selection                                      */
    __IO uint32_t  SYNC;                         /*!< 0058: Synchronization                                              */
    __IO uint32_t  OUTINIT;                      /*!< 005C: Initial State for Channels Output                            */
@@ -6056,7 +6056,7 @@ typedef struct {                                /*!<       LLWU Structure       
    __IO uint8_t   ME;                           /*!< 0004: Module Enable Register                                       */
    __IO uint8_t   F1;                           /*!< 0005: Flag 1 Register                                              */
    __IO uint8_t   F2;                           /*!< 0006: Flag 2 Register                                              */
-   __I  uint8_t   F3;                           /*!< 0007: Flag 3 Register                                              */
+   __IO uint8_t   F3;                           /*!< 0007: Flag 3 Register                                              */
    __IO uint8_t   FILT1;                        /*!< 0008: Pin Filter 1 register                                        */
    __IO uint8_t   FILT2;                        /*!< 0009: Pin Filter 2 register                                        */
    __IO uint8_t   RST;                          /*!< 000A: Reset Enable Register                                        */
@@ -9626,7 +9626,7 @@ typedef struct {                                /*!<       TPIU Structure       
 #define TPIU_CID3                      (TPIU->CID3)
 
 /* ================================================================================ */
-/* ================           UART0 (file:UART0_C7816_CEA709)       ================ */
+/* ================           UART0 (file:UART0_MK_C7816_CEA709)       ================ */
 /* ================================================================================ */
 
 /**

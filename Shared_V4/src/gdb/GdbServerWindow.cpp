@@ -261,6 +261,7 @@ void GdbServerWindow::createServer() {
 }
 
 void GdbServerWindow::closeServer() {
+   Logging::print("GdbServerWindow::closeServer()\n");
 
    dropConnection();
 
@@ -295,6 +296,7 @@ bool GdbServerWindow::confirmDropConnection() {
  */
 void GdbServerWindow::OnDropConnection(wxCommandEvent& WXUNUSED(event)) {
    if ((clientSocket != NULL) && confirmDropConnection()) {
+      Logging::print("GdbServerWindow::OnDropConnection()\n");
       dropConnection();
    }
 }
@@ -322,6 +324,7 @@ void GdbServerWindow::OnQuit(wxCommandEvent& WXUNUSED(event)) {
  *
  */void GdbServerWindow::OnCloseWindow(wxCloseEvent& event) {
    if (!event.CanVeto() || confirmDropConnection())  {
+      Logging::print("GdbServerWindow::OnCloseWindow()\n");
       dropConnection();
       this->Destroy();
    }
@@ -471,16 +474,18 @@ void GdbServerWindow::OnServerEvent(wxSocketEvent& event) {
  */
 void GdbServerWindow::OnTimer(wxTimerEvent& event) {
    pollTarget();
-   if (clientSocket->IsData()) {
+   if ((clientSocket!= NULL) && clientSocket->IsData()) {
       Logging::print("OnTimer:: Data available?\n");
    }
 }
 
-/*! Drop client connection and clean up
+/*!
+ *  Drop client connection and clean up
  *
  */
 void GdbServerWindow::dropConnection() {
    if (gdbInOut != NULL) {
+      Logging::print("GdbServerWindow::dropConnection()\n");
       gdbInOut->finish();
       delete gdbInOut;
       gdbInOut = NULL;
@@ -520,6 +525,18 @@ USBDM_ErrorCode GdbServerWindow::reportError(const char *msg, GdbMessageLevel le
       if (level == M_FATAL) {
          setDeferredFail();
       }
+   }
+   if (level&M_DIALOGUE) {
+      Iconize(false); // restore the window if minimized
+      SetFocus();     // focus on my window
+      Raise();        // bring window to front
+      Show(true);     // show the window
+      wxMessageBox(
+         wxString(msg, wxConvUTF8),                      /* message */
+         wxString("Message", wxConvUTF8),                /* caption */
+         wxOK|wxICON_ERROR,                              /* style   */
+         this                                            /* parent  */
+         );
    }
    if (rc != BDM_RC_OK) {
       statusTextControl->AppendText(wxString(USBDM_GetErrorString(rc), wxConvUTF8));
@@ -582,6 +599,7 @@ void GdbServerWindow::OnSocketEvent(wxSocketEvent& event) {
             if (rc != BDM_RC_OK) {
                reportError("BDM Open failed, reason: ", M_FATAL, rc);
                statusTextControl->AppendText(_("BDM Open failed\n"));
+               Logging::print("GdbServerWindow::OnSocketEvent() - BDM Open failed\n");
                dropConnection();
                return;
             }
@@ -592,6 +610,7 @@ void GdbServerWindow::OnSocketEvent(wxSocketEvent& event) {
             rc = gdbHandlerInit(gdbInOut, *shared->getCurrentDevice(), cb);
             if (rc != BDM_RC_OK) {
                reportError("GDB Handler initialisation failed, reason: ", M_FATAL, rc);
+               Logging::print("GdbServerWindow::OnSocketEvent() - GDB Handler initialisation failed\n");
                dropConnection();
                return;
             }
@@ -613,6 +632,7 @@ void GdbServerWindow::OnSocketEvent(wxSocketEvent& event) {
 
          if (deferredFail) {
             // A fatal error was reported - drop connection
+            Logging::print("GdbServerWindow::OnSocketEvent() - deferredFail\n");
             dropConnection();
          }
          else {
@@ -626,6 +646,7 @@ void GdbServerWindow::OnSocketEvent(wxSocketEvent& event) {
       }
       case wxSOCKET_LOST: {
          serverState = listening;
+         Logging::print("GdbServerWindow::OnSocketEvent() - wxSOCKET_LOST\n");
          dropConnection();
          break;
       }
@@ -653,6 +674,7 @@ void GdbServerWindow::pollTarget() {
          statusTimer->Start(pollIntervalFast, wxTIMER_ONE_SHOT);
          break;
       case T_NOCONNECTION:
+         Logging::print("GdbServerWindow::pollTarget() - T_NOCONNECTION\n");
          dropConnection();
          break;
       case T_UNKNOWN:
@@ -661,6 +683,9 @@ void GdbServerWindow::pollTarget() {
          break;
    }
    if (targetStatus != lastTargetStatus) {
+      if (targetStatus == T_NOCONNECTION) {
+         Logging::print("GdbServerWindow::pollTarget(), status changed to T_NOCONNECTION\n");
+      }
       UpdateStatusBar();
    }
    lastTargetStatus = targetStatus;
@@ -687,7 +712,6 @@ void GdbServerWindow::UpdateStatusBar() {
          break;
    }
    SetStatusText(serverStatusString, 1);
-//   dropConnectionButton->Enable(serverState == connected);
 
    wxString targetStatusString = wxEmptyString;
    switch (targetStatus) {

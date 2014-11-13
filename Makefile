@@ -85,6 +85,7 @@ cleanTargetFiles:
 	$(RMDIR) $(DUMMY_CHILD)/$(TARGET_BINDIR)
 	$(MKDIR) $(DUMMY_CHILD)/$(TARGET_BINDIR)
 ifeq ($(UNAME_S),Windows)
+   # Copy external DLLs
 	$(CP) $(DUMMY_CHILD)/$(SHARED_LIBDIRS)/* $(DUMMY_CHILD)/$(TARGET_LIBDIR)
 endif
 

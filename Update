@@ -4,7 +4,7 @@
 MAJOR=4
 MINOR=10
 MICRO=6
-NANO=180
+NANO=210
 DEBIAN_VERSION=1
 VERSION=${MAJOR}.${MINOR}.${MICRO}.${NANO}
 
@@ -18,7 +18,10 @@ else
    PACKAGE_FILE="../usbdm_${VERSION}-${DEBIAN_VERSION}-amd64.deb"
 fi
 
+echo "Removing usbdm"
 sudo apt-get -y remove usbdm
+
+echo "Installing ${PACKAGE_FILE}"
 sudo dpkg -i ${PACKAGE_FILE} 
 
 

@@ -30,6 +30,7 @@ typedef enum {
    RS08ICSOSCV1,
    RS08ICSV1,
    S08MCGV1,S08MCGV2,S08MCGV3,
+   MKMCGV1,
 } ClockTypes_t;
 
 //! memory types

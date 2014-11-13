@@ -6,7 +6,8 @@
 \verbatim
 Change History
 -==================================================================================
-| 14 Sep 2014 | Fixed stdout/stdin in TCL                                     - pgo
+| 12 Nov 2014 | Minor mod to finding executable - not implemented             - pgo - V4.10.6.230
+| 14 Sep 2014 | Fixed stdout/stderr in TCL                                    - pgo
 +==================================================================================
 \endverbatim
  */
@@ -3021,18 +3022,18 @@ int sub;
    return TCL_OK;
 }
 
-//! Set target Type
+//! Set logging
 static int setLogCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
    // setTarget <value>
    if (argc > 2) {
-      Tcl_WrongNumArgs(interp, 2, argv, "<targetNumber>");
+      Tcl_WrongNumArgs(interp, 2, argv, "<logging>");
       return TCL_ERROR;
    }
    if (argc == 2) {
       // Read control value to set
       int value;
       if (Tcl_GetIntFromObj(interp, argv[1], &value) != TCL_OK) {
-         Tcl_WrongNumArgs(interp, 1, argv, "<targetNumber>");
+         Tcl_WrongNumArgs(interp, 1, argv, "<logging>");
          return TCL_ERROR;
       }
       logging = value?TRUE:FALSE;
@@ -3309,6 +3310,32 @@ static void registerUSBDMCommands(Tcl_Interp *interp) {
    }
 }
 
+#if defined(__linux__)
+#include <unistd.h>
+#endif
+
+int setTclExecutable() {
+#ifdef __WIN32
+   //   Not necessary in WIN32??
+   char executableName[MAX_PATH];
+   if (GetModuleFileNameA(NULL, executableName, sizeof(executableName)) > 0) {
+      setTclExecutable(executableName);
+   }
+   Tcl_FindExecutable(executableName);
+#elif defined(__linux__)
+   char executableName[1000];
+   int pathLength = readlink("/proc/self/exe", executableName, sizeof(executableName));
+   if (pathLength<=0) {
+      return BDM_RC_FAIL;
+   }
+   if (pathLength==sizeof(executableName)) {
+      return BDM_RC_FAIL;
+   }
+   Tcl_FindExecutable(executableName);
+#endif
+   return BDM_RC_OK;
+}
+
 #ifdef INTERACTIVE
 static int appInitProc(Tcl_Interp *interp) {
    // Add usbdm commands
@@ -3326,6 +3353,7 @@ int main(int argc, char *argv[]) {
 #endif
 
    Tcl_Main(argc, argv, appInitProc);
+   setTclExecutable();
    return 0;
 }
 #else
@@ -3367,54 +3395,78 @@ const char *getTclResult(UsbdmTclInterp *interp) {
    return res;
 }
 
+/*
+ * Used as a TCL channel for STDERR & STDOUT
+ */
+static Tcl_Channel tclChannel = 0;
+
 TCL_API
 UsbdmTclInterp *createTclInterpreter(TargetType_t target, FILE *fp) {
    Tcl_FindExecutable("usbdm");
    Tcl_Interp *tclInterp = Tcl_CreateInterp();
-   if (fp != NULL) {
-//      fprintf(fp, "createTclInterpreter() Doing redirection\n"); fflush(fp);
+
+
 #ifdef __WIN32__
-      HANDLE fileHandle = (HANDLE)_get_osfhandle(fileno(fp));
-#endif
-      // Redirect stdout/stderr
-      Tcl_Channel channel;
-      channel = Tcl_GetStdChannel(TCL_STDOUT);
-      if (channel != 0) {
-//         fprintf(fp, "createTclInterpreter() Closing stdout\n"); fflush(fp);
-         Tcl_UnregisterChannel(tclInterp, channel);
+   if (tclChannel == 0) {
+      if (fp == NULL) {
+         // Create sink
+         fp = fopen ("nul", "w");
       }
-      channel = Tcl_GetStdChannel(TCL_STDERR);
-      if (channel != 0) {
-//         fprintf(fp, "createTclInterpreter() Closing stderr\n"); fflush(fp);
-         Tcl_UnregisterChannel(tclInterp, channel);
-      }
-      channel = Tcl_MakeFileChannel(fileHandle, TCL_WRITABLE);
-      if (channel != 0) {
-//         fprintf(fp, "createTclInterpreter() Redirecting stdout\n"); fflush(fp);
-         Tcl_SetStdChannel(channel, TCL_STDOUT);
-      }
-      else {
-         fprintf(fp, "createTclInterpreter() stdout == 0!!!!\n"); fflush(fp);
-      }
-      channel = Tcl_MakeFileChannel(fileHandle, TCL_WRITABLE);
-      if (channel != 0) {
-//         fprintf(fp, "createTclInterpreter() Redirecting stderr\n"); fflush(fp);
-         Tcl_SetStdChannel(channel, TCL_STDERR);
-      }
-      else {
-         fprintf(fp, "createTclInterpreter() stderr == 0!!!!\n"); fflush(fp);
-      }
+      logFile = fp;
+      int fileNo = fileno(fp);
+//      fprintf(logFile, "createTclInterpreter() fileNo == %d\n", fileNo ); fflush(fp);
+      HANDLE fileHandle = (HANDLE)_get_osfhandle(fileNo);
+//      fprintf(logFile, "createTclInterpreter() fileHandle == %p\n", fileHandle ); fflush(fp);
+      tclChannel = Tcl_MakeFileChannel(fileHandle, TCL_WRITABLE);
+//      fprintf(logFile, "createTclInterpreter() tclChannel == %p\n", tclChannel ); fflush(fp);
+      Tcl_RegisterChannel(0, tclChannel);
    }
-   logFile = fp;
+#else
+   if (tclChannel == 0) {
+      //fprintf(stderr, "(tclChannel == 0)\n");
+      if (fp == NULL) {
+         // Create sink
+         fp = fopen ("/dev/null", "w");
+      }
+      if (fp == NULL) {
+         fprintf(stderr, "(fp == NULL)\n");
+      }
+      logFile = fp;
+      int fileNo = fileno(fp);
+      fprintf(logFile, "createTclInterpreter() fileNo == %d\n", fileNo ); fflush(fp);
+      tclChannel = Tcl_MakeFileChannel(fileNo, TCL_WRITABLE);
+      fprintf(logFile, "createTclInterpreter() tclChannel == %p\n", tclChannel ); fflush(fp);
+      Tcl_RegisterChannel(0, tclChannel);
+   }
+#endif
+
+   // Register channel
+   Tcl_RegisterChannel(tclInterp, tclChannel);
+//   fprintf(logFile, "createTclInterpreter() Registered channel = %p\n", tclChannel); fflush(logFile);
+
+   // Redirect stdout/stderr
+//   fprintf(logFile, "createTclInterpreter() Redirecting stdout\n"); fflush(logFile);
+   Tcl_SetStdChannel(tclChannel, TCL_STDOUT);
+
+//   fprintf(logFile, "createTclInterpreter() Redirecting stderr\n"); fflush(logFile);
+   Tcl_SetStdChannel(tclChannel, TCL_STDERR);
+
    registerUSBDMCommands(tclInterp);
    setTargetType(target);
-   Tcl_Eval(tclInterp, "flush stdout");
+
+   Tcl_Flush(tclChannel);
+
    return (UsbdmTclInterp *)tclInterp;
 }
 
 TCL_API
 void freeTclInterpreter(UsbdmTclInterp *usbdmTclInterp) {
+   Tcl_Flush(tclChannel);
+
+//   fprintf(logFile, "freeTclInterpreter() Freeing TCL Interpreter - start\n"); fflush(logFile);
    Tcl_Interp *interp = (Tcl_Interp*)usbdmTclInterp;
+//   fprintf(logFile, "freeTclInterpreter() Freeing TCL Interpreter - obtained interp\n"); fflush(logFile);
    Tcl_DeleteInterp(interp);
+//   fprintf(logFile, "freeTclInterpreter() Freeing TCL Interpreter - complete\n"); fflush(logFile);
 }
 #endif

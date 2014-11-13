@@ -1,5 +1,5 @@
 /*
- * clock-MKxx.c
+ * clock-MK33.c
  *
  * Based on K22P64M120SF5RM, K10P144M100SF2V2RM, K20P100M72SF1RM, K20P64M50SF0RM
  *    2 Oscillators (OSC0, RTC)

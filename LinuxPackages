@@ -5,7 +5,7 @@
 # openjdk-7-jre
 # default-jre-headless
 
-echo This installs the packages tp build i386 version
+echo This installs the packages to build i386 version
 echo
 
 if [ "$1" == "" ]; then

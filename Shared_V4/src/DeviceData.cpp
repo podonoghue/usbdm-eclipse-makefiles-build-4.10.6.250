@@ -25,6 +25,7 @@
     \verbatim
    Change History
    -====================================================================================================
+   | 12 Dec 2014 | Started changes for Kinetis clock trimming                          - pgo 4.10.6.220
    | 29 Aug 2014 | Changes to SDID wildcards                                           - pgo 4.10.6.190
    | 12 Jul 2014 | Added getCommonFlashProgram(), changed getFlashProgram()            - pgo V4.10.6.170
    | 12 Jul 2014 | Added extra SDID handling getSDIDs()                                - pgo V4.10.6.170
@@ -85,6 +86,7 @@ const EnumValuePair ClockTypes::clockNames[] = {
    EnumValuePair(  S08MCGV3,     ("S08MCGV3") ),
    EnumValuePair(  RS08ICSOSCV1, ("RS08ICSOSCV1") ),
    EnumValuePair(  RS08ICSV1,    ("RS08ICSV1") ),
+   EnumValuePair(  MKMCGV1,      ("MCG_MK") ),
    EnumValuePair(  CLKINVALID,   ("Invalid Clock") ),
    EnumValuePair(  0,              ""),
 };
@@ -129,6 +131,8 @@ uint32_t DeviceData::getDefaultClockTrimNVAddress(ClockTypes_t clockType) {
       case CLKEXT :
       default :            return 0U;
    }
+#elif TARGET == ARM
+   return 0x03FE;
 #else
    return 0;
 #endif
@@ -148,24 +152,7 @@ uint32_t DeviceData::getDefaultClockTrimNVAddress()  const {
 //!
 uint32_t DeviceData::getDefaultClockTrimFreq(ClockTypes_t clockType) {
    switch (clockType) {
-      case S08ICGV1 :
-      case S08ICGV2 :
-      case S08ICGV3 :
-      case S08ICGV4 :
-         return 243000UL;
-
-      case S08ICSV1 :
-      case S08ICSV2 :
-      case S08ICSV2x512 :
-      case S08ICSV3 :
-      case S08ICSV4 :
-      case RS08ICSOSCV1 :
-      case RS08ICSV1 :
-         return 31250UL;
-
-      case S08MCGV1 :
-      case S08MCGV2 :
-      case S08MCGV3 :
+      case MKMCGV1 :
          return 31250UL;
 
       case CLKINVALID :
@@ -249,6 +236,8 @@ uint32_t DeviceData::getDefaultClockAddress(ClockTypes_t clockType) {
       default :
          return 0U;
    }
+#elif (TARGET == ARM)
+   return  MKMCGV1;
 #else
    return 0;
 #endif

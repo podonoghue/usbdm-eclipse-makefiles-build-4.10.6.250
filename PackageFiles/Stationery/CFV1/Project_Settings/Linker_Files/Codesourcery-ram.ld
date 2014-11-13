@@ -22,6 +22,7 @@ ENTRY(__cs3_reset)
 SEARCH_DIR(.)
 GROUP(-lgcc -lc -lcs3 -lcs3unhosted -lcs3coldfire)
 
+/* Include external memory map defining RAM and Flash memory etc */
 INCLUDE "MemoryMap-$(targetDeviceName).ld"
 
 /* These force the linker to search for particular symbols from
@@ -50,7 +51,7 @@ SECTIONS
     *(.cs3.region-head.ram)
     ASSERT (. == __cs3_region_start_ram, ".cs3.region-head.ram not permitted");
     __cs3_interrupt_vector = __cs3_interrupt_vector_coldfire;
-    *(.cs3.interrupt_vector)
+    KEEP(*(.cs3.interrupt_vector))
     /* Make sure we pulled in an interrupt vector.  */
     ASSERT (. != __cs3_interrupt_vector_coldfire, "No interrupt vector");
 

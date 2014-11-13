@@ -43,5 +43,4 @@ void sysInit(void) {
 
    /* Use UART initialisation - if present */
    uart_initialise(19200);
-
 }

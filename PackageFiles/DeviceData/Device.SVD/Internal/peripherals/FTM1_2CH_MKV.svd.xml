@@ -281,7 +281,6 @@ Devices using this peripheral:
                         <description>Channel Flag</description>
                         <bitOffset>7</bitOffset>
                         <bitWidth>1</bitWidth>
-                        <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
@@ -328,7 +327,6 @@ Devices using this peripheral:
                <name>STATUS</name>
                <description>Capture and Compare Status</description>
                <addressOffset>0x50</addressOffset>
-               <access>read-only</access>
                <fields>
                   <field>
                      <name>CH0F</name>
@@ -1744,7 +1742,6 @@ Devices using this peripheral:
                      <description>Channel Trigger Flag</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -1921,7 +1918,6 @@ Devices using this peripheral:
                      <description>Fault Detection Flag 0</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -1940,7 +1936,6 @@ Devices using this peripheral:
                      <description>Fault Detection Flag 1</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -1959,7 +1954,6 @@ Devices using this peripheral:
                      <description>Fault Detection Flag 2</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -1978,7 +1972,6 @@ Devices using this peripheral:
                      <description>Fault Detection Flag 3</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -2034,7 +2027,6 @@ Devices using this peripheral:
                      <description>Fault Detection Flag</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>

@@ -10,6 +10,7 @@
 <!ENTITY Custom-Devices                   SYSTEM "Custom/custom-s12z.xml">
 ]>
 <!-- 
+		V4.10.6.230 - Added MC9S12ZVL-Family, untested
       V4.10.6.170 - Created
  -->
 <root version="4.10.6.170">
@@ -45,6 +46,12 @@
       <!-- 
             RAM Memory
       -->
+         <memory id="s12z512b_Ram" type="ram">
+            <memoryRange start="0x001000" size="512" />
+         </memory>
+         <memory id="s12z1K_Ram" type="ram">
+            <memoryRange start="0x001000" size="1K" />
+         </memory>
          <memory id="s12z2K_Ram" type="ram">
             <memoryRange start="0x001000" size="2K" />
          </memory>
@@ -83,6 +90,11 @@
          Flash Block
       -->
       <!--  A Single Block containing  the security info -->	  
+      <memory id="FTMRZ_PFlash0_SEC_8K_512bS" type="flash" registerAddress="0x0380" sectorSize="512" alignment="8" securityAddress="0xFFFE00">
+         <flashProgramRef ref="S12Z-FTMRZ-flash-program" />
+         <securityEntryRef ref="S12Z-default-security" />
+         <memoryRange size="8K" end="0xFFFFFF" />
+      </memory>
       <memory id="FTMRZ_PFlash0_SEC_16K_512bS" type="flash" registerAddress="0x0380" sectorSize="512" alignment="8" securityAddress="0xFFFE00">
          <flashProgramRef ref="S12Z-FTMRZ-flash-program" />
          <securityEntryRef ref="S12Z-default-security" />
@@ -212,6 +224,56 @@
          <flashProgramRef ref="S12Z-FTMRZ-flash-program" />
       </device>
       
+ <!-- 
+   MC9S12ZVL(S)32/16/8 - MC9S12ZVLRMV1
+  -->
+      <device family="S12Z" name=" MC9S12ZVL8">
+         <clock type="External" />
+         <memoryRef ref="s12z512b_Ram" />
+         <memoryRef ref="FTMRZ_EEPROM_128b_4bS" />
+         <memoryRef ref="FTMRZ_PFlash0_SEC_8K_512bS" />
+         <copctlAddress value="0x06CC" />
+         <sdidAddress value="0x0000" />
+         <sdidMask value="0xFFFFFF00" />
+         <sdid value="0x00170000" />
+         <flashScripts>
+            <tclScriptRef ref="S12Z-FTMRZ-flash-scripts" />
+         </flashScripts>
+         <flashProgramRef ref="S12Z-FTMRZ-flash-program" />
+      </device>
+
+      <device family="S12Z" name=" MC9S12ZVL16">
+         <clock type="External" />
+         <memoryRef ref="s12z1K_Ram" />
+         <memoryRef ref="FTMRZ_EEPROM_128b_4bS" />
+         <memoryRef ref="FTMRZ_PFlash0_SEC_16K_512bS" />
+         <copctlAddress value="0x06CC" />
+         <sdidAddress value="0x0000" />
+         <sdidMask value="0xFFFFFF00" />
+         <sdid value="0x00170000" />
+         <flashScripts>
+            <tclScriptRef ref="S12Z-FTMRZ-flash-scripts" />
+         </flashScripts>
+         <flashProgramRef ref="S12Z-FTMRZ-flash-program" />
+      </device>
+      <device family="S12Z" name="MC9S12ZVLS16" alias="MC9S12ZVL16" />
+
+      <device family="S12Z" name=" MC9S12ZVL32">
+         <clock type="External" />
+         <memoryRef ref="s12z1K_Ram" />
+         <memoryRef ref="FTMRZ_EEPROM_128b_4bS" />
+         <memoryRef ref="FTMRZ_PFlash0_SEC_32K_512bS" />
+         <copctlAddress value="0x06CC" />
+         <sdidAddress value="0x0000" />
+         <sdidMask value="0xFFFFFF00" />
+         <sdid value="0x00170000" />
+         <flashScripts>
+            <tclScriptRef ref="S12Z-FTMRZ-flash-scripts" />
+         </flashScripts>
+         <flashProgramRef ref="S12Z-FTMRZ-flash-program" />
+      </device>
+      <device family="S12Z" name="MC9S12ZVLS32" alias="MC9S12ZVL32" />
+
  <!-- 
    MC9S12ZVM-/L/C - MC9S12ZVMRMV1
   -->

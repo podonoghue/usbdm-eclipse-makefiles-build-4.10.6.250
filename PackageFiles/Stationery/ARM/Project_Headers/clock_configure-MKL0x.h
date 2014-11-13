@@ -37,6 +37,7 @@ extern "C" {
 //
 //   <o> Frequency of Main External Clock or Crystal (Hz)  <name=oscclk_clock> <0-48000000>
 //   <i> Frequency of external crystal or clock on XTAL/EXTAL
+//   <i> See MCG_C2_EREFS0 for XTAL/Clock selection
 #define OSCCLK_CLOCK (32768UL)
 
 // OSC32KCLK_CLOCK

@@ -151,6 +151,11 @@ Devices using this vector table:
             <value>29</value>
          </interrupt>
          <interrupt>
+            <name>UART0_LON</name>
+            <description>UART LON</description>
+            <value>30</value>
+         </interrupt>
+         <interrupt>
             <name>UART0_RxTx</name>
             <description>UART status sources</description>
             <value>31</value>

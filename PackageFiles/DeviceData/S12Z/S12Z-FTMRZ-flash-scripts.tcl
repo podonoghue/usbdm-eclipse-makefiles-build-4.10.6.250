@@ -69,7 +69,7 @@ proc disableWatchdog { } {
 ;# @param flashRegions - list of flash array addresses
 ;#
 proc initTarget { flashRegions } {
-   ;# puts "initTarget {}"
+   puts "initTarget {}"
    
    set ::FLASH_REGIONS  $flashRegions 
 
@@ -81,7 +81,8 @@ proc initTarget { flashRegions } {
 ;#  busFrequency - Target bus busFrequency in kHz
 ;#
 proc initFlash { busFrequency } {
-   ;#  puts "initFlash {}"
+   puts "initFlash {}"
+   puts "initFlash {}"
    
    set fclkdiv [calculateFlashDivider $busFrequency]
    
@@ -100,7 +101,7 @@ proc calculateFlashDivider { busFrequency } {
 ;#   According to data sheets the Flash uses the BUS clock for timing
 ;#   Minimum BUS clock of 1MHz
 
-   ;# puts "calculateFlashDivider {}"
+   puts "calculateFlashDivider {}"
    ;# minimum BUS frequency is 1MHz
    if { [expr $busFrequency < 980] } { ;# Allow for tolerance on measurement
       error "Clock too low for flash programming"
@@ -108,7 +109,7 @@ proc calculateFlashDivider { busFrequency } {
    set fmclkFrequency 1.0*$busFrequency
    set fclkdiv [expr round(floor(($fmclkFrequency/1000.0)+0.3999))-1]
    set flashClk [expr $fmclkFrequency/($fclkdiv+1)]
-   ;# puts "fclkdiv=$fclkdiv, flashClk=$flashClk"
+   puts "fclkdiv=$fclkdiv, flashClk=$flashClk"
    if { [expr ($flashClk<800)||($flashClk>1600)] } {
       error "Not possible to find suitable flash clock divider"
    }      
@@ -211,7 +212,7 @@ proc executeEepromCommand { cmd address value } {
 ;#
 proc massEraseTarget { } {
 
-   ;# puts "massEraseTarget{}"
+   puts "massEraseTarget{}"
    
    disableWatchdog
    
@@ -231,7 +232,7 @@ proc massEraseTarget { } {
       incr retry
    }
    if { $flashBusy } {
-      ;#puts [ format "Command error S12X_BDCCSRH=0x%02X, retry=%d" $status $retry ]
+      puts [ format "Command error S12X_BDCCSRH=0x%02X, retry=%d" $status $retry ]
       error "Mass erase command failed"
    }   
    if [expr ($status & $::S12X_BDCCSRH_UNSEC) == 0x00] {
@@ -260,8 +261,9 @@ proc massEraseTarget { } {
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   ;#  puts "Checking if unsecured"
+   puts "Checking if unsecured"
    if [ expr ( [gs] & $::S12X_BDCCSRH_UNSEC ) == 0 ] {
+      puts "Target is secured"
       return "Target is secured"
    }
    return

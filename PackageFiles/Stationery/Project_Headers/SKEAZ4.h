@@ -5,7 +5,7 @@
  *           Equivalent: SKEAZ128M4, SKEAZ64M4
  *
  * @version  V1.6
- * @date     2014/09
+ * @date     2014/10
  *
  *******************************************************************************************************/
 
@@ -741,7 +741,7 @@ typedef struct {                                /*!<       FTM2 Structure       
    } CONTROLS[6];
    __I  uint32_t  RESERVED0[4];                 /*!< 003C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
-   __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
+   __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
    __IO uint32_t  MODE;                         /*!< 0054: Features Mode Selection                                      */
    __IO uint32_t  SYNC;                         /*!< 0058: Synchronization                                              */
    __IO uint32_t  OUTINIT;                      /*!< 005C: Initial State for Channels Output                            */

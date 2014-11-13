@@ -1,9 +1,15 @@
 /*
  * clock-MKMxx.c
  *
- *  Used for MKM33
- * 
- *  Created on: 04/03/2012
+ * Based on MKMxxZxxCxx5RM
+ *    2 Oscillators (OSC0, RTC)
+ *    1 FLL (OSC0,RTC), (FRDIV=/1-/128, /32-/1024, /1280, /1536)
+ *    1 PLL (OSC0,RTC), (VCO x375)
+ *
+ * Used with:
+ *    clock_private-MKMxx.h
+ *
+ *  Created on: 29/09/2014
  *      Author: podonoghue
  */
 #include "string.h"
@@ -36,6 +42,29 @@ void clock_initialise(void) {
 
    // Configure the Crystal Oscillator
    OSC0_CR = OSC_CR_ERCLKEN_M|OSC_CR_EREFSTEN_M|OSC_CR_SCP_M;
+
+#if defined(RTC_OSC) && defined(RTC_OSC_OSC_DISABLE_M)
+   SIM_SCGC5 |= SIM_SCGC5_IRTC_MASK|SIM_SCGC5_IRTCREGFILE_MASK;
+#define RTC_OSC_VALUE (RTC_OSC_OSC_DISABLE_M|RTC_OSC_SCP_M|RTC_OSC_BOOT_MODE_M)
+#if (RTC_OSC_VALUE!=0)
+   // Unlock RTC
+   RTC_STATUS_B = RTC_STATUS_WE(0);
+   RTC_STATUS_B = RTC_STATUS_WE(1);
+   RTC_STATUS_B = RTC_STATUS_WE(3);
+   RTC_STATUS_B = RTC_STATUS_WE(2);
+   RTC_OSC = RTC_OSC_VALUE;
+   // Lock RTC
+   RTC_STATUS_B = RTC_STATUS_WE(1);
+#endif
+#endif
+
+#if defined(MCG_C7) && defined(MCG_C7_PLL32KREFSEL_M)
+   MCG_C7 = MCG_C7_PLL32KREFSEL_M | MCG_C7_OSCSEL_M;
+#endif
+
+#if defined(MCG_C8) && defined(MCG_C8_LOCRE1_M)
+   MCG_C8 = MCG_C8_LOCRE1_M | MCG_C8_LOLRE_M | MCG_C8_CME1_M | MCG_C8_COARSE_LOLIE_M;
+#endif
 
    // Fast Internal Clock divider
    MCG_SC = MCG_SC_FCRDIV_M;
@@ -211,7 +240,7 @@ void clock_initialise(void) {
  * Updates the SystemCoreClock variable with current core Clock retrieved from CPU registers.
  */
 void SystemCoreClockUpdate(void) {
-   uint32_t oscerclk = OSCCLK_CLOCK;
+   uint32_t oscerclk = (MCG_C7&MCG_C7_OSCSEL_MASK)?SYSTEM_OSC32K_CLOCK:OSCCLK_CLOCK;
    switch (MCG_S&MCG_S_CLKST_MASK) {
       case MCG_S_CLKST(0) : // FLL
          if ((MCG_C1&MCG_C1_IREFS_MASK) == 0) {

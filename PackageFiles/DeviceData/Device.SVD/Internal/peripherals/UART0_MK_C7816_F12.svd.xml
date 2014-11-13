@@ -1,9 +1,11 @@
 <!--
 Devices using this peripheral: 
-      MKM33Z5
+      MK24F12
+      MK63F12
+      MK64F12
 -->
       <peripheral>
-         <?sourceFile "UART0_MKM" ?>
+         <?sourceFile "UART0_MK_C7816_F12" ?>
          <name>UART0</name>
          <description>Universal Asynchronous Receiver/Transmitter</description>
          <prependToName>UART0</prependToName>
@@ -15,13 +17,19 @@ Devices using this peripheral:
          <addressBlock>
             <?width "8" ?>
             <offset>0x0</offset>
-            <size>0xE</size>
+            <size>0xF</size>
             <usage>registers</usage>
          </addressBlock>
          <addressBlock>
             <?width "8" ?>
             <offset>0x10</offset>
             <size>0x7</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <?width "8" ?>
+            <offset>0x18</offset>
+            <size>0x8</size>
             <usage>registers</usage>
          </addressBlock>
          <registers>
@@ -40,6 +48,24 @@ UART baud rate generator. When BR is cleared, the UART baud rate generator is di
 supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>5</bitWidth>
+                  </field>
+                  <field>
+                     <name>SBNS</name>
+                     <description>Stop Bit Number Select</description>
+                     <bitOffset>5</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Data frame consists of a single stop bit</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Data frame consists of two stop bits</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>RXEDGIE</name>
@@ -996,6 +1022,44 @@ If match occurs, data is transferred to the data buffer</description>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
+                     <name>LBKDDMAS</name>
+                     <description>LIN Break Detect DMA Select Bit\n
+Configures the LIN break detect flag, S2[LBKDIF], to generate interrupt or DMA requests if BDH[LBKDIE] is set</description>
+                     <bitOffset>3</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>LBKDIF signal is enabled to request interrupt service</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>LBKDIF signal is enabled to request DMA transfer</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>ILDMAS</name>
+                     <description>Idle Line DMA Select\n
+Configures the idle line flag, S1[IDLE], to generate interrupt or DMA requests if C2[ILIE] is set</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>IDLE request signal is asserted to request an interrupt service</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>IDLE request signal is asserted to request an DMA transfer</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
                      <name>RDMAS</name>
                      <description>Receiver Full DMA Select</description>
                      <bitOffset>5</bitOffset>
@@ -1009,6 +1073,25 @@ If match occurs, data is transferred to the data buffer</description>
                         <enumeratedValue>
                            <name>0b1</name>
                            <description>If C2[RIE] and S1[RDRF] flags are set, then the RDRF DMA request signal is asserted to request a DMA transfer</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>TCDMAS</name>
+                     <description>Transmission Complete DMA Select\n
+Configures the transmission complete flag, S1[TC], to generate interrupt or DMA requests if C2[TCIE] is set</description>
+                     <bitOffset>6</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>TC interrupt request signal is asserted to request an interrupt service</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>TC interrupt request signal is asserted to request a DMA transfer</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1157,6 +1240,61 @@ RTS deasserts one bit time after all characters in the transmitter data buffer(F
                         <enumeratedValue>
                            <name>0b1</name>
                            <description>RTS is deasserted if the number of characters in the receiver data register (FIFO) is equal to or greater than RWFIFO[RXWATER]. RTS is asserted when the number of characters in the receiver data register (FIFO) is less than RWFIFO[RXWATER]</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>IR</name>
+               <description>Infrared Register</description>
+               <addressOffset>0xE</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>TNP</name>
+                     <description>Transmitter narrow pulse</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>2</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b00</name>
+                           <description>3/16</description>
+                           <value>0b00</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b01</name>
+                           <description>1/16</description>
+                           <value>0b01</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10</name>
+                           <description>1/32</description>
+                           <value>0b10</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b11</name>
+                           <description>1/4</description>
+                           <value>0b11</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>IREN</name>
+                     <description>Infrared enable</description>
+                     <bitOffset>2</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>IR disabled</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>IR enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1564,6 +1702,480 @@ RTS deasserts one bit time after all characters in the transmitter data buffer(F
                   <field>
                      <name>RXCOUNT</name>
                      <description>Receive Counter</description>
+                     <bitOffset>0</bitOffset>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>C7816</name>
+               <description>7816 Control Register</description>
+               <addressOffset>0x18</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>ISO_7816E</name>
+                     <description>ISO-7816 Functionality Enabled</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>ISO-7816 functionality is turned off / not enabled</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>ISO-7816 functionality is turned on / enabled</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>TTYPE</name>
+                     <description>Transfer Type</description>
+                     <bitOffset>1</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>T = 0 Per the ISO-7816 specification</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>T = 1 Per the ISO-7816 specification</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>INIT</name>
+                     <description>Detect Initial Character</description>
+                     <bitOffset>2</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Normal operating mode. Receiver does not seek to identify initial character</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Receiver searches for initial character</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>ANACK</name>
+                     <description>Generate NACK on Error</description>
+                     <bitOffset>3</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>No NACK is automatically generated</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>A NACK is automatically generated if a parity error is detected or if an invalid initial character is detected</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>ONACK</name>
+                     <description>Generate NACK on Overflow</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The received data does not generate a NACK when the receipt of the data results in an overflow event</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>If the receiver buffer overflows, a NACK is automatically sent on a received character</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>IE7816</name>
+               <description>7816 Interrupt Enable Register</description>
+               <addressOffset>0x19</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>RXTE</name>
+                     <description>Receive Threshold Exceeded Interrupt Enable</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The assertion of the IS7816[RXT] bit will not result in the generation of an interrupt</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The assertion of the IS7816[RXT] bit will result in the generation of an interrupt</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>TXTE</name>
+                     <description>Transmit Threshold Exceeded Interrupt Enable</description>
+                     <bitOffset>1</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The assertion of the IS7816[TXT] bit will not result in the generation of an interrupt</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The assertion of the IS7816[TXT] bit will result in the generation of an interrupt</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>GTVE</name>
+                     <description>Guard Timer Violated Interrupt Enable</description>
+                     <bitOffset>2</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The assertion of the IS7816[GTV] bit will not result in the generation of an interrupt</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The assertion of the IS7816[GTV] bit will result in the generation of an interrupt</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>INITDE</name>
+                     <description>Initial Character Detected Interrupt Enable</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The assertion of the IS7816[INITD] bit will not result in the generation of an interrupt</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The assertion of the IS7816[INITD] bit will result in the generation of an interrupt</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>BWTE</name>
+                     <description>Block Wait Timer Interrupt Enable</description>
+                     <bitOffset>5</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The assertion of the IS7816[BWT] bit will not result in the generation of an interrupt</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The assertion of the IS7816[BWT] bit will result in the generation of an interrupt</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>CWTE</name>
+                     <description>Character Wait Timer Interrupt Enable</description>
+                     <bitOffset>6</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The assertion of the IS7816[CWT] bit will not result in the generation of an interrupt</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The assertion of the IS7816[CWT] bit will result in the generation of an interrupt</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>WTE</name>
+                     <description>Wait Timer Interrupt Enable</description>
+                     <bitOffset>7</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The assertion of the IS7816[WT] bit will not result in the generation of an interrupt</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The assertion of the IS7816[WT] bit will result in the generation of an interrupt</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>IS7816</name>
+               <description>7816 Interrupt Status Register</description>
+               <addressOffset>0x1A</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>RXT</name>
+                     <description>Receive Threshold Exceeded Interrupt</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The number of consecutive NACKS generated as a result of parity errors and buffer overruns is less than or equal to the value in ET7816[RXTHRESHOLD]</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The number of consecutive NACKS generated as a result of parity errors and buffer overruns is greater than the value in ET7816[RXTHRESHOLD]</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>TXT</name>
+                     <description>Transmit Threshold Exceeded Interrupt</description>
+                     <bitOffset>1</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>The number of retries and corresponding NACKS does not exceed the value in the ET7816[TXTHRESHOLD] field</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>The number of retries and corresponding NACKS exceeds the value in the ET7816[TXTHRESHOLD] field</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>GTV</name>
+                     <description>Guard Timer Violated Interrupt</description>
+                     <bitOffset>2</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>A guard time (GT, CGT or BGT) has not been violated</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>A guard time (GT, CGT or BGT) has been violated</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>INITD</name>
+                     <description>Initial Character Detected Interrupt</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>A valid initial character has not been received</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>A valid initial character has been received</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>BWT</name>
+                     <description>Block Wait Timer Interrupt</description>
+                     <bitOffset>5</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Block wait time (BWT) has not been violated</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Block wait Time (BWT) has been violated</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>CWT</name>
+                     <description>Character Wait Timer Interrupt</description>
+                     <bitOffset>6</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Character wait time (CWT) has not been violated</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Character wait time (CWT) has been violated</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>WT</name>
+                     <description>Wait Timer Interrupt</description>
+                     <bitOffset>7</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Wait time (WT) has not been violated</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Wait time (WT) has been violated</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>WP7816T0</name>
+               <description>7816 Wait Parameter Register</description>
+               <addressOffset>0x1B</addressOffset>
+               <size>8</size>
+               <resetValue>0xA</resetValue>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>WI</name>
+                     <description>Wait Timer Interrupt (C7816[TTYPE] = 0)</description>
+                     <bitOffset>0</bitOffset>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>WP7816T1</name>
+               <description>7816 Wait Parameter Register</description>
+               <addressOffset>0x1B</addressOffset>
+               <size>8</size>
+               <resetValue>0xA</resetValue>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>BWI</name>
+                     <description>Block Wait Time Integer(C7816[TTYPE] = 1)</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>4</bitWidth>
+                  </field>
+                  <field>
+                     <name>CWI</name>
+                     <description>Character Wait Time Integer (C7816[TTYPE] = 1)</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>4</bitWidth>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>WN7816</name>
+               <description>7816 Wait N Register</description>
+               <addressOffset>0x1C</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>GTN</name>
+                     <description>Guard Band N</description>
+                     <bitOffset>0</bitOffset>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>WF7816</name>
+               <description>7816 Wait FD Register</description>
+               <addressOffset>0x1D</addressOffset>
+               <size>8</size>
+               <resetValue>0x1</resetValue>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>GTFD</name>
+                     <description>FD Multiplier</description>
+                     <bitOffset>0</bitOffset>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>ET7816</name>
+               <description>7816 Error Threshold Register</description>
+               <addressOffset>0x1E</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>RXTHRESHOLD</name>
+                     <description>Receive NACK Threshold
+The value written to this field indicates the maximum number of consecutive NACKs generated as a result
+of a parity error or receiver buffer overruns before the host processor is notified</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>4</bitWidth>
+                  </field>
+                  <field>
+                     <name>TXTHRESHOLD</name>
+                     <description>Transmit NACK Threshold
+The value written to this field indicates the maximum number of failed attempts (NACKs) a transmitted
+character can have before the host processor is notified</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>4</bitWidth>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>TL7816</name>
+               <description>7816 Transmit Length Register</description>
+               <addressOffset>0x1F</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>TLEN</name>
+                     <description>Transmit Length</description>
                      <bitOffset>0</bitOffset>
                   </field>
                </fields>

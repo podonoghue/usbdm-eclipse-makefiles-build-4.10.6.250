@@ -6,6 +6,7 @@
 \verbatim
 Change History
 -==================================================================================
+| 12 Nov 2014 | Updated breakpoint reporting on console                       - pgo V4.10.6.230
 | 31 Mar 2013 | Query Kinetis devices for number of breakpoints.              - pgo
 | 23 Apr 2012 | Created                                                       - pgo
 +==================================================================================
@@ -494,10 +495,12 @@ const uint8_t *getFpCompAddress(uint32_t address) {
 //! modifying target breakpoint hardware
 //!
 void activateBreakpoints(void) {
-   Logging::print("activateBreakpoints()\n");
    memoryBreakInfo *bpPtr;
-   if (breakpointsActive)
+   if (breakpointsActive) {
+      Logging::print("activateBreakpoints() - breakpoints already active\n");
       return;
+   }
+   Logging::print("activateBreakpoints()\n");
    // Memory breakpoints
    for (bpPtr = memoryBreakpoints;
         bpPtr < memoryBreakpoints+MAX_MEMORY_BREAKPOINTS;

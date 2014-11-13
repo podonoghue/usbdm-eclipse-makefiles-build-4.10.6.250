@@ -23,6 +23,7 @@ enum GdbMessageLevel {
    M_WARN,
    M_ERROR,
    M_FATAL,
+   M_DIALOGUE = 0x80,
 };
 
 typedef USBDM_ErrorCode (*GdbCallback)(const char *msg, GdbMessageLevel level, USBDM_ErrorCode rc);

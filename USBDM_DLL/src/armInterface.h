@@ -17,7 +17,7 @@ DLL_LOCAL
 extern bool pendingResetRelease;
 
 USBDM_ErrorCode resetARM(TargetMode_t targetMode);
-USBDM_ErrorCode armSwdConnect();
-USBDM_ErrorCode armJtagConnect();
+USBDM_ErrorCode armConnect(TargetType_t targetType);
+USBDM_ErrorCode armDisconnect(TargetType_t targetType);
 
 #endif /* ARMINTERFACE_H_ */

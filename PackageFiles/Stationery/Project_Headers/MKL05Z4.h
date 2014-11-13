@@ -5,7 +5,7 @@
  *           Equivalent: MKL05Z32M4, MKL05Z8M4, MKL05Z16M4
  *
  * @version  V0.0
- * @date     2014/09
+ * @date     2014/10
  *
  *******************************************************************************************************/
 
@@ -1056,7 +1056,7 @@ typedef GPIOA_Type GPIOB_Type;  /*!< GPIOB Structure                            
 #define GPIOB_PDDR                     (GPIOB->PDDR)
 
 /* ================================================================================ */
-/* ================           I2C0 (file:I2C0_MKL)                 ================ */
+/* ================           I2C0 (file:I2C0_MKL_SMB)             ================ */
 /* ================================================================================ */
 
 /**
@@ -1230,10 +1230,9 @@ typedef struct {                                /*!<       LLWU Structure       
    __IO uint8_t   PE2;                          /*!< 0001: Pin Enable 2 Register                                        */
    __IO uint8_t   ME;                           /*!< 0002: Module Enable Register                                       */
    __IO uint8_t   F1;                           /*!< 0003: Flag 1 Register                                              */
-   __I  uint8_t   F3;                           /*!< 0004: Flag 3 Register                                              */
-   __I  uint8_t   RESERVED0[3];                 /*!< 0005:                                                              */
-   __IO uint8_t   FILT1;                        /*!< 0008: Pin Filter 1 register                                        */
-   __IO uint8_t   FILT2;                        /*!< 0009: Pin Filter 2 register                                        */
+   __IO uint8_t   F3;                           /*!< 0004: Flag 3 Register                                              */
+   __IO uint8_t   FILT1;                        /*!< 0005: Pin Filter 1 register                                        */
+   __IO uint8_t   FILT2;                        /*!< 0006: Pin Filter 2 register                                        */
 } LLWU_Type;
 
 

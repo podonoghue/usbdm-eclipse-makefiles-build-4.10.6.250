@@ -1,9 +1,9 @@
 @echo off
 cls
-set VERSION=4_10_6_180
-set VERSIONn=4.10.6.180
+set VERSION=4_10_6_230
+set VERSIONn=4.10.6.230
 
-set WXWIDGETS_VERSION=295u
+set WXWIDGETS_VERSION=30u
 
 set WIX_DIR="C:\Program Files (x86)\WiX Toolset v3.7\bin"
 if not exist %WIX_DIR% set WIX_DIR="C:\Program Files\WiX Toolset v3.7\bin"
@@ -73,4 +73,4 @@ goto finish
 %PYRO%   %PATCH%\%PATCH%.wixmsp -out %PATCH%\%PATCH%.msp -t USBDMPatch %PATCH%\diff.wixmst
 
 :finish
-pause
+rem pause

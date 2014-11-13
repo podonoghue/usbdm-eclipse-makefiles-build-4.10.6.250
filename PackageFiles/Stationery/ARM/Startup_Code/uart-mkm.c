@@ -11,11 +11,13 @@
 #include "uart.h"
 #include "Freedom.h"
 
+//#define USE_IRQ
+
 #if defined(MCU_MKM33Z5)
 //=================================================================================
 // UART to use
 //
-#define UART       UART1
+#define UART  UART1
 #define UART_CLOCK SYSTEM_UART1_CLOCK
 
 //=================================================================================
@@ -94,8 +96,13 @@ void uart_initialise(int baudrate) {
 
    UART->C1 = 0;
 
+#ifdef USE_IRQ
+   // Enable UART Tx & Rx - with Rx IRQ
+   UART->C2 = UART_C2_TE_MASK|UART_C2_RE_MASK|UART_C2_RIE_MASK;
+#else
    // Enable UART Tx & Rx
    UART->C2 = UART_C2_TE_MASK|UART_C2_RE_MASK;
+#endif
 }
 
 /*
@@ -111,6 +118,52 @@ void uart_txChar(int ch) {
    UART->D = ch;
 }
 
+#ifdef USE_IRQ
+static uint8_t rxBuffer[100];
+static uint8_t *rxPutPtr = rxBuffer;
+static uint8_t *rxGetPtr = rxBuffer;
+
+void UART0_RxTx_IRQHandler() {
+   // Ignores overflow
+   (void)UART->S1;
+   int ch = UART->D;
+   *rxPutPtr++ = ch;
+   if (rxPutPtr == rxBuffer+sizeof(rxBuffer)) {
+      rxPutPtr = rxBuffer;
+   }
+}
+
+void UART0_Error_IRQHandler() {
+   // Clear & ignore any pending errors
+   if ((UART->S1 & (UART_S1_FE_MASK|UART_S1_OR_MASK|UART_S1_PF_MASK|UART_S1_NF_MASK)) != 0) {
+      // Discard data (& clear status)
+      (void)UART->D;
+   }
+}
+
+/*
+ * Receives a single character over the UART (blocking)
+ *
+ * @return - character received
+ */
+int uart_rxChar(void) {
+
+   // Wait for character
+   while (rxGetPtr==rxPutPtr) {
+   }
+   // Get char from buffer
+   __disable_irq();
+   int ch = *rxGetPtr++;
+   if (rxGetPtr==rxBuffer+sizeof(rxBuffer)) {
+      rxGetPtr = rxBuffer;
+   }
+   __enable_irq();
+   if (ch == '\r') {
+      ch = '\n';
+   }
+   return ch;
+}
+#else
 /*
  * Receives a single character over the UART (blocking)
  *
@@ -118,9 +171,10 @@ void uart_txChar(int ch) {
  */
 int uart_rxChar(void) {
    uint8_t status;
+   // Wait for Rx buffer full
    do {
       status = UART->S1;
-      // Clear & ignore any pending errors
+      // Clear & ignore pending errors
       if ((status & (UART_S1_FE_MASK|UART_S1_OR_MASK|UART_S1_PF_MASK|UART_S1_NF_MASK)) != 0) {
          (void)UART->D;
       }
@@ -132,3 +186,4 @@ int uart_rxChar(void) {
    }
    return ch;
 }
+#endif

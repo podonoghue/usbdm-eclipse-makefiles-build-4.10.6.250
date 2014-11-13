@@ -22,7 +22,7 @@ Devices using this peripheral:
       MK70F15
 -->
       <peripheral>
-         <?sourceFile "UART0_C7816_CEA709" ?>
+         <?sourceFile "UART0_MK_C7816_CEA709" ?>
          <name>UART0</name>
          <description>Universal Asynchronous Receiver/Transmitter (C7816, CEA709)</description>
          <prependToName>UART0</prependToName>

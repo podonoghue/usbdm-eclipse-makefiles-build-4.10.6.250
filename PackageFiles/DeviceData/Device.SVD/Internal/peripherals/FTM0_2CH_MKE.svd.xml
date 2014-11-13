@@ -250,7 +250,6 @@ Devices using this peripheral:
                         <description>Channel Flag</description>
                         <bitOffset>7</bitOffset>
                         <bitWidth>1</bitWidth>
-                        <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
@@ -344,7 +343,6 @@ Devices using this peripheral:
                      <description>Channel Trigger Flag</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>

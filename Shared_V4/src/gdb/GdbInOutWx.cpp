@@ -49,6 +49,7 @@ GdbInOutWx::GdbInOutWx(wxSocketBase *clientSocket, wxTextCtrl *logScreen) :
  *
  */
 GdbInOutWx::~GdbInOutWx() {
+   Logging::print("GdbInOutWx::~GdbInOuWxt()\n");
    finish();
 }
 
@@ -64,6 +65,7 @@ GdbInOutWx::~GdbInOutWx() {
  */
 void GdbInOutWx::finish(void) {
    clientSocket->SetFlags(wxSOCKET_WAITALL);
+   Logging::print("GdbInOutWx::finish()\n");
    GdbInOut::finish();
 }
 

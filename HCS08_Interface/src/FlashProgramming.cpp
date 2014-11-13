@@ -857,18 +857,19 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
 
 #if TARGET == MC56F80xx
    MemorySpace_t memorySpace = MS_XWord;
-#else      
+#else
    MemorySpace_t memorySpace = MS_Byte;
-#endif   
+#endif
    // Probe RAM buffer
    rc = probeMemory(memorySpace, parameters.getRamStart());
    if (rc == BDM_RC_OK) {
       rc = probeMemory(memorySpace, parameters.getRamEnd());
    }
    if (rc != BDM_RC_OK) {
+      Logging::error("Failed, probeMemory() failed\n");
       return rc;
    }
-#if (TARGET==HCS08)   
+#if (TARGET==HCS08)
    LoadInfoStruct *infoPtr = (LoadInfoStruct *)buffer;
    targetProgramInfo.smallProgram = (infoPtr->flags&OPT_SMALL_CODE) != 0;
    if (targetProgramInfo.smallProgram) {
@@ -1658,7 +1659,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
 #elif (TARGET == MC56F80xx)
    MemorySpace_t memorySpace = MS_XWord;
 #elif (TARGET == ARM)
-   MemorySpace_t memorySpace = MS_Long; 
+   MemorySpace_t memorySpace = MS_Long;
 #elif (TARGET == S12Z)
    MemorySpace_t memorySpace = MS_Word;
 #elif (TARGET == HCS08) || (TARGET == HCS12)
@@ -1940,7 +1941,7 @@ USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
          // |0x80 => XROM, |0x03 => Bank1 (Data)
          addressFlag |= 0x83000000;
       }
-#endif      
+#endif
 #if (TARGET == CFV1) || (TARGET == ARM)
       if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
          // Flag needed for DFLASH/flexNVM access
@@ -3111,7 +3112,7 @@ USBDM_ErrorCode FlashProgrammer::doWriteRam(FlashImage *flashImage) {
 //! @note If target clock trimming is enabled then the Non-volatile clock trim
 //!       locations are ignored.
 //!
-USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage, 
+USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
                                              CallBackT    progressCallBack) {
 
    Logging log("FlashProgrammer::verifyFlash");
@@ -3204,8 +3205,8 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
 //! @note The FTRIM etc. locations in the flash image may be modified with trim values.
 //! @note Security locations within the flash image may be modified to effect the protection options.
 //!
-USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage, 
-                                              CallBackT    progressCallBack, 
+USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
+                                              CallBackT    progressCallBack,
                                               bool         doRamWrites) {
    Logging log("FlashProgrammer::programFlash");
    Logging::setLoggingLevel(100);
@@ -3337,7 +3338,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
-#endif   
+#endif
    // Set up for Flash operations (clock etc)
    rc = initialiseTargetFlash();
    if (rc != PROGRAMMING_RC_OK) {

@@ -1,11 +1,11 @@
-﻿<!--
+<!--
 Devices using this peripheral: 
       MKM33Z5
 -->
       <peripheral>
          <?sourceFile "RTC_MKM" ?>
          <name>RTC</name>
-         <description>Real-time counter</description>
+         <description>Independent Real-time clock</description>
          <prependToName>RTC</prependToName>
          <baseAddress>0x40050000</baseAddress>
          <size>16</size>
@@ -15,7 +15,19 @@ Devices using this peripheral:
          <addressBlock>
             <?width "16" ?>
             <offset>0x0</offset>
-            <size>0x18</size>
+            <size>0x14</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <?width "8" ?>
+            <offset>0x12</offset>
+            <size>0x1</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <?width "16" ?>
+            <offset>0x14</offset>
+            <size>0x4</size>
             <usage>registers</usage>
          </addressBlock>
          <addressBlock>
@@ -210,7 +222,7 @@ Same as Seconds Counter Value in SECONDS</description>
                      <description>Compensation enable bit 
 0:- Coarse Compensation is disabled.\n 
 1:- Coarse Compensation is enabled. \n
-Note:- If both the bits are meant to be set '1' hardware will not let the COMP_EN bit to be
+Note:- If both the bits are meant to be set &apos;1&apos; hardware will not let the COMP_EN bit to be
 written 1</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -244,7 +256,7 @@ Daylight Saving function, this bit should be set to 0</description>
                      <description>Software Reset bit.\n
 Self clearing bit. Asserting this field clears the contents of alarm, interrupt (status and enable except
 tamper interrupt enable bit ) registers, STATUS[CMP_DONE], and STATUS[BUS_ERR] and has no effect
-on DST, calendaring,Standby time and tamper detect regs</description>
+on DST, calendaring,Standby time and tamper detect</description>
                      <bitOffset>8</bitOffset>
                      <bitWidth>1</bitWidth>
                   </field>
@@ -284,6 +296,13 @@ This bit is asserted when the MCU/CPU power falls below the read only threshold<
                      <bitWidth>1</bitWidth>
                   </field>
                   <field>
+                     <name>RST_SRC</name>
+                     <description>Reset Source bit.\n
+This bit indicates to the user software the cause for reset to the part and subsequent boot up of CPU</description>
+                     <bitOffset>3</bitOffset>
+                     <bitWidth>1</bitWidth>
+                  </field>
+                  <field>
                      <name>CMP_INT</name>
                      <description>Compensation Interval bit.\n
 This read-only status bit is asserted for a time equal to compensation interval seconds</description>
@@ -292,7 +311,7 @@ This read-only status bit is asserted for a time equal to compensation interval 
                   </field>
                   <field>
                      <name>WE</name>
-                     <description>Write Enable bits.\b
+                     <description>Write Enable bits.\n
 These bits control the entry and exit of the write protection mode. Both registers are protected by the write
 protection mechanism. These are self clearing bits. Reads will return zeros</description>
                      <bitOffset>6</bitOffset>
@@ -307,9 +326,63 @@ This bit indicates that a read or write cycle was initiated by software when the
                   </field>
                   <field>
                      <name>CMP_DONE</name>
-                     <description>AAAAAAA</description>
+                     <description>Compensation Done bit.\n
+This bit indicates that current compensation cycle is complete.\n
+The bit gets cleared by writing 1 to it</description>
                      <bitOffset>11</bitOffset>
                      <bitWidth>1</bitWidth>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>STATUS_B</name>
+               <description>Status Register</description>
+               <addressOffset>0x12</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>INVAL_BIT</name>
+                     <description>Invalidate CPU read/write access bit.\n
+This read-only bit indicates the time /date counters are invalid or changing</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>1</bitWidth>
+                  </field>
+                  <field>
+                     <name>WRITE_PROT_EN</name>
+                     <description>Write Protect Enable status bit.\n
+This read-only bit indicates that registers are in locked mode and write to them is disabled</description>
+                     <bitOffset>1</bitOffset>
+                     <bitWidth>1</bitWidth>
+                  </field>
+                  <field>
+                     <name>CPU_LOW_VOLT</name>
+                     <description>CPU Low Voltage Warning status bit.\n
+This bit is asserted when the MCU/CPU power falls below the read only threshold</description>
+                     <bitOffset>2</bitOffset>
+                     <bitWidth>1</bitWidth>
+                  </field>
+                  <field>
+                     <name>RST_SRC</name>
+                     <description>Reset Source bit.\n
+This bit indicates to the user software the cause for reset to the part and subsequent boot up of CPU</description>
+                     <bitOffset>3</bitOffset>
+                     <bitWidth>1</bitWidth>
+                  </field>
+                  <field>
+                     <name>CMP_INT</name>
+                     <description>Compensation Interval bit.\n
+This read-only status bit is asserted for a time equal to compensation interval seconds</description>
+                     <bitOffset>5</bitOffset>
+                     <bitWidth>1</bitWidth>
+                  </field>
+                  <field>
+                     <name>WE</name>
+                     <description>Write Enable bits.\n
+These bits control the entry and exit of the write protection mode. Both registers are protected by the write
+protection mechanism. These are self clearing bits. Reads will return zeros</description>
+                     <bitOffset>6</bitOffset>
+                     <bitWidth>2</bitWidth>
                   </field>
                </fields>
             </register>
@@ -512,11 +585,21 @@ This bit indicates that the alarm value programmed matches the counter values</d
                </fields>
             </register>
             <register>
+               <name>GP_DATA_REG</name>
+               <description>General Purpose Data Register\n
+The use of the bits in this register are specific to the MCU. See the Chip Configuration
+chapter for description of this register. Software reset has no effect on the contents of this
+register</description>
+               <addressOffset>0x20</addressOffset>
+               <size>16</size>
+               <access>read-write</access>
+               <resetMask>0xFFFF</resetMask>
+            </register>
+            <register>
                <name>OSC</name>
                <description>RTC Control Register\n
 (Alias for GP_DATA_REG)</description>
                <addressOffset>0x20</addressOffset>
-               <size>16</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -613,7 +696,7 @@ This bit indicates that the alarm value programmed matches the counter values</d
                      <name>BOOT_MODE</name>
                      <description>Boot mode override bit\n
 This bit can be used to override the boot to happen in VLPR mode. 
-The effect of this bit can be seen on next system reset.</description>
+The effect of this bit can be seen on next system reset</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -630,16 +713,6 @@ The effect of this bit can be seen on next system reset.</description>
                      </enumeratedValues>
                   </field>
                </fields>
-            </register>
-            <register>
-               <name>GP_DATA_REG</name>
-               <description>General Purpose Data Register\n
-The use of the bits in this register are specific to the MCU. See the Chip Configuration
-chapter for description of this register. Software reset has no effect on the contents of this
-register</description>
-               <addressOffset>0x20</addressOffset>
-               <size>16</size>
-               <access>read-write</access>
             </register>
             <register>
                <name>DST_HOUR</name>
@@ -712,6 +785,7 @@ compensation block to correct the 1 Hz clock</description>
                <addressOffset>0x28</addressOffset>
                <size>16</size>
                <access>read-write</access>
+               <resetMask>0xFFFF</resetMask>
             </register>
             <register>
                <name>TAMPER_DIRECTION</name>

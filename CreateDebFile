@@ -4,7 +4,7 @@
 MAJOR=4
 MINOR=10
 MICRO=6
-NANO=180
+NANO=210
 DEBIAN_VERSION=1
 VERSION=${MAJOR}.${MINOR}.${MICRO}.${NANO}
 
@@ -184,12 +184,12 @@ echo "========================================="
 makeDebFile `getconf LONG_BIT`
 
 # Build for i386 on x86_64 platform
-if [ `getconf LONG_BIT` != 32 ]; then
-   echo "========================================="
-   echo "Building 32 version on x86_64 platform"
-   echo "========================================="
-   makeDebFile 32
-fi
+#if [ `getconf LONG_BIT` != 32 ]; then
+#   echo "========================================="
+#   echo "Building 32 version on x86_64 platform"
+#   echo "========================================="
+#   makeDebFile 32
+#fi
 
 exit
 

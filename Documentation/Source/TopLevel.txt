@@ -32,7 +32,7 @@
    - @htmlonly <a href="http://sourceforge.net/projects/usbdm/"><b>Release versions of the software for the various BDMs are available on Sourceforge.</b></a> @endhtmlonly
    - @htmlonly <a href="USBDM_V4.10/USBDM_FlashProgrammers/html/index.html"><b>Various stand-alone programmers are provided to support the USBDM hardware.</b></a> @endhtmlonly 
    - @htmlonly <a href="https://github.com/podonoghue"><b>Source code is available on GitHub</b></a>@endhtmlonly 
-   
+   - @htmlonly <a href="https://community.freescale.com/community/bdm"><b>Post queries on OSBDM and TBDML Discussion Board</b></a>@endhtmlonly 
    
 <hr>
 \subsection JS16Designs JS16 based versions (Current designs)
@@ -204,7 +204,7 @@ The table below shows the support provided by each version and provides links to
  </tr>
  <tr>
   <td valign=top >  <p  ><a href="USBDM_V4.10/USBDM_JS16/html/index.html"><b>USBDM_JS16CWJ</b></a></p>  </td>
-  <td valign=top >  <p  align=center >Yes</p>  </td>
+  <td valign=top >  <p  align=center >No </p>  </td>
   <td valign=top >  <p  align=center >   </p>  </td>
   <td valign=top >  <p  align=center >X  </p>  </td>
   <td valign=top >  <p  align=center >   </p>  </td>
@@ -272,7 +272,7 @@ The table below shows the support provided by each version and provides links to
   <td valign=top >  <p  align=center >    </p>  </td>
   <td valign=top >  <p  align=center >    </p>  </td>
   <td valign=top >  <p  align=center >    </p>  </td>
-  <td valign=top >  <p  align=center >    </p>  </td>
+  <td valign=top >  <p  align=center >X   </p>  </td>
  </tr>
 </table>
 <br>* DSC support is very limited in Codewarrior 10 and the stand-alone programmer
@@ -331,7 +331,9 @@ The table below shows the support provided by each version and provides links to
    - @htmlonly <a href="http://www.evbplus.com/">Wytec's Motorola/Freescale software development tools</a> @endhtmlonly \n
    - @htmlonly <a href="http://www.usbdm.com.br/">Gravador para Microcontroladores Freescale (Gravador USBDM)</a> @endhtmlonly \n
    
-The software may be used to "upgrade" the Axiom MC56F8006 Demo board to enable the on-board BDM. 
+The software may be used to "upgrade" the following devices to enable the on-board BDM as a USBDM bdm. 
+   - @htmlonly <a href="http://www.freescale.com/webapp/sps/site/homepage.jsp?code=TOWER_HOME">Selected Freescale Tower boards (KInetis, Coldfire, HCS08 and HCS12)</a> @endhtmlonly \n
+   - @htmlonly <a href="http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=FRDM-KL25Z">Freescale FRDM boards</a> @endhtmlonly \n
    - @htmlonly <a href="http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=MC56F8006DEMO">Axiom MC56F8006 Demo board</a> @endhtmlonly. \n
 
 <hr>

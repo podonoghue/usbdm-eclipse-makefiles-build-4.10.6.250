@@ -5,7 +5,7 @@
  *           Equivalent: MKE06Z128M4, MKE06Z64M4
  *
  * @version  V0.0
- * @date     2014/09
+ * @date     2014/10
  *
  *******************************************************************************************************/
 
@@ -1060,7 +1060,7 @@ typedef struct {                                /*!<       FTM2 Structure       
    } CONTROLS[6];
    __I  uint32_t  RESERVED0[4];                 /*!< 003C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
-   __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
+   __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
    __IO uint32_t  MODE;                         /*!< 0054: Features Mode Selection                                      */
    __IO uint32_t  SYNC;                         /*!< 0058: Synchronization                                              */
    __IO uint32_t  OUTINIT;                      /*!< 005C: Initial State for Channels Output                            */
@@ -2890,7 +2890,7 @@ typedef struct {                                /*!<       RTC Structure        
  */
 typedef struct {                                /*!<       SIM Structure                                                */
    __IO uint32_t  SRSID;                        /*!< 0000: System Reset Status and ID Register                          */
-   __IO uint32_t  SOPT0;                        /*!< 0004: System Options Register 1                                    */
+   __IO uint32_t  SOPT0;                        /*!< 0004: System Options Register 0                                    */
    __IO uint32_t  SOPT1;                        /*!< 0008: System Options Register 1                                    */
    __IO uint32_t  PINSEL0;                      /*!< 000C: Pin Selection Register 0                                     */
    __IO uint32_t  PINSEL1;                      /*!< 0010: Pin Selection Register 1                                     */

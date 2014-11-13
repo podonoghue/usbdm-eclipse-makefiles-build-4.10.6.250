@@ -1,5 +1,5 @@
 /*!
-\page eclipseLunaInstall Eclipse Luna - Install (Codesourcery, GNU tools)
+\page eclipseLunaInstall Eclipse - Install (Codesourcery, GNU tools)
 
 \section requiredSoftware Required Software
 

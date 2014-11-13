@@ -3,20 +3,61 @@
 
 \section sectionHistory Revision History
 
-V4.1.6.200 (??? 2014)
+V4.10.6.??? (??? 2014)
 ======================================================================================= 
    - Initial support for Keil with ARM targets (Partially done)
 
+V4.10.6.220 (November 2014)
+======================================================================================= 
+   - Eclipse Plugin
+      - Reset button has been replaced with more useful Restart button
+      - C compiler default language changed to ISO-C99 (-std=c99)
+      - C++ compiler default language changed to 1998 ISO C++ (-std=c++98)
+      - Correction to overlapping optimization options.
+      - Improved Fault Report Dialogue
+      - Changes to launcher
+        - Simplified Startup options
+        - Added options for connection to running target
+        - May now disconnect from target w/o affecting execution
+        - Added restart options
+        - Launch is now available in Run mode (may be used as Flash programmer)
+   - Changed ARM disconnect so reset capture is restored to default value
+
+V4.10.6.210 (October 2014)
+======================================================================================= 
+	- Improvements to Eclipse plugins
+	- Addition of Disassembly option to Eclipse plugins
+	- Addition of missing Codewarrior devices (MKL02M4)
+	- Increased retry time in GDB server to allow limited DeepSleep debugging
+	- Added Fault Report Dialogue to Eclipse plugin
+
+V4.10.6.200 (September 2014)
+======================================================================================= 
+	- Added MKL03 devices (programming and SVD files)
+	- Improvements for MKM33
+	- Fixed aliases bug relating to SDID of HCS08 devices
+	- Fixed bug in ARG_GDBServer that prevents re-use on failure
+	- Decreased retry time for drivers (give up quicker)
+	- Corrected errors in Kinetis SVD file & header files.
+   	
+V4.10.6.190 (August 2014)
+======================================================================================= 
+	- Corrected some issues with Mass erase of secured/difficult devices 
+	- Updates SVD files for MK64 
+	- Improved logging for TCL scripts
+
 V4.10.6.180 (August 2014)
 ======================================================================================= 
-   - Updated installer for KDS release
-   - Added MK22FN128M12, MK22FN512M12 (new prog algorithm)
-   - Corrected SDIDs for several devices
-   - Added OpenSDAV2.1 Flash driver
-   - Fixes for Processor Expert in Eclipse & KDS (linker options, default build options)
-   - Fixes for Linux builds 
-   - Fixes for 9S08P8 etc devices (SDIDs)
-   - CMSIS link now uses variable
+	- Updated installer for KDS release 
+	- Added MK22FN128M12, MK22FN512M12 (new prog algorithm) 
+	- Added MKM33xx etc 
+	- Corrected SDIDs for several devices 
+	- Added OpenSDAV2.1 Flash driver 
+	- Fixes for Processor Expert in Eclipse & KDS (linker options, default build options) 
+	- Fixes for Linux builds 
+	- Fixes for 9S08P8 etc devices (SDIDs) 
+	- CMSIS link now uses variable 
+	- Fixed failure to save some settings in New Project wizard.
 	
 V4.10.6.170 (July 2014)
 ======================================================================================= 

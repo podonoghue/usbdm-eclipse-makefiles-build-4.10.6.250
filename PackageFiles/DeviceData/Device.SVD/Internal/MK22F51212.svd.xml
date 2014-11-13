@@ -3,6 +3,7 @@
 [
 <!ENTITY VECTOR_TABLE SYSTEM "vectorTables/MK22F51212_VectorTable.svd.xml">
 <!ENTITY ADC0         SYSTEM "peripherals/ADC0_MKD5_MKLZ4.svd.xml">
+<!ENTITY ADC1         SYSTEM "peripherals/ADC1_from_ADC0_1.svd.xml">
 <!ENTITY AXBS         SYSTEM "peripherals/AXBS_6M_5S.svd.xml">
 <!ENTITY CMP0         SYSTEM "peripherals/CMP0_MK.svd.xml">
 <!ENTITY CMP1         SYSTEM "peripherals/CMP1_from_CMP0_0.svd.xml">
@@ -63,10 +64,10 @@
 <!ENTITY SPI2         SYSTEM "peripherals/SPI2_from_SPI1_0.svd.xml">
 <!ENTITY SYST         SYSTEM "peripherals/SysTick_0.svd.xml">
 <!ENTITY TPIU         SYSTEM "peripherals/TPIU_0.svd.xml">
-<!ENTITY UART0        SYSTEM "peripherals/UART0_C7816.svd.xml">
+<!ENTITY UART0        SYSTEM "peripherals/UART0_MK_C7816.svd.xml">
 <!ENTITY UART1        SYSTEM "peripherals/UART1_0.svd.xml">
 <!ENTITY UART2        SYSTEM "peripherals/UART2_from_UART1_0.svd.xml">
-<!ENTITY USB0         SYSTEM "peripherals/USB0_MK_MKL.svd.xml">
+<!ENTITY USB0         SYSTEM "peripherals/USB0_CLK_RECOVER.svd.xml">
 <!ENTITY VREF         SYSTEM "peripherals/VREF_MK_3.svd.xml">
 <!ENTITY WDOG         SYSTEM "peripherals/WDOG_MK.svd.xml">
 ]>
@@ -87,6 +88,7 @@
    <width>32</width>
    <peripherals>
 &ADC0;
+&ADC1;
 &AXBS;
 &CMP0;
 &CMP1;

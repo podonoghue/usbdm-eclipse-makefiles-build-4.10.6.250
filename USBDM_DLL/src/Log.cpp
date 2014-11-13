@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <unistd.h>
 #include "Log.h"
 #include "Version.h"
 #include "USBDM_API.h"
@@ -196,7 +197,6 @@ void Logging::openLogFile(const char *description){
       fprintf(logFile, "Log re-opened on: %s"
             "==============================================\n\n", ctime(&time_now));
       return;
-//      fclose(logFile);
    }
    logFile = openApplicationFile("usbdm.log");
    if (logFile == NULL) {
@@ -211,6 +211,9 @@ void Logging::openLogFile(const char *description){
    time(&time_now);
    fprintf(logFile, "Log file created on: %s"
          "==============================================\n\n", ctime(&time_now));
+
+   // Re-direct stderr to logfile
+   dup2(fileno(logFile), STDERR_FILENO);
 }
 /*! \brief Turns logging on or off
  *

@@ -25,7 +25,7 @@ $(USBDM_TCL)-debug:
 
 all: UsbdmScript UsbdmScript-debug $(USBDM_TCL) $(USBDM_TCL)-debug
 
-test: $(USBDM_TCL)-debug
+test: $(USBDM_TCL) $(USBDM_TCL)-debug
 
 clean:
 	${RMDIR} UsbdmScript$(BUILDDIR_SUFFIX)

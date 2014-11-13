@@ -359,7 +359,7 @@ static USBDM_ErrorCode initialiseBDMInterface(void) {
    if (deviceOptions.getSecurity() == SEC_SECURED) {
       deviceOptions.setSecurity(SEC_SMART);
    }
-   
+
    // Copy required options for Flash programming.
    // Other options are reset to default.
    bdmProgrammingOptions.size                = sizeof(USBDM_ExtendedOptions_t);
@@ -483,7 +483,7 @@ DiReturnT DiGdiOpen ( DiUInt32T      dnGdiVersionH,
    unsigned sub;
 
    usbdm_gdi_dll_open();
-   
+
 #if TARGET == MC56F80xx
    DSC_SetLogFile(Logging::getLogFileHandle());
 #endif
@@ -1310,7 +1310,7 @@ uint32_t        endAddress;                      // End address
                   MemoryRegion::getMemoryTypeName(memoryType), getMemSpaceName(memorySpace), (uint32_t)writeAddress, (uint32_t)writeAddress+sub-1);
             return setErrorState(DI_ERR_FATAL, "Unsupported memory write during flash programming");
          }
-#endif         
+#endif
          // Write data to programming buffer
          Logging::print("loadDataBytes(address=0x%06X, size=0x%04X)\n", writeAddress, sub);
          Logging::printDump(memoryReadWriteBuffer,sub,writeAddress,memorySpace&MS_SIZE);
@@ -1470,7 +1470,7 @@ USBDM_ErrorCode rc = BDM_RC_OK;
       rc = DSC_ReadMemory(memorySpace, blockSize, address, memoryReadWriteBuffer);
 #else
       rc = USBDM_ReadMemory(memorySpace, blockSize, address, memoryReadWriteBuffer);
-#endif		 
+#endif
       if (rc != BDM_RC_OK) {
          Logging::print("DiMemoryRead(...) - Failed, rc= %s\n", USBDM_GetErrorString(rc));
          return setErrorState(DI_ERR_NONFATAL, rc);

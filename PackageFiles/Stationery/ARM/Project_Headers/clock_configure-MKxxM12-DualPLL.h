@@ -46,10 +46,11 @@ extern "C" {
 //
 //   <o> Frequency of OSC0 External Clock or Crystal (Hz)  <name=oscclk0_clock> <0-50000000>
 //   <i> Frequency of external crystal or clock on XTAL0/EXTAL0
+//   <i> See MCG_C2_EREFS0 for XTAL/Clock selection
 #define OSCCLK0_CLOCK (8000000UL)
 
 // OSC32KCLK_CLOCK
-// Assumed to be only available when main oscilator operating with 32kHz crystal on XTAL/EXTAL
+// Assumed to be only available when main oscillator operating with 32kHz crystal on XTAL/EXTAL
 #if (OSCCLK0_CLOCK < 31000) || (OSCCLK0_CLOCK> 33000)
 #define OSC32KCLK_CLOCK (0)
 #else

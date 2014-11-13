@@ -30,6 +30,9 @@
 \verbatim
  Change History
 +======================================================================================================
+| 12 Nov 2014 | Added armDisconnect() to allow reset behaviour to be restored       - pgo - V4.10.6.230
+| 12 Nov 2014 | Refactored armConnect()                                             - pgo - V4.10.6.230
+| 12 Oct 2014 | Added automatic alignment correction to memory (FIX_ALIGNMENT)      - pgo - V4.10.6.210
 | 25 Apr 2014 | Added check for Power sense option in Power-on sequence             - pgo - V4.10.6.140
 | 23 Mar 2014 | Changes to handling pendingResetRelease                             - pgo - V4.10.6.130
 | 01 Mar 2014 | Removed MCF51AC256 CSR.VBD hack                                     - pgo - V4.10.6.120
@@ -82,6 +85,8 @@
 #include "ICP.h"
 #include <windows.h>
 #endif
+
+#define FIX_ALIGNMENT  // Enable autofix for alignment on readMemory() & writeMemory()
 
 #define JTAG_HEADER_SIZE (5) // Number of bytes to reserved for BDM header in JTAG Commands
 
@@ -385,6 +390,10 @@ USBDM_ErrorCode USBDM_Close(void) {
 
    Logging::print("Trying to close the device\n");
 
+   if ((bdmOptions.targetType == T_ARM_SWD) || (bdmOptions.targetType == T_ARM_JTAG)) {
+      Logging::print("Doing armDisconnect()\n");
+      armDisconnect(bdmState.targetType);
+   }
    if (bdmState.targetType != T_OFF) { // USBDM on ?
       // Tell the BDM that we're finished (power down)
       Logging::print("USBDM_Close() - telling BDM to close (poweroff)\n");
@@ -1370,16 +1379,10 @@ USBDM_ErrorCode rc;
    if (rc != BDM_RC_OK) {
       return rc;
    }
-   if (bdmOptions.targetType == T_ARM_SWD) {
-      rc = armSwdConnect();
+   if ((bdmOptions.targetType == T_ARM_SWD) || (bdmOptions.targetType == T_ARM_JTAG)) {
+      rc = armConnect(bdmOptions.targetType);
       if (rc != BDM_RC_OK) {
-         rc = armSwdConnect();
-      }
-   }
-   else if (bdmOptions.targetType == T_ARM_JTAG) {
-      rc = armJtagConnect();
-      if (rc != BDM_RC_OK) {
-         rc = armJtagConnect();
+         rc = armConnect(bdmOptions.targetType);
       }
    }
    if (pendingResetRelease) {
@@ -1951,7 +1954,7 @@ USBDM_ErrorCode USBDM_TargetHalt(void) {
 //!     BDM_RC_OK    => OK \n
 //!     other        => Error code - see \ref USBDM_ErrorCode
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_WriteReg(unsigned int regNo, unsigned long regValue) {
    LOGGING_Q;
 
@@ -2013,9 +2016,9 @@ USBDM_ErrorCode USBDM_ReadReg(unsigned int regNo, unsigned long *regValue) {
    usb_data[1] = CMD_USBDM_READ_REG;
    usb_data[2] = (uint8_t)(regNo>>8);
    usb_data[3] = (uint8_t)(regNo);
-   
+
    rc = bdm_usb_transaction(4, 5, usb_data);
-   
+
    if (rc != BDM_RC_OK) {
       Logging::print("Failed - ID#=%X\n", regNo);
       *regValue = 0xDEADBEEFU;
@@ -2405,7 +2408,7 @@ USBDM_ErrorCode USBDM_ReadDReg(unsigned int regNo, unsigned long *regValue) {
 //! ~   ~                                  ~ \n
 //! +---+----------------------------------+ \n
 //! \endverbatim
-static void assembleMessageHeader(uint8_t command, 
+static void assembleMessageHeader(uint8_t command,
                                   uint8_t memorySpace,
                                   uint8_t count,
                                   uint32_t address) {
@@ -2437,7 +2440,7 @@ static void assembleMessageHeader(uint8_t command,
 //!     BDM_RC_OK    => OK \n
 //!     other        => Error code - see \ref USBDM_ErrorCode
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_WriteMemory( unsigned int        memorySpace,
                                    unsigned int        byteCount,
                                    unsigned int        address,
@@ -2453,7 +2456,6 @@ USBDM_ErrorCode USBDM_WriteMemory( unsigned int        memorySpace,
 
    // Make multiple of 4, allow for header
    const unsigned int MaxDataSize = (bdmInfo.commandBufferSize-MESSAGE_HEADER_SIZE)&~0x03;
-   bool unaligned;
 
    bdmState.activityFlag = BDM_ACTIVE;
 
@@ -2462,6 +2464,53 @@ USBDM_ErrorCode USBDM_WriteMemory( unsigned int        memorySpace,
 
    Logging::printDump(data, byteCount, address);
 
+#ifdef FIX_ALIGNMENT
+   // Check size alignment
+   bool unaligned = false;
+   switch (elementSize) {
+      case 1: unaligned = false;                // No alignment requirement
+         break;
+      case 2: unaligned = ((byteCount&1) != 0); // Multiple of 2
+         break;
+      case 4: unaligned = ((byteCount&3) != 0); // Multiple of 4
+         break;
+      default: unaligned = 1;                   // Impossible
+         break;
+   }
+   if (unaligned) {
+      Logging::error("Failed - alignment (size of transfer) error\n");
+      return BDM_RC_ILLEGAL_PARAMS;
+   }
+   // Check address alignment & adjust memory space
+   switch (elementSize) {
+      default:
+      case 1:   // No alignment requirement
+         break;
+      case 2:   // Multiple of 2
+         if ((address&1) != 0) {
+            // Change to byte transfer
+            unaligned = true;
+            memorySpace = (memorySpace&~MS_SIZE)|1;
+         }
+         break;
+      case 4:   // Multiple of 4
+         if ((address&1) != 0) {
+            // Change to byte transfer
+            unaligned = true;
+            memorySpace = (memorySpace&~MS_SIZE)|1;
+         }
+         else if ((address&2) != 0) {
+            // Change to word transfer
+            unaligned = true;
+            memorySpace = (memorySpace&~MS_SIZE)|2;
+         }
+         break;
+   }
+   if (unaligned) {
+      Logging::print("Alignment error - adjusted memory space size\n");
+   }
+#else
+   bool unaligned = false;
    // Check address & size alignment
    switch (elementSize) {
       case 1:  unaligned = 0;               // No alignment requirement
@@ -2477,6 +2526,7 @@ USBDM_ErrorCode USBDM_WriteMemory( unsigned int        memorySpace,
       Logging::print("Failed - alignment error\n");
       return BDM_RC_ILLEGAL_PARAMS;
    }
+#endif
 //   Logging::printDump(data, count);
 
    while (byteCount>0) {
@@ -2554,14 +2604,60 @@ USBDM_ErrorCode USBDM_ReadMemory( unsigned int  memorySpace,
 
    // Make multiple of 4, Allow for status byte
    const unsigned int MaxDataSize = (bdmInfo.commandBufferSize-1)&~0x03;
-   bool unaligned;
 
    bdmState.activityFlag = BDM_ACTIVE;
 
    Logging::print("elementSize=%d, count=0x%X(%d), addr=[%s0x%06X..0x%06X]\n",
           elementSize, byteCount, byteCount, getMemSpaceAbbreviatedName((MemorySpace_t)memorySpace), address, address+byteCount-1);
 
+   #ifdef FIX_ALIGNMENT
+   // Check size alignment
+   bool unaligned = false;
+   switch (elementSize) {
+      case 1: unaligned = false;                // No alignment requirement
+         break;
+      case 2: unaligned = ((byteCount&1) != 0); // Multiple of 2
+         break;
+      case 4: unaligned = ((byteCount&3) != 0); // Multiple of 4
+         break;
+      default: unaligned = 1;                   // Impossible
+         break;
+   }
+   if (unaligned) {
+      Logging::error("Failed - alignment (size of transfer) error\n");
+      return BDM_RC_ILLEGAL_PARAMS;
+   }
+   // Check address alignment & adjust memory space
+   switch (elementSize) {
+      default:
+      case 1:   // No alignment requirement
+         break;
+      case 2:   // Multiple of 2
+         if ((address&1) != 0) {
+            // Change to byte transfer
+            unaligned = true;
+            memorySpace = (memorySpace&~MS_SIZE)|1;
+         }
+         break;
+      case 4:   // Multiple of 4
+         if ((address&1) != 0) {
+            // Change to byte transfer
+            unaligned = true;
+            memorySpace = (memorySpace&~MS_SIZE)|1;
+         }
+         else if ((address&2) != 0) {
+            // Change to word transfer
+            unaligned = true;
+            memorySpace = (memorySpace&~MS_SIZE)|2;
+         }
+         break;
+   }
+   if (unaligned) {
+      Logging::print("Alignment error - adjusted memory space size\n");
+   }
+#else
    // Check address and size alignment
+   bool unaligned;
    switch (elementSize) {
       case 1: unaligned = 0;               // No alignment requirement
          break;
@@ -2576,6 +2672,7 @@ USBDM_ErrorCode USBDM_ReadMemory( unsigned int  memorySpace,
       Logging::error("Failed - alignment error\n");
       return BDM_RC_ILLEGAL_PARAMS;
    }
+#endif
    while (byteCount>0) {
       blockSize = byteCount;
       if (blockSize > MaxDataSize) {
@@ -3120,7 +3217,7 @@ USBDM_ErrorCode USBDM_JTAG_Reset(void) {
 //!
 //! @note - Requires the tap to be initially in \b TEST-LOGIC-RESET or \b RUN-TEST/IDLE
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_JTAG_SelectShift(unsigned char mode) {
    LOGGING_Q;
 
@@ -3153,7 +3250,7 @@ USBDM_ErrorCode USBDM_JTAG_SelectShift(unsigned char mode) {
 //!     BDM_RC_OK    => OK \n
 //!     other        => Error code - see \ref USBDM_ErrorCode
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_JTAG_Write(unsigned char       bitCount,
                                  unsigned char       exit,
                                  const unsigned char *buffer) {

@@ -80,6 +80,7 @@ GdbInOut::GdbInOut() :
  *
  */
 GdbInOut::~GdbInOut() {
+   Logging::print("GdbInOut::~GdbInOut()\n");
    finish();
 }
 
@@ -89,6 +90,7 @@ GdbInOut::~GdbInOut() {
  *     - Sets connectionActive false
  */
 void GdbInOut::finish(void) {
+   Logging::print("GdbInOut::finish()\n");
    if (connectionActive) {
       sendErrorMessage(E_Fatal, "Closing connection");
    }

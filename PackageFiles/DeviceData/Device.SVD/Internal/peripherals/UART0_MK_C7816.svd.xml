@@ -1,13 +1,33 @@
 <!--
 Devices using this peripheral: 
-      MKM33Z5
+      MK10D7
+      MK10DZ10
+      MK11D5
+      MK12D5
+      MK20D7
+      MK20DZ10
+      MK21D5
+      MK22D5
+      MK22F12
+      MK22F51212
+      MK30D7
+      MK30DZ10
+      MK40D7
+      MK40DZ10
+      MK50D7
+      MK50DZ10
+      MK51D7
+      MK51DZ10
+      MK52DZ10
+      MK53DZ10
+      MK60DZ10
 -->
       <peripheral>
-         <?sourceFile "UART1_MKM_C7816" ?>
-         <name>UART1</name>
+         <?sourceFile "UART0_MK_C7816" ?>
+         <name>UART0</name>
          <description>Universal Asynchronous Receiver/Transmitter</description>
          <prependToName>UART0</prependToName>
-         <baseAddress>0x4006B000</baseAddress>
+         <baseAddress>0x4006A000</baseAddress>
          <size>32</size>
          <access>read-write</access>
          <resetValue>0x0</resetValue>
@@ -15,7 +35,7 @@ Devices using this peripheral:
          <addressBlock>
             <?width "8" ?>
             <offset>0x0</offset>
-            <size>0xE</size>
+            <size>0xF</size>
             <usage>registers</usage>
          </addressBlock>
          <addressBlock>
@@ -1163,6 +1183,61 @@ RTS deasserts one bit time after all characters in the transmitter data buffer(F
                         <enumeratedValue>
                            <name>0b1</name>
                            <description>RTS is deasserted if the number of characters in the receiver data register (FIFO) is equal to or greater than RWFIFO[RXWATER]. RTS is asserted when the number of characters in the receiver data register (FIFO) is less than RWFIFO[RXWATER]</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+               </fields>
+            </register>
+            <register>
+               <name>IR</name>
+               <description>Infrared Register</description>
+               <addressOffset>0xE</addressOffset>
+               <size>8</size>
+               <resetMask>0xFF</resetMask>
+               <fields>
+                  <field>
+                     <name>TNP</name>
+                     <description>Transmitter narrow pulse</description>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>2</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b00</name>
+                           <description>3/16</description>
+                           <value>0b00</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b01</name>
+                           <description>1/16</description>
+                           <value>0b01</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10</name>
+                           <description>1/32</description>
+                           <value>0b10</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b11</name>
+                           <description>1/4</description>
+                           <value>0b11</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>IREN</name>
+                     <description>Infrared enable</description>
+                     <bitOffset>2</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>IR disabled</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>IR enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

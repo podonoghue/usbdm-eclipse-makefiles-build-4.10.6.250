@@ -257,11 +257,11 @@ else
    LIB_WX_PLUGIN := usbdm-wx
 endif
 
-LIB_USB_SHARED  := usb-1.0
-LIB_USB_STATIC  := usb-static-1.0
+_LIB_USB_SHARED  := usb-1.0
+_LIB_USB_STATIC  := usb-static-1.0
 
 ifeq ($(UNAME_S),Windows)
-   LIB_USB = $(LIB_USB_STATIC)
+   LIB_USB = $(_LIB_USB_STATIC)
    ifdef DEBUG
       LIB_USBDM     := usbdm-debug.4 
       LIB_USBDM_TCL := usbdmTCL-debug.4 
@@ -272,7 +272,7 @@ ifeq ($(UNAME_S),Windows)
       LIB_USBDM_DSC := usbdm-dsc.4 
    endif
 else
-   LIB_USB = $(LIB_USB_SHARED)
+   LIB_USB = $(_LIB_USB_SHARED)
    ifdef DEBUG
       LIB_USBDM     := usbdm-debug
       LIB_USBDM_TCL := usbdm-tcl-debug 

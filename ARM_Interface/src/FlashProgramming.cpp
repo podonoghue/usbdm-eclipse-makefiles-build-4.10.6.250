@@ -26,6 +26,7 @@
 +================================================================================
 | Revision History
 +================================================================================
+| 15 Sep 14 | Changed error check order in VerifyFlash()                    - pgo V4.10.6.190
 | 17 Aug 14 | Changed SDID structure to support multiple masks              - pgo V4.10.6.180
 | 12 Jul 14 | Added getCommonFlashProgram(), changed getFlashProgram() etc  - pgo V4.10.6.170
 |  6 Nov 13 | 4.10.6.60 Changes to support PAxx small programmer            - pgo
@@ -1659,7 +1660,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    return rc;
 }
 
-#if (TARGET == CFVx) || (TARGET == HCS12) || (TARGET == S12Z) || (TARGET == MC56F80xx)
+#if (TARGET == CFVx) || (TARGET == HCS12) || (TARGET == S12Z) || (TARGET == MC56F80xx) || (TARGET == ARM)
 //=======================================================================
 //! \brief Determines the target execution speed
 //!
@@ -2989,10 +2990,21 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
    }
    // Set up the target for Flash operations
    rc = resetAndConnectTarget();
-   if (rc != PROGRAMMING_RC_OK) {
+
+   // Delay checking some errors until after security check
+   if ((rc != BDM_RC_OK) &&
+       (rc != PROGRAMMING_RC_ERROR_SECURED) &&      // Secured device
+       (rc != BDM_RC_SECURED) &&                    // Secured device
+       (rc != BDM_RC_BDM_EN_FAILED) &&              // BDM enable failed (on HCS devices)
+       (rc != BDM_RC_RESET_TIMEOUT_RISE)            // Reset pulsing on Kinetis etc.
+       ) {
       return rc;
    }
-   rc = checkTargetUnSecured();
+   USBDM_ErrorCode rcSecurity = checkTargetUnSecured();
+   if (rcSecurity != PROGRAMMING_RC_OK) {
+      return rcSecurity;
+   }
+   // Do deferred error check
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
@@ -3162,13 +3174,13 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
-#if (TARGET == CFVx) || (TARGET == MC56F80xx)
+#if (TARGET == CFVx) || (TARGET == MC56F80xx)// || (TARGET == ARM)
    rc = determineTargetSpeed();
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
 #endif
-#if (TARGET == RS08) || (TARGET == CFV1) || (TARGET == HCS08)
+#if (TARGET == RS08) || (TARGET == CFV1) || (TARGET == HCS08) || (TARGET == ARM)
    // Calculate clock trim values & update memory image
    rc = setFlashTrimValues(flashImage);
    if (rc != PROGRAMMING_RC_OK) {

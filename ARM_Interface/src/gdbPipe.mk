@@ -3,6 +3,7 @@
 # List source file to include from current directory
 SRC += FlashProgramming.cpp
 SRC += Version.rc
+SRC += ClockTrimmingKinetis.cpp
 
 # Shared files $(SHARED_SRC)
 VPATH := $(SHARED_SRC) $(VPATH)

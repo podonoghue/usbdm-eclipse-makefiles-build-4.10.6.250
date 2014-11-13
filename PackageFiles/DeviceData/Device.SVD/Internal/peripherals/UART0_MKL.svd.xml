@@ -543,7 +543,8 @@ After IDLE has been cleared, it cannot become set again until after a new charac
                   <field>
                      <name>RDRF</name>
                      <description>Receive Data Register Full Flag\n
-RDRF becomes set whenever the receive data buffer is full. To clear RDRF, read the UART data register</description>
+RDRF becomes set whenever the receive data buffer is full.\n
+To clear RDRF, read the UART data register</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -564,9 +565,9 @@ RDRF becomes set whenever the receive data buffer is full. To clear RDRF, read t
                      <description>Transmission Complete Flag\n
 TC is set out of reset and when TDRE is set and no data, preamble, or break character is being transmitted.\n
 TC is cleared automatically by one of the following:\n
-- Write to the UART data register ( UART _D) to transmit new data\n
+- Write to the UART data register (UART_D) to transmit new data\n
 - Queue a preamble by changing TE from 0 to 1\n
-- Queue a break character by writing 1 to UART _C2[SBK]</description>
+- Queue a break character by writing 1 to UART_C2[SBK]</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -898,7 +899,6 @@ LBKDIF is cleared by writing a 1 to it</description>
                      <description>Receive Bit 8 / Transmit Bit 9</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                   </field>
                </fields>
             </register>
@@ -947,7 +947,8 @@ status flags</description>
                <fields>
                   <field>
                      <name>OSR</name>
-                     <description>Over Sampling Ratio</description>
+                     <description>Over Sampling Ratio\n
+This field configures the oversampling ratio for the receiver between 4x (00011) and 32x (11111)</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>5</bitWidth>
                   </field>

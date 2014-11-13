@@ -35,13 +35,14 @@
 <!ENTITY RNG          SYSTEM "peripherals/RNG_1.svd.xml">
 <!ENTITY ROM          SYSTEM "peripherals/ROM_MKL.svd.xml">
 <!ENTITY RTC          SYSTEM "peripherals/RTC_MKM.svd.xml">
+<!ENTITY RTC_RAM      SYSTEM "peripherals/RTC_MKM_RAM.svd.xml">
 <!ENTITY SIM          SYSTEM "peripherals/SIM_MKMxxZxxM5.svd.xml">
 <!ENTITY SMC          SYSTEM "peripherals/SMC_MKM.svd.xml">
 <!ENTITY SPI0         SYSTEM "peripherals/SPI0_MKM.svd.xml">
 <!ENTITY SPI1         SYSTEM "peripherals/SPI1_MKM_FIFO.svd.xml">
 <!ENTITY SYST         SYSTEM "peripherals/SysTick_0.svd.xml">
-<!ENTITY UART0        SYSTEM "peripherals/UART0_MKM.svd.xml">
-<!ENTITY UART1        SYSTEM "peripherals/UART1_MKM_C7816.svd.xml">
+<!ENTITY UART0        SYSTEM "peripherals/UART0_MKM_C7816.svd.xml">
+<!ENTITY UART1        SYSTEM "peripherals/UART1_from_UART0_0.svd.xml">
 <!ENTITY UART2        SYSTEM "peripherals/UART2_from_UART0_0.svd.xml">
 <!ENTITY UART3        SYSTEM "peripherals/UART3_from_UART1_0.svd.xml">
 <!ENTITY VREF         SYSTEM "peripherals/VREF_MKM.svd.xml">
@@ -96,6 +97,7 @@
 &RNG;
 &ROM;
 &RTC;
+&RTC_RAM;
 &SIM;
 &SMC;
 &SPI0;

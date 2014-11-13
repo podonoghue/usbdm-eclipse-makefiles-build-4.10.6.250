@@ -22,7 +22,7 @@ Steps to follow undex Windows-8
 	https://learn.sparkfun.com/tutorials/disabling-driver-signature-on-windows-8/disabling-signed-driver-enforcement-on-windows-8
 	- After this you should be able to follow the steps given below for WIN-7 to install the drivers.
 	
-Steps to follow under WIN-7 (its similar for WIN-XP but there will be other confirmation dialogues)
+Steps to follow under WIN-7 (it's similar for WIN-XP but there will be other confirmation dialogues)
    - Download the appropriate driver installation file (as above) from Sourceforge:
    <A HREF="http://sourceforge.net/projects/usbdm/files/Version 4.10.6/Software/">USBDM Sourceforge</A>\n
    - Remove the BDM if it is already plugged in.
@@ -75,23 +75,5 @@ expert and I don't have access to other versions for testing.  If you find other
    
   Robert
   \endverbatim
-
-<hr>
- \section NoteOnFirmwareChange Note for upgrading from version 3.x to 4.x USBDM firmware
- 
-This change is complicated by the existence of a Bootloader in the BDM firmware.  If not replaced this
-loader will continue to use the original VID/PID.  Because of this, it is desirable to completely replace the
-BDM firmware. \n\n
-For JS16 based BDMs this is a simple process since the Freescale JS12 Bootloader software may be 
-used to replace all the firmware.  See \ref constructionPage. \n \n
-For JMxx based BDMs it is necessary to use a HCS08 programmer to re-program the entire device so that the 
-Bootloader is updated when the rest of firmware is changed. If a programmer is not available then it is still
-possible to update the BDM firmware <i>using the Bootloader</i> but the Bootloader will remain unchanged.  
-To do this it will be necessary to install the drivers twice - once for the old VID/PID used by the Bootloader
-and again for the new VID/PID used by the main firmware.  Doing so will render any OSBDM drivers inoperable 
-on that USB port.
-
-<hr> 
-
 
 */

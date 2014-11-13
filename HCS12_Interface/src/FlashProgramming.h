@@ -186,7 +186,7 @@ public:
    USBDM_ErrorCode verifyFlash(FlashImage  *flashImage, CallBackT errorCallBack=NULL);
    USBDM_ErrorCode readTargetChipId(uint32_t *targetSDID, bool doInit=false);
    USBDM_ErrorCode confirmSDID(void);
-   
+
    USBDM_ErrorCode getCalculatedTrimValue(uint16_t &value) {
       value = parameters.getClockTrimValue();
       return PROGRAMMING_RC_OK;

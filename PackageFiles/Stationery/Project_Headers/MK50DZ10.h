@@ -5,7 +5,7 @@
  *           Equivalent: MK50DN512ZM10, MK50DX256ZM10
  *
  * @version  V0.0
- * @date     2014/09
+ * @date     2014/10
  *
  *******************************************************************************************************/
 
@@ -3873,7 +3873,7 @@ typedef struct {                                /*!<       FTM0 Structure       
       __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
    } CONTROLS[8];
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
-   __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
+   __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
    __IO uint32_t  MODE;                         /*!< 0054: Features Mode Selection                                      */
    __IO uint32_t  SYNC;                         /*!< 0058: Synchronization                                              */
    __IO uint32_t  OUTINIT;                      /*!< 005C: Initial State for Channels Output                            */
@@ -4389,7 +4389,7 @@ typedef struct {                                /*!<       FTM1 Structure       
    } CONTROLS[2];
    __I  uint32_t  RESERVED0[12];                /*!< 001C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
-   __I  uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
+   __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
    __IO uint32_t  MODE;                         /*!< 0054: Features Mode Selection                                      */
    __IO uint32_t  SYNC;                         /*!< 0058: Synchronization                                              */
    __IO uint32_t  OUTINIT;                      /*!< 005C: Initial State for Channels Output                            */
@@ -8809,7 +8809,7 @@ typedef struct {                                /*!<       TSI0 Structure       
 #define TSI0_THRESHLD15                (TSI0->THRESHLD[15])
 
 /* ================================================================================ */
-/* ================           UART0 (file:UART0_C7816)             ================ */
+/* ================           UART0 (file:UART0_MK_C7816)          ================ */
 /* ================================================================================ */
 
 /**

@@ -97,12 +97,12 @@ Devices using this vector table:
          </interrupt>
          <interrupt>
             <name>FTFA_Command</name>
-            <description>FTFE interrupt</description>
+            <description>FTFA interrupt</description>
             <value>18</value>
          </interrupt>
          <interrupt>
             <name>FTFA_Collision</name>
-            <description>FTFE Read collision interrupt</description>
+            <description>FTFA Read collision interrupt</description>
             <value>19</value>
          </interrupt>
          <interrupt>

@@ -1,6 +1,7 @@
 <!--
 Devices using this peripheral: 
       MKL02Z4
+      MKL03Z4
 -->
       <peripheral derivedFrom="TPM0">
          <name>TPM1</name>

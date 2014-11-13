@@ -20,6 +20,14 @@ struct LargeTargetImageHeader {
    uint32_t         flashData;         //!< Pointer to information about operation
 };
 
+//! Header at the start of timing data (controls program action & holds result)
+struct LargeTargetTimingDataHeader {
+   uint32_t         flags;             //!< Controls actions of routine
+   uint32_t         errorCode;         //!< Error code from action
+   uint32_t         controller;        //!< Ptr to flash controller (unused)
+   uint32_t         timingCount;       //!< Timing count
+};
+
 //! Header at the start of flash programming buffer (controls program action)
 struct LargeTargetFlashDataHeader {
    uint32_t         flags;             //!< Controls actions of routine
@@ -95,7 +103,18 @@ private:
       ADDRESS_LINEAR = 1UL<<31,  //!< Linear address (HCS12)
       ADDRESS_EEPROM = 1UL<<30,  //!< EEPROM
    };
-
+   //! Structure for MCGCG parameters
+   struct MK_MCG_ClockParameters_t {
+      uint8_t  mcgC1;
+      uint8_t  mcgC2;
+      uint8_t  mcgC3;
+      uint8_t  mcgTrim;
+      uint8_t  mcgSC;
+      uint8_t  mcgCT;
+   } ;
+   union ClockParameters {
+      MK_MCG_ClockParameters_t mcg;
+   } ;
    typedef USBDM_ErrorCode (*CallBackT)(USBDM_ErrorCode status, int percent, const char *message);
 
    DeviceData              parameters;                   //!< Parameters describing the target device
@@ -125,6 +144,11 @@ private:
                                    uint16_t      *returnTrimValue,
                                    unsigned long *measuredBusFrequency,
                                    int            do9BitTrim);
+   USBDM_ErrorCode trimMCG_Clock(MK_MCG_ClockParameters_t *clockParameters);
+   USBDM_ErrorCode setFlashTrimValues(FlashImage *flashImage);
+   USBDM_ErrorCode configureMCG_Clock(unsigned long         *busFrequency,
+                                   MK_MCG_ClockParameters_t *clockParameters);
+   USBDM_ErrorCode configureTargetClock(unsigned long  *busFrequency);
    USBDM_ErrorCode configureExternal_Clock(unsigned long  *busFrequency);
    USBDM_ErrorCode eraseFlash(void);
    USBDM_ErrorCode convertTargetErrorCode(FlashDriverError_t rc);
@@ -159,6 +183,7 @@ private:
                                           FlashProgramConstPtr flashProgram,
                                           FlashOperation       flashOperation);
    USBDM_ErrorCode probeMemory(MemorySpace_t memorySpace, uint32_t address);
+   USBDM_ErrorCode dummyTrimLocations(FlashImage *flashImage);
    USBDM_ErrorCode partitionFlexNVM(void);
 
 public:
@@ -174,7 +199,7 @@ public:
    USBDM_ErrorCode verifyFlash(FlashImage  *flashImage, CallBackT errorCallBack=NULL);
    USBDM_ErrorCode readTargetChipId(uint32_t *targetSDID, bool doInit=false);
    USBDM_ErrorCode confirmSDID(void);
-   
+
    USBDM_ErrorCode getCalculatedTrimValue(uint16_t &value) {
       value = parameters.getClockTrimValue();
       return PROGRAMMING_RC_OK;

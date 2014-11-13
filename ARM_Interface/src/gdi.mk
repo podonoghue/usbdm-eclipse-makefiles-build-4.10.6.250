@@ -5,6 +5,7 @@ SRC += FlashProgramming.cpp
 SRC += USBDM_GDI.cpp
 SRC += ARMDebug.cpp
 SRC += Version.rc
+SRC += ClockTrimmingKinetis.cpp
 
 # Shared files $(SHARED_SRC)
 VPATH := $(SHARED_SRC) $(VPATH)

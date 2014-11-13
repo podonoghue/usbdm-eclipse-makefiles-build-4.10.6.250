@@ -199,6 +199,13 @@ USBDM_ErrorCode bdm_usb_init( void ) {
    Logging::print("Using libusbx v%d.%d.%d.%d\n", version->major, version->minor, version->micro, version->nano);
 #endif
 #endif
+
+#ifdef LOG
+   //Enable libUSB logging
+//    Hangs windows????
+//   libusb_set_debug(NULL, LIBUSB_LOG_LEVEL_WARNING);
+#endif
+
    // Initialize LIBUSB
    if (libusb_init(NULL) != LIBUSB_SUCCESS) {
       Logging::error("libusb_init() Failed\n");
@@ -207,6 +214,7 @@ USBDM_ErrorCode bdm_usb_init( void ) {
    initialised = TRUE;
    return BDM_RC_OK;
 }
+
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_exit( void ) {
    LOGGING;
@@ -295,7 +303,7 @@ USBDM_ErrorCode bdm_usb_findDevices(unsigned *devCount) {
           ((deviceDescriptor.idVendor==OSBDM_VID)&&(deviceDescriptor.idProduct==OSBDM_PID)) ||
           ((deviceDescriptor.idVendor==TBDML_VID)&&(deviceDescriptor.idProduct==TBDML_PID))) {
          // Found a device
-         Logging::print("==> Found USBDM device #%d\n", deviceIndex);
+         Logging::print("==> Found USBDM device, List[%d] = #%d\n", deviceCount, deviceIndex);
          bdmDevices[deviceCount++] = currentDevice; // Record found device
          libusb_ref_device(currentDevice);          // Reference so we don't lose it
          bdmDevices[deviceCount]=NULL;              // Terminate the list again
@@ -327,7 +335,7 @@ USBDM_ErrorCode bdm_usb_findDevices(unsigned *devCount) {
 //!                     to zero on any error.
 //!
 //!  @return\n
-//!       BDM_RC_OK 
+//!       BDM_RC_OK
 //!
 DLL_LOCAL
 USBDM_ErrorCode bdm_usb_getDeviceCount(unsigned int *pDeviceCount) {
@@ -379,11 +387,13 @@ USBDM_ErrorCode bdm_usb_open( unsigned int device_no ) {
          return BDM_RC_DEVICE_OPEN_FAILED;
       }
    }
+//   Logging::print("libusb_open() done\n");
    int configuration = 0;
    rc = libusb_get_configuration(usbDeviceHandle, &configuration);
    if (rc != LIBUSB_SUCCESS) {
       Logging::error("libusb_get_configuration() failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
    }
+//   Logging::print("libusb_get_configuration() done\n");
    if (configuration != 1) {
       rc = libusb_set_configuration(usbDeviceHandle, 1);
       if (rc != LIBUSB_SUCCESS) {
@@ -393,6 +403,7 @@ USBDM_ErrorCode bdm_usb_open( unsigned int device_no ) {
          usbDeviceHandle = NULL;
          return BDM_RC_DEVICE_OPEN_FAILED;
       }
+//      Logging::print("libusb_set_configuration() done\n");
    }
    rc = libusb_claim_interface(usbDeviceHandle, 0);
    if (rc != LIBUSB_SUCCESS) {
@@ -408,6 +419,7 @@ USBDM_ErrorCode bdm_usb_open( unsigned int device_no ) {
          return BDM_RC_DEVICE_OPEN_FAILED;
       }
    }
+//   Logging::print("libusb_claim_interface() done\n");
    rc = libusb_clear_halt(usbDeviceHandle, EP_IN);
    if (rc != LIBUSB_SUCCESS) {
       // Ignore
@@ -926,7 +938,6 @@ USBDM_ErrorCode bdm_usb_reset_connection(void) {
    int rc;
    LOGGING;
 
-//   milliSleep(100);
    rc = libusb_set_configuration(usbDeviceHandle, 1);
    if (rc != LIBUSB_SUCCESS) {
       Logging::error("libusb_set_configuration(1) failed, rc = (%d):%s\n", rc, libusb_error_name(rc));
@@ -1078,18 +1089,11 @@ USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
                                          unsigned int  *actualRxSize) {
    static bool     commandToggle       = 0;
    static int      sequence            = 0;
-   static int      recurseCount        = 0;
-   int             retry               = 2;
-   bool            resetFlag           = false;
-   bool            reportFlag          = false;
-   USBDM_ErrorCode rc                  = BDM_RC_OK;
+//   bool            resetFlag           = false;
+//   bool            reportFlag          = false;
+//   USBDM_ErrorCode rc                  = BDM_RC_OK;
    unsigned char   outData[txSize];
    LOGGING;
-
-   if (recurseCount > 2) {
-      return BDM_RC_USB_ERROR;
-   }
-   recurseCount++;
 
    // Save copy of data for retry
    memcpy(outData, data, txSize);
@@ -1100,185 +1104,9 @@ USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
       sequence      = 0;
    }
    sequence++;
-   do {
-      if (resetFlag) {
-         Logging::print("Reset retry - resetting connection\n");
-         if (bdm_usb_reset_connection() != BDM_RC_OK) {
-            continue;
-         }
-         USBDM_GetCommandStatus();
-//         USBDMStatus_t   status;
-//         if ((USBDM_GetBDMStatus(&status) != BDM_RC_OK) &&
-//             (USBDM_GetBDMStatus(&status) != BDM_RC_OK)) { // Get status - reset command toggle
-//            Logging::print("USBDM_GetBDMStatus() - USBDM_GetVersion failed\n");
-//            continue;
-//         }
-//         USBDM_GetCommandStatus();
-//         USBDM_GetCommandStatus();
-      }
-      if (reportFlag) {
-         Logging::error("Retrying command(%s), seq = %d, retry = %d\n", getCommandName(data[1]), sequence, retry);
-      }
-      rc = bdmJMxx_simple_usb_transaction(commandToggle, txSize, rxSize, outData, data, actualRxSize);
-      if (rc == BDM_RC_USB_ERROR) {
-         Logging::error("RX_ERROR response, seq = %d, retry = %d\n", sequence, retry);
-         resetFlag  = true;
-         reportFlag = true;
-         continue;
-      }
-      if (reportFlag) {
-         Logging::error("Retry result, seq = %d, retry = %d, rc = %s\n",
-               sequence, retry, USBDM_GetErrorString((rc)));
-      }
-      commandToggle = !commandToggle;
-      if (rc != BDM_RC_OK) {
-         reportFlag = true;
-      }
-   } while ((rc == BDM_RC_USB_ERROR) && (retry-->0) && (recurseCount<2));
-   if (resetFlag) {
-      if (rc == BDM_RC_OK) {
-         Logging::error("USB Success after USB reset\n");
-#if defined(LOG) && defined(RETRY_TEST)
-         rc = BDM_RC_USB_RETRY_OK; // debug - fail even on OK retry
-#endif
-      }
-      else if (rc != BDM_RC_USB_ERROR) {
-         Logging::error("USB OK but operation failed after USB reset\n");
-      }
-   }
-   else if (reportFlag) {
-      if (rc == BDM_RC_OK) {
-         Logging::error("Success after retry\n");
-#if defined(LOG) && defined(RETRY_TEST)
-         rc = BDM_RC_USB_RETRY_OK; // debug - fail even on OK retry
-#endif
-      }
-      else {
-         Logging::error("Failure after retry\n");
-      }
-   }
-   if ((rc != BDM_RC_OK) && (rc != BDM_RC_USB_RETRY_OK)) {
-      data[0] = rc;
-      *actualRxSize = 0;
-      memset(&data[1], 0x00, rxSize-1);
-   }
-   recurseCount--;
-   return rc;
+
+   return bdmJMxx_simple_usb_transaction(commandToggle, txSize, rxSize, outData, data, actualRxSize);
 }
-
-#if 0
-//! \brief Executes an USB transaction.
-//! This consists of a transmission of a command and reception of the response
-//! JMxx Version - see \ref bdm_usb_transaction()
-//!
-static
-USBDM_ErrorCode bdmJMxx_usb_transaction( unsigned int   txSize,
-                                          unsigned int   rxSize,
-                                          unsigned char *data,
-                                          unsigned int  *actualRxSize) {
-   USBDM_ErrorCode rc;
-   const unsigned MaxFirstTransaction = 30;
-   static bool commandToggle = 0;
-   unsigned retry=6;
-   static int sequence = 0;
-   bool reportFlag = false;
-   uint8_t sendBuffer[txSize];
-   LOGGING;
-
-   if (data[1] == CMD_USBDM_GET_CAPABILITIES) {
-//      Logging::print("Setting toggle=0\n");
-      commandToggle = 0;
-      sequence = 0;
-   }
-   sequence++;
-   memcpy(sendBuffer, data, txSize);
-   do {
-      Logging::print("Tx1 retry\n");
-      // An initial transaction of up to MaxFirstTransaction bytes is sent
-      // This is guaranteed to fit in a single pkt (<= endpoint MAXPACKETSIZE)
-      sendBuffer[0] = txSize;
-      if (commandToggle) {
-         sendBuffer[1] |= 0x80;
-      }
-      else {
-         sendBuffer[1] &= ~0x80;
-      }
-      rc = bdm_usb_send_epOut(txSize>MaxFirstTransaction?MaxFirstTransaction:txSize,
-                              (const unsigned char *)sendBuffer);
-      if (rc != BDM_RC_OK) {
-         reportFlag = true;
-         Logging::print("Tx1 failed\n");
-         continue;
-      }
-      else if (reportFlag) {
-         Logging::print("Tx1 success\n");
-      }
-      // Remainder of data (if any) is sent as 2nd transaction
-      // The size of this transaction is know to the receiver
-      // Zero is sent as first byte (size) to allow differentiation from 1st transaction
-      if ((rc == BDM_RC_OK) && (txSize>MaxFirstTransaction)) {
-         Logging::print("Splitting command\n");
-         uint8_t saveByte = sendBuffer[MaxFirstTransaction-1];
-         sendBuffer[MaxFirstTransaction-1] = 0; // Marker indicating later transaction
-         rc = bdm_usb_send_epOut(txSize+1-MaxFirstTransaction,
-               (const unsigned char *)(sendBuffer+MaxFirstTransaction-1));
-         sendBuffer[MaxFirstTransaction-1] = saveByte;
-      }
-      if (rc != BDM_RC_OK) {
-         reportFlag = true;
-         Logging::print("Tx2 failed\n");
-         continue;
-      }
-      else if (reportFlag) {
-         Logging::print("Tx2 success\n");
-      }
-      // Get response
-      rc = bdm_usb_recv_epIn(rxSize, data, actualRxSize);
-      bool receivedCommandToggle = (data[0]&0x80) != 0;
-      if ((rc == BDM_RC_USB_ERROR) || (commandToggle != receivedCommandToggle)) {
-         // Retry on single USB fail or toggle error
-         Logging::print("USB Rx or Toggle error, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
-         milliSleep(100);
-         rc = bdm_usb_recv_epIn(rxSize, data, actualRxSize);
-         receivedCommandToggle = (data[0]&0x80) != 0;
-         if ((rc == BDM_RC_USB_ERROR) || (commandToggle != receivedCommandToggle)) {
-            Logging::print("Immediate retry failed, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
-         }
-         else {
-            Logging::print("Immediate retry succeeded, seq = %d, S=%d, R=%d\n", sequence, commandToggle?1:0, receivedCommandToggle?1:0);
-         }
-      }
-      else if (reportFlag) {
-         Logging::print("Rx success\n");
-      }
-      // Mask toggle bit out of data
-      data[0] &= ~0x80;
-      if (rc == BDM_RC_USB_ERROR) {
-         // Retry entire command
-         reportFlag = true;
-         Logging::print("USB error, seq = %d, retrying command\n", sequence);
-         continue;
-      }
-      // Don't toggle on busy -
-      if (rc == BDM_RC_BUSY) {
-         reportFlag = true;
-         Logging::print("BUSY response, seq = %d\n", sequence);
-         continue;
-      }
-      if (reportFlag) {
-         Logging::print("Report, rc=%d, seq = %d, S=%d, R=%d\n", rc, sequence, commandToggle?1:0, receivedCommandToggle?1:0);
-      }
-      commandToggle = !commandToggle;
-      if (rc != BDM_RC_OK) {
-         data[0] = rc;
-         *actualRxSize = 0;
-         memset(&data[1], 0x00, rxSize-1);
-      }
-   } while ((rc == BDM_RC_USB_ERROR) && (retry-->0));
-
-   return rc;
-}
-#endif
 
 //! \brief Executes an USB transaction.
 //! This consists of a transmission of a command and reception of the response

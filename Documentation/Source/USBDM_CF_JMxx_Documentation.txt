@@ -115,7 +115,7 @@
    -  Xerces XML parser - http://xerces.apache.org/xerces-c
    
  \section sectionQueries Queries
-   Any queries please post on the Freescale @htmlonly <a href="http://forums.freescale.com/freescale/board?board.id=OSBDM08">OSBDM Discussion Board</a>. @endhtmlonly \n
+   Any queries please post on the Freescale @htmlonly <a href="https://community.freescale.com/community/bdm">OSBDM and TBDML Discussion Board</a>. @endhtmlonly \n
    
  \section licenseSection License
    \verbatim

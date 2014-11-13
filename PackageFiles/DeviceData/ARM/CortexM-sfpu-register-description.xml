@@ -49,7 +49,7 @@
    <reg name="r11"   bitsize="32" type="uint32"      group="general" />
    <reg name="r12"   bitsize="32" type="uint32"      group="general" />
    <reg name="sp"    bitsize="32" type="data_ptr"    group="general" />
-   <reg name="lr"    bitsize="32" type="uint32"      group="general" />
+   <reg name="lr"    bitsize="32" type="data_ptr"    group="general" />
    <reg name="pc"    bitsize="32" type="code_ptr"    group="general" />
    <reg name="xpsr"  bitsize="32" type="xpsr.type"   group="general" />
    <reg name="msp"   bitsize="32" type="data_ptr"    group="general" />

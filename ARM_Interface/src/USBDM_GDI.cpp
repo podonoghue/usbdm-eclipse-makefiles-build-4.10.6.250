@@ -372,7 +372,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
    // Defaults
    pdesExitStatus->dscCause = DI_WAIT_UNKNOWN;
    pdesExitStatus->dwBpId   = 0x1000400; // bkpt ID?
-   pdesExitStatus->szReason = (DiStringT)"unknown state";
+   pdesExitStatus->szReason = (DiStringT)"Unknown state";
 
    unsigned long dhcsr;
    BDMrc = armReadMemoryWord(DHCSR, &dhcsr);
@@ -433,7 +433,7 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
                pdesExitStatus->szReason);
       }
    }
-   Logging::print("Status => DI_WAIT_RUNNING, (%s)\n", pdesExitStatus->szReason);
+   Logging::print("Reason = %s\n", pdesExitStatus->szReason);
    lastStatus = pdesExitStatus->dscCause;
    return setErrorState(DI_OK);
 }

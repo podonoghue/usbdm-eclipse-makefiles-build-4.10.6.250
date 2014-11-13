@@ -26,7 +26,9 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>LVD</name>
-                     <description>Low Voltage Detect: If PMC_SPMSC1[LVDRE] is set in Run mode or both PMC_SPMSC1[LVDRE] and PMC_SPMSC1[LVDSE] are set in Stop mode, and the supply drops below the LVD trip voltage, an LVD reset will occur. This field is also set by POR.\n
+                     <description>Low Voltage Detect:\n
+If PMC_SPMSC1[LVDRE] is set in Run mode or both PMC_SPMSC1[LVDRE] and PMC_SPMSC1[LVDSE] are set in Stop mode, 
+and the supply drops below the LVD trip voltage, an LVD reset will occur. This field is also set by POR.\n
 NOTE: This field is reset to 1 on POR and LVR, and reset to 0 on other reset</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -45,7 +47,8 @@ NOTE: This field is reset to 1 on POR and LVR, and reset to 0 on other reset</de
                   </field>
                   <field>
                      <name>LOC</name>
-                     <description>Internal Clock Source Module Reset: Causes reset by an ICS module reset</description>
+                     <description>Internal Clock Source Module Reset:\n
+Causes reset by an ICS module reset</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -63,7 +66,8 @@ NOTE: This field is reset to 1 on POR and LVR, and reset to 0 on other reset</de
                   </field>
                   <field>
                      <name>WDOG</name>
-                     <description>Watchdog (WDOG): Causes reset by the WDOG timer timing out. This reset source may be blocked by WDOG_CS1[EN] = 0</description>
+                     <description>Watchdog (WDOG): \n
+Causes reset by the WDOG timer timing out. This reset source may be blocked by WDOG_CS1[EN] = 0</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -81,7 +85,8 @@ NOTE: This field is reset to 1 on POR and LVR, and reset to 0 on other reset</de
                   </field>
                   <field>
                      <name>PIN</name>
-                     <description>External Reset Pin: Causes reset by an active low-level on the external reset pin</description>
+                     <description>External Reset Pin:\n
+Causes reset by an active low-level on the external reset pin</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -99,7 +104,8 @@ NOTE: This field is reset to 1 on POR and LVR, and reset to 0 on other reset</de
                   </field>
                   <field>
                      <name>POR</name>
-                     <description>Power-On Reset: Causes reset by the power-on detection logic. When the internal supply voltage is ramping up, the low voltage reset (LVR) status field is also set at that time, to indicate that the reset has occurred while the internal supply was below the LVR threshold.\n
+                     <description>Power-On Reset:\n
+Causes reset by the power-on detection logic. When the internal supply voltage is ramping up, the low voltage reset (LVR) status field is also set at that time, to indicate that the reset has occurred while the internal supply was below the LVR threshold.\n
 NOTE: This bit POR to 1, LVR to uncertain value and reset to 0 at any other conditions</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -118,7 +124,8 @@ NOTE: This bit POR to 1, LVR to uncertain value and reset to 0 at any other cond
                   </field>
                   <field>
                      <name>LOCKUP</name>
-                     <description>Core Lockup: Indicates a reset has been caused by the ARM core indication of a LOCKUP event</description>
+                     <description>Core Lockup: \n
+Indicates a reset has been caused by the ARM core indication of a LOCKUP event</description>
                      <bitOffset>9</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -136,7 +143,8 @@ NOTE: This bit POR to 1, LVR to uncertain value and reset to 0 at any other cond
                   </field>
                   <field>
                      <name>SW</name>
-                     <description>Software: Indicates a reset has been caused by software setting of SYSRESETREQ bit in Application Interrupt and Reset Control Register in the ARM core</description>
+                     <description>Software:\n
+Indicates a reset has been caused by software setting of SYSRESETREQ bit in Application Interrupt and Reset Control Register in the ARM core</description>
                      <bitOffset>10</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -154,7 +162,8 @@ NOTE: This bit POR to 1, LVR to uncertain value and reset to 0 at any other cond
                   </field>
                   <field>
                      <name>MDMAP</name>
-                     <description>MDM-AP System Reset Request: Indicates a reset has been caused by the host debugger system setting of the System Reset Request field in the MDM-AP Control Register</description>
+                     <description>MDM-AP System Reset Request:\n
+Indicates a reset has been caused by the host debugger system setting of the System Reset Request field in the MDM-AP Control Register</description>
                      <bitOffset>11</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -172,7 +181,8 @@ NOTE: This bit POR to 1, LVR to uncertain value and reset to 0 at any other cond
                   </field>
                   <field>
                      <name>SACKERR</name>
-                     <description>Stop Mode Acknowledge Error Reset: Indicates that after an attempt to enter Stop mode, a reset has been caused by the failure of one or more IICs to acknowledge within approximately one second to enter stop mode</description>
+                     <description>Stop Mode Acknowledge Error Reset: \n
+Indicates that after an attempt to enter Stop mode, a reset has been caused by the failure of one or more IICs to acknowledge within approximately one second to enter stop mode</description>
                      <bitOffset>13</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -329,13 +339,13 @@ NOTE: This bit POR to 1, LVR to uncertain value and reset to 0 at any other cond
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PTA4/ACMP0_OUT/SWD_DIO as PTA4 or ACMP0_OUT function, 
+                           <description>PTA4/ACMP0_OUT/SWD_DIO as PTA4 or ACMP0_OUT function,\n 
 PTC4/RTCO/FTM1_CH0/ACMP0_IN2/SWD_CLK as PTC4, RTCO, FTM1_CH0, or ACMP0_IN2 function</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>PTA4/ACMP0_OUT/SWD_DIO as SWD_DIO function, 
+                           <description>PTA4/ACMP0_OUT/SWD_DIO as SWD_DIO function, \n
 PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                            <value>0b1</value>
                         </enumeratedValue>
@@ -371,7 +381,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>RTCC</name>
-                     <description>Real-Time Counter Capture: Allows the Real-time Counter (RTC) overflow to be captured by FTM1 channel 1</description>
+                     <description>Real-Time Counter Capture:\n
+Allows the Real-time Counter (RTC) overflow to be captured by FTM1 channel 1</description>
                      <bitOffset>10</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -389,7 +400,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>ACIC</name>
-                     <description>Analog Comparator to Input Capture Enable: Connects the output of ACMP0 to FTM1 input channel 0</description>
+                     <description>Analog Comparator to Input Capture Enable:\n
+Connects the output of ACMP0 to FTM1 input channel 0</description>
                      <bitOffset>11</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -407,7 +419,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>RXDCE</name>
-                     <description>UART0_RX Capture Select: Enables the UART0_RX to be captured by FTM0 channel 1</description>
+                     <description>UART0_RX Capture Select: \n
+Enables the UART0_RX to be captured by FTM0 channel 1</description>
                      <bitOffset>12</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -443,7 +456,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>FTMSYNC</name>
-                     <description>FTM2 Synchronization Select: Generates a PWM synchronization trigger to the FTM2 module if 1 is written to this field</description>
+                     <description>FTM2 Synchronization Select: \n
+Generates a PWM synchronization trigger to the FTM2 module if 1 is written to this field</description>
                      <bitOffset>14</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -461,7 +475,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>TXDME</name>
-                     <description>UART0_TX Modulation Select: Enables the UART0_TX output modulated by FTM0 channel 0</description>
+                     <description>UART0_TX Modulation Select:\n
+Enables the UART0_TX output modulated by FTM0 channel 0</description>
                      <bitOffset>15</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -479,7 +494,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>BUSREF</name>
-                     <description>BUS Clock Output select: Enables bus clock output on PTH2 via an optional prescaler</description>
+                     <description>BUS Clock Output select:\n
+Enables bus clock output on PTH2 via an optional prescaler</description>
                      <bitOffset>16</bitOffset>
                      <bitWidth>3</bitWidth>
                      <enumeratedValues>
@@ -545,7 +561,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>DLYACT</name>
-                     <description>FTM2 Trigger Delay Active: This read-only field specifies the status if the FTM2 initial or match delay is active. This field is set when an FTM2 trigger arrives and the delay counter is ticking. Otherwise, this field will be clear</description>
+                     <description>FTM2 Trigger Delay Active:\n
+This read-only field specifies the status if the FTM2 initial or match delay is active. This field is set when an FTM2 trigger arrives and the delay counter is ticking. Otherwise, this field will be clear</description>
                      <bitOffset>23</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -563,7 +580,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>DELAY</name>
-                     <description>FTM2 Trigger Delay:Specifies the delay from FTM2 initial or match trigger to ADC hardware trigger when 1 is written to ADHWT. The 8-bit modulo value allows the delay from 0 to 255 upon the BUSREF clock settings. This is a one-shot counter that starts ticking when the trigger arrives and stops ticking when the counter value reaches the modulo value that is defined</description>
+                     <description>FTM2 Trigger Delay:\n
+Specifies the delay from FTM2 initial or match trigger to ADC hardware trigger when 1 is written to ADHWT. The 8-bit modulo value allows the delay from 0 to 255 upon the BUSREF clock settings. This is a one-shot counter that starts ticking when the trigger arrives and stops ticking when the counter value reaches the modulo value that is defined</description>
                      <bitOffset>24</bitOffset>
                      <bitWidth>8</bitWidth>
                   </field>
@@ -576,7 +594,8 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                <fields>
                   <field>
                      <name>RTCPS</name>
-                     <description>RTCO Pin Select</description>
+                     <description>RTCO Pin Select\n
+Selects the RTCO port pins</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -648,144 +667,144 @@ PTC4/RTCO/FTM1CH0/ACMP0_IN2/SWD_CLK as SWD_CLK function</description>
                   </field>
                   <field>
                      <name>FTM0PS0</name>
-                     <description>FTM0[0] Port Pin Select</description>
+                     <description>FTM0 channel 0 Port Pin Select</description>
                      <bitOffset>8</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM0[0] channels are mapped on PTA0</description>
+                           <description>FTM0 channel 0 is mapped on PTA0</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM0[0] channels are mapped on PTB2</description>
+                           <description>FTM0 channel 0 is mapped on PTB2</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FTM0PS1</name>
-                     <description>FTM0[1] Port Pin Select</description>
+                     <description>FTM0 channel 1 Port Pin Select</description>
                      <bitOffset>9</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM0[1] channels are mapped on PTA1</description>
+                           <description>FTM0 channel 1 is mapped on PTA1</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM0[1] channels are mapped on PTB3</description>
+                           <description>FTM0 channel 1 is mapped on PTB3</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FTM1PS0</name>
-                     <description>FTM1[0] Port Pin Select</description>
+                     <description>FTM1 channel 0 Port Pin Select</description>
                      <bitOffset>10</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM1[0] channels are mapped on PTC4</description>
+                           <description>FTM1 channel 0 is mapped on PTC4</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM1[0] channels are mapped on PTH2</description>
+                           <description>FTM1 channel 0 is mapped on PTH2</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FTM1PS1</name>
-                     <description>FTM1[1] Port Pin Select</description>
+                     <description>FTM1 channel 1 Port Pin Select</description>
                      <bitOffset>11</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM1[1] channels are mapped on PTC5</description>
+                           <description>FTM1 channel 1 is mapped on PTC5</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM1[1] channels are mapped on PTE7</description>
+                           <description>FTM1 channel 1 is mapped on PTE7</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FTM2PS0</name>
-                     <description>FTM2[0] Port Pin Select</description>
+                     <description>FTM2 Channel 0 Port Pin Select</description>
                      <bitOffset>12</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM2[0] channels are mapped on PTC0</description>
+                           <description>FTM2 Channel 0 channels are mapped on PTC0</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM2[0] channels are mapped on PTH0</description>
+                           <description>FTM2 Channel 0 channels are mapped on PTH0</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FTM2PS1</name>
-                     <description>FTM2[1] Port Pin Select</description>
+                     <description>FTM2 Channel 1 Port Pin Select</description>
                      <bitOffset>13</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM2[1] channels are mapped on PTC1</description>
+                           <description>FTM2 Channel 1 channels are mapped on PTC1</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM2[1] channels are mapped on PTH1</description>
+                           <description>FTM2 Channel 1 channels are mapped on PTH1</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FTM2PS2</name>
-                     <description>FTM2[2] Port Pin Select</description>
+                     <description>FTM2 Channel 2 Port Pin Select</description>
                      <bitOffset>14</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM2[2] channels are mapped on PTC2</description>
+                           <description>FTM2 Channel 2 channels are mapped on PTC2</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM2[2] channels are mapped on PTD0</description>
+                           <description>FTM2 Channel 2 channels are mapped on PTD0</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FTM2PS3</name>
-                     <description>FTM2[3] Port Pin Select</description>
+                     <description>FTM2 Channel 3 Port Pin Select</description>
                      <bitOffset>15</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM2[3] channels are mapped on PTC3</description>
+                           <description>FTM2 Channel 3 channels are mapped on PTC3</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM2[3] channels are mapped on PTD1</description>
+                           <description>FTM2 Channel 3 channels are mapped on PTD1</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

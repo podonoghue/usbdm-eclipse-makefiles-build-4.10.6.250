@@ -946,7 +946,7 @@
          <sdid value="0x024" />
       </device>
       <device family="HCS08" name="MC9S08JS8L" alias="MC9S08JS8">
-         <sdid value="0x024" />
+         <sdid value="0x024"  mask="0x0FFF"/>
       </device>
       <device family="HCS08" name="MC9S08JS16">
          <clock registerAddress="0x0040" type="S08MCGV1" />
@@ -960,7 +960,7 @@
          <sdid value="0x024" />
       </device>
       <device family="HCS08" name="MC9S08JS16L" alias="MC9S08JS16">
-         <sdid value="0x024" />
+         <sdid value="0x024"  mask="0x0FFF"/>
       </device>
       <device family="HCS08" name="MC9S08LC36">
          <clock registerAddress="0x0038" type="S08ICGV4" />
@@ -1317,28 +1317,28 @@
          <flashProgramRef ref="HCS08-PTxx-flash-program" />
       </device>
       <device family="HCS08Plus" name="MC9S08PT8" alias="MC9S08PA8">
-         <sdid value="0x0042" />
+         <sdid value="0x0042"  mask="0x0FFF"/>
       </device>
       <device family="HCS08Plus" name="MC9S08PT16" alias="MC9S08PA16">
-         <sdid value="0x0042" />
+         <sdid value="0x0042"  mask="0x0FFF"/>
       </device>
       <device family="HCS08Plus" name="MC9S08PT32" alias="MC9S08PA32">
-         <sdid value="0x0040" />
+         <sdid value="0x0040"  mask="0x0FFF"/>
       </device>
       <device family="HCS08Plus" name="MC9S08PT60" alias="MC9S08PA60">
-         <sdid value="0x0040" />
+         <sdid value="0x0040" mask="0x0FFF"/>
       </device>
       <device family="HCS08Plus" name="MC9S08PL8" alias="MC9S08PA8">
-         <sdid value="0x0042" />
+         <sdid value="0x0042"  mask="0x0FFF"/>
       </device>
       <device family="HCS08Plus" name="MC9S08PL16" alias="MC9S08PA16">
-         <sdid value="0x0042" />
+         <sdid value="0x0042"  mask="0x0FFF"/>
       </device>
       <device family="HCS08Plus" name="MC9S08PL32" alias="MC9S08PA32">
-         <sdid value="0x0040" />
+         <sdid value="0x0040"  mask="0x0FFF"/>
       </device>
       <device family="HCS08Plus" name="MC9S08PL60" alias="MC9S08PA60">
-         <sdid value="0x0040" />
+         <sdid value="0x0040"  mask="0x0FFF"/>
       </device>
       <device family="HCS08" name="MC9S08QA2">
          <clock registerAddress="0x0048" type="S08ICSV1" />
@@ -1398,7 +1398,7 @@
          <flashProgramRef ref="HCS08-small-flash-program" />
       </device>
       <device family="HCS08" name="S9S08QD2" alias="MC9S08QD2">
-         <sdid value="0x011" />
+         <sdid value="0x011"  mask="0x0FFF"/>
       </device>
       <device family="HCS08" name="MC9S08QD4">
          <clock registerAddress="0x0038" type="S08ICSV1" />
@@ -1412,7 +1412,7 @@
          <sdid value="0x011" />
       </device>
       <device family="HCS08" name="S9S08QD4" alias="MC9S08QD4">
-         <sdid value="0x011" />
+         <sdid value="0x011"  mask="0x0FFF"/>
       </device>
       <device family="HCS08" name="MC9S08QE4">
          <clock registerAddress="0x0038" type="S08ICSV3" />

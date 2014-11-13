@@ -45,6 +45,18 @@
 
  <hr>
    
+\section TroubleshootingSection3 Troubleshooting USBDM installation #3
+   - <b>USBDM problems</b> \n
+      - There have been a few isolated problems reported that seem to relate to USB issues.\n
+      
+   - Try the following:
+      -# Install the latest version of the USBDM software using the installer.
+      -# Use a different USB cable
+      -# Use a different USB port on the computer
+      -# Add a USB port expander inline with the BDM.
+
+ <hr>
+   
 \section TestingTheBDMHardwareSection Testing the BDM hardware
       
    There is TCL command interpreter supplied with the later version of usbdm.  In V4.7 onwards this is available in the start menu as <b>USBDM TCL Interpreter</b>. \n

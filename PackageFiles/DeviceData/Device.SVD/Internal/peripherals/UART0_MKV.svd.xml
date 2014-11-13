@@ -43,25 +43,27 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                   </field>
                   <field>
                      <name>SBNS</name>
-                     <description>Stop Bit Number Select</description>
+                     <description>Stop Bit Number Select\n
+SBNS selects the number of stop bits present in a data frame</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Data frame consists of a single stop bit</description>
+                           <description>One stop bit</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Data frame consists of two stop bits</description>
+                           <description>Two stop bit</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>RXEDGIE</name>
-                     <description>RxD Input Active Edge Interrupt Enable (for RXEDGIF)</description>
+                     <description>RxD Input Active Edge Interrupt Enable\n
+Enables the receive input active edge, RXEDGIF, to generate interrupt requests</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -292,7 +294,10 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                   </field>
                   <field>
                      <name>RWU</name>
-                     <description>Receiver Wakeup Control</description>
+                     <description>Receiver Wakeup Control\n
+This field can be set to place the UART receiver in a standby state. RWU automatically clears when an
+RWU event occurs, that is, an IDLE event when C1[WAKE] is clear or an address match when C1[WAKE]
+is set</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -430,7 +435,9 @@ Normally, hardware wakes the receiver by automatically clearing RWU</description
                <fields>
                   <field>
                      <name>PF</name>
-                     <description>Parity Error Flag</description>
+                     <description>Parity Error Flag\n
+PF is set when PE is set and the parity of the received data does not match its parity bit.
+The PF is not set in the case of an overrun condition</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -585,7 +592,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                <fields>
                   <field>
                      <name>RAF</name>
-                     <description>Receiver Active Flag</description>
+                     <description>Receiver Active Flag\n
+PF is set when PE is set and the parity of the received data does not match its parity bit. The PF is not set
+in the case of an overrun condition</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -604,7 +613,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>LBKDE</name>
-                     <description>LIN Break Detection Enable</description>
+                     <description>LIN Break Detection Enable\n
+Enables the LIN Break detection feature. While LBKDE is set, S1[RDRF], S1[NF], S1[FE], and S1[PF] are
+prevented from setting</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -622,7 +633,8 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>BRK13</name>
-                     <description>Break Transmit Character Length</description>
+                     <description>Break Transmit Character Length\n
+Determines whether the transmit break character is 10, 11, or 12 bits long, or 13 or 14 bits long</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -640,7 +652,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>RWUID</name>
-                     <description>Receive Wakeup Idle Detect</description>
+                     <description>Receive Wakeup Idle Detect\n
+When RWU is set and WAKE is cleared, this field controls whether the idle character that wakes the
+receiver sets S1[IDLE]</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -658,7 +672,8 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>RXINV</name>
-                     <description>Receive Data Inversion</description>
+                     <description>Receive Data Inversion\n
+Setting this field reverses the polarity of the received data input</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -694,7 +709,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>RXEDGIF</name>
-                     <description>RxD Pin Active Edge Interrupt Flag</description>
+                     <description>RxD Pin Active Edge Interrupt Flag\n
+RXEDGIF is set when an active edge, falling if RXINV = 0, rising if RXINV=1, on the UART _RX pin occurs.\n
+RXEDGIF is cleared by writing a 1 to it</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -712,7 +729,9 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                   </field>
                   <field>
                      <name>LBKDIF</name>
-                     <description>LIN Break Detect Interrupt Flag</description>
+                     <description>LIN Break Detect Interrupt Flag\n
+LBKDIF is set when the LIN break detect circuitry is enabled and a LIN break character is detected.\n
+LBKDIF is cleared by writing a 1 to it</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -835,12 +854,12 @@ If the receive buffer has a depth greater than 1 then there may be data in the r
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>TXD pin is an input in single-wire mode</description>
+                           <description>TxD pin is an input in single-wire mode</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>TXD pin is an output in single-wire mode</description>
+                           <description>TxD pin is an output in single-wire mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

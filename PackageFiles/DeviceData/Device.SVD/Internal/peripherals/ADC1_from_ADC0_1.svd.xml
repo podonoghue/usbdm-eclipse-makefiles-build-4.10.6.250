@@ -1,10 +1,10 @@
 <!--
 Devices using this peripheral: 
-      MKV10Z7
+      MK22F51212
 -->
       <peripheral derivedFrom="ADC0">
          <name>ADC1</name>
          <description>Analog-to-Digital Converter</description>
          <prependToName>ADC1</prependToName>
-         <baseAddress>0x4003C000</baseAddress>
+         <baseAddress>0x40027000</baseAddress>
       </peripheral>

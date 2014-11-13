@@ -26,6 +26,7 @@
 +================================================================================
 | Revision History
 +================================================================================
+| 12 Nov 14 | Changed mass erase/secured check order                        - pgo V4.10.6.230
 | 17 Aug 14 | Changed SDID structure to support multiple masks              - pgo V4.10.6.180
 | 12 Jul 14 | Added getCommonFlashProgram(), changed getFlashProgram() etc  - pgo V4.10.6.170
 | 26 Feb 14 | 4.10.6.120 removed buffer clearing initSmallTargetBuffer()    - pgo
@@ -857,9 +858,9 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
 
 #if TARGET == MC56F80xx
    MemorySpace_t memorySpace = MS_XWord;
-#else      
+#else
    MemorySpace_t memorySpace = MS_Byte;
-#endif   
+#endif
    // Probe RAM buffer
    rc = probeMemory(memorySpace, parameters.getRamStart());
    if (rc == BDM_RC_OK) {
@@ -868,7 +869,7 @@ USBDM_ErrorCode FlashProgrammer::loadTargetProgram(FlashProgramConstPtr flashPro
    if (rc != BDM_RC_OK) {
       return rc;
    }
-#if (TARGET==HCS08)   
+#if (TARGET==HCS08)
    LoadInfoStruct *infoPtr = (LoadInfoStruct *)buffer;
    targetProgramInfo.smallProgram = (infoPtr->flags&OPT_SMALL_CODE) != 0;
    if (targetProgramInfo.smallProgram) {
@@ -1058,9 +1059,9 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType    *bu
    MemorySpace_t memorySpace = (MemorySpace_t)MS_Word;
 #elif (TARGET == HCS08) || (TARGET == HCS12)
    MemorySpace_t memorySpace = (MemorySpace_t)(MS_Fast|MS_Byte);
-#else      
+#else
    MemorySpace_t memorySpace = MS_Byte;
-#endif   
+#endif
    headerPtr->flashData       = nativeToTarget32(targetProgramInfo.headerAddress);
    headerPtr->watchdogAddress = nativeToTarget32(parameters.getWatchdogAddress());
 
@@ -1496,7 +1497,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
 #elif (TARGET == MC56F80xx)
    MemorySpace_t memorySpace = MS_XWord;
 #elif (TARGET == ARM)
-   MemorySpace_t memorySpace = MS_Long; 
+   MemorySpace_t memorySpace = MS_Long;
 #elif (TARGET == S12Z)
    MemorySpace_t memorySpace = MS_Word;
 #elif (TARGET == HCS08) || (TARGET == HCS12)
@@ -1600,7 +1601,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    ReadPC(&value);
    Logging::print("Start PC = 0x%08X, end PC = 0x%08X\n", targetRegPC, value);
 
-#if (TARGET == CFV1) 
+#if (TARGET == CFV1)
    // Read AG128 watchdog
    uint8_t tBuffer[22];
    if (ReadMemory(memorySpace, sizeof(tBuffer), 0xFF9880, tBuffer) != BDM_RC_OK) {
@@ -1778,7 +1779,7 @@ USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
          // |0x80 => XROM, |0x03 => Bank1 (Data)
          addressFlag |= 0x83000000;
       }
-#endif      
+#endif
 #if (TARGET == CFV1) || (TARGET == ARM)
       if ((memoryType == MemFlexNVM) || (memoryType == MemDFlash)) {
          // Flag needed for DFLASH/flexNVM access
@@ -2949,7 +2950,7 @@ USBDM_ErrorCode FlashProgrammer::doWriteRam(FlashImage *flashImage) {
 //! @note If target clock trimming is enabled then the Non-volatile clock trim
 //!       locations are ignored.
 //!
-USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage, 
+USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
                                              CallBackT    progressCallBack) {
 
    Logging log("FlashProgrammer::verifyFlash");
@@ -3042,8 +3043,8 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
 //! @note The FTRIM etc. locations in the flash image may be modified with trim values.
 //! @note Security locations within the flash image may be modified to effect the protection options.
 //!
-USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage, 
-                                              CallBackT    progressCallBack, 
+USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
+                                              CallBackT    progressCallBack,
                                               bool         doRamWrites) {
    Logging log("FlashProgrammer::programFlash");
    Logging::setLoggingLevel(100);
@@ -3137,7 +3138,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
       return rc;
    }
 #endif
-#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12) || (TARGET == S12Z)
+#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12)
    // Check target SDID (RS08/HCS08/HCS12 allows SDID to be read on secured device)
    rc = confirmSDID();
    if (rc != PROGRAMMING_RC_OK) {
@@ -3151,7 +3152,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
          return rc;
       }
    }
-#if (TARGET == CFV1) || (TARGET == ARM) || (TARGET == CFVx) || (TARGET == MC56F80xx)
+#if (TARGET == CFV1) || (TARGET == ARM) || (TARGET == CFVx) || (TARGET == MC56F80xx) || (TARGET == S12Z)
    // Check target SDID
    rc = confirmSDID();
    if (rc != PROGRAMMING_RC_OK) {
@@ -3175,7 +3176,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
-#endif   
+#endif
    // Set up for Flash operations (clock etc)
    rc = initialiseTargetFlash();
    if (rc != PROGRAMMING_RC_OK) {

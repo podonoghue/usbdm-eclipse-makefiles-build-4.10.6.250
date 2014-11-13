@@ -181,15 +181,17 @@
 //=================================================================================
 // I2C1  pins
 //
-// PTE1(Fn6) = SCL (PTE1(Fn1), PTA3(Fn2), PTC1(Fn2), PTC10(Fn2))
-#define I2C1_SCL_PORT         E
+// Arduino                D15                   A5
+// I2C1_SCL = PTE1(Fn6), PTE1(Fn6), PTA3(Fn2), PTC1(Fn2), PTC10(Fn2)
+#define I2C1_SCL_PORT         C
 #define I2C1_SCL_PIN_NUM      1
-#define I2C1_SCL_FN           6
+#define I2C1_SCL_FN           2
 
-// PTE0(Fn6) = SDA (PTE0(Fn0), PTA4(Fn2), PTC2(Fn2), PTC11(Fn2))
-#define I2C1_SDA_PORT         E
-#define I2C1_SDA_PIN_NUM      0
-#define I2C1_SDA_FN           6
+// Arduino                D14                   A4
+// I2C1_SDA = PTE0(Fn6), PTE0(Fn6), PTA4(Fn2), PTC2(Fn2), PTC11(Fn2)
+#define I2C1_SDA_PORT         C
+#define I2C1_SDA_PIN_NUM      2
+#define I2C1_SDA_FN           2
 
 // SPI0 Pin definitions
 //============================================================
@@ -334,16 +336,16 @@
 //=================================================================================
 // Elec freaks LCD Shield buttons
 //
-#define NORTH_SWITCH_PORT          C    // (A0) North
-#define NORTH_SWITCH_NUM           0
-#define EAST_SWITCH_PORT           C    // (A1) East
-#define EAST_SWITCH_NUM            1
-#define SOUTH_SWITCH_PORT          D    // (A2) South
-#define SOUTH_SWITCH_NUM           6
-#define CENTRE_SWITCH_PORT         D    // (A3) Centre
-#define CENTRE_SWITCH_NUM          5
-#define WEST_SWITCH_PORT           B    // (A4) West
-#define WEST_SWITCH_NUM            1
+#define NORTH_SWITCH_PORT           B    // (A4) North
+#define NORTH_SWITCH_NUM            1
+#define EAST_SWITCH_PORT            C    // (A0) East
+#define EAST_SWITCH_NUM             0
+#define WEST_SWITCH_PORT            D    // (A2) West
+#define WEST_SWITCH_NUM             6
+#define SOUTH_SWITCH_PORT           C    // (A1) South
+#define SOUTH_SWITCH_NUM            1
+#define CENTRE_SWITCH_PORT          D    // (A3) Centre
+#define CENTRE_SWITCH_NUM           5
 
 //=================================================================================
 // ADC Channel numbers
@@ -356,69 +358,99 @@
 //=================================================================================
 // LED Port bit masks
 //
-// PTA2(Fn3) = FTM0_CH7
+// PTA2(Fn3) = GREEN_LED = PTA2/UART0_TX/FTM0_CH7
 #define LED_GREEN_PORT         A
 #define LED_GREEN_NUM          2
 #define LED_GREEN_FTM_FN       3
 #define LED_GREEN_FTM_CHANNEL  7
 
-// PTA1(Fn2) = FTM0_CH6
+// PTA1(Fn2) = RED_LED = PTA1/UART0_RX/FTM0_CH6
 #define LED_RED_PORT           A
 #define LED_RED_NUM            1
 #define LED_RED_FTM_FN         2
 #define LED_RED_FTM_CHANNEL    6
 
-// PTD5(Fn4) = FTM0_CH5
+// PTD5(Fn4) = BLUE_LED = PTD5/FTM0_CH5
 #define LED_BLUE_PORT          D
 #define LED_BLUE_NUM           5
 #define LED_BLUE_FTM_FN        4
 #define LED_BLUE_FTM_CHANNEL   5
 
 //=================================================================================
-// I2C0 Port bit masks
+// I2C0  pins
 //
-// PTB2(Fn2) = SCL
+// Arduino A5 (PTB2) via R88
+// I2C_SCL_FXOS8700CQ (PTB2) via R4
+// I2C0_SCL = PTB0(Fn2), PTB2(Fn2), PTD2(Fn7)
 #define I2C0_SCL_PORT         B
 #define I2C0_SCL_PIN_NUM      2
 #define I2C0_SCL_FN           2
 
-// PTB3(Fn2) = SDA
+// Arduino A4 (PTB3)  via R89
+// I2C_SDA_FXOS8700CQ (PTB3) via R16
+// I2C0_SDA = PTB1(Fn2), PTB3(Fn2), PTD7(Fn7)
 #define I2C0_SDA_PORT         B
 #define I2C0_SDA_PIN_NUM      3
 #define I2C0_SDA_FN           2
 
+//=================================================================================
+// I2C1  pins
+//
+// Arduino  D15
+// I2C1_SCL = PTE1(Fn6), PTC10(Fn2)
+#define I2C1_SCL_PORT         E
+#define I2C1_SCL_PIN_NUM      1
+#define I2C1_SCL_FN           6
+
+// Arduino  D14
+// I2C0_SDA = PTE0(Fn6), PTC11(Fn2)
+#define I2C1_SDA_PORT         E
+#define I2C1_SDA_PIN_NUM      0
+#define I2C1_SDA_FN           6
+
 // SPI0 Pin definitions
 //============================================================
-// SPI data out pin - PTD7(Fn2)
+// SPI0_SIN = PTC7(Fn2), PTD3(Fn2)(uSD_SPI_MISO, nRF24L01+)
+#define SPI0_SIN_REG           D
+#define SPI0_SIN_NUM           3
+
+// SPI0_SOUT = PTC6(Fn2), PTD2(Fn2)(uSD_SPI_MOSI, nRF24L01+)
+#define SPI0_SOUT_REG          D
+#define SPI0_SOUT_NUM          2
+
+// SPI0_SCK = PTC5(Fn2), PTD1(Fn2)(uSD_SPI_CLK, nRF24L01+)
+#define SPI0_SCK_REG           D
+#define SPI0_SCK_NUM           1
+
+// SPI0_PCS0 = PTC4(Fn2)(uSD card CS), PTD0(Fn2)
+#define SPI0_PCS0_REG          C
+#define SPI0_PCS0_NUM          4
+// SPI0_PCS1 = PTC3(Fn2), PTD4(Fn2)(nRF24L01+ CS)
+#define SPI0_PCS1_REG          C
+#define SPI0_PCS1_NUM          3
+// SPI0_PCS2 = PTC2(Fn2), PTD5(Fn2)
+#define SPI0_PCS2_REG          C
+#define SPI0_PCS2_NUM          2
+// SPI0_PCS3 = PTC1(Fn2), PTD6(Fn2)
+#define SPI0_PCS3_REG          C
+#define SPI0_PCS3_NUM          1
+// SPI0_PCS4 = PTD4(Fn2)
+#define SPI0_PCS4_REG          C
+#define SPI0_PCS4_NUM          0
+
+// SPI1 Pin definitions
+//============================================================
+// SPI1_SIN = PTD7(Fn2), PTE(Fn?), PTB17(Fn?)
 #define SPI1_SIN_REG           D
 #define SPI1_SIN_NUM           7
 
-// SPI data out pin - PTD6(Fn2)
+// SPI1_SOUT = PTD6(Fn2), PTE1(Fn?), PTB16(Fn?)
 #define SPI1_SOUT_REG          D
 #define SPI1_SOUT_NUM          6
 
-// SPI clock pin - PTD5(Fn2)
+// SPI1_SCK = PTD5(Fn2)
 #define SPI1_SCK_REG           D
 #define SPI1_SCK_NUM           5
-
-//// SPI CS0 outputs - PTD0(Fn2), PTC4(Fn2)
-//#define SPI0_PCS0_REG          C
-//#define SPI0_PCS0_NUM          4
-//// SPI CS1 outputs - PTD4(Fn2), PTC3(Fn2)
-//#define SPI0_PCS1_REG          C
-//#define SPI0_PCS1_NUM          3
-//// SPI CS2 outputs - PTD5(Fn2), PTC2(Fn2)
-//#define SPI0_PCS2_REG          C
-//#define SPI0_PCS2_NUM          2
-//// SPI CS3 outputs - PTD6(Fn2), PTC1(Fn2)
-//#define SPI0_PCS3_REG          C
-//#define SPI0_PCS3_NUM          1
-//// SPI CS4 outputs - PTD4(Fn2)
-//#define SPI0_PCS4_REG          C
-//#define SPI0_PCS4_NUM          0
-
-// Pin ALT function for SPI pins (SOUT,SCK,PCSn)
-//#define SPI0_ALT_FN     2
 
 //=================================================================================
 // ADC Channel numbers

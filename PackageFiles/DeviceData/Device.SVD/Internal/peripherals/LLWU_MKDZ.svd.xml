@@ -650,7 +650,6 @@ Indicates that an enabled internal peripheral was a source of exiting a low-leak
 the flag, follow the internal peripheral flag clearing mechanism</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>7</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>

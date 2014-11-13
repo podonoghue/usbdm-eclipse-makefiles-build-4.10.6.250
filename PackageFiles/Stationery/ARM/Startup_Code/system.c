@@ -15,10 +15,6 @@
 $(cDeviceParameters)
 
 
-/*----------------------------------------------------------------------------
-  Clock Variable definitions
- *----------------------------------------------------------------------------*/
-
 /* This definition is overridden if Clock initialisation is provided */
 __attribute__((__weak__))
 void SystemCoreClockUpdate(void) {
@@ -53,7 +49,7 @@ void rtc_initialise(void) {
 }
 
 // Dummy hook routine for when CMSIS is not used.
-__attribute__((naked, weak)) 
+__attribute__((weak)) 
 void software_init_hook (void) {
 }
 

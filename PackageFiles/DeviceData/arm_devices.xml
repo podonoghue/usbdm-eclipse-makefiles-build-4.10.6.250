@@ -28,6 +28,7 @@
 ]>
 <!-- 
 ToDo - review flash block sizes for MK20-MK70
+      V4.10.6.190 - Added MKL03 devices
       V4.10.6.190 - Added SDID M=0 when V=0 to indicate wild-card
       V4.10.6.180 - Added MKMxx
       V4.10.6.180 - Added MK22FN256, MK22FN512
@@ -773,8 +774,7 @@ NOTES:
          <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x02070000" />
+         <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE02M2" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -786,8 +786,7 @@ NOTES:
          <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x02070000" />
+         <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE02M2" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -799,8 +798,7 @@ NOTES:
          <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x02040000" />
+         <sdid value="0x02040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE02M2" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -812,8 +810,7 @@ NOTES:
          <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x02070000" />
+         <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE02M4" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -825,8 +822,7 @@ NOTES:
          <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x02070000" />
+         <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE02M4" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -838,8 +834,7 @@ NOTES:
          <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x02040000" />
+         <sdid value="0x02040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE02M4" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -851,8 +846,7 @@ NOTES:
          <memoryRef ref="FTMRE_PFlash0_SEC_8K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x04070000" />
+         <sdid value="0x04070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE04" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -863,8 +857,7 @@ NOTES:
          <memoryRef ref="FTMRE_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x04040000" />
+         <sdid value="0x04040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE04" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -875,8 +868,7 @@ NOTES:
          <memoryRef ref="FTMRE_PFlash0_SEC_128K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x04040000" />
+         <sdid value="0x04040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE04" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -888,8 +880,7 @@ NOTES:
          <memoryRef ref="FTMRE_PFlash0_SEC_64K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x06040000" />
+         <sdid value="0x06040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE06" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -900,8 +891,7 @@ NOTES:
          <memoryRef ref="FTMRE_PFlash0_SEC_128K_512bS" />
          <memoryRef ref="kinetisIO_MKE" />
          <sdidAddress value="0x40048000" />
-         <sdidMask value="0xFF000000" />
-         <sdid value="0x06040000" />
+         <sdid value="0x06040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
          <projectActionListRef  ref="Options-file-list-MKE06" />
          <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
@@ -914,8 +904,7 @@ NOTES:
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_8K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x02130602" />
+         <sdid value="0x02130602" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -926,8 +915,7 @@ NOTES:
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_16K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x02130602" />
+         <sdid value="0x02130602" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -938,8 +926,41 @@ NOTES:
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x02130602" />
+         <sdid value="0x02130602" mask="0xFFFF0000"/>
+         <tclScriptRef ref="Kinetis-KLxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKL0x" />
+         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+      </device>
+<!-- MKL03Z4 -->
+      <device name="MKL03Z8M4"  family="CortexM0" subfamily="MKL03Z4">
+         <memoryRef ref="kinetisL2K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_8K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdid value="0x03120680" mask="0xFFFF0FF0"/>
+         <tclScriptRef ref="Kinetis-KLxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKL0x" />
+         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+      </device>
+      <device name="MKL03Z16M4" family="CortexM0" subfamily="MKL03Z4">
+         <memoryRef ref="kinetisL2K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_16K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdid value="0x03120680" mask="0xFFFF0FF0"/>
+         <tclScriptRef ref="Kinetis-KLxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
+         <projectActionListRef  ref="Options-file-list-MKL0x" />
+         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+      </device>
+      <device name="MKL03Z32M4" family="CortexM0" subfamily="MKL03Z4">
+         <memoryRef ref="kinetisL2K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdid value="0x03121681" mask="0xFFFF0FF0"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -951,8 +972,7 @@ NOTES:
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_8K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x04110480" />
+         <sdid value="0x04110480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -963,8 +983,7 @@ NOTES:
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_16K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x04120480" />
+         <sdid value="0x04120480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -975,8 +994,7 @@ NOTES:
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x04130480" />
+         <sdid value="0x04130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -988,8 +1006,7 @@ NOTES:
          <memoryRef ref="kinetisL1K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_8K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x05110480" />
+         <sdid value="0x05110480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -1000,8 +1017,7 @@ NOTES:
          <memoryRef ref="kinetisL2K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_16K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x05120480" />
+         <sdid value="0x05120480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -1012,8 +1028,7 @@ NOTES:
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x05130480" />
+         <sdid value="0x05130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKL0x" />
@@ -1025,8 +1040,7 @@ NOTES:
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x14130480" />
+         <sdid value="0x14130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1037,8 +1051,7 @@ NOTES:
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x14140480" />
+         <sdid value="0x14140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1050,8 +1063,7 @@ NOTES:
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x15130480" />
+         <sdid value="0x15130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1062,8 +1074,7 @@ NOTES:
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x15140480" />
+         <sdid value="0x15140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1074,8 +1085,7 @@ NOTES:
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x15150480" />
+         <sdid value="0x15150480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1087,8 +1097,7 @@ NOTES:
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x16130000" />
+         <sdid value="0x16130000" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1099,8 +1108,7 @@ NOTES:
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x16140000" />
+         <sdid value="0x16140000" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1111,8 +1119,7 @@ NOTES:
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x16150000" />
+         <sdid value="0x16150000" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1123,8 +1130,7 @@ NOTES:
          <memoryRef ref="kinetisL32K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_256K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x16160480" />
+         <sdid value="0x16160480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1136,8 +1142,7 @@ NOTES:
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x24130480" />
+         <sdid value="0x24130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1148,8 +1153,7 @@ NOTES:
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x24140480" />
+         <sdid value="0x24140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1172,7 +1176,6 @@ NOTES:
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
          <sdid value="0x25100480" mask="0xFFF00F80" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
@@ -1196,8 +1199,7 @@ NOTES:
          <memoryRef ref="kinetisL4K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x26130480" />
+         <sdid value="0x26130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1208,8 +1210,7 @@ NOTES:
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x26140480" />
+         <sdid value="0x26140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1220,8 +1221,7 @@ NOTES:
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x26150480" />
+         <sdid value="0x26150480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1232,8 +1232,7 @@ NOTES:
          <memoryRef ref="kinetisL32K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_256K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x26160480" />
+         <sdid value="0x26160480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1246,8 +1245,7 @@ NOTES:
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x34140480" />
+         <sdid value="0x34140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1260,8 +1258,7 @@ NOTES:
          <memoryRef ref="kinetisL8K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x36140480" />
+         <sdid value="0x36140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1273,8 +1270,7 @@ NOTES:
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x36150480" />
+         <sdid value="0x36150480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1285,8 +1281,7 @@ NOTES:
          <memoryRef ref="kinetisL32K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_256K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x36160480" />
+         <sdid value="0x36160480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1298,8 +1293,7 @@ NOTES:
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x46150588" />
+         <sdid value="0x46150588" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1310,8 +1304,7 @@ NOTES:
          <memoryRef ref="kinetisL32K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_256K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
-         <sdidMask value="0xFFFF0000" />
-         <sdid value="0x46160588" />
+         <sdid value="0x46160588" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <projectActionListRef  ref="Options-file-list-MKLxx" />
@@ -1665,6 +1658,7 @@ NOTES:
          <note>K20P32M50SF0RM</note>
       </device>
       <device name="MK20DX128M5" family="CortexM4" subfamily="MK20D5">
+         <clock registerAddress="0x40064000" type="MCG_MK" />
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
@@ -2641,11 +2635,30 @@ NOTES:
       </device>
       <device name="MK70FN1M0M15"      alias="MK70FN1M0M12" /> <!-- These are identical apart from speed grade -->
       
+      
 <!-- Aliases 
 
    Aliases may set <sdid>, <sdidAddress> and <sdidMask> otherwise they are inherited from aliased device.
    If re-using a device description for a _different_ device then SDID should be set (use 0 if necessary)
 -->     
+      <device name="FRDM-K20D50M"    alias="MK20DX128M5" />
+      <device name="FRDM-K22F"       alias="MK22FN512M12" />
+      <device name="FRDM-K64F"       alias="MK64FN1M0M12" />
+      <device name="FRDM-KE02Z"      alias="MKE02Z64M2" />
+      <device name="FRDM-KE02Z40M"   alias="MKE02Z64M4" />
+      <device name="FRDM-KE04Z"      alias="MKE04Z8M4" />
+      <device name="FRDM-KE06Z"      alias="MKE06Z128M4" />
+      <device name="FRDM-KL02Z"      alias="MKL02Z32M4" />
+      <device name="FRDM-KL03Z"      alias="MKL03Z32M4" />
+      <device name="FRDM-KL05Z"      alias="MKL05Z32M4" />
+      <device name="FRDM-KL25Z"      alias="MKL25Z128M4" />
+      <device name="FRDM-KL26Z"      alias="MKL26Z64M4" />
+      <device name="FRDM-KL46Z"      alias="MKL46Z256M4" />
+
+      <device name="S9KEAZN16"       alias="MKE02Z16M4" />
+      <device name="S9KEAZN32"       alias="MKE02Z32M4" />
+      <device name="S9KEAZN64"       alias="MKE02Z64M4" />
+      <device name="S9KEAZN8"        alias="MKE04Z8M4" />
 
 <!-- Codewarrior IDE aliases -->
       <device name="K10DN32"           alias="MK10DN32M5"        hidden="true"/>
@@ -2755,6 +2768,10 @@ NOTES:
       <device name="KE02Z32M2"         alias="MKE02Z32M2"        hidden="true"/>
       <device name="KE02Z64M2"         alias="MKE02Z64M2"        hidden="true"/>
       
+      <device name="KE02Z16M4"         alias="MKE02Z16M4"        hidden="true"/>
+      <device name="KE02Z32M4"         alias="MKE02Z32M4"        hidden="true"/>
+      <device name="KE02Z64M4"         alias="MKE02Z64M4"        hidden="true"/>
+      
       <device name="KE04Z8M4"          alias="MKE04Z8M4"         hidden="true"/>
       <device name="KE04Z64M4"         alias="MKE04Z64M4"        hidden="true"/>
       <device name="KE04Z128M4"        alias="MKE04Z128M4"       hidden="true"/>
@@ -2765,6 +2782,10 @@ NOTES:
       <device name="KL02Z8M4"          alias="MKL02Z8M4"         hidden="true"/>
       <device name="KL02Z16M4"         alias="MKL02Z16M4"        hidden="true"/>
       <device name="KL02Z32M4"         alias="MKL02Z32M4"        hidden="true"/>
+      
+      <device name="KL03Z8M4"          alias="MKL03Z8M4"         hidden="true"/>
+      <device name="KL03Z16M4"         alias="MKL03Z16M4"        hidden="true"/>
+      <device name="KL03Z32M4"         alias="MKL03Z32M4"        hidden="true"/>
       
       <device name="KL04Z8M4"          alias="MKL04Z8M4"         hidden="true"/>
       <device name="KL04Z16M4"         alias="MKL04Z16M4"        hidden="true"/>

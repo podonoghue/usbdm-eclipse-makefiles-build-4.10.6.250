@@ -1,5 +1,6 @@
 <!--
 Devices using this peripheral: 
+      MKL03Z4
       MKL04Z4
       MKL05Z4
 -->
@@ -16,13 +17,7 @@ Devices using this peripheral:
          <addressBlock>
             <?width "8" ?>
             <offset>0x0</offset>
-            <size>0x5</size>
-            <usage>registers</usage>
-         </addressBlock>
-         <addressBlock>
-            <?width "8" ?>
-            <offset>0x8</offset>
-            <size>0x2</size>
+            <size>0x7</size>
             <usage>registers</usage>
          </addressBlock>
          <registers>
@@ -353,7 +348,6 @@ accessible as the MWUFx bit. The flag will need to be cleared in the peripheral 
 writing a 1 to the MWUFx bit</description>
                <addressOffset>0x4</addressOffset>
                <size>8</size>
-               <access>read-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -385,7 +379,7 @@ the flag, follow the internal peripheral flag clearing mechanism</description>
                <description>Pin Filter %s register\n
 Control and status register that is used to enable/disable the digital
 filter features for an external pin</description>
-               <addressOffset>0x8</addressOffset>
+               <addressOffset>0x5</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>

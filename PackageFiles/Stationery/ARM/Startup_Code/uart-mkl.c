@@ -13,43 +13,7 @@
 
 //#define USE_IRQ
 
-#if defined(MCU_MKE02Z2) ||  defined(MCU_MKE02Z4) ||  defined(MCU_MKE06Z4)
-//=================================================================================
-// UART to use
-//
-#define UART  UART1
-#define UART_CLOCK SYSTEM_UART1_CLOCK
-
-//=================================================================================
-// UART Port pin setup
-//
-__attribute__((always_inline))
-inline static void initDefaultUart()  {
-   // Enable clock to UART
-   SIM_SCGC |= SIM_SCGC_UART1_MASK;
-}
-#elif defined(MCU_MKE04Z8M4)
-//=================================================================================
-// UART to use
-//
-#define UART  UART0
-#define UART_CLOCK SYSTEM_UART1_CLOCK
-
-//=================================================================================
-// UART Port pin setup
-//
-__attribute__((always_inline))
-inline static void initDefaultUart()  {
-   // Enable clock to UART
-   SIM_SCGC |= SIM_SCGC_UART0_MASK;
-
-   // Set Tx & Rx Pin function
-   SIM_PINSEL &= ~SIM_PINSEL_UART0PS_MASK; // UART0_RX and UART0_TX are mapped on PTB0 and PTB1.
-   SIM_SOPT   &= ~(SIM_SOPT_RXDFE_MASK|  // RXD0 input signal is connected to UART0 module directly
-                   SIM_SOPT_RXDCE_MASK|  // UART0_RX input signal is connected to the UART0 module only
-                   SIM_SOPT_TXDME_MASK); // UART0_TX output is connected to pin-out directly.
-}
-#elif defined(MCU_MKL02Z4) || defined(MCU_MKL04Z4) || defined(MCU_MKL05Z4)
+#if defined(MCU_MKL02Z4) || defined(MCU_MKL04Z4) || defined(MCU_MKL05Z4)
 //=================================================================================
 // UART to use
 //
@@ -191,10 +155,9 @@ void uart_txChar(int ch) {
 }
 
 #ifdef USE_IRQ
-// Enough to buffer at least 2 messages
-uint8_t rxBuffer[210];
-uint8_t *rxPutPtr = rxBuffer;
-uint8_t *rxGetPtr = rxBuffer;
+static uint8_t rxBuffer[100];
+static uint8_t *rxPutPtr = rxBuffer;
+static uint8_t *rxGetPtr = rxBuffer;
 
 void UART0_RxTx_IRQHandler() {
    // Ignores overflow
@@ -203,10 +166,6 @@ void UART0_RxTx_IRQHandler() {
    *rxPutPtr++ = ch;
    if (rxPutPtr == rxBuffer+sizeof(rxBuffer)) {
       rxPutPtr = rxBuffer;
-   }
-   if (rxPutPtr == rxGetPtr) {
-      // Buffer overflow
-      __breakpoint();
    }
 }
 
@@ -251,7 +210,7 @@ int uart_rxChar(void) {
    // Wait for Rx buffer full
    do {
       status = UART->S1;
-      // Clear & ignore any pending errors
+      // Clear & ignore and pending errors
       if ((status & (UART_S1_FE_MASK|UART_S1_OR_MASK|UART_S1_PF_MASK|UART_S1_NF_MASK)) != 0) {
          UART->S1 = UART_S1_FE_MASK|UART_S1_OR_MASK|UART_S1_PF_MASK|UART_S1_NF_MASK;
       }

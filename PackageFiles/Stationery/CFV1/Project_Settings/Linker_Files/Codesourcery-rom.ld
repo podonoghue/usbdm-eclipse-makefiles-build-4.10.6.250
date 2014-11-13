@@ -50,13 +50,13 @@ SECTIONS
     *(.cs3.region-head.rom)
     ASSERT (. == __cs3_region_start_rom, ".cs3.region-head.rom not permitted");
     __cs3_interrupt_vector = __cs3_interrupt_vector_coldfire;
-    *(.cs3.interrupt_vector)
+    KEEP(*(.cs3.interrupt_vector))
     /* Make sure we pulled in an interrupt vector.  */
     ASSERT (. != __cs3_interrupt_vector_coldfire, "No interrupt vector");
 
     /* Emit a Security field */
     . = __cs3_region_start_rom + 0x400;
-    *(.cs3.security_information)
+    KEEP(*(.cs3.security_information))
     ASSERT (. == __cs3_region_start_rom + 0x410, "No security information");
 
     *(.cs3.reset)

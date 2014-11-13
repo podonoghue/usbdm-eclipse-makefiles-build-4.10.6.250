@@ -1,6 +1,7 @@
       <!-- Cortex-M0 
          MKE
          MKL 
+         MKM
        -->      
       <!-- GNU Build options Cortex M0 (e.g. MKL, MKE) devices -->
       <projectActionList id="gnuSettings.cortex.m0" root="usbdm_resource_path/Stationery/ARM/" >
@@ -191,7 +192,7 @@
             <copy source="Project_Headers/clock_configure-MKE02M2.h"      target="Project_Headers/clock_configure.h" />
          </condition>
          <condition variable="UART-setup-MKE02M2">
-            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Startup_Code/uart-mke.c"                        target="Startup_Code/uart.c" />
             <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
          </condition>
       </projectActionList>
@@ -205,7 +206,7 @@
             <copy source="Project_Headers/clock_configure-MKE02M4.h"      target="Project_Headers/clock_configure.h" />
          </condition>
          <condition variable="UART-setup-MKE02M4">
-            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Startup_Code/uart-mke.c"                        target="Startup_Code/uart.c" />
             <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
          </condition>
       </projectActionList>
@@ -219,7 +220,7 @@
             <copy source="Project_Headers/clock_configure-MKE04.h"        target="Project_Headers/clock_configure.h" />
          </condition>
          <condition variable="UART-setup-MKE04">
-            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Startup_Code/uart-mke.c"                        target="Startup_Code/uart.c" />
             <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
          </condition>
       </projectActionList>
@@ -233,7 +234,7 @@
             <copy source="Project_Headers/clock_configure-MKE06.h"        target="Project_Headers/clock_configure.h" />
          </condition>
          <condition variable="UART-setup-MKE06">
-            <copy source="Startup_Code/uart-mkl.c"                        target="Startup_Code/uart.c" />
+            <copy source="Startup_Code/uart-mke.c"                        target="Startup_Code/uart.c" />
             <copy source="Project_Headers/uart.h"                         target="Project_Headers/uart.h" />
          </condition>
       </projectActionList>
