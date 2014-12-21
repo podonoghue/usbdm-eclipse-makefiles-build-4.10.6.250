@@ -267,6 +267,7 @@
          <sdidAddress value="0x0000" />
          <sdidMask value="0xFFFFFF00" />
          <sdid value="0x00170000" />
+         <sdid value="0x04150000" />
          <flashScripts>
             <tclScriptRef ref="S12Z-FTMRZ-flash-scripts" />
          </flashScripts>

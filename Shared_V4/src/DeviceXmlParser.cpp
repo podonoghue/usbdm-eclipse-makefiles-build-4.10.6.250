@@ -24,17 +24,18 @@
 
     \verbatim
    Change History
-   -=========================================================================================
-   | 12 Jul 14 | Added getCommonFlashProgram(), changed getFlashProgram() etc  - pgo V4.10.6.170
-   | 12 Jul 2014 | Changed alias handling to be better defined                 - pgo 4.10.6.170
-   |    Jan 2014 | Added <projectActions> and removed obsolete elements        - pgo 4.10.6
-   |  6 Jul 2013 | Added Register description parsing                          - pgo 4.10.6
-   |        2013 | Added GNU information parsing (incomplete)                  - pgo 4.10.4?
-   |  6 Oct 2012 | Fixed default SDID etc                                      - pgo 4.10.2
-   |    Aug 2011 | Added I/O memory type                                       - pgo
-   |    Aug 2011 | Removed Boost                                               - pgo
-   |    Apr 2011 | Added TCL scripts etc                                       - pgo
-   +=========================================================================================
+   -=============================================================================================
+   |  1 Dec 2014 | Fixed format in printf()s                                    - pgo 4.10.6.230
+   | 12 Jul 2014 | Added getCommonFlashProgram(), changed getFlashProgram() etc - pgo V4.10.6.170
+   | 12 Jul 2014 | Changed alias handling to be better defined                  - pgo 4.10.6.170
+   |    Jan 2014 | Added <projectActions> and removed obsolete elements         - pgo 4.10.6
+   |  6 Jul 2013 | Added Register description parsing                           - pgo 4.10.6
+   |        2013 | Added GNU information parsing (incomplete)                   - pgo 4.10.4?
+   |  6 Oct 2012 | Fixed default SDID etc                                       - pgo 4.10.2
+   |    Aug 2011 | Added I/O memory type                                        - pgo
+   |    Aug 2011 | Removed Boost                                                - pgo
+   |    Apr 2011 | Added TCL scripts etc                                        - pgo
+   +=============================================================================================
    \endverbatim
 */
 
@@ -862,7 +863,7 @@ MemoryRegionPtr DeviceXmlParser::parseFlashMemoryDetails(DOMElement *currentProp
          throw MyException(string("DeviceXmlParser::parseFlashMemoryDetails() - Illegal sectorSize in Flash - ")+sSectorSize.asCString());
       }
       if (isDefault) {
-         Logging::print("Setting default %s sector size 0x%04X\n",
+         Logging::print("Setting default %s sector size 0x%04lX\n",
                MemoryRegion::getMemoryTypeName(memoryType), sectorSize);
          defaultSectorSize = sectorSize;
       }
@@ -1078,7 +1079,7 @@ MemoryRegionPtr DeviceXmlParser::parseMemory(DOMElement *currentProperty) {
       if (!addressOK) {
          Logging::print("memoryRangeIt() startGiven=%s, middleGiven=%s, endGiven=%s, sizeGiven=%s, \n",
                startGiven?"Y":"N", middleGiven?"Y":"N", endGiven?"Y":"N", sizeGiven?"Y":"N");
-         Logging::print("memoryRangeIt() memoryStartAddress=0x%X, memoryMiddleAddress=0x%X, memoryEndAddress=0x%X, memorySize=0x%X, \n",
+         Logging::print("memoryRangeIt() memoryStartAddress=0x%lX, memoryMiddleAddress=0x%lX, memoryEndAddress=0x%lX, memorySize=0x%lX, \n",
                memoryStartAddress, memoryMiddleAddress, memoryEndAddress, memorySize);
          throw MyException("memoryRangeIt() - Illegal memory start/middle/end/size in memory region list");
       }
@@ -1173,7 +1174,7 @@ MemoryRegionPtr DeviceXmlParser::parseMemory(DOMElement *currentProperty) {
           (pageResetGiven && (pageStart <= 0x00) && ( 0x00 <= pageEnd)) ) {
          Logging::print("memoryRangeIt() pageStartGiven=%s, pagesGiven=%s, pageEndGiven=%s, pageNoGiven=%s, pageResetGiven=%s \n",
                pageStartGiven?"Y":"N", pagesGiven?"Y":"N", pageEndGiven?"Y":"N", pageNoGiven?"Y":"N", pageResetGiven?"Y":"N");
-         Logging::print("memoryRangeIt() pageStart=0x%06X, pages=0x%06X, pageEnd=0x%06X\n",
+         Logging::print("memoryRangeIt() pageStart=0x%06lX, pages=0x%06lX, pageEnd=0x%06lX\n",
                pageStart, pages, pageEnd);
          throw MyException("memoryRangeIt() - Illegal memory pageStart/pages/pageEnd/pageNo/pageReset in memory region list");
       }
@@ -1328,7 +1329,7 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          }
          itDev->setSDIDAddress(sdidAddress);
          if (isDefault) {
-            Logging::warning("Setting default SDID Address 0x%06X \n", sdidAddress);
+            Logging::warning("Setting default SDID Address 0x%06lX \n", sdidAddress);
             defSDIDAddress = sdidAddress;
          }
       }
@@ -1341,7 +1342,7 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          }
          currentSDIDMask = sdidMask;
          if (isDefault) {
-            Logging::warning("Setting default SDID mask 0x%04X \n", sdidMask);
+            Logging::warning("Setting default SDID mask 0x%04lX \n", sdidMask);
             defSDIDMask = sdidMask;
          }
       }
@@ -1354,7 +1355,7 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          }
          itDev->setWatchdogAddress(copctlAddress);
          if (isDefault)
-            Logging::warning("Setting default WatchdogAddress Address 0x%06X \n", copctlAddress);
+            Logging::warning("Setting default WatchdogAddress Address 0x%06lX \n", copctlAddress);
             defWatchdogAddress = copctlAddress;
       }
       else if (XMLString::equals(propertyTag.asXMLString(), tag_soptAddress.asXMLString())) {
@@ -1366,7 +1367,7 @@ DeviceDataPtr DeviceXmlParser::parseDevice(DOMElement *deviceEl) {
          }
          itDev->setWatchdogAddress(soptAddress);
          if (isDefault) {
-            Logging::warning("Setting default WatchdogAddress Address 0x%06X \n", soptAddress);
+            Logging::warning("Setting default WatchdogAddress Address 0x%06lX \n", soptAddress);
             defWatchdogAddress = soptAddress;
          }
       }

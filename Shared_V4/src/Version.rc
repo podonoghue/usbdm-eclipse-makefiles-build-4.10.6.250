@@ -52,6 +52,11 @@ END
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 
+#define RT_MANIFEST  24
+#define APP_MANIFEST  1
+
+APP_MANIFEST RT_MANIFEST manifest.xml
+
 #ifdef USE_ICON    
    IDI_APPICON ICON "Hardware-Chip.ico"
 #endif

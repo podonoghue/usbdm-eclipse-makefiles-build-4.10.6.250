@@ -75,6 +75,10 @@ proc loadSymbols {} {
                                
    set ::DHCSR                  0xE000EDF0
    
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
+   
    return
 }
 
@@ -228,9 +232,9 @@ proc massEraseTarget { } {
 proc isUnsecure { } {
    set flashOBR [ rl $::FLASH_OBR ]
    if [ expr ( $flashOBR & $::FLASH_OBR_RDPRT ) != 0 ] {
-      error "Flash is secured"
+      puts "Flash is secured"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
-   
    return
 }
 

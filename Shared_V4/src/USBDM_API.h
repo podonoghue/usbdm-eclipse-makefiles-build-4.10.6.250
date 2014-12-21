@@ -85,9 +85,8 @@
 #if defined __cplusplus
     extern "C" {
 #else
-#ifndef bool
-#define bool int //!< Define bool for C
-#endif
+#undef bool
+#define bool char //!< Define bool for C to be consistent with C++!
 #endif
 
 //! USBDM Version this header describes
@@ -364,12 +363,17 @@ typedef enum {
    CFV1_RegA5     = 13, //!< A5
    CFV1_RegA6     = 14, //!< A6
    CFV1_RegA7     = 15, //!< A7
+   CFV1_RegSP     = CFV1_RegA7,
    CFV1_PSTBASE   = 16, //!< Start of PST registers, access as CFV1_PSTBASE+n
    // The following are used internally by the BDM and only available
    // externally from firmware version 4.10.6
+   // Takes advantage of the similarity b/w READ_Rn and READ_DREG
    CFV1_RegOTHER_A7  = 0xC0|0,  //!< Other A7 (not active in target)
    CFV1_RegVBR       = 0xC0|1,  //!< Vector Base register
    CFV1_RegCPUCR     = 0xC0|2,  //!< CPUCR
+   CFV1_RegMACSR     = 0xC0|4,  //!< MACSR
+   CFV1_RegMASK      = 0xC0|5,  //!< MASK
+   CFV1_RegACC       = 0xC0|6,  //!< ACC
    CFV1_RegSR        = 0xC0|14, //!< Status register
    CFV1_RegPC        = 0xC0|15, //!< Program Counter
 } CFV1_Registers_t;
@@ -393,6 +397,7 @@ typedef enum {
    CFVx_RegA5  = 13, //!< A5
    CFVx_RegA6  = 14, //!< A6
    CFVx_RegA7  = 15, //!< A7
+   CFVx_RegSP  = CFVx_RegA7,
 } CFVx_Registers_t;
 
 //! regNo Parameter for ARM_ReadReg() with ARM (Kinetis) target
@@ -532,6 +537,9 @@ typedef enum {
    CFV1_CRegOTHER_A7  = 0,  //!< Other A7 (not active in target)
    CFV1_CRegVBR       = 1,  //!< Vector Base register
    CFV1_CRegCPUCR     = 2,  //!< CPUCR
+   CFV1_CRegMACSR     = 4,  //!< MACSR
+   CFV1_CRegMASK      = 5,  //!< MASK
+   CFV1_CRegACC       = 6,  //!< ACC
    CFV1_CRegSR        = 14, //!< Status register
    CFV1_CRegPC        = 15, //!< Program Counter
 } CFV1_CRegisters_t;
@@ -906,7 +914,7 @@ typedef struct {
 //!     BDM_RC_OK => OK \n
 //!     other     => USB Error - see \ref USBDM_ErrorCode
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_Init(void);
 //! Clean up
 //!
@@ -916,7 +924,7 @@ USBDM_ErrorCode USBDM_Init(void);
 //!     BDM_RC_OK => OK \n
 //!     other     => USB Error - see \ref USBDM_ErrorCode
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_Exit(void);
 
 //! Get version of the DLL
@@ -1415,7 +1423,7 @@ USBDM_ErrorCode  USBDM_TargetHalt(void);
 //!     BDM_RC_OK    => OK \n
 //!     other        => Error code - see \ref USBDM_ErrorCode
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_WriteReg(unsigned int regNo, unsigned long regValue);
 
 //! Read Target Core register
@@ -1544,7 +1552,7 @@ USBDM_ErrorCode USBDM_ReadDReg(unsigned int regNo, unsigned long *regValue);
 //!     BDM_RC_OK    => OK \n
 //!     other        => Error code - see \ref USBDM_ErrorCode
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_WriteMemory( unsigned int        memorySpace,
                                    unsigned int        byteCount,
                                    unsigned int        address,
@@ -1599,7 +1607,7 @@ USBDM_ErrorCode  USBDM_JTAG_Reset(void);
 //!
 //! @note - Requires the tap to be initially in \b TEST-LOGIC-RESET or \b RUN-TEST/IDLE
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode  USBDM_JTAG_SelectShift(unsigned char mode);
 
 //! JTAG - write data to JTAG shift register
@@ -1624,7 +1632,7 @@ USBDM_ErrorCode  USBDM_JTAG_SelectShift(unsigned char mode);
 //!     BDM_RC_OK    => OK \n
 //!     other        => Error code - see \ref USBDM_ErrorCode
 //!
-USBDM_API 
+USBDM_API
 USBDM_ErrorCode USBDM_JTAG_Write(unsigned char       bitCount,
                                  unsigned char       exit,
                                  const unsigned char *buffer);
@@ -1706,7 +1714,7 @@ USBDM_ErrorCode USBDM_JTAG_ExecuteSequence(unsigned char       length,
 //! The BDM resets in ICP mode after this command
 //! @note Communication is lost.
 //!
-USBDM_API 
+USBDM_API
 void USBDM_RebootToICP(void);
 
 //
@@ -1725,7 +1733,7 @@ void USBDM_RebootToICP(void);
 //! @note Flash memory alignment requirements should be taken into account.  The
 //! range erased should be a multiple of the Flash erase block size.
 //!
-USBDM_API 
+USBDM_API
 ICP_ErrorCode_t  USBDM_ICP_Erase( unsigned int addr,
                                   unsigned int count);
 
@@ -1739,7 +1747,7 @@ ICP_ErrorCode_t  USBDM_ICP_Erase( unsigned int addr,
 //!      - == ICP_RC_OK => success \n
 //!      - != ICP_RC_OK => fail, see \ref ICP_ErrorCode_t
 //!
-USBDM_API 
+USBDM_API
 ICP_ErrorCode_t  USBDM_ICP_Program( unsigned int  addr,
                                     unsigned int  count,
                                     unsigned char *data);
@@ -1754,7 +1762,7 @@ ICP_ErrorCode_t  USBDM_ICP_Program( unsigned int  addr,
 //!      - == ICP_RC_OK => success \n
 //!      - != ICP_RC_OK => fail, see \ref ICP_ErrorCode_t
 //!
-USBDM_API 
+USBDM_API
 ICP_ErrorCode_t  USBDM_ICP_Verify( unsigned int  addr,
                                    unsigned int  count,
                                    unsigned char *data);
@@ -1765,10 +1773,10 @@ ICP_ErrorCode_t  USBDM_ICP_Verify( unsigned int  addr,
 //!
 //! Used in ICP mode to reset to normal (BDM) mode.
 //! @note Communication is lost.  \n
-//!       The BDM will do the usual flash validity checks before entering BDM mode so if flash is not correctly 
+//!       The BDM will do the usual flash validity checks before entering BDM mode so if flash is not correctly
 //!        programmed the BDM may remain in ICP mode.
 //!
-USBDM_API 
+USBDM_API
 void USBDM_ICP_Reboot( void );
 
 //====================================================================
@@ -1782,7 +1790,7 @@ typedef
       ICP_ErrorCode_t (__attribute__((__stdcall__)) *icpCallBackT)(ICP_ErrorCode_t status, unsigned int percent);
 #else
       ICP_ErrorCode_t (*icpCallBackT)(ICP_ErrorCode_t status, unsigned int percent);
-#endif	  
+#endif
 
 //====================================================================
 //! ICP mode - Set ICP Callback function

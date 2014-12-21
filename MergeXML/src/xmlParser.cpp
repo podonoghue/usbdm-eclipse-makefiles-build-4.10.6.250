@@ -5,11 +5,13 @@
 /*
  * History
  * ----------------------------------------------------------------------------------------------
+ * 10 Oct 2014 | Updated to use regular expressions for tag matching                         -pgo
  * 10 Oct 2013 | Changed string indexes to size_t                                            -pgo
  * ----------------------------------------------------------------------------------------------
  */
 #include <iostream>
-using namespace std;
+
+#include <wx/regex.h>
 
 #pragma GCC visibility push(default)
 
@@ -28,6 +30,8 @@ XERCES_CPP_NAMESPACE_USE
 
 #include "helper-classes.h"
 #include "xmlParser.h"
+
+using namespace std;
 
 //const XMLByte XmlParser::MyResolver::data[] = "SHORTCUTS;    ";
 
@@ -118,19 +122,19 @@ void XmlParser::load(XercesDOMParser* &parser, DOMDocument* &document, const cha
    }
    catch (const XMLException& toCatch) {
        char* message = xercesc::XMLString::transcode(toCatch.getMessage());
-       cout << "Exception message is: \n"
+       cerr << "Exception message is: \n"
             << message << "\n";
        throw new runtime_error("XML Exception");
    }
    catch (const xercesc::DOMException& toCatch) {
        char* message = xercesc::XMLString::transcode(toCatch.msg);
-       cout << "Exception message is: \n"
+       cerr << "Exception message is: \n"
             << message << "\n";
        xercesc::XMLString::release(&message);
        throw new runtime_error("DOM Exception");
    }
    catch (...) {
-       cout << "Unexpected Exception \n";
+       cerr << "Unexpected Exception \n";
        throw new runtime_error("Unexpected Exception");
    }
    document = parser->getDocument();
@@ -200,19 +204,24 @@ bool XmlParser::nodesMatch(DOMElement *mergeEl, DOMElement *patchEl) {
          }
          return false;
       }
-      if (verbose) {
-         cerr << "\' - Present";
-      }
       DualString patchAttributeValue(attribute->getNodeValue());
       DualString mergeAttributeValue(mergeEl->getAttribute(attributeName.asXMLString()));
-      if (!XMLString::equals(patchAttributeValue.asXMLString(), mergeAttributeValue.asXMLString())) {
+      wxRegEx regEx(patchAttributeValue.asCString(), wxRE_NOSUB);
+
+      if (verbose) {
+         cerr << "\' (value=\'" << mergeAttributeValue.asCString();
+      }
+      if (!regEx.IsValid()) {
+         throw new invalid_argument("Illegal regular expression: " + string(patchAttributeValue.asCString()));
+      }
+      if (!regEx.Matches(mergeAttributeValue.asCString())) {
          if (verbose) {
-            cerr << "\' - Not equal\n";
+            cerr << "\') doesn't match \'" << patchAttributeValue.asCString() << "\'\n";
          }
          return false;
       }
       if (verbose) {
-         cerr << "\' - Equal (" << patchAttributeValue.asCString() << ")\n";
+         cerr << "\') matches \'" << patchAttributeValue.asCString() << "\'\n";
       }
    }
    return true;
@@ -287,12 +296,14 @@ void XmlParser::processAttributes(DOMElement *mergeEl, DOMElement *patchEl) {
          attrValue = attributeValue.substr(equalIndex+1, semiColonIndex-(equalIndex+1));
       }
       if (setAttr) {
+         mergeDone = true;
          if (verbose) {
             cerr << "XmlParser::processAttributes() - Adding attribute " << attrName << "=\"" << attrValue <<"\"\n";
          }
          mergeEl->setAttribute(DualString(attrName.c_str()).asXMLString(), DualString(attrValue.c_str()).asXMLString());
       }
       else {
+         mergeDone = true;
          if (verbose) {
             cerr << "XmlParser::processAttributes() - Deleting attribute " << attrName << "\"\n";
          }
@@ -369,12 +380,14 @@ DOMElement *XmlParser::removeActionAttributes(DOMElement *element) {
             attrValue = attributeValue.substr(equalIndex+1, semiColonIndex-(equalIndex+1));
          }
          if (setAttr) {
+            mergeDone = true;
             if (verbose) {
                cerr << "XmlParser::removeActionAttributes():Adding attribute " << attrName << "=\"" << attrValue <<"\"\n";
             }
             element->setAttribute(DualString(attrName.c_str()).asXMLString(), DualString(attrValue.c_str()).asXMLString());
          }
          else {
+            mergeDone = true;
             if (verbose) {
                cerr << "XmlParser::removeActionAttributes():Deleting attribute " << attrName << "\"\n";
             }
@@ -425,13 +438,18 @@ bool XmlParser::mergeNodes(DOMElement *mergeEl, DOMElement *patchEl) {
          return true;
       }
       Actions currentAction = getAction(patchChildEl);
+      if (verbose && (currentAction != scan)) {
+         cerr << "mergeNodes() - Action = " << currentAction << "\n";
+      }
       if (mergeChildEl == NULL) {
          // Reached end of existing children
          if (currentAction == insert) {
             // We've tried matching all the children so we have to insert
             DualString newNodeName(patchChildEl->getNodeName());
-            if (verbose)
-               cerr << "mergeNodes() - Appending node <" << newNodeName.asCString() << ">\n";
+            mergeDone = true;
+            if (verbose) {
+               cerr << "mergeNodes() - Inserting node <" << newNodeName.asCString() << ">\n";
+            }
             DOMComment *commentNode = getCommentNode(patchChildEl);
             if (commentNode != NULL) {
                DOMNode *copyOfNode;
@@ -456,6 +474,7 @@ bool XmlParser::mergeNodes(DOMElement *mergeEl, DOMElement *patchEl) {
             if (verbose) {
                cerr << "mergeNodes() - Replacing node <" << newNodeName.asCString() << ">\n";
             }
+            mergeDone = true;
             DOMComment *commentNode = getCommentNode(patchChildEl);
             if (commentNode != NULL) {
                DOMNode *copyOfNode;
@@ -486,7 +505,7 @@ bool XmlParser::mergeNodes(DOMElement *mergeEl, DOMElement *patchEl) {
 
 int XmlParser::mergePatchfile() {
 
-//   cout << "mergePatchfile()\n";
+//   cerr << "mergePatchfile()\n";
 
    DOMElement *mergeRoot = mergeDocument->getDocumentElement();
    if (mergeRoot == NULL) {
@@ -498,12 +517,12 @@ int XmlParser::mergePatchfile() {
       cerr << "mergePatchfile() - No patch root";
       return -1;
    }
-
+   mergeDone = false;
    mergeNodes(mergeRoot, patchRoot);
    if (verbose) {
-      cout << "mergePatchfile() - Completed patching XML file \n";
+      cerr << "mergePatchfile() - Completed patching XML file \n";
    }
-   return 0;
+   return mergeDone?1:0;
 }
 
 int XmlParser::commit(const char* xmlFile) {
@@ -550,12 +569,12 @@ int XmlParser::commit(const char* xmlFile) {
    return 0;
 }
 
-int XmlParser::openSourcefile(const char *sourcePath) {
+int XmlParser::loadSourcefile(const char *sourcePath) {
    load(mergeParser, mergeDocument, sourcePath);
    return 0;
 }
 
-int XmlParser::openPatchfile(const char *patchPath) {
+int XmlParser::loadPatchfile(const char *patchPath) {
    load(patchParser, patchDocument, patchPath);
    return 0;
 }
@@ -567,13 +586,10 @@ int XmlParser::openPatchfile(const char *patchPath) {
 //!
 //! @return 0 => OK
 //!
-int XmlParser::addUsbdmWizard(const char *sourcePath, const char *destinationPath, const char *patchPath) {
+int XmlParser::addUsbdmWizard(const wxString& sourcePath, const wxString& patchPath) {
 int rc = 0;
-
    if (verbose) {
-      cout << "Applying patches: " << patchPath <<"\n"
-              " <= " << sourcePath << "\n"
-              " => " << destinationPath << "\n";
+      cerr << "Applying patches: " << patchPath << "\n ===> " << sourcePath << "\n";
    }
    try {
       XMLPlatformUtils::Initialize();
@@ -587,18 +603,48 @@ int rc = 0;
    }
    try {
       XmlParser parser;
-      if (verbose)
-         cerr << "Opening source: '" << sourcePath << "'" << endl;
-      parser.openSourcefile(sourcePath);
-      if (verbose)
-         cerr << "Opening patch: '" << patchPath << "'" << endl;
-      parser.openPatchfile(patchPath);
-      if (verbose)
+      if (verbose) {
+         cerr << "Loading patch: '" << patchPath << "'" << endl;
+      }
+      parser.loadPatchfile(patchPath.ToAscii());
+      if (verbose) {
+         cerr << "Loading source: '" << sourcePath << "'" << endl;
+      }
+      parser.loadSourcefile(sourcePath.ToAscii());
+      if (verbose) {
          cerr << "Parsing XML file\n";
-      parser.mergePatchfile();
-      if (verbose)
-         cerr << "Saving result: '" << destinationPath << "'" << endl;
-      parser.commit(destinationPath);
+      }
+      bool mergeDone = parser.mergePatchfile();
+      if (!mergeDone) {
+         if (verbose) {
+            cerr << "No changes made to : '" << sourcePath << "'" << endl;
+         }
+      }
+      else {
+         // Make backup if necessary
+         wxString backupFilepath = sourcePath+_(".original");
+         if (verbose) {
+            cerr << "Making backup : '" << sourcePath << "' => '" << backupFilepath << "'\n";
+         }
+         if (wxFileExists(backupFilepath)) {
+            cerr << "Warning: Backup already exists\n";
+            cerr << "Info: Removing source file\n";
+            wxRemoveFile(sourcePath);
+         }
+         else if (wxRenameFile(sourcePath, backupFilepath, false)) {
+            cerr << "Info: Made backup\n";
+         }
+         else {
+            cerr << "Error: Failed to make backup of " << sourcePath << " - no conversion done\n";
+            rc = -1;
+         }
+         if (rc >= 0) {
+            if (verbose) {
+               cerr << "Saving changes to : '" << sourcePath << "'" << endl;
+            }
+            parser.commit(sourcePath);
+         }
+      }
    }
    catch (runtime_error *ex) {
       cerr << "Exception while parsing, reason: " << ex->what() << endl;
@@ -608,7 +654,6 @@ int rc = 0;
       xercesc::XMLPlatformUtils::Terminate();
    }
    catch( xercesc::XMLException& e ){
-
       cerr<< " in catch()\n";
       char* message = xercesc::XMLString::transcode( e.getMessage() ) ;
 
@@ -618,8 +663,6 @@ int rc = 0;
       XMLString::release( &message ) ;
       rc = -1;
    }
-   if (rc == 0)
-      cout << "OK\n";
    return rc;
 }
 

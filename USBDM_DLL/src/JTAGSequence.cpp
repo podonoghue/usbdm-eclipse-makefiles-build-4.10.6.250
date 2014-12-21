@@ -462,7 +462,7 @@ uint8_t retry;
 
 //! Obtains an 8-bit data value from the instruction stream or
 //! data stream as required.
-//! 
+//!
 static uint8_t getValueByte(uint8_t value) {
    if ((value == 0) && (dataOutPtr != NULL)) {
       // If zero get value from dataOutPtr
@@ -485,7 +485,7 @@ USBDM_ErrorCode debugExecuteJTAGSequence(uint8_t        sequenceLength,
    complete          = false;
    inFill            = JTAG_WRITE_1;
    exitAction        = JTAG_EXIT_IDLE;
-   rc                = BDM_RC_OK;                         
+   rc                = BDM_RC_OK;
    iterator          = 0;
    startOfIteration  = NULL;
    tempValue         = 0;

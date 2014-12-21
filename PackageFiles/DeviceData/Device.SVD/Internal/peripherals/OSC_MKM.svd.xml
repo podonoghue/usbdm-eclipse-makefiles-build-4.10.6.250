@@ -8,7 +8,7 @@ Devices using this peripheral:
          <description>System Oscillator</description>
          <prependToName>OSC0</prependToName>
          <baseAddress>0x40066000</baseAddress>
-         <size>32</size>
+         <size>8</size>
          <access>read-write</access>
          <resetValue>0x0</resetValue>
          <resetMask>0xFFFFFFFF</resetMask>
@@ -21,115 +21,115 @@ Devices using this peripheral:
          <registers>
             <register>
                <name>CR</name>
-               <description>OSC Control Register</description>
+               <description>Control Register</description>
                <addressOffset>0x0</addressOffset>
-               <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>SC16P</name>
-                     <description>Oscillator 16 pF Capacitor Load Configure</description>
+                     <description>Oscillator +16 pF Capacitor Load</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Disable the selection</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Add 16 pF capacitor to the oscillator load</description>
+                           <description>Add 16 pF</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SC8P</name>
-                     <description>Oscillator 8 pF Capacitor Load Configure</description>
+                     <description>Oscillator +8 pF Capacitor Load</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Disable the selection</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Add 8 pF capacitor to the oscillator load</description>
+                           <description>Add 8 pF</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SC4P</name>
-                     <description>Oscillator 4 pF Capacitor Load Configure</description>
+                     <description>Oscillator +4 pF Capacitor Load</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Disable the selection</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Add 4 pF capacitor to the oscillator load</description>
+                           <description>Add 4 pF</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SC2P</name>
-                     <description>Oscillator 2 pF Capacitor Load Configure</description>
+                     <description>Oscillator +2 pF Capacitor Load</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Disable the selection</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Add 2 pF capacitor to the oscillator load</description>
+                           <description>Add 2 pF</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>EREFSTEN</name>
-                     <description>External Reference Stop Enable</description>
+                     <description>External Reference Stop Enable\n
+Controls whether or not the external reference clock (OSCERCLK) remains enabled when MCU enters Stop mode</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>External reference clock is disabled in Stop mode</description>
+                           <description>Disabled in STOP</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>External reference clock stays enabled in Stop mode if ERCLKEN is set before entering Stop mode</description>
+                           <description>Enabled in STOP\tif ERCLKEN is set before entering</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ERCLKEN</name>
-                     <description>External Reference Enable</description>
+                     <description>External Reference Enable\nEnables external reference clock (OSCERCLK)</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>External reference clock is inactive</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>External reference clock is enabled</description>
+                           <description>Clock is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

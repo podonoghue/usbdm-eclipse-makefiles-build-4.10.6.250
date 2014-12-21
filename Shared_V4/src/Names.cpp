@@ -228,7 +228,7 @@ static const char *const newCommandTable[]= {
    "CMD_USBDM_SET_SPEED"                     , // 16
    "CMD_USBDM_GET_SPEED"                     , // 17
 
-   "CMD_USBDM_CONTROL_INTERFACE"             , // 18
+   "CMD_CUSTOM_COMMAND"                      , // 18
    NULL                                      , // 19
 
    "CMD_USBDM_READ_STATUS_REG"               , // 20
@@ -329,12 +329,11 @@ char const *getAutoConnectName(AutoConnect_t mode) {
    static char buff[40] = "";
    switch(mode) {
    case AUTOCONNECT_NEVER  : strcpy(buff,"NEVER");       break;
-   case AUTOCONNECT_ALWAYS : strcpy(buff,"ALWAYS");      break;
    case AUTOCONNECT_STATUS : strcpy(buff,"STATUS");      break;
+   case AUTOCONNECT_ALWAYS : strcpy(buff,"ALWAYS");      break;
    }
    return buff;
 }
-
 
 char const *getConnectionRetryName(RetryMode mode) {
    static char buff[150] = "";
@@ -382,7 +381,7 @@ static const char *getUnknownReg(unsigned int regAddr) {
 //!
 char const *getCFV1ControlRegName( unsigned int regAddr ){
    static const char *names[] = {
-      "_A7","VBR","CPUCR",NULL,NULL,NULL,NULL,NULL,
+      "OTHER_A7","VBR","CPUCR",NULL, "MACSR", "MASK", "ACC", NULL,
       NULL,NULL,NULL,NULL,NULL,NULL,"SR","PC",
       NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
       NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
@@ -685,21 +684,22 @@ char const *getRS08RegName( unsigned int regAddr ) {
 char const *getCFV1RegName( unsigned int regAddr ){
    static const char *names[] = {
       "D0","D1","D2","D3","D4","D5","D6","D7",
-      "A0","A1","A2","A3","A4","A5","A6","USP",
+      "A0","A1","A2","A3","A4","A5","A6","SP",
       "PST0","PST1","PST2","PST3","PST4","PST5",
       "PST6","PST7","PST8","PST9","PST10","PST11",
       };
    static const char *names2[] = {
-      "_A7","VBR","CPUCR","SR","PC"
+      "OTHER_A7","VBR","CPUCR",NULL, "MACSR", "MASK", "ACC", NULL,
+      NULL, NULL, NULL, NULL, NULL, NULL, "SR","PC"
       };
    const char *regName = NULL;
 
    if (regAddr < sizeof(names)/sizeof(names[0])) {
        regName = names[regAddr];
    }
-   regAddr -= CFV1_RegOTHER_A7;
-   if (regAddr < sizeof(names2)/sizeof(names2[0])) {
-      regName = names2[regAddr];
+   unsigned tRegAddr = regAddr-CFV1_RegOTHER_A7;
+   if (tRegAddr < sizeof(names2)/sizeof(names2[0])) {
+      regName = names2[tRegAddr];
    }
    if (regName == NULL) {
       regName = getUnknownReg(regAddr);

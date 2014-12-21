@@ -20,10 +20,11 @@
 ;#####################################################################################
 ;#  History
 ;#
-;#  V4.10.4 - Changed return code handling
-;#  V4.10.4 - Added disableWatchdog { }
-;#  V4.10.4 - Renamed NVM_...
-;#  V4.10.2 - Added write to $CPMUCOP
+;#  V4.19.4.240 - Added return error codes
+;#  V4.10.4 	- Changed return code handling
+;#  V4.10.4 	- Added disableWatchdog { }
+;#  V4.10.4 	- Renamed NVM_...
+;#  V4.10.2 	- Added write to $CPMUCOP
 ;# 
 
 ;######################################################################################
@@ -84,6 +85,10 @@ proc loadSymbols {} {
    
    set ::FLASH_REGIONS              "" ;# List of addresses within each unique flash region (incl. eeprom)
    
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
+   
    return
 }
 
@@ -99,6 +104,7 @@ proc disableWatchdog { } {
    ;# dialogue "Before reset - FTMRK" Waiting... ok
    ;# reset s h
 
+   puts "disableWatchdog {}"
    catch {connect}                 ;# Ignore possible BDM enable fault
    wb $::COPCTL $::COPCTL_DISABLE  ;# Disable WDOG
    rb $::COPCTL 
@@ -111,7 +117,7 @@ proc disableWatchdog { } {
 ;# @param flashRegions - list of flash array addresses
 ;#
 proc initTarget { flashRegions } {
-   ;# puts "initTarget {}"
+   puts "initTarget {}"
    
    set ::FLASH_REGIONS  $flashRegions 
 
@@ -123,7 +129,7 @@ proc initTarget { flashRegions } {
 ;#  busFrequency - Target bus busFrequency in kHz
 ;#
 proc initFlash { busFrequency } {
-   ;#  puts "initFlash {}"
+   puts "initFlash {}"
    
    set cfmclkd [calculateFlashDivider $busFrequency]
 
@@ -143,14 +149,16 @@ proc calculateFlashDivider { busFrequency } {
 ;# NOTES:
 ;#   According to data sheets the Flash uses the BUS clock for timing
 ;#
-   ;# puts "calculateFlashDivider {}"
+   puts "calculateFlashDivider {}"
    set clockFreq $busFrequency
+   
    if { [expr $clockFreq < 1000] } {
-      error "Clock too low for flash programming"
+      puts "Clock too low for flash programming"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }
    set cfmclkd  [expr round(($clockFreq-1101.0)/1000)]
    set flashClk [expr round($clockFreq/($cfmclkd+1))]
-   ;# puts "cfmclkd = $cfmclkd, flashClk = $flashClk"
+   puts "cfmclkd = $cfmclkd, flashClk = $flashClk"
    
    return $cfmclkd
 }
@@ -162,7 +170,8 @@ proc calculateFlashDivider { busFrequency } {
 ;#  value   - data value to use
 ;#
 proc executeFlashCommand { cmd {address "none"} {data0 "none"} {data1 "none"} {data2 "none"} {data3 "none"} } {
-   ;# puts "executeFlashCommand {}"
+
+   ;#  puts "executeFlashCommand {}"
    
    wb $::NVM_FSTAT     $::NVM_FSTAT_CLEAR           ;# clear any error flags
    wb $::NVM_FCCOBIX   0                            ;# index = 0
@@ -201,8 +210,8 @@ proc executeFlashCommand { cmd {address "none"} {data0 "none"} {data1 "none"} {d
       incr retry
    }
    if [ expr ($flashError || ($retry>=20)) ] {
-      ;# puts [ format "Flash command error NVM_FSTAT=0x%02X, retry=%d" $status $retry ]
-      error "Flash command failed"
+      puts [ format "Flash command error NVM_FSTAT=0x%02X, retry=%d" $status $retry ]
+      error $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }
    return
 }
@@ -212,36 +221,48 @@ proc executeFlashCommand { cmd {address "none"} {data0 "none"} {data1 "none"} {d
 ;#
 proc massEraseTarget { } {
 
-   ;# puts "massEraseTarget{}"
-   
-   ;# disableWatchdog
+   puts "massEraseTarget{}"
    
    ;# Mass erase flash
    initFlash [expr [speed]/1000]  ;# Flash speed calculated from BDM connection speed
 
-;#   executeFlashCommand $::NVM_FCMD_UNSECURE
+   if [ expr [isUnsecure] != 0 ] {
+      ;# Need an extra mass erase and reset if the device is secure !!!
+      puts "Doing pre-erase"   
+      executeFlashCommand $::NVM_FCMD_UNSECURE
+      
+      ;# Device is now blank & temporarily unsecured
+      puts "Resetting"
+      reset s h 
+      connect
+   }
+
    executeFlashCommand $::NVM_FCMD_ERASE_ALL_BLKS
    
-   ;# Device is now blank & temporarily unsecured
-   ;# rb $::NVM_NVSEC
+   ;# Disable watchdog as it may not have been possible when secured
+   disableWatchdog
    
-   ;# Confirm unsecured
-   isUnsecure
-
+   ;#puts [format "gs = 0x%X" [ gs ] ]
+   
    ;# Flash is now Blank and unsecured
+   ;# Confirm unsecured
+   return [ isUnsecure ]
 }
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   ;#  puts "Checking if unsecured"
+;#   puts "isUnsecure{} - Checking if unsecured"
    set securityValue [rb $::NVM_FSEC]
 
    if [ expr ( $securityValue & $::NVM_FSEC_SEC_MASK ) != $::NVM_FSEC_SEC_UNSEC ] {
-      return "Target is secured"
+      puts "isUnsecure{} - Target is secured!"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
-   return
+   puts "isUnsecure{} - Target is unsecured"
+   return 0
 }
+
 
 ;######################################################################################
 ;# Actions on initial load

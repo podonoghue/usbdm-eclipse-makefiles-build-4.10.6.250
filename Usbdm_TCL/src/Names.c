@@ -190,19 +190,17 @@ static char buff[150] = "";
               USBDMStatus->halt_state?"CFVx-halted":"CFVx-running");
       return buff;
 }
-
-#if 0
-char const *getSecurityName(SecurityOptions_t security) {
-   switch (security) {
-      case SEC_DEFAULT     : return "default";
-      case SEC_SECURED     : return "secured";
-      case SEC_UNSECURED   : return "unsecured";
-      case SEC_INTELLIGENT : return "intelligent";
-      case SEC_CUSTOM      : return "custom";
-      default              : return "security-??";
-   }
-}
-#endif
+//
+//char const *getSecurityName(SecurityOptions_t security) {
+//   switch (security) {
+//      case SEC_DEFAULT     : return "default";
+//      case SEC_SECURED     : return "secured";
+//      case SEC_UNSECURED   : return "unsecured";
+//      case SEC_INTELLIGENT : return "intelligent";
+//      case SEC_CUSTOM      : return "custom";
+//      default              : return "security-??";
+//   }
+//}
 
 #if defined(LOG) || 1
 //! Command String from Command #
@@ -328,37 +326,35 @@ char const *getAutoConnectName(AutoConnect_t mode) {
    static char buff[40] = "";
    switch(mode) {
    case AUTOCONNECT_NEVER  : strcpy(buff,"NEVER");       break;
-   case AUTOCONNECT_ALWAYS : strcpy(buff,"ALWAYS");      break;
    case AUTOCONNECT_STATUS : strcpy(buff,"STATUS");      break;
+   case AUTOCONNECT_ALWAYS : strcpy(buff,"ALWAYS");      break;
    }
    return buff;
 }
 
-#if 0
-char const *getConnectionRetryName(RetryMode mode) {
-   static char buff[150] = "";
-
-   switch (mode & retryMask) {
-   case retryAlways     : strcpy(buff,"ALWAYS");      break;
-   case retryNever      : strcpy(buff,"NEVER");       break;
-   case retryNotPartial : strcpy(buff,"NOTPARTIAL");  break;
-   default              : strcpy(buff,"UNKNOWN!!!");  break;
-   }
-   if (mode & retryWithInit) {
-      strcat(buff,"+INIT");
-   }
-   if (mode & retryByPower) {
-      strcat(buff,"+POWER");
-   }
-   if (mode & retryByReset) {
-      strcat(buff,"+RESET");
-   }
-   if (mode & retryDelayedCheck) {
-      strcat(buff,"+DELAYCHECK");
-   }
-   return buff;
-}
-#endif
+//char const *getConnectionRetryName(RetryMode mode) {
+//   static char buff[150] = "";
+//
+//   switch (mode & retryMask) {
+//   case retryAlways     : strcpy(buff,"ALWAYS");      break;
+//   case retryNever      : strcpy(buff,"NEVER");       break;
+//   case retryNotPartial : strcpy(buff,"NOTPARTIAL");  break;
+//   default              : strcpy(buff,"UNKNOWN!!!");  break;
+//   }
+//   if (mode & retryWithInit) {
+//      strcat(buff,"+INIT");
+//   }
+//   if (mode & retryByPower) {
+//      strcat(buff,"+POWER");
+//   }
+//   if (mode & retryByReset) {
+//      strcat(buff,"+RESET");
+//   }
+//   if (mode & retryDelayedCheck) {
+//      strcat(buff,"+DELAYCHECK");
+//   }
+//   return buff;
+//}
 
 //!  Creates dummy register name in static buffer
 //!
@@ -1225,13 +1221,12 @@ const char *fillMode;
    return buff;
 }
 
-#if 0
 //! Print bdm option structure to log file
 //!
 //! @param options - options to report
 //!
 void printBdmOptions(const USBDM_ExtendedOptions_t *options) {
-   Logging::print("\n"
+   printf("\n"
          "========================================\n"
          "autoReconnect         => %s\n"
          "bdmClockSource        => %s\n"
@@ -1272,7 +1267,6 @@ void printBdmOptions(const USBDM_ExtendedOptions_t *options) {
          options->useResetSignal?"T":"F"
          );
 }
-#endif
 
 //! \brief Maps a ARM register # to a string
 //!

@@ -22,6 +22,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.19.4.240 - Added return error codes
 ;#  V4.10.4.190 - Simplified Mass erase sequence according to App note AN4835
 ;#  V4.10.4.130 - Changed Mass erase sequence (added retry etc.)
 ;#  V4.10.4     - Changed return code handling
@@ -188,6 +189,10 @@ proc loadSymbols {} {
    set ::BDM_CAP_PST                     0x0800  ;# Supports PST signal sensing
    set ::BDM_CAP_CDC                     0x1000  ;# Supports CDC Serial over USB interface
    set ::BDM_CAP_ARM_SWD                 0x2000  ;# Supports ARM targets via SWD
+
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
    
    return
 }
@@ -208,19 +213,23 @@ proc executeCommand {} {
       set fstat [ rb $::FTFL_FSTAT ]
       set flashBusy [expr $fstat & $::FTFL_FSTAT_CCIF]
       if [ expr $retry == 10] {
-         error "Flash busy timeout"
+         puts "Flash busy timeout"
+         return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
       }
       after 100
       incr retry
    }
    if [ expr ( $fstat & $::FTFL_FSTAT_ACCERR ) != 0 ] {
-      error "Flash access error"
+      puts "Flash access error"
+      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }
    if [ expr ( $fstat & $::FTFL_FSTAT_FPVIOL ) != 0 ] {
-      error "Flash write protect error"
+      puts "Flash write protect error"
+      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }  
    if [ expr ( $fstat & $::FTFL_FSTAT_MGSTAT0 ) != 0 ] {
-      error "Flash command failed error"
+      puts "Flash command failed error"
+      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }  
 }
 
@@ -405,117 +414,25 @@ proc massEraseTarget { } {
          break;
       }
       after 50
-   }
+   }  
    puts "massEraseTarget{} - Doing reset sh"
    reset sh
-   return
-}
-
-;######################################################################################
-;#  Target is mass erased and left unsecured (non-blank!)
-;#
-proc massEraseTargetOld { } {
-
-   ;# hold target reset to be sure
-   pinSet rst=0
-
-   ;# Cycle power if feature available
-   if [expr ( [getcap] & $::BDM_CAP_VDDCONTROL) != 0] {
-      puts "massEraseTarget{} - Cycling Vdd"
-      settargetvdd off
-      after 200
-      settargetvdd on
-      after 100
-   }
-   ;# Connect with reset asserted, ignore errors as may be secured
-   puts "massEraseTarget{} - Connecting (Ignoring errors)"
-   catch { connect }
-
-   ;# Repeatedly try to start erase with core and system reset
-   ;# For some reason this appears unreliable on JTAG interface
-   ;# with a watchdog timeout or similar reset problem
-   set mdmApControlErase [expr $::MDM_AP_C_CORE_HOLD | $::MDM_AP_C_SYSTEM_RESET | $::MDM_AP_C_MASS_ERASE]
-   set mdmApControl 0
-   for {set retry 0} {$retry < 10} {incr retry} {
-      after 50
-      puts "massEraseTarget{} - Starting erase"
-      ;# Write Mass Erase + System Reset + Core Reset
-      if { [catch { wcreg $::MDM_AP_Control $mdmApControlErase } ] } {
-         puts "massEraseTarget{} - wcreg MDM_AP_Control failed"
-         continue;
-      }      
-      ;# Check if Mass Erase confirmed
-      if { [catch { set mdmApControl [rcreg $::MDM_AP_Control] } ] } {
-         puts "massEraseTarget{} - rcreg MDM_AP_Control failed"
-         continue;
-      }
-      if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) == 0)] {
-         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE failed - retry"
-         continue;
-      }
-      ;# Check if start Mass Erase confirmed
-      set mdmApStatus [rcreg $::MDM_AP_Status]
-      if [expr (($mdmApStatus & $::MDM_AP_ST_MASS_ERASE_ACK) != 0)] {
-         puts "massEraseTarget{} - MDM_AP_ST_MASS_ERASE_ACK success"
-         break;
-      }
-      puts "massEraseTarget{} - Starting erase failed"
-   }
    
-   ;# Wait for erase to complete
-   for {set retry 0} {$retry < 20} {incr retry} {
-      puts "massEraseTarget{} - Waiting for erase to finish"
-      after 50;
-      set mdmApControl [rcreg $::MDM_AP_Control]
-      if [expr (($mdmApControl & $::MDM_AP_C_MASS_ERASE) != 0)] {
-         puts "massEraseTarget{} - MDM_AP_C_MASS_ERASE still set - waiting"
-         continue;
-      }
-      ;# Check if Unsecured confirmed
-      set mdmApStatus [rcreg $::MDM_AP_Status]
-      if [expr (($mdmApStatus & $::MDM_AP_ST_SYSTEM_SECURITY) == 0)] {
-         puts "massEraseTarget{} - MDM_AP_ST_SYSTEM_SECURITY cleared - success"
-         break;
-      }    
-   }
-
-   ;# Release the system reset
-   wcreg $::MDM_AP_Control $::MDM_AP_C_CORE_HOLD
-
-   ;# Release the system reset
-   wcreg $::MDM_AP_Control 0
-
-   after 50
-
-   ;# Apply reset to make sure device is unsecured
-   reset s s
-   
-   ;# Reconnect, ignore any errors
-   catch { connect }
-
-   set mdmApStatus [rcreg $::MDM_AP_Status]
-   if [expr (($mdmApStatus & $::MDM_AP_ST_SYSTEM_SECURITY) != 0)] {
-      puts "massEraseTarget{} - Device is still secured after reset"
-      error "Device is still secured"
-   }
-   puts "massEraseTarget{} - success"
    return
 }
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   ;#pinSet rst=0
-   puts "isUnsecure{} - Checking if unsecured"
    set securityValue [ rcreg $::MDM_AP_Status ]
    puts [format "isUnsecure{} - MDM_AP_Status=%X" $securityValue ]
    if [ expr ( $securityValue & $::MDM_AP_ST_SYSTEM_SECURITY ) != 0 ] {
       puts "isUnsecure{} - Target is secured!"
-      error "Target is secured"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
    puts "isUnsecure{} - Target is unsecured"
    ;#pinSet
-   return
+   return 0
 }
 
 ;######################################################################################

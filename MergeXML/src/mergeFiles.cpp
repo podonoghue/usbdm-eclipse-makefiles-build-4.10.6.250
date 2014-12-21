@@ -45,47 +45,22 @@ public:
    }
 
    virtual ~ConvertTraverser() {
-      if (mergePath != NULL)
-         free((void*)mergePath);
    }
 
    virtual wxDirTraverseResult OnFile(const wxString& originalFilepath) {
-      wxString backupFilepath = originalFilepath+_(".original");
-
-      cout << "Info: Applying patches: " << mergePath <<"\n"
-                  " <= " << backupFilepath.ToAscii() << "\n"
-                  " => " << originalFilepath.ToAscii() << "\n";
-      if(!wxFileExists(wxString(mergePath, wxConvUTF8))) {
-         cerr << "Error: Merge file doesn't exist\n";
+      if(!wxFileExists(mergePath)) {
+         cerr << "Error: Merge file '" << mergePath << "' doesn't exist\n";
          rc = -1;
          return wxDIR_STOP;
       }
       if(!wxFileExists(originalFilepath)) {
-         cerr << "Error: Original file doesn't exist\n";
+         cerr << "Error: Original file '" << originalFilepath << "' doesn't exist\n";
          rc = -1;
          return wxDIR_STOP;
       }
-      // Make backup if necessary
-      if (wxFileExists(backupFilepath)) {
-         cout << "Warning: Backup already exists\n";
-      }
-      else if (wxRenameFile(originalFilepath, backupFilepath, false)) {
-         cout << "Info: Made backup\n";
-      }
-      else {
-         cerr << "Error: Failed to make backup of " << originalFilepath << " - no conversion done\n";
-         rc = 1;
-         return wxDIR_STOP;
-      }
-      //      printf("   Converting %s => \n     %s\n",
-      //            (const char *)backupFilepath.ToAscii(),
-      //            (const char *)originalFilepath.ToAscii());
-      rc = XmlParser::addUsbdmWizard((const char*)(backupFilepath.ToAscii()), (const char*)(originalFilepath.ToAscii()), mergePath);
+      rc = XmlParser::addUsbdmWizard(originalFilepath, mergePath);
       if(rc != 0) {
-         cerr << "Error: Failed to do conversion - restoring original file\n";
-         if (!wxRenameFile(backupFilepath, originalFilepath, true)) {
-            cerr << "Error: Failed to restore" << originalFilepath.ToAscii() << "\n";
-         }
+         cerr << "Error: Failed to do conversion '" << originalFilepath << "' unchanged\n";
          return wxDIR_STOP;
       }
       return wxDIR_CONTINUE;
@@ -96,7 +71,7 @@ public:
         return wxDIR_CONTINUE;
     }
 private:
-    const char *mergePath;
+    const wxString mergePath;
 };
 
 class RestoreTraverser : public MyTraverser
@@ -120,19 +95,19 @@ public:
          destinationFilepath = filepath;
          sourceFilepath      = filepath+_(".original");
       }
-      cout << "Info: Restoring \n"
+      cerr << "Info: Restoring \n"
            << " => " << destinationFilepath.ToAscii() <<"\n"
            << " <= " << sourceFilepath.ToAscii() << "\n";
 
       if (!wxFileExists(sourceFilepath)) {
-         cout << "Warning: No backup exists - skipping restoration\n";
+         cerr << "Warning: No backup exists - skipping restoration\n";
          return wxDIR_CONTINUE;
       }
       if (!wxRenameFile(sourceFilepath, destinationFilepath, true)) {
          cerr << "Error: Failed to restore" << destinationFilepath.ToAscii() << "\n";
          return wxDIR_STOP;
       }
-      cout << "OK\n";
+      cerr << "Done\n";
       return wxDIR_CONTINUE;
    }
    virtual wxDirTraverseResult OnDir(const wxString& WXUNUSED(dirname)) {

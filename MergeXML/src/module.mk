@@ -4,3 +4,4 @@ SRC += helper-classes.c
 SRC += mergeFiles.c
 SRC += xmlParser.c
 SRC += Version.rc
+SRC += manifest.xml

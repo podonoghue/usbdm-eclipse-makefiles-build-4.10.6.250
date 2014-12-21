@@ -64,14 +64,9 @@ Devices using this peripheral:
                      <access>write-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not clear the interrupt</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Clear the IF bit (interrupt flag)</description>
-                           <value>0b1</value>
+                           <name>0bX</name>
+                           <description>Write 1 to clear IF</description>
+                           <isDefault>true</isDefault>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
@@ -84,12 +79,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No interrupt is pending</description>
+                           <description>No interrupt</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>An interrupt is pending</description>
+                           <description>Interrupt Pending</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -102,12 +97,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Disable interrupts to the system</description>
+                           <description>Interrupts disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enable interrupts to the system</description>
+                           <description>Interrupts enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -121,12 +116,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not start the sequence. Writes of this value have no effect</description>
+                           <description>No effect</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Initiate the charger detection sequence. If the sequence is already running, writes of this value have no effect</description>
+                           <description>Start sequence\t- Initiate the charger detection sequence. If the sequence is already running, writes of this value have no effect</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -140,12 +135,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not perform a software reset</description>
+                           <description>No effect</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Perform a software reset</description>
+                           <description>Software reset</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -166,12 +161,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>kHz Speed (between 1 kHz and 1023 kHz)</description>
+                           <description>kHz Speed\t- Between 1 kHz and 1023 kHz</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>MHz Speed (between 1 MHz and 1023 MHz)</description>
+                           <description>MHz Speed\t- Between 1 MHz and 1023 MHz</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -192,28 +187,30 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>SEQ_RES</name>
-                     <description>Charger Detection Sequence Results</description>
+                     <description>Charger Detection Sequence Results\nReports how the charger detection is attached</description>
                      <bitOffset>16</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>No results to report</description>
+                           <description>No results</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Attached to a standard host. Must comply with USB Spec 2.0 by drawing only 2.5mA (max) until connected</description>
+                           <description>Standard host\t- Must comply with USB Spec 2.0 by drawing only 2.5mA (max) until connected</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Attached to a charging port. The exact meaning depends on bit 18: 0: Attached to either a charging host or a dedicated charger. The charger type detection has not completed. 1: Attached to a charging host. The charger type detection has completed</description>
+                           <description>Charging port\t- The exact meaning depends on bit 18:\n
+\t0: Attached to either a charging host or a dedicated charger. The charger type detection has not completed.\n
+\t1: Attached to a charging host. The charger type detection has completed</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Attached to a dedicated charger</description>
+                           <description>Dedicated charger</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -226,29 +223,30 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>The module is either not enabled, or the module is enabled but the data pins have not yet been detected</description>
+                           <description>Not enabled/detected\n
+The module is either not enabled, or the module is enabled but the data pins have not yet been detected</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Data pin contact detection is complete</description>
+                           <description>Data pin complete</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Charging port detection is complete</description>
+                           <description>Charging port complete</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Charger type detection is complete</description>
+                           <description>Charger type complete</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ERR</name>
-                     <description>Error Flag</description>
+                     <description>Error Flag\nIndicates whether there is an error in the detection sequence</description>
                      <bitOffset>20</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -259,43 +257,44 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Error in the detection sequence. See the SEQ_STAT field to determine the phase in which the error occurred</description>
+                           <description>Sequence errors\t- Error in the detection sequence.\n
+See the SEQ_STAT field to determine the phase in which the error occurred</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>TO</name>
-                     <description>Timeout Flag</description>
+                     <description>Timeout Flag\nIndicates whether the detection sequence has passed the timeout threshhold</description>
                      <bitOffset>21</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The detection sequence has not been running for over 1 s</description>
+                           <description>&lt;= 1 second</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>It has been over 1 s since the data pin contact was detected and debounced</description>
+                           <description>&gt;= 1 second since contact</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ACTIVE</name>
-                     <description>Active Status Indicator</description>
+                     <description>Active Status Indicator\nIndicates whether the sequence is running</description>
                      <bitOffset>22</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The sequence is not running</description>
+                           <description>Sequence not running</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The sequence is running</description>
+                           <description>Sequence running</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

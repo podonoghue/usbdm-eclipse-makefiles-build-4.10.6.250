@@ -54,20 +54,18 @@ These bits change the resulting VREF by approximately ~0.5 mV for each step</des
                   <field>
                      <name>CHOPEN</name>
                      <description>Chop oscillator enable.\n
-When set, internal chopping operation is enabled and the internal analog offset will be minimized.
-This bit is set during factory trimming of the VREF voltage. This bit should be written to 1 to achieve the
-performance stated in the data sheet</description>
+When set, internal chopping operation is enabled and the internal analog offset will be minimized</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Chop oscillator is disabled</description>
+                           <description>Chopping is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Chop oscillator is enabled</description>
+                           <description>Chopping is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -90,17 +88,17 @@ These bits select the buffer modes for the Voltage Reference module</description
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Bandgap on only, for stabilization and startup</description>
+                           <description>Bandgap only\tfor stabilization and startup</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>High power buffer mode enabled</description>
+                           <description>Low-power\t buffer enabled</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Low-power buffer mode enabled</description>
+                           <description>Tight-regulation\t buffer enabled</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -112,21 +110,19 @@ These bits select the buffer modes for the Voltage Reference module</description
                   </field>
                   <field>
                      <name>VREFST</name>
-                     <description>Internal Voltage Reference stable\n
-This bit indicates that the bandgap reference within the Voltage Reference module has completed its
-startup and stabilization</description>
+                     <description>Internal Voltage Reference has settled</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The bandgap is disabled or not stable</description>
+                           <description>Not ready</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The bandgap is stable</description>
+                           <description>Ready</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -134,42 +130,36 @@ startup and stabilization</description>
                   <field>
                      <name>REGEN</name>
                      <description>Regulator enable\n
-This bit is used to enable the internal 1.75 V regulator to produce a constant internal voltage supply in
-order to reduce the sensitivity to external supply noise and variation. If it is desired to keep the regulator
-enabled in very low power modes, refer to the Chip Configuration chapter for a description on how this can
-be achieved</description>
+Enabled the internal 1.75 V regulator</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Internal 1.75 V regulator is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Internal 1.75 V regulator is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>VREFEN</name>
-                     <description>Internal Voltage Reference enable\n
-This bit is used to enable the bandgap reference within the Voltage Reference module.
-NOTE: After the VREF is enabled, turning off the clock to the VREF module via the corresponding clock
-gate register will not disable the VREF. VREF must be disabled via this VREFEN bit</description>
+                     <description>Internal Voltage Reference enable</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The module is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The module is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

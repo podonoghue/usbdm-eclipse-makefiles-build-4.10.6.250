@@ -43,372 +43,67 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>M0AP</name>
-                     <description>Master 0 Access Protection</description>
+                     <description>Master 0 Access Protection\n
+This field controls whether read and write access to the flash are allowed\n
+based on the logical master number of the requesting crossbar switch master</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>No access may be performed by this master</description>
+                           <description>No access allowed</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Only read accesses may be performed by this master</description>
+                           <description>Only read accesses</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Only write accesses may be performed by this master</description>
+                           <description>Only write accesses</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Both read and write accesses may be performed by this master</description>
+                           <description>Read and write accesses</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>M1AP</name>
-                     <description>Master 1 Access Protection</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>No access may be performed by this master</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Only read accesses may be performed by this master</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Only write accesses may be performed by this master</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Both read and write accesses may be performed by this master</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M2AP</name>
-                     <description>Master 2 Access Protection</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>No access may be performed by this master</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Only read accesses may be performed by this master</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Only write accesses may be performed by this master</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Both read and write accesses may be performed by this master</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M3AP</name>
-                     <description>Master 3 Access Protection</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>No access may be performed by this master</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Only read accesses may be performed by this master</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Only write accesses may be performed by this master</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Both read and write accesses may be performed by this master</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M4AP</name>
-                     <description>Master 4 Access Protection</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>No access may be performed by this master</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Only read accesses may be performed by this master</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Only write accesses may be performed by this master</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Both read and write accesses may be performed by this master</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M5AP</name>
-                     <description>Master 5 Access Protection</description>
-                     <bitOffset>10</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>No access may be performed by this master</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Only read accesses may be performed by this master</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Only write accesses may be performed by this master</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Both read and write accesses may be performed by this master</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M6AP</name>
-                     <description>Master 6 Access Protection</description>
-                     <bitOffset>12</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>No access may be performed by this master</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Only read accesses may be performed by this master</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Only write accesses may be performed by this master</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Both read and write accesses may be performed by this master</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M7AP</name>
-                     <description>Master 7 Access Protection</description>
-                     <bitOffset>14</bitOffset>
-                     <bitWidth>2</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b00</name>
-                           <description>No access may be performed by this master</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
-                           <description>Only read accesses may be performed by this master</description>
-                           <value>0b01</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b10</name>
-                           <description>Only write accesses may be performed by this master</description>
-                           <value>0b10</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b11</name>
-                           <description>Both read and write accesses may be performed by this master</description>
-                           <value>0b11</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="M0AP" > <name>M1AP</name> <description>Master 1 Access Protection</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="M0AP" > <name>M2AP</name> <description>Master 2 Access Protection</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="M0AP" > <name>M3AP</name> <description>Master 3 Access Protection</description> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="M0AP" > <name>M4AP</name> <description>Master 4 Access Protection</description> <bitOffset>8</bitOffset> </field>
+                  <field derivedFrom="M0AP" > <name>M5AP</name> <description>Master 5 Access Protection</description> <bitOffset>10</bitOffset> </field>
+                  <field derivedFrom="M0AP" > <name>M6AP</name> <description>Master 6 Access Protection</description> <bitOffset>12</bitOffset> </field>
+                  <field derivedFrom="M0AP" > <name>M7AP</name> <description>Master 7 Access Protection</description> <bitOffset>14</bitOffset> </field>
                   <field>
                      <name>M0PFD</name>
-                     <description>Master 0 Prefetch Disable</description>
+                     <description>Master 0 Prefetch Disable\n
+Disables prefetching for this master</description>
                      <bitOffset>16</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Prefetching for this master is enabled</description>
+                           <description>Prefetching enabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Prefetching for this master is disabled</description>
+                           <description>Prefetching is disabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>M1PFD</name>
-                     <description>Master 1 Prefetch Disable</description>
-                     <bitOffset>17</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Prefetching for this master is enabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Prefetching for this master is disabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M2PFD</name>
-                     <description>Master 2 Prefetch Disable</description>
-                     <bitOffset>18</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Prefetching for this master is enabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Prefetching for this master is disabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M3PFD</name>
-                     <description>Master 3 Prefetch Disable</description>
-                     <bitOffset>19</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Prefetching for this master is enabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Prefetching for this master is disabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M4PFD</name>
-                     <description>Master 4 Prefetch Disable</description>
-                     <bitOffset>20</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Prefetching for this master is enabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Prefetching for this master is disabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M5PFD</name>
-                     <description>Master 5 Prefetch Disable</description>
-                     <bitOffset>21</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Prefetching for this master is enabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Prefetching for this master is disabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M6PFD</name>
-                     <description>Master 6 Prefetch Disable</description>
-                     <bitOffset>22</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Prefetching for this master is enabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Prefetching for this master is disabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>M7PFD</name>
-                     <description>Master 7 Prefetch Disable</description>
-                     <bitOffset>23</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Prefetching for this master is enabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Prefetching for this master is disabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="M0PFD" > <name>M1PFD</name> <description>Master 1 Prefetch Disable</description> <bitOffset>17</bitOffset> </field>
+                  <field derivedFrom="M0PFD" > <name>M2PFD</name> <description>Master 2 Prefetch Disable</description> <bitOffset>18</bitOffset> </field>
+                  <field derivedFrom="M0PFD" > <name>M3PFD</name> <description>Master 3 Prefetch Disable</description> <bitOffset>19</bitOffset> </field>
+                  <field derivedFrom="M0PFD" > <name>M4PFD</name> <description>Master 4 Prefetch Disable</description> <bitOffset>20</bitOffset> </field>
+                  <field derivedFrom="M0PFD" > <name>M5PFD</name> <description>Master 5 Prefetch Disable</description> <bitOffset>21</bitOffset> </field>
+                  <field derivedFrom="M0PFD" > <name>M6PFD</name> <description>Master 6 Prefetch Disable</description> <bitOffset>22</bitOffset> </field>
+                  <field derivedFrom="M0PFD" > <name>M7PFD</name> <description>Master 7 Prefetch Disable</description> <bitOffset>23</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -419,67 +114,72 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>B01SEBE</name>
-                     <description>Bank 0-1 Single Entry Buffer Enable</description>
+                     <description>Bank 0-1 Single Entry Buffer Enable\n
+This bit controls whether the single entry page buffer is enabled in response to flash read accesses.\n
+A high-to-low transition of this bit forces the page buffer to be invalidated</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Single entry buffer is disabled</description>
+                           <description>Buffer is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Single entry buffer is enabled</description>
+                           <description>Buffer is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>B01IPE</name>
-                     <description>Bank 0-1 Instruction Prefetch Enable</description>
+                     <description>Bank 0-1 Instruction Prefetch Enable\n
+This bit controls whether prefetches (or speculative accesses) are initiated in response to instruction fetches</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not prefetch in response to instruction fetches</description>
+                           <description>Don&apos;t prefetch instruction fetches</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enable prefetches in response to instruction fetches</description>
+                           <description>Prefetches instruction fetches</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>B01DPE</name>
-                     <description>Bank 0-1 Data Prefetch Enable</description>
+                     <description>Bank 0-1 Data Prefetch Enable\n
+This bit controls whether prefetches (or speculative accesses) are initiated in response to data references</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not prefetch in response to data references</description>
+                           <description>Don&apos;t prefetch for data references</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enable prefetches in response to data references</description>
+                           <description>Prefetch for data references</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>B01ICE</name>
-                     <description>Bank 0-1 Instruction Cache Enable</description>
+                     <description>Bank 0-1 Instruction Cache Enable\n
+This bit controls whether instruction fetches are loaded into the cache</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not cache instruction fetches</description>
+                           <description>Don&apos;t cache instruction fetches</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -491,13 +191,14 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>B01DCE</name>
-                     <description>Bank 0-1 Data Cache Enable</description>
+                     <description>Bank 0-1 Data Cache Enable\n
+This bit controls whether data references are loaded into the cache</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not cache data references</description>
+                           <description>Don&apos;t cache data references</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -509,13 +210,14 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>CRC</name>
-                     <description>Cache Replacement Control</description>
+                     <description>Cache Replacement Control\n
+This 3-bit field defines the replacement algorithm for accesses that are cached</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>3</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b000</name>
-                           <description>LRU replacement algorithm per set across all four ways</description>
+                           <description>LRU across all four ways</description>
                            <value>0b000</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -525,12 +227,12 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b010</name>
-                           <description>Independent LRU with ways [0-1] for ifetches, [2-3] for data</description>
+                           <description>Independent LRU ways [0-1] ifetches, [2-3] data</description>
                            <value>0b010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b011</name>
-                           <description>Independent LRU with ways [0-2] for ifetches, [3] for data</description>
+                           <description>Independent LRU ways [0-2] ifetches, [3] data</description>
                            <value>0b011</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -542,7 +244,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>B01MW</name>
-                     <description>Bank 0-1 Memory Width</description>
+                     <description>Bank 0-1 Memory Width\n
+This field defines the width of the memory bank</description>
                      <bitOffset>17</bitOffset>
                      <bitWidth>2</bitWidth>
                      <access>read-only</access>
@@ -571,66 +274,68 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>S_B_INV</name>
-                     <description>Invalidate Prefetch Speculation Buffer</description>
+                     <description>Invalidate Prefetch Speculation Buffer\n
+When this bit is written, the prefetch speculation buffer and single entry buffer are immediately cleared</description>
                      <bitOffset>19</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>write-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Speculation buffer and single entry buffer are not affected</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Invalidate (clear) speculation buffer and single entry buffer</description>
-                           <value>0b1</value>
+                           <name>0bX</name>
+                           <description>Write 1 to invalidate</description>
+                           <isDefault>true</isDefault>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>CINV_WAY</name>
-                     <description>Cache Invalidate Way x</description>
+                     <description>Cache Invalidate Way x\n
+When a bit within this field is written, the corresponding cache way is immediately invalidated:\n
+\t- the way&apos;s tag, data, and valid contents are cleared</description>
                      <bitOffset>20</bitOffset>
                      <bitWidth>4</bitWidth>
                      <access>write-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No cache way invalidation for the corresponding cache</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Invalidate cache way for the corresponding cache: clear the tag, data, and vld bits of ways selected</description>
-                           <value>0b1</value>
+                           <name>0bX</name>
+                           <description>Write 1 to invalidate</description>
+                           <isDefault>true</isDefault>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>CLCK_WAY</name>
-                     <description>Cache Lock Way x</description>
+                     <description>Cache Lock Way x\n
+These bits determine if the given cache way is locked such that its contents will not be displaced by future misses</description>
                      <bitOffset>24</bitOffset>
                      <bitWidth>4</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Cache way is unlocked and may be displaced</description>
+                           <description>Cache way is unlocked</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Cache way is locked and its contents are not displaced</description>
+                           <description>Cache way is locked</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>B01RWSC</name>
-                     <description>Bank 0-1 Read Wait State Control</description>
+                     <description>Bank 0-1 Read Wait State Control\n
+This field defines the number of wait states required to access the bank 0 flash memory</description>
                      <bitOffset>28</bitOffset>
                      <bitWidth>4</bitWidth>
                      <access>read-only</access>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0bXXXX</name>
+                           <description>Wait state (N+1)</description>
+                           <isDefault>true</isDefault>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>
@@ -642,67 +347,73 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>B23SEBE</name>
-                     <description>Bank 2-3 Single Entry Buffer Enable</description>
+                     <description>Bank 2-3 Single Entry Buffer Enable\n
+This bit controls whether the single entry page buffer is enabled in response to flash read accesses.\n
+Its operation is independent from bank 0&apos;s cache.\n
+A high-to-low transition of this bit forces the page buffer to be invalidated</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Single entry buffer is disabled</description>
+                           <description>Buffer is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Single entry buffer is enabled</description>
+                           <description>Buffer is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>B23IPE</name>
-                     <description>Bank 2-3 Instruction Prefetch Enable</description>
+                     <description>Bank 2-3 Instruction Prefetch Enable\n
+This bit controls whether prefetches (or speculative accesses) are initiated in response to instruction fetches</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not prefetch in response to instruction fetches</description>
+                           <description>Don&apos;t prefetch instruction fetches</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enable prefetches in response to instruction fetches</description>
+                           <description>Prefetches instruction fetches</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>B23DPE</name>
-                     <description>Bank 2-3 Data Prefetch Enable</description>
+                     <description>Bank 2-3 Data Prefetch Enable\n
+This bit controls whether prefetches (or speculative accesses) are initiated in response to data references</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not prefetch in response to data references</description>
+                           <description>Don&apos;t prefetch for data references</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enable prefetches in response to data references</description>
+                           <description>Prefetch for data references</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>B23ICE</name>
-                     <description>Bank 2-3 Instruction Cache Enable</description>
+                     <description>Bank 2-3 Instruction Cache Enable\n
+This bit controls whether instruction fetches are loaded into the cache</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not cache instruction fetches</description>
+                           <description>Don&apos;t cache instruction fetches</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -714,13 +425,14 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>B23DCE</name>
-                     <description>Bank 2-3 Data Cache Enable</description>
+                     <description>Bank 2-3 Data Cache Enable\n
+This bit controls whether data references are loaded into the cache</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Do not cache data references</description>
+                           <description>Don&apos;t cache data references</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -732,7 +444,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>B23MW</name>
-                     <description>Bank 2-3 Memory Width</description>
+                     <description>Bank 2-3 Memory Width\n
+This field defines the width of the bank memory</description>
                      <bitOffset>17</bitOffset>
                      <bitWidth>2</bitWidth>
                      <access>read-only</access>
@@ -761,10 +474,18 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>B23RWSC</name>
-                     <description>Bank 2-3 Read Wait State Control</description>
+                     <description>Bank 2-3 Read Wait State Control\n
+This field defines the number of wait states required to access the bank flash memory</description>
                      <bitOffset>28</bitOffset>
                      <bitWidth>4</bitWidth>
                      <access>read-only</access>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0bXXXX</name>
+                           <description>Wait state (N+1)</description>
+                           <isDefault>true</isDefault>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>
@@ -776,80 +497,49 @@ Devices using this peripheral:
                <addressOffset>0x100</addressOffset>
                <register>
                   <name>S0</name>
-                  <description>Cache Tag Storage</description>
+                  <description>Cache Tag Storage\n
+Tag &amp; valid information for Set 0 in Way %s</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
                         <name>valid</name>
-                        <description>1-bit valid for cache entry</description>
+                        <description>Valid bit for cache entry</description>
                         <bitOffset>0</bitOffset>
                         <bitWidth>1</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b0</name>
+                              <description>Entry is invalid</description>
+                              <value>0b0</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1</name>
+                              <description>Entry is valid</description>
+                              <value>0b1</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
                      </field>
                      <field>
                         <name>tag</name>
-                        <description>13-bit tag for cache entry</description>
+                        <description>Tag for cache entry</description>
                         <bitOffset>6</bitOffset>
                         <bitWidth>14</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0bX</name>
+                              <description>Tag (address)</description>
+                              <isDefault>true</isDefault>
+                           </enumeratedValue>
+                        </enumeratedValues>
                      </field>
                   </fields>
                </register>
-               <register>
-                  <name>S1</name>
-                  <description>Cache Tag Storage</description>
-                  <addressOffset>0x4</addressOffset>
-                  <fields>
-                     <field>
-                        <name>valid</name>
-                        <description>1-bit valid for cache entry</description>
-                        <bitOffset>0</bitOffset>
-                        <bitWidth>1</bitWidth>
-                     </field>
-                     <field>
-                        <name>tag</name>
-                        <description>13-bit tag for cache entry</description>
-                        <bitOffset>6</bitOffset>
-                        <bitWidth>14</bitWidth>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S2</name>
-                  <description>Cache Tag Storage</description>
-                  <addressOffset>0x8</addressOffset>
-                  <fields>
-                     <field>
-                        <name>valid</name>
-                        <description>1-bit valid for cache entry</description>
-                        <bitOffset>0</bitOffset>
-                        <bitWidth>1</bitWidth>
-                     </field>
-                     <field>
-                        <name>tag</name>
-                        <description>13-bit tag for cache entry</description>
-                        <bitOffset>6</bitOffset>
-                        <bitWidth>14</bitWidth>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S3</name>
-                  <description>Cache Tag Storage</description>
-                  <addressOffset>0xC</addressOffset>
-                  <fields>
-                     <field>
-                        <name>valid</name>
-                        <description>1-bit valid for cache entry</description>
-                        <bitOffset>0</bitOffset>
-                        <bitWidth>1</bitWidth>
-                     </field>
-                     <field>
-                        <name>tag</name>
-                        <description>13-bit tag for cache entry</description>
-                        <bitOffset>6</bitOffset>
-                        <bitWidth>14</bitWidth>
-                     </field>
-                  </fields>
-               </register>
+               <register derivedFrom="S0"> <name>S1</name> <description>Cache Tag Storage\n
+Tag &amp; valid information for Set 1 in Way %s</description> <addressOffset>0x4</addressOffset> </register>
+               <register derivedFrom="S0"> <name>S2</name> <description>Cache Tag Storage\n
+Tag &amp; valid information for Set 2 in Way %s</description> <addressOffset>0x8</addressOffset> </register>
+               <register derivedFrom="S0"> <name>S3</name> <description>Cache Tag Storage\n
+Tag &amp; valid information for Set 3 in Way %s</description> <addressOffset>0xC</addressOffset> </register>
             </cluster>
             <cluster>
                <dim>4</dim>
@@ -859,196 +549,108 @@ Devices using this peripheral:
                <addressOffset>0x200</addressOffset>
                <register>
                   <name>S0UM</name>
-                  <description>Cache Data Storage (uppermost word)</description>
+                  <description>Cache Data Storage (uppermost word)\n
+Data storage for Set 0 in Way %s</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
                         <name>data</name>
                         <description>Bits [127:96] of data entry</description>
                         <bitOffset>0</bitOffset>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0bX</name>
+                              <description>Cached data</description>
+                              <isDefault>true</isDefault>
+                           </enumeratedValue>
+                        </enumeratedValues>
                      </field>
                   </fields>
                </register>
                <register>
                   <name>S0MU</name>
-                  <description>Cache Data Storage (mid-upper word)</description>
+                  <description>Cache Data Storage (mid-upper word)\n
+Data storage for Set 0 in Way %s</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
                      <field>
                         <name>data</name>
                         <description>Bits [95:64] of data entry</description>
                         <bitOffset>0</bitOffset>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0bX</name>
+                              <description>Cached data</description>
+                              <isDefault>true</isDefault>
+                           </enumeratedValue>
+                        </enumeratedValues>
                      </field>
                   </fields>
                </register>
                <register>
                   <name>S0ML</name>
-                  <description>Cache Data Storage (mid-lower word)</description>
+                  <description>Cache Data Storage (mid-lower word)\n
+Data storage for Set 0 in Way %s</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
                      <field>
                         <name>data</name>
                         <description>Bits [63:32] of data entry</description>
                         <bitOffset>0</bitOffset>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0bX</name>
+                              <description>Cached data</description>
+                              <isDefault>true</isDefault>
+                           </enumeratedValue>
+                        </enumeratedValues>
                      </field>
                   </fields>
                </register>
                <register>
                   <name>S0LM</name>
-                  <description>Cache Data Storage (lowermost word)</description>
+                  <description>Cache Data Storage (lowermost word)\n
+Data storage for Set 0 in Way %s</description>
                   <addressOffset>0xC</addressOffset>
                   <fields>
                      <field>
                         <name>data</name>
                         <description>Bits [31:0] of data entry</description>
                         <bitOffset>0</bitOffset>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0bX</name>
+                              <description>Cached data</description>
+                              <isDefault>true</isDefault>
+                           </enumeratedValue>
+                        </enumeratedValues>
                      </field>
                   </fields>
                </register>
-               <register>
-                  <name>S1UM</name>
-                  <description>Cache Data Storage (uppermost word)</description>
-                  <addressOffset>0x10</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [127:96] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S1MU</name>
-                  <description>Cache Data Storage (mid-upper word)</description>
-                  <addressOffset>0x14</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [95:64] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S1ML</name>
-                  <description>Cache Data Storage (mid-lower word)</description>
-                  <addressOffset>0x18</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [63:32] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S1LM</name>
-                  <description>Cache Data Storage (lowermost word)</description>
-                  <addressOffset>0x1C</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [31:0] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S2UM</name>
-                  <description>Cache Data Storage (uppermost word)</description>
-                  <addressOffset>0x20</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [127:96] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S2MU</name>
-                  <description>Cache Data Storage (mid-upper word)</description>
-                  <addressOffset>0x24</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [95:64] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S2ML</name>
-                  <description>Cache Data Storage (mid-lower word)</description>
-                  <addressOffset>0x28</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [63:32] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S2LM</name>
-                  <description>Cache Data Storage (lowermost word)</description>
-                  <addressOffset>0x2C</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [31:0] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S3UM</name>
-                  <description>Cache Data Storage (uppermost word)</description>
-                  <addressOffset>0x30</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [127:96] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S3MU</name>
-                  <description>Cache Data Storage (mid-upper word)</description>
-                  <addressOffset>0x34</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [95:64] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S3ML</name>
-                  <description>Cache Data Storage (mid-lower word)</description>
-                  <addressOffset>0x38</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [63:32] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
-               <register>
-                  <name>S3LM</name>
-                  <description>Cache Data Storage (lowermost word)</description>
-                  <addressOffset>0x3C</addressOffset>
-                  <fields>
-                     <field>
-                        <name>data</name>
-                        <description>Bits [31:0] of data entry</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
-               </register>
+               <register derivedFrom="S0UM"> <name>S1UM</name> <description>Cache Data Storage (uppermost word)\n
+Data storage for Set 1 in Way %s</description> <addressOffset>0x10</addressOffset> </register>
+               <register derivedFrom="S0MU"> <name>S1MU</name> <description>Cache Data Storage (mid-upper word)\n
+Data storage for Set 1 in Way %s</description> <addressOffset>0x14</addressOffset> </register>
+               <register derivedFrom="S0ML"> <name>S1ML</name> <description>Cache Data Storage (mid-lower word)\n
+Data storage for Set 1 in Way %s</description> <addressOffset>0x18</addressOffset> </register>
+               <register derivedFrom="S0LM"> <name>S1LM</name> <description>Cache Data Storage (lowermost word)\n
+Data storage for Set 1 in Way %s</description> <addressOffset>0x1C</addressOffset> </register>
+               <register derivedFrom="S0UM"> <name>S2UM</name> <description>Cache Data Storage (uppermost word)\n
+Data storage for Set 2 in Way %s</description> <addressOffset>0x20</addressOffset> </register>
+               <register derivedFrom="S0MU"> <name>S2MU</name> <description>Cache Data Storage (mid-upper word)\n
+Data storage for Set 2 in Way %s</description> <addressOffset>0x24</addressOffset> </register>
+               <register derivedFrom="S0ML"> <name>S2ML</name> <description>Cache Data Storage (mid-lower word)\n
+Data storage for Set 2 in Way %s</description> <addressOffset>0x28</addressOffset> </register>
+               <register derivedFrom="S0LM"> <name>S2LM</name> <description>Cache Data Storage (lowermost word)\n
+Data storage for Set 2 in Way %s</description> <addressOffset>0x2C</addressOffset> </register>
+               <register derivedFrom="S0UM"> <name>S3UM</name> <description>Cache Data Storage (uppermost word)\n
+Data storage for Set 3 in Way %s</description> <addressOffset>0x30</addressOffset> </register>
+               <register derivedFrom="S0MU"> <name>S3MU</name> <description>Cache Data Storage (mid-upper word)\n
+Data storage for Set 3 in Way %s</description> <addressOffset>0x34</addressOffset> </register>
+               <register derivedFrom="S0ML"> <name>S3ML</name> <description>Cache Data Storage (mid-lower word)\n
+Data storage for Set 3 in Way %s</description> <addressOffset>0x38</addressOffset> </register>
+               <register derivedFrom="S0LM"> <name>S3LM</name> <description>Cache Data Storage (lowermost word)\n
+Data storage for Set 3 in Way %s</description> <addressOffset>0x3C</addressOffset> </register>
             </cluster>
          </registers>
       </peripheral>

@@ -5,6 +5,7 @@ Devices using this peripheral:
 -->
       <peripheral>
          <?sourceFile "FGPIOC_MKE" ?>
+         <?refreshWholePeripheral?>
          <name>FGPIOC</name>
          <description>General Purpose Input/Output</description>
          <prependToName>FGPIOC</prependToName>
@@ -15,29 +16,40 @@ Devices using this peripheral:
          <resetMask>0xFFFFFFFF</resetMask>
          <addressBlock>
             <offset>0x0</offset>
-            <size>0x1C</size>
+            <size>0x4</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <offset>0x4</offset>
+            <size>0xC</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <offset>0x10</offset>
+            <size>0xC</size>
             <usage>registers</usage>
          </addressBlock>
          <registers>
             <register>
                <name>PDOR</name>
-               <description>Port Data Output Register</description>
+               <description>Port Data Output Register\n
+Controls the level driven on pin provided it is configured as GPIO output</description>
                <addressOffset>0x0</addressOffset>
                <fields>
                   <field>
                      <name>PTI</name>
-                     <description>Port I Data Output</description>
+                     <description>Port Data Output</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Logic level 0 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <description>Low</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Logic level 1 is driven on pin provided pin is configured for General Purpose Output</description>
+                           <description>High</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -46,25 +58,21 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PSOR</name>
-               <description>Port Set Output Register</description>
+               <description>Port Set Output Register\n
+Writing 1 to a bit sets the corresponding bit in the PDOR</description>
                <addressOffset>0x4</addressOffset>
                <access>write-only</access>
                <fields>
                   <field>
                      <name>PTI</name>
-                     <description>Port I Set Output</description>
+                     <description>Port Set Output</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Corresponding bit does not change</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Corresponding bit is set to logic 1</description>
-                           <value>0b1</value>
+                           <name>0bX</name>
+                           <description>Write 1 to set</description>
+                           <isDefault>true</isDefault>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
@@ -72,25 +80,21 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PCOR</name>
-               <description>Port Clear Output Register</description>
+               <description>Port Clear Output Register\n
+Writing 1 to a bit clears the corresponding bit in the PDOR</description>
                <addressOffset>0x8</addressOffset>
                <access>write-only</access>
                <fields>
                   <field>
                      <name>PTI</name>
-                     <description>Port I Clear Output</description>
+                     <description>Port Clear Output</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Corresponding bit in PDORn does not change</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Corresponding bit in PDORn is cleared to logic 0</description>
-                           <value>0b1</value>
+                           <name>0bX</name>
+                           <description>Write 1 to clear</description>
+                           <isDefault>true</isDefault>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
@@ -98,25 +102,21 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PTOR</name>
-               <description>Port Toggle Output Register</description>
+               <description>Port Toggle Output Register\n
+Writing 1 to a bit toggles the corresponding bit in the PDOR</description>
                <addressOffset>0xC</addressOffset>
                <access>write-only</access>
                <fields>
                   <field>
                      <name>PTI</name>
-                     <description>Port I Toggle Output</description>
+                     <description>Port Toggle Output</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Corresponding bit in PDORn does not change</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Corresponding bit in PDORn is set to the inverse of its existing logic state</description>
-                           <value>0b1</value>
+                           <name>0bX</name>
+                           <description>Write 1 to toggle</description>
+                           <isDefault>true</isDefault>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
@@ -124,23 +124,25 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PDIR</name>
-               <description>Port Data Input Register</description>
+               <description>Port Data Input Register\n
+This register directly reflects the value on the port pins if configured as GPIO</description>
                <addressOffset>0x10</addressOffset>
+               <access>read-only</access>
                <fields>
                   <field>
                      <name>PTI</name>
-                     <description>Port I Data Input</description>
+                     <description>Port Data Input</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Pin logic level is logic 0 or is not configured for use by digital function</description>
+                           <description>Pin is low</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Pin logic level is logic 1</description>
+                           <description>Pin is high</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -149,23 +151,24 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PDDR</name>
-               <description>Port Data Direction Register</description>
+               <description>Port Data Direction Register\n
+Controls the direction of port pins</description>
                <addressOffset>0x14</addressOffset>
                <fields>
                   <field>
                      <name>PTI</name>
-                     <description>Port I Data Direction</description>
+                     <description>Port Data Direction</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
+                           <description>Input</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <description>Output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -174,24 +177,26 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PIDR</name>
-               <description>Port Input Disable Register</description>
+               <description>Port Input Disable Register\n
+Used to disable the pin input function</description>
                <addressOffset>0x18</addressOffset>
-               <access>read-only</access>
+               <resetValue>0xFFFFFFFF</resetValue>
                <fields>
                   <field>
                      <name>PTI</name>
-                     <description>Port I Data Direction</description>
+                     <description>Port Input Disable\n
+Disables a pin as General Purpose Input. Corresponding Pin Data Input Register bit will read zero</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Pin is configured as general purpose input, if configured for the GPIO function</description>
-                           <value>0b0</value>
+                           <name>0b1</name>
+                           <description>Input available</description>
+                           <value>0b1</value>
                         </enumeratedValue>
                         <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Pin is configured for general purpose output, if configured for the GPIO function</description>
+                           <name>1</name>
+                           <description>Input reads as 0</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

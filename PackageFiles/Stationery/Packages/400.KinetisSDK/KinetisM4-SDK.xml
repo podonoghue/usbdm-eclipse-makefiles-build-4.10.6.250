@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0">
+   <!-- Freescale Kinetis SDK -->
+   <projectActionList id="KinetisM4-SDK" root="usbdm_resource_path/Stationery/ARM/">
+      <applyWhen>
+         <deviceFamilyIs>CortexM4</deviceFamilyIs>
+      </applyWhen>
+      <variable id="KinetisM4-SDK-enable" name="Kinetis SDK" description="Adds Kinetis SDK features" />
+      <condition variable="KinetisM4-SDK-enable">
+         <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths">
+            <value>&quot;${KSDK_PATH}/platform/utilities&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/drivers/clock&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/drivers/gpio&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/drivers/interrupt&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/hal/sim&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/hal/port&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/hal/gpio&quot;</value>
+            <value>&quot;${KSDK_PATH}/rtos&quot;</value>
+         </projectOption>
+         <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.include.paths">
+            <value>&quot;${KSDK_PATH}/platform/utilities&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/drivers/clock&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/drivers/gpio&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/drivers/interrupt&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/hal/sim&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/hal/port&quot;</value>
+            <value>&quot;${KSDK_PATH}/platform/hal/gpio&quot;</value>
+            <value>&quot;${KSDK_PATH}/rtos&quot;</value>
+         </projectOption>
+         <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols">
+            <value>__CORTEX_M3</value>
+            <value>__CMSIS_RTOS</value>
+         </projectOption>
+         <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols">
+            <value>__CORTEX_M3</value>
+            <value>__CMSIS_RTOS</value>
+         </projectOption>
+      </condition>
+   </projectActionList>
+
+</root>

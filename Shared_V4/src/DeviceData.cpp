@@ -25,6 +25,7 @@
     \verbatim
    Change History
    -====================================================================================================
+   |  1 Dec 2014 | Fixed format in printf()s                                           - pgo 4.10.6.230
    | 12 Dec 2014 | Started changes for Kinetis clock trimming                          - pgo 4.10.6.220
    | 29 Aug 2014 | Changes to SDID wildcards                                           - pgo 4.10.6.190
    | 12 Jul 2014 | Added getCommonFlashProgram(), changed getFlashProgram()            - pgo V4.10.6.170
@@ -422,7 +423,7 @@ void DeviceData::setCustomSecurity(const std::string &securityValue) {
       }
       SecurityEntryPtr securityEntry = memoryRegionPtr->getSecurityEntry();
       if (securityEntry != NULL) {
-         Logging::print("securityEntry = %p, use_count = %d, securityInfo = %s\n", &*securityEntry, securityEntry.use_count(), (const char *)securityEntry->toString().c_str());
+         Logging::print("securityEntry = %p, use_count = %ld, securityInfo = %s\n", &*securityEntry, securityEntry.use_count(), (const char *)securityEntry->toString().c_str());
          securityEntry->setCustomSecureInformation(SecurityInfoPtr(new SecurityInfo(0, SecurityInfo::custom, securityValue)));
          SecurityInfoPtr getCustomSecureInformation = securityEntry->getCustomSecureInformation();
 //         Logging::print("getCustomSecureInformation = %p, use_count = %d, size = %d, securityInfo = %s\n", &*getCustomSecureInformation, getCustomSecureInformation.use_count(), getCustomSecureInformation->getSize(), (const char *)getCustomSecureInformation->toString().c_str());
@@ -598,14 +599,15 @@ void DeviceDataBase::listDevices() const {
             Logging::print("#    Target           Address    SDID          Script? Flash?             \n");
             Logging::print("#=========================================================================\n");
          }
-         Logging::print("%-20s%s 0x%08X 0x%08X %7s %7s\n",
+         Logging::print("%-20s%s 0x%08X 0x%08X 0x%08X %7s %7s\n",
                deviceData->getTargetName().c_str(), aliased?"(A)":"   ",
 //                  ClockTypes::getClockName(deviceData->getClockType()).c_str(),
 //                  deviceData->getClockAddress(),
 //                  deviceData->getClockTrimNVAddress(),
 //                  deviceData->getClockTrimFreq()/1000.0,
                deviceData->getSDIDAddress(),
-               deviceData->getSDID(),
+               deviceData->getSDID().value,
+               deviceData->getSDID().mask,
                deviceData->getFlashScripts()?"Yes":"No",
                deviceData->getCommonFlashProgram()?"Yes":"No"
          );
@@ -624,7 +626,7 @@ void DeviceDataBase::listDevices() const {
                deviceData->getClockTrimNVAddress(),
                deviceData->getClockTrimFreq()/1000.0,
                deviceData->getSDIDAddress(),
-               deviceData->getSDID(),
+               deviceData->getSDID().value,
                deviceData->getFlashScripts()?"Y":"N",
                deviceData->getCommonFlashProgram()?"Y":"N"
          );
@@ -650,7 +652,7 @@ void DeviceDataBase::listDevices() const {
                   Logging::printq(",P=0x%02X)", memoryRange->pageNo);
                }
                else {
-                  Logging::printq(")", memoryRange->start, memoryRange->end);
+                  Logging::printq(")");
                }
             }
             Logging::print("\n");

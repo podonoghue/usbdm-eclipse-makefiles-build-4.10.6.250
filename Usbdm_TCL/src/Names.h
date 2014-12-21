@@ -1,8 +1,8 @@
 /*!
  * \brief Header file for CmdTable.c
 */
-#ifndef NAMES_H_
-#define NAMES_H_
+#ifndef _NAMES_H_
+#define _NAMES_H_
 
 
 char const *getCommandName(unsigned char command);
@@ -44,6 +44,13 @@ char const *getDHCSRName(uint32_t dhcsrValue);
 char const *getDEMCRName(uint32_t demcrValue);
 char const *getMDM_APControlName(uint32_t mdmApValue);
 char const *getMDM_APStatusName(uint32_t mdmApValue);
+char const *getAutoConnectName(AutoConnect_t mode);
+//char const *getConnectionRetryName(RetryMode mode);
+char const *getMemSpaceName(MemorySpace_t memSpace);
+char const *getMemSpaceAbbreviatedName(MemorySpace_t memSpace);
+char const *getStatusRegName(unsigned int targetType, unsigned int value);
+void printBdmOptions(const USBDM_ExtendedOptions_t *options);
+#endif // LOG
 
 char const *getHardwareDescription(unsigned int hardwareVersion);
 char const *getBriefHardwareDescription(unsigned int hardwareVersion);
@@ -55,6 +62,3 @@ char const *getSRSLName(uint32_t srslValue);
 char const *getSRSHName(uint32_t srshValue);
 char const *getDpRegName(int reg);
 char const *ARM_GetRegisterName( unsigned int regAddr );
-
-
-#endif // NAMES_H_

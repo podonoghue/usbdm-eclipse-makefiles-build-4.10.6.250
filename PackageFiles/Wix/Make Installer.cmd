@@ -1,7 +1,7 @@
 @echo off
 cls
-set VERSION=4_10_6_230
-set VERSIONn=4.10.6.230
+set VERSION=4_10_6_240
+set VERSIONn=4.10.6.240
 
 set WXWIDGETS_VERSION=30u
 
@@ -28,6 +28,7 @@ set REBUILT_WXS=DeviceData.wxs Stationery.wxs FlashImages.wxs WizardPatchData.wx
 set REBUILT_WXS=%REBUILT_WXS% EclipsePlugin_1.wxs EclipsePlugin_2.wxs EclipsePlugin_3.wxs EclipsePlugin_4.wxs EclipsePlugin_5.wxs
 set REBUILT_WXS=%REBUILT_WXS% EclipseKepler.wxs KinetisDesignStudio.wxs
 
+set CANDLE_OPTIONS=-ext WixUIExtension -ext WixUtilExtension
 set LIGHT_OPTIONS=-ext WixUIExtension -ext WixUtilExtension -sw0204
 set LIGHT_DIRS=-b bin\DeviceData -b bin\Stationery -b bin\FlashImages -b WizardPatches -b Examples -b %CODEWARRIOR_PLUGIN_SOURCE% -b %ECLIPSE_PLUGIN_SOURCE%
 
@@ -57,7 +58,7 @@ mkdir %WIX_BUILD_DIR%
 %HEAT% dir .\plugins\codewarrior  %HEAT_OPTIONS% -cg Cg.CWEclipsePlugin   -dr D.CWEclipsePlugins -out %WIX_BUILD_DIR%\CWEclipsePlugin.wxs
 %HEAT% dir .\plugins\eclipse      %HEAT_OPTIONS% -cg Cg.EclipsePlugins    -dr D.EclipsePlugins   -out %WIX_BUILD_DIR%\EclipsePlugins.wxs
 
-%CANDLE% -dProductVersion=%VERSIONn% -dWxWidgetsVer=%WXWIDGETS_VERSION% -o %WIX_BUILD_DIR%\ *.wxs %WIX_BUILD_DIR%\*.wxs
+%CANDLE% %CANDLE_OPTIONS% -dProductVersion=%VERSIONn% -dWxWidgetsVer=%WXWIDGETS_VERSION% -o %WIX_BUILD_DIR%\ *.wxs %WIX_BUILD_DIR%\*.wxs
 %LIGHT% %LIGHT_OPTIONS% %LIGHT_DIRS% -out %MSI_FILE% %WIX_BUILD_DIR%\*.wixobj
 
 rem del *.wixpdb

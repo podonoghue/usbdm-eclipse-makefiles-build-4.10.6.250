@@ -6,14 +6,6 @@
 <!ENTITY CoreDebug    SYSTEM "peripherals/CoreDebug.svd.xml">
 <!ENTITY FTFA         SYSTEM "peripherals/FTFA.svd.xml">
 <!ENTITY GPIOA        SYSTEM "peripherals/GPIOA_MKM.svd.xml">
-<!ENTITY GPIOB        SYSTEM "peripherals/GPIOB_from_GPIOA_1.svd.xml">
-<!ENTITY GPIOC        SYSTEM "peripherals/GPIOC_from_GPIOA_1.svd.xml">
-<!ENTITY GPIOD        SYSTEM "peripherals/GPIOD_from_GPIOA_1.svd.xml">
-<!ENTITY GPIOE        SYSTEM "peripherals/GPIOE_from_GPIOA_1.svd.xml">
-<!ENTITY GPIOF        SYSTEM "peripherals/GPIOF_from_GPIOA_1.svd.xml">
-<!ENTITY GPIOG        SYSTEM "peripherals/GPIOG_from_GPIOA_0.svd.xml">
-<!ENTITY GPIOH        SYSTEM "peripherals/GPIOH_from_GPIOA_0.svd.xml">
-<!ENTITY GPIOI        SYSTEM "peripherals/GPIOI_from_GPIOA_0.svd.xml">
 <!ENTITY I2C0         SYSTEM "peripherals/I2C0_MKM.svd.xml">
 <!ENTITY LLWU         SYSTEM "peripherals/LLWU_MKL_1.svd.xml">
 <!ENTITY LPTMR0       SYSTEM "peripherals/LPTMR0_MKM.svd.xml">
@@ -23,14 +15,6 @@
 <!ENTITY NVIC         SYSTEM "peripherals/NVIC_MKL.svd.xml">
 <!ENTITY OSC0         SYSTEM "peripherals/OSC_MKM.svd.xml">
 <!ENTITY PORTA        SYSTEM "peripherals/PORTA_MKM.svd.xml">
-<!ENTITY PORTB        SYSTEM "peripherals/PORTB_from_PORTA_1.svd.xml">
-<!ENTITY PORTC        SYSTEM "peripherals/PORTC_from_PORTA_1.svd.xml">
-<!ENTITY PORTD        SYSTEM "peripherals/PORTD_from_PORTA_1.svd.xml">
-<!ENTITY PORTE        SYSTEM "peripherals/PORTE_from_PORTA_1.svd.xml">
-<!ENTITY PORTF        SYSTEM "peripherals/PORTF_from_PORTA_1.svd.xml">
-<!ENTITY PORTG        SYSTEM "peripherals/PORTG_from_PORTA_0.svd.xml">
-<!ENTITY PORTH        SYSTEM "peripherals/PORTH_from_PORTA_0.svd.xml">
-<!ENTITY PORTI        SYSTEM "peripherals/PORTI_from_PORTA_0.svd.xml">
 <!ENTITY RCM          SYSTEM "peripherals/RCM_MKM.svd.xml">
 <!ENTITY RNG          SYSTEM "peripherals/RNG_1.svd.xml">
 <!ENTITY ROM          SYSTEM "peripherals/ROM_MKL.svd.xml">
@@ -42,9 +26,6 @@
 <!ENTITY SPI1         SYSTEM "peripherals/SPI1_MKM_FIFO.svd.xml">
 <!ENTITY SYST         SYSTEM "peripherals/SysTick_0.svd.xml">
 <!ENTITY UART0        SYSTEM "peripherals/UART0_MKM_C7816.svd.xml">
-<!ENTITY UART1        SYSTEM "peripherals/UART1_from_UART0_0.svd.xml">
-<!ENTITY UART2        SYSTEM "peripherals/UART2_from_UART0_0.svd.xml">
-<!ENTITY UART3        SYSTEM "peripherals/UART3_from_UART1_0.svd.xml">
 <!ENTITY VREF         SYSTEM "peripherals/VREF_MKM.svd.xml">
 <!ENTITY WDOG         SYSTEM "peripherals/WDOG_MKM.svd.xml">
 ]>
@@ -68,14 +49,14 @@
 &CoreDebug;
 &FTFA;
 &GPIOA;
-&GPIOB;
-&GPIOC;
-&GPIOD;
-&GPIOE;
-&GPIOF;
-&GPIOG;
-&GPIOH;
-&GPIOI;
+<peripheral derivedFrom="GPIOA"><name>GPIOB</name><prependToName>GPIOB</prependToName><baseAddress>0x400FF001</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOC</name><prependToName>GPIOC</prependToName><baseAddress>0x400FF002</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOD</name><prependToName>GPIOD</prependToName><baseAddress>0x400FF003</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOE</name><prependToName>GPIOE</prependToName><baseAddress>0x400FF040</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOF</name><prependToName>GPIOF</prependToName><baseAddress>0x400FF041</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOG</name><prependToName>GPIOG</prependToName><baseAddress>0x400FF042</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOH</name><prependToName>GPIOH</prependToName><baseAddress>0x400FF043</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOI</name><prependToName>GPIOI</prependToName><baseAddress>0x400FF080</baseAddress></peripheral>
 &I2C0;
 &LLWU;
 &LPTMR0;
@@ -85,14 +66,14 @@
 &NVIC;
 &OSC0;
 &PORTA;
-&PORTB;
-&PORTC;
-&PORTD;
-&PORTE;
-&PORTF;
-&PORTG;
-&PORTH;
-&PORTI;
+<peripheral derivedFrom="PORTA"><name>PORTB</name><prependToName>PORTB</prependToName><baseAddress>0x40047000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTC</name><prependToName>PORTC</prependToName><baseAddress>0x40048000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTD</name><prependToName>PORTD</prependToName><baseAddress>0x40049000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTE</name><prependToName>PORTE</prependToName><baseAddress>0x4004A000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTF</name><prependToName>PORTF</prependToName><baseAddress>0x4004B000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTG</name><prependToName>PORTG</prependToName><baseAddress>0x4004C000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTH</name><prependToName>PORTH</prependToName><baseAddress>0x4004D000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTI</name><prependToName>PORTI</prependToName><baseAddress>0x4004E000</baseAddress></peripheral>
 &RCM;
 &RNG;
 &ROM;
@@ -104,9 +85,9 @@
 &SPI1;
 &SYST;
 &UART0;
-&UART1;
-&UART2;
-&UART3;
+<peripheral derivedFrom="UART0"><name>UART1</name><prependToName>UART1</prependToName><baseAddress>0x4006B000</baseAddress></peripheral>
+<peripheral derivedFrom="UART0"><name>UART2</name><prependToName>UART2</prependToName><baseAddress>0x4006C000</baseAddress></peripheral>
+<peripheral derivedFrom="UART1"><name>UART3</name><prependToName>UART3</prependToName><baseAddress>0x4006D000</baseAddress></peripheral>
 &VREF;
 &WDOG;
    </peripherals>

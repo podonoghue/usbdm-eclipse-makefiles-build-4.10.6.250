@@ -26,6 +26,7 @@
 +================================================================================
 | Revision History
 +================================================================================
+| 18 Dec 14 | TCL interface changes                                         - pgo V4.10.6.240
 | 17 Aug 14 | Changed SDID structure to support multiple masks              - pgo V4.10.6.180
 | 12 Jul 14 | Added getCommonFlashProgram(), changed getFlashProgram() etc  - pgo V4.10.6.170
 | 26 Feb 14 | 4.10.6.120 removed buffer clearing initSmallTargetBuffer()    - pgo
@@ -666,7 +667,7 @@ USBDM_ErrorCode FlashProgrammer::initialiseTargetFlash() {
          return PROGRAMMING_RC_ERROR_SPEED_APPROX;
 
       busFrequency = parameters.getConnectionFreq()*parameters.getBDMtoBUSFactor();
-      Logging::print("Using user-supplied bus speed = %d kHz\n",
+      Logging::print("Using user-supplied bus speed = %lud kHz\n",
             busFrequency/1000);
    }
    else
@@ -679,7 +680,7 @@ USBDM_ErrorCode FlashProgrammer::initialiseTargetFlash() {
    uint32_t targetBusFrequency = (uint32_t)round(busFrequency/1000.0);
    flashOperationInfo.targetBusFrequency = targetBusFrequency;
 
-   Logging::print("Target Bus Frequency = %ld kHz\n", targetBusFrequency);
+   Logging::print("Target Bus Frequency = %ud kHz\n", targetBusFrequency);
 #endif
 
    char buffer[100];
@@ -1075,8 +1076,9 @@ USBDM_ErrorCode FlashProgrammer::loadLargeTargetProgram(memoryElementType    *bu
    if (currentFlashProgram != flashProgram)  {
       Logging::print("Reloading due to change in flash code\n");
       // Write the flash programming code to target memory
-      if (WriteMemory(memorySpace, codeLoadSize, codeLoadAddress, (uint8_t *)buffer) != BDM_RC_OK) {
-         Logging::print("WriteMemory() Failed, rc = %d\n");
+      USBDM_ErrorCode rc = WriteMemory(memorySpace, codeLoadSize, codeLoadAddress, (uint8_t *)buffer);
+      if (rc != BDM_RC_OK) {
+         Logging::print("WriteMemory() Failed, rc = %d (%s)\n", rc, USBDM_GetErrorString(rc));
          return PROGRAMMING_RC_ERROR_BDM_WRITE;
       }
    }
@@ -1599,7 +1601,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    unsigned long value;
    USBDM_Connect();
    ReadPC(&value);
-   Logging::print("Start PC = 0x%08X, end PC = 0x%08X\n", targetRegPC, value);
+   Logging::print("Start PC = 0x%08lX, end PC = 0x%08lX\n", targetRegPC, value);
 
 #if (TARGET == CFV1)
    // Read AG128 watchdog
@@ -1661,7 +1663,7 @@ USBDM_ErrorCode FlashProgrammer::executeTargetProgram(memoryElementType *pBuffer
    return rc;
 }
 
-#if (TARGET == CFVx) || (TARGET == HCS12) || (TARGET == S12Z) || (TARGET == MC56F80xx)
+#if (TARGET == CFVx) || (TARGET == HCS12) || (TARGET == S12Z) || (TARGET == MC56F80xx) || (TARGET == ARM)
 //=======================================================================
 //! \brief Determines the target execution speed
 //!
@@ -1724,7 +1726,7 @@ USBDM_ErrorCode FlashProgrammer::determineTargetSpeed(void) {
          timingDataResult.errorCode);
    unsigned long value;
    ReadPC(&value);
-   Logging::print("Start PC = 0x%08X, end PC = 0x%08X\n", targetProgramInfo.entry, value);
+   Logging::print("Start PC = 0x%08X, end PC = 0x%08lX\n", targetProgramInfo.entry, value);
    if ((timingDataResult.flags != DO_TIMING_LOOP) && (timingDataResult.errorCode == FLASH_ERR_OK)) {
       timingDataResult.errorCode    = FLASH_ERR_UNKNOWN;
       Logging::error("Error, Unexpected flag result\n");
@@ -1808,7 +1810,7 @@ USBDM_ErrorCode FlashProgrammer::eraseFlash(void) {
    return rc;
 }
 
-#if (TARGET == CFV1) || (TARGET == ARM) || (TARGET == HCS08)
+#if (TARGET == CFV1) || (TARGET == ARM) || (TARGET == HCS08) || (TARGET == S12Z)
 //=======================================================================
 //! Selective erases the target memory security areas.
 //! This is only of use when the target is unsecured but the security
@@ -2061,9 +2063,10 @@ USBDM_ErrorCode FlashProgrammer::checkTargetUnSecured() {
    USBDM_ErrorCode rc = initialiseTarget();
    if (rc != PROGRAMMING_RC_OK)
       return rc;
-   if (runTCLCommand("isUnsecure") != PROGRAMMING_RC_OK) {
+   rc = runTCLCommand("isUnsecure");
+   if (rc != PROGRAMMING_RC_OK) {
       Logging::print("Secured\n");
-      return PROGRAMMING_RC_ERROR_SECURED;
+      return rc;
    }
    Logging::print("Unsecured\n");
    return PROGRAMMING_RC_OK;
@@ -2284,19 +2287,11 @@ USBDM_ErrorCode FlashProgrammer::runTCLCommand(const char *command) {
       Logging::error("No TCL Interpreter\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-   int rc = evalTclScript(tclInterpreter, command);
-   const char *result = getTclResult(tclInterpreter);
-   if ((result != NULL) && (*result != '\0')) {
-      // Error return
-      Logging::error("Result = \'%s\'\n", result);
-      return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
+   USBDM_ErrorCode rc = evalTclScript(tclInterpreter, command);
+   if (rc != BDM_RC_OK) {
+      Logging::error("Failed - rc = %d (%s)\n", rc, USBDM_GetErrorString(rc));
    }
-   if (rc != 0) {
-      // Unexpected failure!
-      Logging::error("TCL Command '%s' failed\n", command);
-      return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
-   }
-   return PROGRAMMING_RC_OK;
+   return rc;
 }
 
 //=======================================================================
@@ -3138,7 +3133,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
       return rc;
    }
 #endif
-#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12) || (TARGET == S12Z)
+#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12)
    // Check target SDID (RS08/HCS08/HCS12 allows SDID to be read on secured device)
    rc = confirmSDID();
    if (rc != PROGRAMMING_RC_OK) {
@@ -3152,7 +3147,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
          return rc;
       }
    }
-#if (TARGET == CFV1) || (TARGET == ARM) || (TARGET == CFVx) || (TARGET == MC56F80xx)
+#if (TARGET == CFV1) || (TARGET == ARM) || (TARGET == CFVx) || (TARGET == MC56F80xx) || (TARGET == S12Z)
    // Check target SDID
    rc = confirmSDID();
    if (rc != PROGRAMMING_RC_OK) {
@@ -3164,7 +3159,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
-#if (TARGET == CFVx) || (TARGET == MC56F80xx)
+#if (TARGET == CFVx) || (TARGET == MC56F80xx)// || (TARGET == ARM)
    rc = determineTargetSpeed();
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
@@ -3185,19 +3180,21 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    //
    // The above leaves the Flash ready for programming
    //
-#if (TARGET==ARM) || (TARGET == CFV1)
+#if (TARGET==ARM) || (TARGET == CFV1) || (TARGET == S12Z)
    if (parameters.getEraseOption() == DeviceData::eraseMass) {
-      // Erase the security area as Mass erase programs it
+      // Erase the security area as Mass erase programs it to a non-blank value
       rc = selectiveEraseFlashSecurity();
       if (rc != PROGRAMMING_RC_OK) {
          return rc;
       }
    }
+#if (TARGET==ARM) || (TARGET == CFV1)
    // Program EEPROM/DFLASH Split
    rc = partitionFlexNVM();
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
+#endif
 #endif
    if (parameters.getEraseOption() == DeviceData::eraseAll) {
       // Erase all flash arrays

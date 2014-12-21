@@ -7,7 +7,7 @@ Devices using this peripheral:
 -->
       <peripheral>
          <?sourceFile "USB0_CLK_RECOVER" ?>
-         <?forcedAccessWidth "32" ?>
+         <?forcedBlockWidth "32" ?>
          <name>USB0</name>
          <description>Universal Serial Bus, OTG Capable Controller</description>
          <prependToName>USB0</prependToName>

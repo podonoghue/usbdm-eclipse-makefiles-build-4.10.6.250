@@ -13,10 +13,11 @@
 <!ENTITY HCS08-alt-load-flash-program     SYSTEM "HCS08/HCS08-default-0xB0-flash-program.abs.s19">
 ]>
 <!-- 
-      V4.10.7 - Changed SDIDs for MC9S08PAxx, MC9S08PTxx and MC9S08PLxx 
-      V4.10.6 - Added SDID for MC9S08PT32
-      V4.10.6 - Added MC9S08PA4
-      V4.10.4 - Changed how security information is expressed
+      V4.10.6.240    - Added experimental FXTH87xx11
+      V4.10.6        - Changed SDIDs for MC9S08PAxx, MC9S08PTxx and MC9S08PLxx 
+      V4.10.6        - Added SDID for MC9S08PT32
+      V4.10.6        - Added MC9S08PA4
+      V4.10.4        - Changed how security information is expressed
  -->
 <root version="4.10.4">
    <description>HCS08 Device characteristics v4.8.0 25/12/2011</description>
@@ -1942,6 +1943,26 @@
          </memory>
          <sdid value="0x002" />
       </device>
+      <!-- 
+      ====================================================================================
+      Experimental
+       -->
+      <device family="HCS08" name="FXTH87xx11">
+         <memory type="ram">
+            <memoryRange start="0x000090" end="0x28F" />
+         </memory>
+         <memory registerAddress="0x1820" type="flash" securityAddress="0xFFB0">
+            <securityEntryRef ref="HCS08-fnored-security" />
+            <memoryRange start="0x00C000" end="0xDFBF" />
+         </memory>
+         <sdid value="0x002C" />
+         <flashProgramRef ref="HCS08-alt-load-flash-program" />
+         <note>Untested</note>
+      </device>
+      <!-- 
+      ====================================================================================
+      Experimental
+       -->
       <!-- 
       &Test-Devices;
        -->

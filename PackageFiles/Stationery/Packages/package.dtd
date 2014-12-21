@@ -1,0 +1,73 @@
+<!-- Root fileElement -->
+<!ELEMENT root (projectActionList*) >
+   <!ATTLIST root version CDATA #REQUIRED >
+ 
+<!-- List of actions to be applied to a project -->
+<!ELEMENT projectActionList (applyWhen|projectActionList|projectActionListRef|variable|condition|excludeSourceFile|excludeSourceFolder|createFolder|copy|projectOption|customAction)*>
+   <!ATTLIST projectActionList id    ID     #IMPLIED>
+   <!ATTLIST projectActionList root  CDATA  #IMPLIED>
+
+<!ELEMENT applyWhen (deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches|and|or|not)>
+
+<!ELEMENT and ((deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches|and|or|not)*) >
+<!ELEMENT or  ((deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches|and|or|not)*) >
+<!ELEMENT not  (deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches|and|or|not) >
+
+<!ELEMENT deviceNameIs (#PCDATA) >
+<!ELEMENT deviceFamilyIs (#PCDATA) >
+<!ELEMENT deviceSubfamilyIs (#PCDATA) >
+<!ELEMENT deviceNameMatches (#PCDATA) >
+<!ELEMENT deviceFamilyMatches (#PCDATA) >
+<!ELEMENT deviceSubfamilyMatches (#PCDATA) >
+
+<!ELEMENT projectActionListRef EMPTY>
+   <!ATTLIST projectActionListRef ref IDREF #REQUIRED>
+ 
+<!-- Variable controlling a condition -->
+<!ELEMENT variable EMPTY >
+   <!ATTLIST variable id           ID    #REQUIRED>
+   <!ATTLIST variable name         CDATA #REQUIRED>
+   <!ATTLIST variable description  CDATA #IMPLIED>
+   <!ATTLIST variable type         (boolean) "boolean" >
+   <!ATTLIST variable defaultValue CDATA #IMPLIED>
+   <!ATTLIST variable values       CDATA #IMPLIED>
+   
+<!-- Condition controlling actions -->
+<!ELEMENT condition (excludeSourceFile|excludeSourceFolder|createFolder|copy|projectOption|customAction)*>
+   <!ATTLIST condition variable    IDREF  #REQUIRED>
+   <!ATTLIST condition negated     (true|false) "false" >
+   
+<!-- Exclude/include source file in Eclipse project -->
+<!ELEMENT excludeSourceFile EMPTY >
+   <!ATTLIST excludeSourceFile target  CDATA         #REQUIRED>
+   <!ATTLIST excludeSourceFile excluded (true|false) "true" >
+
+<!-- Exclude/include source folder in Eclipse project -->
+<!ELEMENT excludeSourceFolder EMPTY >
+   <!ATTLIST excludeSourceFolder target  CDATA         #REQUIRED>
+   <!ATTLIST excludeSourceFolder excluded (true|false) "true" >
+
+ <!ELEMENT createFolder EMPTY >
+   <!ATTLIST createFolder target  CDATA #REQUIRED>
+   <!ATTLIST createFolder type    CDATA #REQUIRED>
+
+<!-- File to be copied to a project -->
+<!ELEMENT copy EMPTY >
+   <!ATTLIST copy source  				CDATA #REQUIRED>
+   <!ATTLIST copy target  				CDATA #REQUIRED>
+   <!ATTLIST copy type    				CDATA #IMPLIED>
+   <!ATTLIST copy macroReplacement  (true|false) "true">
+   <!ATTLIST copy replace           (true|false) "false">
+   
+<!-- Eclipse project options (for gcc, gdb etc) -->
+<!ELEMENT projectOption (value*)>
+   <!ATTLIST projectOption id        CDATA        #REQUIRED>
+   <!ATTLIST projectOption replace   (true|false) "true">
+
+<!-- Custom build action -->
+<!ELEMENT customAction (value)* >
+   <!ATTLIST customAction class       CDATA #REQUIRED>
+   
+<!-- Attribute value for projectOption --> 
+<!ELEMENT value (#PCDATA)>  
+   

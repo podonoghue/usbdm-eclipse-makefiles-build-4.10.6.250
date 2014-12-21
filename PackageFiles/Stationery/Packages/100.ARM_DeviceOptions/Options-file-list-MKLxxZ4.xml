@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0">
+   <!-- Extra Optional files for MK1x MKL2x MKL3x -->
+   <projectActionList id="Options-file-list-MKLxxZ4">
+      <applyWhen>
+         <or>
+            <deviceSubfamilyIs>MKL14Z4</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MKL15Z4</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MKL16Z4</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MKL24Z4</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MKL25Z4</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MKL26Z4</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MKL34Z4</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MKL36Z4</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MKL46Z4</deviceSubfamilyIs>
+         </or>
+      </applyWhen>
+      <variable id="Clock-setup-MKL25" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="UART-setup-MKL25" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
+      <condition variable="Clock-setup-MKL25">
+         <copy source="Startup_Code/clock-MKLxx.c" target="Startup_Code/clock.c" />
+         <copy source="Project_Headers/clock_configure-MKLxx.h" target="Project_Headers/clock_configure.h" />
+      </condition>
+      <condition variable="UART-setup-MKL25">
+         <copy source="Startup_Code/uart-mkl.c" target="Startup_Code/uart.c" />
+         <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
+      </condition>
+   </projectActionList>
+</root>

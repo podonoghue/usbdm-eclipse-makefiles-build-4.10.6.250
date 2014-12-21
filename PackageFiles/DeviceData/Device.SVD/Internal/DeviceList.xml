@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<!DOCTYPE DeviceList SYSTEM "DeviceListSchema.dtd">
+<!DOCTYPE DeviceList SYSTEM "DeviceListSchema.dtd" >
 
 <root version="4.10.6">
    <description>Lookup table for mapping complete device name to the SVD file that describes the device</description>
@@ -196,6 +196,8 @@
       <device name="MKL36Z64M4">       <svdFileName>MKL36Z4</svdFileName>    </device>
       <device name="MKL36Z128M4">      <svdFileName>MKL36Z4</svdFileName>    </device>
       <device name="MKL36Z256M4">      <svdFileName>MKL36Z4</svdFileName>    </device>
+      <device name="MKL43Z128M4">      <svdFileName>MKL43Z4</svdFileName>    </device>
+      <device name="MKL43Z256M4">      <svdFileName>MKL43Z4</svdFileName>    </device>
       <device name="MKL46Z128M4">      <svdFileName>MKL46Z4</svdFileName>    </device>
       <device name="MKL46Z256M4">      <svdFileName>MKL46Z4</svdFileName>    </device>
       <device name="MKV10Z32M7">       <svdFileName>MKV10Z7</svdFileName>    </device>
@@ -207,18 +209,39 @@
       <device name="SKEAZ128M4">       <svdFileName>SKEAZ4</svdFileName>     </device>
       
       <device name="FRDM-K20D50M">     <svdFileName>MK20D5</svdFileName> 		</device>
-      <device name="FRDM-K22F">   	   <svdFileName>MK22F51212</svdFileName> 	</device>
-      <device name="FRDM-K64F">    	   <svdFileName>MK64F12</svdFileName> 		</device>
+      <device name="FRDM-K22F">        <svdFileName>MK22F51212</svdFileName> 		</device>
+      <device name="FRDM-K64F">        <svdFileName>MK64F12</svdFileName> 		</device>
       <device name="FRDM-KE02Z">       <svdFileName>MKE02Z2</svdFileName> 		</device>
       <device name="FRDM-KE02Z40M">    <svdFileName>MKE02Z4</svdFileName> 		</device>
-      <device name="FRDM-KE04Z">       <svdFileName>MKE04Z8M4</svdFileName> 	</device>
+      <device name="FRDM-KE04Z">       <svdFileName>MKE04Z8M4</svdFileName> 		</device>
       <device name="FRDM-KE06Z">       <svdFileName>MKE06Z4</svdFileName> 		</device>
       <device name="FRDM-KL02Z">       <svdFileName>MKL02Z4</svdFileName> 		</device>
       <device name="FRDM-KL03Z">       <svdFileName>MKL03Z4</svdFileName> 		</device>
       <device name="FRDM-KL05Z">       <svdFileName>MKL05Z4</svdFileName> 		</device>
       <device name="FRDM-KL25Z">       <svdFileName>MKL25Z4</svdFileName> 		</device>
       <device name="FRDM-KL26Z">       <svdFileName>MKL26Z4</svdFileName> 		</device>
+      <device name="FRDM-KL43Z">       <svdFileName>MKL43Z4</svdFileName> 		</device>
       <device name="FRDM-KL46Z">       <svdFileName>MKL46Z4</svdFileName> 		</device>
       
+      <device name="MCF52230">       <svdFileName>MCF5223x</svdFileName>      </device>
+      <device name="MCF52231">       <svdFileName>MCF5223x</svdFileName>      </device>
+      <device name="MCF52232">       <svdFileName>MCF5223x</svdFileName>      </device>
+      <device name="MCF52233">       <svdFileName>MCF5223x</svdFileName>      </device>
+      <device name="MCF52234">       <svdFileName>MCF5223x</svdFileName>      </device>
+      <device name="MCF52235">       <svdFileName>MCF5223x</svdFileName>      </device>
+      <device name="MCF52236">       <svdFileName>MCF5223x</svdFileName>      </device>
+      
+      <device name="MCF52252">       <svdFileName>MCF5225x</svdFileName> 		</device>
+      <device name="MCF52254">       <svdFileName>MCF5225x</svdFileName>      </device>
+      <device name="MCF52255">       <svdFileName>MCF5225x</svdFileName>      </device>
+      <device name="MCF52256">       <svdFileName>MCF5225x</svdFileName>      </device>
+      <device name="MCF52258">       <svdFileName>MCF5225x</svdFileName>      </device>
+      <device name="MCF52259">       <svdFileName>MCF5225x</svdFileName>      </device>
+      <device name="TWR-MCF52259">   <svdFileName>MCF5225x</svdFileName>      </device>
+
+      <device name="MCF51JU">        <svdFileName>MCF51JU</svdFileName>      </device>
+      <device name="TWR-JU128">      <svdFileName>MCF51JU</svdFileName>      </device>
+      <device name="MCF51JF">        <svdFileName>MCF51JF</svdFileName>      </device>
+      <device name="TWR-JF128">      <svdFileName>MCF51JF</svdFileName>      </device>
    </deviceList>
 </root>

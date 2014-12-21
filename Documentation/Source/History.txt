@@ -6,7 +6,20 @@
 V4.10.6.??? (??? 2014)
 ======================================================================================= 
    - Initial support for Keil with ARM targets (Partially done)
-
+	
+V4.10.6.230 (December 2014)
+======================================================================================= 
+	- Eclipse Plugin
+		- Some fixes to launch configurations for MKL devices
+		- Project creation is now more modular to allow easier addition of features
+	- OpenSDA-USBDM firmware
+		- Fixed a bug that prevented USBDM use with SOME versions of P&E Bootloader
+		- ARM register read now consistently returns TARGET_BUSY when reading registers 
+		  while target is running.      
+	- Bug fixes on Project Wizard for Codewarrior Legacy
+	- Addition of MKL43 device
+	- Addition of MC9S12GA256 device
+      
 V4.10.6.220 (November 2014)
 ======================================================================================= 
    - Eclipse Plugin

@@ -89,7 +89,7 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>No clock selected. This in effect disables the FTM counter</description>
+                           <description>Disabled</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -99,7 +99,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Fixed frequency clock</description>
+                           <description>Fixed freq. clock</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -111,36 +111,38 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>CPWMS</name>
-                     <description>Center-Aligned PWM Select</description>
+                     <description>Centre-Aligned PWM Select\n
+Selects between left and centre-aligned PWM pulse output</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM counter operates in Up Counting mode</description>
+                           <description>Left-aligned</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM counter operates in Up-Down Counting mode</description>
+                           <description>Centre-aligned</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>TOIE</name>
-                     <description>Timer Overflow Interrupt Enable</description>
+                     <description>Timer Overflow Interrupt Enable\n
+An interrupt is generated when TOF equals one</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Disable TOF interrupts. Use software polling</description>
+                           <description>Interrupts disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enable TOF interrupts. An interrupt is generated when TOF equals one</description>
+                           <description>Interrupts enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -150,16 +152,15 @@ Devices using this peripheral:
                      <description>Timer Overflow Flag</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM counter has not overflowed</description>
+                           <description>Not overflowed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM counter has overflowed</description>
+                           <description>Overflowed</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -183,6 +184,7 @@ Devices using this peripheral:
                <name>MOD</name>
                <description>Modulo</description>
                <addressOffset>0x8</addressOffset>
+               <resetValue>0xFFFF</resetValue>
                <fields>
                   <field>
                      <name>MOD</name>
@@ -204,26 +206,86 @@ Devices using this peripheral:
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
+                        <name>ELS</name>
+                        <?ignoreOverlap?>
+                        <description>Edge or Level Select\n
+Determine edge sensitivity of IC or output action of OC and pulse polarity of PWM\n
+Edge sensitivity/Output polarity/Pulse polarity</description>
+                        <bitOffset>2</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>Inactive</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>Rising/Toggle/Low</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b10</name>
+                              <description>Falling/Clear/High</description>
+                              <value>0b10</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b11</name>
+                              <description>Either/Set/Low</description>
+                              <value>0b11</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
                         <name>ELSA</name>
-                        <description>Edge or Level Select</description>
+                        <?hide?>
+                        <description>Edge or Level Select A</description>
                         <bitOffset>2</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
                         <name>ELSB</name>
-                        <description>Edge or Level Select</description>
+                        <?hide?>
+                        <description>Edge or Level Select B</description>
                         <bitOffset>3</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
+                        <name>MS</name>
+                        <?ignoreOverlap?>
+                        <description>Channel Mode Select\n
+Determines Input Capture, Output Compare &amp; Pulse Width Modulation</description>
+                        <bitOffset>4</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>Input capture</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>Output compare</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1X</name>
+                              <description>Pulse Width Modulation</description>
+                              <value>0b1X</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
                         <name>MSA</name>
-                        <description>Channel Mode Select</description>
+                        <?hide?>
+                        <description>Channel Mode Select A</description>
                         <bitOffset>4</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
                         <name>MSB</name>
-                        <description>Channel Mode Select</description>
+                        <?hide?>
+                        <description>Channel Mode Select B</description>
                         <bitOffset>5</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
@@ -235,30 +297,30 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Disable channel interrupts. Use software polling</description>
+                              <description>Interrupts disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Enable channel interrupts</description>
+                              <description>Interrupts enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>CHF</name>
-                        <description>Channel Flag</description>
+                        <description>Channel Flag\nSet when a channel event occurs</description>
                         <bitOffset>7</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No channel event has occurred</description>
+                              <description>No channel event</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>A channel event has occurred</description>
+                              <description>Channel event</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -292,34 +354,17 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The generation of channel trigger is disabled</description>
+                           <description>Trigger disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The generation of channel trigger is enabled</description>
+                           <description>Trigger is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1TRIG</name>
-                     <description>Channel 1 Trigger Enable</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The generation of channel trigger is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The generation of channel trigger is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH0TRIG" > <name>CH1TRIG</name> <description>Channel 1 Trigger Enable</description> <bitOffset>5</bitOffset> </field>
                   <field>
                      <name>INITTRIGEN</name>
                      <description>Initialization Trigger Enable</description>

@@ -11,6 +11,7 @@ Devices using this peripheral:
       MKL26Z4
       MKL34Z4
       MKL36Z4
+      MKL43Z4
       MKL46Z4
 -->
       <peripheral>
@@ -199,6 +200,25 @@ Devices using this peripheral:
                         <enumeratedValue>
                            <name>0b1</name>
                            <description>Registers can be written when locked under limited conditions</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
+                  </field>
+                  <field>
+                     <name>WPS</name>
+                     <description>Wakeup Pin Select\n
+The wakeup pin is optional and not available on all devices</description>
+                     <bitOffset>4</bitOffset>
+                     <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Wakeup pin asserts (active low, open drain) if the RTC interrupt asserts or the wakeup pin is turned on</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Wakeup pin outputs the RTC 32kHz clock, provided the wakeup pin is turned on and the 32kHz clock is output to other peripherals</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

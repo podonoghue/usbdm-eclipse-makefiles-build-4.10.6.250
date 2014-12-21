@@ -1,5 +1,7 @@
-<?xml version='1.0' encoding='windows-1252'?>
-<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+  xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
    <?define CW_Ver="3" ?> 
 
    <?define Manufacturer="pgo" ?>
@@ -16,7 +18,7 @@
    
    <Fragment>
       <!--======================================================
-               Directory structure
+            Directory structure
       =======================================================-->
       <DirectoryRef Id='TARGETDIR'>
          <!-- Directory structure for CodeWarrior Development Studio for Microcontrollers V6.3 -->
@@ -38,7 +40,7 @@
       </DirectoryRef>
      
       <!--======================================================
-               Registry searches
+            Registry searches
       =======================================================-->
      
       <!-- Check for CodeWarrior Development Studio for Microcontrollers V6.3 -->
@@ -56,14 +58,14 @@
          <RegistrySearchRef Id="Rs.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)" />
       </Property>
       
-      <!--=================================================================================
-           Actions
-      ==================================================================================-->
+      <!--======================================================
+            Actions
+      =======================================================-->
       <!-- Patch HCS08 Wizard XLM-->
       <CustomAction
          Id="Ca.CreateHCS08MergeCommand_V6_$(var.CW_Ver)"
          Property="Ca.MergeHCS08Command_V6_$(var.CW_Ver)"
-         Value="&quot;[INSTALLDIR]mergeXml.exe&quot; &quot;[D.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)_XML]\&quot; &quot;HCS908*.xml&quot; &quot;[D.WizardPatchData]OSBDM_HCS08_Wizard_V6_$(var.CW_Ver).xml&quot; "
+         Value="&quot;[INSTALLDIR]mergeXml.exe&quot; &quot;[D.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)_XML]\&quot; &quot;HCS908*.xml&quot; &quot;[D.WizardPatchData]OSBDM_Wizard_V6_$(var.CW_Ver).xml&quot; "
          Execute="immediate"/>
       <CustomAction Id="Ca.MergeHCS08Command_V6_$(var.CW_Ver)"   BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Return="ignore" Impersonate="no"/>
 
@@ -79,7 +81,7 @@
       <CustomAction
          Id="Ca.CreateMCF51MergeCommand_V6_$(var.CW_Ver)"
          Property="Ca.MergeMCF51Command_V6_$(var.CW_Ver)"
-         Value="&quot;[INSTALLDIR]mergeXml.exe&quot; &quot;[D.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)_XML]\&quot; &quot;MCF51*.xml&quot; &quot;[D.WizardPatchData]OSBDM_MCF51_Wizard_V6_$(var.CW_Ver).xml&quot; "
+         Value="&quot;[INSTALLDIR]mergeXml.exe&quot; &quot;[D.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)_XML]\&quot; &quot;MCF51*.xml&quot; &quot;[D.WizardPatchData]OSBDM_Wizard_V6_$(var.CW_Ver).xml&quot; "
          Execute="immediate"/>
       <CustomAction Id="Ca.MergeMCF51Command_V6_$(var.CW_Ver)"   BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Return="ignore" Impersonate="no"/>
 
@@ -106,7 +108,7 @@
       </InstallExecuteSequence>
 
       <!--======================================================
-               Components
+            Components
       =======================================================-->
      <!-- 
            USBDM Installed Marker
@@ -144,7 +146,7 @@
                Target="[INSTALLDIR]mergeXml.exe"
                Description="Adds HCS08 Open Source BDM targets to Codewarrior for Microcontroller New Project Wizard"
                WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="no" 
-               Arguments="-p &quot;[D.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)_XML]\&quot; &quot;HCS908*.xml&quot; &quot;[D.WizardPatchData]OSBDM_HCS08_Wizard_V6_$(var.CW_Ver).xml&quot;"/>                            
+               Arguments="-p &quot;[D.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)_XML]\&quot; &quot;HCS908*.xml&quot; &quot;[D.WizardPatchData]OSBDM_Wizard_V6_$(var.CW_Ver).xml&quot;"/>                            
             <RegistryValue Root='HKCU' Key="Software\$(var.Manufacturer)\$(var.ProductName)"
                            Type='string' Name='PatchCodewarriorWizardsMenu_HCS08_V6_$(var.CW_Ver)' Value="" KeyPath='yes' />
          </Component>
@@ -158,12 +160,15 @@
                Target="[INSTALLDIR]mergeXml.exe"
                Description="Adds CFv1 Open Source BDM targets to Codewarrior for Microcontroller New Project Wizard"
                WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="no" 
-               Arguments="-p &quot;[D.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)_XML]\&quot; &quot;MCF51*.xml&quot; &quot;[D.WizardPatchData]OSBDM_MCF51_Wizard_V6_$(var.CW_Ver).xml&quot;"/>                            
+               Arguments="-p &quot;[D.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)_XML]\&quot; &quot;MCF51*.xml&quot; &quot;[D.WizardPatchData]OSBDM_Wizard_V6_$(var.CW_Ver).xml&quot;"/>                            
             <RegistryValue Root='HKCU' Key="Software\$(var.Manufacturer)\$(var.ProductName)"
                            Type='string' Name='PatchCodewarriorWizardsMenu_CFV1_V6_$(var.CW_Ver)' Value="" KeyPath='yes' />
          </Component>
       </DirectoryRef>
-      
+            
+      <!--======================================================
+            Features
+      =======================================================-->
       <Feature Id='F.CW_FOR_MICROCONTROLLERS_V6_$(var.CW_Ver)'
             Title='Microcontrollers V6.$(var.CW_Ver)'
             Description="USBDM support for CodeWarrior Development Studio for Microcontrollers V6.$(var.CW_Ver)."

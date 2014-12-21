@@ -70,7 +70,9 @@ Devices using this peripheral:
                   <fields>
                      <field>
                         <name>BA</name>
-                        <description>Base Address</description>
+                        <description>Base Address\n
+Defines the base address for memory dedicated to the associated chip-select.\n
+BA is compared to bits 31-16 on the internal address to determine if external memory is being accessed</description>
                         <bitOffset>16</bitOffset>
                         <bitWidth>16</bitWidth>
                      </field>
@@ -83,54 +85,61 @@ Devices using this peripheral:
                   <fields>
                      <field>
                         <name>V</name>
-                        <description>Valid</description>
+                        <description>Valid\n
+Specifies whether the corresponding CSAR, CSMR, and CSCR contents are valid.\n
+Programmed chip selects do not assert until the V bit is 1b\n
+(except for FB_CS0, which acts as the global chip-select)</description>
                         <bitOffset>0</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Chip-select is invalid</description>
+                              <description>Chip-select invalid</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Chip-select is valid</description>
+                              <description>Chip-select valid</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>WP</name>
-                        <description>Write Protect</description>
+                        <description>Write Protect\n
+Controls write accesses to the address range in the corresponding CSAR\n
+Attempting writes to a protected range results in a bus error termination of the internal cycle and no external cycle</description>
                         <bitOffset>8</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Write accesses are allowed</description>
+                              <description>Writes allowed</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Write accesses are not allowed. Attempting to write to the range of addresses for which the WP bit is set results in a bus error termination of the internal cycle and no external cycle</description>
+                              <description>Writes not allowed\n</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BAM</name>
-                        <description>Base Address Mask</description>
+                        <description>Base Address Mask\n
+Defines the associated chip-select&apos;s block size by masking address bits\n
+If masked, the corresponding address bit in CSAR is a don&apos;t care in the chip-select decode</description>
                         <bitOffset>16</bitOffset>
                         <bitWidth>16</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>The corresponding address bit in CSAR is used in the chip-select decode</description>
+                              <description>Bit is used</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The corresponding address bit in CSAR is a don&apos;t care in the chip-select decode</description>
+                              <description>Bit is masked</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -145,54 +154,57 @@ Devices using this peripheral:
                   <fields>
                      <field>
                         <name>BSTW</name>
-                        <description>Burst-Write Enable</description>
+                        <description>Burst-Write Enable\n
+Enables burst write of data larger than the specified port size</description>
                         <bitOffset>3</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Break data larger than the specified port size into individual, port-sized, non-burst writes. For example, a longword write to an 8-bit port takes four byte writes</description>
+                              <description>Mutiple writes are used</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Enables burst write of data larger than the specified port size, including longword writes to 8 and 16-bit ports, word writes to 8-bit ports, and line writes to 8-, 16-, and 32-bit ports</description>
+                              <description>Burst enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BSTR</name>
-                        <description>Burst-Read Enable</description>
+                        <description>Burst-Read Enable\n
+Enables burst write of data larger than the specified port size</description>
                         <bitOffset>4</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Data exceeding the specified port size is broken into individual, port-sized, non-burst reads. For example, a longword read from an 8-bit port is broken into four 8-bit reads</description>
+                              <description>Mutiple reads are used</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Enables data burst reads larger than the specified port size, including longword reads from 8- and 16-bit ports, word reads from 8-bit ports, and line reads from 8, 16-, and 32-bit ports</description>
+                              <description>Burst enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BEM</name>
-                        <description>Byte-Enable Mode</description>
+                        <description>Byte-Enable Mode\n
+Controls is FB_BE signals are used for writes</description>
                         <bitOffset>5</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>The FB_BE n signals are not asserted for reads. The FB_BE n signals are asserted for data write only</description>
+                              <description>Writes used FB_BE</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The FB_BE n signals are asserted for read and write accesses</description>
+                              <description>Reads and writes use FB_BE</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -205,40 +217,36 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b00</name>
-                              <description>32-bit port size. Valid data is sampled and driven on FB_D[31:0]</description>
+                              <description>32-bit port size</description>
                               <value>0b00</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b01</name>
-                              <description>8-bit port size. Valid data sampled and driven on FB_D[31:24] if BLS = 0 or FB_D[7:0] if BLS = 1</description>
+                              <description>8-bit port size</description>
                               <value>0b01</value>
                            </enumeratedValue>
                            <enumeratedValue>
-                              <name>0b10</name>
-                              <description>16-bit port size. Valid data sampled and driven on FB_D[31:16] if BLS = 0 or FB_D[15:0] if BLS = 1</description>
+                              <name>0b1X</name>
+                              <description>16-bit port size</description>
                               <value>0b10</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b11</name>
-                              <description>16-bit port size. Valid data sampled and driven on FB_D[31:16] if BLS = 0 or FB_D[15:0] if BLS = 1</description>
-                              <value>0b11</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>AA</name>
-                        <description>Auto-Acknowledge Enable</description>
+                        <description>Auto-Acknowledge Enable\n
+Allows an internal transfer acknowledge to be asserted as specified by WS otherwise and external acknowledge is expected</description>
                         <bitOffset>8</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Disabled. No internal transfer acknowledge is asserted and the cycle is terminated externally</description>
+                              <description>External ACK</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Enabled. Internal transfer acknowledge is asserted as specified by WS</description>
+                              <description>Internal ACK</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -251,21 +259,30 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Not shifted. Data is left-aligned on FB_AD</description>
+                              <description>Data is left-aligned on FB_AD</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Shifted. Data is right-aligned on FB_AD</description>
+                              <description>Data is right-aligned on FB_AD</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>WS</name>
-                        <description>Wait States</description>
+                        <description>Wait states\n
+Specifies the number of wait states after FlexBus asserts the associated chip select and before an internal
+transfer acknowledge is generated (WS = 00h inserts 0 wait states, ..., WS = 3Fh inserts 63 wait states)</description>
                         <bitOffset>10</bitOffset>
                         <bitWidth>6</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0bXXXXXX</name>
+                              <description>N wait states</description>
+                              <isDefault>true</isDefault>
+                           </enumeratedValue>
+                        </enumeratedValues>
                      </field>
                      <field>
                         <name>WRAH</name>
@@ -275,7 +292,7 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b00</name>
-                              <description>1 cycle (default for all but FB_CS0 )</description>
+                              <description>1 cycle</description>
                               <value>0b00</value>
                            </enumeratedValue>
                            <enumeratedValue>
@@ -290,63 +307,65 @@ Devices using this peripheral:
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b11</name>
-                              <description>4 cycles (default for FB_CS0 )</description>
+                              <description>4 cycles</description>
                               <value>0b11</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>RDAH</name>
-                        <description>Read Address Hold or Deselect</description>
+                        <description>Read Address Hold or Deselect
+If CSCRn[AA] is then an additional cycle is added</description>
                         <bitOffset>18</bitOffset>
                         <bitWidth>2</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b00</name>
-                              <description>When AA is 0b, 1 cycle. When AA is 1b, 0 cycles</description>
+                              <description>0 cycles</description>
                               <value>0b00</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b01</name>
-                              <description>When AA is 0b, 2 cycles. When AA is 1b, 1 cycle</description>
+                              <description>1 cycle</description>
                               <value>0b01</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b10</name>
-                              <description>When AA is 0b, 3 cycles. When AA is 1b, 2 cycles</description>
+                              <description>2 cycles</description>
                               <value>0b10</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b11</name>
-                              <description>When AA is 0b, 4 cycles. When AA is 1b, 3 cycles</description>
+                              <description>3 cycles</description>
                               <value>0b11</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>ASET</name>
-                        <description>Address Setup</description>
+                        <description>Address Setup\n
+Determines on which clock cycle FB_CSn is asserted after the address is asserted</description>
                         <bitOffset>20</bitOffset>
                         <bitWidth>2</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b00</name>
-                              <description>Assert FB_CSn on the first rising clock edge after the address is asserted (default for all but FB_CS0 )</description>
+                              <description>1st rising clock edge</description>
                               <value>0b00</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b01</name>
-                              <description>Assert FB_CSn on the second rising clock edge after the address is asserted</description>
+                              <description>2nd rising clock edge</description>
                               <value>0b01</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b10</name>
-                              <description>Assert FB_CSn on the third rising clock edge after the address is asserted</description>
+                              <description>3rd rising clock edge</description>
                               <value>0b10</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b11</name>
-                              <description>Assert FB_CSn on the fourth rising clock edge after the address is asserted (default for FB_CS0 )</description>
+                              <description>4th rising clock edge</description>
                               <value>0b11</value>
                            </enumeratedValue>
                         </enumeratedValues>

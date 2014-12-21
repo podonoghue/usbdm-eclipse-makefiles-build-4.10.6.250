@@ -57,6 +57,26 @@
 
  <hr>
    
+\section TroubleshootingSection4 Troubleshooting USBDM installation #4
+	- <b>Missing TBDML or OSBDM options in Codewarrior legacy <i>New Project Wizard</i></b> \n
+		- The USBDM installer attempts to patch the XML files associated with the above applications
+      to add in the TBDML or OSBDM options if they are missing.  This may be the case for later devices.\n
+      Sometimes this can be messed up by a feature of Windows 7 know as 'VirtualStore'.  This is a
+      fix to allow older programs to appear to write to protected areas of storage which is now not
+      supported - in particular "c:\program Files....".  It does this by doing the writes to another 
+      area or storage and forwarding future accesses to that new location.  \n
+      This can interfere with the USBDM patching process (or be triggered by it). The patching process
+      has been improved to avoid this.
+		- Applying service packs to Codewarrior may add new devices to Codewarrior.\n
+		  These devices may not support TBDML or OSBDM and obviously haven't been patched as above.
+   	  
+	- Check the following:
+		-# See if there is a directory "%localappdata%\VirtualStore\Program Files (x86)\Freescale\CWS12v5.1\bin\plugins\support"
+		-# Delete the contents of the <b>XML</b> subfolder
+		-# Run the <b><i>appropriate</i></b> scripts from the USBDM menu <b>Codewarrior Wizard Patches</b>
+
+ <hr>
+   
 \section TestingTheBDMHardwareSection Testing the BDM hardware
       
    There is TCL command interpreter supplied with the later version of usbdm.  In V4.7 onwards this is available in the start menu as <b>USBDM TCL Interpreter</b>. \n
@@ -69,9 +89,9 @@ openbdm
 settarget hcs12
 
 pinSet rst=L    ;# Reset pin should be low
-pinSet rst=3    ;# Reset pin should be 3-state and weakly pulled-up by a resistor to target VDD on the BDM.
+pinSet rst=3    ;# Reset pin should be 3-state and have a weak pull-up to target VDD on the BDM.
 pinSet bkgd=L   ;# BKGD pin should be low
-pinSet bkgd=3   ;# BKGD pin should be 3-state and weakly pulled-up by a resistor to target VDD on the BDM.
+pinSet bkgd=3   ;# BKGD pin should be 3-state and have a weak pull-up to target VDD on the BDM.
 pinSet bkgd=H   ;# BKGD pin should be high
 \endverbatim
    

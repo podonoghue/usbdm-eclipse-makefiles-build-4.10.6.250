@@ -477,24 +477,12 @@ Devices using this peripheral:
                   </field>
                </fields>
             </register>
-                        <register derivedFrom="PACRA">
-                           <name>PACRB</name>
-                           <addressOffset>0x24</addressOffset>
-                        </register>
-                        <register derivedFrom="PACRA">
-                           <name>PACRC</name>
-                           <addressOffset>0x28</addressOffset>
-                        </register>
-                        <register derivedFrom="PACRA">
-                           <name>PACRD</name>
-                           <addressOffset>0x2C</addressOffset>
-                        </register>
-                        <register derivedFrom="PACRA">
-            <dim>12</dim>
+            <register derivedFrom="PACRA"> <name>PACRB</name> <addressOffset>0x24</addressOffset> </register>
+            <register derivedFrom="PACRA"> <name>PACRC</name> <addressOffset>0x28</addressOffset> </register>
+            <register derivedFrom="PACRA"> <name>PACRD</name> <addressOffset>0x2C</addressOffset> </register>
+            <register derivedFrom="PACRA">            <dim>12</dim>
             <dimIncrement>4</dimIncrement>
             <dimIndex>E,F,G,H,I,J,K,L,M,N,O,P</dimIndex>
-                           <name>PACR%s</name>
-                           <addressOffset>0x40</addressOffset>
-                        </register>
+ <name>PACR%s</name> <addressOffset>0x40</addressOffset> </register>
          </registers>
       </peripheral>

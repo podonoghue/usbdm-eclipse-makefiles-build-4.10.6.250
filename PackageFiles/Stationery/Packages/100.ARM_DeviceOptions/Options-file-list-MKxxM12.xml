@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0">
+   <!-- Extra Optional files for MKxxM12 -->
+   <projectActionList id="Options-file-list-MKxxM12">
+      <applyWhen>
+         <or>
+            <deviceSubfamilyIs>MK10F12</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MK20F12</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MK21F12</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MK22F12</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MK24F12</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MK61F12</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MK70F12</deviceSubfamilyIs>
+         </or>
+      </applyWhen>
+      <variable id="Clock-setup-MKxxM12" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="UART-setup-MKxxM12" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
+      <condition variable="Clock-setup-MKxxM12">
+         <copy source="Startup_Code/clock-MKxx.c" target="Startup_Code/clock.c" />
+         <copy source="Project_Headers/clock_configure-MKxxM12.h" target="Project_Headers/clock_configure.h" />
+      </condition>
+      <condition variable="UART-setup-MKxxM12">
+         <copy source="Startup_Code/uart-mk.c" target="Startup_Code/uart.c" />
+         <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
+      </condition>
+   </projectActionList>
+</root>

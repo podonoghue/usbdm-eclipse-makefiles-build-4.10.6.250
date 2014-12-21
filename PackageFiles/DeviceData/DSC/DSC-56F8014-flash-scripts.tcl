@@ -67,6 +67,11 @@ proc loadSymbols {} {
      
    set ::BUS_FREQUENCY         4000
    
+   set ::BDM_RC_ILLEGAL_COMMAND                    4
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
+   
    return
 }
 
@@ -91,7 +96,7 @@ proc initTarget { args } {
 ;#  busFrequency - Target bus frequency in kHz
 ;#
 proc initFlash { busFrequency } {
-   ;#  puts "initFlash {}"
+   puts "initFlash {}"
    
    set ::BUS_FREQUENCY $busFrequency
 
@@ -116,7 +121,8 @@ proc calculateFlashDivider { busFrequency } {
 ;#
    ;#  puts "calculateFlashDivider {}"
    if { [expr $busFrequency < 1000] } {
-      error "Clock too low for flash programming"
+      puts "Clock too low for flash programming"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }
    set sysclk [expr 2*$busFrequency]
    if { [expr $sysclk > 12800] } {
@@ -129,9 +135,10 @@ proc calculateFlashDivider { busFrequency } {
    set minPeriod [expr (1/200.0 + 1/(4.0*$busFrequency))]
    set cfmclkd [expr $cfmclkd + round(floor(($inFrequency*$minPeriod)))] 
    set flashClk [expr $inFrequency / (($cfmclkd&0x3F)+1)]
-   ;#  puts "inFrequency = $inFrequency cfmclkd = $cfmclkd, flashClk = $flashClk"
+   puts "inFrequency = $inFrequency cfmclkd = $cfmclkd, flashClk = $flashClk"
    if { [expr ($flashClk<150)] } {
-      error "Not possible to find suitable flash clock divider"
+      puts "Not possible to find suitable flash clock divider"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }      
    return $cfmclkd
 }
@@ -139,9 +146,10 @@ proc calculateFlashDivider { busFrequency } {
 ;######################################################################################
 ;#  Target is erased & unsecured
 proc massEraseTarget { } {
-   error "Mass erase is not supported"
-   
-   return
+
+   puts "massEraseTarget{}"
+   puts "Mass erase is not supported"
+   return $::BDM_RC_ILLEGAL_COMMAND
 }
 
 ;######################################################################################
@@ -152,9 +160,10 @@ proc isUnsecure { } {
    set securityValue [rb $::DSC_FSEC]
 
    if [ expr ( $securityValue & $::DSC_FSEC_SEC_MASK ) != $::DSC_FSEC_SEC_UNSEC ] {
-      error "Target is secured"
+      puts "isUnsecure{} - Target is secured!"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
-   
+   puts "isUnsecure{} - Target is unsecured"
    return
 }
 

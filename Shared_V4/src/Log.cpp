@@ -25,6 +25,7 @@
     \verbatim
    Change History
    +=========================================================================================
+   |  1 Dec 2014 | Added format information for logging print()s              - pgo 4.10.6.230
    |  1 Dec 2012 | Changed logging extensively                                - pgo - V4.10.4
    | 16 Nov 2009 | Relocated log file directory for Vista.                    - pgo
    |  5 Nov 2009 | Completed restructure for V1                               - pgo
@@ -238,7 +239,7 @@ void Logging::printq(const char *format, ...) {
  *
  *  @param format Format and parameters as for printf()
  */
-void Logging::print(const char *format, ...) {
+void Logging::print(const char *format, ...)  {
    va_list list;
    if ((logFile == NULL) || (!loggingEnabled) || (indent > currentLogLevel)) {
       return;
@@ -258,11 +259,12 @@ void Logging::print(const char *format, ...) {
    va_end(list);
    fflush(logFile);
 }
+
 /*! \brief Provides a print function which prints data into a log file.
  *
  *  @param format Format and parameters as for printf()
  */
-void Logging::error(const char *format, ...) {
+void Logging::error(const char *format, ...)  {
    va_list list;
    if (logFile == NULL) {
       return;

@@ -33,6 +33,7 @@
   <xs:simpleType name="cpuNameType">
     <xs:restriction base="xs:token">
       <xs:enumeration value="CM0"/>
+      <xs:enumeration value="CM0PLUS"/>
       <xs:enumeration value="SC000"/>
       <xs:enumeration value="CM3"/>
       <xs:enumeration value="SC300"/>
@@ -91,7 +92,7 @@
   <!-- this is particularly important as these are used in ANSI C Structures during the device header file generation -->
   <xs:simpleType name="identifierType">
     <xs:restriction base="xs:string">
-      <xs:pattern value="((%s)[_A-Za-z]{1}[_A-Za-z0-9]*)|([_A-Za-z]{1}[_A-Za-z0-9]*(\[%s\])?)|([_A-Za-z]{1}[_A-Za-z0-9]*(%s)?[_A-Za-z0-9]*)"/>
+      <xs:pattern value="(((%s)[_A-Za-z]{1}[_A-Za-z0-9]*)|([_A-Za-z]{1}[_A-Za-z0-9]*(\[%s\])?)|([_A-Za-z]{1}[_A-Za-z0-9]*(%s)?[_A-Za-z0-9]*))(,(((@p)|(@f)|(@a)|(@i))[_A-Za-z0-9]*)*)*"/>
     </xs:restriction>
   </xs:simpleType>
   <!-- enumerationNameType specifies the subset and sequence of characters used for specifying names of enumeratedValues. -->
@@ -105,7 +106,7 @@
   <!-- dimIndexType specifies the subset and sequence of characters used for specifying the sequence of indices in register arrays -->
   <xs:simpleType name="dimIndexType">
     <xs:restriction base="xs:string">
-      <xs:pattern value="[0-9]+\-[0-9]+|[A-Z]-[A-Z]|[_0-9a-zA-Z]+(,\s*[_0-9a-zA-Z]+)+"/>
+      <xs:pattern value="[0-9]+\-[0-9]+|[A-Z]-[A-Z]|[_0-9a-zA-Z:\.\s\(\)\[\]]+(,\s*[_0-9a-zA-Z:\.\s\(\)\[\]]+)*"/>
     </xs:restriction>
   </xs:simpleType>
   <!-- scaledNonNegativeInteger specifies the format in which numbers are represented in hexadecimal or decimar format -->

@@ -32,6 +32,7 @@
 \verbatim
  Change History
 +===========================================================================================
+|  1 Dec 2014 | Fixed format in printf()s                                     - pgo 4.10.6.230
 | 17 Mar 2012 | Implemented some missing functions _ta(),_bkpt(),             - pgo - V4.9.3
 +===========================================================================================
 \endverbatim
@@ -160,7 +161,7 @@ CFF_API int bdm_test_for_halt(void) {
    }
 }
 CFF_API int bdm_write_dreg(int regNo, unsigned long value) {
-   Logging::print("CFF-bdm_write_dreg(%d, 0x%08X)\n", regNo, value);
+   Logging::print("CFF-bdm_write_dreg(%d, 0x%08lX)\n", regNo, value);
    USBDM_WriteReg(CFVx_RegD0+regNo, value);
    return 1;
 }
@@ -169,7 +170,7 @@ CFF_API int bdm_read_dreg(int regNo) {
    unsigned long temp;
 
    USBDM_ReadReg(CFVx_RegD0+regNo, &temp);
-   Logging::print("CFF-bdm_read_dreg(%d) => 0x%08X\n", regNo, temp);
+   Logging::print("CFF-bdm_read_dreg(%d) => 0x%08lX\n", regNo, temp);
    return temp;
 }
 CFF_API int bdm_read_areg(int regNo) {
@@ -177,16 +178,16 @@ CFF_API int bdm_read_areg(int regNo) {
    unsigned long temp;
 
    USBDM_ReadReg(CFVx_RegA0+regNo, &temp);
-   Logging::print("CFF-bdm_read_dreg(%d) => 0x%08X\n", regNo, temp);
+   Logging::print("CFF-bdm_read_dreg(%d) => 0x%08lX\n", regNo, temp);
    return temp;
 }
 CFF_API int bdm_write_areg(int regNo, unsigned long value) {
-   Logging::print("CFF-bdm_write_areg(%d, 0x%08X)\n", regNo, value);
+   Logging::print("CFF-bdm_write_areg(%d, 0x%08lX)\n", regNo, value);
    USBDM_WriteReg(CFVx_RegA0+regNo, value);
    return 1;
 }
 CFF_API int bdm_wcreg(int regNo, unsigned long value) {
-   Logging::print("CFF-bdm_wcreg(0x%04X, 0x%08X)\n", regNo, value);
+   Logging::print("CFF-bdm_wcreg(0x%04X, 0x%08lX)\n", regNo, value);
    USBDM_WriteCReg(regNo, value);
    return 0;
 }
@@ -194,50 +195,50 @@ CFF_API int bdm_rcreg(int regNo) {
    LOGGING;
    unsigned long temp;
    USBDM_ReadCReg(CFVx_RegD0+regNo, &temp);
-   Logging::print("CFF-bdm_rcreg(%04X) => 0x%08X\n", regNo, temp);
+   Logging::print("CFF-bdm_rcreg(%04X) => 0x%08lX\n", regNo, temp);
    return temp;
 }
 CFF_API int bdm_rdmreg(int regNo) {
    LOGGING;
    unsigned long temp = 0;
    USBDM_ReadDReg(HCS08_DRegBKPT+regNo, &temp);
-   Logging::print("CFF-bdm_rdmreg(%04X) => 0x%08X - dummy\n", regNo, temp);
+   Logging::print("CFF-bdm_rdmreg(%04X) => 0x%08lX - dummy\n", regNo, temp);
    return temp;
 }
 CFF_API int bdm_wdmreg(int regNo, unsigned long value) {
-   Logging::print("CFF-bdm_wdmreg(0x04X, 0x%08X)\n", regNo, value);
+   Logging::print("CFF-bdm_wdmreg(0x%04X, 0x%08lX)\n", regNo, value);
    USBDM_WriteDReg(regNo, value);
    return 0;
 }
 
 CFF_API int bdm_fillb(unsigned long address, unsigned char *data, unsigned long byteCount) {
-   Logging::print("CFF-bdm_fillb(0x%08X,0x%08X,%p)\n", address, byteCount, data);
+   Logging::print("CFF-bdm_fillb(0x%08lX,0x%08lX,%p)\n", address, byteCount, data);
    USBDM_WriteMemory(1, byteCount, address, data);
    return 0;
 }
 CFF_API int bdm_fillw(unsigned long address, unsigned char *data, unsigned long byteCount) {
-   Logging::print("CFF-bdm_fillw(0x%08X,0x%08X,%p)\n", address, byteCount, data);
+   Logging::print("CFF-bdm_fillw(0x%08lX,0x%08lX,%p)\n", address, byteCount, data);
    USBDM_WriteMemory(2, byteCount, address, data);
    return 0;
 }
 CFF_API int bdm_filll(unsigned long address, unsigned char *data, unsigned long byteCount) {
-   Logging::print("CFF-bdm_filll(0x%08X,0x%08X,%p)\n", address, byteCount, data);
+   Logging::print("CFF-bdm_filll(0x%08lX,0x%08lX,%p)\n", address, byteCount, data);
    USBDM_WriteMemory(4, byteCount, address, data);
    return 0;
 }
 
 CFF_API int bdm_dumpb(unsigned long address, unsigned char *data, unsigned long byteCount) {
-   Logging::print("CFF-bdm_dumpb(0x%08X,0x%08X,%p)\n", address, byteCount, data);
+   Logging::print("CFF-bdm_dumpb(0x%08lX,0x%08lX,%p)\n", address, byteCount, data);
    USBDM_ReadMemory(1, byteCount, address, data);
    return 0;
 }
 CFF_API int bdm_dumpw(unsigned long address, unsigned char *data, unsigned long byteCount) {
-   Logging::print("CFF-bdm_dumpw(0x%08X,0x%08X,%p)\n", address, byteCount, data);
+   Logging::print("CFF-bdm_dumpw(0x%08lX,0x%08lX,%p)\n", address, byteCount, data);
    USBDM_ReadMemory(2, byteCount, address, data);
    return 0;
 }
 CFF_API int bdm_dumpl(unsigned long address, unsigned char *data, unsigned long byteCount) {
-   Logging::print("CFF-bdm_dumpl(0x%08X,0x%08X,%p)\n", address, byteCount, data);
+   Logging::print("CFF-bdm_dumpl(0x%08lX,0x%08lX,%p)\n", address, byteCount, data);
    USBDM_ReadMemory(4, byteCount, address, data);
    return 0;
 }
@@ -260,14 +261,14 @@ CFF_API int bdm_bkpt(void) {
    return 0;
 }
 CFF_API int bdm_write_byte(unsigned long address, unsigned long value) {
-   Logging::print("CFF-bdm_write_byte(0x%08X, 0x%08X)\n", address, value);
+   Logging::print("CFF-bdm_write_byte(0x%08lX, 0x%08lX)\n", address, value);
    uint8_t data;
    data = value;
    USBDM_WriteMemory(1, 1, address, &data);
    return 0;
 }
 CFF_API int bdm_write_word(unsigned long address, unsigned long value) {
-   Logging::print("CFF-bdm_write_word(0x%08X, 0x%08X)\n", address, value);
+   Logging::print("CFF-bdm_write_word(0x%08lX, 0x%08lX)\n", address, value);
    uint8_t data[2];
    data[0] = value>>8;
    data[1] = value;
@@ -275,7 +276,7 @@ CFF_API int bdm_write_word(unsigned long address, unsigned long value) {
    return 0;
 }
 CFF_API int bdm_write_long(unsigned long address, unsigned long value) {
-   Logging::print("CFF-bdm_write_long(0x%08X, 0x%08X)\n", address, value);
+   Logging::print("CFF-bdm_write_long(0x%08lX, 0x%08lX)\n", address, value);
    uint8_t data[4];
    data[0] = value>>24;
    data[1] = value>>16;
@@ -306,7 +307,7 @@ CFF_API int bdm_read_long(unsigned long address) {
    unsigned long value;
    USBDM_ReadMemory(4, 4, address, data);
    value = (data[0]<<24)+(data[1]<<16)+(data[2]<<8)+data[3];
-   Logging::print("CFF-bdm_read_long(0x%08X) = > 0x%08X\n", address, value);
+   Logging::print("CFF-bdm_read_long(0x%08lX) = > 0x%08lX\n", address, value);
    return value;
 }
 

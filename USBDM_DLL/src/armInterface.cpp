@@ -30,6 +30,7 @@
 \verbatim
  Change History
 +==================================================================================================
+|  1 Dec 2014 | Fixed format in printf()s                                           - pgo 4.10.6.230
 | 12 Nov 2014 | Added armDisconnect() to allow reset behaviour to be restored       - pgo - V4.10.6.220
 | 12 Nov 2014 | Refactored armConnect()                                             - pgo - V4.10.6.220
 | 23 Mar 2014 | Changes to handling pendingResetRelease                             - pgo - V4.10.6.220
@@ -126,22 +127,23 @@ static const uint32_t dpControlStatBaseValue = CSYSPWRUPREQ|CDBGPWRUPREQ;
 //!
 static USBDM_ErrorCode armReadMemoryWord(unsigned long address, unsigned long *data) {
    LOGGING_Q;
+
    Logging::setLoggingLevel(0);
    uint8_t buff[4];
    USBDM_ErrorCode rc = USBDM_ReadMemory(4, 4, address, buff);
    *data = (buff[0])+(buff[1]<<8)+(buff[2]<<16)+(buff[3]<<24);
    switch(address) {
    case DEMCR:
-      Logging::print("Memory[0x%08X (DEMCR)] => 0x%08X (%s)\n", address, *data, getDEMCRName(*data));
+      Logging::print("Memory[0x%08lX (DEMCR)] => 0x%08lX (%s)\n", address, *data, getDEMCRName(*data));
       break;
    case DHCSR:
-      Logging::print("Memory[0x%08X (DHCSR)] => 0x%08X (%s)\n", address, *data, getDHCSRName(*data));
+      Logging::print("Memory[0x%08lX (DHCSR)] => 0x%08lX (%s)\n", address, *data, getDHCSRName(*data));
       break;
    case DBGMCU_CR:
-      Logging::print("Memory[0x%08X (STM.DBGMCU_CR)] => 0x%08X\n", address, *data);
+      Logging::print("Memory[0x%08lX (STM.DBGMCU_CR)] => 0x%08lX\n", address, *data);
       break;
    default:
-      Logging::print("Memory[0x%08X] => 0x%08X\n", address, *data);
+      Logging::print("Memory[0x%08lX] => 0x%08lX\n", address, *data);
       break;
    }
    return rc;
@@ -159,21 +161,22 @@ static USBDM_ErrorCode armReadMemoryWord(unsigned long address, unsigned long *d
 //!
 static USBDM_ErrorCode armWriteMemoryWord(unsigned long address, unsigned long data) {
    LOGGING_Q;
+
    Logging::setLoggingLevel(0);
    uint8_t buff[4] = {(uint8_t)data, (uint8_t)(data>>8), (uint8_t)(data>>16), (uint8_t)(data>>24)};
    USBDM_ErrorCode rc = USBDM_WriteMemory(4, 4, address, buff);
    switch(address) {
    case DEMCR:
-      Logging::print("Memory[0x%08X (DEMCR)] <= 0x%08X (%s)\n", address, data, getDEMCRName(data));
+      Logging::print("Memory[0x%08lX (DEMCR)] <= 0x%08lX (%s)\n", address, data, getDEMCRName(data));
       break;
    case DHCSR:
-      Logging::print("Memory[0x%08X (DHCSR)] <= 0x%08X (%s)\n", address, data, getDHCSRName(data));
+      Logging::print("Memory[0x%08lX (DHCSR)] <= 0x%08lX (%s)\n", address, data, getDHCSRName(data));
       break;
    case DBGMCU_CR:
-      Logging::print("Memory[0x%08X (STM.DBGMCU_CR)] <= 0x%08X\n", address, data);
+      Logging::print("Memory[0x%08lX (STM.DBGMCU_CR)] <= 0x%08lX\n", address, data);
       break;
    default:
-      Logging::print("Memory[0x%08X] <= 0x%08X\n", address, data);
+      Logging::print("Memory[0x%08lX] <= 0x%08lX\n", address, data);
       break;
    }
    return rc;
@@ -461,7 +464,7 @@ static USBDM_ErrorCode armCheckAPs(void) {
    }
    armDebugInformation.MDM_AP_present = ((dataIn & 0xFFFFFF00)== 0x001C0000);
    if (armDebugInformation.MDM_AP_present) {
-      Logging::print("MDM-AP (Kinetis) found (Id=0x%08X)\n", dataIn);
+      Logging::print("MDM-AP (Kinetis) found (Id=0x%08lX)\n", dataIn);
    }
    // Check if ARM AMBA-AHB-AP present
    rc = USBDM_ReadCReg(ARM_CRegAHB_AP_Id, &dataIn);
@@ -469,10 +472,10 @@ static USBDM_ErrorCode armCheckAPs(void) {
       return rc;
    }
    if ((dataIn&0x0FFF000F)!= 0x04770001) {
-      Logging::print("AMBA-AHB-AP not found (Id=0x%08X)!\n", dataIn);
+      Logging::print("AMBA-AHB-AP not found (Id=0x%08lX)!\n", dataIn);
       return BDM_RC_ARM_ACCESS_ERROR;
    }
-   Logging::print("AMBA-AHB-AP found (Id=0x%08X)\n", dataIn);
+   Logging::print("AMBA-AHB-AP found (Id=0x%08lX)\n", dataIn);
    // Save the AHB_AP_CFG register
    rc = USBDM_ReadCReg(ARM_CRegAHB_AP_CFG, &dataIn);
    if (rc != BDM_RC_OK) {
@@ -480,14 +483,14 @@ static USBDM_ErrorCode armCheckAPs(void) {
    }
    armDebugInformation.memAPConfig = dataIn;
    bool bigEndian = (dataIn&AHB_AP_CFG_BIGENDIAN)!=0;
-   Logging::print("AHB_AP.CFG => 0x%08X, %s\n", dataIn, bigEndian?"BigEndian":"LittleEndian");
+   Logging::print("AHB_AP.CFG => 0x%08lX, %s\n", dataIn, bigEndian?"BigEndian":"LittleEndian");
 
    // Get Debug base address
    rc = USBDM_ReadCReg(ARM_CRegAHB_AP_Base, &dataIn);
    if (rc != BDM_RC_OK) {
       return rc;
    }
-   Logging::print("AHB_AP.Base => 0x%08X\n", dataIn);
+   Logging::print("AHB_AP.Base => 0x%08lX\n", dataIn);
    armDebugInformation.debugBaseaddr = dataIn & 0xFFFFF000;
 
    return BDM_RC_OK;
@@ -575,7 +578,7 @@ static USBDM_ErrorCode debugPowerUp(void) {
          return rc;
       }
       rc = USBDM_ReadDReg(ARM_DRegSTATUS, &dataIn);
-      Logging::print("DP_ControlStatus= 0x%08X\n", dataIn);
+      Logging::print("DP_ControlStatus= 0x%08lX\n", dataIn);
       milliSleep(100);
       if (rc != BDM_RC_OK) {
          return rc;
@@ -662,7 +665,7 @@ USBDM_ErrorCode targetDebugEnable() {
          Logging::error("DHCSR read failed\n");
          continue;
       }
-      Logging::print("Initial DHCSR value = %s(0x%08X)\n", getDHCSRName(dhcsrValue), dhcsrValue);
+      Logging::print("Initial DHCSR value = %s(0x%08lX)\n", getDHCSRName(dhcsrValue), dhcsrValue);
       if ((dhcsrValue&DHCSR_C_DEBUGEN) != 0) {
          Logging::print("Debug Enable already set\n");
       }
@@ -681,7 +684,7 @@ USBDM_ErrorCode targetDebugEnable() {
                Logging::error("DHCSR read failed\n");
                continue;
             }
-            Logging::print("Final DHCSR value = %s(0x%08X)\n", getDHCSRName(dhcsrCheckValue), dhcsrCheckValue);
+            Logging::print("Final DHCSR value = %s(0x%08lX)\n", getDHCSRName(dhcsrCheckValue), dhcsrCheckValue);
          }
          if ((dhcsrCheckValue&DHCSR_C_DEBUGEN) == 0) {
             Logging::error("Debug enable failed\n");
@@ -922,6 +925,8 @@ USBDM_ErrorCode armDisconnect(TargetType_t targetType) {
    if (armInitialiseDone) {
       // Clear reset captures (ignore errors)
       armWriteMemoryWord(DEMCR, demcrBaseValue);
+      // Disabled as immediately start target execution which I think is undesirable.
+//      armWriteMemoryWord(DHCSR, DHCSR_DBGKEY);
    }
    armInitialiseDone = false;
    return BDM_RC_OK;

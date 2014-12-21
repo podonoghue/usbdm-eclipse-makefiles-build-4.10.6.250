@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE DeviceList SYSTEM "usbdmDeviceSchema.dtd"
 [
-<!ENTITY CFV1-default-flashProgram      SYSTEM "CFV1/ColdfireV1-default-flash-program.elf.S19">
-<!ENTITY CFV1-default-flashScripts      SYSTEM "CFV1/ColdfireV1-default-flash-scripts.tcl">
-<!ENTITY CFV1Plus-default-flashProgram  SYSTEM "CFV1/ColdfireV1Plus-default-flash-program.elf.S19">
-<!ENTITY CFV1Plus-default-flashScripts  SYSTEM "CFV1/ColdfireV1Plus-default-flash-scripts.tcl">
-<!ENTITY CFV1-Watchdog-flashProgram     SYSTEM "CFV1/ColdfireV1-Watchdog-flash-program.elf.S19">
-<!ENTITY New-ColdfileV1-Devices         SYSTEM "cfv1_newDevices.xml">
-<!ENTITY Custom-Devices                 SYSTEM "Custom/custom-cfv1.xml">
-<!ENTITY ColdfireV1-Project-actions     SYSTEM "CFV1/ColdfireV1-Project-actions.xml">
+<!ENTITY CFV1-default-flashProgram           SYSTEM "CFV1/ColdfireV1-default-flash-program.elf.S19">
+<!ENTITY CFV1-default-flashScripts           SYSTEM "CFV1/ColdfireV1-default-flash-scripts.tcl">
+<!ENTITY CFV1Plus-default-flashProgram       SYSTEM "CFV1/ColdfireV1Plus-default-flash-program.elf.S19">
+<!ENTITY CFV1Plus-default-flashScripts       SYSTEM "CFV1/ColdfireV1Plus-default-flash-scripts.tcl">
+<!ENTITY CFV1-Watchdog-flashProgram          SYSTEM "CFV1/ColdfireV1-Watchdog-flash-program.elf.S19">
+<!ENTITY Coldfire-base-register-description  SYSTEM "CFV1/Coldfire-base-register-description.xml">
+<!ENTITY New-ColdfileV1-Devices              SYSTEM "cfv1_newDevices.xml">
+<!ENTITY Custom-Devices                      SYSTEM "Custom/custom-cfv1.xml">
 ]>
 <!--  Notes
+      V4.10.6.240 - Added GDB register description
       V4.10.6.170 - Added features to support more flexible project creation
       V4.10.6.170 - Split out C project creation
       V4.10.6.110 - Changed to using <projectActionList> tag & related changes
@@ -34,11 +35,6 @@ Coldfire+
 <root version="4.10.6.170">
    <description>Coldfire V1 Device characteristics</description>
    <sharedInformation>
-      <!--  
-            Project actions 
-      -->
-      &ColdfireV1-Project-actions;
-      
       <!-- 
             Flash Programs & TCL Scripts 
       -->
@@ -147,10 +143,17 @@ Coldfire+
       </memory>
       <!-- Coldfire I/O space -->
       <memory id="coldfireIO" type="io">
-         <memoryRange start="0xC00000" size="16"/>  <!-- Rapid I/O -->
-         <memoryRange start="0xFF8000" size="32K"/> <!-- Peripherals -->
+         <memoryRange start="0xFFC00000" size="16"/>  <!-- Rapid I/O -->
+         <memoryRange start="0xFFFF8000" size="32K"/> <!-- Peripherals -->
       </memory>         
       
+      <!--  
+            Register sets 
+      -->
+      <registerDescription id="Coldfire-register-description"  count="18" >
+         &Coldfire-base-register-description;
+      </registerDescription>
+
    </sharedInformation>
 		
    <deviceList>
@@ -177,6 +180,7 @@ Coldfire+
          <sdidMask value="0x0FFF" />
          <sdid value="0x0000" mask="0x0000"/>
          <tclScriptRef ref="CFV1-default-Scripts" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
          <note>Default CFV1 Device</note>
       </device>
 &Custom-Devices;
@@ -193,8 +197,7 @@ Coldfire+
          <sdid value="0x0C1B" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51AC128C" subfamily="MCF51AC">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
@@ -209,8 +212,7 @@ Coldfire+
          <sdid value="0x0C1B" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51AC256A" subfamily="MCF51AC">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
@@ -225,8 +227,7 @@ Coldfire+
          <sdid value="0x0C1B" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51AC256B" subfamily="MCF51AC">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
@@ -241,8 +242,7 @@ Coldfire+
          <sdid value="0x0C1B" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51AG96" subfamily="MCF51AG">
          <clock registerAddress="0xFF8024" type="S08ICSV3" />
@@ -257,8 +257,7 @@ Coldfire+
          <sdid value="0x0C05" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-Watchdog-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51AG128" subfamily="MCF51AG">
          <clock registerAddress="0xFF8024" type="S08ICSV3" />
@@ -273,8 +272,7 @@ Coldfire+
          <sdid value="0x0C05" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-Watchdog-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51CN128" subfamily="MCF51CN">
          <clock registerAddress="0xFF8240" type="S08MCGV3" />
@@ -289,8 +287,7 @@ Coldfire+
          <sdid value="0x0C2F" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51EM128" subfamily="MCF51EM">
          <clock registerAddress="0xFF8220" type="S08ICSV3" />
@@ -309,8 +306,7 @@ Coldfire+
          <sdid value="0x0C02" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51EM256" subfamily="MCF51EM">
          <clock registerAddress="0xFF8220" type="S08ICSV3" />
@@ -329,8 +325,7 @@ Coldfire+
          <sdid value="0x0C02" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51JE128" subfamily="MCF51JE">
          <clock registerAddress="0xFF8038" type="S08MCGV3" />
@@ -348,8 +343,7 @@ Coldfire+
          <sdid value="0x0C04" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51JE256" subfamily="MCF51JE">
          <clock registerAddress="0xFF8038" type="S08MCGV3" />
@@ -367,8 +361,7 @@ Coldfire+
          <sdid value="0x0C04" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51JF32" subfamily="MCF51JF">
          <clock type="External" />
@@ -381,8 +374,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D01" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51JF64" subfamily="MCF51JF">
          <clock type="External" />
@@ -395,8 +387,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D01" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51JF128" subfamily="MCF51JF">
          <clock type="External" />
@@ -409,8 +400,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D01" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51JU32" subfamily="MCF51JU">
          <clock type="External" />
@@ -423,8 +413,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D02" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51JU64" subfamily="MCF51JU">
          <clock type="External" />
@@ -437,8 +426,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D02" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51JU128" subfamily="MCF51JU">
          <clock type="External" />
@@ -451,8 +439,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D02" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51JM32" subfamily="MCF51JM">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
@@ -468,8 +455,7 @@ Coldfire+
          <sdid value="0x0C17" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51JM64" subfamily="MCF51JM">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
@@ -485,8 +471,7 @@ Coldfire+
          <sdid value="0x0C17" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51JM128" subfamily="MCF51JM">
          <clock registerAddress="0xFF8048" type="S08MCGV3" />
@@ -502,8 +487,7 @@ Coldfire+
          <sdid value="0x0C17" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51MM128" subfamily="MCF51MM">
          <clock registerAddress="0xFF8038" type="S08MCGV3" />
@@ -522,8 +506,7 @@ Coldfire+
          <sdid value="0x0C04" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51MM256" subfamily="MCF51MM">
          <clock registerAddress="0xFF8038" type="S08MCGV3" />
@@ -542,8 +525,7 @@ Coldfire+
          <sdid value="0x0C04" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51QE32" subfamily="MCF51QE">
          <clock registerAddress="0xFF8038" type="S08ICSV3" />
@@ -558,8 +540,7 @@ Coldfire+
          <sdid value="0x0C15" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51QE64" subfamily="MCF51QE">
          <clock registerAddress="0xFF8038" type="S08ICSV3" />
@@ -574,8 +555,7 @@ Coldfire+
          <sdid value="0x0C15" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51QE96" subfamily="MCF51QE">
          <clock registerAddress="0xFF8038" type="S08ICSV3" />
@@ -590,8 +570,7 @@ Coldfire+
          <sdid value="0x0C15" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1" name="MCF51QE128" subfamily="MCF51QE">
          <clock registerAddress="0xFF8038" type="S08ICSV3" />
@@ -606,8 +585,7 @@ Coldfire+
          <sdid value="0x0C15" />
          <tclScriptRef ref="CFV1-default-Scripts" />
          <flashProgramRef ref="CFV1-default-FlashProgram" />
-         <projectActionListRef ref="Options-file-list-CFV1" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QF32" subfamily="MCF51QF">
          <clock type="External" />
@@ -620,8 +598,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D05" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QF64" subfamily="MCF51QF">
          <clock type="External" />
@@ -634,8 +611,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D05" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QF128" subfamily="MCF51QF">
          <clock type="External" />
@@ -648,8 +624,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D05" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QH32" subfamily="MCF51QH">
          <clock type="External" />
@@ -662,8 +637,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D04" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QH64" subfamily="MCF51QH">
          <clock type="External" />
@@ -676,8 +650,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D04" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QH128" subfamily="MCF51QH">
          <clock type="External" />
@@ -690,8 +663,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D04" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QM32" subfamily="MCF51QM">
          <clock type="External" />
@@ -704,8 +676,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D03" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QM64" subfamily="MCF51QM">
          <clock type="External" />
@@ -718,8 +689,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D03" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QM128" subfamily="MCF51QM">
          <clock type="External" />
@@ -732,8 +702,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D03" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QU32" subfamily="MCF51QU">
          <clock type="External" />
@@ -746,8 +715,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D06" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QU64" subfamily="MCF51QU">
          <clock type="External" />
@@ -760,8 +728,7 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D06" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
       <device family="CFV1Plus" name="MCF51QU128" subfamily="MCF51QU">
          <clock type="External" />
@@ -774,9 +741,14 @@ Coldfire+
          <sdid value="0x0D3F" />  <!-- Unprogrammed IFR ? -->
          <sdid value="0x0D06" />
          <tclScriptRef ref="CFV1Plus-default-Scripts" />
-         <projectActionListRef ref="Options-file-list-CFV1Plus" />
-         <projectActionListRef ref="Coldfire-V1-ProjectActions" />
+         <registerDescriptionRef ref="Coldfire-register-description" />
       </device>
 &New-ColdfileV1-Devices;
+
+<!-- Aliases -->
+      <device name="TWR-JF128" alias="MCF51JF128" />
+      <device name="TWR-JU128" alias="MCF51JU128" />
+<!-- End aliases -->
+
    </deviceList>
 </root>

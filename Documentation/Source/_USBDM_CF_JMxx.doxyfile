@@ -752,12 +752,6 @@ HTML_FOOTER =
 
 HTML_STYLESHEET = myStyle.css
 
-# If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
-# files or namespaces will be aligned in HTML using tables. If set to 
-# NO a bullet list will be used.
-
-HTML_ALIGN_MEMBERS = YES
-
 # If the GENERATE_HTMLHELP tag is set to YES, additional index files 
 # will be generated that can be used as input for tools like the 
 # Microsoft HTML help workshop to generate a compiled HTML help file (.chm) 
@@ -1002,7 +996,7 @@ RTF_EXTENSIONS_FILE =
 # If the GENERATE_MAN tag is set to YES (the default) Doxygen will 
 # generate man pages
 
-GENERATE_MAN = NO
+GENERATE_MAN = YES
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put. 
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 

@@ -20,6 +20,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.19.4.240 - Added return error codes
 ;#  V4.10.6.130 - Changed initTarget() to catch errors
 ;#  V4.10.4     - Changed return code handling
 ;# 
@@ -66,6 +67,10 @@ proc loadSymbols {} {
    set ::SIM_COPC               0xFFFF80CA
    set ::SIM_COPC_VALUE         0x00
 
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
+   
    return
 }
 
@@ -84,7 +89,8 @@ proc initTarget { arg } {
 ;#  busFrequency - Target bus frequency in kHz
 ;#
 proc initFlash { busFrequency } {
-;# Not used  
+;# Not used
+   
    return
 }
 
@@ -147,7 +153,8 @@ proc massEraseTarget { } {
       incr retry
    }
    if [ expr ( $status & $::CFV1_DBGSR_ERASE) == 0 ] {
-      error "Flash mass erase failed"
+      puts "Flash mass erase failed"
+      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }
    return
 }
@@ -155,12 +162,13 @@ proc massEraseTarget { } {
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   ;# Check if not read protected   
    set securityValue [ rdreg $::CFV1_DRegXCSRbyte ]
    if [ expr ( $securityValue & ($::CFV1_XCSR_SEC|$::CFV1_XCSR_ENBDM) ) != $::CFV1_XCSR_ENBDM ] {
-      return "Target is secured"
+      puts "isUnsecure{} - Target is secured!"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
-   return
+   puts "isUnsecure{} - Target is unsecured"
+   return 0
 }
 
 ;######################################################################################

@@ -30,6 +30,7 @@
 \verbatim
  Change History
 +======================================================================================================
+|  1 Dec 2014 | Fixed format in printf()s                                           - pgo 4.10.6.230
 | 12 Nov 2014 | Added armDisconnect() to allow reset behaviour to be restored       - pgo - V4.10.6.230
 | 12 Nov 2014 | Refactored armConnect()                                             - pgo - V4.10.6.230
 | 12 Oct 2014 | Added automatic alignment correction to memory (FIX_ALIGNMENT)      - pgo - V4.10.6.210
@@ -38,7 +39,7 @@
 | 01 Mar 2014 | Removed MCF51AC256 CSR.VBD hack                                     - pgo - V4.10.6.120
 | 16 Mar 2013 | Added default frequency to getDefaultExtendedOptions()              - pgo - V4.10.4
 | 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo - V4.10.4
-|  1 Dec 2012 | Changed logging                                                     - pgo - V4.10.4
+|  1 Dec 2012 | Changed Logg                                                     - pgo - V4.10.4
 | 30 Nov 2012 | Extended timeout for USBDM_ControlPins()                            - pgo - V4.10.4
 | 30 Oct 2012 | Added MS_Fast report                                                - pgo - V4.10.4
 | 17 Oct 2012 | USBDM_SetTarget() now only does POR if actual TVdd change and       - pgo - V4.10.3
@@ -768,7 +769,21 @@ USBDM_API
 USBDM_ErrorCode USBDM_SetExtendedOptions(const USBDM_ExtendedOptions_t *newBdmOptions) {
    LOGGING;
 #ifdef LOG
-   Logging::print("=> proposed\n");
+//   Logging::print("=> proposed (%p), sizeof = %d, sizeof=%d\n", newBdmOptions, sizeof (*newBdmOptions), sizeof(USBDM_ExtendedOptions_t));
+//   Logging::print("=> sizeof (size)= %d\n",                sizeof (newBdmOptions->size));
+//   Logging::print("=> sizeof (targetType)= %d\n",          sizeof (newBdmOptions->targetType));
+//   Logging::print("=> sizeof (targetVdd)= %d\n",           sizeof (newBdmOptions->targetVdd));
+//   Logging::print("=> sizeof (cycleVddOnReset)= %d\n",     sizeof (newBdmOptions->cycleVddOnReset));
+//   Logging::print("=> sizeof (leaveTargetPowered)= %d\n",  sizeof (newBdmOptions->leaveTargetPowered));
+//   Logging::print("=> sizeof (autoReconnect)= %d\n",       sizeof (newBdmOptions->autoReconnect));
+//   Logging::print("=> offset (size)= %d\n",                ((int)&newBdmOptions->size)-((int)newBdmOptions));
+//   Logging::print("=> offset (targetType)= %d\n",          ((int)&newBdmOptions->targetType)-((int)newBdmOptions));
+//   Logging::print("=> offset (targetVdd)= %d\n",           ((int)&newBdmOptions->targetVdd)-((int)newBdmOptions));
+//   Logging::print("=> offset (cycleVddOnReset)= %d\n",     ((int)&newBdmOptions->cycleVddOnReset)-((int)newBdmOptions));
+//   Logging::print("=> offset (leaveTargetPowered)= %d\n",  ((int)&newBdmOptions->leaveTargetPowered)-((int)newBdmOptions));
+//   Logging::print("=> offset (autoReconnect)= %d\n",       ((int)&newBdmOptions->autoReconnect)-((int)newBdmOptions));
+
+   Logging::print("=> proposed => \n");
    printBdmOptions(newBdmOptions);
 #endif
    // Validate some options
@@ -1416,7 +1431,7 @@ USBDM_ErrorCode USBDM_SetSpeed( unsigned long frequency) {
 
    bdmState.activityFlag = BDM_ACTIVE;
 
-   Logging::print("BDM Clk = %d kHz\n", frequency);
+   Logging::print("BDM Clk = %lukHz\n", frequency);
 
    switch (bdmState.targetType) {
       case T_HC12 :
@@ -1498,7 +1513,7 @@ USBDM_ErrorCode USBDM_GetSpeed(unsigned long *frequency /* kHz */) {
          break;
       }
    }
-   Logging::print("BDM Clk = %d kHz\n", *frequency);
+   Logging::print("BDM Clk = %lu kHz\n", *frequency);
    return rc;
 }
 
@@ -1528,7 +1543,7 @@ USBDM_ErrorCode USBDM_GetSpeedHz(unsigned long *frequency /* Hz */) {
       // The SYNC pulse is 128 BDM clock cycles
       *frequency = (60000000UL/value) * 128;
    }
-   Logging::print("Ticks = %d, BDM Clk = %d Hz\n", value, *frequency);
+   Logging::print("Ticks = %d, BDM Clk = %lu Hz\n", value, *frequency);
    return rc;
 }
 
@@ -1601,13 +1616,13 @@ USBDM_ErrorCode USBDM_ReadStatusReg(unsigned long *BDMStatusReg) {
       // Only report when changing
       const char *dummyString = dummy?"- dummy":"";
 
-      Logging::print("Changed => 0x%X = %s %s\n",
+      Logging::print("Changed => 0x%lX = %s %s\n",
             *BDMStatusReg,
             getStatusRegName(bdmState.targetType,*BDMStatusReg),
             dummyString);
    }
    else {
-      Logging::print("=> 0x%X = %s\n",
+      Logging::print("=> 0x%lX = %s\n",
             *BDMStatusReg,
             getStatusRegName(bdmState.targetType,*BDMStatusReg));
    }
@@ -1959,7 +1974,7 @@ USBDM_ErrorCode USBDM_WriteReg(unsigned int regNo, unsigned long regValue) {
    LOGGING_Q;
 
 #ifdef LOG
-   Logging::print("reg=%s(%d), 0x%X\n",
+   Logging::print("reg=%s(%d), 0x%lX\n",
          getRegName( bdmState.targetType, regNo ), regNo, regValue);
 #endif
 
@@ -2030,7 +2045,7 @@ USBDM_ErrorCode USBDM_ReadReg(unsigned int regNo, unsigned long *regValue) {
                   (usb_data[4]);
    }
 #ifdef LOG
-   Logging::print("reg=%s => 0x%X\n",
+   Logging::print("reg=%s => 0x%lX\n",
          getRegName( bdmState.targetType, regNo ), *regValue);
 #endif
 
@@ -2107,29 +2122,29 @@ USBDM_ErrorCode USBDM_WriteCReg(unsigned int regNo, unsigned long regValue) {
 #ifdef LOG
    switch (bdmState.targetType) {
       case T_CFV1 :
-         Logging::print("reg=%s(0x%X), 0x%X\n",
+         Logging::print("reg=%s(0x%X), 0x%lX\n",
                getCFV1ControlRegName(regNo), regNo, regValue);
          break;
       case T_CFVx :
-         Logging::print("reg=%s(0x%X), 0x%X\n",
+         Logging::print("reg=%s(0x%X), 0x%lX\n",
                getCFVxControlRegName(regNo), regNo, regValue);
          break;
       case T_ARM_SWD :
       case T_ARM_JTAG :
          switch (regNo) {
          case ARM_CRegMDM_AP_Status:
-            Logging::print("reg=MDM-AP.Status,  %s(0x%08X)\n", getMDM_APStatusName((uint32_t)regValue), regValue);
+            Logging::print("reg=MDM-AP.Status,  %s(0x%08lX)\n", getMDM_APStatusName((uint32_t)regValue), regValue);
             break;
          case ARM_CRegMDM_AP_Control:
-            Logging::print("reg=MDM-AP.Control, %s(0x%08X)\n", getMDM_APControlName((uint32_t)regValue),regValue);
+            Logging::print("reg=MDM-AP.Control, %s(0x%08lX)\n", getMDM_APControlName((uint32_t)regValue),regValue);
             break;
          default:
-            Logging::print("reg=%s(0x%X), 0x%08X)\n", getARMControlRegName(regNo), regNo, regValue);
+            Logging::print("reg=%s(0x%X), 0x%08lX)\n", getARMControlRegName(regNo), regNo, regValue);
             break;
          }
          break;
       default :
-         Logging::print("Failed - Unknown mode, register(0x%4X) = 0x%X\n",
+         Logging::print("Failed - Unknown mode, register(0x%4X) = 0x%lX\n",
                regNo, regValue);
          break;
    };
@@ -2204,27 +2219,27 @@ USBDM_ErrorCode USBDM_ReadCReg(unsigned int regNo, unsigned long *regValue) {
 #ifdef LOG
    switch (bdmState.targetType) {
       case T_CFV1 :
-         Logging::print("reg=%s(0x%X), 0x%X\n", getCFV1ControlRegName(regNo), regNo, *regValue);
+         Logging::print("reg=%s(0x%X), 0x%lX\n", getCFV1ControlRegName(regNo), regNo, *regValue);
          break;
       case T_CFVx :
-         Logging::print("reg=%s(0x%X), 0x%X\n", getCFVxControlRegName(regNo), regNo, *regValue);
+         Logging::print("reg=%s(0x%X), 0x%lX\n", getCFVxControlRegName(regNo), regNo, *regValue);
          break;
       case T_ARM_SWD :
       case T_ARM_JTAG :
          switch (regNo) {
          case ARM_CRegMDM_AP_Status:
-            Logging::print("reg=MDM-AP.Status,  %s(0x%08X)\n", getMDM_APStatusName(*regValue), *regValue);
+            Logging::print("reg=MDM-AP.Status,  %s(0x%08lX)\n", getMDM_APStatusName(*regValue), *regValue);
             break;
          case ARM_CRegMDM_AP_Control:
-            Logging::print("reg=MDM-AP.Control, %s(0x%08X)\n", getMDM_APControlName(*regValue),*regValue);
+            Logging::print("reg=MDM-AP.Control, %s(0x%08lX)\n", getMDM_APControlName(*regValue),*regValue);
             break;
          default:
-            Logging::print("reg=%s(0x%X), 0x%08X\n", getARMControlRegName(regNo), regNo, *regValue);
+            Logging::print("reg=%s(0x%X), 0x%08lX\n", getARMControlRegName(regNo), regNo, *regValue);
             break;
          }
          break;
       default :
-         Logging::print("Failed - Unknown mode, register(0x%4X) = 0x%X\n", regNo, *regValue);
+         Logging::print("Failed - Unknown mode, register(0x%4X) = 0x%lX\n", regNo, *regValue);
          break;
    };
 #endif
@@ -2254,30 +2269,30 @@ USBDM_ErrorCode USBDM_WriteDReg(unsigned int regNo, unsigned long regValue) {
 #ifdef LOG
    switch (bdmState.targetType) {
       case T_HC12 :
-         Logging::print("%s(0x%X) <= 0x%X\n",
+         Logging::print("%s(0x%X) <= 0x%lX\n",
                getHCS12DebugRegName(regNo), regNo, regValue);
          break;
       case T_HCS08 :
-         Logging::print("BKPT <= 0x%X\n", regValue);
+         Logging::print("BKPT <= 0x%lX\n", regValue);
          break;
       case T_RS08 :
-         Logging::print("BKPT <= 0x%X\n", regValue);
+         Logging::print("BKPT <= 0x%lX\n", regValue);
          break;
       case T_CFV1 :
-         Logging::print("%s(0x%X) <= 0x%X\n",
+         Logging::print("%s(0x%X) <= 0x%lX\n",
                getCFV1DebugRegName(regNo), regNo, regValue);
          break;
       case T_CFVx :
-         Logging::print("%s(0x%X) <= 0x%X\n",
+         Logging::print("%s(0x%X) <= 0x%lX\n",
                getCFVxDebugRegName(regNo), regNo, regValue);
          break;
       case T_ARM_SWD :
       case T_ARM_JTAG :
-         Logging::print("%s(0x%X) <= 0x%X\n",
+         Logging::print("%s(0x%X) <= 0x%lX\n",
                getSWDDebugRegName(regNo), regNo, regValue);
          break;
       default :
-         Logging::print("Unknown mode, register(0x%4X) <= 0x%X\n",
+         Logging::print("Unknown mode, register(0x%4X) <= 0x%lX\n",
                regNo, regValue);
          break;
    };
@@ -2340,31 +2355,31 @@ USBDM_ErrorCode USBDM_ReadDReg(unsigned int regNo, unsigned long *regValue) {
 #ifdef LOG
    switch (bdmState.targetType) {
       case T_HC12 :
-         Logging::print("%s(0x%X) => 0x%X\n",
+         Logging::print("%s(0x%X) => 0x%lX\n",
                getHCS12DebugRegName(regNo), regNo, *regValue);
          break;
       case T_HCS08 :
-         Logging::print("BKPT => 0x%X\n", *regValue);
+         Logging::print("BKPT => 0x%lX\n", *regValue);
          break;
       case T_RS08 :
-         Logging::print("BKPT => 0x%X\n", *regValue);
+         Logging::print("BKPT => 0x%lX\n", *regValue);
          break;
       case T_CFV1 :
-         Logging::print("%s(0x%X) => 0x%X\n",
+         Logging::print("%s(0x%X) => 0x%lX\n",
                   getCFV1DebugRegName(regNo), regNo, *regValue);
          break;
       case T_CFVx :
-         Logging::print("%s(0x%X) => 0x%X=>%s\n",
+         Logging::print("%s(0x%X) => 0x%lX=>%s\n",
                   getCFVxDebugRegName(regNo), regNo, *regValue,
                   getCFVx_CSR_Name(*regValue));
          break;
       case T_ARM_SWD :
       case T_ARM_JTAG :
-         Logging::print("%s(0x%X) => 0x%X\n",
+         Logging::print("%s(0x%X) => 0x%lX\n",
                getSWDDebugRegName(regNo), regNo, *regValue);
          break;
       default :
-         Logging::print("Failed - Unknown mode, register(0x%4X) => 0x%X\n",
+         Logging::print("Failed - Unknown mode, register(0x%4X) => 0x%lX\n",
                regNo, *regValue);
          break;
    };
@@ -2447,7 +2462,7 @@ USBDM_ErrorCode USBDM_WriteMemory( unsigned int        memorySpace,
                                    unsigned const char *data) {
    LOGGING_Q;
    if (Logging::getLoggingLevel()>=0) {
-      // Turn off logging below this level
+      // Turn off Logg below this level
       Logging::setLoggingLevel(0);
    }
    unsigned blockSize;
@@ -2592,7 +2607,7 @@ USBDM_ErrorCode USBDM_ReadMemory( unsigned int  memorySpace,
                                   unsigned char *data) {
    LOGGING_Q;
    if (Logging::getLoggingLevel()>=0) {
-      // Turn off logging below this level
+      // Turn off Logg below this level
       Logging::setLoggingLevel(0);
    }
    USBDM_ErrorCode rc, stickyRc = BDM_RC_OK;

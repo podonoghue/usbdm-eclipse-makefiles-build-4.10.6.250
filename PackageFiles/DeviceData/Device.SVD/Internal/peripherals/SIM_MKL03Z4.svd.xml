@@ -14,7 +14,7 @@ Devices using this peripheral:
          <resetMask>0xFFFFFFFF</resetMask>
          <addressBlock>
             <offset>0x0</offset>
-            <size>0x8</size>
+            <size>0x4</size>
             <usage>registers</usage>
          </addressBlock>
          <addressBlock>
@@ -59,7 +59,12 @@ Devices using this peripheral:
          </addressBlock>
          <addressBlock>
             <offset>0x1100</offset>
-            <size>0x8</size>
+            <size>0x4</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <offset>0x1104</offset>
+            <size>0x4</size>
             <usage>registers</usage>
          </addressBlock>
          <registers>
@@ -130,13 +135,6 @@ Selects the 32 kHz clock source (ERCLK32K) for RTC and LPTMR. This field is rese
                </fields>
             </register>
             <register>
-               <name>SOPT1CFG</name>
-               <description>SOPT1 Configuration Register</description>
-               <addressOffset>0x4</addressOffset>
-               <size>32</size>
-               <access>read-only</access>
-            </register>
-            <register>
                <name>SOPT2</name>
                <description>System Options Register 2</description>
                <addressOffset>0x1004</addressOffset>
@@ -202,7 +200,7 @@ Selects the 32 kHz clock source (ERCLK32K) for RTC and LPTMR. This field is rese
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b111</name>
-                           <description>Reserved</description>
+                           <description>IRC48M clock</description>
                            <value>0b111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -220,7 +218,7 @@ Selects the 32 kHz clock source (ERCLK32K) for RTC and LPTMR. This field is rese
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>MCGFLLCLK clock</description>
+                           <description>IRC48M clock</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -248,7 +246,7 @@ Selects the 32 kHz clock source (ERCLK32K) for RTC and LPTMR. This field is rese
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>MCGFLLCLK clock</description>
+                           <description>IRC48M clock</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -333,7 +331,7 @@ Selects the 32 kHz clock source (ERCLK32K) for RTC and LPTMR. This field is rese
                <fields>
                   <field>
                      <name>LPUART0TXSRC</name>
-                     <description>LPUART0 transmit data source select\n
+                     <description>LPUART0TXSRC transmit data source select\n
 Selects the source for the LPUART0 transmit data</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -391,7 +389,8 @@ Selects the source for the LPUART0 receive data</description>
             </register>
             <register>
                <name>SOPT7</name>
-               <description>System Options Register 7</description>
+               <description>System Options Register 7\n
+Selects 1 of 16 peripherals to initiate an ADC conversion via the ADHWDT input, when ADC0ALTTRGEN =1, else is ignored by ADC0</description>
                <addressOffset>0x1018</addressOffset>
                <fields>
                   <field>
@@ -484,36 +483,40 @@ Selects the source for the LPUART0 receive data</description>
                   </field>
                   <field>
                      <name>ADC0PRETRGSEL</name>
-                     <description>ADC0 pretrigger select</description>
+                     <description>ADC0 pretrigger select\n
+Selects the ADC0 pre-trigger source when alternative triggers are enabled through ADC0ALTTRGEN</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Pre-trigger A</description>
+                           <description>Pre-trigger ADHDWTSA is selected\n
+ADC0 will use ADC0_SC1A configuration for the next ADC conversion and store the result in ADC0_RA register</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Pre-trigger B</description>
+                           <description>Pre-trigger ADHDWTSB is selected\n
+ADC0 will use ADC0_SC1B configuration for the next ADC conversion and store the result in ADC0_RB register</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ADC0ALTTRGEN</name>
-                     <description>ADC0 alternate trigger enable</description>
+                     <description>ADC0 alternate trigger enable\n
+Enables alternative conversion triggers for ADC0</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>TPM1 channel 0 (A) and channel 1 (B) triggers selected for ADC0</description>
+                           <description>ADC ADHWT trigger comes from TPM1 channel 0 and channel1</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Alternate trigger selected for ADC0</description>
+                           <description>ADC ADHWT trigger comes from a peripheral event selected by ADC0TRGSEL bits</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -795,18 +798,19 @@ Selects the source for the LPUART0 receive data</description>
                   </field>
                   <field>
                      <name>VREF</name>
-                     <description>SPI0 Clock Gate Control</description>
+                     <description>VREF Clock Gate Control\n
+Controls the clock gate to the VREF module</description>
                      <bitOffset>20</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>VREF disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>VREF enabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1443,7 +1447,9 @@ This write-once field selects the clock source of the COP watchdog</description>
                <fields>
                   <field>
                      <name>SRVCOP</name>
-                     <description>Sevice COP Register</description>
+                     <description>Sevice COP Register\n
+Write 0x55 and then 0xAA (in that order) to reset the COP timeout counter, writing any other value will
+generate a system reset</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                   </field>

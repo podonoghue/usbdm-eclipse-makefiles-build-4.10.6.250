@@ -21,13 +21,11 @@
 <!ENTITY Custom-Devices                    SYSTEM "Custom/custom-arm.xml">
 <!ENTITY CortexM-base-register-description SYSTEM "ARM/CortexM-base-register-description.xml">
 <!ENTITY CortexM-sfpu-register-description SYSTEM "ARM/CortexM-sfpu-register-description.xml">
-<!ENTITY CortexM0-Project-actions          SYSTEM "ARM/CortexM0-Project-actions.xml">
-<!ENTITY CortexM3-Project-actions          SYSTEM "ARM/CortexM3-Project-actions.xml">
-<!ENTITY CortexM4-Project-actions          SYSTEM "ARM/CortexM4-Project-actions.xml">
-<!ENTITY Kinetis-PE-Project-actions        SYSTEM "ARM/Kinetis-PE-Project-actions.xml">
 ]>
 <!-- 
 ToDo - review flash block sizes for MK20-MK70
+      V4.10.6.240 - Added various devices, updated FRDM aliases
+      V4.10.6.190 - Added MKL43 devices
       V4.10.6.190 - Added MKL03 devices
       V4.10.6.190 - Added SDID M=0 when V=0 to indicate wild-card
       V4.10.6.180 - Added MKMxx
@@ -59,14 +57,6 @@ NOTES:
 <root version="4.10.6.170">
    <description>ARM device characteristics 21/6/2014</description>
    <sharedInformation>
-      <!--  
-            Project actions 
-      -->
-      &Kinetis-PE-Project-actions;
-      &CortexM0-Project-actions;
-      &CortexM3-Project-actions;
-      &CortexM4-Project-actions;
-      
       <!-- 
             Flash Programs & TCL Scripts 
       -->
@@ -761,7 +751,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>Default ARM Device</note>
       </device>
@@ -776,8 +765,6 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE02M2" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE02Z32M2" family="CortexM0" subfamily="MKE02Z2">
@@ -788,8 +775,6 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE02M2" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE02Z64M2" family="CortexM0" subfamily="MKE02Z2">
@@ -800,11 +785,9 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x02040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE02M2" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
-      <device name="MKE02Z16M4" family="CortexM0" subfamily="MKE02Z2">
+      <device name="MKE02Z16M4" family="CortexM0" subfamily="MKE02Z4">
          <memoryRef ref="kinetisE2K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
@@ -812,11 +795,9 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE02M4" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
-      <device name="MKE02Z32M4" family="CortexM0" subfamily="MKE02Z2">
+      <device name="MKE02Z32M4" family="CortexM0" subfamily="MKE02Z4">
          <memoryRef ref="kinetisE4K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
@@ -824,11 +805,9 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE02M4" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
-      <device name="MKE02Z64M4" family="CortexM0" subfamily="MKE02Z2">
+      <device name="MKE02Z64M4" family="CortexM0" subfamily="MKE02Z4">
          <memoryRef ref="kinetisE4K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
@@ -836,8 +815,6 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x02040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE02M4" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKE04Z4 -->
@@ -848,8 +825,6 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x04070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE04" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE04Z64M4" family="CortexM0" subfamily="MKE04Z4">
@@ -859,8 +834,6 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x04040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE04" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE04Z128M4" family="CortexM0" subfamily="MKE04Z4">
@@ -870,8 +843,6 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x04040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE04" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKE06Z4 -->
@@ -882,8 +853,6 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x06040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE06" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKE06Z128M4" family="CortexM0" subfamily="MKE06Z4">
@@ -893,8 +862,6 @@ NOTES:
          <sdidAddress value="0x40048000" />
          <sdid value="0x06040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
-         <projectActionListRef  ref="Options-file-list-MKE06" />
-         <projectActionListRef  ref="Kinetis-MKE-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 
@@ -907,8 +874,6 @@ NOTES:
          <sdid value="0x02130602" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL02Z16M4" family="CortexM0" subfamily="MKL02Z4">
@@ -918,8 +883,6 @@ NOTES:
          <sdid value="0x02130602" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL02Z32M4" family="CortexM0" subfamily="MKL02Z4">
@@ -929,8 +892,6 @@ NOTES:
          <sdid value="0x02130602" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL03Z4 -->
@@ -941,8 +902,6 @@ NOTES:
          <sdid value="0x03120680" mask="0xFFFF0FF0"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL03Z16M4" family="CortexM0" subfamily="MKL03Z4">
@@ -952,8 +911,6 @@ NOTES:
          <sdid value="0x03120680" mask="0xFFFF0FF0"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL03Z32M4" family="CortexM0" subfamily="MKL03Z4">
@@ -963,8 +920,6 @@ NOTES:
          <sdid value="0x03121681" mask="0xFFFF0FF0"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL04Z4 -->
@@ -975,8 +930,6 @@ NOTES:
          <sdid value="0x04110480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL04Z16M4" family="CortexM0" subfamily="MKL04Z4">
@@ -986,8 +939,6 @@ NOTES:
          <sdid value="0x04120480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL04Z32M4" family="CortexM0" subfamily="MKL04Z4">
@@ -997,8 +948,6 @@ NOTES:
          <sdid value="0x04130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL05Z4 -->
@@ -1009,8 +958,6 @@ NOTES:
          <sdid value="0x05110480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL05Z16M4" family="CortexM0" subfamily="MKL05Z4">
@@ -1020,8 +967,6 @@ NOTES:
          <sdid value="0x05120480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL05Z32M4" family="CortexM0" subfamily="MKL05Z4">
@@ -1031,8 +976,6 @@ NOTES:
          <sdid value="0x05130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKL0x" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL14Z4 -->
@@ -1043,8 +986,6 @@ NOTES:
          <sdid value="0x14130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL14Z64M4" family="CortexM0" subfamily="MKL14Z4">
@@ -1054,8 +995,6 @@ NOTES:
          <sdid value="0x14140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL15Z4 -->
@@ -1066,8 +1005,6 @@ NOTES:
          <sdid value="0x15130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL15Z64M4"  family="CortexM0" subfamily="MKL15Z4">
@@ -1077,8 +1014,6 @@ NOTES:
          <sdid value="0x15140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL15Z128M4" family="CortexM0" subfamily="MKL15Z4">
@@ -1088,8 +1023,6 @@ NOTES:
          <sdid value="0x15150480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL16Z4 -->
@@ -1100,8 +1033,6 @@ NOTES:
          <sdid value="0x16130000" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL16Z64M4"  family="CortexM0" subfamily="MKL16Z4">
@@ -1111,8 +1042,6 @@ NOTES:
          <sdid value="0x16140000" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL16Z128M4" family="CortexM0" subfamily="MKL16Z4">
@@ -1122,8 +1051,6 @@ NOTES:
          <sdid value="0x16150000" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL16Z256M4" family="CortexM0" subfamily="MKL16Z4">
@@ -1133,8 +1060,6 @@ NOTES:
          <sdid value="0x16160480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL24Z4 -->
@@ -1145,8 +1070,6 @@ NOTES:
          <sdid value="0x24130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL24Z64M4" family="CortexM0" subfamily="MKL24Z4">
@@ -1156,8 +1079,6 @@ NOTES:
          <sdid value="0x24140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL25Z4 -->
@@ -1168,8 +1089,6 @@ NOTES:
          <sdid value="0x25100480" mask="0xFFF00F80" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef ref="Options-file-list-MKLxx" />
-         <projectActionListRef   ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL25Z64M4"  family="CortexM0" subfamily="MKL25Z4">
@@ -1179,8 +1098,6 @@ NOTES:
          <sdid value="0x25100480" mask="0xFFF00F80" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL25Z128M4" family="CortexM0" subfamily="MKL25Z4">
@@ -1190,8 +1107,6 @@ NOTES:
          <sdid value="0x25100480" mask="0xFFF00F80" />
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL26Z4 -->
@@ -1202,8 +1117,6 @@ NOTES:
          <sdid value="0x26130480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL26Z64M4"  family="CortexM0" subfamily="MKL26Z4">
@@ -1213,8 +1126,6 @@ NOTES:
          <sdid value="0x26140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL26Z128M4" family="CortexM0" subfamily="MKL26Z4">
@@ -1224,8 +1135,6 @@ NOTES:
          <sdid value="0x26150480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL26Z256M4" family="CortexM0" subfamily="MKL26Z4">
@@ -1235,8 +1144,6 @@ NOTES:
          <sdid value="0x26160480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       
@@ -1248,8 +1155,6 @@ NOTES:
          <sdid value="0x34140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       
@@ -1261,11 +1166,8 @@ NOTES:
          <sdid value="0x36140480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
-
       <device name="MKL36Z128M4" family="CortexM0" subfamily="MKL36Z4">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
@@ -1273,8 +1175,6 @@ NOTES:
          <sdid value="0x36150480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL36Z256M4" family="CortexM0" subfamily="MKL36Z4">
@@ -1284,8 +1184,25 @@ NOTES:
          <sdid value="0x36160480" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+      </device>
+<!-- MKL43Z4 -->
+      <device name="MKL43Z128M4" family="CortexM0" subfamily="MKL43Z4">
+         <memoryRef ref="kinetisL16K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdid value="0x43150588" mask="0xFFFF0000"/>
+         <tclScriptRef ref="Kinetis-KLxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
+         <registerDescriptionRef ref="CortexM0-register-description" />
+      </device>
+      <device name="MKL43Z256M4" family="CortexM0" subfamily="MKL43Z4">
+         <memoryRef ref="kinetisL32K_Ram" />
+         <memoryRef ref="FTFA_PFlash0_SEC_256K_1KS" />
+         <memoryRef ref="kinetisIO_MKL" />
+         <sdid value="0x43160588" mask="0xFFFF0000"/>
+         <tclScriptRef ref="Kinetis-KLxx-Scripts" />
+         <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 <!-- MKL46Z4 -->
@@ -1296,8 +1213,6 @@ NOTES:
          <sdid value="0x46150588" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
       <device name="MKL46Z256M4" family="CortexM0" subfamily="MKL46Z4">
@@ -1307,8 +1222,6 @@ NOTES:
          <sdid value="0x46160588" mask="0xFFFF0000"/>
          <tclScriptRef ref="Kinetis-KLxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKL-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKLxx" />
-         <projectActionListRef  ref="Kinetis-MKL-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
       </device>
 
@@ -1322,8 +1235,6 @@ NOTES:
          <sdid value="0x10300000" mask="0xF0F00000"/>
          <tclScriptRef ref="Kinetis-KMxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKMxx" />
-         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
          <note>No LCD</note>
       </device>
@@ -1335,8 +1246,6 @@ NOTES:
          <sdid value="0x10300000" mask="0xF0F00000"/>
          <tclScriptRef ref="Kinetis-KMxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKMxx" />
-         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
          <note>No LCD</note>
       </device>
@@ -1349,8 +1258,6 @@ NOTES:
          <sdid value="0x30300000" mask="0xF0F00000"/>
          <tclScriptRef ref="Kinetis-KMxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKMxx" />
-         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
          <note>8x17 LCD</note>
       </device>
@@ -1362,8 +1269,6 @@ NOTES:
          <sdid value="0x30300000" mask="0xF0F00000"/>
          <tclScriptRef ref="Kinetis-KMxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKMxx" />
-         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
          <note>8x17 LCD</note>
       </device>
@@ -1376,8 +1281,6 @@ NOTES:
          <sdid value="0x30300000" mask="0xF0F00000"/>
          <tclScriptRef ref="Kinetis-KMxx-Scripts" />
          <flashProgramRef ref="Kinetis-MKM-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKMxx" />
-         <projectActionListRef  ref="Kinetis-MKM-ProjectActions" />
          <registerDescriptionRef ref="CortexM0-register-description" />
          <note>8x17 LCD</note>
       </device>
@@ -1391,8 +1294,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DN64M5"  family="CortexM4" subfamily="MK10D5">
@@ -1402,8 +1303,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DN128M5" family="CortexM4" subfamily="MK10D5">
@@ -1413,8 +1312,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX32M5"  family="CortexM4" subfamily="MK10D5">
@@ -1425,8 +1322,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX64M5"  family="CortexM4" subfamily="MK10D5">
@@ -1437,8 +1332,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX128M5" family="CortexM4" subfamily="MK10D5">
@@ -1449,8 +1342,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK10-M7-->
@@ -1462,8 +1353,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX128M7" family="CortexM4" subfamily="MK10D7">
@@ -1474,8 +1363,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX256M7" family="CortexM4" subfamily="MK10D7">
@@ -1486,8 +1373,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK10-M10-->
@@ -1499,8 +1384,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DN512ZM10" family="CortexM4" subfamily="MK10DZ10">
@@ -1511,8 +1394,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX128M10"  family="CortexM4" subfamily="MK10D10">
@@ -1523,8 +1404,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX128ZM10" family="CortexM4" subfamily="MK10DZ10">
@@ -1535,8 +1414,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX256M10"  family="CortexM4" subfamily="MK10D10">
@@ -1547,8 +1424,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK10DX256ZM10" family="CortexM4" subfamily="MK10DZ10">
@@ -1560,8 +1435,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK10-M12-->
@@ -1575,8 +1448,6 @@ NOTES:
          <sdid value="0x00000180" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K10P144M120SF3RM</note>
       </device>
@@ -1589,8 +1460,6 @@ NOTES:
          <sdid value="0x00000180" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K10P144M120SF3RM</note>
       </device>
@@ -1602,8 +1471,6 @@ NOTES:
          <sdid value="0x00000010" mask="0xFFFF0FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K20P32M50SF0RM</note>
       </device>
@@ -1614,8 +1481,6 @@ NOTES:
          <sdid value="0x00000010" mask="0xFFFF0FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K20P32M50SF0RM</note>
       </device>
@@ -1626,8 +1491,6 @@ NOTES:
          <sdid value="0x00000010" mask="0xFFFF0FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K20P32M50SF0RM</note>
       </device>
@@ -1639,8 +1502,6 @@ NOTES:
          <sdid value="0x00000010" mask="0xFFFF0FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K20P32M50SF0RM</note>
      </device>
@@ -1652,8 +1513,6 @@ NOTES:
          <sdid value="0x00000010" mask="0xFFFF0FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K20P32M50SF0RM</note>
       </device>
@@ -1666,8 +1525,6 @@ NOTES:
          <sdid value="0x00000010" mask="0xFFFF0FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K20P32M50SF0RM</note>
       </device>
@@ -1680,8 +1537,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK20DX128M7" family="CortexM4" subfamily="MK20D7">
@@ -1692,8 +1547,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK20DX256M7" family="CortexM4" subfamily="MK20D7">
@@ -1706,8 +1559,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK20-M10 -->
@@ -1718,8 +1569,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK20DN512ZM10" family="CortexM4" subfamily="MK20DZ10">
@@ -1729,8 +1578,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK20DX128M10"  family="CortexM4" subfamily="MK20D10">
@@ -1741,8 +1588,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK20DX128ZM10" family="CortexM4" subfamily="MK20DZ10">
@@ -1753,8 +1598,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK20DX256M10"  family="CortexM4" subfamily="MK20D10">
@@ -1765,8 +1608,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK20DX256ZM10" family="CortexM4" subfamily="MK20DZ10">
@@ -1777,8 +1618,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK20-M12 -->
@@ -1792,8 +1631,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
       </device>
       <device name="MK20FX512M12" family="CortexM4F" subfamily="MK20F12">
@@ -1804,8 +1641,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
       </device>
 <!-- MK21-M5 -->
@@ -1816,8 +1651,6 @@ NOTES:
          <sdid value="0x00002300" mask="0x00000FF0"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K21P80M50SF4RM</note>
       </device>
@@ -1829,8 +1662,6 @@ NOTES:
          <sdid value="0x00002300" mask="0x00000FF0"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K21P80M50SF4RM</note>
       </device>
@@ -1842,8 +1673,6 @@ NOTES:
          <sdid value="0x00002300" mask="0x00000FF0"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K21P80M50SF4RM</note>
       </device>
@@ -1858,8 +1687,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
       </device>
       <device name="MK21FX512M12" family="CortexM4F" subfamily="MK21F12">
@@ -1870,8 +1697,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
       </device>
 <!-- MK22-M5 -->
@@ -1882,8 +1707,6 @@ NOTES:
          <sdid value="0x00000210" mask="0x00000FF0"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K22P80M50SF4RM,K22P64M50SF4RM,K22P121M50SF4RM</note>
       </device>
@@ -1895,8 +1718,6 @@ NOTES:
          <sdid value="0x00000210" mask="0x00000FF0"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K22P48M50SF4RM,K22P64M50SF4RM,K22P80M50SF4RM,K22P121M50SF4RM</note>
       </device>
@@ -1908,8 +1729,6 @@ NOTES:
          <sdid value="0x00000210" mask="0x00000FF0"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>K22P48M50SF4RM,K22P64M50SF4RM,K22P80M50SF4RM,K22P121M50SF4RM</note>
       </device>
@@ -1921,8 +1740,6 @@ NOTES:
          <sdid value="0x22000A80" mask="0xFFF00F80"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-MK-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K22P121M120SF8RM</note>
       </device>
@@ -1934,8 +1751,6 @@ NOTES:
          <sdid value="0x22000E80" mask="0xFFF00F80"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-MK-FTFA-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K22P121M120SF7RM</note>
       </device>
@@ -1949,8 +1764,6 @@ NOTES:
          <sdid value="0x00000310" mask="0xFFF00FF0"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K22P64M120SF5RM,K22P80M120SF5RM,K22P100M120SF5RM,K22P121M120SF5RM,K22P144M120SF5RM</note>
       </device>
@@ -1963,8 +1776,6 @@ NOTES:
          <sdid value="0x00000310" mask="0xFFF00FF0"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K22P64M120SF5RM,K22P80M120SF5RM,K22P100M120SF5RM,K22P121M120SF5RM,K22P144M120SF5RM</note>
       </device>
@@ -1979,8 +1790,6 @@ NOTES:
          <sdid value="0x24000000" mask="0xFFF00F80"/>
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K24P144M120SF5RM</note>
       </device>
@@ -1993,8 +1802,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK30DX128M7" family="CortexM4" subfamily="MK30D7">
@@ -2005,8 +1812,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK30DX256M7" family="CortexM4" subfamily="MK30D7">
@@ -2017,8 +1822,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK30-M10 -->
@@ -2029,11 +1832,9 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
-      <device name="MK30DX64M10" family="CortexM4" subfamily="MK30D">
+      <device name="MK30DX64M10" family="CortexM4" subfamily="MK30D10">
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
@@ -2041,8 +1842,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK30DX128M10"  family="CortexM4"  subfamily="MK30D10">
@@ -2053,8 +1852,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK30DX128ZM10" family="CortexM4"  subfamily="MK30DZ10">
@@ -2065,8 +1862,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK30DX256M10"  family="CortexM4"  subfamily="MK30D10">
@@ -2077,8 +1872,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK30DX256ZM10" family="CortexM4"  subfamily="MK30DZ10">
@@ -2089,8 +1882,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK40-M7 -->
@@ -2102,8 +1893,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK40DX128M7" family="CortexM4" subfamily="MK40D7">
@@ -2114,8 +1903,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK40DX256M7" family="CortexM4" subfamily="MK40D7">
@@ -2126,8 +1913,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK40-M10 -->
@@ -2138,8 +1923,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK40DX64M10"   family="CortexM4" subfamily="MK40D10">
@@ -2150,8 +1933,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK40DX128M10"  family="CortexM4" subfamily="MK40D10">
@@ -2162,8 +1943,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK40DX128ZM10" family="CortexM4" subfamily="MK40DZ10">
@@ -2174,8 +1953,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK40DX256M10"  family="CortexM4" subfamily="MK40D10">
@@ -2186,8 +1963,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK40DX256ZM10" family="CortexM4" subfamily="MK40DZ10">
@@ -2198,8 +1973,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK50-M7 -->
@@ -2211,8 +1984,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef   ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK50DX256M7" family="CortexM4" subfamily="MK50D7">
@@ -2223,8 +1994,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef   ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK50-M10 -->
@@ -2235,8 +2004,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK50DN512ZM10" family="CortexM4" subfamily="MK50DZ10">
@@ -2246,8 +2013,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK50DX128M10" family="CortexM4"  subfamily="MK50D10">
@@ -2258,8 +2023,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK50DX256M10" family="CortexM4"  subfamily="MK50D10">
@@ -2270,8 +2033,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK50DX256ZM10" family="CortexM4" subfamily="MK50DZ10">
@@ -2282,8 +2043,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK51-M7 -->
@@ -2295,8 +2054,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM7" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK51DX256M7" family="CortexM4"  subfamily="MK51D7">
@@ -2307,8 +2064,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM5" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK51-M10 -->
@@ -2319,8 +2074,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK51DN512ZM10" family="CortexM4" subfamily="MK51DZ10">
@@ -2330,8 +2083,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK51DN256M10"  family="CortexM4" subfamily="MK51D10">
@@ -2341,8 +2092,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK51DN256ZM10" family="CortexM4" subfamily="MK51DZ10">
@@ -2352,8 +2101,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK51DX128M10"  family="CortexM4" subfamily="MK51D10">
@@ -2364,8 +2111,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK51DX256M10"  family="CortexM4" subfamily="MK51D10">
@@ -2376,8 +2121,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK51DX256ZM10" family="CortexM4" subfamily="MK51DZ10">
@@ -2388,8 +2131,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK52-M10 -->
@@ -2400,8 +2141,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK52DN512ZM10" family="CortexM4" subfamily="MK52DZ10">
@@ -2411,8 +2150,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK53-M10 -->
@@ -2423,8 +2160,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK53DN512ZM10" family="CortexM4" subfamily="MK53DZ10">
@@ -2433,9 +2168,6 @@ NOTES:
          <memoryRef ref="kinetisIO_MK" />
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
-         <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK53DX256M10" family="CortexM4"  subfamily="MK53D10">
@@ -2446,8 +2178,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK53DX256ZM10" family="CortexM4" subfamily="MK53DZ10">
@@ -2458,8 +2188,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK60-M10 -->
@@ -2470,8 +2198,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK60DN512ZM10" family="CortexM4" subfamily="MK60DZ10">
@@ -2481,8 +2207,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
       <device name="MK60DX256ZM10" family="CortexM4" subfamily="MK60DZ10">
@@ -2493,8 +2217,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM10Z" />
-         <projectActionListRef  ref="Kinetis-MK-ProjectActions" />
          <registerDescriptionRef ref="CortexM4-register-description" />
       </device>
 <!-- MK60-M12-M15 -->
@@ -2506,8 +2228,6 @@ NOTES:
          <sdid value="0x000001C0" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12-DualPLL" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K60P144M150SF3RM</note>
       </device>
@@ -2522,8 +2242,6 @@ NOTES:
          <sdid value="0x000001C0" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12-DualPLL" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K60P144M150SF3RM</note>
       </device>
@@ -2537,8 +2255,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
       </device>
       <device name="MK61FX512M15"      alias="MK61FX512M12" /> <!-- These are identical apart from speed grade -->
@@ -2552,8 +2268,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
       </device>
       <device name="MK61FN1M0M15"      alias="MK61FN1M0M12" /> <!-- These are identical apart from speed grade -->
@@ -2568,8 +2282,6 @@ NOTES:
          <sdid value="0x63000000" mask="0xFFF00F80" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K63P144M120SF5RM</note>
       </device>
@@ -2583,8 +2295,6 @@ NOTES:
          <sdid value="0x62001348" mask="0xFFF00F80" /> <!-- Buggy device code -->
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K64P144M120SF5RM</note>
       </device>
@@ -2599,8 +2309,6 @@ NOTES:
          <sdid value="0x62001348" mask="0xFFF00F80" /> <!-- Buggy device code -->
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12_USBClk" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
          <note>K64P144M120SF5RM</note>
       </device>
@@ -2614,8 +2322,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
       </device>
       <device name="MK70FX512M15"      alias="MK70FX512M12" /> <!-- These are identical apart from speed grade -->
@@ -2629,8 +2335,6 @@ NOTES:
          <sdid value="0x00000000" mask="0x00000000" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFE-flash-program" />
-         <projectActionListRef  ref="Options-file-list-MKxxM12" />
-         <projectActionListRef  ref="Kinetis-MK-F-ProjectActions" />
          <registerDescriptionRef ref="CortexM4F-register-description" />
       </device>
       <device name="MK70FN1M0M15"      alias="MK70FN1M0M12" /> <!-- These are identical apart from speed grade -->
@@ -2653,7 +2357,11 @@ NOTES:
       <device name="FRDM-KL05Z"      alias="MKL05Z32M4" />
       <device name="FRDM-KL25Z"      alias="MKL25Z128M4" />
       <device name="FRDM-KL26Z"      alias="MKL26Z64M4" />
+      <device name="FRDM-KL43Z"      alias="MKL43Z256M4" />
       <device name="FRDM-KL46Z"      alias="MKL46Z256M4" />
+
+      <device name="TWR-K40X256"     alias="MK40DX256ZM10" />
+      <device name="TWR-K60N512"     alias="MK60DN512ZM10" />
 
       <device name="S9KEAZN16"       alias="MKE02Z16M4" />
       <device name="S9KEAZN32"       alias="MKE02Z32M4" />

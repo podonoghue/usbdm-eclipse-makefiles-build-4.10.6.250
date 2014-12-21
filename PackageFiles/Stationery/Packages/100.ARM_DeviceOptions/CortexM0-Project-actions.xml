@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0" >
+<!-- 
+Cortex-M0 
+   MKE
+   MKL 
+   MKM
+ -->    
+      
+   <!-- Base MKE files -->
+   <projectActionList id="Kinetis-MKE-files" >
+      <applyWhen>
+         <and>
+            <deviceFamilyMatches>CortexM0</deviceFamilyMatches>
+            <deviceSubfamilyMatches>^MKE\d+.*</deviceSubfamilyMatches>
+         </and>
+      </applyWhen>
+      <createFolder target="Sources"                         type="" />
+      <createFolder target="Startup_Code"                    type="" />
+      <createFolder target="Project_Headers"                 type="include" />
+      <createFolder target="Project_Settings/Linker_Files"   type="" />
+
+      <copy source="Startup_Code/system-mke.c"                                target="Startup_Code/system.c" />
+      <copy source="Startup_Code/vectors-mke.c"                               target="Startup_Code/vectors.c" />
+      <copy source="Startup_Code/newlib_stubs.c"                              target="Startup_Code/newlib_stubs.c" />
+      <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"                target="Startup_Code/startup_ARMLtdGCC.S" />
+      <copy source="Project_Settings/Debug.launch"                            target="Project_Settings/$(projectName)-Debug.launch" />
+      <copy source="Project_Settings/Linker_Files/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/Linker_Files/Linker-rom.ld" />
+      <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
+      <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
+      <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+      <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
+      <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
+      <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />
+      <copy source="Project_Headers/core_cmInstr.h"                           target="Project_Headers/core_cmInstr.h" />
+      <copy source="Project_Headers/utilities-mke.h"                          target="Project_Headers/utilities.h" />
+      <copy source="Sources/main.c"                                           target="Sources/main.c" />
+
+      <copy source="$(externalVectorTable)"                                   target="Startup_Code/vectors.c" replace="true" />
+      <copy source="$(externalLinkerScript)"                                  target="Project_Settings/Linker_Files/Custom.ld" />
+      <copy source="$(externalHeaderFile)"                                    target="Project_Headers/$(targetDevice).h" replace="true" />
+   </projectActionList>
+
+   <!-- Base MKL files -->
+   <projectActionList id="Kinetis-MKL-files" >
+      <applyWhen>
+         <and>
+            <deviceFamilyMatches>CortexM0</deviceFamilyMatches>
+            <deviceSubfamilyMatches>^MKL\d+.*</deviceSubfamilyMatches>
+         </and>
+      </applyWhen>
+      <createFolder target="Sources"                         type="" />
+      <createFolder target="Startup_Code"                    type="" />
+      <createFolder target="Project_Headers"                 type="include" />
+      <createFolder target="Project_Settings/Linker_Files"   type="" />
+
+      <copy source="Startup_Code/system-mkl.c"                                target="Startup_Code/system.c" />
+      <copy source="Startup_Code/vectors-mkl.c"                               target="Startup_Code/vectors.c" />
+      <copy source="Startup_Code/newlib_stubs.c"                              target="Startup_Code/newlib_stubs.c" />
+      <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"                target="Startup_Code/startup_ARMLtdGCC.S" />
+      <copy source="Project_Settings/Debug.launch"                            target="Project_Settings/$(projectName)-Debug.launch" />
+      <copy source="Project_Settings/Linker_Files/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/Linker_Files/Linker-rom.ld" />
+      <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
+      <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
+      <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+      <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
+      <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
+      <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />
+      <copy source="Project_Headers/core_cmInstr.h"                           target="Project_Headers/core_cmInstr.h" />
+      <copy source="Project_Headers/utilities-mkl.h"                          target="Project_Headers/utilities.h" />
+      <copy source="Sources/main.c"                                           target="Sources/main.c" />
+
+      <copy source="$(externalVectorTable)"                                   target="Startup_Code/vectors.c" replace="true" />
+      <copy source="$(externalLinkerScript)"                                  target="Project_Settings/Linker_Files/Custom.ld" />
+      <copy source="$(externalHeaderFile)"                                    target="Project_Headers/$(targetDevice).h" replace="true" />
+   </projectActionList>
+
+   <!-- Base MKM files -->
+   <projectActionList id="Kinetis-MKM-files" >
+      <applyWhen>
+         <and>
+            <deviceFamilyMatches>CortexM0</deviceFamilyMatches>
+            <deviceSubfamilyMatches>^MKM\d+.*</deviceSubfamilyMatches>
+         </and>
+      </applyWhen>
+      <createFolder target="Sources"                         type="" />
+      <createFolder target="Startup_Code"                    type="" />
+      <createFolder target="Project_Headers"                 type="include" />
+      <createFolder target="Project_Settings/Linker_Files"   type="" />
+
+      <copy source="Startup_Code/system-mkm.c"                                target="Startup_Code/system.c" />
+      <copy source="Startup_Code/vectors-mkm.c"                               target="Startup_Code/vectors.c" />
+      <copy source="Startup_Code/newlib_stubs.c"                              target="Startup_Code/newlib_stubs.c" />
+      <copy source="Startup_Code/startup_ARMLtdGCC_CortexM0.S"                target="Startup_Code/startup_ARMLtdGCC.S" />
+      <copy source="Project_Settings/Debug.launch"                            target="Project_Settings/$(projectName)-Debug.launch" />
+      <copy source="Project_Settings/Linker_Files/ARMLtd_GCC-rom-mk.ld"       target="Project_Settings/Linker_Files/Linker-rom.ld" />
+      <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
+      <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
+      <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+      <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
+      <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
+      <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />
+      <copy source="Project_Headers/core_cmInstr.h"                           target="Project_Headers/core_cmInstr.h" />
+      <copy source="Project_Headers/utilities-mkm.h"                          target="Project_Headers/utilities.h" />
+      <copy source="Sources/main.c"                                           target="Sources/main.c" />
+
+      <copy source="$(externalVectorTable)"                                   target="Startup_Code/vectors.c" replace="true" />
+      <copy source="$(externalLinkerScript)"                                  target="Project_Settings/Linker_Files/Custom.ld" />
+      <copy source="$(externalHeaderFile)"                                    target="Project_Headers/$(targetDevice).h" replace="true" />
+   </projectActionList>
+
+</root>

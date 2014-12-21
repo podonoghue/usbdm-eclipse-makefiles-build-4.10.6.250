@@ -3,7 +3,6 @@
 [
 <!ENTITY VECTOR_TABLE SYSTEM "vectorTables/MKE04Z8M4_VectorTable.svd.xml">
 <!ENTITY ACMP0        SYSTEM "peripherals/ACMP0_MKE.svd.xml">
-<!ENTITY ACMP1        SYSTEM "peripherals/ACMP1_from_ACMP0_0.svd.xml">
 <!ENTITY ADC          SYSTEM "peripherals/ADC_MKE04.svd.xml">
 <!ENTITY BP           SYSTEM "peripherals/BP_1_MKE.svd.xml">
 <!ENTITY CRC          SYSTEM "peripherals/CRC.svd.xml">
@@ -13,12 +12,10 @@
 <!ENTITY FTM0         SYSTEM "peripherals/FTM0_2CH_MKE.svd.xml">
 <!ENTITY FTM2         SYSTEM "peripherals/FTM2_6CH_MKE.svd.xml">
 <!ENTITY FTMRE        SYSTEM "peripherals/FTMRE_MKE_2.svd.xml">
-<!ENTITY GPIOA        SYSTEM "peripherals/GPIOA_from_FGPIOA_0.svd.xml">
 <!ENTITY I2C0         SYSTEM "peripherals/I2C0_MKE.svd.xml">
 <!ENTITY ICS          SYSTEM "peripherals/ICS_MKE.svd.xml">
 <!ENTITY IRQ          SYSTEM "peripherals/IRQ_MKE.svd.xml">
 <!ENTITY KBI0         SYSTEM "peripherals/KBI0_MKE.svd.xml">
-<!ENTITY KBI1         SYSTEM "peripherals/KBI1_from_KBI0_0.svd.xml">
 <!ENTITY MCM          SYSTEM "peripherals/MCM_MKE.svd.xml">
 <!ENTITY NV           SYSTEM "peripherals/NV_FTMRH.svd.xml">
 <!ENTITY NVIC         SYSTEM "peripherals/NVIC_MKL.svd.xml">
@@ -52,7 +49,7 @@
    <width>32</width>
    <peripherals>
 &ACMP0;
-&ACMP1;
+<peripheral derivedFrom="ACMP0"><name>ACMP1</name><prependToName>ACMP1</prependToName><baseAddress>0x40074000</baseAddress></peripheral>
 &ADC;
 &BP;
 &CRC;
@@ -62,12 +59,12 @@
 &FTM0;
 &FTM2;
 &FTMRE;
-&GPIOA;
+<peripheral derivedFrom="FGPIOA"><name>GPIOA</name><prependToName>GPIOA</prependToName><baseAddress>0x400FF000</baseAddress></peripheral>
 &I2C0;
 &ICS;
 &IRQ;
 &KBI0;
-&KBI1;
+<peripheral derivedFrom="KBI0"><name>KBI1</name><prependToName>KBI1</prependToName><baseAddress>0x4007A000</baseAddress></peripheral>
 &MCM;
 &NV;
 &NVIC;

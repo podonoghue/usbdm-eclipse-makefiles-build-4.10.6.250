@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0" >
+
+   <!-- Blinky example for Freedom board -->
+   <projectActionList id="FRDM-Blinky-CFV1" >
+      <applyWhen>
+         <and>
+            <or>
+               <deviceFamilyMatches>CFV1</deviceFamilyMatches>
+               <deviceFamilyMatches>CFV1Plus</deviceFamilyMatches>
+            </or>
+            <or>
+               <deviceNameMatches>^TWR-.*</deviceNameMatches>
+            </or>
+         </and>
+      </applyWhen>
+      <variable id="FRDM-Blinky-CFV1-V" name="Blinky example" description="Add Blinky Example code for Freedom board" />
+      <condition variable="FRDM-Blinky-CFV1-V">
+         <copy source="Project_Headers/Board_LEDs.h"  target="Project_Headers/Board_LEDs.h" />
+         <copy source="Project_Headers/leds.h"        target="Project_Headers/leds.h" />
+         <copy source="Sources/leds.c"                target="Sources/leds.c" />
+         <copy source="Sources/main.c"                target="Sources/main.c" replace="true" />
+      </condition>
+   </projectActionList>
+
+</root>

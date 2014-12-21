@@ -26,6 +26,7 @@
 +================================================================================
 | Revision History
 +================================================================================
+| 18 Dec 14 | TCL interface changes                                         - pgo V4.10.6.240
 | 17 Aug 14 | Changed SDID structure to support multiple masks              - pgo V4.10.6.180
 | 28 Dec 12 | 4.10.4 Changed handling of security area (& erasing)          - pgo
 | 28 Dec 12 | 4.10.4 Changed TCL interface error handling                   - pgo
@@ -585,7 +586,7 @@ USBDM_ErrorCode FlashProgrammer::initialiseTargetFlash() {
          return PROGRAMMING_RC_ERROR_SPEED_APPROX;
 
       busFrequency = parameters.getConnectionFreq()*parameters.getBDMtoBUSFactor();
-      Logging::print("Using user-supplied bus speed = %d kHz\n",
+      Logging::print("Using user-supplied bus speed = %lud kHz\n",
             busFrequency/1000);
    }
    else
@@ -1096,9 +1097,10 @@ USBDM_ErrorCode FlashProgrammer::checkTargetUnSecured() {
    USBDM_ErrorCode rc = initialiseTarget();
    if (rc != PROGRAMMING_RC_OK)
       return rc;
-   if (runTCLCommand("isUnsecure") != PROGRAMMING_RC_OK) {
+   rc = runTCLCommand("isUnsecure");
+   if (rc != PROGRAMMING_RC_OK) {
       Logging::print("Secured\n");
-      return PROGRAMMING_RC_ERROR_SECURED;
+      return rc;
    }
    Logging::print("Unsecured\n");
    return PROGRAMMING_RC_OK;
@@ -1359,19 +1361,11 @@ USBDM_ErrorCode FlashProgrammer::runTCLCommand(const char *command) {
       Logging::error("No TCL Interpreter\n");
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
-   int rc = evalTclScript(tclInterpreter, command);
-   const char *result = getTclResult(tclInterpreter);
-   if ((result != NULL) && (*result != '\0')) {
-      // Error return
-      Logging::error("Result = \'%s\'\n", result);
-      return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
+   USBDM_ErrorCode rc = evalTclScript(tclInterpreter, command);
+   if (rc != BDM_RC_OK) {
+      Logging::error("Failed - rc = %d (%s)\n", rc, USBDM_GetErrorString(rc));
    }
-   if (rc != 0) {
-      // Unexpected failure!
-      Logging::error("TCL Command '%s' failed\n", command);
-      return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
-   }
-   return PROGRAMMING_RC_OK;
+   return rc;
 }
 
 //=======================================================================

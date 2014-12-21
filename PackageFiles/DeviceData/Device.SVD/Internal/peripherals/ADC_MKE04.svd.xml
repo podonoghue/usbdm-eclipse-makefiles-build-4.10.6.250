@@ -84,18 +84,18 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>AIEN</name>
-                     <description>Interrupt Enable</description>
+                     <description>Conversion Complete Interrupt Enable</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Conversion complete interrupt is disabled</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Conversion complete interrupt is enabled</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

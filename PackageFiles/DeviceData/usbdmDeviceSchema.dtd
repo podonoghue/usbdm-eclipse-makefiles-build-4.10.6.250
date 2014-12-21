@@ -39,12 +39,14 @@
 <!ELEMENT projectActionListRef EMPTY>
      <!ATTLIST projectActionListRef ref IDREF #REQUIRED>
      
- <!-- File to be copied to a project -->
+<!-- File to be copied to a project -->
 <!ELEMENT copy EMPTY >
-     <!ATTLIST copy source  CDATA #REQUIRED>
-     <!ATTLIST copy target  CDATA #REQUIRED>
-     <!ATTLIST copy type    CDATA #IMPLIED>
-     
+   <!ATTLIST copy source  				CDATA #REQUIRED>
+   <!ATTLIST copy target  				CDATA #REQUIRED>
+   <!ATTLIST copy type    				CDATA #IMPLIED>
+   <!ATTLIST copy macroReplacement  (true|false) #IMPLIED>
+   <!ATTLIST copy replace           (true|false) #IMPLIED>
+   
  <!-- Variable controlling a condition -->
 <!ELEMENT variable EMPTY >
      <!ATTLIST variable id           ID    #REQUIRED>

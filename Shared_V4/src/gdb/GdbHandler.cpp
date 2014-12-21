@@ -6,6 +6,8 @@
 \verbatim
 Change History
 -==================================================================================
+|  2 Dec 2014 | Added resetTarget() to handle GDB read of PC unsetting SP     - pgo V4.10.6.240
+| 24 Nov 2014 | Changed CFV1 PC access from CFV1_CRegPC to CFV1_RegPC         - pgo V4.10.6.230s
 | 12 Nov 2014 | Removed initial reset to allow connection to running target   - pgo V4.10.6.230
 | 12 Nov 2014 | Dummied thread responses                                      - pgo V4.10.6.230
 | 12 Nov 2014 | Updated reporting to console                                  - pgo V4.10.6.230
@@ -56,10 +58,10 @@ using namespace std;
 #include "GdbMiscellaneous.h"
 
 #if TARGET == CFV1
-#define USBDM_ReadPC(x)                      USBDM_ReadCReg(CFV1_CRegPC, x);
-#define USBDM_WritePC(x)                     USBDM_WriteCReg(CFV1_CRegPC, x);
-#define USBDM_ReadSP(x)                      USBDM_ReadCReg(CFV1_CRegSP, x);
-#define USBDM_WriteSP(x)                     USBDM_WriteCReg(CFV1_CRegSP, x);
+#define USBDM_ReadPC(x)                      USBDM_ReadReg(CFV1_RegPC, x);
+#define USBDM_WritePC(x)                     USBDM_WriteReg(CFV1_RegPC, x);
+#define USBDM_ReadSP(x)                      USBDM_ReadReg(CFV1_RegSP, x);
+#define USBDM_WriteSP(x)                     USBDM_WriteReg(CFV1_RegSP, x);
 #define USBDM_ReadSR(x)                      USBDM_ReadCReg(CFV1_CRegSR, x);
 #define USBDM_WriteSR(x)                     USBDM_WriteCReg(CFV1_CRegSR, x);
 #elif TARGET == CFVx
@@ -106,6 +108,38 @@ static GdbInOut        *gdbInOut                     = NULL;
 static RunState         runState                     = halted;
 static DeviceData       deviceData;
 static bool             maskInterruptsWhenStepping   = true;
+
+uint32_t get32bit(uint8_t buff[]) {
+   return (buff[0]<<24)+(buff[1]<<16)+(buff[2]<<8)+(buff[3]);
+}
+
+static USBDM_ErrorCode resetTarget(TargetMode_t mode = (TargetMode_t)(RESET_SPECIAL|RESET_DEFAULT)) {
+
+   USBDM_ErrorCode rc = USBDM_TargetReset(mode);
+   if (rc != BDM_RC_OK) {
+      return rc;
+   }
+   // Initialise the target after programming
+   reportGdbPrintf(M_INFO, "Resetting target\n", getTargetModeName(mode));
+#if TARGET == CFV1
+   // CFV1 targets are confused by the following sequence:
+   // - Reset target
+   // - Write to PC
+   // - This prevents the SP being loaded when the program continues
+   reportGdbPrintf(M_INFO, "Loading PC & SP\n");
+   Logging::print("Loading PC & SP\n");
+   uint8_t buff[8];
+   USBDM_ErrorCode rc2 = USBDM_ReadMemory(MS_Byte, 0x8, 0, buff);
+   if (rc2 == BDM_RC_OK) {
+      uint32_t resetSP = get32bit(buff+0);
+      uint32_t resetPC = get32bit(buff+4);
+      Logging::print("Writing PC=0x%08X, SP=-x%08X\n", resetPC, resetSP);
+      USBDM_WriteSP(resetSP); // This will be SSP after reset
+      USBDM_WritePC(resetPC);
+   }
+#endif
+   return rc;
+}
 
 static GdbTargetStatus gdbTargetStatus = T_UNKNOWN;
 
@@ -389,20 +423,18 @@ static const char defaultTargetRegsXML[] =
       "<?xml version=\"1.0\"?>\n"
       "<!DOCTYPE feature SYSTEM \"gdb-target.dtd\">\n"
       "<feature name=\"org.gnu.gdb.coldfire.core\">\n"
-      "   <flags id=\"ps.type\" size=\"4\">\n"
+      "   <struct id=\"ps.type\" size=\"4\">\n"
       "      <field name=\"C\"  start=\"0\"  end=\"0\"/>\n"
       "      <field name=\"V\"  start=\"1\"  end=\"1\"/>\n"
       "      <field name=\"Z\"  start=\"2\"  end=\"2\"/>\n"
       "      <field name=\"N\"  start=\"3\"  end=\"3\"/>\n"
       "      <field name=\"X\"  start=\"4\"  end=\"4\"/>\n"
-      "      <field name=\"I0\" start=\"8\"  end=\"8\"/>\n"
-      "      <field name=\"I1\" start=\"9\"  end=\"9\"/>\n"
-      "      <field name=\"I2\" start=\"10\" end=\"10\"/>\n"
+      "      <field name=\"I\"  start=\"8\"  end=\"10\"/>\n"
       "      <field name=\"M\"  start=\"12\" end=\"12\"/>\n"
       "      <field name=\"S\"  start=\"13\" end=\"13\"/>\n"
       "      <field name=\"T0\" start=\"14\" end=\"14\"/>\n"
       "      <field name=\"T1\" start=\"15\" end=\"15\"/>\n"
-      "   </flags>\n"
+      "   </struct>\n"
       "   <reg name=\"d0\" bitsize=\"32\" type=\"uint32\"     group=\"general\" />\n"
       "   <reg name=\"d1\" bitsize=\"32\" type=\"uint32\"     group=\"general\" />\n"
       "   <reg name=\"d2\" bitsize=\"32\" type=\"uint32\"     group=\"general\" />\n"
@@ -490,7 +522,7 @@ int registerMap[] = {
       CFV1_RegD4,CFV1_RegD5,CFV1_RegD6,CFV1_RegD7,
       CFV1_RegA0,CFV1_RegA1,CFV1_RegA2,CFV1_RegA3,
       CFV1_RegA4,CFV1_RegA5,CFV1_RegA6,CFV1_RegA7,
-      0x100+CFV1_CRegSR, 0x100+CFV1_CRegPC,         // +0x100 indicates USBDM_ReadCReg
+      0x100+CFV1_CRegSR, CFV1_RegPC,         // +0x100 indicates USBDM_ReadCReg/USBDM_WriteCReg
 };
 #define CACHED_PC_VALUE  (*(uint32_t*)(registerBuffer+(4*17)))
 #elif TARGET == CFVx
@@ -565,8 +597,8 @@ static int readReg(unsigned regNo, unsigned char *buffPtr) {
 
    if (!isValidRegister(regNo)) {
       Logging::print("reg[%d] => Invalid GDB register number\n", regNo);
-      reportGdbPrintf(M_FATAL, BDM_RC_ILLEGAL_PARAMS, "Invalid GDB register number. ");
-      memset(buffPtr, 0xAA, 4);
+      reportGdbPrintf(M_WARN, BDM_RC_ILLEGAL_PARAMS, "Invalid GDB register number. ");
+      memset(buffPtr, 0x00, 4);
       return 4;
    }
    int usbdmRegNo = registerMap[regNo];
@@ -597,10 +629,16 @@ static int readReg(unsigned regNo, unsigned char *buffPtr) {
       Logging::print("%s => %08lX\n", getCFVxControlRegName(usbdmRegNo), regValue);
    }
 #endif
-   if (rc != BDM_RC_OK) {
+   if (rc == BDM_RC_TARGET_BUSY) {
+      // Special case - target running so regs can't be read
+      Logging::print("Register read(%d) failed, reason = %s\n", regNo, USBDM_GetErrorString(rc));
+      memset(buffPtr, 0x00, 4);
+      return 4;
+   }
+   else if (rc != BDM_RC_OK) {
       Logging::print("Register read(%d) failed, reason = %s\n", regNo, USBDM_GetErrorString(rc));
       reportGdbPrintf(M_ERROR, rc, "Register read failed. ");
-      memset(buffPtr, 0xAA, 4);
+      memset(buffPtr, 0x00, 4);
       return 4;
    }
    regValue = nativeToTarget32(regValue);
@@ -641,6 +679,12 @@ static USBDM_ErrorCode readRegs(void) {
       if (rc == BDM_RC_OK) {
          // OK
          registerBufferSize = 4*(targetLastRegIndex+1);
+         return BDM_RC_OK;
+      }
+      if (rc == BDM_RC_TARGET_BUSY) {
+         // Target running - dummy response
+         registerBufferSize = 4*(targetLastRegIndex+1);
+         memset(registerBuffer, 0, 4*(targetLastRegIndex+1));
          return BDM_RC_OK;
       }
       if (rc != BDM_RC_ILLEGAL_COMMAND) {
@@ -895,6 +939,17 @@ GdbTargetStatus getTargetStatus (void) {
    unsigned long value;
    USBDM_ErrorCode rc = USBDM_ReadStatusReg(&value);
    if (rc != BDM_RC_OK) {
+      Logging::print("Doing autoReconnect\n");
+      if (USBDM_Connect() != BDM_RC_OK) {
+         Logging::print("Re-connect failed\n");
+      }
+      else {
+         Logging::print("Re-connect OK\n");
+         // retry after connect
+         rc = USBDM_ReadStatusReg(&value);
+      }
+   }
+   if (rc != BDM_RC_OK) {
       Logging::print("Failed, rc = %s\n", USBDM_GetErrorString(rc));
       status = T_UNKNOWN;
    }
@@ -1146,9 +1201,9 @@ static USBDM_ErrorCode doMonitorCommand(const char *cmd) {
       doReadCommand(command);
    }
    else if (strneq(command, "reset", sizeof("reset")-1)) {
-      // ignore any parameters
+      //TODO Handle parameters
       reportGdbPrintf(M_INFO, "User reset of target\n");
-      USBDM_TargetReset((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
+      resetTarget((TargetMode_t)(RESET_DEFAULT|RESET_SPECIAL));
       gdbInOut->sendGdbHexString("O", "User reset of target\n", -1);
       gdbInOut->sendGdbString("OK");
       registerBufferSize = 0;
@@ -1256,7 +1311,12 @@ static USBDM_ErrorCode doQCommands(const GdbPacket *pkt) {
       gdbInOut->sendGdbString("QC1");
    }
    else if (strncmp(cmd, "qfThreadInfo", sizeof("qfThreadInfo")-1) == 0) {
-      gdbInOut->sendGdbString("m1");
+      if (getTargetStatus() != T_NOCONNECTION) {
+         gdbInOut->sendGdbString("m1");
+      }
+      else {
+         gdbInOut->sendGdbString("l");
+      }
    }
    else if (strncmp(cmd, "qsThreadInfo", sizeof("qsThreadInfo")-1) == 0) {
       gdbInOut->sendGdbString("l");
@@ -1372,21 +1432,13 @@ static USBDM_ErrorCode programImage(FlashImage *flashImage) {
    deviceData.setClockTrimFreq(0);
    deviceData.setClockTrimNVAddress(0);
    rc = flashProgrammer.setDeviceData(deviceData);
-   if (rc != PROGRAMMING_RC_OK) {
-      return rc;
+   if (rc == BDM_RC_OK) {
+      rc = flashProgrammer.programFlash(flashImage);
    }
-   rc = flashProgrammer.programFlash(flashImage);
-
-   // Initialise the target after programming
-   flashProgrammer.resetAndConnectTarget();
-   reportGdbPrintf(M_INFO, "Resetting target\n");
-
    if (rc != PROGRAMMING_RC_OK) {
       Logging::print("programImage() - failed, rc = %s\n", USBDM_GetErrorString(rc));
-      return rc;
    }
-   Logging::print("programImage() - Complete\n");
-   return BDM_RC_OK;
+   return rc;
 }
 
 //#define VCONT_SUPPORTED
@@ -1476,7 +1528,7 @@ static USBDM_ErrorCode doVCommands(const GdbPacket *pkt) {
       // vFlashDone
       Logging::print("vFlashDone\n");
       if (flashImage != NULL) {
-         reportGdbPrintf(M_INFO, "Programming Target Flash\n");
+         reportGdbPrintf(M_INFO, "Programming Target Flash....\n");
          USBDM_ErrorCode rc = programImage(flashImage);
          delete flashImage;
          flashImage = NULL;
@@ -1486,14 +1538,15 @@ static USBDM_ErrorCode doVCommands(const GdbPacket *pkt) {
 //#endif
          if (rc != PROGRAMMING_RC_OK) {
             Logging::print("vFlashDone: Programming failed, rc=%s\n", USBDM_GetErrorString(rc));
-            reportGdbPrintf(M_FATAL, rc,"Programming Flash Image failed: ");
+            reportGdbPrintf(M_FATAL, rc, "Programming Flash Image failed: ");
             gdbInOut->sendErrorMessage(GdbInOut::E_Fatal, "Flash programming failed");
             return rc;
          }
          else {
-            reportGdbPrintf(M_INFO, "Programmed flash Image to target\n");
+            reportGdbPrintf(M_INFO, "Programming successful\n");
             Logging::print("vFlashDone: Programming complete\n");
          }
+         resetTarget();
       }
       else {
          reportGdbPrintf(M_INFO, "Programming Flash Image skipped (empty image)\n");
@@ -1567,6 +1620,7 @@ USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
          reportGdbPrintf(M_INFO, "Ignoring Break as not running\n");
          return BDM_RC_OK;
       }
+      runState = breaking;
       Logging::print("Breaking...\n");
       reportGdbPrintf(M_INFO, "Breaking...\n");
       USBDM_Connect();
@@ -1582,7 +1636,7 @@ USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
    case 'R' : // Target reset
       Logging::print("Target Reset\n");
       reportGdbPrintf(M_INFO, "Resetting target\n");
-      USBDM_TargetReset((TargetMode_t)(RESET_SPECIAL|RESET_DEFAULT));
+      resetTarget();
       break;
    case 'g' : // 'g' - Read general registers.
 //   Reply:
@@ -1738,7 +1792,7 @@ USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
       break;
    case 'p' : // 'p n...' Read register n...
       if (sscanf(pkt->buffer, "p%x", &regNo) != 1) {
-         Logging::print("Failed to read register\n");
+         Logging::print("Failed to parse register\n");
          gdbInOut->sendErrorMessage(0x11);
          break;
       }
@@ -1771,6 +1825,7 @@ USBDM_ErrorCode doGdbCommand(const GdbPacket *pkt) {
    case 'k' : // Kill
       reportGdbPrintf(M_INFO, "Kill...\n");
       Logging::print("Kill...\n");
+      gdbInOut->sendGdbString("OK");
       gdbInOut->finish();
       return BDM_RC_OK;
    case 'D' : // Detach

@@ -1,7 +1,6 @@
 <!--
 Devices using this peripheral: 
       MKL02Z4
-      MKL03Z4
       MKL04Z4
       MKL05Z4
       MKL14Z4
@@ -85,23 +84,111 @@ Devices using this peripheral:
                      <description>Flash Security</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b00</name>
+                           <description>MCU security status is secure</description>
+                           <value>0b00</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b01</name>
+                           <description>MCU security status is secure</description>
+                           <value>0b01</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10</name>
+                           <description>MCU security status is unsecure (shipped state)</description>
+                           <value>0b10</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b11</name>
+                           <description>MCU security status is secure</description>
+                           <value>0b11</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>FSLACC</name>
                      <description>Freescale Failure Analysis Access Code</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>2</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b00</name>
+                           <description>Freescale factory access granted</description>
+                           <value>0b00</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b01</name>
+                           <description>Freescale factory access denied</description>
+                           <value>0b01</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10</name>
+                           <description>Freescale factory access denied</description>
+                           <value>0b10</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b11</name>
+                           <description>Freescale factory access granted</description>
+                           <value>0b11</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>MEEN</name>
                      <bitOffset>4</bitOffset>
                      <bitWidth>2</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b00</name>
+                           <description>Mass erase is enabled</description>
+                           <value>0b00</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b01</name>
+                           <description>Mass erase is enabled</description>
+                           <value>0b01</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10</name>
+                           <description>Mass erase is disabled</description>
+                           <value>0b10</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b11</name>
+                           <description>Mass erase is enabled</description>
+                           <value>0b11</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>KEYEN</name>
                      <description>Backdoor Key Security Enable</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>2</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b00</name>
+                           <description>Backdoor key access disabled</description>
+                           <value>0b00</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b01</name>
+                           <description>Backdoor key access disabled(preferred KEYEN state to disable backdoor key access)</description>
+                           <value>0b01</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b10</name>
+                           <description>Backdoor key access enabled</description>
+                           <value>0b10</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b11</name>
+                           <description>Backdoor key access disabled</description>
+                           <value>0b11</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>
@@ -116,7 +203,12 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>LPBOOT</name>
-                     <description>Low-power boot enabled</description>
+                     <description>Low-power Boot State Bit 0\n
+LPBOOT1:LPBOOT \n
+00 =&gt; Core and system clock divider (OUTDIV1) is 0x7 (divide by 8). Device is VLPR mode from reset.\n
+01 =&gt; Core and system clock divider (OUTDIV1) is 0x3 (divide by 4). Device is VLPR mode from reset.\n
+10 =&gt; Core and system clock divider (OUTDIV1) is 0x1 (divide by 2). Device is RUN mode from reset.\n
+11 =&gt; Core and system clock divider (OUTDIV1) is 0x0 (divide by 1). Device is RUN mode from reset</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                   </field>
@@ -125,24 +217,77 @@ Devices using this peripheral:
                      <description>NMI Pin Boot State</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>NMI interrupts are always blocked</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>NMI_b pin/interrupts reset default to enabled</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>RESET_PIN_CFG</name>
                      <description>Reset Pin Boot State</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>RESET pin is disabled following a POR and cannot be enabled as reset function</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>RESET_b pin is dedicated.
+The port is configured with pullup enabled, open drain, passive filter enabled</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>LPBOOT1</name>
-                     <description>Low-power Boot State Bit 1</description>
+                     <description>Low-power Boot State Bit 1\n
+See LPBOOT for speed options</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Device is configured for VLPR mode on exit from reset</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Device is configured for RUN mode on exit from reset</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>FAST_INIT</name>
                      <description>The Flash Initialization Enable</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Slower initialization:
+The flash initialization will be slower with the benefit of reduced average current during this time. The duration of the recovery will be
+controlled by the clock divider selection determined by the LPBOOT setting</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Fast Initialization:
+The flash has faster recoveries at the expense of higher current during these times</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>

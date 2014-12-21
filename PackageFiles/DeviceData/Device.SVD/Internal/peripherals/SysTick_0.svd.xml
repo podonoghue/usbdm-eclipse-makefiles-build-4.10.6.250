@@ -61,6 +61,7 @@ Devices using this peripheral:
       MKL26Z4
       MKL34Z4
       MKL36Z4
+      MKL43Z4
       MKL46Z4
       MKM33Z5
 -->
@@ -94,30 +95,31 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>counter disabled</description>
+                           <description>Counter disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>counter enabled</description>
+                           <description>Counter enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>TICKINT</name>
-                     <description>Enable SysTick handler to be pend</description>
+                     <description>Enable SysTick handler to be pend\n
+Enables SysTick exception request when counting down to 0</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>counting down to 0 does not assert the SysTick exception request</description>
+                           <description>Exception masked</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>counting down to 0 asserts the SysTick exception request</description>
+                           <description>Exception unmasked</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -130,21 +132,34 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>external clock</description>
+                           <description>External clock</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>processor clock</description>
+                           <description>Processor clock</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>COUNTFLAG</name>
-                     <description>Returns 1 if timer counted to 0 since last time this was read. Clears on read by application of any part of the SysTick Control and Status Register</description>
+                     <description>Timer counted to 0 flag\n
+Clears on read by application of any part of the SysTick Control and Status Register</description>
                      <bitOffset>16</bitOffset>
                      <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Counter has not reached 0</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Counter reached 0</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>
@@ -155,7 +170,8 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>RELOAD</name>
-                     <description>Value to load into the SysTick Current Value Register when the counter reaches 0</description>
+                     <description>Reload value for counter\n
+Value to load into the SysTick Current Value Register when the counter reaches 0</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>24</bitWidth>
                   </field>
@@ -168,7 +184,8 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>CURRENT</name>
-                     <description>Current value at the time the register is accessed</description>
+                     <description>Counter value\n
+Current value at the time the register is accessed</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>24</bitWidth>
                   </field>
@@ -195,12 +212,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>10ms calibration value is exact</description>
+                           <description>Calibration value is exact</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>10ms calibration value is inexact, because of the clock frequency</description>
+                           <description>Calibration value is inexact</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

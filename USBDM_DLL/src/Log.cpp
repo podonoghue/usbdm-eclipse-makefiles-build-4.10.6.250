@@ -25,6 +25,7 @@
     \verbatim
    Change History
    +=========================================================================================
+   |  1 Dec 2014 | Fixed format in printf()s                                  - pgo 4.10.6.230
    |  1 Dec 2012 | Changed logging extensively                                - pgo - V4.10.4
    | 16 Nov 2009 | Relocated log file directory for Vista.                    - pgo
    |  5 Nov 2009 | Completed restructure for V1                               - pgo
@@ -149,12 +150,48 @@ FILE *openApplicationFile(const char *fileName) {
 }
 #endif
 
-const char *Logging::currentName       = NULL;  //!< Name of current function
-FILE       *Logging::logFile           = NULL;  //!< File handle for logging file
-int         Logging::indent            = 0;     //!< Indent level for listing
-int         Logging::currentLogLevel   = 100;   //!< Level below which to log messages
-bool        Logging::loggingEnabled    = true;  //!< Logging on/off
-bool        Logging::timestampEnabled  = false; //!< Timestamp messages
+const char        *Logging::currentName         = NULL;      //!< Name of current function
+FILE              *Logging::logFile             = NULL;      //!< File handle for logging file
+int                Logging::indent              = 0;         //!< Indent level for listing
+int                Logging::currentLogLevel     = 100;       //!< Level below which to log messages
+bool               Logging::loggingEnabled      = true;      //!< Logging on/off
+Logging::Timestamp Logging::timestampMode       = relative;  //!< Timestamp messages
+
+/*! \brief Get time in milliseconds
+ *
+ *  @return time value
+ */
+double Logging::getCurrentTime(void)
+{
+   struct timeval tv;
+   if (gettimeofday(&tv, NULL) != 0) {
+      return 0;
+   }
+   return (tv.tv_sec*1000.0)+(tv.tv_usec/1000.0);
+}
+
+double Logging::getTimeStamp(void) {
+   static double loggingStartTime = -1.0;
+   static double lastTimestamp    = -1;
+   if (loggingStartTime < 0.0) {
+      loggingStartTime = getCurrentTime();
+      lastTimestamp    = loggingStartTime;
+   }
+   double timestamp;
+   switch (timestampMode) {
+      case none        :
+         timestamp = loggingStartTime;
+         break;
+      case relative    :
+         timestamp = getCurrentTime() - loggingStartTime;
+         break;
+      case incremental :
+         timestamp = getCurrentTime() - lastTimestamp;
+         break;
+   }
+   lastTimestamp = getCurrentTime();
+   return timestamp;
+}
 
 /*!  \brief Object to allow logging the execution of a function
  *
@@ -166,8 +203,9 @@ Logging::Logging(const char *name, When when) : name(name), when(when) {
    lastName      = currentName;
    lastLogLevel  = currentLogLevel;
    currentName   = name;
+
    if ((when==entry)||(when==both)) {
-      print("Entry ================ (i=%d, l=%d)\n", indent, currentLogLevel);
+      print("Entry ===============\n");
    }
 }
 /*!  \brief Record exit from a function
@@ -175,7 +213,7 @@ Logging::Logging(const char *name, When when) : name(name), when(when) {
  */
 Logging::~Logging(){
    if ((when==exit)||(when==both)) {
-      print("Exit ================ (i=%d, l=%d)\n", indent, currentLogLevel);
+      print("Exit ================\n");
    }
    currentLogLevel = lastLogLevel;
    currentName     = lastName;
@@ -187,11 +225,14 @@ Logging::~Logging(){
  *
  *  @note logging is enabled and timestamp disabled
  */
-void Logging::openLogFile(const char *description){
-   time_t time_now;
+void Logging::openLogFile(const char *description) {
 
    indent = 0;
    currentName = NULL;
+
+   time_t time_now;
+   time(&time_now);
+
    if (logFile != NULL) {
       loggingEnabled   = true;
       fprintf(logFile, "Log re-opened on: %s"
@@ -202,13 +243,14 @@ void Logging::openLogFile(const char *description){
    if (logFile == NULL) {
       return;
    }
-   loggingEnabled   = true;
-   timestampEnabled = false;
+   loggingEnabled     = true;
+   timestampMode      = incremental;
+   getTimeStamp();
+
    fprintf(logFile, "%s - %s, Compiled on %s, %s.\n",
          description,
          USBDM_VERSION_STRING, __DATE__,__TIME__);
 
-   time(&time_now);
    fprintf(logFile, "Log file created on: %s"
          "==============================================\n\n", ctime(&time_now));
 
@@ -234,14 +276,14 @@ void Logging::setLoggingLevel(int level) {
  *
  */
 int Logging::getLoggingLevel() {
-   return currentLogLevel - indent;
+   return indent - currentLogLevel;
 }
-/*! \brief Turns timestamp on or off
+/*! \brief Sets timestamping mode
  *
- *  @param value - true/false => on/off timestamp
+ *  @param mode - mode of timestamping
  */
-void Logging::enableTimestamp(bool enable) {
-   timestampEnabled = enable;
+void Logging::enableTimestamp(Logging::Timestamp mode) {
+   timestampMode = mode;
 }
 /*!  \brief Close the log file
  *
@@ -280,24 +322,11 @@ void Logging::printq(const char *format, ...) {
    fflush(logFile);
 }
 
-/*! \brief Get time as milliseconds
- *
- *  @return time value
- */
-static double getTimeStamp()
-{
-   struct timeval tv;
-   if (gettimeofday(&tv, NULL) != 0) {
-      return 0;
-   }
-   return (tv.tv_sec*1000)+(tv.tv_usec/1000.0);
-}
-
 /*! \brief Provides a print function which prints data into a log file.
  *
  *  @param format Format and parameters as for printf()
  */
-void Logging::print(const char *format, ...) {
+void Logging::print(const char *format, ...)  {
    va_list list;
    if ((logFile == NULL) || (!loggingEnabled) || (indent > currentLogLevel)) {
       return;
@@ -305,8 +334,33 @@ void Logging::print(const char *format, ...) {
    if (format == NULL) {
       format = "print() - Error - empty format string!\n";
    }
-   if (timestampEnabled) {
-      fprintf(logFile, "%04.3f: ",getTimeStamp());
+   if (timestampMode != none) {
+      fprintf(logFile, "%10.2f: ", getTimeStamp());
+   }
+   fprintf(logFile, "%*s", 3*indent, "");
+   if (currentName!=NULL) {
+      fprintf(logFile, "%s(): ", currentName);
+   }
+   va_start(list, format);
+   vfprintf(logFile, format, list);
+   va_end(list);
+   fflush(logFile);
+}
+
+/*! \brief Provides a print function which prints data into a log file.
+ *
+ *  @param format Format and parameters as for printf()
+ */
+void Logging::error(const char *format, ...)  {
+   va_list list;
+   if (logFile == NULL) {
+      return;
+   }
+   if (format == NULL) {
+      format = "error() - Error - empty format string!\n";
+   }
+   if (timestampMode != none) {
+      fprintf(logFile, "%10.2f: ", getTimeStamp());
    }
    fprintf(logFile, "%*s", 3*indent, "");
    if (currentName!=NULL) {
@@ -321,7 +375,7 @@ void Logging::print(const char *format, ...) {
  *
  *  @param format Format and parameters as for printf()
  */
-void Logging::error(const char *format, ...) {
+void Logging::warning(const char *format, ...) {
    va_list list;
    if (logFile == NULL) {
       return;
@@ -329,8 +383,8 @@ void Logging::error(const char *format, ...) {
    if (format == NULL) {
       format = "error() - Error - empty format string!\n";
    }
-   if (timestampEnabled) {
-      fprintf(logFile, "%04.3f: ",getTimeStamp());
+   if (timestampMode != none) {
+      fprintf(logFile, "%10.2f: ", getTimeStamp());
    }
    fprintf(logFile, "%*s", 3*indent, "");
    if (currentName!=NULL) {
@@ -387,8 +441,8 @@ void Logging::printDump(unsigned const char *data,
    while(size>0) {
       if (eolFlag) {
          eolFlag = false;
-         if (timestampEnabled) {
-            fprintf(logFile, "%04.3f: ",getTimeStamp());
+         if (timestampMode) {
+            fprintf(logFile, "%10.2f: ", getTimeStamp());
          }
          fprintf(logFile, "%*s", 3*indent, "");
          fprintf(logFile,"   %8.8X:", address>>addressShift);

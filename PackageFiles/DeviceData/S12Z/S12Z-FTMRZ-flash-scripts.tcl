@@ -20,6 +20,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.19.4.240 - Added return error codes
 ;#  V4.10.6 - Created
 ;# 
 
@@ -49,6 +50,10 @@ proc loadSymbols {} {
    set ::NVM_PRDIV8                 0x40
    
    set ::FLASH_REGIONS              "" ;# List of addresses within each unique flash region (incl. eeprom)
+   
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
    
    return
 }
@@ -82,7 +87,6 @@ proc initTarget { flashRegions } {
 ;#
 proc initFlash { busFrequency } {
    puts "initFlash {}"
-   puts "initFlash {}"
    
    set fclkdiv [calculateFlashDivider $busFrequency]
    
@@ -104,14 +108,16 @@ proc calculateFlashDivider { busFrequency } {
    puts "calculateFlashDivider {}"
    ;# minimum BUS frequency is 1MHz
    if { [expr $busFrequency < 980] } { ;# Allow for tolerance on measurement
-      error "Clock too low for flash programming"
+      puts "Clock too low for flash programming"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }
    set fmclkFrequency 1.0*$busFrequency
    set fclkdiv [expr round(floor(($fmclkFrequency/1000.0)+0.3999))-1]
    set flashClk [expr $fmclkFrequency/($fclkdiv+1)]
    puts "fclkdiv=$fclkdiv, flashClk=$flashClk"
    if { [expr ($flashClk<800)||($flashClk>1600)] } {
-      error "Not possible to find suitable flash clock divider"
+      puts "Not possible to find suitable flash clock divider"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }      
    return $fclkdiv
 }
@@ -157,8 +163,8 @@ proc executeFlashCommand { cmd address value } {
    }
    wb $::NVM_FTSTMOD  0x00                      ;# Clear WRALL
    if [ expr ($flashError || ($retry>=20)) ] {
-      ;#  puts [ format "Flash command error NVM_FSTAT=0x%02X, retry=%d" $status $retry ]
-      error "Flash command failed"
+      puts [ format "Flash command error NVM_FSTAT=0x%02X, retry=%d" $status $retry ]
+      error $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }
    return
 }
@@ -201,8 +207,8 @@ proc executeEepromCommand { cmd address value } {
       incr retry
    }
    if [ expr ($flashError || ($retry>=20)) ] {
-      ;#  puts [ format "EEPROM command error NVM_ESTAT=0x%02X, retry=%d" $status $retry ]
-      error "EEPROM command failed"
+      puts [ format "EEPROM command error NVM_ESTAT=0x%02X, retry=%d" $status $retry ]
+      error $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }
    return
 }
@@ -218,7 +224,7 @@ proc massEraseTarget { } {
    
    ;# Special S12Z erase command 
    massErase
-   
+    
    ;# Wait for command completion
    set flashBusy 1
    set retry 0
@@ -233,40 +239,25 @@ proc massEraseTarget { } {
    }
    if { $flashBusy } {
       puts [ format "Command error S12X_BDCCSRH=0x%02X, retry=%d" $status $retry ]
-      error "Mass erase command failed"
+      error $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }   
    if [expr ($status & $::S12X_BDCCSRH_UNSEC) == 0x00] {
-      error "Device is still secure"
+      puts "Flash mass erase failed - still secured"
+      error $::PROGRAMMING_RC_ERROR_SECURED
    }   
-   ;# Reset to have unsecured (finally) but not blank device
-   ;#  reset s h
-   ;#  connect   ;# shouldn't fail
-   ;#  
-   ;#  ;# Confirm unsecured
-   ;#  puts "Checking if target is unsecured"
-   ;#  set securityValue [rb $::NVM_FSEC]
-   ;#  if [ expr ( $securityValue & $::NVM_FSEC_SEC_MASK ) != $::NVM_FSEC_SEC_UNSEC ] {
-   ;#     puts "Target failed to unsecure"
-   ;#     error "Target failed to unsecure"
-   ;#     return
-   ;#  }
-   ;#  ;# Erase security location so device is unsecured and blank!
-   ;#  initTarget $::FLASH_REGIONS
-   ;#  initFlash [expr [speed]/1000]   ;# Flash speed calculated from BDM connection speed
-
    ;# Flash is now Blank and unsecured
-   return
+   return [ isUnsecure ]
 }
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   puts "Checking if unsecured"
    if [ expr ( [gs] & $::S12X_BDCCSRH_UNSEC ) == 0 ] {
-      puts "Target is secured"
-      return "Target is secured"
+      puts "isUnsecure{} - Target is secured!"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
-   return
+   puts "isUnsecure{} - Target is unsecured"
+   return 0
 }
 
 ;######################################################################################

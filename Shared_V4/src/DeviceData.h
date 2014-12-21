@@ -258,7 +258,7 @@ public:
     SecurityInfo(int size, SecType mode, std::string securityInfo)
     : size(size), mode(mode), securityInfo(securityInfo)
     {
-       Logging::print("SecurityInfo(%d, %d, %s)\n", size, mode, (const char *)securityInfo.c_str());
+//       Logging::print("SecurityInfo(%d, %d, %s)\n", size, mode, (const char *)securityInfo.c_str());
        if (size == 0) {
           // Auto size security
           this->size = securityInfo.size()/2;
@@ -308,10 +308,10 @@ public:
 //        print("SecurityInfo()\n");
     }
    SecurityEntry() {
-        Logging::print("SecurityInfo()\n");
+//        Logging::print("SecurityInfo()\n");
     }
     ~SecurityEntry() {
-       Logging::print("~SecurityInfo()\n");
+//       Logging::print("~SecurityInfo()\n");
     }
     const std::string toString() const {
        return std::string("SecurityEntry - \n") +
@@ -1012,7 +1012,7 @@ public:
       return ptr;
    }
    DeviceDataBase() {
-      Logging log("DeviceDataBase::DeviceDataBase()");
+//      Logging log("DeviceDataBase::DeviceDataBase()");
    };
    ~DeviceDataBase();
 };

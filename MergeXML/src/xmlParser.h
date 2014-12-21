@@ -8,6 +8,9 @@
 #ifndef XMLPARSER_H_
 #define XMLPARSER_H_
 
+#include <wx/wx.h>
+#include <wx/string.h>
+
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/dom/DOMComment.hpp>
@@ -29,6 +32,7 @@ private:
    xercesc_3_1::XercesDOMParser* patchParser;
    xercesc_3_1::DOMDocument*     patchDocument;
    static bool      verbose;
+   bool  mergeDone;
 
 private:
    XmlParser() :
@@ -42,6 +46,7 @@ private:
       patchParser(NULL),
       patchDocument(NULL)
    {
+      mergeDone = false;
    }
 
    ~XmlParser() {
@@ -71,8 +76,8 @@ private:
 
    void  load(xercesc_3_1::XercesDOMParser* &parser, xercesc_3_1::DOMDocument* &document, const char* xmlFile);
    int   mergePatchfile();
-   int   openSourcefile(const char *sourcePath);
-   int   openPatchfile(const char *patchPath);
+   int   loadSourcefile(const char *sourcePath);
+   int   loadPatchfile(const char *patchPath);
    int   commit(const char* xmlFile);
    bool  mergeNodes(xercesc_3_1::DOMElement *mergeEl, xercesc_3_1::DOMElement *patchEl);
    bool  nodesMatch(xercesc_3_1::DOMElement *mergeEl, xercesc_3_1::DOMElement *patchEl);
@@ -82,9 +87,7 @@ private:
    xercesc_3_1::DOMComment *getCommentNode(xercesc_3_1::DOMElement *element);
 
 public:
-   static int addUsbdmWizard(const char *sourcePath,
-                             const char *destinationPath,
-                             const char *patchPath);
+   static int addUsbdmWizard(const wxString& sourcePath, const wxString& patchPath);
 };
 
 #endif /* XMLPARSER_H_ */

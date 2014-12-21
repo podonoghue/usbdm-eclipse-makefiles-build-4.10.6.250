@@ -2,10 +2,10 @@
  * @file     MK64F12.h
  *
  * @brief    CMSIS Cortex-M Peripheral Access Layer Header File for MK64F12.
- *           Equivalent: MK64FN1M0M12, MK64FX512M12
+ *           Equivalent: FRDM-K64F, MK64FN1M0M12, MK64FX512M12
  *
  * @version  V0.0
- * @date     2014/10
+ * @date     2014/12
  *
  *******************************************************************************************************/
 
@@ -20,7 +20,7 @@ extern "C" {
 /* -------------------------  Interrupt Number Definition  ------------------------ */
 
 typedef enum {
-/* --------------------  Cortex-M Processor Exceptions Numbers  ------------------- */
+/* ------------------------  Processor Exceptions Numbers  ------------------------- */
   Reset_IRQn                    = -15,   /*!<   1 Reset Vector, invoked on Power up and warm reset                                 */
   NonMaskableInt_IRQn           = -14,   /*!<   2 Non maskable Interrupt, cannot be stopped or preempted                           */
   HardFault_IRQn                = -13,   /*!<   3 Hard Fault, all classes of Fault                                                 */
@@ -226,7 +226,7 @@ extern void ENET_Error_IRQHandler(void);
 #define __Vendor_SysTickConfig   0
 #define __FPU_PRESENT            1
 
-#include <core_cm4.h>   /*!< Cortex-M processor and core peripherals                              */
+#include <core_cm4.h>   /*!< Processor and core peripherals */
 
 #ifndef __IO
 #define __IO volatile 
@@ -271,8 +271,8 @@ extern void ENET_Error_IRQHandler(void);
  * @brief Analog-to-Digital Converter
  */
 typedef struct {                                /*!<       ADC0 Structure                                               */
-   __IO uint32_t  SC1A;                         /*!< 0000: Status and Control Register                                  */
-   __IO uint32_t  SC1B;                         /*!< 0004: Status and Control Register                                  */
+   __IO uint32_t  SC1A;                         /*!< 0000: Status and Control Register 1                                */
+   __IO uint32_t  SC1B;                         /*!< 0004: Status and Control Register 1                                */
    __IO uint32_t  CFG1;                         /*!< 0008: Configuration Register 1                                     */
    __IO uint32_t  CFG2;                         /*!< 000C: Configuration Register 2                                     */
    __I  uint32_t  RA;                           /*!< 0010: Data Result Register                                         */
@@ -1683,11 +1683,16 @@ typedef struct {                                /*!<       CRC Structure        
  */
 typedef struct {                                /*!<       DAC0 Structure                                               */
    struct { /* (cluster) */                     /*!< 0000: (size=0x0020, 32)                                            */
-      __IO uint8_t   DATL;                      /*!< 0000: DAC Data Low Register                                        */
-      __IO uint8_t   DATH;                      /*!< 0001: Data High Register                                           */
+      union {                                   /*!< 0000: (size=0002)                                                  */
+         __IO uint16_t  DATA;                   /*!< 0000: Data Register                                                */
+         struct {                               /*!< 0000: (size=0002)                                                  */
+            __IO uint8_t   DATL;                /*!< 0000: Data Low Register                                            */
+            __IO uint8_t   DATH;                /*!< 0001: Data High Register                                           */
+         };
+      };
    } DAT[16];
    __IO uint8_t   SR;                           /*!< 0020: Status Register                                              */
-   __IO uint8_t   C0;                           /*!< 0021: Control Register                                             */
+   __IO uint8_t   C0;                           /*!< 0021: Control Register 0                                           */
    __IO uint8_t   C1;                           /*!< 0022: Control Register 1                                           */
    __IO uint8_t   C2;                           /*!< 0023: Control Register 2                                           */
 } DAC0_Type;
@@ -1697,6 +1702,11 @@ typedef struct {                                /*!<       DAC0 Structure       
 /* -----------     'DAC0' Position & Mask macros                        ----------- */
 /* -------------------------------------------------------------------------------- */
 
+
+/* ------- DAC0_DATA                                ------ */
+#define DAC_DATA_DATA_MASK                       (0x7FFUL << DAC_DATA_DATA_SHIFT)                    /*!< DAC0_DATA: DATA Mask                    */
+#define DAC_DATA_DATA_SHIFT                      0                                                   /*!< DAC0_DATA: DATA Position                */
+#define DAC_DATA_DATA(x)                         (((x)<<DAC_DATA_DATA_SHIFT)&DAC_DATA_DATA_MASK)     /*!< DAC0_DATA                               */
 
 /* ------- DAC0_DATL                                ------ */
 #define DAC_DATL_DATA_MASK                       (0xFFUL << DAC_DATL_DATA_SHIFT)                     /*!< DAC0_DATL: DATA Mask                    */
@@ -1758,36 +1768,52 @@ typedef struct {                                /*!<       DAC0 Structure       
 /* -----------     'DAC0' Register Access macros                        ----------- */
 /* -------------------------------------------------------------------------------- */
 
+#define DAC0_DATA0                     (DAC0->DAT[0].DATA)
 #define DAC0_DAT0L                     (DAC0->DAT[0].DATL)
 #define DAC0_DAT0H                     (DAC0->DAT[0].DATH)
+#define DAC0_DATA1                     (DAC0->DAT[1].DATA)
 #define DAC0_DAT1L                     (DAC0->DAT[1].DATL)
 #define DAC0_DAT1H                     (DAC0->DAT[1].DATH)
+#define DAC0_DATA2                     (DAC0->DAT[2].DATA)
 #define DAC0_DAT2L                     (DAC0->DAT[2].DATL)
 #define DAC0_DAT2H                     (DAC0->DAT[2].DATH)
+#define DAC0_DATA3                     (DAC0->DAT[3].DATA)
 #define DAC0_DAT3L                     (DAC0->DAT[3].DATL)
 #define DAC0_DAT3H                     (DAC0->DAT[3].DATH)
+#define DAC0_DATA4                     (DAC0->DAT[4].DATA)
 #define DAC0_DAT4L                     (DAC0->DAT[4].DATL)
 #define DAC0_DAT4H                     (DAC0->DAT[4].DATH)
+#define DAC0_DATA5                     (DAC0->DAT[5].DATA)
 #define DAC0_DAT5L                     (DAC0->DAT[5].DATL)
 #define DAC0_DAT5H                     (DAC0->DAT[5].DATH)
+#define DAC0_DATA6                     (DAC0->DAT[6].DATA)
 #define DAC0_DAT6L                     (DAC0->DAT[6].DATL)
 #define DAC0_DAT6H                     (DAC0->DAT[6].DATH)
+#define DAC0_DATA7                     (DAC0->DAT[7].DATA)
 #define DAC0_DAT7L                     (DAC0->DAT[7].DATL)
 #define DAC0_DAT7H                     (DAC0->DAT[7].DATH)
+#define DAC0_DATA8                     (DAC0->DAT[8].DATA)
 #define DAC0_DAT8L                     (DAC0->DAT[8].DATL)
 #define DAC0_DAT8H                     (DAC0->DAT[8].DATH)
+#define DAC0_DATA9                     (DAC0->DAT[9].DATA)
 #define DAC0_DAT9L                     (DAC0->DAT[9].DATL)
 #define DAC0_DAT9H                     (DAC0->DAT[9].DATH)
+#define DAC0_DATA10                    (DAC0->DAT[10].DATA)
 #define DAC0_DATL10                    (DAC0->DAT[10].DATL)
 #define DAC0_DATH10                    (DAC0->DAT[10].DATH)
+#define DAC0_DATA11                    (DAC0->DAT[11].DATA)
 #define DAC0_DATL11                    (DAC0->DAT[11].DATL)
 #define DAC0_DATH11                    (DAC0->DAT[11].DATH)
+#define DAC0_DATA12                    (DAC0->DAT[12].DATA)
 #define DAC0_DATL12                    (DAC0->DAT[12].DATL)
 #define DAC0_DATH12                    (DAC0->DAT[12].DATH)
+#define DAC0_DATA13                    (DAC0->DAT[13].DATA)
 #define DAC0_DATL13                    (DAC0->DAT[13].DATL)
 #define DAC0_DATH13                    (DAC0->DAT[13].DATH)
+#define DAC0_DATA14                    (DAC0->DAT[14].DATA)
 #define DAC0_DATL14                    (DAC0->DAT[14].DATL)
 #define DAC0_DATH14                    (DAC0->DAT[14].DATH)
+#define DAC0_DATA15                    (DAC0->DAT[15].DATA)
 #define DAC0_DATL15                    (DAC0->DAT[15].DATL)
 #define DAC0_DATH15                    (DAC0->DAT[15].DATH)
 #define DAC0_SR                        (DAC0->SR)
@@ -1809,36 +1835,52 @@ typedef DAC0_Type DAC1_Type;  /*!< DAC1 Structure                               
 /* -----------     'DAC1' Register Access macros                        ----------- */
 /* -------------------------------------------------------------------------------- */
 
+#define DAC1_DATA0                     (DAC1->DAT[0].DATA)
 #define DAC1_DAT0L                     (DAC1->DAT[0].DATL)
 #define DAC1_DAT0H                     (DAC1->DAT[0].DATH)
+#define DAC1_DATA1                     (DAC1->DAT[1].DATA)
 #define DAC1_DAT1L                     (DAC1->DAT[1].DATL)
 #define DAC1_DAT1H                     (DAC1->DAT[1].DATH)
+#define DAC1_DATA2                     (DAC1->DAT[2].DATA)
 #define DAC1_DAT2L                     (DAC1->DAT[2].DATL)
 #define DAC1_DAT2H                     (DAC1->DAT[2].DATH)
+#define DAC1_DATA3                     (DAC1->DAT[3].DATA)
 #define DAC1_DAT3L                     (DAC1->DAT[3].DATL)
 #define DAC1_DAT3H                     (DAC1->DAT[3].DATH)
+#define DAC1_DATA4                     (DAC1->DAT[4].DATA)
 #define DAC1_DAT4L                     (DAC1->DAT[4].DATL)
 #define DAC1_DAT4H                     (DAC1->DAT[4].DATH)
+#define DAC1_DATA5                     (DAC1->DAT[5].DATA)
 #define DAC1_DAT5L                     (DAC1->DAT[5].DATL)
 #define DAC1_DAT5H                     (DAC1->DAT[5].DATH)
+#define DAC1_DATA6                     (DAC1->DAT[6].DATA)
 #define DAC1_DAT6L                     (DAC1->DAT[6].DATL)
 #define DAC1_DAT6H                     (DAC1->DAT[6].DATH)
+#define DAC1_DATA7                     (DAC1->DAT[7].DATA)
 #define DAC1_DAT7L                     (DAC1->DAT[7].DATL)
 #define DAC1_DAT7H                     (DAC1->DAT[7].DATH)
+#define DAC1_DATA8                     (DAC1->DAT[8].DATA)
 #define DAC1_DAT8L                     (DAC1->DAT[8].DATL)
 #define DAC1_DAT8H                     (DAC1->DAT[8].DATH)
+#define DAC1_DATA9                     (DAC1->DAT[9].DATA)
 #define DAC1_DAT9L                     (DAC1->DAT[9].DATL)
 #define DAC1_DAT9H                     (DAC1->DAT[9].DATH)
+#define DAC1_DATA10                    (DAC1->DAT[10].DATA)
 #define DAC1_DATL10                    (DAC1->DAT[10].DATL)
 #define DAC1_DATH10                    (DAC1->DAT[10].DATH)
+#define DAC1_DATA11                    (DAC1->DAT[11].DATA)
 #define DAC1_DATL11                    (DAC1->DAT[11].DATL)
 #define DAC1_DATH11                    (DAC1->DAT[11].DATH)
+#define DAC1_DATA12                    (DAC1->DAT[12].DATA)
 #define DAC1_DATL12                    (DAC1->DAT[12].DATL)
 #define DAC1_DATH12                    (DAC1->DAT[12].DATH)
+#define DAC1_DATA13                    (DAC1->DAT[13].DATA)
 #define DAC1_DATL13                    (DAC1->DAT[13].DATL)
 #define DAC1_DATH13                    (DAC1->DAT[13].DATH)
+#define DAC1_DATA14                    (DAC1->DAT[14].DATA)
 #define DAC1_DATL14                    (DAC1->DAT[14].DATL)
 #define DAC1_DATH14                    (DAC1->DAT[14].DATH)
+#define DAC1_DATA15                    (DAC1->DAT[15].DATA)
 #define DAC1_DATL15                    (DAC1->DAT[15].DATL)
 #define DAC1_DATH15                    (DAC1->DAT[15].DATH)
 #define DAC1_SR                        (DAC1->SR)
@@ -1860,14 +1902,14 @@ typedef struct {                                /*!<       DMA Structure        
    __IO uint32_t  ERQ;                          /*!< 000C: Enable Request Register                                      */
    __I  uint32_t  RESERVED1;                    /*!< 0010:                                                              */
    __IO uint32_t  EEI;                          /*!< 0014: Enable Error Interrupt Register                              */
-   __O  uint8_t   CEEI;                         /*!< 0018: Clear Enable Error Interrupt Register                        */
-   __O  uint8_t   SEEI;                         /*!< 0019: Set Enable Error Interrupt Register                          */
-   __O  uint8_t   CERQ;                         /*!< 001A: Clear Enable Request Register                                */
-   __O  uint8_t   SERQ;                         /*!< 001B: Set Enable Request Register                                  */
-   __O  uint8_t   CDNE;                         /*!< 001C: Clear DONE Status Bit Register                               */
-   __O  uint8_t   SSRT;                         /*!< 001D: Set START Bit Register                                       */
-   __O  uint8_t   CERR;                         /*!< 001E: Clear Error Register                                         */
-   __O  uint8_t   CINT;                         /*!< 001F: Clear Interrupt Request Register                             */
+   __IO uint8_t   CEEI;                         /*!< 0018: Clear Enable Error Interrupt Register                        */
+   __IO uint8_t   SEEI;                         /*!< 0019: Set Enable Error Interrupt Register                          */
+   __IO uint8_t   CERQ;                         /*!< 001A: Clear Enable Request Register                                */
+   __IO uint8_t   SERQ;                         /*!< 001B: Set Enable Request Register                                  */
+   __IO uint8_t   CDNE;                         /*!< 001C: Clear DONE Status Bit Register                               */
+   __IO uint8_t   SSRT;                         /*!< 001D: Set START Bit Register                                       */
+   __IO uint8_t   CERR;                         /*!< 001E: Clear Error Register                                         */
+   __IO uint8_t   CINT;                         /*!< 001F: Clear Interrupt Request Register                             */
    __I  uint32_t  RESERVED2;                    /*!< 0020:                                                              */
    __IO uint32_t  INT;                          /*!< 0024: Interrupt Request Register                                   */
    __I  uint32_t  RESERVED3;                    /*!< 0028:                                                              */
@@ -1875,44 +1917,44 @@ typedef struct {                                /*!<       DMA Structure        
    __I  uint32_t  RESERVED4;                    /*!< 0030:                                                              */
    __I  uint32_t  HRS;                          /*!< 0034: Hardware Request Status Register                             */
    __I  uint32_t  RESERVED5[50];                /*!< 0038:                                                              */
-   __IO uint8_t   DCHPRI3;                      /*!< 0100: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI2;                      /*!< 0101: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI1;                      /*!< 0102: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI0;                      /*!< 0103: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI7;                      /*!< 0104: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI6;                      /*!< 0105: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI5;                      /*!< 0106: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI4;                      /*!< 0107: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI11;                     /*!< 0108: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI10;                     /*!< 0109: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI9;                      /*!< 010A: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI8;                      /*!< 010B: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI15;                     /*!< 010C: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI14;                     /*!< 010D: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI13;                     /*!< 010E: Channel n Priority Register                                  */
-   __IO uint8_t   DCHPRI12;                     /*!< 010F: Channel n Priority Register                                  */
+   __IO uint8_t   DCHPRI3;                      /*!< 0100: Channel 3 Priority Register                                  */
+   __IO uint8_t   DCHPRI2;                      /*!< 0101: Channel 2 Priority Register                                  */
+   __IO uint8_t   DCHPRI1;                      /*!< 0102: Channel 1 Priority Register                                  */
+   __IO uint8_t   DCHPRI0;                      /*!< 0103: Channel 0 Priority Register                                  */
+   __IO uint8_t   DCHPRI7;                      /*!< 0104: Channel 7 Priority Register                                  */
+   __IO uint8_t   DCHPRI6;                      /*!< 0105: Channel 6 Priority Register                                  */
+   __IO uint8_t   DCHPRI5;                      /*!< 0106: Channel 5 Priority Register                                  */
+   __IO uint8_t   DCHPRI4;                      /*!< 0107: Channel 4 Priority Register                                  */
+   __IO uint8_t   DCHPRI11;                     /*!< 0108: Channel 11 Priority Register                                 */
+   __IO uint8_t   DCHPRI10;                     /*!< 0109: Channel 10 Priority Register                                 */
+   __IO uint8_t   DCHPRI9;                      /*!< 010A: Channel 9 Priority Register                                  */
+   __IO uint8_t   DCHPRI8;                      /*!< 010B: Channel 8 Priority Register                                  */
+   __IO uint8_t   DCHPRI15;                     /*!< 010C: Channel 15 Priority Register                                 */
+   __IO uint8_t   DCHPRI14;                     /*!< 010D: Channel 14 Priority Register                                 */
+   __IO uint8_t   DCHPRI13;                     /*!< 010E: Channel 13 Priority Register                                 */
+   __IO uint8_t   DCHPRI12;                     /*!< 010F: Channel 12 Priority Register                                 */
    __I  uint32_t  RESERVED6[956];               /*!< 0110:                                                              */
    struct { /* (cluster) */                     /*!< 1000: (size=0x0200, 512)                                           */
-      __IO uint32_t  SADDR;                     /*!< 1000: TCD Source Address                                           */
-      __IO uint16_t  SOFF;                      /*!< 1004: TCD Signed Source Address Offset                             */
-      __IO uint16_t  ATTR;                      /*!< 1006: TCD Transfer Attributes                                      */
+      __IO uint32_t  SADDR;                     /*!< 1000: Source Address                                               */
+      __IO uint16_t  SOFF;                      /*!< 1004: Signed Source Address Offset                                 */
+      __IO uint16_t  ATTR;                      /*!< 1006: Transfer Attributes                                          */
       union {                                   /*!< 1000: (size=0004)                                                  */
-         __IO uint32_t  NBYTES_MLNO;            /*!< 1008: TCD Minor Byte Count (Minor Loop Disabled)                   */
-         __IO uint32_t  NBYTES_MLOFFNO;         /*!< 1008: TCD Signed Minor Loop Offset (Minor Loop Enabled and Offset Disabled) */
-         __IO uint32_t  NBYTES_MLOFFYES;        /*!< 1008: TCD Signed Minor Loop Offset (Minor Loop and Offset Enabled) */
+         __IO uint32_t  NBYTES_MLNO;            /*!< 1008: Minor Byte Count (Minor Loop Disabled)                       */
+         __IO uint32_t  NBYTES_MLOFFNO;         /*!< 1008: Signed Minor Loop Offset (Minor Loop Enabled and Offset Disabled) */
+         __IO uint32_t  NBYTES_MLOFFYES;        /*!< 1008: Signed Minor Loop Offset (Minor Loop and Offset Enabled)     */
       };
-      __IO uint32_t  SLAST;                     /*!< 100C: TCD Last Source Address Adjustment                           */
-      __IO uint32_t  DADDR;                     /*!< 1010: TCD Destination Address                                      */
-      __IO uint16_t  DOFF;                      /*!< 1014: TCD Signed Destination Address Offset                        */
+      __IO uint32_t  SLAST;                     /*!< 100C: Last Source Address Adjustment                               */
+      __IO uint32_t  DADDR;                     /*!< 1010: Destination Address                                          */
+      __IO uint16_t  DOFF;                      /*!< 1014: Signed Destination Address Offset                            */
       union {                                   /*!< 1000: (size=0002)                                                  */
-         __IO uint16_t  CITER_ELINKNO;          /*!< 1016: TCD Current Minor Loop Link, Major Loop Count (Channel Linking Disabled) */
-         __IO uint16_t  CITER_ELINKYES;         /*!< 1016: TCD Current Minor Loop Link, Major Loop Count (Channel Linking Enabled) */
+         __IO uint16_t  CITER_ELINKNO;          /*!< 1016: Current Minor Loop Link, Major Loop Count (Channel Linking Disabled) */
+         __IO uint16_t  CITER_ELINKYES;         /*!< 1016: Current Minor Loop Link, Major Loop Count (Channel Linking Enabled) */
       };
-      __IO uint32_t  DLASTSGA;                  /*!< 1018: TCD Last Destination Address Adjustment/Scatter Gather Address */
-      __IO uint16_t  CSR;                       /*!< 101C: TCD Control and Status                                       */
+      __IO uint32_t  DLASTSGA;                  /*!< 1018: Last Destination Address Adjustment/Scatter Gather Address   */
+      __IO uint16_t  CSR;                       /*!< 101C: Control and Status                                           */
       union {                                   /*!< 1000: (size=0002)                                                  */
-         __IO uint16_t  BITER_ELINKNO;          /*!< 101E: TCD Beginning Minor Loop Link, Major Loop Count (Channel Linking Disabled) */
-         __IO uint16_t  BITER_ELINKYES;         /*!< 101E: TCD Beginning Minor Loop Link, Major Loop Count (Channel Linking Enabled) */
+         __IO uint16_t  BITER_ELINKNO;          /*!< 101E: Beginning Minor Loop Link, Major Loop Count (Channel Linking Disabled) */
+         __IO uint16_t  BITER_ELINKYES;         /*!< 101E: Beginning Minor Loop Link, Major Loop Count (Channel Linking Enabled) */
       };
    } TCD[16];
 } DMA_Type;
@@ -4518,7 +4560,7 @@ typedef struct {                                /*!<       ETM Structure        
  */
 typedef struct {                                /*!<       EWM Structure                                                */
    __IO uint8_t   CTRL;                         /*!< 0000: Control Register                                             */
-   __O  uint8_t   SERV;                         /*!< 0001: Service Register                                             */
+   __IO uint8_t   SERV;                         /*!< 0001: Service Register                                             */
    __IO uint8_t   CMPL;                         /*!< 0002: Compare Low Register                                         */
    __IO uint8_t   CMPH;                         /*!< 0003: Compare High Register                                        */
 } EWM_Type;
@@ -4804,30 +4846,9 @@ typedef struct {                                /*!<       FMC Structure        
 /* ------- FMC_S0                                   ------ */
 #define FMC_S0_valid_MASK                        (0x01UL << FMC_S0_valid_SHIFT)                      /*!< FMC_S0: valid Mask                      */
 #define FMC_S0_valid_SHIFT                       0                                                   /*!< FMC_S0: valid Position                  */
-#define FMC_S0_tag_MASK                          (0x1FFFUL << FMC_S0_tag_SHIFT)                      /*!< FMC_S0: tag Mask                        */
-#define FMC_S0_tag_SHIFT                         6                                                   /*!< FMC_S0: tag Position                    */
+#define FMC_S0_tag_MASK                          (0x3FFFFUL << FMC_S0_tag_SHIFT)                     /*!< FMC_S0: tag Mask                        */
+#define FMC_S0_tag_SHIFT                         5                                                   /*!< FMC_S0: tag Position                    */
 #define FMC_S0_tag(x)                            (((x)<<FMC_S0_tag_SHIFT)&FMC_S0_tag_MASK)           /*!< FMC_S0                                  */
-
-/* ------- FMC_S1                                   ------ */
-#define FMC_S1_valid_MASK                        (0x01UL << FMC_S1_valid_SHIFT)                      /*!< FMC_S1: valid Mask                      */
-#define FMC_S1_valid_SHIFT                       0                                                   /*!< FMC_S1: valid Position                  */
-#define FMC_S1_tag_MASK                          (0x1FFFUL << FMC_S1_tag_SHIFT)                      /*!< FMC_S1: tag Mask                        */
-#define FMC_S1_tag_SHIFT                         6                                                   /*!< FMC_S1: tag Position                    */
-#define FMC_S1_tag(x)                            (((x)<<FMC_S1_tag_SHIFT)&FMC_S1_tag_MASK)           /*!< FMC_S1                                  */
-
-/* ------- FMC_S2                                   ------ */
-#define FMC_S2_valid_MASK                        (0x01UL << FMC_S2_valid_SHIFT)                      /*!< FMC_S2: valid Mask                      */
-#define FMC_S2_valid_SHIFT                       0                                                   /*!< FMC_S2: valid Position                  */
-#define FMC_S2_tag_MASK                          (0x1FFFUL << FMC_S2_tag_SHIFT)                      /*!< FMC_S2: tag Mask                        */
-#define FMC_S2_tag_SHIFT                         6                                                   /*!< FMC_S2: tag Position                    */
-#define FMC_S2_tag(x)                            (((x)<<FMC_S2_tag_SHIFT)&FMC_S2_tag_MASK)           /*!< FMC_S2                                  */
-
-/* ------- FMC_S3                                   ------ */
-#define FMC_S3_valid_MASK                        (0x01UL << FMC_S3_valid_SHIFT)                      /*!< FMC_S3: valid Mask                      */
-#define FMC_S3_valid_SHIFT                       0                                                   /*!< FMC_S3: valid Position                  */
-#define FMC_S3_tag_MASK                          (0x1FFFUL << FMC_S3_tag_SHIFT)                      /*!< FMC_S3: tag Mask                        */
-#define FMC_S3_tag_SHIFT                         6                                                   /*!< FMC_S3: tag Position                    */
-#define FMC_S3_tag(x)                            (((x)<<FMC_S3_tag_SHIFT)&FMC_S3_tag_MASK)           /*!< FMC_S3                                  */
 
 /* ------- FMC_S0U                                  ------ */
 #define FMC_S0U_data_MASK                        (0xFFFFFFFFUL << FMC_S0U_data_SHIFT)                /*!< FMC_S0U: data Mask                      */
@@ -4838,36 +4859,6 @@ typedef struct {                                /*!<       FMC Structure        
 #define FMC_S0L_data_MASK                        (0xFFFFFFFFUL << FMC_S0L_data_SHIFT)                /*!< FMC_S0L: data Mask                      */
 #define FMC_S0L_data_SHIFT                       0                                                   /*!< FMC_S0L: data Position                  */
 #define FMC_S0L_data(x)                          (((x)<<FMC_S0L_data_SHIFT)&FMC_S0L_data_MASK)       /*!< FMC_S0L                                 */
-
-/* ------- FMC_S1U                                  ------ */
-#define FMC_S1U_data_MASK                        (0xFFFFFFFFUL << FMC_S1U_data_SHIFT)                /*!< FMC_S1U: data Mask                      */
-#define FMC_S1U_data_SHIFT                       0                                                   /*!< FMC_S1U: data Position                  */
-#define FMC_S1U_data(x)                          (((x)<<FMC_S1U_data_SHIFT)&FMC_S1U_data_MASK)       /*!< FMC_S1U                                 */
-
-/* ------- FMC_S1L                                  ------ */
-#define FMC_S1L_data_MASK                        (0xFFFFFFFFUL << FMC_S1L_data_SHIFT)                /*!< FMC_S1L: data Mask                      */
-#define FMC_S1L_data_SHIFT                       0                                                   /*!< FMC_S1L: data Position                  */
-#define FMC_S1L_data(x)                          (((x)<<FMC_S1L_data_SHIFT)&FMC_S1L_data_MASK)       /*!< FMC_S1L                                 */
-
-/* ------- FMC_S2U                                  ------ */
-#define FMC_S2U_data_MASK                        (0xFFFFFFFFUL << FMC_S2U_data_SHIFT)                /*!< FMC_S2U: data Mask                      */
-#define FMC_S2U_data_SHIFT                       0                                                   /*!< FMC_S2U: data Position                  */
-#define FMC_S2U_data(x)                          (((x)<<FMC_S2U_data_SHIFT)&FMC_S2U_data_MASK)       /*!< FMC_S2U                                 */
-
-/* ------- FMC_S2L                                  ------ */
-#define FMC_S2L_data_MASK                        (0xFFFFFFFFUL << FMC_S2L_data_SHIFT)                /*!< FMC_S2L: data Mask                      */
-#define FMC_S2L_data_SHIFT                       0                                                   /*!< FMC_S2L: data Position                  */
-#define FMC_S2L_data(x)                          (((x)<<FMC_S2L_data_SHIFT)&FMC_S2L_data_MASK)       /*!< FMC_S2L                                 */
-
-/* ------- FMC_S3U                                  ------ */
-#define FMC_S3U_data_MASK                        (0xFFFFFFFFUL << FMC_S3U_data_SHIFT)                /*!< FMC_S3U: data Mask                      */
-#define FMC_S3U_data_SHIFT                       0                                                   /*!< FMC_S3U: data Position                  */
-#define FMC_S3U_data(x)                          (((x)<<FMC_S3U_data_SHIFT)&FMC_S3U_data_MASK)       /*!< FMC_S3U                                 */
-
-/* ------- FMC_S3L                                  ------ */
-#define FMC_S3L_data_MASK                        (0xFFFFFFFFUL << FMC_S3L_data_SHIFT)                /*!< FMC_S3L: data Mask                      */
-#define FMC_S3L_data_SHIFT                       0                                                   /*!< FMC_S3L: data Position                  */
-#define FMC_S3L_data(x)                          (((x)<<FMC_S3L_data_SHIFT)&FMC_S3L_data_MASK)       /*!< FMC_S3L                                 */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'FMC' Register Access macros                         ----------- */
@@ -5094,25 +5085,25 @@ typedef struct {                                /*!<       FTFE Structure       
    __IO uint8_t   FCNFG;                        /*!< 0001: Flash Configuration Register                                 */
    __I  uint8_t   FSEC;                         /*!< 0002: Flash Security Register                                      */
    __I  uint8_t   FOPT;                         /*!< 0003: Flash Option Register                                        */
-   __IO uint8_t   FCCOB3;                       /*!< 0004: Flash Common Command Object Register 3 - Usually Flash address [7..0] */
-   __IO uint8_t   FCCOB2;                       /*!< 0005: Flash Common Command Object Register 2 - Usually Flash address [15..8] */
-   __IO uint8_t   FCCOB1;                       /*!< 0006: Flash Common Command Object Register 1 - Usually Flash address [23..16] */
-   __IO uint8_t   FCCOB0;                       /*!< 0007: Flash Common Command Object Register 0 - Usually FCMD (a code that defines the flash command) */
-   __IO uint8_t   FCCOB7;                       /*!< 0008: Flash Common Command Object Register 7 - Usually Data Byte 3 */
-   __IO uint8_t   FCCOB6;                       /*!< 0009: Flash Common Command Object Register 6 - Usually Data Byte 2 */
-   __IO uint8_t   FCCOB5;                       /*!< 000A: Flash Common Command Object Register 5 - Usually Data Byte 1 */
-   __IO uint8_t   FCCOB4;                       /*!< 000B: Flash Common Command Object Register 4 - Usually Data Byte 0 */
-   __IO uint8_t   FCCOBB;                       /*!< 000C: Flash Common Command Object Register B - Usually Data Byte 7 */
-   __IO uint8_t   FCCOBA;                       /*!< 000D: Flash Common Command Object Register A - Usually Data Byte 6 */
-   __IO uint8_t   FCCOB9;                       /*!< 000E: Flash Common Command Object Register 9 - Usually Data Byte 5 */
-   __IO uint8_t   FCCOB8;                       /*!< 000F: Flash Common Command Object Register 8 - Usually Data Byte 4 */
+   __IO uint8_t   FCCOB3;                       /*!< 0004: FCCOB 3 - Usually Flash address [7..0]                       */
+   __IO uint8_t   FCCOB2;                       /*!< 0005: FCCOB 2 - Usually Flash address [15..8]                      */
+   __IO uint8_t   FCCOB1;                       /*!< 0006: FCCOB 1 - Usually Flash address [23..16]                     */
+   __IO uint8_t   FCCOB0;                       /*!< 0007: FCCOB 0 - Usually FCMD (a code that defines the flash command)  */
+   __IO uint8_t   FCCOB7;                       /*!< 0008: FCCOB 7 - Usually Data Byte 3                                */
+   __IO uint8_t   FCCOB6;                       /*!< 0009: FCCOB 6 - Usually Data Byte 2                                */
+   __IO uint8_t   FCCOB5;                       /*!< 000A: FCCOB 5 - Usually Data Byte 1                                */
+   __IO uint8_t   FCCOB4;                       /*!< 000B: FCCOB 4 - Usually Data Byte 0                                */
+   __IO uint8_t   FCCOBB;                       /*!< 000C: FCCOB B - Usually Data Byte 7                                */
+   __IO uint8_t   FCCOBA;                       /*!< 000D: FCCOB A - Usually Data Byte 6                                */
+   __IO uint8_t   FCCOB9;                       /*!< 000E: FCCOB 9 - Usually Data Byte 5                                */
+   __IO uint8_t   FCCOB8;                       /*!< 000F: FCCOB 8 - Usually Data Byte 4                                */
    __IO uint8_t   FPROT3;                       /*!< 0010: Program Flash Protection                                     */
    __IO uint8_t   FPROT2;                       /*!< 0011: Program Flash Protection                                     */
    __IO uint8_t   FPROT1;                       /*!< 0012: Program Flash Protection                                     */
    __IO uint8_t   FPROT0;                       /*!< 0013: Program Flash Protection                                     */
    __I  uint16_t  RESERVED0;                    /*!< 0014:                                                              */
-   __IO uint8_t   FEPROT;                       /*!< 0016: EEPROM Protection Register (Only for devices with FlexNVM)   */
-   __IO uint8_t   FDPROT;                       /*!< 0017: Data Flash Protection Register (Only for devices with FlexNVM) */
+   __IO uint8_t   FEPROT;                       /*!< 0016: EEPROM Protection Register                                   */
+   __IO uint8_t   FDPROT;                       /*!< 0017: Data Flash Protection Register                               */
 } FTFE_Type;
 
 
@@ -5229,8 +5220,8 @@ typedef struct {                                /*!<       FTM0 Structure       
    __IO uint32_t  CNT;                          /*!< 0004: Counter                                                      */
    __IO uint32_t  MOD;                          /*!< 0008: Modulo                                                       */
    struct { /* (cluster) */                     /*!< 000C: (size=0x0040, 64)                                            */
-      __IO uint32_t  CnSC;                      /*!< 000C: Channel %s Status and Control                                */
-      __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
+      __IO uint32_t  CnSC;                      /*!< 000C: Channel  Status and Control                                  */
+      __IO uint32_t  CnV;                       /*!< 0010: Channel  Value                                               */
    } CONTROLS[8];
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
    __IO uint32_t  STATUS;                       /*!< 0050: Capture and Compare Status                                   */
@@ -5287,10 +5278,16 @@ typedef struct {                                /*!<       FTM0 Structure       
 /* ------- FTM0_CnSC                                ------ */
 #define FTM_CnSC_DMA_MASK                        (0x01UL << FTM_CnSC_DMA_SHIFT)                      /*!< FTM0_CnSC: DMA Mask                     */
 #define FTM_CnSC_DMA_SHIFT                       0                                                   /*!< FTM0_CnSC: DMA Position                 */
+#define FTM_CnSC_ELS_MASK                        (0x03UL << FTM_CnSC_ELS_SHIFT)                      /*!< FTM0_CnSC: ELS Mask                     */
+#define FTM_CnSC_ELS_SHIFT                       2                                                   /*!< FTM0_CnSC: ELS Position                 */
+#define FTM_CnSC_ELS(x)                          (((x)<<FTM_CnSC_ELS_SHIFT)&FTM_CnSC_ELS_MASK)       /*!< FTM0_CnSC                               */
 #define FTM_CnSC_ELSA_MASK                       (0x01UL << FTM_CnSC_ELSA_SHIFT)                     /*!< FTM0_CnSC: ELSA Mask                    */
 #define FTM_CnSC_ELSA_SHIFT                      2                                                   /*!< FTM0_CnSC: ELSA Position                */
 #define FTM_CnSC_ELSB_MASK                       (0x01UL << FTM_CnSC_ELSB_SHIFT)                     /*!< FTM0_CnSC: ELSB Mask                    */
 #define FTM_CnSC_ELSB_SHIFT                      3                                                   /*!< FTM0_CnSC: ELSB Position                */
+#define FTM_CnSC_MS_MASK                         (0x03UL << FTM_CnSC_MS_SHIFT)                       /*!< FTM0_CnSC: MS Mask                      */
+#define FTM_CnSC_MS_SHIFT                        4                                                   /*!< FTM0_CnSC: MS Position                  */
+#define FTM_CnSC_MS(x)                           (((x)<<FTM_CnSC_MS_SHIFT)&FTM_CnSC_MS_MASK)         /*!< FTM0_CnSC                               */
 #define FTM_CnSC_MSA_MASK                        (0x01UL << FTM_CnSC_MSA_SHIFT)                      /*!< FTM0_CnSC: MSA Mask                     */
 #define FTM_CnSC_MSA_SHIFT                       4                                                   /*!< FTM0_CnSC: MSA Position                 */
 #define FTM_CnSC_MSB_MASK                        (0x01UL << FTM_CnSC_MSB_SHIFT)                      /*!< FTM0_CnSC: MSB Mask                     */
@@ -5744,8 +5741,8 @@ typedef struct {                                /*!<       FTM1 Structure       
    __IO uint32_t  CNT;                          /*!< 0004: Counter                                                      */
    __IO uint32_t  MOD;                          /*!< 0008: Modulo                                                       */
    struct { /* (cluster) */                     /*!< 000C: (size=0x0010, 16)                                            */
-      __IO uint32_t  CnSC;                      /*!< 000C: Channel %s Status and Control                                */
-      __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
+      __IO uint32_t  CnSC;                      /*!< 000C: Channel  Status and Control                                  */
+      __IO uint32_t  CnV;                       /*!< 0010: Channel  Value                                               */
    } CONTROLS[2];
    __I  uint32_t  RESERVED0[12];                /*!< 001C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
@@ -5977,34 +5974,400 @@ typedef struct {                                /*!<       GPIOA Structure      
 
 
 /* ------- GPIOA_PDOR                               ------ */
-#define GPIO_PDOR_PDO_MASK                       (0xFFFFFFFFUL << GPIO_PDOR_PDO_SHIFT)               /*!< GPIOA_PDOR: PDO Mask                    */
-#define GPIO_PDOR_PDO_SHIFT                      0                                                   /*!< GPIOA_PDOR: PDO Position                */
-#define GPIO_PDOR_PDO(x)                         (((x)<<GPIO_PDOR_PDO_SHIFT)&GPIO_PDOR_PDO_MASK)     /*!< GPIOA_PDOR                              */
+#define GPIO_PDOR_PDO0_MASK                      (0x01UL << GPIO_PDOR_PDO0_SHIFT)                    /*!< GPIOA_PDOR: PDO0 Mask                   */
+#define GPIO_PDOR_PDO0_SHIFT                     0                                                   /*!< GPIOA_PDOR: PDO0 Position               */
+#define GPIO_PDOR_PDO1_MASK                      (0x01UL << GPIO_PDOR_PDO1_SHIFT)                    /*!< GPIOA_PDOR: PDO1 Mask                   */
+#define GPIO_PDOR_PDO1_SHIFT                     1                                                   /*!< GPIOA_PDOR: PDO1 Position               */
+#define GPIO_PDOR_PDO2_MASK                      (0x01UL << GPIO_PDOR_PDO2_SHIFT)                    /*!< GPIOA_PDOR: PDO2 Mask                   */
+#define GPIO_PDOR_PDO2_SHIFT                     2                                                   /*!< GPIOA_PDOR: PDO2 Position               */
+#define GPIO_PDOR_PDO3_MASK                      (0x01UL << GPIO_PDOR_PDO3_SHIFT)                    /*!< GPIOA_PDOR: PDO3 Mask                   */
+#define GPIO_PDOR_PDO3_SHIFT                     3                                                   /*!< GPIOA_PDOR: PDO3 Position               */
+#define GPIO_PDOR_PDO4_MASK                      (0x01UL << GPIO_PDOR_PDO4_SHIFT)                    /*!< GPIOA_PDOR: PDO4 Mask                   */
+#define GPIO_PDOR_PDO4_SHIFT                     4                                                   /*!< GPIOA_PDOR: PDO4 Position               */
+#define GPIO_PDOR_PDO5_MASK                      (0x01UL << GPIO_PDOR_PDO5_SHIFT)                    /*!< GPIOA_PDOR: PDO5 Mask                   */
+#define GPIO_PDOR_PDO5_SHIFT                     5                                                   /*!< GPIOA_PDOR: PDO5 Position               */
+#define GPIO_PDOR_PDO6_MASK                      (0x01UL << GPIO_PDOR_PDO6_SHIFT)                    /*!< GPIOA_PDOR: PDO6 Mask                   */
+#define GPIO_PDOR_PDO6_SHIFT                     6                                                   /*!< GPIOA_PDOR: PDO6 Position               */
+#define GPIO_PDOR_PDO7_MASK                      (0x01UL << GPIO_PDOR_PDO7_SHIFT)                    /*!< GPIOA_PDOR: PDO7 Mask                   */
+#define GPIO_PDOR_PDO7_SHIFT                     7                                                   /*!< GPIOA_PDOR: PDO7 Position               */
+#define GPIO_PDOR_PDO8_MASK                      (0x01UL << GPIO_PDOR_PDO8_SHIFT)                    /*!< GPIOA_PDOR: PDO8 Mask                   */
+#define GPIO_PDOR_PDO8_SHIFT                     8                                                   /*!< GPIOA_PDOR: PDO8 Position               */
+#define GPIO_PDOR_PDO9_MASK                      (0x01UL << GPIO_PDOR_PDO9_SHIFT)                    /*!< GPIOA_PDOR: PDO9 Mask                   */
+#define GPIO_PDOR_PDO9_SHIFT                     9                                                   /*!< GPIOA_PDOR: PDO9 Position               */
+#define GPIO_PDOR_PDO10_MASK                     (0x01UL << GPIO_PDOR_PDO10_SHIFT)                   /*!< GPIOA_PDOR: PDO10 Mask                  */
+#define GPIO_PDOR_PDO10_SHIFT                    10                                                  /*!< GPIOA_PDOR: PDO10 Position              */
+#define GPIO_PDOR_PDO11_MASK                     (0x01UL << GPIO_PDOR_PDO11_SHIFT)                   /*!< GPIOA_PDOR: PDO11 Mask                  */
+#define GPIO_PDOR_PDO11_SHIFT                    11                                                  /*!< GPIOA_PDOR: PDO11 Position              */
+#define GPIO_PDOR_PDO12_MASK                     (0x01UL << GPIO_PDOR_PDO12_SHIFT)                   /*!< GPIOA_PDOR: PDO12 Mask                  */
+#define GPIO_PDOR_PDO12_SHIFT                    12                                                  /*!< GPIOA_PDOR: PDO12 Position              */
+#define GPIO_PDOR_PDO13_MASK                     (0x01UL << GPIO_PDOR_PDO13_SHIFT)                   /*!< GPIOA_PDOR: PDO13 Mask                  */
+#define GPIO_PDOR_PDO13_SHIFT                    13                                                  /*!< GPIOA_PDOR: PDO13 Position              */
+#define GPIO_PDOR_PDO14_MASK                     (0x01UL << GPIO_PDOR_PDO14_SHIFT)                   /*!< GPIOA_PDOR: PDO14 Mask                  */
+#define GPIO_PDOR_PDO14_SHIFT                    14                                                  /*!< GPIOA_PDOR: PDO14 Position              */
+#define GPIO_PDOR_PDO15_MASK                     (0x01UL << GPIO_PDOR_PDO15_SHIFT)                   /*!< GPIOA_PDOR: PDO15 Mask                  */
+#define GPIO_PDOR_PDO15_SHIFT                    15                                                  /*!< GPIOA_PDOR: PDO15 Position              */
+#define GPIO_PDOR_PDO16_MASK                     (0x01UL << GPIO_PDOR_PDO16_SHIFT)                   /*!< GPIOA_PDOR: PDO16 Mask                  */
+#define GPIO_PDOR_PDO16_SHIFT                    16                                                  /*!< GPIOA_PDOR: PDO16 Position              */
+#define GPIO_PDOR_PDO17_MASK                     (0x01UL << GPIO_PDOR_PDO17_SHIFT)                   /*!< GPIOA_PDOR: PDO17 Mask                  */
+#define GPIO_PDOR_PDO17_SHIFT                    17                                                  /*!< GPIOA_PDOR: PDO17 Position              */
+#define GPIO_PDOR_PDO18_MASK                     (0x01UL << GPIO_PDOR_PDO18_SHIFT)                   /*!< GPIOA_PDOR: PDO18 Mask                  */
+#define GPIO_PDOR_PDO18_SHIFT                    18                                                  /*!< GPIOA_PDOR: PDO18 Position              */
+#define GPIO_PDOR_PDO19_MASK                     (0x01UL << GPIO_PDOR_PDO19_SHIFT)                   /*!< GPIOA_PDOR: PDO19 Mask                  */
+#define GPIO_PDOR_PDO19_SHIFT                    19                                                  /*!< GPIOA_PDOR: PDO19 Position              */
+#define GPIO_PDOR_PDO20_MASK                     (0x01UL << GPIO_PDOR_PDO20_SHIFT)                   /*!< GPIOA_PDOR: PDO20 Mask                  */
+#define GPIO_PDOR_PDO20_SHIFT                    20                                                  /*!< GPIOA_PDOR: PDO20 Position              */
+#define GPIO_PDOR_PDO21_MASK                     (0x01UL << GPIO_PDOR_PDO21_SHIFT)                   /*!< GPIOA_PDOR: PDO21 Mask                  */
+#define GPIO_PDOR_PDO21_SHIFT                    21                                                  /*!< GPIOA_PDOR: PDO21 Position              */
+#define GPIO_PDOR_PDO22_MASK                     (0x01UL << GPIO_PDOR_PDO22_SHIFT)                   /*!< GPIOA_PDOR: PDO22 Mask                  */
+#define GPIO_PDOR_PDO22_SHIFT                    22                                                  /*!< GPIOA_PDOR: PDO22 Position              */
+#define GPIO_PDOR_PDO23_MASK                     (0x01UL << GPIO_PDOR_PDO23_SHIFT)                   /*!< GPIOA_PDOR: PDO23 Mask                  */
+#define GPIO_PDOR_PDO23_SHIFT                    23                                                  /*!< GPIOA_PDOR: PDO23 Position              */
+#define GPIO_PDOR_PDO24_MASK                     (0x01UL << GPIO_PDOR_PDO24_SHIFT)                   /*!< GPIOA_PDOR: PDO24 Mask                  */
+#define GPIO_PDOR_PDO24_SHIFT                    24                                                  /*!< GPIOA_PDOR: PDO24 Position              */
+#define GPIO_PDOR_PDO25_MASK                     (0x01UL << GPIO_PDOR_PDO25_SHIFT)                   /*!< GPIOA_PDOR: PDO25 Mask                  */
+#define GPIO_PDOR_PDO25_SHIFT                    25                                                  /*!< GPIOA_PDOR: PDO25 Position              */
+#define GPIO_PDOR_PDO26_MASK                     (0x01UL << GPIO_PDOR_PDO26_SHIFT)                   /*!< GPIOA_PDOR: PDO26 Mask                  */
+#define GPIO_PDOR_PDO26_SHIFT                    26                                                  /*!< GPIOA_PDOR: PDO26 Position              */
+#define GPIO_PDOR_PDO27_MASK                     (0x01UL << GPIO_PDOR_PDO27_SHIFT)                   /*!< GPIOA_PDOR: PDO27 Mask                  */
+#define GPIO_PDOR_PDO27_SHIFT                    27                                                  /*!< GPIOA_PDOR: PDO27 Position              */
+#define GPIO_PDOR_PDO28_MASK                     (0x01UL << GPIO_PDOR_PDO28_SHIFT)                   /*!< GPIOA_PDOR: PDO28 Mask                  */
+#define GPIO_PDOR_PDO28_SHIFT                    28                                                  /*!< GPIOA_PDOR: PDO28 Position              */
+#define GPIO_PDOR_PDO29_MASK                     (0x01UL << GPIO_PDOR_PDO29_SHIFT)                   /*!< GPIOA_PDOR: PDO29 Mask                  */
+#define GPIO_PDOR_PDO29_SHIFT                    29                                                  /*!< GPIOA_PDOR: PDO29 Position              */
+#define GPIO_PDOR_PDO30_MASK                     (0x01UL << GPIO_PDOR_PDO30_SHIFT)                   /*!< GPIOA_PDOR: PDO30 Mask                  */
+#define GPIO_PDOR_PDO30_SHIFT                    30                                                  /*!< GPIOA_PDOR: PDO30 Position              */
+#define GPIO_PDOR_PDO31_MASK                     (0x01UL << GPIO_PDOR_PDO31_SHIFT)                   /*!< GPIOA_PDOR: PDO31 Mask                  */
+#define GPIO_PDOR_PDO31_SHIFT                    31                                                  /*!< GPIOA_PDOR: PDO31 Position              */
 
 /* ------- GPIOA_PSOR                               ------ */
-#define GPIO_PSOR_PTSO_MASK                      (0xFFFFFFFFUL << GPIO_PSOR_PTSO_SHIFT)              /*!< GPIOA_PSOR: PTSO Mask                   */
-#define GPIO_PSOR_PTSO_SHIFT                     0                                                   /*!< GPIOA_PSOR: PTSO Position               */
-#define GPIO_PSOR_PTSO(x)                        (((x)<<GPIO_PSOR_PTSO_SHIFT)&GPIO_PSOR_PTSO_MASK)   /*!< GPIOA_PSOR                              */
+#define GPIO_PSOR_PTSO0_MASK                     (0x01UL << GPIO_PSOR_PTSO0_SHIFT)                   /*!< GPIOA_PSOR: PTSO0 Mask                  */
+#define GPIO_PSOR_PTSO0_SHIFT                    0                                                   /*!< GPIOA_PSOR: PTSO0 Position              */
+#define GPIO_PSOR_PTSO1_MASK                     (0x01UL << GPIO_PSOR_PTSO1_SHIFT)                   /*!< GPIOA_PSOR: PTSO1 Mask                  */
+#define GPIO_PSOR_PTSO1_SHIFT                    1                                                   /*!< GPIOA_PSOR: PTSO1 Position              */
+#define GPIO_PSOR_PTSO2_MASK                     (0x01UL << GPIO_PSOR_PTSO2_SHIFT)                   /*!< GPIOA_PSOR: PTSO2 Mask                  */
+#define GPIO_PSOR_PTSO2_SHIFT                    2                                                   /*!< GPIOA_PSOR: PTSO2 Position              */
+#define GPIO_PSOR_PTSO3_MASK                     (0x01UL << GPIO_PSOR_PTSO3_SHIFT)                   /*!< GPIOA_PSOR: PTSO3 Mask                  */
+#define GPIO_PSOR_PTSO3_SHIFT                    3                                                   /*!< GPIOA_PSOR: PTSO3 Position              */
+#define GPIO_PSOR_PTSO4_MASK                     (0x01UL << GPIO_PSOR_PTSO4_SHIFT)                   /*!< GPIOA_PSOR: PTSO4 Mask                  */
+#define GPIO_PSOR_PTSO4_SHIFT                    4                                                   /*!< GPIOA_PSOR: PTSO4 Position              */
+#define GPIO_PSOR_PTSO5_MASK                     (0x01UL << GPIO_PSOR_PTSO5_SHIFT)                   /*!< GPIOA_PSOR: PTSO5 Mask                  */
+#define GPIO_PSOR_PTSO5_SHIFT                    5                                                   /*!< GPIOA_PSOR: PTSO5 Position              */
+#define GPIO_PSOR_PTSO6_MASK                     (0x01UL << GPIO_PSOR_PTSO6_SHIFT)                   /*!< GPIOA_PSOR: PTSO6 Mask                  */
+#define GPIO_PSOR_PTSO6_SHIFT                    6                                                   /*!< GPIOA_PSOR: PTSO6 Position              */
+#define GPIO_PSOR_PTSO7_MASK                     (0x01UL << GPIO_PSOR_PTSO7_SHIFT)                   /*!< GPIOA_PSOR: PTSO7 Mask                  */
+#define GPIO_PSOR_PTSO7_SHIFT                    7                                                   /*!< GPIOA_PSOR: PTSO7 Position              */
+#define GPIO_PSOR_PTSO8_MASK                     (0x01UL << GPIO_PSOR_PTSO8_SHIFT)                   /*!< GPIOA_PSOR: PTSO8 Mask                  */
+#define GPIO_PSOR_PTSO8_SHIFT                    8                                                   /*!< GPIOA_PSOR: PTSO8 Position              */
+#define GPIO_PSOR_PTSO9_MASK                     (0x01UL << GPIO_PSOR_PTSO9_SHIFT)                   /*!< GPIOA_PSOR: PTSO9 Mask                  */
+#define GPIO_PSOR_PTSO9_SHIFT                    9                                                   /*!< GPIOA_PSOR: PTSO9 Position              */
+#define GPIO_PSOR_PTSO10_MASK                    (0x01UL << GPIO_PSOR_PTSO10_SHIFT)                  /*!< GPIOA_PSOR: PTSO10 Mask                 */
+#define GPIO_PSOR_PTSO10_SHIFT                   10                                                  /*!< GPIOA_PSOR: PTSO10 Position             */
+#define GPIO_PSOR_PTSO11_MASK                    (0x01UL << GPIO_PSOR_PTSO11_SHIFT)                  /*!< GPIOA_PSOR: PTSO11 Mask                 */
+#define GPIO_PSOR_PTSO11_SHIFT                   11                                                  /*!< GPIOA_PSOR: PTSO11 Position             */
+#define GPIO_PSOR_PTSO12_MASK                    (0x01UL << GPIO_PSOR_PTSO12_SHIFT)                  /*!< GPIOA_PSOR: PTSO12 Mask                 */
+#define GPIO_PSOR_PTSO12_SHIFT                   12                                                  /*!< GPIOA_PSOR: PTSO12 Position             */
+#define GPIO_PSOR_PTSO13_MASK                    (0x01UL << GPIO_PSOR_PTSO13_SHIFT)                  /*!< GPIOA_PSOR: PTSO13 Mask                 */
+#define GPIO_PSOR_PTSO13_SHIFT                   13                                                  /*!< GPIOA_PSOR: PTSO13 Position             */
+#define GPIO_PSOR_PTSO14_MASK                    (0x01UL << GPIO_PSOR_PTSO14_SHIFT)                  /*!< GPIOA_PSOR: PTSO14 Mask                 */
+#define GPIO_PSOR_PTSO14_SHIFT                   14                                                  /*!< GPIOA_PSOR: PTSO14 Position             */
+#define GPIO_PSOR_PTSO15_MASK                    (0x01UL << GPIO_PSOR_PTSO15_SHIFT)                  /*!< GPIOA_PSOR: PTSO15 Mask                 */
+#define GPIO_PSOR_PTSO15_SHIFT                   15                                                  /*!< GPIOA_PSOR: PTSO15 Position             */
+#define GPIO_PSOR_PTSO16_MASK                    (0x01UL << GPIO_PSOR_PTSO16_SHIFT)                  /*!< GPIOA_PSOR: PTSO16 Mask                 */
+#define GPIO_PSOR_PTSO16_SHIFT                   16                                                  /*!< GPIOA_PSOR: PTSO16 Position             */
+#define GPIO_PSOR_PTSO17_MASK                    (0x01UL << GPIO_PSOR_PTSO17_SHIFT)                  /*!< GPIOA_PSOR: PTSO17 Mask                 */
+#define GPIO_PSOR_PTSO17_SHIFT                   17                                                  /*!< GPIOA_PSOR: PTSO17 Position             */
+#define GPIO_PSOR_PTSO18_MASK                    (0x01UL << GPIO_PSOR_PTSO18_SHIFT)                  /*!< GPIOA_PSOR: PTSO18 Mask                 */
+#define GPIO_PSOR_PTSO18_SHIFT                   18                                                  /*!< GPIOA_PSOR: PTSO18 Position             */
+#define GPIO_PSOR_PTSO19_MASK                    (0x01UL << GPIO_PSOR_PTSO19_SHIFT)                  /*!< GPIOA_PSOR: PTSO19 Mask                 */
+#define GPIO_PSOR_PTSO19_SHIFT                   19                                                  /*!< GPIOA_PSOR: PTSO19 Position             */
+#define GPIO_PSOR_PTSO20_MASK                    (0x01UL << GPIO_PSOR_PTSO20_SHIFT)                  /*!< GPIOA_PSOR: PTSO20 Mask                 */
+#define GPIO_PSOR_PTSO20_SHIFT                   20                                                  /*!< GPIOA_PSOR: PTSO20 Position             */
+#define GPIO_PSOR_PTSO21_MASK                    (0x01UL << GPIO_PSOR_PTSO21_SHIFT)                  /*!< GPIOA_PSOR: PTSO21 Mask                 */
+#define GPIO_PSOR_PTSO21_SHIFT                   21                                                  /*!< GPIOA_PSOR: PTSO21 Position             */
+#define GPIO_PSOR_PTSO22_MASK                    (0x01UL << GPIO_PSOR_PTSO22_SHIFT)                  /*!< GPIOA_PSOR: PTSO22 Mask                 */
+#define GPIO_PSOR_PTSO22_SHIFT                   22                                                  /*!< GPIOA_PSOR: PTSO22 Position             */
+#define GPIO_PSOR_PTSO23_MASK                    (0x01UL << GPIO_PSOR_PTSO23_SHIFT)                  /*!< GPIOA_PSOR: PTSO23 Mask                 */
+#define GPIO_PSOR_PTSO23_SHIFT                   23                                                  /*!< GPIOA_PSOR: PTSO23 Position             */
+#define GPIO_PSOR_PTSO24_MASK                    (0x01UL << GPIO_PSOR_PTSO24_SHIFT)                  /*!< GPIOA_PSOR: PTSO24 Mask                 */
+#define GPIO_PSOR_PTSO24_SHIFT                   24                                                  /*!< GPIOA_PSOR: PTSO24 Position             */
+#define GPIO_PSOR_PTSO25_MASK                    (0x01UL << GPIO_PSOR_PTSO25_SHIFT)                  /*!< GPIOA_PSOR: PTSO25 Mask                 */
+#define GPIO_PSOR_PTSO25_SHIFT                   25                                                  /*!< GPIOA_PSOR: PTSO25 Position             */
+#define GPIO_PSOR_PTSO26_MASK                    (0x01UL << GPIO_PSOR_PTSO26_SHIFT)                  /*!< GPIOA_PSOR: PTSO26 Mask                 */
+#define GPIO_PSOR_PTSO26_SHIFT                   26                                                  /*!< GPIOA_PSOR: PTSO26 Position             */
+#define GPIO_PSOR_PTSO27_MASK                    (0x01UL << GPIO_PSOR_PTSO27_SHIFT)                  /*!< GPIOA_PSOR: PTSO27 Mask                 */
+#define GPIO_PSOR_PTSO27_SHIFT                   27                                                  /*!< GPIOA_PSOR: PTSO27 Position             */
+#define GPIO_PSOR_PTSO28_MASK                    (0x01UL << GPIO_PSOR_PTSO28_SHIFT)                  /*!< GPIOA_PSOR: PTSO28 Mask                 */
+#define GPIO_PSOR_PTSO28_SHIFT                   28                                                  /*!< GPIOA_PSOR: PTSO28 Position             */
+#define GPIO_PSOR_PTSO29_MASK                    (0x01UL << GPIO_PSOR_PTSO29_SHIFT)                  /*!< GPIOA_PSOR: PTSO29 Mask                 */
+#define GPIO_PSOR_PTSO29_SHIFT                   29                                                  /*!< GPIOA_PSOR: PTSO29 Position             */
+#define GPIO_PSOR_PTSO30_MASK                    (0x01UL << GPIO_PSOR_PTSO30_SHIFT)                  /*!< GPIOA_PSOR: PTSO30 Mask                 */
+#define GPIO_PSOR_PTSO30_SHIFT                   30                                                  /*!< GPIOA_PSOR: PTSO30 Position             */
+#define GPIO_PSOR_PTSO31_MASK                    (0x01UL << GPIO_PSOR_PTSO31_SHIFT)                  /*!< GPIOA_PSOR: PTSO31 Mask                 */
+#define GPIO_PSOR_PTSO31_SHIFT                   31                                                  /*!< GPIOA_PSOR: PTSO31 Position             */
 
 /* ------- GPIOA_PCOR                               ------ */
-#define GPIO_PCOR_PTCO_MASK                      (0xFFFFFFFFUL << GPIO_PCOR_PTCO_SHIFT)              /*!< GPIOA_PCOR: PTCO Mask                   */
-#define GPIO_PCOR_PTCO_SHIFT                     0                                                   /*!< GPIOA_PCOR: PTCO Position               */
-#define GPIO_PCOR_PTCO(x)                        (((x)<<GPIO_PCOR_PTCO_SHIFT)&GPIO_PCOR_PTCO_MASK)   /*!< GPIOA_PCOR                              */
+#define GPIO_PCOR_PTCO0_MASK                     (0x01UL << GPIO_PCOR_PTCO0_SHIFT)                   /*!< GPIOA_PCOR: PTCO0 Mask                  */
+#define GPIO_PCOR_PTCO0_SHIFT                    0                                                   /*!< GPIOA_PCOR: PTCO0 Position              */
+#define GPIO_PCOR_PTCO1_MASK                     (0x01UL << GPIO_PCOR_PTCO1_SHIFT)                   /*!< GPIOA_PCOR: PTCO1 Mask                  */
+#define GPIO_PCOR_PTCO1_SHIFT                    1                                                   /*!< GPIOA_PCOR: PTCO1 Position              */
+#define GPIO_PCOR_PTCO2_MASK                     (0x01UL << GPIO_PCOR_PTCO2_SHIFT)                   /*!< GPIOA_PCOR: PTCO2 Mask                  */
+#define GPIO_PCOR_PTCO2_SHIFT                    2                                                   /*!< GPIOA_PCOR: PTCO2 Position              */
+#define GPIO_PCOR_PTCO3_MASK                     (0x01UL << GPIO_PCOR_PTCO3_SHIFT)                   /*!< GPIOA_PCOR: PTCO3 Mask                  */
+#define GPIO_PCOR_PTCO3_SHIFT                    3                                                   /*!< GPIOA_PCOR: PTCO3 Position              */
+#define GPIO_PCOR_PTCO4_MASK                     (0x01UL << GPIO_PCOR_PTCO4_SHIFT)                   /*!< GPIOA_PCOR: PTCO4 Mask                  */
+#define GPIO_PCOR_PTCO4_SHIFT                    4                                                   /*!< GPIOA_PCOR: PTCO4 Position              */
+#define GPIO_PCOR_PTCO5_MASK                     (0x01UL << GPIO_PCOR_PTCO5_SHIFT)                   /*!< GPIOA_PCOR: PTCO5 Mask                  */
+#define GPIO_PCOR_PTCO5_SHIFT                    5                                                   /*!< GPIOA_PCOR: PTCO5 Position              */
+#define GPIO_PCOR_PTCO6_MASK                     (0x01UL << GPIO_PCOR_PTCO6_SHIFT)                   /*!< GPIOA_PCOR: PTCO6 Mask                  */
+#define GPIO_PCOR_PTCO6_SHIFT                    6                                                   /*!< GPIOA_PCOR: PTCO6 Position              */
+#define GPIO_PCOR_PTCO7_MASK                     (0x01UL << GPIO_PCOR_PTCO7_SHIFT)                   /*!< GPIOA_PCOR: PTCO7 Mask                  */
+#define GPIO_PCOR_PTCO7_SHIFT                    7                                                   /*!< GPIOA_PCOR: PTCO7 Position              */
+#define GPIO_PCOR_PTCO8_MASK                     (0x01UL << GPIO_PCOR_PTCO8_SHIFT)                   /*!< GPIOA_PCOR: PTCO8 Mask                  */
+#define GPIO_PCOR_PTCO8_SHIFT                    8                                                   /*!< GPIOA_PCOR: PTCO8 Position              */
+#define GPIO_PCOR_PTCO9_MASK                     (0x01UL << GPIO_PCOR_PTCO9_SHIFT)                   /*!< GPIOA_PCOR: PTCO9 Mask                  */
+#define GPIO_PCOR_PTCO9_SHIFT                    9                                                   /*!< GPIOA_PCOR: PTCO9 Position              */
+#define GPIO_PCOR_PTCO10_MASK                    (0x01UL << GPIO_PCOR_PTCO10_SHIFT)                  /*!< GPIOA_PCOR: PTCO10 Mask                 */
+#define GPIO_PCOR_PTCO10_SHIFT                   10                                                  /*!< GPIOA_PCOR: PTCO10 Position             */
+#define GPIO_PCOR_PTCO11_MASK                    (0x01UL << GPIO_PCOR_PTCO11_SHIFT)                  /*!< GPIOA_PCOR: PTCO11 Mask                 */
+#define GPIO_PCOR_PTCO11_SHIFT                   11                                                  /*!< GPIOA_PCOR: PTCO11 Position             */
+#define GPIO_PCOR_PTCO12_MASK                    (0x01UL << GPIO_PCOR_PTCO12_SHIFT)                  /*!< GPIOA_PCOR: PTCO12 Mask                 */
+#define GPIO_PCOR_PTCO12_SHIFT                   12                                                  /*!< GPIOA_PCOR: PTCO12 Position             */
+#define GPIO_PCOR_PTCO13_MASK                    (0x01UL << GPIO_PCOR_PTCO13_SHIFT)                  /*!< GPIOA_PCOR: PTCO13 Mask                 */
+#define GPIO_PCOR_PTCO13_SHIFT                   13                                                  /*!< GPIOA_PCOR: PTCO13 Position             */
+#define GPIO_PCOR_PTCO14_MASK                    (0x01UL << GPIO_PCOR_PTCO14_SHIFT)                  /*!< GPIOA_PCOR: PTCO14 Mask                 */
+#define GPIO_PCOR_PTCO14_SHIFT                   14                                                  /*!< GPIOA_PCOR: PTCO14 Position             */
+#define GPIO_PCOR_PTCO15_MASK                    (0x01UL << GPIO_PCOR_PTCO15_SHIFT)                  /*!< GPIOA_PCOR: PTCO15 Mask                 */
+#define GPIO_PCOR_PTCO15_SHIFT                   15                                                  /*!< GPIOA_PCOR: PTCO15 Position             */
+#define GPIO_PCOR_PTCO16_MASK                    (0x01UL << GPIO_PCOR_PTCO16_SHIFT)                  /*!< GPIOA_PCOR: PTCO16 Mask                 */
+#define GPIO_PCOR_PTCO16_SHIFT                   16                                                  /*!< GPIOA_PCOR: PTCO16 Position             */
+#define GPIO_PCOR_PTCO17_MASK                    (0x01UL << GPIO_PCOR_PTCO17_SHIFT)                  /*!< GPIOA_PCOR: PTCO17 Mask                 */
+#define GPIO_PCOR_PTCO17_SHIFT                   17                                                  /*!< GPIOA_PCOR: PTCO17 Position             */
+#define GPIO_PCOR_PTCO18_MASK                    (0x01UL << GPIO_PCOR_PTCO18_SHIFT)                  /*!< GPIOA_PCOR: PTCO18 Mask                 */
+#define GPIO_PCOR_PTCO18_SHIFT                   18                                                  /*!< GPIOA_PCOR: PTCO18 Position             */
+#define GPIO_PCOR_PTCO19_MASK                    (0x01UL << GPIO_PCOR_PTCO19_SHIFT)                  /*!< GPIOA_PCOR: PTCO19 Mask                 */
+#define GPIO_PCOR_PTCO19_SHIFT                   19                                                  /*!< GPIOA_PCOR: PTCO19 Position             */
+#define GPIO_PCOR_PTCO20_MASK                    (0x01UL << GPIO_PCOR_PTCO20_SHIFT)                  /*!< GPIOA_PCOR: PTCO20 Mask                 */
+#define GPIO_PCOR_PTCO20_SHIFT                   20                                                  /*!< GPIOA_PCOR: PTCO20 Position             */
+#define GPIO_PCOR_PTCO21_MASK                    (0x01UL << GPIO_PCOR_PTCO21_SHIFT)                  /*!< GPIOA_PCOR: PTCO21 Mask                 */
+#define GPIO_PCOR_PTCO21_SHIFT                   21                                                  /*!< GPIOA_PCOR: PTCO21 Position             */
+#define GPIO_PCOR_PTCO22_MASK                    (0x01UL << GPIO_PCOR_PTCO22_SHIFT)                  /*!< GPIOA_PCOR: PTCO22 Mask                 */
+#define GPIO_PCOR_PTCO22_SHIFT                   22                                                  /*!< GPIOA_PCOR: PTCO22 Position             */
+#define GPIO_PCOR_PTCO23_MASK                    (0x01UL << GPIO_PCOR_PTCO23_SHIFT)                  /*!< GPIOA_PCOR: PTCO23 Mask                 */
+#define GPIO_PCOR_PTCO23_SHIFT                   23                                                  /*!< GPIOA_PCOR: PTCO23 Position             */
+#define GPIO_PCOR_PTCO24_MASK                    (0x01UL << GPIO_PCOR_PTCO24_SHIFT)                  /*!< GPIOA_PCOR: PTCO24 Mask                 */
+#define GPIO_PCOR_PTCO24_SHIFT                   24                                                  /*!< GPIOA_PCOR: PTCO24 Position             */
+#define GPIO_PCOR_PTCO25_MASK                    (0x01UL << GPIO_PCOR_PTCO25_SHIFT)                  /*!< GPIOA_PCOR: PTCO25 Mask                 */
+#define GPIO_PCOR_PTCO25_SHIFT                   25                                                  /*!< GPIOA_PCOR: PTCO25 Position             */
+#define GPIO_PCOR_PTCO26_MASK                    (0x01UL << GPIO_PCOR_PTCO26_SHIFT)                  /*!< GPIOA_PCOR: PTCO26 Mask                 */
+#define GPIO_PCOR_PTCO26_SHIFT                   26                                                  /*!< GPIOA_PCOR: PTCO26 Position             */
+#define GPIO_PCOR_PTCO27_MASK                    (0x01UL << GPIO_PCOR_PTCO27_SHIFT)                  /*!< GPIOA_PCOR: PTCO27 Mask                 */
+#define GPIO_PCOR_PTCO27_SHIFT                   27                                                  /*!< GPIOA_PCOR: PTCO27 Position             */
+#define GPIO_PCOR_PTCO28_MASK                    (0x01UL << GPIO_PCOR_PTCO28_SHIFT)                  /*!< GPIOA_PCOR: PTCO28 Mask                 */
+#define GPIO_PCOR_PTCO28_SHIFT                   28                                                  /*!< GPIOA_PCOR: PTCO28 Position             */
+#define GPIO_PCOR_PTCO29_MASK                    (0x01UL << GPIO_PCOR_PTCO29_SHIFT)                  /*!< GPIOA_PCOR: PTCO29 Mask                 */
+#define GPIO_PCOR_PTCO29_SHIFT                   29                                                  /*!< GPIOA_PCOR: PTCO29 Position             */
+#define GPIO_PCOR_PTCO30_MASK                    (0x01UL << GPIO_PCOR_PTCO30_SHIFT)                  /*!< GPIOA_PCOR: PTCO30 Mask                 */
+#define GPIO_PCOR_PTCO30_SHIFT                   30                                                  /*!< GPIOA_PCOR: PTCO30 Position             */
+#define GPIO_PCOR_PTCO31_MASK                    (0x01UL << GPIO_PCOR_PTCO31_SHIFT)                  /*!< GPIOA_PCOR: PTCO31 Mask                 */
+#define GPIO_PCOR_PTCO31_SHIFT                   31                                                  /*!< GPIOA_PCOR: PTCO31 Position             */
 
 /* ------- GPIOA_PTOR                               ------ */
-#define GPIO_PTOR_PTTO_MASK                      (0xFFFFFFFFUL << GPIO_PTOR_PTTO_SHIFT)              /*!< GPIOA_PTOR: PTTO Mask                   */
-#define GPIO_PTOR_PTTO_SHIFT                     0                                                   /*!< GPIOA_PTOR: PTTO Position               */
-#define GPIO_PTOR_PTTO(x)                        (((x)<<GPIO_PTOR_PTTO_SHIFT)&GPIO_PTOR_PTTO_MASK)   /*!< GPIOA_PTOR                              */
+#define GPIO_PTOR_PTTO0_MASK                     (0x01UL << GPIO_PTOR_PTTO0_SHIFT)                   /*!< GPIOA_PTOR: PTTO0 Mask                  */
+#define GPIO_PTOR_PTTO0_SHIFT                    0                                                   /*!< GPIOA_PTOR: PTTO0 Position              */
+#define GPIO_PTOR_PTTO1_MASK                     (0x01UL << GPIO_PTOR_PTTO1_SHIFT)                   /*!< GPIOA_PTOR: PTTO1 Mask                  */
+#define GPIO_PTOR_PTTO1_SHIFT                    1                                                   /*!< GPIOA_PTOR: PTTO1 Position              */
+#define GPIO_PTOR_PTTO2_MASK                     (0x01UL << GPIO_PTOR_PTTO2_SHIFT)                   /*!< GPIOA_PTOR: PTTO2 Mask                  */
+#define GPIO_PTOR_PTTO2_SHIFT                    2                                                   /*!< GPIOA_PTOR: PTTO2 Position              */
+#define GPIO_PTOR_PTTO3_MASK                     (0x01UL << GPIO_PTOR_PTTO3_SHIFT)                   /*!< GPIOA_PTOR: PTTO3 Mask                  */
+#define GPIO_PTOR_PTTO3_SHIFT                    3                                                   /*!< GPIOA_PTOR: PTTO3 Position              */
+#define GPIO_PTOR_PTTO4_MASK                     (0x01UL << GPIO_PTOR_PTTO4_SHIFT)                   /*!< GPIOA_PTOR: PTTO4 Mask                  */
+#define GPIO_PTOR_PTTO4_SHIFT                    4                                                   /*!< GPIOA_PTOR: PTTO4 Position              */
+#define GPIO_PTOR_PTTO5_MASK                     (0x01UL << GPIO_PTOR_PTTO5_SHIFT)                   /*!< GPIOA_PTOR: PTTO5 Mask                  */
+#define GPIO_PTOR_PTTO5_SHIFT                    5                                                   /*!< GPIOA_PTOR: PTTO5 Position              */
+#define GPIO_PTOR_PTTO6_MASK                     (0x01UL << GPIO_PTOR_PTTO6_SHIFT)                   /*!< GPIOA_PTOR: PTTO6 Mask                  */
+#define GPIO_PTOR_PTTO6_SHIFT                    6                                                   /*!< GPIOA_PTOR: PTTO6 Position              */
+#define GPIO_PTOR_PTTO7_MASK                     (0x01UL << GPIO_PTOR_PTTO7_SHIFT)                   /*!< GPIOA_PTOR: PTTO7 Mask                  */
+#define GPIO_PTOR_PTTO7_SHIFT                    7                                                   /*!< GPIOA_PTOR: PTTO7 Position              */
+#define GPIO_PTOR_PTTO8_MASK                     (0x01UL << GPIO_PTOR_PTTO8_SHIFT)                   /*!< GPIOA_PTOR: PTTO8 Mask                  */
+#define GPIO_PTOR_PTTO8_SHIFT                    8                                                   /*!< GPIOA_PTOR: PTTO8 Position              */
+#define GPIO_PTOR_PTTO9_MASK                     (0x01UL << GPIO_PTOR_PTTO9_SHIFT)                   /*!< GPIOA_PTOR: PTTO9 Mask                  */
+#define GPIO_PTOR_PTTO9_SHIFT                    9                                                   /*!< GPIOA_PTOR: PTTO9 Position              */
+#define GPIO_PTOR_PTTO10_MASK                    (0x01UL << GPIO_PTOR_PTTO10_SHIFT)                  /*!< GPIOA_PTOR: PTTO10 Mask                 */
+#define GPIO_PTOR_PTTO10_SHIFT                   10                                                  /*!< GPIOA_PTOR: PTTO10 Position             */
+#define GPIO_PTOR_PTTO11_MASK                    (0x01UL << GPIO_PTOR_PTTO11_SHIFT)                  /*!< GPIOA_PTOR: PTTO11 Mask                 */
+#define GPIO_PTOR_PTTO11_SHIFT                   11                                                  /*!< GPIOA_PTOR: PTTO11 Position             */
+#define GPIO_PTOR_PTTO12_MASK                    (0x01UL << GPIO_PTOR_PTTO12_SHIFT)                  /*!< GPIOA_PTOR: PTTO12 Mask                 */
+#define GPIO_PTOR_PTTO12_SHIFT                   12                                                  /*!< GPIOA_PTOR: PTTO12 Position             */
+#define GPIO_PTOR_PTTO13_MASK                    (0x01UL << GPIO_PTOR_PTTO13_SHIFT)                  /*!< GPIOA_PTOR: PTTO13 Mask                 */
+#define GPIO_PTOR_PTTO13_SHIFT                   13                                                  /*!< GPIOA_PTOR: PTTO13 Position             */
+#define GPIO_PTOR_PTTO14_MASK                    (0x01UL << GPIO_PTOR_PTTO14_SHIFT)                  /*!< GPIOA_PTOR: PTTO14 Mask                 */
+#define GPIO_PTOR_PTTO14_SHIFT                   14                                                  /*!< GPIOA_PTOR: PTTO14 Position             */
+#define GPIO_PTOR_PTTO15_MASK                    (0x01UL << GPIO_PTOR_PTTO15_SHIFT)                  /*!< GPIOA_PTOR: PTTO15 Mask                 */
+#define GPIO_PTOR_PTTO15_SHIFT                   15                                                  /*!< GPIOA_PTOR: PTTO15 Position             */
+#define GPIO_PTOR_PTTO16_MASK                    (0x01UL << GPIO_PTOR_PTTO16_SHIFT)                  /*!< GPIOA_PTOR: PTTO16 Mask                 */
+#define GPIO_PTOR_PTTO16_SHIFT                   16                                                  /*!< GPIOA_PTOR: PTTO16 Position             */
+#define GPIO_PTOR_PTTO17_MASK                    (0x01UL << GPIO_PTOR_PTTO17_SHIFT)                  /*!< GPIOA_PTOR: PTTO17 Mask                 */
+#define GPIO_PTOR_PTTO17_SHIFT                   17                                                  /*!< GPIOA_PTOR: PTTO17 Position             */
+#define GPIO_PTOR_PTTO18_MASK                    (0x01UL << GPIO_PTOR_PTTO18_SHIFT)                  /*!< GPIOA_PTOR: PTTO18 Mask                 */
+#define GPIO_PTOR_PTTO18_SHIFT                   18                                                  /*!< GPIOA_PTOR: PTTO18 Position             */
+#define GPIO_PTOR_PTTO19_MASK                    (0x01UL << GPIO_PTOR_PTTO19_SHIFT)                  /*!< GPIOA_PTOR: PTTO19 Mask                 */
+#define GPIO_PTOR_PTTO19_SHIFT                   19                                                  /*!< GPIOA_PTOR: PTTO19 Position             */
+#define GPIO_PTOR_PTTO20_MASK                    (0x01UL << GPIO_PTOR_PTTO20_SHIFT)                  /*!< GPIOA_PTOR: PTTO20 Mask                 */
+#define GPIO_PTOR_PTTO20_SHIFT                   20                                                  /*!< GPIOA_PTOR: PTTO20 Position             */
+#define GPIO_PTOR_PTTO21_MASK                    (0x01UL << GPIO_PTOR_PTTO21_SHIFT)                  /*!< GPIOA_PTOR: PTTO21 Mask                 */
+#define GPIO_PTOR_PTTO21_SHIFT                   21                                                  /*!< GPIOA_PTOR: PTTO21 Position             */
+#define GPIO_PTOR_PTTO22_MASK                    (0x01UL << GPIO_PTOR_PTTO22_SHIFT)                  /*!< GPIOA_PTOR: PTTO22 Mask                 */
+#define GPIO_PTOR_PTTO22_SHIFT                   22                                                  /*!< GPIOA_PTOR: PTTO22 Position             */
+#define GPIO_PTOR_PTTO23_MASK                    (0x01UL << GPIO_PTOR_PTTO23_SHIFT)                  /*!< GPIOA_PTOR: PTTO23 Mask                 */
+#define GPIO_PTOR_PTTO23_SHIFT                   23                                                  /*!< GPIOA_PTOR: PTTO23 Position             */
+#define GPIO_PTOR_PTTO24_MASK                    (0x01UL << GPIO_PTOR_PTTO24_SHIFT)                  /*!< GPIOA_PTOR: PTTO24 Mask                 */
+#define GPIO_PTOR_PTTO24_SHIFT                   24                                                  /*!< GPIOA_PTOR: PTTO24 Position             */
+#define GPIO_PTOR_PTTO25_MASK                    (0x01UL << GPIO_PTOR_PTTO25_SHIFT)                  /*!< GPIOA_PTOR: PTTO25 Mask                 */
+#define GPIO_PTOR_PTTO25_SHIFT                   25                                                  /*!< GPIOA_PTOR: PTTO25 Position             */
+#define GPIO_PTOR_PTTO26_MASK                    (0x01UL << GPIO_PTOR_PTTO26_SHIFT)                  /*!< GPIOA_PTOR: PTTO26 Mask                 */
+#define GPIO_PTOR_PTTO26_SHIFT                   26                                                  /*!< GPIOA_PTOR: PTTO26 Position             */
+#define GPIO_PTOR_PTTO27_MASK                    (0x01UL << GPIO_PTOR_PTTO27_SHIFT)                  /*!< GPIOA_PTOR: PTTO27 Mask                 */
+#define GPIO_PTOR_PTTO27_SHIFT                   27                                                  /*!< GPIOA_PTOR: PTTO27 Position             */
+#define GPIO_PTOR_PTTO28_MASK                    (0x01UL << GPIO_PTOR_PTTO28_SHIFT)                  /*!< GPIOA_PTOR: PTTO28 Mask                 */
+#define GPIO_PTOR_PTTO28_SHIFT                   28                                                  /*!< GPIOA_PTOR: PTTO28 Position             */
+#define GPIO_PTOR_PTTO29_MASK                    (0x01UL << GPIO_PTOR_PTTO29_SHIFT)                  /*!< GPIOA_PTOR: PTTO29 Mask                 */
+#define GPIO_PTOR_PTTO29_SHIFT                   29                                                  /*!< GPIOA_PTOR: PTTO29 Position             */
+#define GPIO_PTOR_PTTO30_MASK                    (0x01UL << GPIO_PTOR_PTTO30_SHIFT)                  /*!< GPIOA_PTOR: PTTO30 Mask                 */
+#define GPIO_PTOR_PTTO30_SHIFT                   30                                                  /*!< GPIOA_PTOR: PTTO30 Position             */
+#define GPIO_PTOR_PTTO31_MASK                    (0x01UL << GPIO_PTOR_PTTO31_SHIFT)                  /*!< GPIOA_PTOR: PTTO31 Mask                 */
+#define GPIO_PTOR_PTTO31_SHIFT                   31                                                  /*!< GPIOA_PTOR: PTTO31 Position             */
 
 /* ------- GPIOA_PDIR                               ------ */
-#define GPIO_PDIR_PDI_MASK                       (0xFFFFFFFFUL << GPIO_PDIR_PDI_SHIFT)               /*!< GPIOA_PDIR: PDI Mask                    */
-#define GPIO_PDIR_PDI_SHIFT                      0                                                   /*!< GPIOA_PDIR: PDI Position                */
-#define GPIO_PDIR_PDI(x)                         (((x)<<GPIO_PDIR_PDI_SHIFT)&GPIO_PDIR_PDI_MASK)     /*!< GPIOA_PDIR                              */
+#define GPIO_PDIR_PDI0_MASK                      (0x01UL << GPIO_PDIR_PDI0_SHIFT)                    /*!< GPIOA_PDIR: PDI0 Mask                   */
+#define GPIO_PDIR_PDI0_SHIFT                     0                                                   /*!< GPIOA_PDIR: PDI0 Position               */
+#define GPIO_PDIR_PDI1_MASK                      (0x01UL << GPIO_PDIR_PDI1_SHIFT)                    /*!< GPIOA_PDIR: PDI1 Mask                   */
+#define GPIO_PDIR_PDI1_SHIFT                     1                                                   /*!< GPIOA_PDIR: PDI1 Position               */
+#define GPIO_PDIR_PDI2_MASK                      (0x01UL << GPIO_PDIR_PDI2_SHIFT)                    /*!< GPIOA_PDIR: PDI2 Mask                   */
+#define GPIO_PDIR_PDI2_SHIFT                     2                                                   /*!< GPIOA_PDIR: PDI2 Position               */
+#define GPIO_PDIR_PDI3_MASK                      (0x01UL << GPIO_PDIR_PDI3_SHIFT)                    /*!< GPIOA_PDIR: PDI3 Mask                   */
+#define GPIO_PDIR_PDI3_SHIFT                     3                                                   /*!< GPIOA_PDIR: PDI3 Position               */
+#define GPIO_PDIR_PDI4_MASK                      (0x01UL << GPIO_PDIR_PDI4_SHIFT)                    /*!< GPIOA_PDIR: PDI4 Mask                   */
+#define GPIO_PDIR_PDI4_SHIFT                     4                                                   /*!< GPIOA_PDIR: PDI4 Position               */
+#define GPIO_PDIR_PDI5_MASK                      (0x01UL << GPIO_PDIR_PDI5_SHIFT)                    /*!< GPIOA_PDIR: PDI5 Mask                   */
+#define GPIO_PDIR_PDI5_SHIFT                     5                                                   /*!< GPIOA_PDIR: PDI5 Position               */
+#define GPIO_PDIR_PDI6_MASK                      (0x01UL << GPIO_PDIR_PDI6_SHIFT)                    /*!< GPIOA_PDIR: PDI6 Mask                   */
+#define GPIO_PDIR_PDI6_SHIFT                     6                                                   /*!< GPIOA_PDIR: PDI6 Position               */
+#define GPIO_PDIR_PDI7_MASK                      (0x01UL << GPIO_PDIR_PDI7_SHIFT)                    /*!< GPIOA_PDIR: PDI7 Mask                   */
+#define GPIO_PDIR_PDI7_SHIFT                     7                                                   /*!< GPIOA_PDIR: PDI7 Position               */
+#define GPIO_PDIR_PDI8_MASK                      (0x01UL << GPIO_PDIR_PDI8_SHIFT)                    /*!< GPIOA_PDIR: PDI8 Mask                   */
+#define GPIO_PDIR_PDI8_SHIFT                     8                                                   /*!< GPIOA_PDIR: PDI8 Position               */
+#define GPIO_PDIR_PDI9_MASK                      (0x01UL << GPIO_PDIR_PDI9_SHIFT)                    /*!< GPIOA_PDIR: PDI9 Mask                   */
+#define GPIO_PDIR_PDI9_SHIFT                     9                                                   /*!< GPIOA_PDIR: PDI9 Position               */
+#define GPIO_PDIR_PDI10_MASK                     (0x01UL << GPIO_PDIR_PDI10_SHIFT)                   /*!< GPIOA_PDIR: PDI10 Mask                  */
+#define GPIO_PDIR_PDI10_SHIFT                    10                                                  /*!< GPIOA_PDIR: PDI10 Position              */
+#define GPIO_PDIR_PDI11_MASK                     (0x01UL << GPIO_PDIR_PDI11_SHIFT)                   /*!< GPIOA_PDIR: PDI11 Mask                  */
+#define GPIO_PDIR_PDI11_SHIFT                    11                                                  /*!< GPIOA_PDIR: PDI11 Position              */
+#define GPIO_PDIR_PDI12_MASK                     (0x01UL << GPIO_PDIR_PDI12_SHIFT)                   /*!< GPIOA_PDIR: PDI12 Mask                  */
+#define GPIO_PDIR_PDI12_SHIFT                    12                                                  /*!< GPIOA_PDIR: PDI12 Position              */
+#define GPIO_PDIR_PDI13_MASK                     (0x01UL << GPIO_PDIR_PDI13_SHIFT)                   /*!< GPIOA_PDIR: PDI13 Mask                  */
+#define GPIO_PDIR_PDI13_SHIFT                    13                                                  /*!< GPIOA_PDIR: PDI13 Position              */
+#define GPIO_PDIR_PDI14_MASK                     (0x01UL << GPIO_PDIR_PDI14_SHIFT)                   /*!< GPIOA_PDIR: PDI14 Mask                  */
+#define GPIO_PDIR_PDI14_SHIFT                    14                                                  /*!< GPIOA_PDIR: PDI14 Position              */
+#define GPIO_PDIR_PDI15_MASK                     (0x01UL << GPIO_PDIR_PDI15_SHIFT)                   /*!< GPIOA_PDIR: PDI15 Mask                  */
+#define GPIO_PDIR_PDI15_SHIFT                    15                                                  /*!< GPIOA_PDIR: PDI15 Position              */
+#define GPIO_PDIR_PDI16_MASK                     (0x01UL << GPIO_PDIR_PDI16_SHIFT)                   /*!< GPIOA_PDIR: PDI16 Mask                  */
+#define GPIO_PDIR_PDI16_SHIFT                    16                                                  /*!< GPIOA_PDIR: PDI16 Position              */
+#define GPIO_PDIR_PDI17_MASK                     (0x01UL << GPIO_PDIR_PDI17_SHIFT)                   /*!< GPIOA_PDIR: PDI17 Mask                  */
+#define GPIO_PDIR_PDI17_SHIFT                    17                                                  /*!< GPIOA_PDIR: PDI17 Position              */
+#define GPIO_PDIR_PDI18_MASK                     (0x01UL << GPIO_PDIR_PDI18_SHIFT)                   /*!< GPIOA_PDIR: PDI18 Mask                  */
+#define GPIO_PDIR_PDI18_SHIFT                    18                                                  /*!< GPIOA_PDIR: PDI18 Position              */
+#define GPIO_PDIR_PDI19_MASK                     (0x01UL << GPIO_PDIR_PDI19_SHIFT)                   /*!< GPIOA_PDIR: PDI19 Mask                  */
+#define GPIO_PDIR_PDI19_SHIFT                    19                                                  /*!< GPIOA_PDIR: PDI19 Position              */
+#define GPIO_PDIR_PDI20_MASK                     (0x01UL << GPIO_PDIR_PDI20_SHIFT)                   /*!< GPIOA_PDIR: PDI20 Mask                  */
+#define GPIO_PDIR_PDI20_SHIFT                    20                                                  /*!< GPIOA_PDIR: PDI20 Position              */
+#define GPIO_PDIR_PDI21_MASK                     (0x01UL << GPIO_PDIR_PDI21_SHIFT)                   /*!< GPIOA_PDIR: PDI21 Mask                  */
+#define GPIO_PDIR_PDI21_SHIFT                    21                                                  /*!< GPIOA_PDIR: PDI21 Position              */
+#define GPIO_PDIR_PDI22_MASK                     (0x01UL << GPIO_PDIR_PDI22_SHIFT)                   /*!< GPIOA_PDIR: PDI22 Mask                  */
+#define GPIO_PDIR_PDI22_SHIFT                    22                                                  /*!< GPIOA_PDIR: PDI22 Position              */
+#define GPIO_PDIR_PDI23_MASK                     (0x01UL << GPIO_PDIR_PDI23_SHIFT)                   /*!< GPIOA_PDIR: PDI23 Mask                  */
+#define GPIO_PDIR_PDI23_SHIFT                    23                                                  /*!< GPIOA_PDIR: PDI23 Position              */
+#define GPIO_PDIR_PDI24_MASK                     (0x01UL << GPIO_PDIR_PDI24_SHIFT)                   /*!< GPIOA_PDIR: PDI24 Mask                  */
+#define GPIO_PDIR_PDI24_SHIFT                    24                                                  /*!< GPIOA_PDIR: PDI24 Position              */
+#define GPIO_PDIR_PDI25_MASK                     (0x01UL << GPIO_PDIR_PDI25_SHIFT)                   /*!< GPIOA_PDIR: PDI25 Mask                  */
+#define GPIO_PDIR_PDI25_SHIFT                    25                                                  /*!< GPIOA_PDIR: PDI25 Position              */
+#define GPIO_PDIR_PDI26_MASK                     (0x01UL << GPIO_PDIR_PDI26_SHIFT)                   /*!< GPIOA_PDIR: PDI26 Mask                  */
+#define GPIO_PDIR_PDI26_SHIFT                    26                                                  /*!< GPIOA_PDIR: PDI26 Position              */
+#define GPIO_PDIR_PDI27_MASK                     (0x01UL << GPIO_PDIR_PDI27_SHIFT)                   /*!< GPIOA_PDIR: PDI27 Mask                  */
+#define GPIO_PDIR_PDI27_SHIFT                    27                                                  /*!< GPIOA_PDIR: PDI27 Position              */
+#define GPIO_PDIR_PDI28_MASK                     (0x01UL << GPIO_PDIR_PDI28_SHIFT)                   /*!< GPIOA_PDIR: PDI28 Mask                  */
+#define GPIO_PDIR_PDI28_SHIFT                    28                                                  /*!< GPIOA_PDIR: PDI28 Position              */
+#define GPIO_PDIR_PDI29_MASK                     (0x01UL << GPIO_PDIR_PDI29_SHIFT)                   /*!< GPIOA_PDIR: PDI29 Mask                  */
+#define GPIO_PDIR_PDI29_SHIFT                    29                                                  /*!< GPIOA_PDIR: PDI29 Position              */
+#define GPIO_PDIR_PDI30_MASK                     (0x01UL << GPIO_PDIR_PDI30_SHIFT)                   /*!< GPIOA_PDIR: PDI30 Mask                  */
+#define GPIO_PDIR_PDI30_SHIFT                    30                                                  /*!< GPIOA_PDIR: PDI30 Position              */
+#define GPIO_PDIR_PDI31_MASK                     (0x01UL << GPIO_PDIR_PDI31_SHIFT)                   /*!< GPIOA_PDIR: PDI31 Mask                  */
+#define GPIO_PDIR_PDI31_SHIFT                    31                                                  /*!< GPIOA_PDIR: PDI31 Position              */
 
 /* ------- GPIOA_PDDR                               ------ */
-#define GPIO_PDDR_PDD_MASK                       (0xFFFFFFFFUL << GPIO_PDDR_PDD_SHIFT)               /*!< GPIOA_PDDR: PDD Mask                    */
-#define GPIO_PDDR_PDD_SHIFT                      0                                                   /*!< GPIOA_PDDR: PDD Position                */
-#define GPIO_PDDR_PDD(x)                         (((x)<<GPIO_PDDR_PDD_SHIFT)&GPIO_PDDR_PDD_MASK)     /*!< GPIOA_PDDR                              */
+#define GPIO_PDDR_PDD0_MASK                      (0x01UL << GPIO_PDDR_PDD0_SHIFT)                    /*!< GPIOA_PDDR: PDD0 Mask                   */
+#define GPIO_PDDR_PDD0_SHIFT                     0                                                   /*!< GPIOA_PDDR: PDD0 Position               */
+#define GPIO_PDDR_PDD1_MASK                      (0x01UL << GPIO_PDDR_PDD1_SHIFT)                    /*!< GPIOA_PDDR: PDD1 Mask                   */
+#define GPIO_PDDR_PDD1_SHIFT                     1                                                   /*!< GPIOA_PDDR: PDD1 Position               */
+#define GPIO_PDDR_PDD2_MASK                      (0x01UL << GPIO_PDDR_PDD2_SHIFT)                    /*!< GPIOA_PDDR: PDD2 Mask                   */
+#define GPIO_PDDR_PDD2_SHIFT                     2                                                   /*!< GPIOA_PDDR: PDD2 Position               */
+#define GPIO_PDDR_PDD3_MASK                      (0x01UL << GPIO_PDDR_PDD3_SHIFT)                    /*!< GPIOA_PDDR: PDD3 Mask                   */
+#define GPIO_PDDR_PDD3_SHIFT                     3                                                   /*!< GPIOA_PDDR: PDD3 Position               */
+#define GPIO_PDDR_PDD4_MASK                      (0x01UL << GPIO_PDDR_PDD4_SHIFT)                    /*!< GPIOA_PDDR: PDD4 Mask                   */
+#define GPIO_PDDR_PDD4_SHIFT                     4                                                   /*!< GPIOA_PDDR: PDD4 Position               */
+#define GPIO_PDDR_PDD5_MASK                      (0x01UL << GPIO_PDDR_PDD5_SHIFT)                    /*!< GPIOA_PDDR: PDD5 Mask                   */
+#define GPIO_PDDR_PDD5_SHIFT                     5                                                   /*!< GPIOA_PDDR: PDD5 Position               */
+#define GPIO_PDDR_PDD6_MASK                      (0x01UL << GPIO_PDDR_PDD6_SHIFT)                    /*!< GPIOA_PDDR: PDD6 Mask                   */
+#define GPIO_PDDR_PDD6_SHIFT                     6                                                   /*!< GPIOA_PDDR: PDD6 Position               */
+#define GPIO_PDDR_PDD7_MASK                      (0x01UL << GPIO_PDDR_PDD7_SHIFT)                    /*!< GPIOA_PDDR: PDD7 Mask                   */
+#define GPIO_PDDR_PDD7_SHIFT                     7                                                   /*!< GPIOA_PDDR: PDD7 Position               */
+#define GPIO_PDDR_PDD8_MASK                      (0x01UL << GPIO_PDDR_PDD8_SHIFT)                    /*!< GPIOA_PDDR: PDD8 Mask                   */
+#define GPIO_PDDR_PDD8_SHIFT                     8                                                   /*!< GPIOA_PDDR: PDD8 Position               */
+#define GPIO_PDDR_PDD9_MASK                      (0x01UL << GPIO_PDDR_PDD9_SHIFT)                    /*!< GPIOA_PDDR: PDD9 Mask                   */
+#define GPIO_PDDR_PDD9_SHIFT                     9                                                   /*!< GPIOA_PDDR: PDD9 Position               */
+#define GPIO_PDDR_PDD10_MASK                     (0x01UL << GPIO_PDDR_PDD10_SHIFT)                   /*!< GPIOA_PDDR: PDD10 Mask                  */
+#define GPIO_PDDR_PDD10_SHIFT                    10                                                  /*!< GPIOA_PDDR: PDD10 Position              */
+#define GPIO_PDDR_PDD11_MASK                     (0x01UL << GPIO_PDDR_PDD11_SHIFT)                   /*!< GPIOA_PDDR: PDD11 Mask                  */
+#define GPIO_PDDR_PDD11_SHIFT                    11                                                  /*!< GPIOA_PDDR: PDD11 Position              */
+#define GPIO_PDDR_PDD12_MASK                     (0x01UL << GPIO_PDDR_PDD12_SHIFT)                   /*!< GPIOA_PDDR: PDD12 Mask                  */
+#define GPIO_PDDR_PDD12_SHIFT                    12                                                  /*!< GPIOA_PDDR: PDD12 Position              */
+#define GPIO_PDDR_PDD13_MASK                     (0x01UL << GPIO_PDDR_PDD13_SHIFT)                   /*!< GPIOA_PDDR: PDD13 Mask                  */
+#define GPIO_PDDR_PDD13_SHIFT                    13                                                  /*!< GPIOA_PDDR: PDD13 Position              */
+#define GPIO_PDDR_PDD14_MASK                     (0x01UL << GPIO_PDDR_PDD14_SHIFT)                   /*!< GPIOA_PDDR: PDD14 Mask                  */
+#define GPIO_PDDR_PDD14_SHIFT                    14                                                  /*!< GPIOA_PDDR: PDD14 Position              */
+#define GPIO_PDDR_PDD15_MASK                     (0x01UL << GPIO_PDDR_PDD15_SHIFT)                   /*!< GPIOA_PDDR: PDD15 Mask                  */
+#define GPIO_PDDR_PDD15_SHIFT                    15                                                  /*!< GPIOA_PDDR: PDD15 Position              */
+#define GPIO_PDDR_PDD16_MASK                     (0x01UL << GPIO_PDDR_PDD16_SHIFT)                   /*!< GPIOA_PDDR: PDD16 Mask                  */
+#define GPIO_PDDR_PDD16_SHIFT                    16                                                  /*!< GPIOA_PDDR: PDD16 Position              */
+#define GPIO_PDDR_PDD17_MASK                     (0x01UL << GPIO_PDDR_PDD17_SHIFT)                   /*!< GPIOA_PDDR: PDD17 Mask                  */
+#define GPIO_PDDR_PDD17_SHIFT                    17                                                  /*!< GPIOA_PDDR: PDD17 Position              */
+#define GPIO_PDDR_PDD18_MASK                     (0x01UL << GPIO_PDDR_PDD18_SHIFT)                   /*!< GPIOA_PDDR: PDD18 Mask                  */
+#define GPIO_PDDR_PDD18_SHIFT                    18                                                  /*!< GPIOA_PDDR: PDD18 Position              */
+#define GPIO_PDDR_PDD19_MASK                     (0x01UL << GPIO_PDDR_PDD19_SHIFT)                   /*!< GPIOA_PDDR: PDD19 Mask                  */
+#define GPIO_PDDR_PDD19_SHIFT                    19                                                  /*!< GPIOA_PDDR: PDD19 Position              */
+#define GPIO_PDDR_PDD20_MASK                     (0x01UL << GPIO_PDDR_PDD20_SHIFT)                   /*!< GPIOA_PDDR: PDD20 Mask                  */
+#define GPIO_PDDR_PDD20_SHIFT                    20                                                  /*!< GPIOA_PDDR: PDD20 Position              */
+#define GPIO_PDDR_PDD21_MASK                     (0x01UL << GPIO_PDDR_PDD21_SHIFT)                   /*!< GPIOA_PDDR: PDD21 Mask                  */
+#define GPIO_PDDR_PDD21_SHIFT                    21                                                  /*!< GPIOA_PDDR: PDD21 Position              */
+#define GPIO_PDDR_PDD22_MASK                     (0x01UL << GPIO_PDDR_PDD22_SHIFT)                   /*!< GPIOA_PDDR: PDD22 Mask                  */
+#define GPIO_PDDR_PDD22_SHIFT                    22                                                  /*!< GPIOA_PDDR: PDD22 Position              */
+#define GPIO_PDDR_PDD23_MASK                     (0x01UL << GPIO_PDDR_PDD23_SHIFT)                   /*!< GPIOA_PDDR: PDD23 Mask                  */
+#define GPIO_PDDR_PDD23_SHIFT                    23                                                  /*!< GPIOA_PDDR: PDD23 Position              */
+#define GPIO_PDDR_PDD24_MASK                     (0x01UL << GPIO_PDDR_PDD24_SHIFT)                   /*!< GPIOA_PDDR: PDD24 Mask                  */
+#define GPIO_PDDR_PDD24_SHIFT                    24                                                  /*!< GPIOA_PDDR: PDD24 Position              */
+#define GPIO_PDDR_PDD25_MASK                     (0x01UL << GPIO_PDDR_PDD25_SHIFT)                   /*!< GPIOA_PDDR: PDD25 Mask                  */
+#define GPIO_PDDR_PDD25_SHIFT                    25                                                  /*!< GPIOA_PDDR: PDD25 Position              */
+#define GPIO_PDDR_PDD26_MASK                     (0x01UL << GPIO_PDDR_PDD26_SHIFT)                   /*!< GPIOA_PDDR: PDD26 Mask                  */
+#define GPIO_PDDR_PDD26_SHIFT                    26                                                  /*!< GPIOA_PDDR: PDD26 Position              */
+#define GPIO_PDDR_PDD27_MASK                     (0x01UL << GPIO_PDDR_PDD27_SHIFT)                   /*!< GPIOA_PDDR: PDD27 Mask                  */
+#define GPIO_PDDR_PDD27_SHIFT                    27                                                  /*!< GPIOA_PDDR: PDD27 Position              */
+#define GPIO_PDDR_PDD28_MASK                     (0x01UL << GPIO_PDDR_PDD28_SHIFT)                   /*!< GPIOA_PDDR: PDD28 Mask                  */
+#define GPIO_PDDR_PDD28_SHIFT                    28                                                  /*!< GPIOA_PDDR: PDD28 Position              */
+#define GPIO_PDDR_PDD29_MASK                     (0x01UL << GPIO_PDDR_PDD29_SHIFT)                   /*!< GPIOA_PDDR: PDD29 Mask                  */
+#define GPIO_PDDR_PDD29_SHIFT                    29                                                  /*!< GPIOA_PDDR: PDD29 Position              */
+#define GPIO_PDDR_PDD30_MASK                     (0x01UL << GPIO_PDDR_PDD30_SHIFT)                   /*!< GPIOA_PDDR: PDD30 Mask                  */
+#define GPIO_PDDR_PDD30_SHIFT                    30                                                  /*!< GPIOA_PDDR: PDD30 Position              */
+#define GPIO_PDDR_PDD31_MASK                     (0x01UL << GPIO_PDDR_PDD31_SHIFT)                   /*!< GPIOA_PDDR: PDD31 Mask                  */
+#define GPIO_PDDR_PDD31_SHIFT                    31                                                  /*!< GPIOA_PDDR: PDD31 Position              */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'GPIOA' Register Access macros                       ----------- */
@@ -6335,7 +6698,7 @@ typedef struct {                                /*!<       I2S0 Structure       
    __IO uint32_t  TCR4;                         /*!< 0010: SAI Transmit Configuration 4 Register                        */
    __IO uint32_t  TCR5;                         /*!< 0014: SAI Transmit Configuration 5 Register                        */
    __I  uint32_t  RESERVED0[2];                 /*!< 0018:                                                              */
-   __O  uint32_t  TDR[2];                       /*!< 0020: SAI Transmit Data Register                                   */
+   __O  uint32_t  TDR[2];                       /*!< 0020: Transmit Data Register                                       */
    __I  uint32_t  RESERVED1[6];                 /*!< 0028:                                                              */
    __I  uint32_t  TFR[2];                       /*!< 0040: SAI Transmit FIFO Register                                   */
    __I  uint32_t  RESERVED2[6];                 /*!< 0048:                                                              */
@@ -6403,7 +6766,7 @@ typedef struct {                                /*!<       I2S0 Structure       
 #define I2S_TCSR_TE_SHIFT                        31                                                  /*!< I2S0_TCSR: TE Position                  */
 
 /* ------- I2S0_TCR1                                ------ */
-#define I2S_TCR1_TFW_MASK                        (0x07UL << I2S_TCR1_TFW_SHIFT)                      /*!< I2S0_TCR1: TFW Mask                     */
+#define I2S_TCR1_TFW_MASK                        (0x03UL << I2S_TCR1_TFW_SHIFT)                      /*!< I2S0_TCR1: TFW Mask                     */
 #define I2S_TCR1_TFW_SHIFT                       0                                                   /*!< I2S0_TCR1: TFW Position                 */
 #define I2S_TCR1_TFW(x)                          (((x)<<I2S_TCR1_TFW_SHIFT)&I2S_TCR1_TFW_MASK)       /*!< I2S0_TCR1                               */
 
@@ -6475,7 +6838,7 @@ typedef struct {                                /*!<       I2S0 Structure       
 #define I2S_TFR_WFP(x)                           (((x)<<I2S_TFR_WFP_SHIFT)&I2S_TFR_WFP_MASK)         /*!< I2S0_TFR                                */
 
 /* ------- I2S0_TMR                                 ------ */
-#define I2S_TMR_TWM_MASK                         (0xFFFFFFFFUL << I2S_TMR_TWM_SHIFT)                 /*!< I2S0_TMR: TWM Mask                      */
+#define I2S_TMR_TWM_MASK                         (0xFFFFUL << I2S_TMR_TWM_SHIFT)                     /*!< I2S0_TMR: TWM Mask                      */
 #define I2S_TMR_TWM_SHIFT                        0                                                   /*!< I2S0_TMR: TWM Position                  */
 #define I2S_TMR_TWM(x)                           (((x)<<I2S_TMR_TWM_SHIFT)&I2S_TMR_TWM_MASK)         /*!< I2S0_TMR                                */
 
@@ -6590,7 +6953,7 @@ typedef struct {                                /*!<       I2S0 Structure       
 #define I2S_RFR_WFP(x)                           (((x)<<I2S_RFR_WFP_SHIFT)&I2S_RFR_WFP_MASK)         /*!< I2S0_RFR                                */
 
 /* ------- I2S0_RMR                                 ------ */
-#define I2S_RMR_RWM_MASK                         (0xFFFFFFFFUL << I2S_RMR_RWM_SHIFT)                 /*!< I2S0_RMR: RWM Mask                      */
+#define I2S_RMR_RWM_MASK                         (0xFFFFUL << I2S_RMR_RWM_SHIFT)                     /*!< I2S0_RMR: RWM Mask                      */
 #define I2S_RMR_RWM_SHIFT                        0                                                   /*!< I2S0_RMR: RWM Position                  */
 #define I2S_RMR_RWM(x)                           (((x)<<I2S_RMR_RWM_SHIFT)&I2S_RMR_RWM_MASK)         /*!< I2S0_RMR                                */
 
@@ -6724,24 +7087,76 @@ typedef struct {                                /*!<       LLWU Structure       
 #define LLWU_PE4_WUPE15(x)                       (((x)<<LLWU_PE4_WUPE15_SHIFT)&LLWU_PE4_WUPE15_MASK) /*!< LLWU_PE4                                */
 
 /* ------- LLWU_ME                                  ------ */
-#define LLWU_ME_WUME_MASK                        (0xFFUL << LLWU_ME_WUME_SHIFT)                      /*!< LLWU_ME: WUME Mask                      */
-#define LLWU_ME_WUME_SHIFT                       0                                                   /*!< LLWU_ME: WUME Position                  */
-#define LLWU_ME_WUME(x)                          (((x)<<LLWU_ME_WUME_SHIFT)&LLWU_ME_WUME_MASK)       /*!< LLWU_ME                                 */
+#define LLWU_ME_WUME0_MASK                       (0x01UL << LLWU_ME_WUME0_SHIFT)                     /*!< LLWU_ME: WUME0 Mask                     */
+#define LLWU_ME_WUME0_SHIFT                      0                                                   /*!< LLWU_ME: WUME0 Position                 */
+#define LLWU_ME_WUME1_MASK                       (0x01UL << LLWU_ME_WUME1_SHIFT)                     /*!< LLWU_ME: WUME1 Mask                     */
+#define LLWU_ME_WUME1_SHIFT                      1                                                   /*!< LLWU_ME: WUME1 Position                 */
+#define LLWU_ME_WUME2_MASK                       (0x01UL << LLWU_ME_WUME2_SHIFT)                     /*!< LLWU_ME: WUME2 Mask                     */
+#define LLWU_ME_WUME2_SHIFT                      2                                                   /*!< LLWU_ME: WUME2 Position                 */
+#define LLWU_ME_WUME3_MASK                       (0x01UL << LLWU_ME_WUME3_SHIFT)                     /*!< LLWU_ME: WUME3 Mask                     */
+#define LLWU_ME_WUME3_SHIFT                      3                                                   /*!< LLWU_ME: WUME3 Position                 */
+#define LLWU_ME_WUME4_MASK                       (0x01UL << LLWU_ME_WUME4_SHIFT)                     /*!< LLWU_ME: WUME4 Mask                     */
+#define LLWU_ME_WUME4_SHIFT                      4                                                   /*!< LLWU_ME: WUME4 Position                 */
+#define LLWU_ME_WUME5_MASK                       (0x01UL << LLWU_ME_WUME5_SHIFT)                     /*!< LLWU_ME: WUME5 Mask                     */
+#define LLWU_ME_WUME5_SHIFT                      5                                                   /*!< LLWU_ME: WUME5 Position                 */
+#define LLWU_ME_WUME6_MASK                       (0x01UL << LLWU_ME_WUME6_SHIFT)                     /*!< LLWU_ME: WUME6 Mask                     */
+#define LLWU_ME_WUME6_SHIFT                      6                                                   /*!< LLWU_ME: WUME6 Position                 */
+#define LLWU_ME_WUME7_MASK                       (0x01UL << LLWU_ME_WUME7_SHIFT)                     /*!< LLWU_ME: WUME7 Mask                     */
+#define LLWU_ME_WUME7_SHIFT                      7                                                   /*!< LLWU_ME: WUME7 Position                 */
 
 /* ------- LLWU_F1                                  ------ */
-#define LLWU_F1_WUF0_MASK                        (0xFFUL << LLWU_F1_WUF0_SHIFT)                      /*!< LLWU_F1: WUF0 Mask                      */
+#define LLWU_F1_WUF0_MASK                        (0x01UL << LLWU_F1_WUF0_SHIFT)                      /*!< LLWU_F1: WUF0 Mask                      */
 #define LLWU_F1_WUF0_SHIFT                       0                                                   /*!< LLWU_F1: WUF0 Position                  */
-#define LLWU_F1_WUF0(x)                          (((x)<<LLWU_F1_WUF0_SHIFT)&LLWU_F1_WUF0_MASK)       /*!< LLWU_F1                                 */
+#define LLWU_F1_WUF1_MASK                        (0x01UL << LLWU_F1_WUF1_SHIFT)                      /*!< LLWU_F1: WUF1 Mask                      */
+#define LLWU_F1_WUF1_SHIFT                       1                                                   /*!< LLWU_F1: WUF1 Position                  */
+#define LLWU_F1_WUF2_MASK                        (0x01UL << LLWU_F1_WUF2_SHIFT)                      /*!< LLWU_F1: WUF2 Mask                      */
+#define LLWU_F1_WUF2_SHIFT                       2                                                   /*!< LLWU_F1: WUF2 Position                  */
+#define LLWU_F1_WUF3_MASK                        (0x01UL << LLWU_F1_WUF3_SHIFT)                      /*!< LLWU_F1: WUF3 Mask                      */
+#define LLWU_F1_WUF3_SHIFT                       3                                                   /*!< LLWU_F1: WUF3 Position                  */
+#define LLWU_F1_WUF4_MASK                        (0x01UL << LLWU_F1_WUF4_SHIFT)                      /*!< LLWU_F1: WUF4 Mask                      */
+#define LLWU_F1_WUF4_SHIFT                       4                                                   /*!< LLWU_F1: WUF4 Position                  */
+#define LLWU_F1_WUF5_MASK                        (0x01UL << LLWU_F1_WUF5_SHIFT)                      /*!< LLWU_F1: WUF5 Mask                      */
+#define LLWU_F1_WUF5_SHIFT                       5                                                   /*!< LLWU_F1: WUF5 Position                  */
+#define LLWU_F1_WUF6_MASK                        (0x01UL << LLWU_F1_WUF6_SHIFT)                      /*!< LLWU_F1: WUF6 Mask                      */
+#define LLWU_F1_WUF6_SHIFT                       6                                                   /*!< LLWU_F1: WUF6 Position                  */
+#define LLWU_F1_WUF7_MASK                        (0x01UL << LLWU_F1_WUF7_SHIFT)                      /*!< LLWU_F1: WUF7 Mask                      */
+#define LLWU_F1_WUF7_SHIFT                       7                                                   /*!< LLWU_F1: WUF7 Position                  */
 
 /* ------- LLWU_F2                                  ------ */
-#define LLWU_F2_WUFn_MASK                        (0xFFUL << LLWU_F2_WUFn_SHIFT)                      /*!< LLWU_F2: WUFn Mask                      */
-#define LLWU_F2_WUFn_SHIFT                       0                                                   /*!< LLWU_F2: WUFn Position                  */
-#define LLWU_F2_WUFn(x)                          (((x)<<LLWU_F2_WUFn_SHIFT)&LLWU_F2_WUFn_MASK)       /*!< LLWU_F2                                 */
+#define LLWU_F2_WUF8_MASK                        (0x01UL << LLWU_F2_WUF8_SHIFT)                      /*!< LLWU_F2: WUF8 Mask                      */
+#define LLWU_F2_WUF8_SHIFT                       0                                                   /*!< LLWU_F2: WUF8 Position                  */
+#define LLWU_F2_WUF9_MASK                        (0x01UL << LLWU_F2_WUF9_SHIFT)                      /*!< LLWU_F2: WUF9 Mask                      */
+#define LLWU_F2_WUF9_SHIFT                       1                                                   /*!< LLWU_F2: WUF9 Position                  */
+#define LLWU_F2_WUF10_MASK                       (0x01UL << LLWU_F2_WUF10_SHIFT)                     /*!< LLWU_F2: WUF10 Mask                     */
+#define LLWU_F2_WUF10_SHIFT                      2                                                   /*!< LLWU_F2: WUF10 Position                 */
+#define LLWU_F2_WUF11_MASK                       (0x01UL << LLWU_F2_WUF11_SHIFT)                     /*!< LLWU_F2: WUF11 Mask                     */
+#define LLWU_F2_WUF11_SHIFT                      3                                                   /*!< LLWU_F2: WUF11 Position                 */
+#define LLWU_F2_WUF12_MASK                       (0x01UL << LLWU_F2_WUF12_SHIFT)                     /*!< LLWU_F2: WUF12 Mask                     */
+#define LLWU_F2_WUF12_SHIFT                      4                                                   /*!< LLWU_F2: WUF12 Position                 */
+#define LLWU_F2_WUF13_MASK                       (0x01UL << LLWU_F2_WUF13_SHIFT)                     /*!< LLWU_F2: WUF13 Mask                     */
+#define LLWU_F2_WUF13_SHIFT                      5                                                   /*!< LLWU_F2: WUF13 Position                 */
+#define LLWU_F2_WUF14_MASK                       (0x01UL << LLWU_F2_WUF14_SHIFT)                     /*!< LLWU_F2: WUF14 Mask                     */
+#define LLWU_F2_WUF14_SHIFT                      6                                                   /*!< LLWU_F2: WUF14 Position                 */
+#define LLWU_F2_WUF15_MASK                       (0x01UL << LLWU_F2_WUF15_SHIFT)                     /*!< LLWU_F2: WUF15 Mask                     */
+#define LLWU_F2_WUF15_SHIFT                      7                                                   /*!< LLWU_F2: WUF15 Position                 */
 
 /* ------- LLWU_F3                                  ------ */
-#define LLWU_F3_MWUFn_MASK                       (0xFFUL << LLWU_F3_MWUFn_SHIFT)                     /*!< LLWU_F3: MWUFn Mask                     */
-#define LLWU_F3_MWUFn_SHIFT                      0                                                   /*!< LLWU_F3: MWUFn Position                 */
-#define LLWU_F3_MWUFn(x)                         (((x)<<LLWU_F3_MWUFn_SHIFT)&LLWU_F3_MWUFn_MASK)     /*!< LLWU_F3                                 */
+#define LLWU_F3_MWUF0_MASK                       (0x01UL << LLWU_F3_MWUF0_SHIFT)                     /*!< LLWU_F3: MWUF0 Mask                     */
+#define LLWU_F3_MWUF0_SHIFT                      0                                                   /*!< LLWU_F3: MWUF0 Position                 */
+#define LLWU_F3_MWUF1_MASK                       (0x01UL << LLWU_F3_MWUF1_SHIFT)                     /*!< LLWU_F3: MWUF1 Mask                     */
+#define LLWU_F3_MWUF1_SHIFT                      1                                                   /*!< LLWU_F3: MWUF1 Position                 */
+#define LLWU_F3_MWUF2_MASK                       (0x01UL << LLWU_F3_MWUF2_SHIFT)                     /*!< LLWU_F3: MWUF2 Mask                     */
+#define LLWU_F3_MWUF2_SHIFT                      2                                                   /*!< LLWU_F3: MWUF2 Position                 */
+#define LLWU_F3_MWUF3_MASK                       (0x01UL << LLWU_F3_MWUF3_SHIFT)                     /*!< LLWU_F3: MWUF3 Mask                     */
+#define LLWU_F3_MWUF3_SHIFT                      3                                                   /*!< LLWU_F3: MWUF3 Position                 */
+#define LLWU_F3_MWUF4_MASK                       (0x01UL << LLWU_F3_MWUF4_SHIFT)                     /*!< LLWU_F3: MWUF4 Mask                     */
+#define LLWU_F3_MWUF4_SHIFT                      4                                                   /*!< LLWU_F3: MWUF4 Position                 */
+#define LLWU_F3_MWUF5_MASK                       (0x01UL << LLWU_F3_MWUF5_SHIFT)                     /*!< LLWU_F3: MWUF5 Mask                     */
+#define LLWU_F3_MWUF5_SHIFT                      5                                                   /*!< LLWU_F3: MWUF5 Position                 */
+#define LLWU_F3_MWUF6_MASK                       (0x01UL << LLWU_F3_MWUF6_SHIFT)                     /*!< LLWU_F3: MWUF6 Mask                     */
+#define LLWU_F3_MWUF6_SHIFT                      6                                                   /*!< LLWU_F3: MWUF6 Position                 */
+#define LLWU_F3_MWUF7_MASK                       (0x01UL << LLWU_F3_MWUF7_SHIFT)                     /*!< LLWU_F3: MWUF7 Mask                     */
+#define LLWU_F3_MWUF7_SHIFT                      7                                                   /*!< LLWU_F3: MWUF7 Position                 */
 
 /* ------- LLWU_FILT                                ------ */
 #define LLWU_FILT_FILTSEL_MASK                   (0x0FUL << LLWU_FILT_FILTSEL_SHIFT)                 /*!< LLWU_FILT: FILTSEL Mask                 */
@@ -6855,12 +7270,12 @@ typedef struct {                                /*!<       MCG Structure        
    __IO uint8_t   C4;                           /*!< 0003: Control 4 Register                                           */
    __IO uint8_t   C5;                           /*!< 0004: Control 5 Register                                           */
    __IO uint8_t   C6;                           /*!< 0005: Control 6 Register                                           */
-   __I  uint8_t   S;                            /*!< 0006: Status Register                                              */
+   __IO uint8_t   S;                            /*!< 0006: Status Register                                              */
    __I  uint8_t   RESERVED0;                    /*!< 0007:                                                              */
    __IO uint8_t   SC;                           /*!< 0008: Status and Control Register                                  */
    __I  uint8_t   RESERVED1;                    /*!< 0009:                                                              */
-   __IO uint8_t   ATCVH;                        /*!< 000A: Auto Trim Compare Value High Register                        */
-   __IO uint8_t   ATCVL;                        /*!< 000B: Auto Trim Compare Value Low Register                         */
+   __IO uint8_t   ATCVH;                        /*!< 000A: ATM Compare Value High                                       */
+   __IO uint8_t   ATCVL;                        /*!< 000B: ATM Compare Value Low                                        */
    __IO uint8_t   C7;                           /*!< 000C: Control 7 Register                                           */
    __IO uint8_t   C8;                           /*!< 000D: Control 8 Register                                           */
 } MCG_Type;
@@ -7562,7 +7977,7 @@ typedef struct {                                /*!<       NV Structure         
  * @brief System Oscillator
  */
 typedef struct {                                /*!<       OSC0 Structure                                               */
-   __IO uint8_t   CR;                           /*!< 0000: OSC Control Register                                         */
+   __IO uint8_t   CR;                           /*!< 0000: Control Register                                             */
 } OSC0_Type;
 
 
@@ -7604,8 +8019,8 @@ typedef struct {                                /*!<       PDB0 Structure       
    __I  uint32_t  CNT;                          /*!< 0008: Counter Register                                             */
    __IO uint32_t  IDLY;                         /*!< 000C: Interrupt Delay Register                                     */
    struct { /* (cluster) */                     /*!< 0010: (size=0x0050, 80)                                            */
-      __IO uint32_t  C1;                        /*!< 0010: Channel %s Control Register 1                                */
-      __IO uint32_t  S;                         /*!< 0014: Channel %s Status Register                                   */
+      __IO uint32_t  C1;                        /*!< 0010: Channel  Control Register 1                                  */
+      __IO uint32_t  S;                         /*!< 0014: Channel  Status Register                                     */
       __IO uint32_t  DLY[2];                    /*!< 0018: Channel n Delay  Register                                    */
       __I  uint32_t  RESERVED0[6];              /*!< 0020:                                                              */
    } CH[2];
@@ -7825,9 +8240,9 @@ typedef struct {                                /*!<       PIT Structure        
  * @brief Power Management Controller
  */
 typedef struct {                                /*!<       PMC Structure                                                */
-   __IO uint8_t   LVDSC1;                       /*!< 0000: Low Voltage Detect Status and Control 1 Register             */
-   __IO uint8_t   LVDSC2;                       /*!< 0001: Low Voltage Detect Status and Control 2 Register             */
-   __IO uint8_t   REGSC;                        /*!< 0002: Regulator Status and Control Register                        */
+   __IO uint8_t   LVDSC1;                       /*!< 0000: Low Voltage Status and Control 1                             */
+   __IO uint8_t   LVDSC2;                       /*!< 0001: Low Voltage Status and Control 2                             */
+   __IO uint8_t   REGSC;                        /*!< 0002: Regulator Status and Control                                 */
 } PMC_Type;
 
 
@@ -7887,8 +8302,8 @@ typedef struct {                                /*!<       PMC Structure        
  */
 typedef struct {                                /*!<       PORTA Structure                                              */
    __IO uint32_t  PCR[32];                      /*!< 0000: Pin Control Register                                         */
-   __O  uint32_t  GPCLR;                        /*!< 0080: Global Pin Control Low Register                              */
-   __O  uint32_t  GPCHR;                        /*!< 0084: Global Pin Control High Register                             */
+   __IO uint32_t  GPCLR;                        /*!< 0080: Global Pin Control Low Register                              */
+   __IO uint32_t  GPCHR;                        /*!< 0084: Global Pin Control High Register                             */
    __I  uint32_t  RESERVED0[6];                 /*!< 0088:                                                              */
    __IO uint32_t  ISFR;                         /*!< 00A0: Interrupt Status Flag Register                               */
    __I  uint32_t  RESERVED1[7];                 /*!< 00A4:                                                              */
@@ -7944,14 +8359,136 @@ typedef struct {                                /*!<       PORTA Structure      
 #define PORT_GPCHR_GPWE(x)                       (((x)<<PORT_GPCHR_GPWE_SHIFT)&PORT_GPCHR_GPWE_MASK) /*!< PORTA_GPCHR                             */
 
 /* ------- PORTA_ISFR                               ------ */
-#define PORT_ISFR_ISF_MASK                       (0xFFFFFFFFUL << PORT_ISFR_ISF_SHIFT)               /*!< PORTA_ISFR: ISF Mask                    */
-#define PORT_ISFR_ISF_SHIFT                      0                                                   /*!< PORTA_ISFR: ISF Position                */
-#define PORT_ISFR_ISF(x)                         (((x)<<PORT_ISFR_ISF_SHIFT)&PORT_ISFR_ISF_MASK)     /*!< PORTA_ISFR                              */
+#define PORT_ISFR_ISF0_MASK                      (0x01UL << PORT_ISFR_ISF0_SHIFT)                    /*!< PORTA_ISFR: ISF0 Mask                   */
+#define PORT_ISFR_ISF0_SHIFT                     0                                                   /*!< PORTA_ISFR: ISF0 Position               */
+#define PORT_ISFR_ISF1_MASK                      (0x01UL << PORT_ISFR_ISF1_SHIFT)                    /*!< PORTA_ISFR: ISF1 Mask                   */
+#define PORT_ISFR_ISF1_SHIFT                     1                                                   /*!< PORTA_ISFR: ISF1 Position               */
+#define PORT_ISFR_ISF2_MASK                      (0x01UL << PORT_ISFR_ISF2_SHIFT)                    /*!< PORTA_ISFR: ISF2 Mask                   */
+#define PORT_ISFR_ISF2_SHIFT                     2                                                   /*!< PORTA_ISFR: ISF2 Position               */
+#define PORT_ISFR_ISF3_MASK                      (0x01UL << PORT_ISFR_ISF3_SHIFT)                    /*!< PORTA_ISFR: ISF3 Mask                   */
+#define PORT_ISFR_ISF3_SHIFT                     3                                                   /*!< PORTA_ISFR: ISF3 Position               */
+#define PORT_ISFR_ISF4_MASK                      (0x01UL << PORT_ISFR_ISF4_SHIFT)                    /*!< PORTA_ISFR: ISF4 Mask                   */
+#define PORT_ISFR_ISF4_SHIFT                     4                                                   /*!< PORTA_ISFR: ISF4 Position               */
+#define PORT_ISFR_ISF5_MASK                      (0x01UL << PORT_ISFR_ISF5_SHIFT)                    /*!< PORTA_ISFR: ISF5 Mask                   */
+#define PORT_ISFR_ISF5_SHIFT                     5                                                   /*!< PORTA_ISFR: ISF5 Position               */
+#define PORT_ISFR_ISF6_MASK                      (0x01UL << PORT_ISFR_ISF6_SHIFT)                    /*!< PORTA_ISFR: ISF6 Mask                   */
+#define PORT_ISFR_ISF6_SHIFT                     6                                                   /*!< PORTA_ISFR: ISF6 Position               */
+#define PORT_ISFR_ISF7_MASK                      (0x01UL << PORT_ISFR_ISF7_SHIFT)                    /*!< PORTA_ISFR: ISF7 Mask                   */
+#define PORT_ISFR_ISF7_SHIFT                     7                                                   /*!< PORTA_ISFR: ISF7 Position               */
+#define PORT_ISFR_ISF8_MASK                      (0x01UL << PORT_ISFR_ISF8_SHIFT)                    /*!< PORTA_ISFR: ISF8 Mask                   */
+#define PORT_ISFR_ISF8_SHIFT                     8                                                   /*!< PORTA_ISFR: ISF8 Position               */
+#define PORT_ISFR_ISF9_MASK                      (0x01UL << PORT_ISFR_ISF9_SHIFT)                    /*!< PORTA_ISFR: ISF9 Mask                   */
+#define PORT_ISFR_ISF9_SHIFT                     9                                                   /*!< PORTA_ISFR: ISF9 Position               */
+#define PORT_ISFR_ISF10_MASK                     (0x01UL << PORT_ISFR_ISF10_SHIFT)                   /*!< PORTA_ISFR: ISF10 Mask                  */
+#define PORT_ISFR_ISF10_SHIFT                    10                                                  /*!< PORTA_ISFR: ISF10 Position              */
+#define PORT_ISFR_ISF11_MASK                     (0x01UL << PORT_ISFR_ISF11_SHIFT)                   /*!< PORTA_ISFR: ISF11 Mask                  */
+#define PORT_ISFR_ISF11_SHIFT                    11                                                  /*!< PORTA_ISFR: ISF11 Position              */
+#define PORT_ISFR_ISF12_MASK                     (0x01UL << PORT_ISFR_ISF12_SHIFT)                   /*!< PORTA_ISFR: ISF12 Mask                  */
+#define PORT_ISFR_ISF12_SHIFT                    12                                                  /*!< PORTA_ISFR: ISF12 Position              */
+#define PORT_ISFR_ISF13_MASK                     (0x01UL << PORT_ISFR_ISF13_SHIFT)                   /*!< PORTA_ISFR: ISF13 Mask                  */
+#define PORT_ISFR_ISF13_SHIFT                    13                                                  /*!< PORTA_ISFR: ISF13 Position              */
+#define PORT_ISFR_ISF14_MASK                     (0x01UL << PORT_ISFR_ISF14_SHIFT)                   /*!< PORTA_ISFR: ISF14 Mask                  */
+#define PORT_ISFR_ISF14_SHIFT                    14                                                  /*!< PORTA_ISFR: ISF14 Position              */
+#define PORT_ISFR_ISF15_MASK                     (0x01UL << PORT_ISFR_ISF15_SHIFT)                   /*!< PORTA_ISFR: ISF15 Mask                  */
+#define PORT_ISFR_ISF15_SHIFT                    15                                                  /*!< PORTA_ISFR: ISF15 Position              */
+#define PORT_ISFR_ISF16_MASK                     (0x01UL << PORT_ISFR_ISF16_SHIFT)                   /*!< PORTA_ISFR: ISF16 Mask                  */
+#define PORT_ISFR_ISF16_SHIFT                    16                                                  /*!< PORTA_ISFR: ISF16 Position              */
+#define PORT_ISFR_ISF17_MASK                     (0x01UL << PORT_ISFR_ISF17_SHIFT)                   /*!< PORTA_ISFR: ISF17 Mask                  */
+#define PORT_ISFR_ISF17_SHIFT                    17                                                  /*!< PORTA_ISFR: ISF17 Position              */
+#define PORT_ISFR_ISF18_MASK                     (0x01UL << PORT_ISFR_ISF18_SHIFT)                   /*!< PORTA_ISFR: ISF18 Mask                  */
+#define PORT_ISFR_ISF18_SHIFT                    18                                                  /*!< PORTA_ISFR: ISF18 Position              */
+#define PORT_ISFR_ISF19_MASK                     (0x01UL << PORT_ISFR_ISF19_SHIFT)                   /*!< PORTA_ISFR: ISF19 Mask                  */
+#define PORT_ISFR_ISF19_SHIFT                    19                                                  /*!< PORTA_ISFR: ISF19 Position              */
+#define PORT_ISFR_ISF20_MASK                     (0x01UL << PORT_ISFR_ISF20_SHIFT)                   /*!< PORTA_ISFR: ISF20 Mask                  */
+#define PORT_ISFR_ISF20_SHIFT                    20                                                  /*!< PORTA_ISFR: ISF20 Position              */
+#define PORT_ISFR_ISF21_MASK                     (0x01UL << PORT_ISFR_ISF21_SHIFT)                   /*!< PORTA_ISFR: ISF21 Mask                  */
+#define PORT_ISFR_ISF21_SHIFT                    21                                                  /*!< PORTA_ISFR: ISF21 Position              */
+#define PORT_ISFR_ISF22_MASK                     (0x01UL << PORT_ISFR_ISF22_SHIFT)                   /*!< PORTA_ISFR: ISF22 Mask                  */
+#define PORT_ISFR_ISF22_SHIFT                    22                                                  /*!< PORTA_ISFR: ISF22 Position              */
+#define PORT_ISFR_ISF23_MASK                     (0x01UL << PORT_ISFR_ISF23_SHIFT)                   /*!< PORTA_ISFR: ISF23 Mask                  */
+#define PORT_ISFR_ISF23_SHIFT                    23                                                  /*!< PORTA_ISFR: ISF23 Position              */
+#define PORT_ISFR_ISF24_MASK                     (0x01UL << PORT_ISFR_ISF24_SHIFT)                   /*!< PORTA_ISFR: ISF24 Mask                  */
+#define PORT_ISFR_ISF24_SHIFT                    24                                                  /*!< PORTA_ISFR: ISF24 Position              */
+#define PORT_ISFR_ISF25_MASK                     (0x01UL << PORT_ISFR_ISF25_SHIFT)                   /*!< PORTA_ISFR: ISF25 Mask                  */
+#define PORT_ISFR_ISF25_SHIFT                    25                                                  /*!< PORTA_ISFR: ISF25 Position              */
+#define PORT_ISFR_ISF26_MASK                     (0x01UL << PORT_ISFR_ISF26_SHIFT)                   /*!< PORTA_ISFR: ISF26 Mask                  */
+#define PORT_ISFR_ISF26_SHIFT                    26                                                  /*!< PORTA_ISFR: ISF26 Position              */
+#define PORT_ISFR_ISF27_MASK                     (0x01UL << PORT_ISFR_ISF27_SHIFT)                   /*!< PORTA_ISFR: ISF27 Mask                  */
+#define PORT_ISFR_ISF27_SHIFT                    27                                                  /*!< PORTA_ISFR: ISF27 Position              */
+#define PORT_ISFR_ISF28_MASK                     (0x01UL << PORT_ISFR_ISF28_SHIFT)                   /*!< PORTA_ISFR: ISF28 Mask                  */
+#define PORT_ISFR_ISF28_SHIFT                    28                                                  /*!< PORTA_ISFR: ISF28 Position              */
+#define PORT_ISFR_ISF29_MASK                     (0x01UL << PORT_ISFR_ISF29_SHIFT)                   /*!< PORTA_ISFR: ISF29 Mask                  */
+#define PORT_ISFR_ISF29_SHIFT                    29                                                  /*!< PORTA_ISFR: ISF29 Position              */
+#define PORT_ISFR_ISF30_MASK                     (0x01UL << PORT_ISFR_ISF30_SHIFT)                   /*!< PORTA_ISFR: ISF30 Mask                  */
+#define PORT_ISFR_ISF30_SHIFT                    30                                                  /*!< PORTA_ISFR: ISF30 Position              */
+#define PORT_ISFR_ISF31_MASK                     (0x01UL << PORT_ISFR_ISF31_SHIFT)                   /*!< PORTA_ISFR: ISF31 Mask                  */
+#define PORT_ISFR_ISF31_SHIFT                    31                                                  /*!< PORTA_ISFR: ISF31 Position              */
 
 /* ------- PORTA_DFER                               ------ */
-#define PORT_DFER_DFE_MASK                       (0xFFFFFFFFUL << PORT_DFER_DFE_SHIFT)               /*!< PORTA_DFER: DFE Mask                    */
-#define PORT_DFER_DFE_SHIFT                      0                                                   /*!< PORTA_DFER: DFE Position                */
-#define PORT_DFER_DFE(x)                         (((x)<<PORT_DFER_DFE_SHIFT)&PORT_DFER_DFE_MASK)     /*!< PORTA_DFER                              */
+#define PORT_DFER_DFE0_MASK                      (0x01UL << PORT_DFER_DFE0_SHIFT)                    /*!< PORTA_DFER: DFE0 Mask                   */
+#define PORT_DFER_DFE0_SHIFT                     0                                                   /*!< PORTA_DFER: DFE0 Position               */
+#define PORT_DFER_DFE1_MASK                      (0x01UL << PORT_DFER_DFE1_SHIFT)                    /*!< PORTA_DFER: DFE1 Mask                   */
+#define PORT_DFER_DFE1_SHIFT                     1                                                   /*!< PORTA_DFER: DFE1 Position               */
+#define PORT_DFER_DFE2_MASK                      (0x01UL << PORT_DFER_DFE2_SHIFT)                    /*!< PORTA_DFER: DFE2 Mask                   */
+#define PORT_DFER_DFE2_SHIFT                     2                                                   /*!< PORTA_DFER: DFE2 Position               */
+#define PORT_DFER_DFE3_MASK                      (0x01UL << PORT_DFER_DFE3_SHIFT)                    /*!< PORTA_DFER: DFE3 Mask                   */
+#define PORT_DFER_DFE3_SHIFT                     3                                                   /*!< PORTA_DFER: DFE3 Position               */
+#define PORT_DFER_DFE4_MASK                      (0x01UL << PORT_DFER_DFE4_SHIFT)                    /*!< PORTA_DFER: DFE4 Mask                   */
+#define PORT_DFER_DFE4_SHIFT                     4                                                   /*!< PORTA_DFER: DFE4 Position               */
+#define PORT_DFER_DFE5_MASK                      (0x01UL << PORT_DFER_DFE5_SHIFT)                    /*!< PORTA_DFER: DFE5 Mask                   */
+#define PORT_DFER_DFE5_SHIFT                     5                                                   /*!< PORTA_DFER: DFE5 Position               */
+#define PORT_DFER_DFE6_MASK                      (0x01UL << PORT_DFER_DFE6_SHIFT)                    /*!< PORTA_DFER: DFE6 Mask                   */
+#define PORT_DFER_DFE6_SHIFT                     6                                                   /*!< PORTA_DFER: DFE6 Position               */
+#define PORT_DFER_DFE7_MASK                      (0x01UL << PORT_DFER_DFE7_SHIFT)                    /*!< PORTA_DFER: DFE7 Mask                   */
+#define PORT_DFER_DFE7_SHIFT                     7                                                   /*!< PORTA_DFER: DFE7 Position               */
+#define PORT_DFER_DFE8_MASK                      (0x01UL << PORT_DFER_DFE8_SHIFT)                    /*!< PORTA_DFER: DFE8 Mask                   */
+#define PORT_DFER_DFE8_SHIFT                     8                                                   /*!< PORTA_DFER: DFE8 Position               */
+#define PORT_DFER_DFE9_MASK                      (0x01UL << PORT_DFER_DFE9_SHIFT)                    /*!< PORTA_DFER: DFE9 Mask                   */
+#define PORT_DFER_DFE9_SHIFT                     9                                                   /*!< PORTA_DFER: DFE9 Position               */
+#define PORT_DFER_DFE10_MASK                     (0x01UL << PORT_DFER_DFE10_SHIFT)                   /*!< PORTA_DFER: DFE10 Mask                  */
+#define PORT_DFER_DFE10_SHIFT                    10                                                  /*!< PORTA_DFER: DFE10 Position              */
+#define PORT_DFER_DFE11_MASK                     (0x01UL << PORT_DFER_DFE11_SHIFT)                   /*!< PORTA_DFER: DFE11 Mask                  */
+#define PORT_DFER_DFE11_SHIFT                    11                                                  /*!< PORTA_DFER: DFE11 Position              */
+#define PORT_DFER_DFE12_MASK                     (0x01UL << PORT_DFER_DFE12_SHIFT)                   /*!< PORTA_DFER: DFE12 Mask                  */
+#define PORT_DFER_DFE12_SHIFT                    12                                                  /*!< PORTA_DFER: DFE12 Position              */
+#define PORT_DFER_DFE13_MASK                     (0x01UL << PORT_DFER_DFE13_SHIFT)                   /*!< PORTA_DFER: DFE13 Mask                  */
+#define PORT_DFER_DFE13_SHIFT                    13                                                  /*!< PORTA_DFER: DFE13 Position              */
+#define PORT_DFER_DFE14_MASK                     (0x01UL << PORT_DFER_DFE14_SHIFT)                   /*!< PORTA_DFER: DFE14 Mask                  */
+#define PORT_DFER_DFE14_SHIFT                    14                                                  /*!< PORTA_DFER: DFE14 Position              */
+#define PORT_DFER_DFE15_MASK                     (0x01UL << PORT_DFER_DFE15_SHIFT)                   /*!< PORTA_DFER: DFE15 Mask                  */
+#define PORT_DFER_DFE15_SHIFT                    15                                                  /*!< PORTA_DFER: DFE15 Position              */
+#define PORT_DFER_DFE16_MASK                     (0x01UL << PORT_DFER_DFE16_SHIFT)                   /*!< PORTA_DFER: DFE16 Mask                  */
+#define PORT_DFER_DFE16_SHIFT                    16                                                  /*!< PORTA_DFER: DFE16 Position              */
+#define PORT_DFER_DFE17_MASK                     (0x01UL << PORT_DFER_DFE17_SHIFT)                   /*!< PORTA_DFER: DFE17 Mask                  */
+#define PORT_DFER_DFE17_SHIFT                    17                                                  /*!< PORTA_DFER: DFE17 Position              */
+#define PORT_DFER_DFE18_MASK                     (0x01UL << PORT_DFER_DFE18_SHIFT)                   /*!< PORTA_DFER: DFE18 Mask                  */
+#define PORT_DFER_DFE18_SHIFT                    18                                                  /*!< PORTA_DFER: DFE18 Position              */
+#define PORT_DFER_DFE19_MASK                     (0x01UL << PORT_DFER_DFE19_SHIFT)                   /*!< PORTA_DFER: DFE19 Mask                  */
+#define PORT_DFER_DFE19_SHIFT                    19                                                  /*!< PORTA_DFER: DFE19 Position              */
+#define PORT_DFER_DFE20_MASK                     (0x01UL << PORT_DFER_DFE20_SHIFT)                   /*!< PORTA_DFER: DFE20 Mask                  */
+#define PORT_DFER_DFE20_SHIFT                    20                                                  /*!< PORTA_DFER: DFE20 Position              */
+#define PORT_DFER_DFE21_MASK                     (0x01UL << PORT_DFER_DFE21_SHIFT)                   /*!< PORTA_DFER: DFE21 Mask                  */
+#define PORT_DFER_DFE21_SHIFT                    21                                                  /*!< PORTA_DFER: DFE21 Position              */
+#define PORT_DFER_DFE22_MASK                     (0x01UL << PORT_DFER_DFE22_SHIFT)                   /*!< PORTA_DFER: DFE22 Mask                  */
+#define PORT_DFER_DFE22_SHIFT                    22                                                  /*!< PORTA_DFER: DFE22 Position              */
+#define PORT_DFER_DFE23_MASK                     (0x01UL << PORT_DFER_DFE23_SHIFT)                   /*!< PORTA_DFER: DFE23 Mask                  */
+#define PORT_DFER_DFE23_SHIFT                    23                                                  /*!< PORTA_DFER: DFE23 Position              */
+#define PORT_DFER_DFE24_MASK                     (0x01UL << PORT_DFER_DFE24_SHIFT)                   /*!< PORTA_DFER: DFE24 Mask                  */
+#define PORT_DFER_DFE24_SHIFT                    24                                                  /*!< PORTA_DFER: DFE24 Position              */
+#define PORT_DFER_DFE25_MASK                     (0x01UL << PORT_DFER_DFE25_SHIFT)                   /*!< PORTA_DFER: DFE25 Mask                  */
+#define PORT_DFER_DFE25_SHIFT                    25                                                  /*!< PORTA_DFER: DFE25 Position              */
+#define PORT_DFER_DFE26_MASK                     (0x01UL << PORT_DFER_DFE26_SHIFT)                   /*!< PORTA_DFER: DFE26 Mask                  */
+#define PORT_DFER_DFE26_SHIFT                    26                                                  /*!< PORTA_DFER: DFE26 Position              */
+#define PORT_DFER_DFE27_MASK                     (0x01UL << PORT_DFER_DFE27_SHIFT)                   /*!< PORTA_DFER: DFE27 Mask                  */
+#define PORT_DFER_DFE27_SHIFT                    27                                                  /*!< PORTA_DFER: DFE27 Position              */
+#define PORT_DFER_DFE28_MASK                     (0x01UL << PORT_DFER_DFE28_SHIFT)                   /*!< PORTA_DFER: DFE28 Mask                  */
+#define PORT_DFER_DFE28_SHIFT                    28                                                  /*!< PORTA_DFER: DFE28 Position              */
+#define PORT_DFER_DFE29_MASK                     (0x01UL << PORT_DFER_DFE29_SHIFT)                   /*!< PORTA_DFER: DFE29 Mask                  */
+#define PORT_DFER_DFE29_SHIFT                    29                                                  /*!< PORTA_DFER: DFE29 Position              */
+#define PORT_DFER_DFE30_MASK                     (0x01UL << PORT_DFER_DFE30_SHIFT)                   /*!< PORTA_DFER: DFE30 Mask                  */
+#define PORT_DFER_DFE30_SHIFT                    30                                                  /*!< PORTA_DFER: DFE30 Position              */
+#define PORT_DFER_DFE31_MASK                     (0x01UL << PORT_DFER_DFE31_SHIFT)                   /*!< PORTA_DFER: DFE31 Mask                  */
+#define PORT_DFER_DFE31_SHIFT                    31                                                  /*!< PORTA_DFER: DFE31 Position              */
 
 /* ------- PORTA_DFCR                               ------ */
 #define PORT_DFCR_CS_MASK                        (0x01UL << PORT_DFCR_CS_SHIFT)                      /*!< PORTA_DFCR: CS Mask                     */
@@ -9766,7 +10303,7 @@ typedef struct {                                /*!<       SPI1 Structure       
       __IO uint32_t  PUSHR_SLAVE;               /*!< 0034: PUSH TX FIFO Register In Slave Mode                          */
    };
    __I  uint32_t  POPR;                         /*!< 0038: POP RX FIFO Register                                         */
-   __I  uint32_t  TXFR[1];                      /*!< 003C: DSPI Transmit FIFO                                           */
+   __I  uint32_t  TXFR[1];                      /*!< 003C: Transmit FIFO                                                */
    __I  uint32_t  RESERVED2[15];                /*!< 0040:                                                              */
    __I  uint32_t  RXFR[1];                      /*!< 007C: Receive FIFO                                                 */
 } SPI1_Type;
@@ -11247,7 +11784,7 @@ typedef struct {                                /*!<       USBDCD Structure     
    __IO uint32_t  TIMER0;                       /*!< 0010: TIMER0 Register                                              */
    __IO uint32_t  TIMER1;                       /*!< 0014: TIMER1 register                                              */
    union {                                      /*!< 0000: (size=0004)                                                  */
-      __IO uint32_t  TIMER2_BC11;               /*!< 0018: TIMER2 register                                              */
+      __IO uint32_t  TIMER2;                    /*!< 0018: TIMER2 register                                              */
       __IO uint32_t  TIMER2_BC12;               /*!< 0018: TIMER2 register                                              */
    };
 } USBDCD_Type;
@@ -11309,13 +11846,13 @@ typedef struct {                                /*!<       USBDCD Structure     
 #define USBDCD_TIMER1_TDCD_DBNC_SHIFT            16                                                  /*!< USBDCD_TIMER1: TDCD_DBNC Position       */
 #define USBDCD_TIMER1_TDCD_DBNC(x)               (((x)<<USBDCD_TIMER1_TDCD_DBNC_SHIFT)&USBDCD_TIMER1_TDCD_DBNC_MASK) /*!< USBDCD_TIMER1                           */
 
-/* ------- USBDCD_TIMER2_BC11                       ------ */
-#define USBDCD_TIMER2_BC11_CHECK_DM_MASK         (0x0FUL << USBDCD_TIMER2_BC11_CHECK_DM_SHIFT)       /*!< USBDCD_TIMER2_BC11: CHECK_DM Mask       */
-#define USBDCD_TIMER2_BC11_CHECK_DM_SHIFT        0                                                   /*!< USBDCD_TIMER2_BC11: CHECK_DM Position   */
-#define USBDCD_TIMER2_BC11_CHECK_DM(x)           (((x)<<USBDCD_TIMER2_BC11_CHECK_DM_SHIFT)&USBDCD_TIMER2_BC11_CHECK_DM_MASK) /*!< USBDCD_TIMER2_BC11                      */
-#define USBDCD_TIMER2_BC11_TVDPSRC_CON_MASK      (0x3FFUL << USBDCD_TIMER2_BC11_TVDPSRC_CON_SHIFT)   /*!< USBDCD_TIMER2_BC11: TVDPSRC_CON Mask    */
-#define USBDCD_TIMER2_BC11_TVDPSRC_CON_SHIFT     16                                                  /*!< USBDCD_TIMER2_BC11: TVDPSRC_CON Position*/
-#define USBDCD_TIMER2_BC11_TVDPSRC_CON(x)        (((x)<<USBDCD_TIMER2_BC11_TVDPSRC_CON_SHIFT)&USBDCD_TIMER2_BC11_TVDPSRC_CON_MASK) /*!< USBDCD_TIMER2_BC11                      */
+/* ------- USBDCD_TIMER2                            ------ */
+#define USBDCD_TIMER2_CHECK_DM_MASK              (0x0FUL << USBDCD_TIMER2_CHECK_DM_SHIFT)            /*!< USBDCD_TIMER2: CHECK_DM Mask            */
+#define USBDCD_TIMER2_CHECK_DM_SHIFT             0                                                   /*!< USBDCD_TIMER2: CHECK_DM Position        */
+#define USBDCD_TIMER2_CHECK_DM(x)                (((x)<<USBDCD_TIMER2_CHECK_DM_SHIFT)&USBDCD_TIMER2_CHECK_DM_MASK) /*!< USBDCD_TIMER2                           */
+#define USBDCD_TIMER2_TVDPSRC_CON_MASK           (0x3FFUL << USBDCD_TIMER2_TVDPSRC_CON_SHIFT)        /*!< USBDCD_TIMER2: TVDPSRC_CON Mask         */
+#define USBDCD_TIMER2_TVDPSRC_CON_SHIFT          16                                                  /*!< USBDCD_TIMER2: TVDPSRC_CON Position     */
+#define USBDCD_TIMER2_TVDPSRC_CON(x)             (((x)<<USBDCD_TIMER2_TVDPSRC_CON_SHIFT)&USBDCD_TIMER2_TVDPSRC_CON_MASK) /*!< USBDCD_TIMER2                           */
 
 /* ------- USBDCD_TIMER2_BC12                       ------ */
 #define USBDCD_TIMER2_BC12_TVDMSRC_ON_MASK       (0x3FFUL << USBDCD_TIMER2_BC12_TVDMSRC_ON_SHIFT)    /*!< USBDCD_TIMER2_BC12: TVDMSRC_ON Mask     */
@@ -11334,11 +11871,11 @@ typedef struct {                                /*!<       USBDCD Structure     
 #define USBDCD_STATUS                  (USBDCD->STATUS)
 #define USBDCD_TIMER0                  (USBDCD->TIMER0)
 #define USBDCD_TIMER1                  (USBDCD->TIMER1)
-#define USBDCD_TIMER2_BC11             (USBDCD->TIMER2_BC11)
+#define USBDCD_TIMER2                  (USBDCD->TIMER2)
 #define USBDCD_TIMER2_BC12             (USBDCD->TIMER2_BC12)
 
 /* ================================================================================ */
-/* ================           VREF (file:VREF_F12)                 ================ */
+/* ================           VREF (file:VREF_MK_0)                ================ */
 /* ================================================================================ */
 
 /**

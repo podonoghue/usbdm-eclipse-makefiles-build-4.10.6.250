@@ -54,6 +54,11 @@ proc loadSymbols {} {
    set ::SYNCR        [expr 0x00120000+$::IPSBASE] ;# 16-bit
    set ::CCHR         [expr 0x00120008+$::IPSBASE] ;# 8-bit
    
+   set ::BDM_RC_ILLEGAL_COMMAND                    4
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
+   
    return
 }
 
@@ -61,8 +66,11 @@ proc loadSymbols {} {
 ;#
 ;#
 proc initTarget { args } {
+   puts "VBR_REG      <= $::RAMBASE"
    wcreg $::VBR_REG      $::RAMBASE
+   puts "RAMBAR_REG   <= [format 0x%08X [expr $::RAMBASE+$::RAMBAR_OPTS]]"
    wcreg $::RAMBAR_REG   [expr $::RAMBASE+$::RAMBAR_OPTS]
+   puts "FLASHBAR_REG <= [format 0x%08X [expr $::FLASHBASE+$::FLASHBAR_OPTS]]"
    wcreg $::FLASHBAR_REG [expr $::FLASHBASE+$::FLASHBAR_OPTS]
    
    wb $::PDDPAR    0x0F       ;# Enable PST signals
@@ -93,8 +101,10 @@ proc initFlash { busFrequency } {
 ;######################################################################################
 ;#  Target is erased & unsecured
 proc massEraseTarget { } {
-   error "Mass erase is not supported"
-   
+
+   puts "massEraseTarget{}"
+   puts "Mass erase is not supported"
+   return $::BDM_RC_ILLEGAL_COMMAND
    return
 }
 
@@ -102,7 +112,7 @@ proc massEraseTarget { } {
 ;#
 proc isUnsecure { } {
 ;# ToDo
-   return
+   return 0
 }
 
 ;######################################################################################

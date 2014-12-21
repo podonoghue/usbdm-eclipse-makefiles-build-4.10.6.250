@@ -1,5 +1,3 @@
-#include "Version.h"
-
 #include <windows.h>
 
 #ifndef IDC_STATIC
@@ -13,14 +11,10 @@
 //
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 1 VERSIONINFO
-    FILEVERSION     USBDM_VERSION_MAJOR,USBDM_VERSION_MINOR,USBDM_VERSION_MICRO,USBDM_VERSION_NANO
-    PRODUCTVERSION  USBDM_VERSION_MAJOR,USBDM_VERSION_MINOR,USBDM_VERSION_MICRO,USBDM_VERSION_NANO
+    FILEVERSION     4,6,0,0
+    PRODUCTVERSION  4,6,0,0
     FILEOS          VOS_NT
-#ifdef INTERACTIVE    
     FILETYPE        VFT_APP
-#else
-    FILETYPE        VFT_DLL
-#endif
 
 BEGIN
     BLOCK "StringFileInfo"
@@ -29,10 +23,10 @@ BEGIN
         BEGIN
             VALUE "CompanyName",      "pgo"
             VALUE "FileDescription",  "A simple program for modifying an XML file"
-            VALUE "FileVersion",      USBDM_VERSION_STRING
+            VALUE "FileVersion",      "4.6" 
             VALUE "InternalName",     ""
             VALUE "ProductName",      "USBDM"
-            VALUE "ProductVersion",   USBDM_VERSION_STRING
+            VALUE "ProductVersion",   "4.6"
         END
     END
 
@@ -46,11 +40,15 @@ BEGIN
         /* supports English language (0x409) in the Windows ANSI codepage (1252). */
 
         VALUE "Translation", 0x409, 1252
-
     END
 END
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
+
+#define RT_MANIFEST  24
+#define APP_MANIFEST  1
+
+APP_MANIFEST RT_MANIFEST uacManifest.xml
 
 #ifdef USE_ICON    
    IDI_APPICON ICON "Hardware-Chip.ico"

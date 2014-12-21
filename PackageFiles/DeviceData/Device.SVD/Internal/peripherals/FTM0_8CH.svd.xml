@@ -122,7 +122,7 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>No clock selected. This in effect disables the FTM counter</description>
+                           <description>Disabled</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -132,7 +132,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Fixed frequency clock</description>
+                           <description>Fixed freq. clock</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -144,36 +144,38 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>CPWMS</name>
-                     <description>Center-Aligned PWM Select</description>
+                     <description>Centre-Aligned PWM Select\n
+Selects between left and centre-aligned PWM pulse output</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM counter operates in Up Counting mode</description>
+                           <description>Left-aligned</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM counter operates in Up-Down Counting mode</description>
+                           <description>Centre-aligned</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>TOIE</name>
-                     <description>Timer Overflow Interrupt Enable</description>
+                     <description>Timer Overflow Interrupt Enable\n
+An interrupt is generated when TOF equals one</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Disable TOF interrupts. Use software polling</description>
+                           <description>Interrupts disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enable TOF interrupts. An interrupt is generated when TOF equals one</description>
+                           <description>Interrupts enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -183,16 +185,15 @@ Devices using this peripheral:
                      <description>Timer Overflow Flag</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
-                     <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FTM counter has not overflowed</description>
+                           <description>Not overflowed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FTM counter has overflowed</description>
+                           <description>Overflowed</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -216,6 +217,7 @@ Devices using this peripheral:
                <name>MOD</name>
                <description>Modulo</description>
                <addressOffset>0x8</addressOffset>
+               <resetValue>0xFFFF</resetValue>
                <fields>
                   <field>
                      <name>MOD</name>
@@ -238,43 +240,103 @@ Devices using this peripheral:
                   <fields>
                      <field>
                         <name>DMA</name>
-                        <description>DMA Enable</description>
+                        <description>DMA Transfer Enable</description>
                         <bitOffset>0</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Disable DMA transfers</description>
+                              <description>DMA disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Enable DMA transfers</description>
+                              <description>DMA enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
+                        <name>ELS</name>
+                        <?ignoreOverlap?>
+                        <description>Edge or Level Select\n
+Determine edge sensitivity of IC or output action of OC and pulse polarity of PWM\n
+Edge sensitivity/Output polarity/Pulse polarity</description>
+                        <bitOffset>2</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>Inactive</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>Rising/Toggle/Low</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b10</name>
+                              <description>Falling/Clear/High</description>
+                              <value>0b10</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b11</name>
+                              <description>Either/Set/Low</description>
+                              <value>0b11</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
                         <name>ELSA</name>
-                        <description>Edge or Level Select</description>
+                        <?hide?>
+                        <description>Edge or Level Select A</description>
                         <bitOffset>2</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
                         <name>ELSB</name>
-                        <description>Edge or Level Select</description>
+                        <?hide?>
+                        <description>Edge or Level Select B</description>
                         <bitOffset>3</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
+                        <name>MS</name>
+                        <?ignoreOverlap?>
+                        <description>Channel Mode Select\n
+Determines Input Capture, Output Compare &amp; Pulse Width Modulation</description>
+                        <bitOffset>4</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>Input capture</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>Output compare</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1X</name>
+                              <description>Pulse Width Modulation</description>
+                              <value>0b1X</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
                         <name>MSA</name>
-                        <description>Channel Mode Select</description>
+                        <?hide?>
+                        <description>Channel Mode Select A</description>
                         <bitOffset>4</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
                         <name>MSB</name>
-                        <description>Channel Mode Select</description>
+                        <?hide?>
+                        <description>Channel Mode Select B</description>
                         <bitOffset>5</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
@@ -286,30 +348,30 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Disable channel interrupts. Use software polling</description>
+                              <description>Interrupts disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Enable channel interrupts</description>
+                              <description>Interrupts enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>CHF</name>
-                        <description>Channel Flag</description>
+                        <description>Channel Flag\nSet when a channel event occurs</description>
                         <bitOffset>7</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No channel event has occurred</description>
+                              <description>No channel event</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>A channel event has occurred</description>
+                              <description>Channel event</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -366,132 +428,13 @@ Devices using this peripheral:
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1F</name>
-                     <description>Channel 1 Flag</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH2F</name>
-                     <description>Channel 2 Flag</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH3F</name>
-                     <description>Channel 3 Flag</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH4F</name>
-                     <description>Channel 4 Flag</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH5F</name>
-                     <description>Channel 5 Flag</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH6F</name>
-                     <description>Channel 6 Flag</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH7F</name>
-                     <description>Channel 7 Flag</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH0F" > <name>CH1F</name> <description>Channel 1 Flag</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="CH0F" > <name>CH2F</name> <description>Channel 2 Flag</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="CH0F" > <name>CH3F</name> <description>Channel 3 Flag</description> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="CH0F" > <name>CH4F</name> <description>Channel 4 Flag</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="CH0F" > <name>CH5F</name> <description>Channel 5 Flag</description> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="CH0F" > <name>CH6F</name> <description>Channel 6 Flag</description> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="CH0F" > <name>CH7F</name> <description>Channel 7 Flag</description> <bitOffset>7</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -721,42 +664,8 @@ Devices using this peripheral:
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>TRIG1</name>
-                     <description>PWM Synchronization Hardware Trigger 1</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Trigger is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Trigger is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>TRIG2</name>
-                     <description>PWM Synchronization Hardware Trigger 2</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Trigger is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Trigger is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="TRIG0" > <name>TRIG1</name> <description>PWM Synchronization Hardware Trigger 1</description> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="TRIG0" > <name>TRIG2</name> <description>PWM Synchronization Hardware Trigger 2</description> <bitOffset>6</bitOffset> </field>
                   <field>
                      <name>SWSYNC</name>
                      <description>PWM Synchronization Software Trigger</description>
@@ -790,142 +699,23 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The initialization value is 0</description>
+                           <description>Low</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The initialization value is 1</description>
+                           <description>High</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1OI</name>
-                     <description>Channel 1 Output Initialization Value</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The initialization value is 0</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The initialization value is 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH2OI</name>
-                     <description>Channel 2 Output Initialization Value</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The initialization value is 0</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The initialization value is 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH3OI</name>
-                     <description>Channel 3 Output Initialization Value</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The initialization value is 0</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The initialization value is 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH4OI</name>
-                     <description>Channel 4 Output Initialization Value</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The initialization value is 0</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The initialization value is 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH5OI</name>
-                     <description>Channel 5 Output Initialization Value</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The initialization value is 0</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The initialization value is 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH6OI</name>
-                     <description>Channel 6 Output Initialization Value</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The initialization value is 0</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The initialization value is 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH7OI</name>
-                     <description>Channel 7 Output Initialization Value</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The initialization value is 0</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The initialization value is 1</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH0OI" > <name>CH1OI</name> <description>Channel 1 Output Initialization Value</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="CH0OI" > <name>CH2OI</name> <description>Channel 2 Output Initialization Value</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="CH0OI" > <name>CH3OI</name> <description>Channel 3 Output Initialization Value</description> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="CH0OI" > <name>CH4OI</name> <description>Channel 4 Output Initialization Value</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="CH0OI" > <name>CH5OI</name> <description>Channel 5 Output Initialization Value</description> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="CH0OI" > <name>CH6OI</name> <description>Channel 6 Output Initialization Value</description> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="CH0OI" > <name>CH7OI</name> <description>Channel 7 Output Initialization Value</description> <bitOffset>7</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -941,142 +731,23 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Channel output is not masked. It continues to operate normally</description>
+                           <description>Not masked\tChannel output operates normally</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Channel output is masked. It is forced to its inactive state</description>
+                           <description>Masked\tChannel output is forced to its inactive state</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1OM</name>
-                     <description>Channel 1 Output Mask</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not masked. It continues to operate normally</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is masked. It is forced to its inactive state</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH2OM</name>
-                     <description>Channel 2 Output Mask</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not masked. It continues to operate normally</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is masked. It is forced to its inactive state</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH3OM</name>
-                     <description>Channel 3 Output Mask</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not masked. It continues to operate normally</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is masked. It is forced to its inactive state</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH4OM</name>
-                     <description>Channel 4 Output Mask</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not masked. It continues to operate normally</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is masked. It is forced to its inactive state</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH5OM</name>
-                     <description>Channel 5 Output Mask</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not masked. It continues to operate normally</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is masked. It is forced to its inactive state</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH6OM</name>
-                     <description>Channel 6 Output Mask</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not masked. It continues to operate normally</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is masked. It is forced to its inactive state</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH7OM</name>
-                     <description>Channel 7 Output Mask</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not masked. It continues to operate normally</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is masked. It is forced to its inactive state</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH0OM" > <name>CH1OM</name> <description>Channel 1 Output Mask</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="CH0OM" > <name>CH2OM</name> <description>Channel 2 Output Mask</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="CH0OM" > <name>CH3OM</name> <description>Channel 3 Output Mask</description> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="CH0OM" > <name>CH4OM</name> <description>Channel 4 Output Mask</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="CH0OM" > <name>CH5OM</name> <description>Channel 5 Output Mask</description> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="CH0OM" > <name>CH6OM</name> <description>Channel 6 Output Mask</description> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="CH0OM" > <name>CH7OM</name> <description>Channel 7 Output Mask</description> <bitOffset>7</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -1092,30 +763,31 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Channels are independent</description>
+                           <description>Independent</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Channels are combined</description>
+                           <description>Combined</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>COMP0</name>
-                     <description>Complement for Channels 0 &amp; 1</description>
+                     <description>Complement for Channels 0 &amp; 1\n
+Controls whether channels are the some or complement</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Channel 1 output is the same as channel 0 output</description>
+                           <description>Same</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Channel 1 output is the complement of channel 0 output</description>
+                           <description>Complement</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1128,12 +800,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Dual Edge Capture mode for this pair of channels is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Dual Edge Capture mode for this pair of channels is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1146,48 +818,49 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Dual edge captures are inactive</description>
+                           <description>Inactive</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Dual edge captures are active</description>
+                           <description>Active</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>DTEN0</name>
-                     <description>Deadtime Enable for Channels 0 &amp; 1</description>
+                     <description>Deadtime Enable for Channels 0 &amp; 1\n
+Deadtime insertion</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Deadtime insertion for this pair of channels is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Deadtime insertion for this pair of channels is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SYNCEN0</name>
-                     <description>Synchronization Enable for Channels 0 &amp; 1</description>
+                     <description>PWM Synchronization Enable for Channels 0 &amp; 1</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PWM synchronization for this pair of channels is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>PWM synchronization for this pair of channels is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1200,394 +873,37 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Fault control for this pair of channels is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Fault control for this pair of channels is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>COMBINE1</name>
-                     <description>Combine Channels 2 &amp; 3</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channels are independent</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channels are combined</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>COMP1</name>
-                     <description>Complement for Channels 2 &amp; 3</description>
-                     <bitOffset>9</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel 3 output is the same as channel 2 output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel 3 output is the complement of channel 2 output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DECAPEN1</name>
-                     <description>Dual Edge Capture Mode Enable for Channels 2 &amp; 3</description>
-                     <bitOffset>10</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Dual Edge Capture mode for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Dual Edge Capture mode for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DECAP1</name>
-                     <description>Dual Edge Capture Mode Captures for Channel 2 &amp; 3</description>
-                     <bitOffset>11</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Dual edge captures are inactive</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Dual edge captures are active</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DTEN1</name>
-                     <description>Deadtime Enable for Channels 2 &amp; 3</description>
-                     <bitOffset>12</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Deadtime insertion for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Deadtime insertion for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>SYNCEN1</name>
-                     <description>Synchronization Enable for Channels 2 &amp; 3</description>
-                     <bitOffset>13</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>PWM synchronization for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>PWM synchronization for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAULTEN1</name>
-                     <description>Fault Control Enable for Channels 2 &amp; 3</description>
-                     <bitOffset>14</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault control for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault control for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>COMBINE2</name>
-                     <description>Combine Channels 4 &amp; 5</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channels are independent</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channels are combined</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>COMP2</name>
-                     <description>Complement for Channels 4 &amp; 5</description>
-                     <bitOffset>17</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel 5 output is the same as channel 4 output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel 5 output is the complement of channel 4 output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DECAPEN2</name>
-                     <description>Dual Edge Capture Mode Enable for Channels 4 &amp; 5</description>
-                     <bitOffset>18</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Dual Edge Capture mode for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Dual Edge Capture mode for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DECAP2</name>
-                     <description>Dual Edge Capture Mode Captures for Channels 4 &amp; 5</description>
-                     <bitOffset>19</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Dual edge captures are inactive</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Dual edge captures are active</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DTEN2</name>
-                     <description>Deadtime Enable for Channels 4 &amp; 5</description>
-                     <bitOffset>20</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Deadtime insertion for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Deadtime insertion for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>SYNCEN2</name>
-                     <description>Synchronization Enable for Channels 4 &amp; 5</description>
-                     <bitOffset>21</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>PWM synchronization for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>PWM synchronization for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAULTEN2</name>
-                     <description>Fault Control Enable for Channels 4 &amp; 5</description>
-                     <bitOffset>22</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault control for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault control for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>COMBINE3</name>
-                     <description>Combine Channels 6 &amp; 7</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channels are independent</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channels are combined</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>COMP3</name>
-                     <description>Complement for Channels 6 &amp; 7</description>
-                     <bitOffset>25</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel 7 output is the same as channel 6 output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel 7 output is the complement of channel 6 output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DECAPEN3</name>
-                     <description>Dual Edge Capture Mode Enable for Channels 6 &amp; 7</description>
-                     <bitOffset>26</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Dual Edge Capture mode for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Dual Edge Capture mode for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DECAP3</name>
-                     <description>Dual Edge Capture Mode Captures for Channels 6 &amp; 7</description>
-                     <bitOffset>27</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Dual edge captures are inactive</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Dual edge captures are active</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>DTEN3</name>
-                     <description>Deadtime Enable for Channels 6 &amp; 7</description>
-                     <bitOffset>28</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Deadtime insertion for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Deadtime insertion for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>SYNCEN3</name>
-                     <description>Synchronization Enable for Channels 6 &amp; 7</description>
-                     <bitOffset>29</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>PWM synchronization for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>PWM synchronization for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAULTEN3</name>
-                     <description>Fault Control Enable for Channels 6 &amp; 7</description>
-                     <bitOffset>30</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault control for this pair of channels is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault control for this pair of channels is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="COMBINE0" > <name>COMBINE1</name> <description>Combine Channels 2 &amp; 3</description> <bitOffset>8</bitOffset> </field>
+                  <field derivedFrom="COMP0" > <name>COMP1</name> <description>Complement for Channels 2 &amp; 3</description> <bitOffset>9</bitOffset> </field>
+                  <field derivedFrom="DECAPEN0" > <name>DECAPEN1</name> <description>Dual Edge Capture Mode Enable for Channels 2 &amp; 3</description> <bitOffset>10</bitOffset> </field>
+                  <field derivedFrom="DECAP0" > <name>DECAP1</name> <description>Dual Edge Capture Mode Captures for Channel 2 &amp; 3</description> <bitOffset>11</bitOffset> </field>
+                  <field derivedFrom="DTEN0" > <name>DTEN1</name> <description>Deadtime Enable for Channels 2 &amp; 3</description> <bitOffset>12</bitOffset> </field>
+                  <field derivedFrom="SYNCEN0" > <name>SYNCEN1</name> <description>Synchronization Enable for Channels 2 &amp; 3</description> <bitOffset>13</bitOffset> </field>
+                  <field derivedFrom="FAULTEN0" > <name>FAULTEN1</name> <description>Fault Control Enable for Channels 2 &amp; 3</description> <bitOffset>14</bitOffset> </field>
+                  <field derivedFrom="COMBINE0" > <name>COMBINE2</name> <description>Combine Channels 4 &amp; 5</description> <bitOffset>16</bitOffset> </field>
+                  <field derivedFrom="COMP0" > <name>COMP2</name> <description>Complement for Channels 4 &amp; 5</description> <bitOffset>17</bitOffset> </field>
+                  <field derivedFrom="DECAPEN0" > <name>DECAPEN2</name> <description>Dual Edge Capture Mode Enable for Channels 4 &amp; 5</description> <bitOffset>18</bitOffset> </field>
+                  <field derivedFrom="DECAP0" > <name>DECAP2</name> <description>Dual Edge Capture Mode Captures for Channels 4 &amp; 5</description> <bitOffset>19</bitOffset> </field>
+                  <field derivedFrom="DTEN0" > <name>DTEN2</name> <description>Deadtime Enable for Channels 4 &amp; 5</description> <bitOffset>20</bitOffset> </field>
+                  <field derivedFrom="SYNCEN0" > <name>SYNCEN2</name> <description>Synchronization Enable for Channels 4 &amp; 5</description> <bitOffset>21</bitOffset> </field>
+                  <field derivedFrom="FAULTEN0" > <name>FAULTEN2</name> <description>Fault Control Enable for Channels 4 &amp; 5</description> <bitOffset>22</bitOffset> </field>
+                  <field derivedFrom="COMBINE0" > <name>COMBINE3</name> <description>Combine Channels 4 &amp; 5</description> <bitOffset>24</bitOffset> </field>
+                  <field derivedFrom="COMP0" > <name>COMP3</name> <description>Complement for Channels 4 &amp; 5</description> <bitOffset>25</bitOffset> </field>
+                  <field derivedFrom="DECAPEN0" > <name>DECAPEN3</name> <description>Dual Edge Capture Mode Enable for Channels 4 &amp; 5</description> <bitOffset>26</bitOffset> </field>
+                  <field derivedFrom="DECAP0" > <name>DECAP3</name> <description>Dual Edge Capture Mode Captures for Channels 4 &amp; 5</description> <bitOffset>27</bitOffset> </field>
+                  <field derivedFrom="DTEN0" > <name>DTEN3</name> <description>Deadtime Enable for Channels 4 &amp; 5</description> <bitOffset>28</bitOffset> </field>
+                  <field derivedFrom="SYNCEN0" > <name>SYNCEN3</name> <description>Synchronization Enable for Channels 4 &amp; 5</description> <bitOffset>29</bitOffset> </field>
+                  <field derivedFrom="FAULTEN0" > <name>FAULTEN3</name> <description>Fault Control Enable for Channels 4 &amp; 5</description> <bitOffset>30</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -1609,17 +925,17 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0x</name>
-                           <description>Divide the system clock by 1</description>
+                           <description>Divide by 1</description>
                            <value>0b0x</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Divide the system clock by 4</description>
+                           <description>Divide by 4</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Divide the system clock by 16</description>
+                           <description>Divide by 16</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1639,106 +955,21 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The generation of channel trigger is disabled</description>
+                           <description>Trigger disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The generation of channel trigger is enabled</description>
+                           <description>Trigger is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH3TRIG</name>
-                     <description>Channel 3 Trigger Enable</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The generation of channel trigger is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The generation of channel trigger is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH4TRIG</name>
-                     <description>Channel 4 Trigger Enable</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The generation of channel trigger is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The generation of channel trigger is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH5TRIG</name>
-                     <description>Channel 5 Trigger Enable</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The generation of channel trigger is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The generation of channel trigger is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH0TRIG</name>
-                     <description>Channel 0 Trigger Enable</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The generation of channel trigger is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The generation of channel trigger is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH1TRIG</name>
-                     <description>Channel 1 Trigger Enable</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The generation of channel trigger is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The generation of channel trigger is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH2TRIG" > <name>CH3TRIG</name> <description>Channel 3 Trigger Enable</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="CH2TRIG" > <name>CH4TRIG</name> <description>Channel 4 Trigger Enable</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="CH2TRIG" > <name>CH5TRIG</name> <description>Channel 5 Trigger Enable</description> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="CH2TRIG" > <name>CH0TRIG</name> <description>Channel 0 Trigger Enable</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="CH2TRIG" > <name>CH1TRIG</name> <description>Channel 1 Trigger Enable</description> <bitOffset>5</bitOffset> </field>
                   <field>
                      <name>INITTRIGEN</name>
                      <description>Initialization Trigger Enable</description>
@@ -1790,142 +1021,23 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Channel polarity is active high</description>
+                           <description>Active high</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Channel polarity is active low</description>
+                           <description>Active low</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>POL1</name>
-                     <description>Channel 1 Polarity</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel polarity is active high</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel polarity is active low</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>POL2</name>
-                     <description>Channel 2 Polarity</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel polarity is active high</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel polarity is active low</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>POL3</name>
-                     <description>Channel 3 Polarity</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel polarity is active high</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel polarity is active low</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>POL4</name>
-                     <description>Channel 4 Polarity</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel polarity is active high</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel polarity is active low</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>POL5</name>
-                     <description>Channel 5 Polarity</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel polarity is active high</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel polarity is active low</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>POL6</name>
-                     <description>Channel 6 Polarity</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel polarity is active high</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel polarity is active low</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>POL7</name>
-                     <description>Channel 7 Polarity</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel polarity is active high</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel polarity is active low</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="POL0" > <name>POL1</name> <description>Channel 1 Polarity</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="POL0" > <name>POL2</name> <description>Channel 2 Polarity</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="POL0" > <name>POL3</name> <description>Channel 3 Polarity</description> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="POL0" > <name>POL4</name> <description>Channel 4 Polarity</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="POL0" > <name>POL5</name> <description>Channel 5 Polarity</description> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="POL0" > <name>POL6</name> <description>Channel 6 Polarity</description> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="POL0" > <name>POL7</name> <description>Channel 7 Polarity</description> <bitOffset>7</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -1941,70 +1053,19 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No fault condition was detected at the fault input</description>
+                           <description>No fault</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>A fault condition was detected at the fault input</description>
+                           <description>Fault condition</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>FAULTF1</name>
-                     <description>Fault Detection Flag 1</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No fault condition was detected at the fault input</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A fault condition was detected at the fault input</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAULTF2</name>
-                     <description>Fault Detection Flag 2</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No fault condition was detected at the fault input</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A fault condition was detected at the fault input</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAULTF3</name>
-                     <description>Fault Detection Flag 3</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No fault condition was detected at the fault input</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A fault condition was detected at the fault input</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="FAULTF0" > <name>FAULTF1</name> <description>Fault Detection Flag 1</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="FAULTF0" > <name>FAULTF2</name> <description>Fault Detection Flag 2</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="FAULTF0" > <name>FAULTF3</name> <description>Fault Detection Flag 3</description> <bitOffset>3</bitOffset> </field>
                   <field>
                      <name>FAULTIN</name>
                      <description>Fault Inputs</description>
@@ -2072,25 +1133,22 @@ Devices using this peripheral:
                      <description>Channel 0 Input Filter</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>4</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0000</name>
+                           <description>Disabled</description>
+                           <value>0b0000</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0bXXXX</name>
+                           <description>Filter enabled</description>
+                           <isDefault>true</isDefault>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1FVAL</name>
-                     <description>Channel 1 Input Filter</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>CH2FVAL</name>
-                     <description>Channel 2 Input Filter</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
-                  <field>
-                     <name>CH3FVAL</name>
-                     <description>Channel 3 Input Filter</description>
-                     <bitOffset>12</bitOffset>
-                     <bitWidth>4</bitWidth>
-                  </field>
+                  <field derivedFrom="CH0FVAL" > <name>CH1FVAL</name> <description>Channel 1 Input Filter</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="CH0FVAL" > <name>CH2FVAL</name> <description>Channel 2 Input Filter</description> <bitOffset>8</bitOffset> </field>
+                  <field derivedFrom="CH0FVAL" > <name>CH3FVAL</name> <description>Channel 3 Input Filter</description> <bitOffset>12</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -2106,70 +1164,19 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Fault input is disabled</description>
+                           <description>Input disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Fault input is enabled</description>
+                           <description>Input enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>FAULT1EN</name>
-                     <description>Fault Input 1 Enable</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault input is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault input is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAULT2EN</name>
-                     <description>Fault Input 2 Enable</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault input is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault input is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FAULT3EN</name>
-                     <description>Fault Input 3 Enable</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault input is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault input is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="FAULT0EN" > <name>FAULT1EN</name> <description>Fault Input 1 Enable</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="FAULT0EN" > <name>FAULT2EN</name> <description>Fault Input 2 Enable</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="FAULT0EN" > <name>FAULT3EN</name> <description>Fault Input 3 Enable</description> <bitOffset>3</bitOffset> </field>
                   <field>
                      <name>FFLTR0EN</name>
                      <description>Fault Input 0 Filter Enable</description>
@@ -2178,75 +1185,36 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Fault input filter is disabled</description>
+                           <description>Filter disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Fault input filter is enabled</description>
+                           <description>Filter enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>FFLTR1EN</name>
-                     <description>Fault Input 1 Filter Enable</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault input filter is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault input filter is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FFLTR2EN</name>
-                     <description>Fault Input 2 Filter Enable</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault input filter is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault input filter is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FFLTR3EN</name>
-                     <description>Fault Input 3 Filter Enable</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Fault input filter is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Fault input filter is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="FFLTR0EN" > <name>FFLTR1EN</name> <description>Fault Input 1 Filter Enable</description> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="FFLTR0EN" > <name>FFLTR2EN</name> <description>Fault Input 2 Filter Enable</description> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="FFLTR0EN" > <name>FFLTR3EN</name> <description>Fault Input 3 Filter Enable</description> <bitOffset>7</bitOffset> </field>
                   <field>
                      <name>FFVAL</name>
-                     <description>Fault Input Filter</description>
+                     <description>Fault Input Filter\nSelects the filter value for the fault inputs</description>
                      <bitOffset>8</bitOffset>
                      <bitWidth>4</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Filter disabled</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Filter enabled</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>
@@ -2263,68 +1231,71 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Quadrature Decoder mode is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Quadrature Decoder mode is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>TOFDIR</name>
-                     <description>Timer Overflow Direction in Quadrature Decoder Mode</description>
+                     <description>Timer Overflow Direction in Quadrature Decoder Mode\n
+Indicates if the TOF bit was set on the top or the bottom of counting</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>TOF bit was set on the bottom of counting. There was an FTM counter decrement and FTM counter changes from its minimum value (CNTIN register) to its maximum value (MOD register)</description>
+                           <description>Bottom of counting\tThere was an FTM counter decrement and FTM counter changes from its minimum value (CNTIN register) to its maximum value (MOD register)</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>TOF bit was set on the top of counting. There was an FTM counter increment and FTM counter changes from its maximum value (MOD register) to its minimum value (CNTIN register)</description>
+                           <description>Top of counting\tThere was an FTM counter increment and FTM counter changes from its maximum value (MOD register) to its minimum value (CNTIN register)</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>QUADIR</name>
-                     <description>FTM Counter Direction in Quadrature Decoder Mode</description>
+                     <description>FTM Counter Direction in Quadrature Decoder Mode\n
+Indicates the counting direction and it is updated according to selected encoding mode</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Counting direction is decreasing (FTM counter decrement)</description>
+                           <description>Decreasing</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Counting direction is increasing (FTM counter increment)</description>
+                           <description>Increasing</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>QUADMODE</name>
-                     <description>Quadrature Decoder Mode</description>
+                     <description>Quadrature Decoder Mode\n
+Selects the encoding mode used in the quadrature decoder mode</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Phase A and phase B encoding mode</description>
+                           <description>Phase A/B mode</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Count and direction encoding mode</description>
+                           <description>Count/direction mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2337,12 +1308,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Normal polarity. Phase B input signal is not inverted before identifying the rising and falling edges of this signal</description>
+                           <description>Normal polarity\tPhase B input signal is not inverted before identifying the rising and falling edges of this signal</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Inverted polarity. Phase B input signal is inverted before identifying the rising and falling edges of this signal</description>
+                           <description>Inverted polarity\tPhase B input signal is inverted before identifying the rising and falling edges of this signal</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2355,48 +1326,50 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Normal polarity. Phase A input signal is not inverted before identifying the rising and falling edges of this signal</description>
+                           <description>Normal polarity\tPhase A input signal is not inverted before identifying the rising and falling edges of this signal</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Inverted polarity. Phase A input signal is inverted before identifying the rising and falling edges of this signal</description>
+                           <description>Inverted polarity\tPhase A input signal is inverted before identifying the rising and falling edges of this signal</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>PHBFLTREN</name>
-                     <description>Phase B Input Filter Enable</description>
+                     <description>Phase B Input Filter Enable\n
+Enables the filter for the quadrature decoder phase B input</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Phase B input filter is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Phase B input filter is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>PHAFLTREN</name>
-                     <description>Phase A Input Filter Enable</description>
+                     <description>Phase A Input Filter Enable\n
+Enables the filter for the quadrature decoder phase A input</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Phase A input filter is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Phase A input filter is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -2471,70 +1444,19 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The fault input polarity is active high. A one at the fault input indicates a fault</description>
+                           <description>Active high\tA one at the fault input indicates a fault</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The fault input polarity is active low. A zero at the fault input indicates a fault</description>
+                           <description>Active low\tA zero at the fault input indicates a fault</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>FLT1POL</name>
-                     <description>Fault Input 1 Polarity</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The fault input polarity is active high. A one at the fault input indicates a fault</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The fault input polarity is active low. A zero at the fault input indicates a fault</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FLT2POL</name>
-                     <description>Fault Input 2 Polarity</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The fault input polarity is active high. A one at the fault input indicates a fault</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The fault input polarity is active low. A zero at the fault input indicates a fault</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>FLT3POL</name>
-                     <description>Fault Input 3 Polarity</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The fault input polarity is active high. A one at the fault input indicates a fault</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The fault input polarity is active low. A zero at the fault input indicates a fault</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="FLT0POL" > <name>FLT1POL</name> <description>Fault Input 1 Polarity</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="FLT0POL" > <name>FLT2POL</name> <description>Fault Input 2 Polarity</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="FLT0POL" > <name>FLT3POL</name> <description>Fault Input 3 Polarity</description> <bitOffset>3</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -2827,70 +1749,19 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Inverting is disabled</description>
+                           <description>Not inverted</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Inverting is enabled</description>
+                           <description>Inverted</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>INV1EN</name>
-                     <description>Pair Channels 1 Inverting Enable</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Inverting is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Inverting is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>INV2EN</name>
-                     <description>Pair Channels 2 Inverting Enable</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Inverting is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Inverting is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>INV3EN</name>
-                     <description>Pair Channels 3 Inverting Enable</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Inverting is disabled</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Inverting is enabled</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="INV0EN" > <name>INV1EN</name> <description>Pair Channels 1 Inverting Enable</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="INV0EN" > <name>INV2EN</name> <description>Pair Channels 2 Inverting Enable</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="INV0EN" > <name>INV3EN</name> <description>Pair Channels 3 Inverting Enable</description> <bitOffset>3</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -2906,142 +1777,23 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Channel output is not affected by software output control</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Channel output is affected by software output control</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1OC</name>
-                     <description>Channel 1 Software Output Control Enable</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not affected by software output control</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is affected by software output control</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH2OC</name>
-                     <description>Channel 2 Software Output Control Enable</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not affected by software output control</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is affected by software output control</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH3OC</name>
-                     <description>Channel 3 Software Output Control Enable</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not affected by software output control</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is affected by software output control</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH4OC</name>
-                     <description>Channel 4 Software Output Control Enable</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not affected by software output control</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is affected by software output control</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH5OC</name>
-                     <description>Channel 5 Software Output Control Enable</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not affected by software output control</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is affected by software output control</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH6OC</name>
-                     <description>Channel 6 Software Output Control Enable</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not affected by software output control</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is affected by software output control</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH7OC</name>
-                     <description>Channel 7 Software Output Control Enable</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Channel output is not affected by software output control</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Channel output is affected by software output control</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH0OC" > <name>CH1OC</name> <description>Channel 1 Software Output Control Enable</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="CH0OC" > <name>CH2OC</name> <description>Channel 2 Software Output Control Enable</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="CH0OC" > <name>CH3OC</name> <description>Channel 3 Software Output Control Enable</description> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="CH0OC" > <name>CH4OC</name> <description>Channel 4 Software Output Control Enable</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="CH0OC" > <name>CH5OC</name> <description>Channel 5 Software Output Control Enable</description> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="CH0OC" > <name>CH6OC</name> <description>Channel 6 Software Output Control Enable</description> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="CH0OC" > <name>CH7OC</name> <description>Channel 7 Software Output Control Enable</description> <bitOffset>7</bitOffset> </field>
                   <field>
                      <name>CH0OCV</name>
                      <description>Channel 0 Software Output Control Value</description>
@@ -3050,142 +1802,23 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The software output control forces 0 to channel output</description>
+                           <description>Forces 0 to output</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The software output control forces 1 to channel output</description>
+                           <description>Forces 1 to output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1OCV</name>
-                     <description>Channel 1 Software Output Control Value</description>
-                     <bitOffset>9</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The software output control forces 0 to channel output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The software output control forces 1 to channel output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH2OCV</name>
-                     <description>Channel 2 Software Output Control Value</description>
-                     <bitOffset>10</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The software output control forces 0 to channel output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The software output control forces 1 to channel output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH3OCV</name>
-                     <description>Channel 3 Software Output Control Value</description>
-                     <bitOffset>11</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The software output control forces 0 to channel output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The software output control forces 1 to channel output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH4OCV</name>
-                     <description>Channel 4 Software Output Control Value</description>
-                     <bitOffset>12</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The software output control forces 0 to channel output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The software output control forces 1 to channel output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH5OCV</name>
-                     <description>Channel 5 Software Output Control Value</description>
-                     <bitOffset>13</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The software output control forces 0 to channel output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The software output control forces 1 to channel output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH6OCV</name>
-                     <description>Channel 6 Software Output Control Value</description>
-                     <bitOffset>14</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The software output control forces 0 to channel output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The software output control forces 1 to channel output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH7OCV</name>
-                     <description>Channel 7 Software Output Control Value</description>
-                     <bitOffset>15</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>The software output control forces 0 to channel output</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>The software output control forces 1 to channel output</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH0OCV" > <name>CH1OCV</name> <description>Channel 1 Software Output Control Value</description> <bitOffset>9</bitOffset> </field>
+                  <field derivedFrom="CH0OCV" > <name>CH2OCV</name> <description>Channel 2 Software Output Control Value</description> <bitOffset>10</bitOffset> </field>
+                  <field derivedFrom="CH0OCV" > <name>CH3OCV</name> <description>Channel 3 Software Output Control Value</description> <bitOffset>11</bitOffset> </field>
+                  <field derivedFrom="CH0OCV" > <name>CH4OCV</name> <description>Channel 4 Software Output Control Value</description> <bitOffset>12</bitOffset> </field>
+                  <field derivedFrom="CH0OCV" > <name>CH5OCV</name> <description>Channel 5 Software Output Control Value</description> <bitOffset>13</bitOffset> </field>
+                  <field derivedFrom="CH0OCV" > <name>CH6OCV</name> <description>Channel 6 Software Output Control Value</description> <bitOffset>14</bitOffset> </field>
+                  <field derivedFrom="CH0OCV" > <name>CH7OCV</name> <description>Channel 7 Software Output Control Value</description> <bitOffset>15</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -3211,132 +1844,13 @@ Devices using this peripheral:
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1SEL</name>
-                     <description>Channel 1 Select</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not include channel in the matching process</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Include channel in the matching process</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH2SEL</name>
-                     <description>Channel 2 Select</description>
-                     <bitOffset>2</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not include channel in the matching process</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Include channel in the matching process</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH3SEL</name>
-                     <description>Channel 3 Select</description>
-                     <bitOffset>3</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not include channel in the matching process</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Include channel in the matching process</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH4SEL</name>
-                     <description>Channel 4 Select</description>
-                     <bitOffset>4</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not include channel in the matching process</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Include channel in the matching process</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH5SEL</name>
-                     <description>Channel 5 Select</description>
-                     <bitOffset>5</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not include channel in the matching process</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Include channel in the matching process</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH6SEL</name>
-                     <description>Channel 6 Select</description>
-                     <bitOffset>6</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not include channel in the matching process</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Include channel in the matching process</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>CH7SEL</name>
-                     <description>Channel 7 Select</description>
-                     <bitOffset>7</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Do not include channel in the matching process</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Include channel in the matching process</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH0SEL" > <name>CH1SEL</name> <description>Channel 1 Select</description> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="CH0SEL" > <name>CH2SEL</name> <description>Channel 2 Select</description> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="CH0SEL" > <name>CH3SEL</name> <description>Channel 3 Select</description> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="CH0SEL" > <name>CH4SEL</name> <description>Channel 4 Select</description> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="CH0SEL" > <name>CH5SEL</name> <description>Channel 5 Select</description> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="CH0SEL" > <name>CH6SEL</name> <description>Channel 6 Select</description> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="CH0SEL" > <name>CH7SEL</name> <description>Channel 7 Select</description> <bitOffset>7</bitOffset> </field>
                   <field>
                      <name>LDOK</name>
                      <description>Load Enable</description>

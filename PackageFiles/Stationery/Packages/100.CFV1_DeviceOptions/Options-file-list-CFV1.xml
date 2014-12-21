@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0" >
+   <!-- Extra Optional files for Coldfire V1 -->
+   <projectActionList id="Options-file-list-CFV1" >
+      <applyWhen>
+         <deviceFamilyIs>CFV1</deviceFamilyIs>
+      </applyWhen>
+      <variable id="Clock-setup-CFV1" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
+      <condition variable="Clock-setup-CFV1" >
+         <copy source="Startup_Code/clock-cfv1.c"                      target="Startup_Code/clock.c" />
+         <copy source="Project_Headers/clock_configure-cfv1.h"         target="Project_Headers/clock_configure.h" />
+      </condition>
+   </projectActionList>
+</root>

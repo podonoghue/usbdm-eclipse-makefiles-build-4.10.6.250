@@ -10,6 +10,7 @@ Devices using this peripheral:
       MKL26Z4
       MKL34Z4
       MKL36Z4
+      MKL43Z4
       MKL46Z4
 -->
       <peripheral>
@@ -99,17 +100,17 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>LPTPM counter is disabled</description>
+                           <description>Disabled</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>LPTPM counter increments on every LPTPM counter clock</description>
+                           <description>LPTPM counter clock</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>LPTPM counter increments on rising edge of LPTPM_EXTCLK synchronized to the LPTPM counter clock</description>
+                           <description>Rising edge of LPTPM_EXTCLK</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -121,36 +122,38 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>CPWMS</name>
-                     <description>Center-aligned PWM Select</description>
+                     <description>Centre-Aligned PWM Select\n
+Selects between left and centre-aligned PWM pulse output</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>LPTPM counter operates in up counting mode</description>
+                           <description>Left-aligned</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>LPTPM counter operates in up-down counting mode</description>
+                           <description>Centre-aligned</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>TOIE</name>
-                     <description>Timer Overflow Interrupt Enable</description>
+                     <description>Timer Overflow Interrupt Enable\n
+An interrupt is generated when TOF equals one</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Disable TOF interrupts. Use software polling or DMA request</description>
+                           <description>Interrupts disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enable TOF interrupts. An interrupt is generated when TOF equals one</description>
+                           <description>Interrupts enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -163,12 +166,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>LPTPM counter has not overflowed</description>
+                           <description>Not overflowed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>LPTPM counter has overflowed</description>
+                           <description>Overflowed</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -200,7 +203,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>COUNT</name>
-                     <description>Counter value</description>
+                     <description>Counter Value</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>16</bitWidth>
                   </field>
@@ -214,7 +217,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>MOD</name>
-                     <description>Modulo value</description>
+                     <description>Modulo Value</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>16</bitWidth>
                   </field>
@@ -228,7 +231,7 @@ Devices using this peripheral:
                <addressOffset>0xC</addressOffset>
                <register>
                   <name>CnSC</name>
-                  <description>Channel (n) Status and Control</description>
+                  <description>Channel %s Status and Control</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
@@ -250,26 +253,86 @@ Devices using this peripheral:
                         </enumeratedValues>
                      </field>
                      <field>
+                        <name>ELS</name>
+                        <?ignoreOverlap?>
+                        <description>Edge or Level Select\n
+Determine edge sensitivity of IC or output action of OC and pulse polarity of PWM\n
+Edge sensitivity/Output polarity/Pulse polarity</description>
+                        <bitOffset>2</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>Inactive</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>Rising/Toggle/Low</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b10</name>
+                              <description>Falling/Clear/High</description>
+                              <value>0b10</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b11</name>
+                              <description>Either/Set/Low</description>
+                              <value>0b11</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
                         <name>ELSA</name>
-                        <description>Edge or Level Select</description>
+                        <?hide?>
+                        <description>Edge or Level Select A</description>
                         <bitOffset>2</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
                         <name>ELSB</name>
-                        <description>Edge or Level Select</description>
+                        <?hide?>
+                        <description>Edge or Level Select B</description>
                         <bitOffset>3</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
+                        <name>MS</name>
+                        <?ignoreOverlap?>
+                        <description>Channel Mode Select\n
+Determines Input Capture, Output Compare &amp; Pulse Width Modulation</description>
+                        <bitOffset>4</bitOffset>
+                        <bitWidth>2</bitWidth>
+                        <enumeratedValues>
+                           <enumeratedValue>
+                              <name>0b00</name>
+                              <description>Input capture</description>
+                              <value>0b00</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b01</name>
+                              <description>Output compare</description>
+                              <value>0b01</value>
+                           </enumeratedValue>
+                           <enumeratedValue>
+                              <name>0b1X</name>
+                              <description>Pulse Width Modulation</description>
+                              <value>0b1X</value>
+                           </enumeratedValue>
+                        </enumeratedValues>
+                     </field>
+                     <field>
                         <name>MSA</name>
-                        <description>Channel Mode Select</description>
+                        <?hide?>
+                        <description>Channel Mode Select A</description>
                         <bitOffset>4</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
                      <field>
                         <name>MSB</name>
-                        <description>Channel Mode Select</description>
+                        <?hide?>
+                        <description>Channel Mode Select B</description>
                         <bitOffset>5</bitOffset>
                         <bitWidth>1</bitWidth>
                      </field>
@@ -281,30 +344,30 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Disable channel interrupts</description>
+                              <description>Interrupts disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Enable channel interrupts</description>
+                              <description>Interrupts enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>CHF</name>
-                        <description>Channel Flag</description>
+                        <description>Channel Flag\nSet when a channel event occurs</description>
                         <bitOffset>7</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No channel event has occurred</description>
+                              <description>No channel event</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>A channel event has occurred</description>
+                              <description>Channel event</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -313,7 +376,7 @@ Devices using this peripheral:
                </register>
                <register>
                   <name>CnV</name>
-                  <description>Channel (n) Value</description>
+                  <description>Channel %s Value</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
                      <field>
@@ -338,48 +401,32 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No channel event has occurred</description>
+                           <description>No channel event</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>A channel event has occurred</description>
+                           <description>Channel event</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>CH1F</name>
-                     <description>Channel 1 Flag</description>
-                     <bitOffset>1</bitOffset>
-                     <bitWidth>1</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>No channel event has occurred</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>A channel event has occurred</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="CH0F" > <name>CH1F</name> <description>Channel 1 Flag</description> <bitOffset>1</bitOffset> </field>
                   <field>
                      <name>TOF</name>
-                     <description>Timer Overflow Flag</description>
+                     <description>Timer Overflow Flag\n
+Indicates if the LPTPM counter has overflowed</description>
                      <bitOffset>8</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>LPTPM counter has not overflowed</description>
+                           <description>Not overflowed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>LPTPM counter has overflowed</description>
+                           <description>Overflowed</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -388,7 +435,8 @@ Devices using this peripheral:
             </register>
             <register>
                <name>CONF</name>
-               <description>Configuration</description>
+               <description>Configuration\n
+Action in Doze mode</description>
                <addressOffset>0x84</addressOffset>
                <fields>
                   <field>
@@ -399,12 +447,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Internal LPTPM counter continues in Doze mode</description>
+                           <description>Continues in Doze mode</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Internal LPTPM counter is paused and does not increment during Doze mode. Trigger inputs and input capture events are also ignored</description>
+                           <description>Paused in Doze mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -417,84 +465,87 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>LPTPM counter is paused and does not increment during debug mode. Trigger inputs and input capture events are also ignored</description>
+                           <description>Paused in debug mode</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>LPTPM counter continues in debug mode</description>
+                           <description>Continues in debug mode</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>GTBEEN</name>
-                     <description>Global time base enable</description>
+                     <description>Global time base enable\nSelects the timebase source</description>
                      <bitOffset>9</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>All channels use the internally generated LPTPM counter as their timebase</description>
+                           <description>Internally generated LPTPM counter</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>All channels use an externally generated global timebase as their timebase</description>
+                           <description>Externally generated timebase</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>CSOT</name>
-                     <description>Counter Start on Trigger</description>
+                     <description>Counter Start on Trigger\n
+Allows the LPTPM counter to start increment only when it a rising edge on the selected input trigger is detected</description>
                      <bitOffset>16</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>LPTPM counter starts to increment immediately, once it is enabled</description>
+                           <description>LPTPM increments immediately</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>LPTPM counter only starts to increment when it a rising edge on the selected input trigger is detected, after it has been enabled or after it has stopped due to overflow</description>
+                           <description>LPTPM start on input trigger</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>CSOO</name>
-                     <description>Counter Stop On Overflow</description>
+                     <description>Counter Stop On Overflow\n
+Controls whether LPTPM counter stops incrementing or decrementing after overflow</description>
                      <bitOffset>17</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>LPTPM counter continues incrementing or decrementing after overflow</description>
+                           <description>LPTPM continues</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>LPTPM counter stops incrementing or decrementing after overflow</description>
+                           <description>LPTPM stops on overflow</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>CROT</name>
-                     <description>Counter Reload On Trigger</description>
+                     <description>Counter Reload On Trigger\n
+Controls if the counter is reloaded due to a rising edge on the selected input trigger</description>
                      <bitOffset>18</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Counter is not reloaded due to a rising edge on the selected input trigger</description>
+                           <description>Not reloaded</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Counter is reloaded when a rising edge is detected on the selected input trigger</description>
+                           <description>Reloaded on rising edge</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

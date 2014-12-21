@@ -22,6 +22,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.19.4.240 - Added return error codes
 ;#  V4.10.4.140 - Changed Mass erase sequence (added retry etc.)
 ;#  V4.10.4     - Changed return code handling
 ;#              - Changed Mass erase reset to special-software (FDPROT etc wasn't unprotected)
@@ -187,6 +188,10 @@ proc loadSymbols {} {
    set ::BDM_CAP_PST                     0x0800  ;# Supports PST signal sensing
    set ::BDM_CAP_CDC                     0x1000  ;# Supports CDC Serial over USB interface
    set ::BDM_CAP_ARM_SWD                 0x2000  ;# Supports ARM targets via SWD
+
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
    
    return
 }
@@ -207,19 +212,23 @@ proc executeCommand {} {
       set fstat [ rb $::FTFL_FSTAT ]
       set flashBusy [expr $fstat & $::FTFL_FSTAT_CCIF]
       if [ expr $retry == 10] {
-         error "Flash busy timeout"
+         puts "Flash busy timeout"
+         return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
       }
       after 100
       incr retry
    }
    if [ expr ( $fstat & $::FTFL_FSTAT_ACCERR ) != 0 ] {
-      error "Flash access error"
+      puts "Flash access error"
+      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }
    if [ expr ( $fstat & $::FTFL_FSTAT_FPVIOL ) != 0 ] {
-      error "Flash write protect error"
+      puts "Flash write protect error"
+      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }  
    if [ expr ( $fstat & $::FTFL_FSTAT_MGSTAT0 ) != 0 ] {
-      error "Flash command failed error"
+      puts "Flash command failed error"
+      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }  
 }
 
@@ -300,6 +309,7 @@ proc massEraseTarget { } {
       }
       after 50
    }
+   
    puts "massEraseTarget{} - Applying MDM_AP_C_DEBUG_REQUEST"
    wcreg $::MDM_AP_Control $::MDM_AP_C_DEBUG_REQUEST
    rcreg $::MDM_AP_Control
@@ -325,6 +335,8 @@ proc massEraseTarget { } {
    return
 }
 
+
+
 ;######################################################################################
 ;#
 proc isUnsecure { } {
@@ -333,7 +345,7 @@ proc isUnsecure { } {
    puts [format "isUnsecure{} - MDM_AP_Status=%X" $securityValue ]
    if [ expr ( $securityValue & $::MDM_AP_ST_SYSTEM_SECURITY ) != 0 ] {
       puts "isUnsecure{} - Target is secured!"
-      error "Target is secured"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
    puts "isUnsecure{} - Target is unsecured"
    return

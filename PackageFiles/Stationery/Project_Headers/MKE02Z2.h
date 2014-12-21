@@ -2,10 +2,10 @@
  * @file     MKE02Z2.h
  *
  * @brief    CMSIS Cortex-M Peripheral Access Layer Header File for MKE02Z2.
- *           Equivalent: MKE02Z32M2, MKE02Z16M2, MKE02Z64M2
+ *           Equivalent: FRDM-KE02Z, MKE02Z32M2, MKE02Z16M2, MKE02Z64M2
  *
  * @version  V0.0
- * @date     2014/10
+ * @date     2014/12
  *
  *******************************************************************************************************/
 
@@ -20,7 +20,7 @@ extern "C" {
 /* -------------------------  Interrupt Number Definition  ------------------------ */
 
 typedef enum {
-/* --------------------  Cortex-M Processor Exceptions Numbers  ------------------- */
+/* ------------------------  Processor Exceptions Numbers  ------------------------- */
   Reset_IRQn                    = -15,   /*!<   1 Reset Vector, invoked on Power up and warm reset                                 */
   NonMaskableInt_IRQn           = -14,   /*!<   2 Non maskable Interrupt, cannot be stopped or preempted                           */
   HardFault_IRQn                = -13,   /*!<   3 Hard Fault, all classes of Fault                                                 */
@@ -100,7 +100,7 @@ extern void WDOG_IRQHandler(void);
 #define __Vendor_SysTickConfig   0
 #define __FPU_PRESENT            0
 
-#include <core_cm0plus.h>   /*!< Cortex-M processor and core peripherals                              */
+#include <core_cm0plus.h>   /*!< Processor and core peripherals */
 
 #ifndef __IO
 #define __IO volatile 
@@ -587,9 +587,9 @@ typedef struct {                                /*!<       FGPIOA Structure     
    __O  uint32_t  PSOR;                         /*!< 0004: Port Set Output Register                                     */
    __O  uint32_t  PCOR;                         /*!< 0008: Port Clear Output Register                                   */
    __O  uint32_t  PTOR;                         /*!< 000C: Port Toggle Output Register                                  */
-   __IO uint32_t  PDIR;                         /*!< 0010: Port Data Input Register                                     */
+   __I  uint32_t  PDIR;                         /*!< 0010: Port Data Input Register                                     */
    __IO uint32_t  PDDR;                         /*!< 0014: Port Data Direction Register                                 */
-   __I  uint32_t  PIDR;                         /*!< 0018: Port Input Disable Register                                  */
+   __IO uint32_t  PIDR;                         /*!< 0018: Port Input Disable Register                                  */
 } FGPIOA_Type;
 
 
@@ -720,9 +720,9 @@ typedef struct {                                /*!<       FGPIOB Structure     
    __O  uint32_t  PSOR;                         /*!< 0004: Port Set Output Register                                     */
    __O  uint32_t  PCOR;                         /*!< 0008: Port Clear Output Register                                   */
    __O  uint32_t  PTOR;                         /*!< 000C: Port Toggle Output Register                                  */
-   __IO uint32_t  PDIR;                         /*!< 0010: Port Data Input Register                                     */
+   __I  uint32_t  PDIR;                         /*!< 0010: Port Data Input Register                                     */
    __IO uint32_t  PDDR;                         /*!< 0014: Port Data Direction Register                                 */
-   __I  uint32_t  PIDR;                         /*!< 0018: Port Input Disable Register                                  */
+   __IO uint32_t  PIDR;                         /*!< 0018: Port Input Disable Register                                  */
 } FGPIOB_Type;
 
 
@@ -853,8 +853,8 @@ typedef struct {                                /*!<       FTM0 Structure       
    __IO uint32_t  CNT;                          /*!< 0004: Counter                                                      */
    __IO uint32_t  MOD;                          /*!< 0008: Modulo                                                       */
    struct { /* (cluster) */                     /*!< 000C: (size=0x0010, 16)                                            */
-      __IO uint32_t  CnSC;                      /*!< 000C: Channel %s Status and Control                                */
-      __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
+      __IO uint32_t  CnSC;                      /*!< 000C: Channel  Status and Control                                  */
+      __IO uint32_t  CnV;                       /*!< 0010: Channel  Value                                               */
    } CONTROLS[2];
    __I  uint32_t  RESERVED0[20];                /*!< 001C:                                                              */
    __IO uint32_t  EXTTRIG;                      /*!< 006C: FTM External Trigger                                         */
@@ -891,10 +891,16 @@ typedef struct {                                /*!<       FTM0 Structure       
 #define FTM_MOD_MOD(x)                           (((x)<<FTM_MOD_MOD_SHIFT)&FTM_MOD_MOD_MASK)         /*!< FTM0_MOD                                */
 
 /* ------- FTM0_CnSC                                ------ */
+#define FTM_CnSC_ELS_MASK                        (0x03UL << FTM_CnSC_ELS_SHIFT)                      /*!< FTM0_CnSC: ELS Mask                     */
+#define FTM_CnSC_ELS_SHIFT                       2                                                   /*!< FTM0_CnSC: ELS Position                 */
+#define FTM_CnSC_ELS(x)                          (((x)<<FTM_CnSC_ELS_SHIFT)&FTM_CnSC_ELS_MASK)       /*!< FTM0_CnSC                               */
 #define FTM_CnSC_ELSA_MASK                       (0x01UL << FTM_CnSC_ELSA_SHIFT)                     /*!< FTM0_CnSC: ELSA Mask                    */
 #define FTM_CnSC_ELSA_SHIFT                      2                                                   /*!< FTM0_CnSC: ELSA Position                */
 #define FTM_CnSC_ELSB_MASK                       (0x01UL << FTM_CnSC_ELSB_SHIFT)                     /*!< FTM0_CnSC: ELSB Mask                    */
 #define FTM_CnSC_ELSB_SHIFT                      3                                                   /*!< FTM0_CnSC: ELSB Position                */
+#define FTM_CnSC_MS_MASK                         (0x03UL << FTM_CnSC_MS_SHIFT)                       /*!< FTM0_CnSC: MS Mask                      */
+#define FTM_CnSC_MS_SHIFT                        4                                                   /*!< FTM0_CnSC: MS Position                  */
+#define FTM_CnSC_MS(x)                           (((x)<<FTM_CnSC_MS_SHIFT)&FTM_CnSC_MS_MASK)         /*!< FTM0_CnSC                               */
 #define FTM_CnSC_MSA_MASK                        (0x01UL << FTM_CnSC_MSA_SHIFT)                      /*!< FTM0_CnSC: MSA Mask                     */
 #define FTM_CnSC_MSA_SHIFT                       4                                                   /*!< FTM0_CnSC: MSA Position                 */
 #define FTM_CnSC_MSB_MASK                        (0x01UL << FTM_CnSC_MSB_SHIFT)                      /*!< FTM0_CnSC: MSB Mask                     */
@@ -967,8 +973,8 @@ typedef struct {                                /*!<       FTM2 Structure       
    __IO uint32_t  CNT;                          /*!< 0004: Counter                                                      */
    __IO uint32_t  MOD;                          /*!< 0008: Modulo                                                       */
    struct { /* (cluster) */                     /*!< 000C: (size=0x0030, 48)                                            */
-      __IO uint32_t  CnSC;                      /*!< 000C: Channel %s Status and Control                                */
-      __IO uint32_t  CnV;                       /*!< 0010: Channel %s Value                                             */
+      __IO uint32_t  CnSC;                      /*!< 000C: Channel  Status and Control                                  */
+      __IO uint32_t  CnV;                       /*!< 0010: Channel  Value                                               */
    } CONTROLS[6];
    __I  uint32_t  RESERVED0[4];                 /*!< 003C:                                                              */
    __IO uint32_t  CNTIN;                        /*!< 004C: Counter Initial Value                                        */
@@ -1146,6 +1152,20 @@ typedef struct {                                /*!<       FTM2 Structure       
 #define FTM_COMBINE_SYNCEN2_SHIFT                21                                                  /*!< FTM2_COMBINE: SYNCEN2 Position          */
 #define FTM_COMBINE_FAULTEN2_MASK                (0x01UL << FTM_COMBINE_FAULTEN2_SHIFT)              /*!< FTM2_COMBINE: FAULTEN2 Mask             */
 #define FTM_COMBINE_FAULTEN2_SHIFT               22                                                  /*!< FTM2_COMBINE: FAULTEN2 Position         */
+#define FTM_COMBINE_COMBINE3_MASK                (0x01UL << FTM_COMBINE_COMBINE3_SHIFT)              /*!< FTM2_COMBINE: COMBINE3 Mask             */
+#define FTM_COMBINE_COMBINE3_SHIFT               24                                                  /*!< FTM2_COMBINE: COMBINE3 Position         */
+#define FTM_COMBINE_COMP3_MASK                   (0x01UL << FTM_COMBINE_COMP3_SHIFT)                 /*!< FTM2_COMBINE: COMP3 Mask                */
+#define FTM_COMBINE_COMP3_SHIFT                  25                                                  /*!< FTM2_COMBINE: COMP3 Position            */
+#define FTM_COMBINE_DECAPEN3_MASK                (0x01UL << FTM_COMBINE_DECAPEN3_SHIFT)              /*!< FTM2_COMBINE: DECAPEN3 Mask             */
+#define FTM_COMBINE_DECAPEN3_SHIFT               26                                                  /*!< FTM2_COMBINE: DECAPEN3 Position         */
+#define FTM_COMBINE_DECAP3_MASK                  (0x01UL << FTM_COMBINE_DECAP3_SHIFT)                /*!< FTM2_COMBINE: DECAP3 Mask               */
+#define FTM_COMBINE_DECAP3_SHIFT                 27                                                  /*!< FTM2_COMBINE: DECAP3 Position           */
+#define FTM_COMBINE_DTEN3_MASK                   (0x01UL << FTM_COMBINE_DTEN3_SHIFT)                 /*!< FTM2_COMBINE: DTEN3 Mask                */
+#define FTM_COMBINE_DTEN3_SHIFT                  28                                                  /*!< FTM2_COMBINE: DTEN3 Position            */
+#define FTM_COMBINE_SYNCEN3_MASK                 (0x01UL << FTM_COMBINE_SYNCEN3_SHIFT)               /*!< FTM2_COMBINE: SYNCEN3 Mask              */
+#define FTM_COMBINE_SYNCEN3_SHIFT                29                                                  /*!< FTM2_COMBINE: SYNCEN3 Position          */
+#define FTM_COMBINE_FAULTEN3_MASK                (0x01UL << FTM_COMBINE_FAULTEN3_SHIFT)              /*!< FTM2_COMBINE: FAULTEN3 Mask             */
+#define FTM_COMBINE_FAULTEN3_SHIFT               30                                                  /*!< FTM2_COMBINE: FAULTEN3 Position         */
 
 /* ------- FTM2_DEADTIME                            ------ */
 #define FTM_DEADTIME_DTVAL_MASK                  (0x3FUL << FTM_DEADTIME_DTVAL_SHIFT)                /*!< FTM2_DEADTIME: DTVAL Mask               */
@@ -2018,16 +2038,6 @@ typedef struct {                                /*!<       NV Structure         
 #define NV_FSEC_KEYEN(x)                         (((x)<<NV_FSEC_KEYEN_SHIFT)&NV_FSEC_KEYEN_MASK)     /*!< NV_FSEC                                 */
 
 /* ------- NV_FOPT                                  ------ */
-#define NV_FOPT_LPBOOT0_MASK                     (0x01UL << NV_FOPT_LPBOOT0_SHIFT)                   /*!< NV_FOPT: LPBOOT0 Mask                   */
-#define NV_FOPT_LPBOOT0_SHIFT                    0                                                   /*!< NV_FOPT: LPBOOT0 Position               */
-#define NV_FOPT_NMI_DIS_MASK                     (0x01UL << NV_FOPT_NMI_DIS_SHIFT)                   /*!< NV_FOPT: NMI_DIS Mask                   */
-#define NV_FOPT_NMI_DIS_SHIFT                    2                                                   /*!< NV_FOPT: NMI_DIS Position               */
-#define NV_FOPT_RESET_PIN_CFG_MASK               (0x01UL << NV_FOPT_RESET_PIN_CFG_SHIFT)             /*!< NV_FOPT: RESET_PIN_CFG Mask             */
-#define NV_FOPT_RESET_PIN_CFG_SHIFT              3                                                   /*!< NV_FOPT: RESET_PIN_CFG Position         */
-#define NV_FOPT_LPBOOT1_MASK                     (0x01UL << NV_FOPT_LPBOOT1_SHIFT)                   /*!< NV_FOPT: LPBOOT1 Mask                   */
-#define NV_FOPT_LPBOOT1_SHIFT                    4                                                   /*!< NV_FOPT: LPBOOT1 Position               */
-#define NV_FOPT_FAST_INIT_MASK                   (0x01UL << NV_FOPT_FAST_INIT_SHIFT)                 /*!< NV_FOPT: FAST_INIT Mask                 */
-#define NV_FOPT_FAST_INIT_SHIFT                  5                                                   /*!< NV_FOPT: FAST_INIT Position             */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'NV' Register Access macros                          ----------- */
@@ -2054,7 +2064,7 @@ typedef struct {                                /*!<       NV Structure         
  * @brief Oscillator
  */
 typedef struct {                                /*!<       OSC Structure                                                */
-   __IO uint8_t   CR;                           /*!< 0000: OSC Control Register                                         */
+   __IO uint8_t   CR;                           /*!< 0000: Control Register                                             */
 } OSC_Type;
 
 
@@ -2074,7 +2084,7 @@ typedef struct {                                /*!<       OSC Structure        
 #define OSC_CR_OSCOS_SHIFT                       4                                                   /*!< OSC_CR: OSCOS Position                  */
 #define OSC_CR_OSCSTEN_MASK                      (0x01UL << OSC_CR_OSCSTEN_SHIFT)                    /*!< OSC_CR: OSCSTEN Mask                    */
 #define OSC_CR_OSCSTEN_SHIFT                     5                                                   /*!< OSC_CR: OSCSTEN Position                */
-#define OSC_CR_OSCEN_MASK                        (0x00UL << OSC_CR_OSCEN_SHIFT)                      /*!< OSC_CR: OSCEN Mask                      */
+#define OSC_CR_OSCEN_MASK                        (0x01UL << OSC_CR_OSCEN_SHIFT)                      /*!< OSC_CR: OSCEN Mask                      */
 #define OSC_CR_OSCEN_SHIFT                       7                                                   /*!< OSC_CR: OSCEN Position                  */
 
 /* -------------------------------------------------------------------------------- */
@@ -2554,14 +2564,14 @@ typedef struct {                                /*!<       SIM Structure        
  * @brief Serial Peripheral Interface
  */
 typedef struct {                                /*!<       SPI0 Structure                                               */
-   __IO uint8_t   C1;                           /*!< 0000: SPI control register 1                                       */
-   __IO uint8_t   C2;                           /*!< 0001: SPI control register 2                                       */
+   __IO uint8_t   C1;                           /*!< 0000: Control register 1                                           */
+   __IO uint8_t   C2;                           /*!< 0001: Control register 2                                           */
    __IO uint8_t   BR;                           /*!< 0002: SPI baud rate register BAUD = (Bus Clock)/Prescaler/Baud Rate Divisor */
-   __I  uint8_t   S;                            /*!< 0003: SPI status register                                          */
+   __I  uint8_t   S;                            /*!< 0003: Status register                                              */
    __I  uint8_t   RESERVED0;                    /*!< 0004:                                                              */
-   __IO uint8_t   D;                            /*!< 0005: SPI data register                                            */
+   __IO uint8_t   D;                            /*!< 0005: Data register                                                */
    __I  uint8_t   RESERVED1;                    /*!< 0006:                                                              */
-   __IO uint8_t   M;                            /*!< 0007: SPI match register:                                          */
+   __IO uint8_t   M;                            /*!< 0007: Match register:                                              */
 } SPI0_Type;
 
 
@@ -2847,9 +2857,9 @@ typedef struct {                                /*!<       UART0 Structure      
 #define UART_C3_R8_SHIFT                         7                                                   /*!< UART0_C3: R8 Position                   */
 
 /* ------- UART0_D                                  ------ */
-#define UART_D_DATA_MASK                         (0xFFUL << UART_D_DATA_SHIFT)                       /*!< UART0_D: DATA Mask                      */
-#define UART_D_DATA_SHIFT                        0                                                   /*!< UART0_D: DATA Position                  */
-#define UART_D_DATA(x)                           (((x)<<UART_D_DATA_SHIFT)&UART_D_DATA_MASK)         /*!< UART0_D                                 */
+#define UART_D_RT_MASK                           (0xFFUL << UART_D_RT_SHIFT)                         /*!< UART0_D: RT Mask                        */
+#define UART_D_RT_SHIFT                          0                                                   /*!< UART0_D: RT Position                    */
+#define UART_D_RT(x)                             (((x)<<UART_D_RT_SHIFT)&UART_D_RT_MASK)             /*!< UART0_D                                 */
 
 /* -------------------------------------------------------------------------------- */
 /* -----------     'UART0' Register Access macros                       ----------- */

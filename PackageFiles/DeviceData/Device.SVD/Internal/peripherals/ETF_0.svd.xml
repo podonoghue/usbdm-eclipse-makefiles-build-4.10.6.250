@@ -77,7 +77,12 @@ Devices using this peripheral:
          </addressBlock>
          <addressBlock>
             <offset>0xFB0</offset>
-            <size>0xC</size>
+            <size>0x4</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <offset>0xFB4</offset>
+            <size>0x8</size>
             <usage>registers</usage>
          </addressBlock>
          <addressBlock>

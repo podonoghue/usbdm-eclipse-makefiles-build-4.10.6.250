@@ -8,24 +8,20 @@
 <!ENTITY CoreDebug    SYSTEM "peripherals/CoreDebug.svd.xml">
 <!ENTITY DWT          SYSTEM "peripherals/DWT_CM0Plus.svd.xml">
 <!ENTITY FGPIOA       SYSTEM "peripherals/FGPIOA_0.svd.xml">
-<!ENTITY FGPIOB       SYSTEM "peripherals/FGPIOB_from_FGPIOA_0.svd.xml">
 <!ENTITY FTFA         SYSTEM "peripherals/FTFA.svd.xml">
-<!ENTITY GPIOA        SYSTEM "peripherals/GPIOA_from_FGPIOA_0.svd.xml">
-<!ENTITY GPIOB        SYSTEM "peripherals/GPIOB_from_GPIOA_0.svd.xml">
 <!ENTITY I2C0         SYSTEM "peripherals/I2C0_MKL_SMB.svd.xml">
-<!ENTITY LLWU         SYSTEM "peripherals/LLWU_MKL_0.svd.xml">
+<!ENTITY LLWU         SYSTEM "peripherals/LLWU_MKL_3.svd.xml">
 <!ENTITY LPTMR0       SYSTEM "peripherals/LPTMR0_0.svd.xml">
-<!ENTITY LPUART       SYSTEM "peripherals/LPUART_MKL03.svd.xml">
-<!ENTITY MCG          SYSTEM "peripherals/MCG_LITE.svd.xml">
+<!ENTITY LPUART0      SYSTEM "peripherals/LPUART0_MKLx3.svd.xml">
+<!ENTITY MCG          SYSTEM "peripherals/MCG_LITE_32kHz.svd.xml">
 <!ENTITY MCM          SYSTEM "peripherals/MCM_MKL_03.svd.xml">
 <!ENTITY MTB          SYSTEM "peripherals/MTB_0.svd.xml">
 <!ENTITY MTBDWT       SYSTEM "peripherals/MTBDWT_MKL.svd.xml">
-<!ENTITY NV           SYSTEM "peripherals/NV_FTFA.svd.xml">
+<!ENTITY NV           SYSTEM "peripherals/NV_FTFA_boot.svd.xml">
 <!ENTITY NVIC         SYSTEM "peripherals/NVIC_MKL.svd.xml">
 <!ENTITY OSC0         SYSTEM "peripherals/OSC_0.svd.xml">
 <!ENTITY PMC          SYSTEM "peripherals/PMC_0.svd.xml">
 <!ENTITY PORTA        SYSTEM "peripherals/PORTA_MKL.svd.xml">
-<!ENTITY PORTB        SYSTEM "peripherals/PORTB_from_PORTA_0.svd.xml">
 <!ENTITY RCM          SYSTEM "peripherals/RCM_MKL_BOOT.svd.xml">
 <!ENTITY ROM          SYSTEM "peripherals/ROM_MKL.svd.xml">
 <!ENTITY RTC          SYSTEM "peripherals/RTC.svd.xml">
@@ -35,7 +31,6 @@
 <!ENTITY SPI0         SYSTEM "peripherals/SPI0_MKL03.svd.xml">
 <!ENTITY SYST         SYSTEM "peripherals/SysTick_0.svd.xml">
 <!ENTITY TPM0         SYSTEM "peripherals/TPM0_2CH.svd.xml">
-<!ENTITY TPM1         SYSTEM "peripherals/TPM1_from_TPM0_0.svd.xml">
 ]>
 <device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD_Schema_1_1.xsd">
    <name>MKL03Z4</name>
@@ -59,14 +54,14 @@
 &CoreDebug;
 &DWT;
 &FGPIOA;
-&FGPIOB;
+<peripheral derivedFrom="FGPIOA"><name>FGPIOB</name><prependToName>FGPIOB</prependToName><baseAddress>0xF80FF040</baseAddress></peripheral>
 &FTFA;
-&GPIOA;
-&GPIOB;
+<peripheral derivedFrom="FGPIOA"><name>GPIOA</name><prependToName>GPIOA</prependToName><baseAddress>0x400FF000</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOB</name><prependToName>GPIOB</prependToName><baseAddress>0x400FF040</baseAddress></peripheral>
 &I2C0;
 &LLWU;
 &LPTMR0;
-&LPUART;
+&LPUART0;
 &MCG;
 &MCM;
 &MTB;
@@ -76,7 +71,7 @@
 &OSC0;
 &PMC;
 &PORTA;
-&PORTB;
+<peripheral derivedFrom="PORTA"><name>PORTB</name><prependToName>PORTB</prependToName><baseAddress>0x4004A000</baseAddress></peripheral>
 &RCM;
 &ROM;
 &RTC;
@@ -86,7 +81,7 @@
 &SPI0;
 &SYST;
 &TPM0;
-&TPM1;
+<peripheral derivedFrom="TPM0"><name>TPM1</name><prependToName>TPM1</prependToName><baseAddress>0x40039000</baseAddress></peripheral>
    </peripherals>
    <vendorExtensions>
 &VECTOR_TABLE;

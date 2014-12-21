@@ -10,18 +10,8 @@
 <!ENTITY DMAMUX       SYSTEM "peripherals/DMAMUX_4CH.svd.xml">
 <!ENTITY DWT          SYSTEM "peripherals/DWT_CM0Plus.svd.xml">
 <!ENTITY FGPIOA       SYSTEM "peripherals/FGPIOA_0.svd.xml">
-<!ENTITY FGPIOB       SYSTEM "peripherals/FGPIOB_from_FGPIOA_0.svd.xml">
-<!ENTITY FGPIOC       SYSTEM "peripherals/FGPIOC_from_FGPIOA_0.svd.xml">
-<!ENTITY FGPIOD       SYSTEM "peripherals/FGPIOD_from_FGPIOA_0.svd.xml">
-<!ENTITY FGPIOE       SYSTEM "peripherals/FGPIOE_from_FGPIOA_0.svd.xml">
 <!ENTITY FTFA         SYSTEM "peripherals/FTFA.svd.xml">
-<!ENTITY GPIOA        SYSTEM "peripherals/GPIOA_from_FGPIOA_0.svd.xml">
-<!ENTITY GPIOB        SYSTEM "peripherals/GPIOB_from_GPIOA_0.svd.xml">
-<!ENTITY GPIOC        SYSTEM "peripherals/GPIOC_from_GPIOA_0.svd.xml">
-<!ENTITY GPIOD        SYSTEM "peripherals/GPIOD_from_GPIOA_0.svd.xml">
-<!ENTITY GPIOE        SYSTEM "peripherals/GPIOE_from_GPIOA_0.svd.xml">
 <!ENTITY I2C0         SYSTEM "peripherals/I2C0_MKL_SMB.svd.xml">
-<!ENTITY I2C1         SYSTEM "peripherals/I2C1_from_I2C0_0.svd.xml">
 <!ENTITY LCD          SYSTEM "peripherals/LCD_2.svd.xml">
 <!ENTITY LLWU         SYSTEM "peripherals/LLWU_MKL_1.svd.xml">
 <!ENTITY LPTMR0       SYSTEM "peripherals/LPTMR0_0.svd.xml">
@@ -35,10 +25,6 @@
 <!ENTITY PIT          SYSTEM "peripherals/PIT_2CH_LTMR64.svd.xml">
 <!ENTITY PMC          SYSTEM "peripherals/PMC_0.svd.xml">
 <!ENTITY PORTA        SYSTEM "peripherals/PORTA_MKL.svd.xml">
-<!ENTITY PORTB        SYSTEM "peripherals/PORTB_from_PORTA_0.svd.xml">
-<!ENTITY PORTC        SYSTEM "peripherals/PORTC_from_PORTA_0.svd.xml">
-<!ENTITY PORTD        SYSTEM "peripherals/PORTD_from_PORTA_0.svd.xml">
-<!ENTITY PORTE        SYSTEM "peripherals/PORTE_from_PORTA_0.svd.xml">
 <!ENTITY RCM          SYSTEM "peripherals/RCM_MKL_LOL.svd.xml">
 <!ENTITY ROM          SYSTEM "peripherals/ROM_MKL.svd.xml">
 <!ENTITY RTC          SYSTEM "peripherals/RTC.svd.xml">
@@ -46,14 +32,11 @@
 <!ENTITY SIM          SYSTEM "peripherals/SIM_MKL34Z4.svd.xml">
 <!ENTITY SMC          SYSTEM "peripherals/SMC_MKL.svd.xml">
 <!ENTITY SPI0         SYSTEM "peripherals/SPI0_MKL_FIFO.svd.xml">
-<!ENTITY SPI1         SYSTEM "peripherals/SPI1_from_SPI0_1.svd.xml">
 <!ENTITY SYST         SYSTEM "peripherals/SysTick_0.svd.xml">
 <!ENTITY TPM0         SYSTEM "peripherals/TPM0_6CH.svd.xml">
 <!ENTITY TPM1         SYSTEM "peripherals/TPM1_2CH.svd.xml">
-<!ENTITY TPM2         SYSTEM "peripherals/TPM2_from_TPM1_0.svd.xml">
 <!ENTITY UART0        SYSTEM "peripherals/UART0_MKL.svd.xml">
 <!ENTITY UART1        SYSTEM "peripherals/UART1_MKL.svd.xml">
-<!ENTITY UART2        SYSTEM "peripherals/UART2_from_UART1_0.svd.xml">
 ]>
 <device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD_Schema_1_1.xsd">
    <name>MKL34Z4</name>
@@ -79,18 +62,18 @@
 &DMAMUX;
 &DWT;
 &FGPIOA;
-&FGPIOB;
-&FGPIOC;
-&FGPIOD;
-&FGPIOE;
+<peripheral derivedFrom="FGPIOA"><name>FGPIOB</name><prependToName>FGPIOB</prependToName><baseAddress>0xF80FF040</baseAddress></peripheral>
+<peripheral derivedFrom="FGPIOA"><name>FGPIOC</name><prependToName>FGPIOC</prependToName><baseAddress>0xF80FF080</baseAddress></peripheral>
+<peripheral derivedFrom="FGPIOA"><name>FGPIOD</name><prependToName>FGPIOD</prependToName><baseAddress>0xF80FF0C0</baseAddress></peripheral>
+<peripheral derivedFrom="FGPIOA"><name>FGPIOE</name><prependToName>FGPIOE</prependToName><baseAddress>0xF80FF100</baseAddress></peripheral>
 &FTFA;
-&GPIOA;
-&GPIOB;
-&GPIOC;
-&GPIOD;
-&GPIOE;
+<peripheral derivedFrom="FGPIOA"><name>GPIOA</name><prependToName>GPIOA</prependToName><baseAddress>0x400FF000</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOB</name><prependToName>GPIOB</prependToName><baseAddress>0x400FF040</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOC</name><prependToName>GPIOC</prependToName><baseAddress>0x400FF080</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOD</name><prependToName>GPIOD</prependToName><baseAddress>0x400FF0C0</baseAddress></peripheral>
+<peripheral derivedFrom="GPIOA"><name>GPIOE</name><prependToName>GPIOE</prependToName><baseAddress>0x400FF100</baseAddress></peripheral>
 &I2C0;
-&I2C1;
+<peripheral derivedFrom="I2C0"><name>I2C1</name><prependToName>I2C1</prependToName><baseAddress>0x40067000</baseAddress></peripheral>
 &LCD;
 &LLWU;
 &LPTMR0;
@@ -104,10 +87,10 @@
 &PIT;
 &PMC;
 &PORTA;
-&PORTB;
-&PORTC;
-&PORTD;
-&PORTE;
+<peripheral derivedFrom="PORTA"><name>PORTB</name><prependToName>PORTB</prependToName><baseAddress>0x4004A000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTC</name><prependToName>PORTC</prependToName><baseAddress>0x4004B000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTD</name><prependToName>PORTD</prependToName><baseAddress>0x4004C000</baseAddress></peripheral>
+<peripheral derivedFrom="PORTA"><name>PORTE</name><prependToName>PORTE</prependToName><baseAddress>0x4004D000</baseAddress></peripheral>
 &RCM;
 &ROM;
 &RTC;
@@ -115,14 +98,14 @@
 &SIM;
 &SMC;
 &SPI0;
-&SPI1;
+<peripheral derivedFrom="SPI0"><name>SPI1</name><prependToName>SPI1</prependToName><baseAddress>0x40077000</baseAddress></peripheral>
 &SYST;
 &TPM0;
 &TPM1;
-&TPM2;
+<peripheral derivedFrom="TPM1"><name>TPM2</name><prependToName>TPM2</prependToName><baseAddress>0x4003A000</baseAddress></peripheral>
 &UART0;
 &UART1;
-&UART2;
+<peripheral derivedFrom="UART1"><name>UART2</name><prependToName>UART2</prependToName><baseAddress>0x4006C000</baseAddress></peripheral>
    </peripherals>
    <vendorExtensions>
 &VECTOR_TABLE;

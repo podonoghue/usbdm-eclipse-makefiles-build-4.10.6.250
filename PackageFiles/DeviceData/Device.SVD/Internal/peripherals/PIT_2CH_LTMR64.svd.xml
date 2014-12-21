@@ -10,6 +10,7 @@ Devices using this peripheral:
       MKL26Z4
       MKL34Z4
       MKL36Z4
+      MKL43Z4
       MKL46Z4
 -->
       <peripheral>
@@ -46,36 +47,38 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>FRZ</name>
-                     <description>Freeze</description>
+                     <description>Freeze\n
+Determines if timers are stopped in Debug mode</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Timers continue to run in Debug mode</description>
+                           <description>Timers run in Debug</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Timers are stopped in Debug mode</description>
+                           <description>Timers stop in Debug</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>MDIS</name>
-                     <description>Module Disable</description>
+                     <description>Module Disable\n
+Disabled PIT module clock</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Clock for PIT Timers is enabled</description>
+                           <description>Clock enabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Clock for PIT Timers is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -121,7 +124,7 @@ Devices using this peripheral:
                   <fields>
                      <field>
                         <name>TSV</name>
-                        <description>Timer Start Value</description>
+                        <description>Start Value</description>
                         <bitOffset>0</bitOffset>
                      </field>
                   </fields>
@@ -134,7 +137,7 @@ Devices using this peripheral:
                   <fields>
                      <field>
                         <name>TVL</name>
-                        <description>Current Timer Value</description>
+                        <description>Current Value</description>
                         <bitOffset>0</bitOffset>
                      </field>
                   </fields>
@@ -152,48 +155,51 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Timer n is disabled</description>
+                              <description>Timer disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Timer n is enabled</description>
+                              <description>Timer enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>TIE</name>
-                        <description>Timer Interrupt Enable</description>
+                        <description>Timer Interrupt Enable\n
+Enables interrupt requests from Timer</description>
                         <bitOffset>1</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Interrupt requests from Timer n are disabled</description>
+                              <description>Interrupt disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Interrupt will be requested whenever TIF is set</description>
+                              <description>Interrupt enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>CHN</name>
-                        <description>Chain Mode</description>
+                        <description>Chain Mode\n
+Allows this timer to bee chained to the previous timer\n
+For example, for Channel 2, if this field is set, Timer 2 is chained to Timer 1</description>
                         <bitOffset>2</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Timer is not chained</description>
+                              <description>Timer not chained</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Timer is chained to previous timer. For example, for Channel 2, if this field is set, Timer 2 is chained to Timer 1</description>
+                              <description>Timer chained</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -213,7 +219,7 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Timeout has not yet occurred</description>
+                              <description>Timeout not occurred</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>

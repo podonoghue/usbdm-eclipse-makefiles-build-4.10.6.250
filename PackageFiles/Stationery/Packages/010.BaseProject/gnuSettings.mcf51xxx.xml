@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0">
+
+   <!-- GNU Build options Coldfire MCF51 -->
+   <projectActionList id="gnuSettings.mcf51" root="usbdm_resource_path/Stationery/CFV1/">
+      <applyWhen>
+         <or>
+            <deviceFamilyIs>CFV1</deviceFamilyIs>
+            <deviceFamilyIs>CFV1Plus</deviceFamilyIs>
+         </or>
+      </applyWhen>
+      <projectOption id="net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu">
+         <value>net.sourceforge.usbdm.cdt.coldfire.toolchain.mcpu.51</value>
+      </projectOption>
+      <projectOption id="net.sourceforge.usbdm.cdt.arm.toolchain.buildtools">
+         <value>$(buildToolId)</value>
+      </projectOption>
+      <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile">
+         <value>$(linkerFile)</value>
+      </projectOption>
+      <projectOption id="net.sourceforge.usbdm.cdt.toolchain.cpp.linker.linkerFile">
+         <value>$(linkerFile)</value>
+      </projectOption>
+      <projectOption id="gnu.c.link.option.paths">
+         <value>&quot;${ProjDirPath}/Project_Settings/Linker_Files&quot;</value>
+      </projectOption>
+      <projectOption id="gnu.cpp.link.option.paths">
+         <value>&quot;${ProjDirPath}/Project_Settings/Linker_Files&quot;</value>
+      </projectOption>
+   </projectActionList>
+
+</root>

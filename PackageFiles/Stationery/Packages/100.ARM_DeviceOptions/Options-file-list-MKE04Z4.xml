@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<!-- Cortex-M4 CMSIS RTOS -->
+<root version="1.0">
+   <!-- Extra Optional files for MKE04 -->
+   <projectActionList id="Options-file-list-MKE04Z4">
+      <applyWhen>
+         <deviceSubfamilyIs>MKE04Z4</deviceSubfamilyIs>
+      </applyWhen>
+      <variable id="Clock-setup-MKE04" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="UART-setup-MKE04" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
+      <condition variable="Clock-setup-MKE04">
+         <copy source="Startup_Code/clock-MKE0x.c" target="Startup_Code/clock.c" />
+         <copy source="Project_Headers/clock_configure-MKE04.h" target="Project_Headers/clock_configure.h" />
+      </condition>
+      <condition variable="UART-setup-MKE04">
+         <copy source="Startup_Code/uart-mke.c" target="Startup_Code/uart.c" />
+         <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
+      </condition>
+   </projectActionList>
+</root>

@@ -56,12 +56,12 @@ any very-low-power mode (VLPR, VLPW, and VLPS)</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>VLPR, VLPW and VLPS are not allowed</description>
+                           <description>VLPR/VLPW/VLPS not allowed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>VLPR, VLPW and VLPS are allowed</description>
+                           <description>VLPR/VLPW/VLPS allowed</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -78,10 +78,9 @@ any very-low-power mode (VLPR, VLPW, and VLPS)</description>
                   <field>
                      <name>STOPM</name>
                      <description>Stop Mode Control\n
-When written, controls entry into the selected stop mode when Sleep-Now or Sleep-On-Exit mode is
-entered with SLEEPDEEP=1 . Writes to this field are blocked if the protection level has not been enabled
-using the PMPROT register. After any system reset, this field is cleared by hardware on any successful
-write to the PMPROT register</description>
+When written, controls entry into the selected stop mode when Sleep-Now or Sleep-On-Exit mode is entered with SLEEPDEEP=1.\n
+Writes to this field are blocked if the protection level has not been enabled using the PMPROT register.\n
+After any system reset, this field is cleared by hardware on any successful write to the PMPROT register</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>3</bitWidth>
                      <enumeratedValues>
@@ -117,7 +116,7 @@ write to the PMPROT register</description>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b110</name>
-                           <description>Reseved</description>
+                           <description>Reserved</description>
                            <value>0b110</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -130,21 +129,20 @@ write to the PMPROT register</description>
                   <field>
                      <name>STOPA</name>
                      <description>Stop Aborted\n
-When set, this read-only status field indicates an interrupt or reset occured during the previous stop mode
-entry sequence, preventing the system from entering that mode. This field is cleared by hardware at the
-beginning of any stop mode entry sequence and is set if the sequence was aborted</description>
+This status field indicates an interrupt or reset occurred during the previous stop mode entry sequence, 
+preventing the system from entering that mode</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The previous stop mode entry was successsful</description>
+                           <description>Stop mode entry successful</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The previous stop mode entry was aborted</description>
+                           <description>Stop mode entry aborted</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -152,9 +150,9 @@ beginning of any stop mode entry sequence and is set if the sequence was aborted
                   <field>
                      <name>RUNM</name>
                      <description>Run Mode Control\n
-When written, causes entry into the selected run mode. Writes to this field are blocked if the protection
-level has not been enabled using the PMPROT register. This field is cleared by hardware on any exit to
-normal RUN mode</description>
+When written, causes entry into the selected run mode.\n
+Writes to this field are blocked if the protection level has not been enabled using the PMPROT register.\n
+This field is cleared by hardware on any exit to normal RUN mode</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -242,18 +240,18 @@ This field controls which VLLS sub-mode to enter if STOPM=VLLSx</description>
                   <field>
                      <name>PORPO</name>
                      <description>POR Power Option\n
-This bit controls whether the POR detect circuit is enabled in VLLS0 mode</description>
+Controls whether the POR detect circuit (for brown-out detection) is enabled in VLLS0 mode</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>POR detect circuit is enabled in VLLS0</description>
+                           <description>POR detect enabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>POR detect circuit is disabled in VLLS0</description>
+                           <description>POR detect disabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -300,7 +298,7 @@ These bits control whether a Partial Stop mode is entered when STOPM=STOP</descr
                <fields>
                   <field>
                      <name>PMSTAT</name>
-                     <description>Power Mode Status\n
+                     <description>Power Mode Status\nIndicates current power mode\n
 When debug is enabled, the PMSTAT will not update to STOP or VLPS\n
 When a PSTOP mode is enabled, the PMSTAT will not update to STOP or VLPS</description>
                      <bitOffset>0</bitOffset>
@@ -308,42 +306,42 @@ When a PSTOP mode is enabled, the PMSTAT will not update to STOP or VLPS</descri
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00000001</name>
-                           <description>Current power mode is RUN</description>
+                           <description>RUN</description>
                            <value>0b00000001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b00000010</name>
-                           <description>Current power mode is STOP</description>
+                           <description>STOP</description>
                            <value>0b00000010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b00000100</name>
-                           <description>Current power mode is VLPR</description>
+                           <description>VLPR</description>
                            <value>0b00000100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b00001000</name>
-                           <description>Current power mode is VLPW</description>
+                           <description>VLPW</description>
                            <value>0b00001000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b00010000</name>
-                           <description>Current power mode is VLPS</description>
+                           <description>VLPS</description>
                            <value>0b00010000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b00100000</name>
-                           <description>Current power mode is LLS</description>
+                           <description>LLS</description>
                            <value>0b00100000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01000000</name>
-                           <description>Current power mode is VLLS</description>
+                           <description>VLLS</description>
                            <value>0b01000000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10000000</name>
-                           <description>Current power mode is HSRUN</description>
+                           <description>HSRUN</description>
                            <value>0b10000000</value>
                         </enumeratedValue>
                      </enumeratedValues>

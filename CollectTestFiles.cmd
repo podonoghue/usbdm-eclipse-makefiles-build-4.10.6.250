@@ -18,10 +18,10 @@ set BINARY_FILES=%PACKAGE_FILES%\bin\win32
 if not exist "%TEST_DIR%" mkdir "%TEST_DIR%"
 
 echo "Copying Binaries"
-xcopy /E /I /Y /Q "%BINARY_FILES%"     "%TEST_DIR%"
+xcopy /E /I /Y "%BINARY_FILES%"     "%TEST_DIR%"
 
 echo "Miscellaneous TCL files"
-xcopy /E /I /Y /Q "%PACKAGE_FILES%\Miscellaneous\"*.tcl  "%TEST_DIR%"
+xcopy /E /I /Y "%PACKAGE_FILES%\Miscellaneous\"*.tcl  "%TEST_DIR%"
 
 echo "Copying Device data"
 xcopy /S /Y /I "%DEVICE_DATA%"      "%TEST_DIR%\DeviceData"

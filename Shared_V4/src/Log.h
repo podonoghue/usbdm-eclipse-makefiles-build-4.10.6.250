@@ -1,6 +1,5 @@
-
 /*! \file
-    \brief Header file for Log.c (Logging features)
+    \brief Header file for Log.cpp (Logging features)
 */
 #ifndef _LOG_H_
 #define _LOG_H_
@@ -29,8 +28,8 @@ public:
    static void setLoggingLevel(int level) {}
    static int  getLoggingLevel() { return 0; }
    static void error(const char *format, ...) {}
-   static void warning(const char *format, ...) {}
    static void print(const char *format, ...) {}
+   static void warning(const char *format, ...) {}
    static void printq(const char *format, ...) {}
    static void printDump(unsigned const char *data,
                          unsigned int size,
@@ -59,6 +58,7 @@ private:
    const  char       *lastName;
    int                lastLogLevel;
    When               when;
+
 public:
    Logging(const char *name, When when=both);
    ~Logging();
@@ -70,10 +70,10 @@ public:
    static int  getLoggingLevel();
    static double getCurrentTime();
    static double getTimeStamp();
-   static void error(const char *format, ...);
-   static void warning(const char *format, ...);
-   static void print(const char *format, ...);
-   static void printq(const char *format, ...);
+   static void error(const char *format, ...)   __attribute__ ((format (printf, 1, 2)));
+   static void warning(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
+   static void print(const char *format, ...)   __attribute__ ((format (printf, 1, 2)));
+   static void printq(const char *format, ...)  __attribute__ ((format (printf, 1, 2)));
    static void printDump(unsigned const char *data,
                          unsigned int size,
                          unsigned int startAddress=0x0000,

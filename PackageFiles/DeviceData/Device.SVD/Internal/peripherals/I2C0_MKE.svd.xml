@@ -54,7 +54,8 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>MULT</name>
-                     <description>The MULT bits define the multiplier factor mul. This factor is used along with the SCL divider to generate the I2C baud rate</description>
+                     <description>Baud rate multiplier factor\n
+This factor is used along with the SCL divider to generate the I2C baud rate</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -91,43 +92,54 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>WUEN</name>
-                     <description>Wakeup Enable</description>
+                     <description>Wakeup Enable\n
+Controls if an interrupt is generated when address matching in low power mode</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Normal operation. No interrupt generated when address matching in low power mode</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Enables the wakeup function in low power mode</description>
+                           <description>Enabled\t- The wakeup function operates in low power mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>RSTA</name>
-                     <description>Repeat START</description>
+                     <description>Repeat START\n
+Writing a one to this bit generates a repeated START condition provided it is the current master.\n
+This bit will always be read as zero</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>write-only</access>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0bX</name>
+                           <description>Write 1 to trigger</description>
+                           <isDefault>true</isDefault>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>TXAK</name>
-                     <description>Transmit Acknowledge Enable</description>
+                     <description>Transmit Acknowledge Enable\n
+Controls if an acknowledge signal is sent to the bus on the following receiving byte (if FACK is cleared) or the current receiving byte (if FACK is set)</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>An acknowledge signal is sent to the bus on the following receiving byte (if FACK is cleared) or the current receiving byte (if FACK is set)</description>
+                           <description>Acknowledge sent</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>No acknowledge signal is sent to the bus on the following receiving data byte (if FACK is cleared) or the current receiving data byte (if FACK is set)</description>
+                           <description>No acknowledge</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -216,19 +228,20 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>RXAK</name>
-                     <description>Receive Acknowledge</description>
+                     <description>Receive Acknowledge\n
+Indicates if an acknowledge signal was received after the completion of one byte of data transmission on the bus</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Acknowledge signal was received after the completion of one byte of data transmission on the bus</description>
+                           <description>Acknowledge received</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>No acknowledge signal detected</description>
+                           <description>No acknowledge</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -241,7 +254,7 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No interrupt pending</description>
+                           <description>Interrupt not pending</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -260,19 +273,22 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Slave receive, master writing to slave</description>
+                           <description>Slave receive\t- Master writing to slave</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Slave transmit, master reading from slave</description>
+                           <description>Slave transmit\t- Master reading from slave</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>RAM</name>
-                     <description>Range Address Match</description>
+                     <description>Range Address Match\n
+This bit is set by any of the following conditions:\n
+- Any nonzero calling address is received that matches the address in the RA register.\n
+- The RMEN bit is set and the calling address is within the range of values of the A1 and RA register</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -393,54 +409,57 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>RMEN</name>
-                     <description>Range Address Matching Enable</description>
+                     <description>Range Address Matching Enable\n
+Enables address matching to occur when a slave receives an address within the range of values of the A1 and RA</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Range mode disabled. No address match occurs for an address within the range of values of the A1 and RA</description>
+                           <description>Range mode disabled\t- No address matching</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Range mode enabled. Address matching occurs when a slave receives an address within the range of values of the A1 and RA</description>
+                           <description>Range mode enabled\t- Address matching occurs</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SBRC</name>
-                     <description>Slave Baud Rate Control</description>
+                     <description>Slave Baud Rate Control\n
+Allows the slave baud rate to follows the master baud rate with clock stretching occurring</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The slave baud rate follows the master baud rate and clock stretching may occur</description>
+                           <description>Slave rate follows master</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Slave baud rate is independent of the master baud rate</description>
+                           <description>Slave rate independent</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ADEXT</name>
-                     <description>Address Extension</description>
+                     <description>Address Extension\n
+Selecte between 7-bit and 9-bit address schemes</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>7-bit address scheme</description>
+                           <description>7-bit address</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>10-bit address scheme</description>
+                           <description>10-bit address</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -509,20 +528,21 @@ writing 1 to it</description>
                   </field>
                   <field>
                      <name>SSIE</name>
-                     <description>II2C Bus Stop or Start Interrupt Enable: This bit enables the interrupt for I2C bus stop or start detection.
-NOTE: To clear the I2C bus stop or start detection interrupt: In the interrupt service routine, first clear the STOPF or STARTF bit by writing 1 to it,
+                     <description>II2C Bus Stop or Start Interrupt Enable\n
+This bit enables the interrupt for I2C bus stop or start detection.\n
+NOTE: To clear the detection interrupt: In the interrupt service routine, first clear the STOPF or STARTF bit by writing 1 to it,
  and then clear the IICIF bit in the status register. If this sequence is reversed, the IICIF bit is asserted again</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Stop or start detection interrupt is disabled</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Stop or start detection interrupt is enabled</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -592,145 +612,153 @@ Set this bit to hold off entry to stop mode when any data transmission or recept
                <fields>
                   <field>
                      <name>SHTF2IE</name>
-                     <description>SHTF2 Interrupt Enable - Enables SCL high and SDA low timeout interrupt</description>
+                     <description>SHTF2 Interrupt Enable\nEnables SCL high and SDA low timeout interrupt</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>SHTF2 interrupt is disabled</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>SHTF2 interrupt is enabled</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SHTF2</name>
-                     <description>SCL High Timeout Flag 2 - This bit sets when SCL is held high and SDA is held low more than clock x LoValue/512. Software clears this bit by writing a 1 to it</description>
+                     <description>SCL High Timeout Flag 2\n
+This bit sets when SCL is held high and SDA is held low more than LoValue/512 clock cycles.\n
+Software clears this bit by writing a 1 to it</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No SCL high and SDA low timeout occurs</description>
+                           <description>No timeout occurred</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>SCL high and SDA low timeout occurs</description>
+                           <description>Timeout occurred</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SHTF1</name>
-                     <description>SCL High Timeout Flag 1 - This read-only bit sets when SCL and SDA are held high more than clock x LoValue / 512, which indicates the bus is free. This bit is cleared automatically</description>
+                     <description>SCL High Timeout Flag 1\n
+This read-only bit sets when SCL and SDA are held high more than LoValue/512 clock cycles, which indicates the bus is free.\n
+This bit is cleared automatically</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No SCL high and SDA high timeout occurs</description>
+                           <description>No timeout occurs</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>SCL high and SDA high timeout occurs</description>
+                           <description>Timeout occurs</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SLTF</name>
-                     <description>SCL Low Timeout Flag - This bit is set when the SLT register (consisting of the SLTH and SLTL registers) is loaded with a non-zero value (LoValue) and an SCL low timeout occurs. Software clears this bit by writing a logic 1 to it</description>
+                     <description>SCL Low Timeout Flag\n
+This bit is set when the SLT register (consisting of the SLTH and SLTL registers) is loaded with a non-zero value (LoValue) and an SCL low timeout occurs
+Software clears this bit by writing a logic 1 to it</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No low timeout occurs</description>
+                           <description>No timeout occurs</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Low timeout occurs</description>
+                           <description>Timeout occurs</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>TCKSEL</name>
-                     <description>Timeout Counter Clock Select - Selects the clock source of the timeout counter</description>
+                     <description>Timeout Counter Clock Select\n
+Selects the clock source of the timeout counter</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Timeout counter counts at the frequency of the bus clock / 64</description>
+                           <description>Bus clock / 64</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Timeout counter counts at the frequency of the bus clock</description>
+                           <description>Bus clock</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SIICAEN</name>
-                     <description>Second I2C Address Enable - Enables or disables SMBus device default address</description>
+                     <description>Second I2C Address Enable\nEnables or disables SMBus device default address</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Address register 2 matching is disabled</description>
+                           <description>Address 2 matching disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Address register 2 matching is enabled</description>
+                           <description>Address 2 matching enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ALERTEN</name>
-                     <description>SMBus Alert Response Address Enable</description>
+                     <description>SMBus Alert Response Address Enable\nEnables or disables SMBus alert response address matching</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>SMBus alert response address matching is disabled</description>
+                           <description>SMBus alert matching is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>SMBus alert response address matching is enabled</description>
+                           <description>SMBus alert matching is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FACK</name>
-                     <description>Fast NACK/ACK Enable - For SMBus packet error checking, the CPU must be able to issue an ACK or NACK according to the result of receiving data byte</description>
+                     <description>Fast NACK/ACK Enable\n
+For SMBus packet error checking, the CPU must be able to issue an ACK or NACK according to the result of receiving data byte</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>An ACK or NACK is sent on the following receiving data byte</description>
+                           <description>ACK/NAK on data byte\t- An ACK or NACK is sent on the following receiving data byte</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Writing 0 to TXAK after receiving a data byte generates an ACK. Writing 1 to TXAK after receiving a data byte generates a NACK</description>
+                           <description>ACK/NAK on TXAK write\t- Writing 0 to TXAK after receiving a data byte generates an ACK. Writing 1 to TXAK after receiving a data byte generates a NACK</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -747,7 +775,9 @@ Set this bit to hold off entry to stop mode when any data transmission or recept
                <fields>
                   <field>
                      <name>SAD</name>
-                     <description>SMBus Address - Contains the slave address used by the SMBus. This field is used on the device default address or other related addresses</description>
+                     <description>SMBus Address\n
+Contains the slave address used by the SMBus.\n
+This field is used on the device default address or other related addresses</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>7</bitWidth>
                   </field>
@@ -755,8 +785,7 @@ Set this bit to hold off entry to stop mode when any data transmission or recept
             </register>
             <register>
                <name>SLTH</name>
-               <description>SCL Low Timeout Register High\n
-Most significant byte of SCL low timeout value that determines the timeout period of SCL low</description>
+               <description>SCL Low Timeout Register High</description>
                <addressOffset>0xA</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
@@ -770,8 +799,7 @@ Most significant byte of SCL low timeout value that determines the timeout perio
             </register>
             <register>
                <name>SLTL</name>
-               <description>SCL Low Timeout Register Low\n
-Least significant byte of SCL low timeout value that determines the timeout period of SCL low</description>
+               <description>SCL Low Timeout Register Low</description>
                <addressOffset>0xB</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>

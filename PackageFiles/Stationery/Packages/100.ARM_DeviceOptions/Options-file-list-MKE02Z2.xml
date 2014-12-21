@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0">
+   <!-- Extra Optional files for MKE02M2 -->
+   <projectActionList id="Options-file-list-MKE02Z2">
+      <applyWhen>
+         <deviceSubfamilyIs>MKE02Z2</deviceSubfamilyIs>
+      </applyWhen>
+      <variable id="Clock-setup-MKE02M2" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="UART-setup-MKE02M2" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
+      <condition variable="Clock-setup-MKE02M2">
+         <copy source="Startup_Code/clock-MKE0x.c" target="Startup_Code/clock.c" />
+         <copy source="Project_Headers/clock_configure-MKE02M2.h" target="Project_Headers/clock_configure.h" />
+      </condition>
+      <condition variable="UART-setup-MKE02M2">
+         <copy source="Startup_Code/uart-mke.c" target="Startup_Code/uart.c" />
+         <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
+      </condition>
+   </projectActionList>
+</root>

@@ -20,6 +20,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.19.4.240 - Added return error codes
 ;#  V4.10.4 - Changed return code handling
 ;# 
 
@@ -69,6 +70,10 @@ proc loadSymbols {} {
 
    set ::FLASH_ADDRESSES         "" ;# List of addresses within each unique flash region (incl. eeprom)
    
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
+   
    return
 }
 
@@ -77,7 +82,7 @@ proc loadSymbols {} {
 ;# @param flashAddresses - list of flash array addresses
 ;#
 proc initTarget { flashAddresses } {
-   ;# puts "initTarget {}"
+   puts "initTarget {}"
    
    set ::FLASH_ADDRESSES  $flashAddresses 
 
@@ -93,7 +98,7 @@ proc initTarget { flashAddresses } {
 ;#  busFrequency - Target bus busFrequency in kHz
 ;#
 proc initFlash { busFrequency } {
-   ;#  puts "initFlash {}"
+   puts "initFlash {}"
    
    set cfmclkd [calculateFlashDivider $busFrequency]
 
@@ -110,9 +115,10 @@ proc initFlash { busFrequency } {
 ;#
 proc calculateFlashDivider { busFrequency } {
 
-   ;# puts "calculateFlashDivider {}"
+   puts "calculateFlashDivider {}"
    if { [expr $busFrequency < 150] } {
-      error "Clock too low for flash programming"
+      puts "Clock too low for flash programming"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }
    set cfmclkd 0
    if { [expr $busFrequency > 12800] } {
@@ -121,9 +127,11 @@ proc calculateFlashDivider { busFrequency } {
    }
    set cfmclkd [expr $cfmclkd | (($busFrequency-1)/200)]
    set flashClk [expr $busFrequency / (($cfmclkd&0x3F)+1)]
-   ;# puts "cfmclkd = $cfmclkd, flashClk = $flashClk"
+   
+   puts "cfmclkd = $cfmclkd, flashClk = $flashClk"
    if { [expr ($flashClk<150)||($flashClk>200)] } {
-      error "Not possible to find suitable flash clock divider"
+      puts "Not possible to find suitable flash clock divider"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }      
    return $cfmclkd
 }
@@ -159,8 +167,8 @@ proc executeFlashCommand { cmd address value } {
       incr retry
    }
    if [ expr ($flashError || ($retry>=20)) ] {
-;#      puts [ format "Flash command error HCS08_FSTAT=0x%02X, retry=%d" $status $retry ]
-      error "Flash command failed"
+      puts [ format "Flash command error HCS08_FSTAT=0x%02X, retry=%d" $status $retry ]
+      error $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }
    return
 }
@@ -195,26 +203,25 @@ proc massEraseTarget { } {
       set status  [rb $::HCS08_FSTAT]
       if [ expr (($status & $::HCS08_FSTAT_FBLANK) == 0) ] {
          ;# puts [ format "Flash blank check failed HCS08_FSTAT=0x%02X" $status ]
-         return "Flash blank check failed"
+         puts "Flash blank check failed"
+	 error $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
       }
    }
    ;# Should be temporarily unsecure
    ;# Confirm unsecured
-   isUnsecure
-
-   ;# Flash is now Blank and unsecured
+   return [ isUnsecure ]
 }
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   ;#  puts "Checking if unsecured"
    set securityValue [rb $::HCS08_FOPT]
-
    if [ expr ( $securityValue & $::HCS08_FOPT_SEC_MASK ) != $::HCS08_FOPT_SEC_UNSEC ] {
-      return "Target is secured"
+      puts "isUnsecure{} - Target is secured!"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
-   return
+   puts "isUnsecure{} - Target is unsecured"
+   return 0
 }
 
 ;######################################################################################

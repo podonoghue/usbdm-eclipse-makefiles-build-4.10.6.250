@@ -411,22 +411,24 @@ LOGGING;
 #else
    if (USBDM_TargetConnectWithRetry((RetryMode)(retryAlways|retryByReset)) != BDM_RC_OK) {
       shared->closeBdm();
-      Logging::print("Failed to connected\n");
+      Logging::print("Failed to connect\n");
       return PROGRAMMING_RC_ERROR_BDM_CONNECT;
    }
-   Logging::print("Connected\n");
+   Logging::print("Connected...\n");
 #endif
 //   USBDM_TargetHalt();
 
-#if (TARGET == CFV1) || (TARGET == ARM)
+#if (TARGET == CFV1) || (TARGET == ARM) || (TARGET == S12Z)
    flashRc = flashprogrammer->setDeviceData(*deviceDatabase->getDefaultDevice());
    if (flashRc != PROGRAMMING_RC_OK) {
       shared->closeBdm();
       Logging::print("setDeviceData() failed\n");
       return flashRc;
    }
-   // CFV1/Kinetis is a bit unusual in that you can't determine the device type of a secured device.
+   // CFV1/Kinetis/SZ12 is a bit unusual in that you can't determine the device type of a secured device.
+   Logging::print("setDeviceData() doing checkTargetUnSecured()\n");
    flashRc = flashprogrammer->checkTargetUnSecured();
+   Logging::print("setDeviceData() done checkTargetUnSecured(), rc = %d\n", flashRc);
    if (flashRc == PROGRAMMING_RC_ERROR_SECURED) {
       int getYesNo = wxMessageBox(_("It is not possible to determine the device type \n"
                                     "as it appears to be secured.\n\n"
@@ -1288,10 +1290,10 @@ void TargetPanel::getDialogueValues(DeviceData &state) {
       state.setClockTrimNVAddress(0);
       state.setClockTrimFreq(0);
    }
-#ifdef GDI   
+#ifdef GDI
    state.setSecurity(SEC_UNSECURED);
    state.setConnectionFreq(0);
-#endif   
+#endif
 }
 
 //! Set current device by name

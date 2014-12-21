@@ -25,6 +25,7 @@
     \verbatim
    Change History
    -================================================================================
+   |  1 Dec 2014 | Fixed format in printf()s                                  - pgo v4.10.6.230
    | 16 Nov 2009 | Changes to allow wxWidgets dependencies to be localised    - pgo
    +-------------+------------------------------------------------------------------
    | 16 Nov 2009 | Created                                                    - pgo
@@ -103,7 +104,7 @@ char getPathSeparator(void) {
 #ifdef _WIN32
 bool fileExists(string filePath) {
    DWORD attrib = GetFileAttributesA(filePath.c_str());
-   Logging::print("fileExists(%s) => attr=%X\n", filePath.c_str(), attrib);
+   Logging::print("fileExists(%s) => attr=%lX\n", filePath.c_str(), attrib);
    return  (attrib != INVALID_FILE_ATTRIBUTES) &&
           ((attrib & FILE_ATTRIBUTE_DIRECTORY) == 0);
 }
@@ -186,7 +187,7 @@ FILE *openApplicationFile(const string &filename, const string &attributes) {
             mkdir(configFilePath.c_str());
 #else
             mkdir(configFilePath.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
-#endif			
+#endif
          }
          // Append filename
          configFilePath += getPathSeparator() + filename;

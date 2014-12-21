@@ -20,7 +20,8 @@
 ;#####################################################################################
 ;#  History
 ;#
-;#  V4.10.4 - Changed return code handling
+;#  V4.19.4.240 - Added return error codes
+;#  V4.10.4     - Changed return code handling
 ;# 
 
 ;######################################################################################
@@ -48,6 +49,10 @@ proc loadSymbols {} {
    set ::CFV1_XCSR_ENBDM        0x01
 
    set ::CFV1_PRDIV8       0x40
+   
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
    
    return
 }
@@ -79,7 +84,8 @@ proc calculateFlashDivider { busFrequency } {
 
    ;# puts "calculateFlashDivider {}"
    if { [expr $busFrequency < 300] } {
-      error "Clock too low for flash programming"
+      puts "Clock too low for flash programming"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }
    set cfmclkd 0
    if { [expr $busFrequency > 12800] } {
@@ -90,7 +96,8 @@ proc calculateFlashDivider { busFrequency } {
    set flashClk [expr $busFrequency / (($cfmclkd&0x3F)+1)]
    ;# puts "cfmclkd = $cfmclkd, flashClk = $flashClk"
    if { [expr ($flashClk<150)||($flashClk>200)] } {
-      error "Not possible to find suitable flash clock divider"
+      puts "Not possible to find suitable flash clock divider"
+      error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }      
    return $cfmclkd
 }
@@ -133,7 +140,8 @@ proc massEraseTarget { } {
       incr retry
    }
    if [ expr ($status & $::CFV1_XCSR_SEC ) != 0 ] {
-      error "Flash mass erase failed"
+      puts "Flash mass erase failed - still secured"
+      error $::PROGRAMMING_RC_ERROR_SECURED
    }
    ;# reset so security change has effect
    reset s s
@@ -145,12 +153,13 @@ proc massEraseTarget { } {
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   ;#  puts "Checking if unsecured"
    set securityValue [ rdreg $::CFV1_DRegXCSRbyte ]
    if [ expr ( $securityValue & $::CFV1_XCSR_SEC ) != 0 ] {
-      return "Target is secured"
+      puts "isUnsecure{} - Target is secured!"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
-   return
+   puts "isUnsecure{} - Target is unsecured"
+   return 0
 }
 
 ;######################################################################################

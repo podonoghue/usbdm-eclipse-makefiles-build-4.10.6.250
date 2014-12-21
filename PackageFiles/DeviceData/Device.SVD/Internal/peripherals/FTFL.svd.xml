@@ -63,8 +63,9 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>MGSTAT0</name>
-                     <description>Memory Controller Command Completion Status Flag \n
-The MGSTAT0 status flag is set if an error is detected during execution of a flash command or during the flash reset sequence. As a status flag, this bit cannot (and need not) be cleared by the user like the other error flags in this register</description>
+                     <description>Command Completion Status Flag \n
+The MGSTAT0 status flag is set if an error is detected during execution of a flash command or during the flash reset sequence.\n
+As a status flag, this bit cannot (and need not) be cleared by the user unlike the other error flags in this register</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -91,12 +92,12 @@ While FPVIOL is set, the CCIF flag cannot be cleared to launch a command. The FP
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No protection violation detected</description>
+                           <description>No violation</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Protection violation detected</description>
+                           <description>Violation detected</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -104,19 +105,19 @@ While FPVIOL is set, the CCIF flag cannot be cleared to launch a command. The FP
                   <field>
                      <name>ACCERR</name>
                      <description>Flash Access Error Flag \n
-The ACCERR error bit indicates an illegal access has occurred to a flash memory resource caused by a violation of the command write sequence or issuing an illegal flash command.  \n
-While ACCERR is set, the  CCIF flag cannot be cleared to launch a command. The ACCERR bit is cleared by writing a 1 to it. Writing a 0 to the ACCERR bit has no effect</description>
+The ACCERR error bit indicates an illegal access has occurred to a flash memory 
+resource caused by a violation of the command write sequence or issuing an illegal flash command</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No access error detected</description>
+                           <description>No access error</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Access error detected</description>
+                           <description>Access error</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -124,19 +125,18 @@ While ACCERR is set, the  CCIF flag cannot be cleared to launch a command. The A
                   <field>
                      <name>RDCOLERR</name>
                      <description>FTFL Read Collision Error Flag \n
-Indicates that the MCU attempted a read from a flash memory resource that was being manipulated by a flash command (CCIF=0). Any simultaneous access is detected as a collision error by the block arbitration logic. The read data in this case cannot be guaranteed.  \n
-The flag is cleared by writing a 1 to it. Writing a 0 has no effect</description>
+Indicates that the MCU attempted a read from a flash memory resource that was being manipulated by a flash command</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No collision error detected</description>
+                           <description>No collision error</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Collision error detected</description>
+                           <description>Collision error</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -144,9 +144,7 @@ The flag is cleared by writing a 1 to it. Writing a 0 has no effect</description
                   <field>
                      <name>CCIF</name>
                      <description>Command Complete Interrupt Flag \n
-Indicates that a flash command or EEPROM file system operation has completed.  \n
-The flag is cleared by writing a 1 to CCIF to launch a command. CCIF then stays low until command completion or command violation.  \n
-The flag is also cleared by a successful write to FlexRAM while enabled for EEE. CCIF then stays low until the EEPROM file system has created the associated EEPROM data record</description>
+Indicates that a flash command or EEPROM file system operation has completed</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -157,7 +155,7 @@ The flag is also cleared by a successful write to FlexRAM while enabled for EEE.
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Command has completed</description>
+                           <description>Command complete</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -174,21 +172,20 @@ The flag is also cleared by a successful write to FlexRAM while enabled for EEE.
                   <field>
                      <name>EEERDY</name>
                      <description>EEEPROM Ready \n
-This flag indicates if the EEPROM backup data has been copied to the FlexRAM and is therefore available for read access. \n
-During the reset sequence, this flag will remain cleared while CCIF is clear and will only set if the FlexNVM block is partitioned for EEPROM. \n
-(Only applicable to devices with FlexRAM)</description>
+Indicates if the EEPROM backup data has been copied to the FlexRAM and is available for read access\n
+Writes to FlexRAM clear EEERDY and initiate EEPROM programming</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FlexRAM is not available for EEPROM operation</description>
+                           <description>EEPROM not ready</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FlexRAM is configured and ready for EEPROM operations. Writes to FlexRAM clear EEERDY and initiate EEPROM programming. Reads return EEPROM data</description>
+                           <description>EEPROM ready\t- FlexRAM is configured and ready for EEPROM operations</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -196,60 +193,61 @@ During the reset sequence, this flag will remain cleared while CCIF is clear and
                   <field>
                      <name>RAMRDY</name>
                      <description>RAM Ready \n
-This flag indicates the current status of the FlexRAM/programming acceleration RAM</description>
+This flag indicates the current status of the FlexRAM/programming acceleration RAM\n
+If EEPROM is enabled the FlexRAM is used for EEPROM emulation, otherwise it may be used as traditional RAM</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>RAM is not available for traditional RAM access (used as EEEPROM or Acceleration RAM unavailable)</description>
+                           <description>FlexRAM is unavailable (EEPROM use)</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FlexRAM is available as traditional RAM only; writes to the FlexRAM do not trigger EEPROM operations or Programming acceleration RAM is available</description>
+                           <description>FlexRAM is available</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>PFLSH</name>
-                     <description>Module configuration \n
-Fixed configuration of FTFL module</description>
+                     <description>Flash memory configuration \n
+This bit indicates if the FTFL module supports FlexMemory or only Data Flash\</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Flash memory module configured to support data flash or EEPROM (FlexMemory)</description>
+                           <description>Supports FlexMemory</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Flash memory module configured to support program flash only</description>
+                           <description>Program flash only</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>SWAP</name>
-                     <description>Swap Flag \n
-The SWAP flag indicates which half of the program flash space is located at relative address 0x0000. The state of the SWAP flag is set during the reset sequence. \n
-(Not all devcies support the swap function)</description>
+                     <description>Program Flash Swap Flag \n
+The SWAP flag indicates which half of the program flash space is located at relative address 0x0000.\n
+(Not all devices support the swap function)</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Physical program flash 0 is located at relative address 0x0000</description>
+                           <description>PFlash 0 @ 0x0000</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>If the PFLSH flag is set, physical program flash 1 is located at relative address 0x0000. If the PFLSH flag is not set, physical program flash 0 is located at relative address 0x0000</description>
+                           <description>PFlash 1 @ 0x0000\t- If supported by device</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -268,7 +266,7 @@ The ERSSUSP bit allows the user to suspend (interrupt) the Erase Flash Sector co
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Suspend the current Erase Flash Sector command execution</description>
+                           <description>Suspend requested</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -276,22 +274,22 @@ The ERSSUSP bit allows the user to suspend (interrupt) the Erase Flash Sector co
                   <field>
                      <name>ERSAREQ</name>
                      <description>Erase All Request \n
-This bit issues a request to the memory controller to execute the Erase All Blocks command and release security. This will: \n
-Erase All Blocks \n
-Verify the erased state \n
-Program the Flash Configuration Field to the unsecure state (FSEC[SEC]=10)</description>
+Indicates a debugger issued a request to the memory controller to execute the Erase All Blocks command. This will: \n
+\t- Erase All Blocks \n
+\t- Verify the erased state \n
+\t- Program the Flash Configuration Field to the unsecure state (FSEC[SEC]=10)</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No request or request complete</description>
+                           <description>No active request\t- Writing 1 initiates a request</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Writing 1 initiates request. When complete returns to 0</description>
+                           <description>Active request</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -305,12 +303,12 @@ The RDCOLLIE bit controls interrupt generation when a flash memory read collisio
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Read collision error interrupt disabled</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Read collision error interrupt enabled. An interrupt request is generated whenever an read collision error is detected</description>
+                           <description>Interrupt enabled\t- Interrupt request whenever an read collision error is detected</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -324,12 +322,12 @@ The CCIE bit controls interrupt generation when a flash command completes</descr
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Command complete interrupt disabled</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Command complete interrupt enabled. An interrupt request is generated whenever the FSTAT[CCIF] flag is set</description>
+                           <description>Interrupt enabled\t- Interrupt request whenever the FSTAT[CCIF] flag is set</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -346,28 +344,28 @@ The CCIE bit controls interrupt generation when a flash command completes</descr
                <fields>
                   <field>
                      <name>SEC</name>
-                     <description>Flash Security</description>
+                     <description>Flash Security\nMCU security status</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>MCU security status is secure</description>
+                           <description>Secure</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>MCU security status is secure</description>
+                           <description>Secure</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>MCU security status is unsecure (Device shipped in this state)</description>
+                           <description>Unsecure</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>MCU security status is secure</description>
+                           <description>Secure</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -380,22 +378,22 @@ The CCIE bit controls interrupt generation when a flash command completes</descr
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Freescale factory access granted</description>
+                           <description>Access granted</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Freescale factory access denied</description>
+                           <description>Access denied</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Freescale factory access denied</description>
+                           <description>Access denied</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Freescale factory access granted</description>
+                           <description>Access granted</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -408,50 +406,51 @@ The CCIE bit controls interrupt generation when a flash command completes</descr
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Mass erase is enabled</description>
+                           <description>Mass erase enabled</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Mass erase is enabled</description>
+                           <description>Mass erase enabled</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Mass erase is disabled</description>
+                           <description>Mass erase disabled</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Mass erase is enabled</description>
+                           <description>Mass erase enabled</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>KEYEN</name>
-                     <description>Backdoor Key Security Enable</description>
+                     <description>Backdoor Key Security Enable\n
+Backdoor key access allows the device to be unsecured by a special code</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Backdoor key access disabled</description>
+                           <description>Backdoor disabled</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Backdoor key access disabled (preferred KEYEN state to disable backdoor key access)</description>
+                           <description>Backdoor disabled</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Backdoor key access enabled</description>
+                           <description>Backdoor enabled</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Backdoor key access disabled</description>
+                           <description>Backdoor disabled</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -481,9 +480,10 @@ These bits are loaded from flash to this register at reset</description>
                <dimIncrement>1</dimIncrement>
                <dimIndex>3:Flash address [7..0],2:Flash address [15..8],1:Flash address [23..16],0:FCMD (a code that defines the flash command),7:Data Byte 3,6:Data Byte 2,5:Data Byte 1,4:Data Byte 0,B:Data Byte 7,A:Data Byte 6,9:Data Byte 5,8:Data Byte 4</dimIndex>
                <name>FCCOB%s</name>
-               <description>Flash Common Command Object Register %s - Usually %m \n
-The FCCOB registers provides a command code and relevant parameters to the memory controller. Usage varies with command. \n
-Some commands return information to the FCCOB registers when complete</description>
+               <description>FCCOB %s - Usually %m \n
+The Flash Common Command Object registers provides a command code and relevant parameters to the memory controller.\n
+Some commands return information to the FCCOB registers when complete,
+Usage varies with command</description>
                <addressOffset>0x4</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
@@ -501,10 +501,7 @@ Some commands return information to the FCCOB registers when complete</descripti
                <dimIndex>3:PROT[7..0],2:PROT[15..8],1:PROT[23..16],0:PROT[31..24]</dimIndex>
                <name>FPROT%s</name>
                <description>Program Flash Protection \n
-Each program flash region can be protected from program and erase operations by setting the associated PROT bit. \n
-In NVM Normal mode: The protection can only be increased. \n
-In NVM Special mode: All bits of FPROT are writable without restriction. \n
-Each bit in the 32-bit protection register represents 1/32 of the total program flash</description>
+Each PROT bit protects 1/32 of the total program flash from program and erase operations</description>
                <addressOffset>0x10</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
@@ -530,12 +527,8 @@ Each bit in the 32-bit protection register represents 1/32 of the total program 
             </register>
             <register>
                <name>FEPROT</name>
-               <description>EEPROM Protection Register \n
-Individual EEPROM regions can be protected from alteration by setting the associated EPROT bit. \n
-In NVM Normal mode: The protection can only be increased. \n
-In NVM Special mode: All bits of FPROT are writable without restriction. \n
-Reset: During the reset sequence, the FEPROT register is loaded with the contents of the FlexRAM protection byte in the Flash Configuration Field located in program flash. \n
-Each EPROT bit covers 1/8 of the configured EEPROM data. \n
+               <description>EEPROM Protection Register\n
+Each EPROT bit protects 1/8 of the configured EEPROM data from program and erase operations.\n
 (Only applicable to devices with EEPROM)</description>
                <addressOffset>0x16</addressOffset>
                <size>8</size>
@@ -543,17 +536,17 @@ Each EPROT bit covers 1/8 of the configured EEPROM data. \n
                <fields>
                   <field>
                      <name>EPROT</name>
-                     <description>EEPROM Region Protect</description>
+                     <description>EEPROM Region Protection</description>
                      <bitOffset>0</bitOffset>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>EEPROM region is protected</description>
+                           <description>Region is protected</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>EEPROM region is not protected</description>
+                           <description>Region is unprotected</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -563,13 +556,7 @@ Each EPROT bit covers 1/8 of the configured EEPROM data. \n
             <register>
                <name>FDPROT</name>
                <description>Data Flash Protection Register \n
-Individual data flash regions can be protected from program and erase operations by setting the associated DPROT bit.  \n
-Each DPROT bit protects one-eighth of the partitioned data flash memory space.  \n
-The granularity of data flash protection cannot be less than the data flash sector size. \n
-In NVM Normal mode: The protection can only be increased. \n
-In NVM Special mode: All bits of FDPROT are writable without restriction. \n
-Reset: During the reset sequence, the FDPROT register is loaded with the contents of the Data Flash protection byte in the Flash Configuration Field located in program flash. \n
-Each EPROT bit covers 1/8 of the configured EEPROM data</description>
+Each FDPROT bit protects 1/8 of the configured Data Flash from program and erase operations</description>
                <addressOffset>0x17</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>

@@ -126,43 +126,48 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>IROPEN</name>
-                     <description>IRO Pin Enable</description>
+                     <description>IRO Pin Enable\n
+Enables and disables the IRO signal.\n
+When the IRO signal is enabled, it is an output that drives out either the CMT transmitter output \n
+or the state of IROL depending on whether MSC[MCGEN] is set or not</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>CMT_IRO signal disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>CMT_IRO signal enabled as output</description>
+                           <description>Enabled as output</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>CMTPOL</name>
-                     <description>Output Polarity</description>
+                     <description>Output Polarity\nControls the polarity of the IRO signal</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>CMT_IRO signal is active low</description>
+                           <description>Active low</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>CMT_IRO signal is active high</description>
+                           <description>Active high</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>IROL</name>
-                     <description>IRO Latch Control</description>
+                     <description>IRO Latch Control\n
+Reads the state of the IRO latch.\n
+Writing to IROL changes the state of the IRO signal when MSC[MCGEN] is cleared and IROPEN is set</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                   </field>
@@ -177,137 +182,146 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>MCGEN</name>
-                     <description>Modulator and Carrier Generator Enable</description>
+                     <description>Modulator and Carrier Enable\n
+Setting MCGEN will initialize the carrier generator and modulator and will enable all clocks</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Modulator and carrier generator disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Modulator and carrier generator enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>EOCIE</name>
-                     <description>End of Cycle Interrupt Enable</description>
+                     <description>End of Cycle Interrupt Enable\n
+Requests to enable a CPU interrupt when EOCF is set if EOCIE is high</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>CPU interrupt is disabled</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>CPU interrupt is enabled</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>FSK</name>
-                     <description>FSK Mode Select</description>
+                     <description>FSK Mode Select\nEnables FSK operation</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The CMT operates in Time or Baseband mode</description>
+                           <description>Time or Baseband mode</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The CMT operates in FSK mode</description>
+                           <description>FSK mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>BASE</name>
-                     <description>Baseband Enable</description>
+                     <description>Baseband Operation Enable\n
+When set, BASE disables the carrier generator and forces the carrier output high for generation of baseband protocols.\n
+When BASE is cleared, the carrier generator is enabled and the carrier output toggles at the frequency determined by values stored
+in the carrier data</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Baseband mode is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Baseband mode is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>EXSPC</name>
-                     <description>Extended Space Enable</description>
+                     <description>Extended Space Enable\nEnables the extended space operation</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Extended space is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Extended space is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>CMTDIV</name>
-                     <description>Clock Divide Prescaler</description>
+                     <description>Clock Divide Prescaler\n
+Causes the CMT to be clocked at the IF signal frequency divided by 1, 2, 4, or 8</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>IF * 1</description>
+                           <description>IF/1</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>IF * 2</description>
+                           <description>IF/2</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>IF * 4</description>
+                           <description>IF/4</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>IF * 8</description>
+                           <description>IF/8</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>EOCF</name>
-                     <description>End Of Cycle Status Flag</description>
+                     <description>End Of Cycle Status Flag\n
+Sets when:\n
+\t-\tThe modulator is not currently active and MCGEN is set\n
+\t-\tAt the end of each modulation cycle while MCGEN is set</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>End of modulation cycle has not occured since the flag last cleared</description>
+                           <description>Cycle not completed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>End of modulator cycle has occurred</description>
+                           <description>Cycle completed</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -323,7 +337,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>MB</name>
-                     <description>These bits control the upper mark periods of the modulator for all modes</description>
+                     <description>Controls the upper mark periods of the modulator for all modes</description>
                      <bitOffset>0</bitOffset>
                   </field>
                </fields>
@@ -337,7 +351,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>MB</name>
-                     <description>These bits control the lower mark periods of the modulator for all modes</description>
+                     <description>Controls the lower mark periods of the modulator for all modes</description>
                      <bitOffset>0</bitOffset>
                   </field>
                </fields>
@@ -351,7 +365,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>SB</name>
-                     <description>These bits control the upper space periods of the modulator for all modes</description>
+                     <description>Controls the upper space periods of the modulator for all modes</description>
                      <bitOffset>0</bitOffset>
                   </field>
                </fields>
@@ -365,14 +379,15 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>SB</name>
-                     <description>These bits control the lower space periods of the modulator for all modes</description>
+                     <description>Controls the lower space periods of the modulator for all modes</description>
                      <bitOffset>0</bitOffset>
                   </field>
                </fields>
             </register>
             <register>
                <name>PPS</name>
-               <description>Primary Prescaler Register</description>
+               <description>Primary Prescaler Register\n
+Divides the CMT clock to generate the Intermediate Frequency clock enable to the secondary prescaler</description>
                <addressOffset>0xA</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
@@ -385,82 +400,82 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0000</name>
-                           <description>Bus clock * 1</description>
+                           <description>Bus clock / 1</description>
                            <value>0b0000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0001</name>
-                           <description>Bus clock * 2</description>
+                           <description>Bus clock / 2</description>
                            <value>0b0001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0010</name>
-                           <description>Bus clock * 3</description>
+                           <description>Bus clock / 3</description>
                            <value>0b0010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0011</name>
-                           <description>Bus clock * 4</description>
+                           <description>Bus clock / 4</description>
                            <value>0b0011</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0100</name>
-                           <description>Bus clock * 5</description>
+                           <description>Bus clock / 5</description>
                            <value>0b0100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0101</name>
-                           <description>Bus clock * 6</description>
+                           <description>Bus clock / 6</description>
                            <value>0b0101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0110</name>
-                           <description>Bus clock * 7</description>
+                           <description>Bus clock / 7</description>
                            <value>0b0110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0111</name>
-                           <description>Bus clock * 8</description>
+                           <description>Bus clock / 8</description>
                            <value>0b0111</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1000</name>
-                           <description>Bus clock * 9</description>
+                           <description>Bus clock / 9</description>
                            <value>0b1000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1001</name>
-                           <description>Bus clock * 10</description>
+                           <description>Bus clock / 10</description>
                            <value>0b1001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1010</name>
-                           <description>Bus clock * 11</description>
+                           <description>Bus clock / 11</description>
                            <value>0b1010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1011</name>
-                           <description>Bus clock * 12</description>
+                           <description>Bus clock / 12</description>
                            <value>0b1011</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1100</name>
-                           <description>Bus clock * 13</description>
+                           <description>Bus clock / 13</description>
                            <value>0b1100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1101</name>
-                           <description>Bus clock * 14</description>
+                           <description>Bus clock / 14</description>
                            <value>0b1101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1110</name>
-                           <description>Bus clock * 15</description>
+                           <description>Bus clock / 15</description>
                            <value>0b1110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1111</name>
-                           <description>Bus clock * 16</description>
+                           <description>Bus clock / 16</description>
                            <value>0b1111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -476,18 +491,18 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>DMA</name>
-                     <description>DMA Enable</description>
+                     <description>DMA Transfer Enable</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>DMA transfer request and done are disabled</description>
+                           <description>DMA disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>DMA transfer request and done are enabled</description>
+                           <description>DMA enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

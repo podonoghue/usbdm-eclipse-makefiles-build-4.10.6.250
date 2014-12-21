@@ -20,6 +20,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.19.4.240 - Added return error codes
 ;#  V4.10.4 - Changed return code handling
 ;# 
 
@@ -49,6 +50,10 @@ proc loadSymbols {} {
    set ::RS08_FLCR_MASS         0x04
    set ::RS08_FLCR_PGM          0x01
    set ::RS08_FLCR_MASS_HVEN    [expr ($::RS08_FLCR_MASS|$::RS08_FLCR_HVEN)]
+   
+   set ::PROGRAMMING_RC_ERROR_SECURED              114
+   set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
+   set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
    
    return
 }
@@ -81,8 +86,7 @@ proc initFlash { busFrequency } {
 ;#
 proc massEraseTarget { } {
 
-   ;# Mass erase flash
-   ;# puts "Mass erasing device"
+   puts "massEraseTarget{}"
    
    settargetvpp standby
    set status [ catch {
@@ -96,7 +100,8 @@ proc massEraseTarget { } {
    } ]
    settargetvpp off
    if [ expr ($status) ] {
-      error "Target mass erase failed"
+      puts "Target mass erase failed"
+      error $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
    }
    ;# Reset to take effect
    reset s s
@@ -104,7 +109,7 @@ proc massEraseTarget { } {
    wb $::RS08_SOPT $::RS08_SOPT_INIT ;# Disable COP
    
    ;# Should be unsecure
-   isUnsecure
+   return [ isUnsecure ]
 
    ;# Flash is now Blank and unsecured
 }
@@ -112,13 +117,14 @@ proc massEraseTarget { } {
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   ;#  puts "Checking if unsecured"
    set securityValue [rb $::RS08_FOPT]
 
    if [ expr ( $securityValue & $::RS08_FOPT_SECD_MASK ) != $::RS08_FOPT_SECD_UNSEC ] {
-      return "Target is secured"
+      puts "isUnsecure{} - Target is secured!"
+      return $::PROGRAMMING_RC_ERROR_SECURED
    }
-   return
+   puts "isUnsecure{} - Target is unsecured"
+   return 0
 }
 
 ;######################################################################################

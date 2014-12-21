@@ -106,44 +106,56 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>LVWIE</name>
-                     <description>Low-Voltage Warning Interrupt Enable</description>
+                     <description>Low-Voltage Warning Interrupt Enable\n
+Enables hardware interrupt requests for LVWF</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Hardware interrupt disabled (use polling)</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Request a hardware interrupt when LVWF = 1</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>LVWACK</name>
-                     <description>Low-Voltage Warning Acknowledge - Write 1 to clear LVWF</description>
+                     <description>Low-Voltage Warning Acknowledge\n
+This write-only bit is used to acknowledge low voltage warning errors.\n
+Write 1 to clear LVWF</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>write-only</access>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0bX</name>
+                           <description>Write 1 to clear</description>
+                           <isDefault>true</isDefault>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>LVWF</name>
-                     <description>Low-Voltage Warning Flag</description>
+                     <description>Low-Voltage Warning Flag\n
+This bit indicates a low-voltage warning event.\n
+LVWF is set when VSupply transitions below the trip point</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Low-voltage warning is not present</description>
+                           <description>No event</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Low-voltage warning is or was present</description>
+                           <description>Low-voltage detected</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

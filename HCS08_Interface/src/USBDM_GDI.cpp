@@ -222,7 +222,7 @@ DiReturnT DiRegisterRead ( DiUInt32T         dnRegNumber,
       return setErrorState(DI_ERR_NONFATAL, rc);
    }
    *drvValue = (U32c)dataValue;
-   Logging::print("0x%X(%d) => 0x%08X\n", dnRegNumber, dnRegNumber, dataValue);
+   Logging::print("0x%X(%d) => 0x%08lX\n", dnRegNumber, dnRegNumber, dataValue);
    return setErrorState(DI_OK);
 }
 

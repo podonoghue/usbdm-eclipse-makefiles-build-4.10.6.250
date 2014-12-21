@@ -12,6 +12,7 @@ Devices using this peripheral:
       MKL26Z4
       MKL34Z4
       MKL36Z4
+      MKL43Z4
       MKL46Z4
       MKV10Z7
 -->
@@ -44,42 +45,45 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>SOURCE</name>
-                     <description>DMA Channel Source (slot)</description>
+                     <description>DMA Channel Source (slot)\n
+Specifies which DMA source, if any, is routed to a particular DMA channel</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>6</bitWidth>
                   </field>
                   <field>
                      <name>TRIG</name>
-                     <description>DMA Channel Trigger Enable</description>
+                     <description>DMA Channel Trigger Enable\n
+Enables the periodic trigger capability for the triggered DMA channel</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Triggering is disabled. If triggering is disabled and ENBL is set, the DMA Channel will simply route the specified source to the DMA channel. (Normal mode)</description>
+                           <description>Request directed routed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Triggering is enabled. If triggering is enabled and ENBL is set, the DMAMUX is in Periodic Trigger mode</description>
+                           <description>Periodic triggering enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ENBL</name>
-                     <description>DMA Channel Enable</description>
+                     <description>DMA Channel Enable\n
+Usually the Channel enable in the DMA is used in preference to this</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>DMA channel is disabled. This mode is primarily used during configuration of the DMAMux. The DMA has separate channel enables/disables, which should be used to disable or reconfigure a DMA channel</description>
+                           <description>Channel disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>DMA channel is enabled</description>
+                           <description>Channel enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

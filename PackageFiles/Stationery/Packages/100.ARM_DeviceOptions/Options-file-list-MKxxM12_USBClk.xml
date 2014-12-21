@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0">
+   <!-- Extra Optional files for MKxxM12 with USB derived Clock (MK22FN(some), MK63FN, MK64FN, MK64FX) -->
+   <projectActionList id="Options-file-list-MKxxM12_USBClk">
+      <applyWhen>
+         <or>
+            <deviceSubfamilyIs>MK22F51212</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MK63F12</deviceSubfamilyIs>
+            <deviceSubfamilyIs>MK64F12</deviceSubfamilyIs>
+         </or>
+      </applyWhen>
+      <variable id="Clock-setup-MK64M12" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="UART-setup-MK64M12" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
+      <condition variable="Clock-setup-MK64M12">
+         <copy source="Startup_Code/clock-MK64M12.c" target="Startup_Code/clock.c" />
+         <copy source="Project_Headers/clock_configure-MK64M12.h" target="Project_Headers/clock_configure.h" />
+      </condition>
+      <condition variable="UART-setup-MK64M12">
+         <copy source="Startup_Code/uart-mk.c" target="Startup_Code/uart.c" />
+         <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
+      </condition>
+   </projectActionList>
+
+</root>

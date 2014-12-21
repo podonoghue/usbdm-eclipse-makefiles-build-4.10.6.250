@@ -379,6 +379,9 @@ USBDM_ErrorCode FlashProgrammer::configureTargetClock(unsigned long  *busFrequen
          MCG_SpeedParameters.mcgCT = 0x01; // DRS = 1
          return configureMCG_Clock(busFrequency, &MCG_SpeedParameters);
          break;
+      case MKMCGV1:
+         return PROGRAMMING_RC_ERROR_ILLEGAL_PARAMS;
+         break;
    }
    return PROGRAMMING_RC_ERROR_ILLEGAL_PARAMS;
 }
@@ -940,6 +943,9 @@ USBDM_ErrorCode FlashProgrammer::setFlashTrimValues(FlashImage *flashImage) {
          flashImage->setValue(parameters.getClockTrimNVAddress(),
                                          clockTrimParameters.mcg.mcgSC&0x01);
          return PROGRAMMING_RC_OK;
+      case MKMCGV1:
+         return PROGRAMMING_RC_ERROR_ILLEGAL_PARAMS;
+         break;
    }
    return PROGRAMMING_RC_ERROR_ILLEGAL_PARAMS;
 }

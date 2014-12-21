@@ -40,18 +40,18 @@ The new values will take effect according to the LDMOD</description>
                   <field>
                      <name>CONT</name>
                      <description>Continuous Mode Enable\n
-Enables the PDB operation in Continuous mode</description>
+Enables the PDB operation in Continuous mode rather than one-shot</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PDB operation in One-Shot mode</description>
+                           <description>One-Shot mode</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>PDB operation in Continuous mode</description>
+                           <description>Continuous mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -65,22 +65,22 @@ Counter clock frequency = Peripheral clock / (PRESCALER factor x MULT factor)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Multiplication factor is 1</description>
+                           <description>x1</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Multiplication factor is 10</description>
+                           <description>x10</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Multiplication factor is 20</description>
+                           <description>x20</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Multiplication factor is 40</description>
+                           <description>x40</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -94,12 +94,12 @@ Enables the PDB interrupt. When this field is set and DMAEN is cleared, PDBIF ge
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PDB interrupt disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>PDB interrupt enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -113,12 +113,12 @@ This field is set when the counter value is equal to the IDLY register. Writing 
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Counter value has not reached IDLY value since flag last cleared</description>
+                           <description>No event</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Counter value has reached IDLY value since flag last cleared</description>
+                           <description>Counter=IDLY event</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -131,7 +131,7 @@ This field is set when the counter value is equal to the IDLY register. Writing 
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PDB disabled. Counter is off and all pre-trigger and trigger outputs are low</description>
+                           <description>PDB disabled\tCounter is off and all pre-trigger and trigger outputs are low</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -150,82 +150,82 @@ The trigger input source can be internal or external (EXTRG pin), or the softwar
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0000</name>
-                           <description>Trigger-In 0 is selected</description>
+                           <description>Trigger-In 0</description>
                            <value>0b0000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0001</name>
-                           <description>Trigger-In 1 is selected</description>
+                           <description>Trigger-In 1</description>
                            <value>0b0001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0010</name>
-                           <description>Trigger-In 2 is selected</description>
+                           <description>Trigger-In 2</description>
                            <value>0b0010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0011</name>
-                           <description>Trigger-In 3 is selected</description>
+                           <description>Trigger-In 3</description>
                            <value>0b0011</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0100</name>
-                           <description>Trigger-In 4 is selected</description>
+                           <description>Trigger-In 4</description>
                            <value>0b0100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0101</name>
-                           <description>Trigger-In 5 is selected</description>
+                           <description>Trigger-In 5</description>
                            <value>0b0101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0110</name>
-                           <description>Trigger-In 6 is selected</description>
+                           <description>Trigger-In 6</description>
                            <value>0b0110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b0111</name>
-                           <description>Trigger-In 7 is selected</description>
+                           <description>Trigger-In 7</description>
                            <value>0b0111</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1000</name>
-                           <description>Trigger-In 8 is selected</description>
+                           <description>Trigger-In 8</description>
                            <value>0b1000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1001</name>
-                           <description>Trigger-In 9 is selected</description>
+                           <description>Trigger-In 9</description>
                            <value>0b1001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1010</name>
-                           <description>Trigger-In 10 is selected</description>
+                           <description>Trigger-In 10</description>
                            <value>0b1010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1011</name>
-                           <description>Trigger-In 11 is selected</description>
+                           <description>Trigger-In 11</description>
                            <value>0b1011</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1100</name>
-                           <description>Trigger-In 12 is selected</description>
+                           <description>Trigger-In 12</description>
                            <value>0b1100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1101</name>
-                           <description>Trigger-In 13 is selected</description>
+                           <description>Trigger-In 13</description>
                            <value>0b1101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1110</name>
-                           <description>Trigger-In 14 is selected</description>
+                           <description>Trigger-In 14</description>
                            <value>0b1110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1111</name>
-                           <description>Software trigger is selected</description>
+                           <description>Software trigger</description>
                            <value>0b1111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -239,42 +239,42 @@ Counter clock frequency = Peripheral clock / (PRESCALER factor x MULT factor)</d
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b000</name>
-                           <description>Prescaler factor = 1</description>
+                           <description>Prescaler = 1</description>
                            <value>0b000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b001</name>
-                           <description>Prescaler factor = 2</description>
+                           <description>Prescaler = 2</description>
                            <value>0b001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b010</name>
-                           <description>Prescaler factor = 4</description>
+                           <description>Prescaler = 4</description>
                            <value>0b010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b011</name>
-                           <description>Prescaler factor = 8</description>
+                           <description>Prescaler = 8</description>
                            <value>0b011</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b100</name>
-                           <description>Prescaler factor = 16</description>
+                           <description>Prescaler = 16</description>
                            <value>0b100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b101</name>
-                           <description>Prescaler factor = 32</description>
+                           <description>Prescaler = 32</description>
                            <value>0b101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b110</name>
-                           <description>Prescaler factor = 64</description>
+                           <description>Prescaler = 64</description>
                            <value>0b110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b111</name>
-                           <description>Prescaler factor = 128</description>
+                           <description>Prescaler = 128</description>
                            <value>0b111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -316,12 +316,12 @@ Enables the channel sequence error flags to generate a sequence error interrupt<
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PDB sequence error interrupt disabled</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>PDB sequence error interrupt enabled</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -335,22 +335,22 @@ Selects when to load the MOD, IDLY, CHnDLYm, INTx, and POyDLY registers, after 1
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Registers are loaded immediately afterwards</description>
+                           <description>Immediate load</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Registers are loaded when the PDB counter reaches the MOD value</description>
+                           <description>PDB counter = MOD value</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Registers are loaded when a trigger input event is detected</description>
+                           <description>Next trigger event</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>Registers are loaded when either the PDB counter reaches the MOD value or a trigger event is detected</description>
+                           <description>PDB counter = MOD value or trigger event</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -427,12 +427,12 @@ Enable the PDB ADC pre-trigger outputs. Only lower M pre-trigger bits are implem
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>PDB channel&apos;s corresponding pre-trigger disabled</description>
+                              <description>Pre-trigger disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>PDB channel&apos;s corresponding pre-trigger enabled</description>
+                              <description>Pre-trigger enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -446,12 +446,12 @@ Selects the PDB ADC pre-trigger outputs. Only lower M pre-trigger fields are imp
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>PDB channel&apos;s corresponding pre-trigger is in bypassed mode. The pre-trigger asserts one peripheral clock cycle after a rising edge is detected on selected trigger input source or software trigger is selected and SWTRIG is written with 1</description>
+                              <description>Bypass mode\tThe pre-trigger asserts one peripheral clock cycle after a rising edge is detected on selected trigger input source or software trigger is selected and SWTRIG is written with 1</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>PDB channel&apos;s corresponding pre-trigger asserts when the counter reaches the channel delay register and one peripheral clock cycle after a rising edge is detected on selected trigger input source or software trigger is selected and SETRIG is written with 1</description>
+                              <description>Delay mode\tPDB channel&apos;s corresponding pre-trigger asserts when the counter reaches the channel delay register and one peripheral clock cycle after a rising edge is detected on selected trigger input source or software trigger is selected and SETRIG is written with 1</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -466,12 +466,12 @@ Only lower M pre-trigger bits are implemented</description>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>PDB channel&apos;s corresponding pre-trigger back-to-back operation disabled</description>
+                              <description>Disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>PDB channel&apos;s corresponding pre-trigger back-to-back operation enabled</description>
+                              <description>Enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -491,12 +491,12 @@ Only lower M pre-trigger bits are implemented</description>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Sequence error not detected on PDB channel&apos;s corresponding pre-trigger</description>
+                              <description>No error\tSequence error not detected on PDB channel&apos;s corresponding pre-trigger</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Sequence error detected on PDB channel&apos;s corresponding pre-trigger. ADCn block can be triggered for a conversion by one pre-trigger from PDB channel n. When one conversion, which is triggered by one of the pre-triggers from PDB channel n, is in progress, new trigger from PDB channel&apos;s corresponding pre-trigger m cannot be accepted by ADCn, and ERR[m] is set. Writing 1&apos;s to clear the sequence error flags</description>
+                              <description>Error\tSequence error detected on PDB channel&apos;s corresponding pre-trigger. ADCn block can be triggered for a conversion by one pre-trigger from PDB channel n. When one conversion, which is triggered by one of the pre-triggers from PDB channel n, is in progress, new trigger from PDB channel&apos;s corresponding pre-trigger m cannot be accepted by ADCn, and ERR[m] is set. Writing 1&apos;s to clear the sequence error flags</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -510,12 +510,12 @@ The CF[m] bit is set when the PDB counter matches the CHnDLYm. Write 0 to clear 
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No match has occurred since flag last cleared</description>
+                              <description>No match\thas occurred since flag last cleared</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Match has occurred since flag last cleared</description>
+                              <description>Match\thas occurred since flag last cleared</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -556,12 +556,12 @@ Enables the pulse output. Only lower Y bits are implemented in this MCU</descrip
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>PDB Pulse-Out disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>PDB Pulse-Out enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

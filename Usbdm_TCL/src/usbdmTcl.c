@@ -434,16 +434,34 @@ static int setTargetCommand(ClientData notneededhere, Tcl_Interp *interp, int ar
       targetType = T_OFF;
    }
    else {
-      printf("Unrecogized target\n");
+      printf("Unrecognised target\n");
       return TCL_ERROR;
    }
    USBDM_SetTargetType(T_OFF);
    USBDM_ExtendedOptions_t defaultBdmOptions = {sizeof(USBDM_ExtendedOptions_t), targetType};
    USBDM_GetDefaultExtendedOptions(&defaultBdmOptions);
    defaultBdmOptions.targetVdd  = bdmOptions.targetVdd;
+//   defaultBdmOptions.autoReconnect = AUTOCONNECT_NEVER;
    if (checkUsbdmRC(interp,  USBDM_SetExtendedOptions(&defaultBdmOptions))) {
       return TCL_ERROR;
    }
+   printBdmOptions(&defaultBdmOptions);
+
+//   printf("=> proposed (%p), sizeof=%d, sizeof=%d\n", &defaultBdmOptions, sizeof(defaultBdmOptions), sizeof(USBDM_ExtendedOptions_t));
+//
+//   printf("=> sizeof (size)= %d\n",                sizeof (defaultBdmOptions.size));
+//   printf("=> sizeof (targetType)= %d\n",          sizeof (defaultBdmOptions.targetType));
+//   printf("=> sizeof (targetVdd)= %d\n",           sizeof (defaultBdmOptions.targetVdd));
+//   printf("=> sizeof (cycleVddOnReset)= %d\n",     sizeof (defaultBdmOptions.cycleVddOnReset));
+//   printf("=> sizeof (leaveTargetPowered)= %d\n",  sizeof (defaultBdmOptions.leaveTargetPowered));
+//   printf("=> sizeof (autoReconnect)= %d\n",       sizeof (defaultBdmOptions.autoReconnect));
+//   printf("=> offset (size)= %d\n",                ((int)&defaultBdmOptions.size)-((int)&defaultBdmOptions));
+//   printf("=> offset (targetType)= %d\n",          ((int)&defaultBdmOptions.targetType)-((int)&defaultBdmOptions));
+//   printf("=> offset (targetVdd)= %d\n",           ((int)&defaultBdmOptions.targetVdd)-((int)&defaultBdmOptions));
+//   printf("=> offset (cycleVddOnReset)= %d\n",     ((int)&defaultBdmOptions.cycleVddOnReset)-((int)&defaultBdmOptions));
+//   printf("=> offset (leaveTargetPowered)= %d\n",  ((int)&defaultBdmOptions.leaveTargetPowered)-((int)&defaultBdmOptions));
+//   printf("=> offset (autoReconnect)= %d\n",       ((int)&defaultBdmOptions.autoReconnect)-((int)&defaultBdmOptions));
+
    USBDM_Version_t version;
    USBDM_GetVersion(&version);
    printf("USBDM DLL Version = %s\n", USBDM_DLLVersionString());
@@ -752,7 +770,7 @@ static int pinSetCommand(ClientData notneededhere, Tcl_Interp *interp, int argc,
          value |= getPinControlValue(arg+4)<<PIN_SWD_OFFS;
       }
       else {
-         Tcl_SetResult(interp, "Unrecognized parameter", TCL_STATIC);
+         Tcl_SetResult(interp, "Unrecognised parameter", TCL_STATIC);
       }
    }
    if (checkUsbdmRC(interp, USBDM_ControlPins(value, NULL))) {
@@ -2727,7 +2745,7 @@ static int syncCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, T
 static int debugCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
 // debug <control_value>
    const char *currentToken;
-   int command, arg1 = 0;
+   int command, arg1 = 0, arg2=0;
    unsigned char usb_data[20] = {0};
    unsigned temp;
 
@@ -2750,8 +2768,17 @@ static int debugCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, 
          return TCL_ERROR;
       }
    }
+   if (argc > 3) {
+      // Arg #1
+      currentToken = Tcl_GetString(argv[3]);
+      if (sscanf(currentToken,"%i",&arg2) != 1) {
+         Tcl_WrongNumArgs(interp, 1, argv, "<control_value>");
+         return TCL_ERROR;
+      }
+   }
    usb_data[2]=command;
    usb_data[3]=arg1;
+   usb_data[4]=arg2;
 
    if (checkUsbdmRC(interp,  USBDM_Debug(usb_data)) != 0) {
       printf(":debug Failed\n");
@@ -2767,7 +2794,7 @@ static int debugCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, 
          printf(":debug %10s => Vdd = %2.1f V\n", getDebugCommandName(command), 5.0*usb_data[1]/255);
          break;
       case BDM_DBG_SWD:
-         printf(":debug %10s =>\n "
+         printf(":debug %10s 0x%2.2X 0x%2.2X =>\n "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
@@ -2780,7 +2807,7 @@ static int debugCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, 
                "\n"
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "\n",
-                getDebugCommandName(command),
+                getDebugCommandName(command), arg1, arg2,
                 usb_data[1],  usb_data[1],  usb_data[2],  usb_data[2],
                 usb_data[3],  usb_data[3],  usb_data[4],  usb_data[4],
                 usb_data[5],  usb_data[5],  usb_data[6],  usb_data[6],
@@ -2793,13 +2820,13 @@ static int debugCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, 
                 );
          return BDM_RC_OK;
       default :
-         printf(":debug %10s => "
+         printf(":debug %10s 0x%2.2X 0x%2.2X => "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "0x%2.2X(%2.2d), 0x%2.2X(%2.2d), "
                "\n",
-                getDebugCommandName(command),
+                getDebugCommandName(command), arg1, arg2,
                 usb_data[1], usb_data[1], usb_data[2], usb_data[2],
                 usb_data[3], usb_data[3], usb_data[4], usb_data[4],
                 usb_data[5], usb_data[5], usb_data[6], usb_data[6],
@@ -3359,46 +3386,84 @@ int main(int argc, char *argv[]) {
 #else
 static FILE *logFile = NULL;
 
+/*
+ * Used as a TCL channel for STDERR & STDOUT
+ */
+static Tcl_Channel tclChannel = 0;
+
 TCL_API
-int evalTclScript(UsbdmTclInterp *usbdmTclInterp, const char *script) {
+USBDM_ErrorCode evalTclScript(UsbdmTclInterp *usbdmTclInterp, const char *script) {
+
    Tcl_Interp *interp = (Tcl_Interp*)usbdmTclInterp;
-   int rc = Tcl_Eval(interp, script);
+
+   int rcTCL = Tcl_Eval(interp, script);
+   const char *result = getTclResult(interp);
+
+   USBDM_ErrorCode rc = BDM_RC_OK;
+   if (rcTCL != TCL_OK) {
+      // We expect no error
+      // Assume anything else is an error
+      rc = PROGRAMMING_RC_ERROR_TCL_SCRIPT;
+   }
+   else {
+      // Null result is OK
+      if ((result != NULL) && (*result != '\0')) {
+         // Return value from TCL script
+         // Use as return value if a number
+         // We do NOT accept zero
+         char *eptr = 0;
+         long temp = strtol(result, &eptr, 0);
+         if (eptr != result) {
+            rc = (USBDM_ErrorCode)temp;
+         }
+         else if (logFile != NULL) {
+            fprintf(logFile, "Non-numeric return value = %s\n", result);
+            return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
+         }
+      }
+   }
    if (logFile != NULL) {
-      Tcl_Eval(interp, "flush stdout\n");
+      Tcl_Flush(tclChannel);
       fflush(logFile);
-      if (rc != TCL_OK) {
-         Tcl_Obj *options = Tcl_GetReturnOptions(interp, rc);
+      if (rcTCL != TCL_OK) {
+         // Try to print TCL stack frame
+         Tcl_Obj *options = Tcl_GetReturnOptions(interp, rcTCL);
          Tcl_Obj *key = Tcl_NewStringObj("-errorinfo", -1);
-         Tcl_Obj *stackTrace;
-         if ((options == NULL) || (key == NULL)) {
-            return rc;
+         if ((options != NULL) && (key != NULL)) {
+            Tcl_IncrRefCount(key);
+            Tcl_Obj *stackTrace;
+            Tcl_DictObjGet(NULL, options, key, &stackTrace);
+            Tcl_DecrRefCount(key);
+            const char *res = Tcl_GetString(stackTrace);
+            Tcl_Eval(interp, "flush stdout\n");
+            Tcl_Eval(interp, "flush stderr\n");
+            if (res != NULL) {
+               fprintf(logFile, "TCL Stack Frame = %s\n", res);
+            }
          }
-         Tcl_IncrRefCount(key);
-         Tcl_DictObjGet(NULL, options, key, &stackTrace);
-         Tcl_DecrRefCount(key);
-         const char *res = Tcl_GetString(stackTrace);
-         if (res == NULL) {
-            return rc;
-         }
-         fprintf(logFile, "TCL Stack Frame = %s\n", res);
       }
    }
    return rc;
 }
 
+/*!
+ * @param interp Interpreter to get result from
+ *
+ * @return a point to the result string (a static buffer)
+ */
 TCL_API
 const char *getTclResult(UsbdmTclInterp *interp) {
+   static char buff[200];
    const char *res = Tcl_GetStringResult(interp);
 //   if (logFile != NULL) {
-//      fprintf(logFile, "TCL Result = %s\n", res);
+//      fprintf(logFile, "getTclResult(): TCL Result = %s\n", res);
 //   }
-   return res;
+   memset(buff, 0, sizeof(buff));
+   if (res != NULL) {
+      strncpy(buff, res, sizeof(buff)-1);
+   }
+   return buff;
 }
-
-/*
- * Used as a TCL channel for STDERR & STDOUT
- */
-static Tcl_Channel tclChannel = 0;
 
 TCL_API
 UsbdmTclInterp *createTclInterpreter(TargetType_t target, FILE *fp) {

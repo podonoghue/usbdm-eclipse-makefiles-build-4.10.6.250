@@ -6,6 +6,7 @@ Devices using this peripheral:
       MK20D10
       MK21D5
       MK22D5
+      MK24F12
       MK30D10
       MK40D10
       MK50D10
@@ -13,6 +14,8 @@ Devices using this peripheral:
       MK52D10
       MK53D10
       MK60D10
+      MK63F12
+      MK64F12
 -->
       <peripheral>
          <?sourceFile "VREF_MK_0" ?>
@@ -40,7 +43,8 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>TRIM</name>
-                     <description>Trim bits</description>
+                     <description>Trim bits\n
+These bits change the resulting VREF by approximately ~0.5 mV for each step</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>6</bitWidth>
                      <enumeratedValues>
@@ -58,18 +62,19 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>CHOPEN</name>
-                     <description>Chop oscillator enable. When set, internal chopping operation is enabled and the internal analog offset will be minimized</description>
+                     <description>Chop oscillator enable.\n
+When set, internal chopping operation is enabled and the internal analog offset will be minimized</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Chop oscillator is disabled</description>
+                           <description>Chopping is disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Chop oscillator is enabled</description>
+                           <description>Chopping is enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -85,23 +90,24 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>MODE_LV</name>
-                     <description>Buffer Mode selection</description>
+                     <description>Buffer Mode selection\n
+These bits select the buffer modes for the Voltage Reference module</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Bandgap on only, for stabilization and startup</description>
+                           <description>Bandgap only\tfor stabilization and startup</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>High power buffer mode enabled</description>
+                           <description>Low-power\t buffer enabled</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>Low-power buffer mode enabled</description>
+                           <description>Tight-regulation\t buffer enabled</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -113,19 +119,19 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>VREFST</name>
-                     <description>Internal Voltage Reference stable</description>
+                     <description>Internal Voltage Reference has settled</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The module is disabled or not stable</description>
+                           <description>Not ready</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The module is stable</description>
+                           <description>Ready</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -150,18 +156,19 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>REGEN</name>
-                     <description>Regulator enable</description>
+                     <description>Regulator enable\n
+Enabled the internal 1.75 V regulator</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Internal 1.75 V regulator is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Internal 1.75 V regulator is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -174,12 +181,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The module is disabled</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The module is enabled</description>
+                           <description>Enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

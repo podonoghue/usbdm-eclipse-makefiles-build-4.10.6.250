@@ -279,7 +279,7 @@ This results in automatic hardware floating-point context preservation and resto
                      <name>ADDRESS</name>
                      <description>The location of the unpopulated floating-point register space allocated on an exception stack frame</description>
                      <bitOffset>3</bitOffset>
-                     <bitWidth>30</bitWidth>
+                     <bitWidth>29</bitWidth>
                   </field>
                </fields>
             </register>

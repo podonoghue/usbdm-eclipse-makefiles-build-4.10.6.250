@@ -16,6 +16,7 @@
 <!ENTITY Custom-Devices                   SYSTEM "Custom/custom-hcs12.xml">
 ]>
 <!-- 
+      V4.10.6.230 - Added MC9S12XF512 - untested
       V4.10.6.210 - Added MC9S12Gxxx - untested
       V4.10.5 		- Added MC9S12HZ256 - untested
       V4.10.4 		- Fixed XEP100 EEPROM
@@ -1100,10 +1101,34 @@
          <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
             <securityEntryRef ref="HCS12-default-security" />
             <memoryRange start="0x4000" end="0x7FFF" />
-            <memoryRange start="0x8000" end="0xBFFF" pages="16"  pageEnd="0x0F" />
+            <memoryRange start="0x8000" end="0xBFFF" pages="15"  pageEnd="0x0F" />
             <memoryRange start="0xC000" end="0xFFFF" />
          </memory>
          <sdid value="0xF080" mask="0xFFF0"/>
+         <flashScripts>
+            <tclScriptRef ref="HCS12-FTMRCK-flash-scripts" />
+         </flashScripts>
+         <flashProgramRef ref="HCS12-GMMC-FTMRG-flash-program" />
+      </device>
+      <!-- 
+==========GA240 definition created by Carl Barnes - Technological Arts===========
+-->      
+      <device family="HCS12" name="MC9S12GA240">
+         <clock type="External" />
+         <memory registerAddress="0x0100" type="eeprom" sectorSize="4" alignment="2">
+            <memoryRange start="0x000400" size="4K" />
+         </memory>
+         <memory type="ram">
+            <memoryRange size="11K" end="0x3FFF" />
+         </memory>
+         <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="512" alignment="8">
+            <securityEntryRef ref="HCS12-default-security" />
+            <memoryRange start="0x1400" end="0x1FFF" />
+            <memoryRange start="0x4000" end="0x7FFF" />
+            <memoryRange start="0x8000" end="0xBFFF" pages="15"  pageEnd="0x0F" />
+            <memoryRange start="0xC000" end="0xFFFF" />
+         </memory>
+         <sdid value="0xF080" />
          <flashScripts>
             <tclScriptRef ref="HCS12-FTMRCK-flash-scripts" />
          </flashScripts>
@@ -1986,6 +2011,27 @@
 <!-- 
 ===================================================================================
 -->      
+      <device family="HCS12" name="MC9S12XF512 ">
+         <clock type="External" />
+         <memory type="ram">
+            <memoryRange start="0x2000" end="0x3FFF" />
+         </memory>
+         <memory pageAddress="0x0017" registerAddress="0x0100" type="eeprom" sectorSize="256" alignment="2">
+            <memoryRange start="0x0800" end="0x0BFF" pages="32"  pageStart="0x00" />
+         </memory>
+         <memory pageAddress="0x0015" registerAddress="0x0100" type="flash" securityAddress="0xFF00" sectorSize="1024" alignment="8">
+            <securityEntryRef ref="HCS12-xep-security" />
+            <memoryRange start="0x4000" end="0x7FFF" />               <!--  Fixed 0xFD -->
+            <memoryRange start="0x8000" end="0xBFFF" pageReset="0xFE" pages="512K"  pageEnd="0xFF" />
+            <memoryRange start="0xC000" end="0xFFFF" />               <!--  Fixed 0xFF -->
+         </memory>
+         <sdidMask value="0xFFF0" />
+         <sdid value="0xD480" />
+         <flashScripts>
+            <tclScriptRef ref="HCS12-XFTMRK-flash-scripts" />
+         </flashScripts>
+         <flashProgramRef ref="HCS12-XMMC-XFTMRK-flash-program" />
+      </device>
       <device family="HCS12" name="MC9S12XEP100">
          <clock type="External" />
          <memory type="ram">

@@ -990,7 +990,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
    if ((elfHeader.e_ident[EI_MAG0] != ELFMAG0V) ||(elfHeader.e_ident[EI_MAG1] != ELFMAG1V) ||
        (elfHeader.e_ident[EI_MAG2] != ELFMAG2V) ||(elfHeader.e_ident[EI_MAG3] != ELFMAG3V) ||
        (elfHeader.e_ident[EI_CLASS] != ELFCLASS32)) {
-      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid  format\n", filePath.c_str());
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid  format\n");
       fclose(fp);
       return SFILE_RC_UNKNOWN_FILE_FORMAT;
    }
@@ -1029,7 +1029,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
    return SFILE_RC_ELF_WRONG_TARGET;
 #endif
    if ((elfHeader.e_type != ET_EXEC) || (elfHeader.e_phoff == 0) || (elfHeader.e_phentsize == 0) || (elfHeader.e_phnum == 0)) {
-      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid format\n", filePath.c_str());
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid format\n");
       fclose(fp);
       return SFILE_RC_ELF_FORMAT_ERROR;
    }
