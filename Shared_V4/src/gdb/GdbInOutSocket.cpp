@@ -53,7 +53,7 @@
 #include "Log.h"
 
 
-#define GDB_PORT_NUM          2331 // Client port (GDB connection)
+#define gdbClientPort          2331 // Client port (GDB connection)
 
 #define LOCAL_HOST_NAME       "localhost"
 #define D_QUEUE               1
@@ -83,7 +83,7 @@ GdbInOutSocket::GdbInOutSocket() :
    activeSocket(-1) {
 
    // Create socket to listen on
-   listenSocket = createSocket(GDB_PORT_NUM, true);
+   listenSocket = createSocket(gdbClientPort, true);
 }
 
 /*
@@ -294,7 +294,7 @@ int GdbInOutSocket::waitForConnection(int listenSocket) {
 //
 //   fprintf(stderr, "Current Windsock Error = %d\n", NET_ERROR_NUM);
 //
-   fprintf(stderr, "Waiting for connection on port #%d... ", GDB_PORT_NUM);
+   fprintf(stderr, "Waiting for connection on port #%d... ", gdbClientPort);
    int result = 0;
    fd_set input;
    do {

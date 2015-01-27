@@ -31,6 +31,7 @@
 #define _USBDM_API_H_
 
 #include <stdint.h>
+#include <stdio.h>
 
 //==================================================
 #if defined __cplusplus
@@ -44,7 +45,11 @@
 #endif
 
 #if defined(_WIN32) && !defined (WINAPI)
+#ifdef __GNUC__
    #define WINAPI __attribute__((__stdcall__))
+#else
+   #define WINAPI __stdcall
+#endif
 #endif
 
 #if defined(_WIN32) && !defined(DLL_LOCAL)
@@ -90,7 +95,7 @@
 #endif
 
 //! USBDM Version this header describes
-#define USBDM_API_VERSION (0x40A07)  // V4.10.7 (in hex xx.xx.xx)
+#define USBDM_API_VERSION (0x40A06)  // V4.10.6 (in hex xx.xx.xx)
 
 //! Capabilities of the hardware
 //!
@@ -1705,6 +1710,19 @@ USBDM_ErrorCode USBDM_JTAG_ExecuteSequence(unsigned char       length,
                                            const unsigned char *sequence,
                                            unsigned char       inLength,
                                            unsigned char       *inBuffer);
+
+//=====================================================================================================
+// Logging
+
+//! Get current log file for messages
+//!
+USBDM_API
+FILE *USBDM_GetLogFile(void);
+
+//! Set log file for messages
+//!
+USBDM_API
+void USBDM_SetLogFile(FILE *fp);
 
 //=====================================================================================================
 // ICP functions

@@ -26,7 +26,7 @@ Devices using this peripheral:
          <registers>
             <register>
                <name>C1</name>
-               <description>ICS Control Register 1</description>
+               <description>Control 1 Register</description>
                <addressOffset>0x0</addressOffset>
                <size>8</size>
                <resetValue>0x4</resetValue>
@@ -34,25 +34,28 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>IREFSTEN</name>
-                     <description>Internal Reference Stop Enable</description>
+                     <description>Internal Reference Stop Enable\n
+Controls whether or not the internal reference clock remains enabled when the ICS enters Stop mode.\n
+(only if IRCLKEN is set or if ICS is in FEI, FBI, or FBILP modes before entering Stop mode)</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Internal reference clock is disabled in Stop mode</description>
+                           <description>Disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Internal reference clock stays enabled in Stop mode if IRCLKEN is set or if ICS is in FEI, FBI, or FBILP mode before entering Stop mode</description>
+                           <description>Enabled in STOP</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>IRCLKEN</name>
-                     <description>Internal Reference Clock Enable</description>
+                     <description>Internal Reference Clock Enable\n
+Enables the internal reference clock for use as ICSIRCLK</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -70,66 +73,69 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>IREFS</name>
-                     <description>Internal Reference Select</description>
+                     <description>Internal Reference Select\n
+Selects the reference clock source for the FLL</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>External reference clock is selected</description>
+                           <description>External clock</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Internal reference clock is selected</description>
+                           <description>Internal clock</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
-                     <name>RDIV</name>
-                     <description>FLL External Reference Divider</description>
+                     <name>FRDIV</name>
+                     <description>FLL External Reference Divider\n
+Selects the amount to divide down the external reference clock for the FLL\n
+If (RANGE=0 or OSCSEL=1) 1st value is used; else 2nd value</description>
                      <bitOffset>3</bitOffset>
                      <bitWidth>3</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b000</name>
-                           <description>If RANGE 0 = 0 or OSCSEL=1 , Divide Factor is 1; for all other RANGE 0 values, Divide Factor is 32</description>
+                           <description>Either 1 or 32</description>
                            <value>0b000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b001</name>
-                           <description>If RANGE 0 = 0 or OSCSEL=1 , Divide Factor is 2; for all other RANGE 0 values, Divide Factor is 64</description>
+                           <description>Either 2 or 64</description>
                            <value>0b001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b010</name>
-                           <description>If RANGE 0 = 0 or OSCSEL=1 , Divide Factor is 4; for all other RANGE 0 values, Divide Factor is 128</description>
+                           <description>Either 4 or 128</description>
                            <value>0b010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b011</name>
-                           <description>If RANGE 0 = 0 or OSCSEL=1 , Divide Factor is 8; for all other RANGE 0 values, Divide Factor is 256</description>
+                           <description>Either 8 or 256</description>
                            <value>0b011</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b100</name>
-                           <description>If RANGE 0 = 0 or OSCSEL=1 , Divide Factor is 16; for all other RANGE 0 values, Divide Factor is 512</description>
+                           <description>Either 16 or 512</description>
                            <value>0b100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b101</name>
-                           <description>If RANGE 0 = 0 or OSCSEL=1 , Divide Factor is 32; for all other RANGE 0 values, Divide Factor is 1024</description>
+                           <description>Either 32 or 1024</description>
                            <value>0b101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b110</name>
-                           <description>If RANGE 0 = 0 or OSCSEL=1 , Divide Factor is 64; for all other RANGE 0 values, Divide Factor is 1280</description>
+                           <description>Either 64 or 1280</description>
                            <value>0b110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b111</name>
-                           <description>If RANGE 0 = 0 or OSCSEL=1 , Divide Factor is 128; for all other RANGE 0 values, Divide Factor is 1536</description>
+                           <description>Either 128 or 1536</description>
                            <value>0b111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -141,23 +147,23 @@ Devices using this peripheral:
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>00</name>
-                           <description>Output of FLL is selected</description>
+                           <name>0b00</name>
+                           <description>FLL</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
-                           <name>01</name>
-                           <description>Internal reference clock is selected</description>
+                           <name>0b01</name>
+                           <description>Internal reference</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
-                           <name>10</name>
-                           <description>External reference clock is selected</description>
+                           <name>0b10</name>
+                           <description>External reference</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
-                           <name>11</name>
-                           <description>Reserved, defaults to 00</description>
+                           <name>0b11</name>
+                           <description>Reserved</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -166,7 +172,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>C2</name>
-               <description>ICS Control Register 2</description>
+               <description>Control 2 Register</description>
                <addressOffset>0x1</addressOffset>
                <size>8</size>
                <resetValue>0x80</resetValue>
@@ -174,18 +180,19 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>LP</name>
-                     <description>Low Power Select</description>
+                     <description>Low Power Select\n
+Controls whether the FLL is disabled in bypass modes</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FLL is not disabled in bypass mode</description>
+                           <description>FLL not disabled in bypass</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FLL is disabled in bypass modes unless debug is active</description>
+                           <description>FLL disabled in bypass</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -198,42 +205,42 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b000</name>
-                           <description>Divides the selected clock by 1</description>
+                           <description>Divide by 1</description>
                            <value>0b000</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b001</name>
-                           <description>Divides the selected clock by 2</description>
+                           <description>Divide by 2</description>
                            <value>0b001</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b010</name>
-                           <description>Divides the selected clock by 4</description>
+                           <description>Divide by 4</description>
                            <value>0b010</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b011</name>
-                           <description>Divides the selected clock by 8</description>
+                           <description>Divide by 8</description>
                            <value>0b011</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b100</name>
-                           <description>Divides the selected clock by 16</description>
+                           <description>Divide by 16</description>
                            <value>0b100</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b101</name>
-                           <description>Divides the selected clock by 32</description>
+                           <description>Divide by 32</description>
                            <value>0b101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b110</name>
-                           <description>Divides the selected clock by 64</description>
+                           <description>Divide by 64</description>
                            <value>0b110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b111</name>
-                           <description>Divides the selected clock by 128</description>
+                           <description>Divide by 128</description>
                            <value>0b111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -242,7 +249,7 @@ Devices using this peripheral:
             </register>
             <register>
                <name>C3</name>
-               <description>ICS Control Register 3</description>
+               <description>Control 3 Register</description>
                <addressOffset>0x2</addressOffset>
                <size>8</size>
                <resetValue>0x80</resetValue>
@@ -250,14 +257,22 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>SCTRIM</name>
-                     <description>Slow Internal Reference Clock Trim Setting</description>
+                     <description>Slow Internal Reference Clock Trim Setting\n
+Adjusts the slow internal reference clock frequency</description>
                      <bitOffset>0</bitOffset>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0bXXXXXXXX</name>
+                           <description>Slow IRC trim value</description>
+                           <isDefault>true</isDefault>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>
             <register>
                <name>C4</name>
-               <description>ICS Control Register 4</description>
+               <description>Control 4 Register</description>
                <addressOffset>0x3</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
@@ -269,31 +284,27 @@ Devices using this peripheral:
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b0</name>
-                           <description>LSB of trim is 0</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>LSB of trim is 1</description>
-                           <value>0b1</value>
+                           <name>0bX</name>
+                           <description>Slow IRC trim(lsb)</description>
+                           <isDefault>true</isDefault>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>CME</name>
-                     <description>Clock Monitor Enable</description>
+                     <description>Clock Monitor Enable\n
+Enables generation of a reset on loss of external clock</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Clock monitor is disabled</description>
+                           <description>Monitor disabled</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Generates a reset request on loss of external clock</description>
+                           <description>Monitor enabled</description>
                            <value>0b01</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -306,12 +317,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No interrupt request is generated on loss of lock</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Generate an interrupt request on loss of lock</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -329,23 +340,25 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>CLKST</name>
-                     <description>Clock Mode Status</description>
+                     <description>Clock Mode Status\n
+These bits indicate the current clock mode.\n
+The CLKST bits do not update immediately due to internal synchronisation between clock domains</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>00</name>
-                           <description>Output of FLL is selected</description>
+                           <name>0b00</name>
+                           <description>Output of the FLL</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
-                           <name>01</name>
-                           <description>FLL Bypassed, internal reference clock is selected</description>
+                           <name>0b01</name>
+                           <description>Internal reference clock</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
-                           <name>10</name>
-                           <description>FLL Bypassed, external reference clock is selected</description>
+                           <name>0b10</name>
+                           <description>External reference clock</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -357,18 +370,19 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>IREFST</name>
-                     <description>Internal Reference Status</description>
+                     <description>Internal Reference Status\n
+This bit indicates the current source for the FLL reference clock</description>
                      <bitOffset>4</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Source of reference clock is the external reference clock</description>
+                           <description>External reference clock</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Source of reference clock is the internal reference clock</description>
+                           <description>Internal reference clock</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -381,12 +395,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FLL is currently unlocked</description>
+                           <description>FLL is unlocked</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FLL is currently locked</description>
+                           <description>FLL is locked</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -399,12 +413,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>FLL has not lost lock since LOLS was last cleared</description>
+                           <description>LOL not occurred</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>FLL has lost lock since LOLS was last cleared</description>
+                           <description>LOL occurred</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

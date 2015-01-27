@@ -18,6 +18,7 @@ Devices using this peripheral:
          <name>UART0</name>
          <description>Universal Asynchronous Receiver/Transmitter</description>
          <prependToName>UART0</prependToName>
+         <headerStructName>UART0</headerStructName>
          <baseAddress>0x4006A000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -48,7 +49,8 @@ supply current. When BR is 1 - 8191, the UART baud rate equals BUSCLK/(16xBR)</d
                   </field>
                   <field>
                      <name>SBNS</name>
-                     <description>Stop Bit Number Select</description>
+                     <description>Stop Bit Number Select\n
+SBNS selects the number of stop bits present in a data frame</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

@@ -50,7 +50,6 @@ Devices using this peripheral:
       MKE04Z8M4
       MKE06Z4
       MKV10Z7
-      SKEAZ4
 -->
       <peripheral>
          <?sourceFile "CRC" ?>

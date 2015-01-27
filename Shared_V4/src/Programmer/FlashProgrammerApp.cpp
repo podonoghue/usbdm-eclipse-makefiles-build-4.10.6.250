@@ -24,13 +24,14 @@
 
 \verbatim
 Change History
--=================================================================================
+-======================================================================================
+|  20 Jan 2015 | Moved logging messages to USBDM log file              4.10.6.260 - pgo
 |   9 Jul 2013 | Re-factor for GDB Server                              4.9.6 - pgo
 |   7 Apr 2012 | Added -reset, -power  options                         4.9.4 - pgo
-|    Feb  2012 | Added -execute option                                 4.9.3 - pgo
+|     Feb 2012 | Added -execute option                                 4.9.3 - pgo
 |   5 May 2011 | Fixed Vdd options                                     4.4.3 - pgo
 |  31 Jan 2011 | Added command line options (finally)                  4.4.1 - pgo
-+=================================================================================
++======================================================================================
 \endverbatim
 */
 
@@ -100,6 +101,8 @@ private:
    SharedPtr                        shared;
 
 public:
+   FlashProgrammerApp();
+
    // Called on application startup
    virtual bool OnInit();
    virtual int  OnExit();
@@ -113,16 +116,32 @@ private:
 
 };
 
-// Implements FlashProgrammerApp & GetApp()
+// Implements FlashProgrammerApp& GetApp()
 DECLARE_APP(FlashProgrammerApp)
 IMPLEMENT_APP(FlashProgrammerApp)
+
+/*
+ * FlashProgrammerApp type definition
+ */
 IMPLEMENT_CLASS(FlashProgrammerApp, wxApp)
 
 /*
  * FlashProgrammerApp event table definition
  */
 BEGIN_EVENT_TABLE( FlashProgrammerApp, wxApp )
+
 END_EVENT_TABLE()
+
+FlashProgrammerApp::FlashProgrammerApp() {
+	commandLine 	= false;
+	trimNVAddress 	= 0;
+	appSettings 	= 0;
+	verbose 		= false;
+	trimFrequency 	= 0;
+	returnValue 	= 0;
+	verify 			= false;
+	program 		= false;
+}
 
 USBDM_ErrorCode callBack(USBDM_ErrorCode status, int percent, const char *message) {
    fprintf(stdout, "%d%%: %s", percent, message);
@@ -230,7 +249,7 @@ bool FlashProgrammerApp::OnInit(void) {
    const wxString title(_("Flash Programmer"));
 
 #if TARGET == MC56F80xx
-   DSC_SetLogFile(Logging::getLogFileHandle());
+   DSC_SetLogFile(0);
 #endif
 
    if (commandLine) {
@@ -242,7 +261,7 @@ bool FlashProgrammerApp::OnInit(void) {
       UsbdmDialogue *dialogue = new UsbdmDialogue(shared, *appSettings);
       dialogue->SetTitle(title);
       SetTopWindow(dialogue);
-      dialogue->execute(hexFileName);
+      dialogue->execute(hexFileName);// Indexer produces incorrect warning
       dialogue->Destroy();
    }
    return true;

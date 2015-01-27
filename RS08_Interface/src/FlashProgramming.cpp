@@ -408,7 +408,7 @@ USBDM_ErrorCode FlashProgrammer::readTargetChipId(uint32_t *targetSDID, bool doI
       }
    }
    if (ReadMemory(SDIDLength, SDIDLength, parameters.getSDIDAddress(), SDIDValue) !=  BDM_RC_OK) {
-      Logging::error("A=0x%06X - Failed ReadMemory()\n", parameters.getSDIDAddress());
+      Logging::error("A=0x%X - Failed ReadMemory()\n", parameters.getSDIDAddress());
       return PROGRAMMING_RC_ERROR_BDM_READ;
    }
    uint32_t testValue;
@@ -599,7 +599,7 @@ USBDM_ErrorCode FlashProgrammer::initialiseTargetFlash() {
    uint32_t targetBusFrequency = (uint32_t)round(busFrequency/1000.0);
 //   this->flashData.frequency = targetBusFrequency;
 
-   Logging::print("Target Bus Frequency = %ld kHz\n", targetBusFrequency);
+   Logging::print("Target Bus Frequency = %ld kHz\n", (unsigned long)targetBusFrequency);
 #endif
 
    char buffer[100];
@@ -1193,7 +1193,7 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, Memory
          securityInfo = flashRegion->getUnsecureInfo();
          dontOverwrite = true;
          break;
-      case SEC_DEFAULT:   //ToDo Unchanged
+      case SEC_DEFAULT:
          Logging::print("Leaving flash image unchanged\n");
          securityInfo = flashRegion->getUnsecureInfo();
          break;
@@ -1253,7 +1253,7 @@ USBDM_ErrorCode FlashProgrammer::setFlashSecurity(FlashImage &flashImage, Memory
       flashImage.loadDataBytes(size, securityAddress, data, dontOverwrite);
 #ifdef LOG
       Logging::print("Setting security region, \n"
-            "              mem[0x%06X-0x%06X] = \n", securityAddress, securityAddress+size/sizeof(memoryElementType)-1);
+            "              mem[0x%06lX-0x%06lX] = \n", (unsigned long)securityAddress, (unsigned long)(securityAddress+size/sizeof(memoryElementType)-1));
       Logging::printDump(data, size, securityAddress);
 #endif
    }
@@ -1345,7 +1345,7 @@ USBDM_ErrorCode FlashProgrammer::runTCLScript(TclScriptConstPtr script) {
    if (rc != 0) {
       // Unexpected failure!
       Logging::error("Failed\n");
-      Logging::error(script->toString().c_str());
+      Logging::error("%s", script->toString().c_str());
       return PROGRAMMING_RC_ERROR_INTERNAL_CHECK_FAILED;
    }
    return PROGRAMMING_RC_OK;
@@ -1436,64 +1436,113 @@ USBDM_ErrorCode FlashProgrammer::doReadbackVerify(FlashImage *flashImage) {
    int blockResult;
 
    FlashImage::Enumerator *enumerator = flashImage->getEnumerator();
-   //ToDo - handle linear addressing on HCS12
+   if (!enumerator->isValid()) {
+      Logging::print("Empty Memory region\n");
+      flashImage->printMemoryMap();
+   }
    while (enumerator->isValid()) {
-      uint32_t startBlock = enumerator->getAddress();
+      uint32_t imageAddress    = enumerator->getAddress();
+      uint32_t memoryAddress;
+
 #if (TARGET==HCS08)||(TARGET==HC12)
-      USBDM_ErrorCode rc = setPageRegisters(startBlock);
+      USBDM_ErrorCode rc = setPageRegisters(imageAddress);
       if (rc != PROGRAMMING_RC_OK) {
          return rc;
       }
 #endif
+
+      uint32_t      offset      = 0;
+      MemorySpace_t memorySpace = MS_None;
+
+#if (TARGET==RS08)
+      memorySpace = MS_Byte;
+#elif (TARGET == MC56F80xx)
+      if (imageAddress >= FlashImage::DataOffset) {
+         memorySpace = MS_XWord;
+         offset      = FlashImage::DataOffset;
+      }
+      else {
+         memorySpace = MS_PWord;
+         offset      = 0;
+      }
+#elif (TARGET == ARM)
+      memorySpace = MS_Long;
+#elif (TARGET == HCS08) || (TARGET == HCS12)
+      memorySpace = (MemorySpace_t)(MS_Fast|MS_Byte);
+#elif (TARGET == S12Z)
+      memorySpace = MS_Word;
+#else
+      memorySpace = MS_Word;
+#endif
+
       // Find end of block to verify
       enumerator->lastValid();
-      unsigned regionSize = enumerator->getAddress() - startBlock + 1;
-      Logging::print("Verifying Block[0x%8.8X..0x%8.8X]\n", startBlock, startBlock+regionSize-1);
+      unsigned regionSize = enumerator->getAddress() - imageAddress + 1;
+
+      memoryAddress = imageAddress-offset;
+      Logging::print("Verifying Block %s[0x%8.8X..0x%8.8X]\n", getMemSpaceName(memorySpace), memoryAddress, memoryAddress+regionSize-1);
+
       while (regionSize>0) {
-#if (TARGET==RS08)
-         MemorySpace_t memorySpace = MS_Byte;
-#elif (TARGET == MC56F80xx)
-         MemorySpace_t memorySpace = MS_PWord;
-#elif (TARGET == ARM)
-         MemorySpace_t memorySpace = MS_Long;
-#elif (TARGET == HCS08) || (TARGET == HCS12)
-         MemorySpace_t memorySpace = (MemorySpace_t)(MS_Fast|MS_Byte);
-#else
-         MemorySpace_t memorySpace = MS_Word;
+         // Get memory block containing address
+         MemoryRegionConstPtr memRegion = parameters.getMemoryRegionFor(memoryAddress, memorySpace);
+         if (memRegion == NULL) {
+            Logging::error("Verifying Block %s[0x%8.8X..0x%8.8X] - Not in valid memory region\n", getMemSpaceName(memorySpace), memoryAddress, memoryAddress+regionSize-1);
+            return PROGRAMMING_RC_ERROR_OUTSIDE_TARGET_FLASH;
+         }
+#if (TARGET == ARM)
+         if (memRegion->getAlignment()<memorySpace) {
+            memorySpace = (MemorySpace_t)memRegion->getAlignment();
+         }
 #endif
-         unsigned blockSize    = regionSize;
+         // Get size of continuous block containing address
+         uint32_t lastContinuous=0;
+         memRegion->findLastContiguous(memoryAddress, &lastContinuous);
+         uint32_t continousBlockSize = lastContinuous+1-(memoryAddress);
+
+         unsigned blockSize = regionSize;
+         if (blockSize > continousBlockSize) {
+            blockSize = continousBlockSize;
+         }
+
          if (blockSize > MAX_BUFFER) {
             blockSize = MAX_BUFFER;
          }
-         // Fix item size to match alignment
-         if ((startBlock & ((memorySpace&MS_SIZE)-1)) != 0) {
-            memorySpace = (MemorySpace_t)((memorySpace&MS_SIZE)|MS_Byte);
+#if (TARGET != MC56F80xx)
+         // Change alignment to match item if necessary
+         if ((imageAddress & ((memorySpace&MS_SIZE)-1)) != 0) {
+            // Unaligned start address
+            memorySpace = (MemorySpace_t)((memorySpace&~MS_SIZE)|MS_Byte);
          }
-         if (((startBlock+blockSize) & ((memorySpace&MS_SIZE)-1)) != 0) {
-            memorySpace = (MemorySpace_t)((memorySpace&MS_SIZE)|MS_Byte);
+         if (((imageAddress+blockSize) & ((memorySpace&MS_SIZE)-1)) != 0) {
+            // Unaligned end address
+            memorySpace = (MemorySpace_t)((memorySpace&~MS_SIZE)|MS_Byte);
          }
-         if (ReadMemory(memorySpace, blockSize*sizeof(memoryElementType), startBlock, (uint8_t *)buffer) != BDM_RC_OK) {
+#endif
+         if (ReadMemory(memorySpace, blockSize*sizeof(memoryElementType), memoryAddress, (uint8_t *)buffer) != BDM_RC_OK) {
             return PROGRAMMING_RC_ERROR_BDM_READ;
          }
          blockResult = TRUE;
          uint32_t testIndex;
          for (testIndex=0; testIndex<blockSize; testIndex++) {
-            if (flashImage->getValue(startBlock+testIndex) != buffer[testIndex]) {
+            if (flashImage->getValue(imageAddress+testIndex) != buffer[testIndex]) {
                blockResult = FALSE;
 #ifndef LOG
                break;
 #endif
 //               Logging::print("Verifying location[0x%8.8X]=>failed, image=%2.2X != target=%2.2X\n",
-//                     startBlock+testIndex,
-//                     (uint8_t)(flashImage->getValue(startBlock+testIndex]),
+//                     imageAddress+testIndex,
+//                     (uint8_t)(flashImage->getValue(imageAddress+testIndex]),
 //                     buffer[testIndex]);
             }
          }
-         Logging::print("Verifying Sub-block[0x%8.8X..0x%8.8X]=>%s\n",
-               startBlock, startBlock+blockSize-1,blockResult?"OK":"FAIL");
-         checkResult = checkResult && blockResult;
-         regionSize -= blockSize;
-         startBlock += blockSize;
+         Logging::print("Verifying Sub-block %s[0x%8.8X..0x%8.8X] => %s\n", getMemSpaceName(memorySpace), memoryAddress, memoryAddress+blockSize-1, blockResult?"OK":"FAIL");
+         if (!blockResult) {
+            Logging::printDump((const uint8_t *)buffer, blockSize*sizeof(memoryElementType), memoryAddress);
+         }
+         checkResult    = checkResult && blockResult;
+         regionSize    -= blockSize;
+         imageAddress  += blockSize;
+         memoryAddress  = imageAddress-offset;
          progressTimer->progress(blockSize, NULL);
 #ifndef LOG
          if (!checkResult) {
@@ -1534,7 +1583,6 @@ USBDM_ErrorCode FlashProgrammer::doVerify(FlashImage *flashImage) {
    }
    if (rc != PROGRAMMING_RC_OK) {
       Logging::error("Verifying failed, Reason= %s\n", USBDM_GetErrorString(rc));
-      return rc;
    }
    return rc;
 }
@@ -1551,7 +1599,7 @@ USBDM_ErrorCode FlashProgrammer::doVerify(FlashImage *flashImage) {
 //! @note If target clock trimming is enabled then the Non-volatile clock trim
 //!       locations are ignored.
 //!
-USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage, 
+USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
                                              CallBackT    progressCallBack) {
 
    Logging log("FlashProgrammer::verifyFlash");
@@ -1592,10 +1640,21 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
    }
    // Set up the target for Flash operations
    rc = resetAndConnectTarget();
-   if (rc != PROGRAMMING_RC_OK) {
+
+   // Delay checking some errors until after security check
+   if ((rc != BDM_RC_OK) &&
+       (rc != PROGRAMMING_RC_ERROR_SECURED) &&      // Secured device
+       (rc != BDM_RC_SECURED) &&                    // Secured device
+       (rc != BDM_RC_BDM_EN_FAILED) &&              // BDM enable failed (on HCS devices)
+       (rc != BDM_RC_RESET_TIMEOUT_RISE)            // Reset pulsing on Kinetis etc.
+       ) {
       return rc;
    }
-   rc = checkTargetUnSecured();
+   USBDM_ErrorCode rcSecurity = checkTargetUnSecured();
+   if (rcSecurity != PROGRAMMING_RC_OK) {
+      return rcSecurity;
+   }
+   // Do deferred error check
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
@@ -1611,18 +1670,20 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
       return rc;
    }
 #endif
-#if (TARGET == CFVx) || (TARGET == MC56F80xx)
-   rc = determineTargetSpeed();
-   if (rc != PROGRAMMING_RC_OK) {
-      return rc;
-   }
-#endif
+//#if (TARGET == CFVx) || (TARGET == MC56F80xx)
+//   rc = determineTargetSpeed();
+//   if (rc != PROGRAMMING_RC_OK) {
+//      return rc;
+//   }
+//#endif
    // Set up for Flash operations (clock etc)
    rc = initialiseTargetFlash();
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
    rc = doVerify(flashImage);
+
+   restoreSecurityAreas(*flashImage);
 
    Logging::print("Verifying Time = %3.2f s, rc = %d\n", progressTimer->elapsedTime(), rc);
 
@@ -1642,8 +1703,8 @@ USBDM_ErrorCode FlashProgrammer::verifyFlash(FlashImage  *flashImage,
 //! @note The FTRIM etc. locations in the flash image may be modified with trim values.
 //! @note Security locations within the flash image may be modified to effect the protection options.
 //!
-USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage, 
-                                              CallBackT    progressCallBack, 
+USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
+                                              CallBackT    progressCallBack,
                                               bool         doRamWrites) {
    Logging log("FlashProgrammer::programFlash");
    Logging::setLoggingLevel(100);
@@ -1717,9 +1778,11 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    // erase some targets without a complete debug connection
    if ((rc != BDM_RC_OK) &&
        ((parameters.getEraseOption() != DeviceData::eraseMass) ||
-        ((rc != PROGRAMMING_RC_ERROR_SECURED) &&
-         (rc != BDM_RC_SECURED) &&
-         (rc != BDM_RC_BDM_EN_FAILED) ))) {
+        ((rc != PROGRAMMING_RC_ERROR_SECURED) &&      // Secured device
+         (rc != BDM_RC_SECURED) &&                    // Secured device
+         (rc != BDM_RC_BDM_EN_FAILED) &&              // BDM enable failed (on HCS devices)
+         (rc != BDM_RC_RESET_TIMEOUT_RISE)            // Reset pulsing on Kinetis etc.
+         ))) {
       return rc;
    }
    bool secured = checkTargetUnSecured() != PROGRAMMING_RC_OK;
@@ -1736,7 +1799,7 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
       return rc;
    }
 #endif
-#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12) 
+#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12) || (TARGET == MC56F80xx)
    // Check target SDID (RS08/HCS08/HCS12 allows SDID to be read on secured device)
    rc = confirmSDID();
    if (rc != PROGRAMMING_RC_OK) {
@@ -1766,19 +1829,19 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
-#if (TARGET == CFVx) || (TARGET == MC56F80xx)
+#if (TARGET == CFVx) || (TARGET == MC56F80xx)// || (TARGET == ARM)
    rc = determineTargetSpeed();
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
 #endif
-#if (TARGET == RS08) || (TARGET == CFV1) || (TARGET == HCS08)
+#if (TARGET == RS08) || (TARGET == CFV1) || (TARGET == HCS08) || (TARGET == ARM)
    // Calculate clock trim values & update memory image
    rc = setFlashTrimValues(flashImage);
    if (rc != PROGRAMMING_RC_OK) {
       return rc;
    }
-#endif   
+#endif
    // Set up for Flash operations (clock etc)
    rc = initialiseTargetFlash();
    if (rc != PROGRAMMING_RC_OK) {
@@ -1787,9 +1850,9 @@ USBDM_ErrorCode FlashProgrammer::programFlash(FlashImage  *flashImage,
    //
    // The above leaves the Flash ready for programming
    //
-#if (TARGET==ARM) || (TARGET == CFV1)
+#if (TARGET==ARM) || (TARGET == CFV1) || (TARGET == S12Z) || (TARGET == MC56F80xx)
    if (parameters.getEraseOption() == DeviceData::eraseMass) {
-      // Erase the security area as Mass erase programs it
+      // Erase the security area as Mass erase programs it to a non-blank value
       rc = selectiveEraseFlashSecurity();
       if (rc != PROGRAMMING_RC_OK) {
          return rc;

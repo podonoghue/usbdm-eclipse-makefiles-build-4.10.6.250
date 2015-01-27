@@ -102,6 +102,36 @@ const char *getBriefHardwareDescription(unsigned int hardwareVersion) {
    return hardwareName;
 }
 
+#ifdef _MSC_VER
+
+#define snprintf c99_snprintf
+
+inline int c99_vsnprintf(char* str, size_t size, const char* format, va_list ap)
+{
+    int count = -1;
+
+    if (size != 0)
+        count = _vsnprintf_s(str, size, _TRUNCATE, format, ap);
+    if (count == -1)
+        count = _vscprintf(format, ap);
+
+    return count;
+}
+
+inline int c99_snprintf(char* str, size_t size, const char* format, ...)
+{
+    int count;
+    va_list ap;
+
+    va_start(ap, format);
+    count = c99_vsnprintf(str, size, format, ap);
+    va_end(ap);
+
+    return count;
+}
+
+#endif // _MSC_VER
+
 //! ICP Error message string from Error #
 static const char *const ICPerrorMessages[] = {
     "No Error",                           // 0
@@ -203,6 +233,30 @@ char const *getSecurityName(SecurityOptions_t security) {
       case SEC_CUSTOM      : return "custom";
       default              : return "security-??";
    }
+}
+
+char const *getTargetModeName(TargetMode_t type) {
+static char buff[100] = "";
+static const char *resetMethod[] = {"ALL",
+                                    "HARDWARE",
+                                    "SOFTWARE",
+                                    "POWER",
+                                    "Illegal",
+                                    "Illegal",
+                                    "Illegal",
+                                    "DEFAULT",
+                                    };
+static const char *resetMode[] = {"SPECIAL",
+                                  "NORMAL",
+                                  "Illegal",
+                                  "Illegal",
+                                  };
+         snprintf(buff, sizeof(buff), "0x%02X(%s, %s)",
+                             type,
+                             resetMethod[(type&RESET_METHOD_MASK)>>2],
+                             resetMode[type&RESET_MODE_MASK]
+                             );
+         return buff;
 }
 
 #if defined(LOG)
@@ -1059,30 +1113,6 @@ static const char *capabilityTable[] = {
    return buff;
 }
 
-char const *getTargetModeName(TargetMode_t type) {
-static char buff[100] = "";
-static const char *resetMethod[] = {"ALL",
-                                    "HARDWARE",
-                                    "SOFTWARE",
-                                    "POWER",
-                                    "Illegal",
-                                    "Illegal",
-                                    "Illegal",
-                                    "DEFAULT",
-                                    };
-static const char *resetMode[] = {"SPECIAL",
-                                  "NORMAL",
-                                  "Illegal",
-                                  "Illegal",
-                                  };
-         snprintf(buff, sizeof(buff), "0x%02X(%s, %s)",
-                             type,
-                             resetMethod[(type&RESET_METHOD_MASK)>>2],
-                             resetMode[type&RESET_MODE_MASK]
-                             );
-         return buff;
-}
-
 char const *getPinLevelName(PinLevelMasks_t level) {
 static char buff[100];
 
@@ -1389,7 +1419,7 @@ static const bitInfo bitNames[] = {
       {"MASS_ERASE_ACK|",  MDM_AP_Status_Flash_Mass_Erase_Ack},
       {"FLASH_READY|",     MDM_AP_Status_Flash_Ready},
       {"SECURE|",          MDM_AP_Status_System_Security},
-      {"RESET|",           MDM_AP_Status_System_Reset},
+      {"RESETn|",          MDM_AP_Status_System_Reset},
       {"MASS_ERASE_EN|",   MDM_AP_Status_Mass_Erase_Enable},
       {"BACKDOOR_EN|",     MDM_AP_Status_Backdoor_Access_Enable},
       {"LOW_POWER_EN|",    MDM_AP_Status_LP_Enable},
@@ -1519,6 +1549,7 @@ const char *getMemSpaceName(MemorySpace_t memSpace) {
    if (memSpace & MS_Fast) {
       strcpy(buffer,"MS_Fast|");
    }
+   // Check for "convenience" names
    switch(memSpace) {
      case MS_PWord   :  strcat(buffer, "MS_PWord"); break;
      case MS_PLong   :  strcat(buffer, "MS_PLong"); break;
@@ -1527,19 +1558,21 @@ const char *getMemSpaceName(MemorySpace_t memSpace) {
      case MS_XLong   :  strcat(buffer, "MS_XLong"); break;
      default: break;
    };
-   switch(memSpace&MS_SPACE) {
-     case MS_None    :  strcat(buffer,"-|");               break;
-     case MS_Program :  strcat(buffer,"MS_Program|");      break;
-     case MS_Data    :  strcat(buffer,"MS_Data|");         break;
-     case MS_Global  :  strcat(buffer,"MS_Global|");       break;
-     default         :  strcat(buffer,"MS_UnknownSpace|"); break;
-   };
-   switch(memSpace&MS_SIZE) {
-     case MS_Byte   :  strcat(buffer,"MS_Byte");   break;
-     case MS_Word   :  strcat(buffer,"MS_Word");   break;
-     case MS_Long   :  strcat(buffer,"MS_Long");   break;
-     default        :  strcat(buffer,"-");         break;
-   };
+   if (buffer[0] == '\0') {
+      switch(memSpace&MS_SPACE) {
+        case MS_None    :  strcat(buffer,"-|");               break;
+        case MS_Program :  strcat(buffer,"MS_Program|");      break;
+        case MS_Data    :  strcat(buffer,"MS_Data|");         break;
+        case MS_Global  :  strcat(buffer,"MS_Global|");       break;
+        default         :  strcat(buffer,"MS_UnknownSpace|"); break;
+      };
+      switch(memSpace&MS_SIZE) {
+        case MS_Byte   :  strcat(buffer,"MS_Byte");   break;
+        case MS_Word   :  strcat(buffer,"MS_Word");   break;
+        case MS_Long   :  strcat(buffer,"MS_Long");   break;
+        default        :  strcat(buffer,"-");         break;
+      };
+   }
    return buffer;
 }
 #endif // LOG

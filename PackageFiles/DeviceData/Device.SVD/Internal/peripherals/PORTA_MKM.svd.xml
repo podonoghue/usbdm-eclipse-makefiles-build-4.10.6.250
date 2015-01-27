@@ -7,6 +7,7 @@ Devices using this peripheral:
          <name>PORTA</name>
          <description>Pin Control and Interrupts</description>
          <prependToName>PORTA</prependToName>
+         <headerStructName>PORT</headerStructName>
          <baseAddress>0x40046000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -107,7 +108,7 @@ Select Pin Function</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b000</name>
-                           <description>Pin Disabled (Analog)</description>
+                           <description>Pin Disabled (Analogue)</description>
                            <value>0b000</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -251,6 +252,7 @@ Interrupts remain set until a logic one is written to the flag</description>
                <name>GPCLR</name>
                <description>Global Pin Control Low Register</description>
                <addressOffset>0x80</addressOffset>
+               <access>write-only</access>
                <fields>
                   <field>
                      <name>GPWD</name>
@@ -286,6 +288,7 @@ Each bit controls if the corresponding PCR register is updated (PCR[15..0])</des
                <name>GPCHR</name>
                <description>Global Pin Control High Register</description>
                <addressOffset>0x84</addressOffset>
+               <access>write-only</access>
                <fields>
                   <field>
                      <name>GPWD</name>

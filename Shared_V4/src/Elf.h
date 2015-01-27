@@ -43,8 +43,10 @@
 #define EM_68HC11  (70)
 #define EM_68HC12  (53)
 #define EM_68HC16  (69)
+#define EM_56K_2   (0xC8)
 #define EM_56K     (0x5670)
 #define EM_S12X    (0x4DEF)
+
 
 typedef uint32_t Elf32_Addr;  // Unsigned program address
 typedef uint16_t Elf32_Half;  // Unsigned medium integer

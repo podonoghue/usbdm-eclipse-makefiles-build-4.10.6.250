@@ -7,8 +7,11 @@
       <applyWhen>
          <deviceFamilyIs>CortexM0</deviceFamilyIs>
       </applyWhen>
-      <variable id="KinetisM0-SDK-enable" name="Kinetis SDK" description="Adds Kinetis SDK features" />
-      <condition variable="KinetisM0-SDK-enable">
+      <variable id="projectOptionValue.Kinetis-SDK-enable" name="Kinetis SDK" description="Adds Kinetis SDK features" />
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Kinetis-SDK-enable" />
+         </applyWhen>
          <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.include.paths">
             <value>&quot;${KSDK_PATH}/platform/utilities&quot;</value>
             <value>&quot;${KSDK_PATH}/platform/drivers/clock&quot;</value>
@@ -29,15 +32,7 @@
             <value>&quot;${KSDK_PATH}/platform/hal/gpio&quot;</value>
             <value>&quot;${KSDK_PATH}/rtos&quot;</value>
          </projectOption>
-         <projectOption id="net.sourceforge.usbdm.gnu.cpp.compiler.option.preprocessor.def.symbols">
-            <value>__CORTEX_M3</value>
-            <value>__CMSIS_RTOS</value>
-         </projectOption>
-         <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols">
-            <value>__CORTEX_M3</value>
-            <value>__CMSIS_RTOS</value>
-         </projectOption>
-      </condition>
+      </block>
    </projectActionList>
 
 </root>

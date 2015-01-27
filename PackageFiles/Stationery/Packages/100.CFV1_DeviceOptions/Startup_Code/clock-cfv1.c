@@ -1,7 +1,7 @@
 /*
- * clockMKxx.c
+ * clock-cfv1.c
  *
- *  Used for MKxx
+ *  Used for CFV1
  *
  *  Created on: 04/03/2012
  *      Author: podonoghue
@@ -17,8 +17,8 @@
 void showClocks(void) {
 
    // Put SYSTEM_MCGOUTCLK_CLOCK on PTA5
-   SIM_SCGC6 |= SIM_SCGC6_PORTA_MASK;
-   MXC_PTAPF2 = (MXC_PTAPF2&~MXC_PTAPF2_A5_MASK)|MXC_PTAPF2_A5(6);
+   SIM->SCGC6 |= SIM_SCGC6_PORTA_MASK;
+   MXC->PTAPF2 = (MXC->PTAPF2&~MXC_PTAPF2_A5_MASK)|MXC_PTAPF2_A5(6);
    /*
     * 0 Disabled (reset value)
     * 1 OSC1ERCLK (from OSC1)
@@ -29,7 +29,7 @@ void showClocks(void) {
     * 6 LPO
     * 7 LPTMR0 prescaler clock output
     */
-   SIM_CLKOUT = SIM_CLKOUT_CS(5)|SIM_CLKOUT_CLKOUTDIV(0);
+   SIM->CLKOUT = SIM_CLKOUT_CS(5)|SIM_CLKOUT_CLKOUTDIV(0);
 }
 #endif
 
@@ -193,11 +193,11 @@ void clock_initialise(void) {
 #endif
 
 #ifdef SIM_CLKDIV1_USBFRAC_MASK
-   SIM_CLKDIV1 = SIM_CLKDIV1_USBDIV_M | SIM_CLKDIV1_USBFRAC_M | SIM_CLKDIV1_USBSRC_M;
+   SIM->CLKDIV1 = SIM_CLKDIV1_USBDIV_M | SIM_CLKDIV1_USBFRAC_M | SIM_CLKDIV1_USBSRC_M;
 #endif
 
-#ifdef SIM_CLKDIV0
-   SIM_CLKDIV0 = SIM_CLKDIV0_M;
+#ifdef SIM->CLKDIV0
+   SIM->CLKDIV0 = SIM_CLKDIV0_M;
 #endif
 
    SystemCoreClockUpdate();

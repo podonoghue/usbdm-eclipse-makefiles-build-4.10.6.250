@@ -29,6 +29,7 @@ Devices using this peripheral:
          <name>ADC0</name>
          <description>Analog-to-Digital Converter</description>
          <prependToName>ADC0</prependToName>
+         <headerStructName>ADC</headerStructName>
          <baseAddress>0x4003B000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -297,7 +298,7 @@ Devices using this peripheral:
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>(Bus clock)/2</description>
+                           <description>Alternate clock 2</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -763,9 +764,22 @@ Enables continuous conversions or sets of conversions (when averaging) after an 
                   </field>
                   <field>
                      <name>CAL</name>
-                     <description>Calibration</description>
+                     <description>Calibration\n
+Begins the calibration sequence when set</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0b0</name>
+                           <description>Calibration busy</description>
+                           <value>0b0</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1</name>
+                           <description>Calibration idle</description>
+                           <value>0b1</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                </fields>
             </register>

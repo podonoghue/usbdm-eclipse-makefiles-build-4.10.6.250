@@ -99,8 +99,10 @@ private:
    };
 
    enum AddressModifiers {
+      ADDRESS_DATA   = 1UL<<31,  //!< DATA (X:) memory (DSC)
       ADDRESS_LINEAR = 1UL<<31,  //!< Linear address (HCS12)
       ADDRESS_EEPROM = 1UL<<30,  //!< EEPROM
+      ADDRESS_A23    = 1UL<<23,  //!< A23 bit for Flex/DataFlash on ARM/CFV1+
    };
 
    typedef USBDM_ErrorCode (*CallBackT)(USBDM_ErrorCode status, int percent, const char *message);
@@ -186,7 +188,7 @@ public:
    USBDM_ErrorCode verifyFlash(FlashImage  *flashImage, CallBackT errorCallBack=NULL);
    USBDM_ErrorCode readTargetChipId(uint32_t *targetSDID, bool doInit=false);
    USBDM_ErrorCode confirmSDID(void);
-
+   
    USBDM_ErrorCode getCalculatedTrimValue(uint16_t &value) {
       value = parameters.getClockTrimValue();
       return PROGRAMMING_RC_OK;

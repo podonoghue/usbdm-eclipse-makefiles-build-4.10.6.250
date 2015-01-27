@@ -24,25 +24,17 @@
 \verbatim
  Change History
 +========================================================================================
+| 20 Jan 15 | Added DSC ELF file support for newer targets              V4.10.6.250 - pgo
 | 21 Jul 14 | Added S12X ELF file support                               V4.10.6.170 - pgo
-+----------------------------------------------------------------------------------------
 | 20 Oct 12 | Added DSC ELF file support                                V4.10.3     - pgo
-+----------------------------------------------------------------------------------------
 |  7 Sep 12 | Added HCS12 support & device type check                   V4.10.0     - pgo
-+----------------------------------------------------------------------------------------
 |  1 Jun 12 | Changed to template format                                V4.9.5      - pgo
-+----------------------------------------------------------------------------------------
 | 31 May 12 | Changed back to flat format                               V4.9.5      - pgo
-+----------------------------------------------------------------------------------------
 | 17 Apr 12 | Added ELF format loading                                  V4.9.5      - pgo
-+----------------------------------------------------------------------------------------
 | 14 Feb 11 | Changed to dynamic memory allocation for buffer           V4.5        - pgo
-+----------------------------------------------------------------------------------------
 | 30 Jan 10 | 2.0.0 Changed to C++                                                  - pgo
 |           |       Added paged memory support                                      - pgo
-+----------------------------------------------------------------------------------------
 |  8 Dec 09 | Started changes for paged files - incomplete                          - pgo
-+----------------------------------------------------------------------------------------
 |  ??    09 | Created                                                               - pgo
 +========================================================================================
 \endverbatim
@@ -69,7 +61,7 @@ template <class dataType> class FlashImageT {
 public:
    class Enumerator;
    friend class Enumerator;
-   static const uint32_t DataOffset    =  (0x02000000);  // Offset used for DSC Data region
+   static const uint32_t DataOffset    =  (0x02000000UL);  // Offset used for DSC Data region
 
 private:
    static const int      PageBitOffset =  (15-sizeof(dataType));  // 2**14 = 16K pages
@@ -122,16 +114,16 @@ private:
          if (index >= PageSize) {
             throw runtime_error("Page index out of range");
          }
-         data[index]         = 0xFF;
+         data[index]         = (elementType)-1;
          validBits[index/8] &= ~(1<<(index&0x7));
       }
 
       //=====================================================================
-      //! Returns contents of page[index] if valid or 0xFF otherwise
+      //! Returns contents of page[index] if valid or (elementType)-1 otherwise
       //!
       elementType getValue(unsigned index) {
          if (!isValid(index)) {
-            return 0xFF;
+            return  (elementType)-1;
          }
          return data[index];
       }
@@ -367,7 +359,7 @@ public:
    //!
    //! @param address - 32-bit memory address
    //!
-   //! @return -dataType value (dummy value of 0xFF.. if unallocated address)
+   //! @return dataType value (dummy value of  ((dataType)-1) if unallocated address)
    //!
    dataType getValue(uint32_t address);
 
@@ -427,6 +419,8 @@ public:
                                  bool            dontOverwrite = false);
 
 private:
+   FILE             *fp;
+
    uint32_t          targetToNative(uint32_t &);
    uint16_t          targetToNative(uint16_t &);
    int32_t           targetToNative(int32_t &);
@@ -437,6 +431,7 @@ private:
    void              printElfProgramHeader(Elf32_Phdr *programHeader);
    void              fixElfProgramHeaderSex(Elf32_Phdr *programHeader);
    USBDM_ErrorCode   loadElfBlock(FILE *fp, long fOffset, Elf32_Word size, Elf32_Addr addr);
+   USBDM_ErrorCode   loadElfBlock(Elf32_Phdr *programHeader);
    USBDM_ErrorCode   loadElfFile(const string &fileName);
 
    USBDM_ErrorCode   loadS1S9File(const string &fileName);
@@ -839,7 +834,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfBlock(FILE       *fp,
       }
       size_t sz;
       if ((sz=fread(buff, 1, blockSize, fp)) != blockSize) {
-         Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Undersize read of Block (Expected %d, read %d)\n", blockSize, sz);
+         Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Undersize read of Block (Expected %lu, read %lu)\n", (unsigned long)blockSize, (unsigned long)sz);
          return SFILE_RC_ELF_FORMAT_ERROR;
       }
 //#if TARGET == MC56F80xx
@@ -928,22 +923,16 @@ void FlashImageT<dataType>::fixElfHeaderSex(Elf32_Ehdr *elfHeader) {
 template <class dataType>
 void FlashImageT<dataType>::printElfProgramHeader(Elf32_Phdr *programHeader) {
    Logging::print("===================\n"
-         "p_type   = 0x%08X(%s)\n"
-         "p_offset = 0x%08X\n"
-         "p_vaddr  = 0x%08X\n"
-         "p_paddr  = 0x%08X\n"
-         "p_filesz = 0x%08X\n"
-         "p_memsz  = 0x%08X\n"
-         "p_flags  = 0x%08X (%s)\n"
-         "p_align  = 0x%08X\n",
-         programHeader->p_type, get_ptTypeName(programHeader->p_type),
+         "p_type                  p_offset   p_vaddr    p_paddr    p_filesz   p_memsz    p_align    p_flags\n"
+         "0x%08X (%-10s) 0x%08X 0x%08X 0x%08X 0x%08X 0x%08X 0x%08X 0x%08X (%-20s)\n",
+         programHeader->p_type  , get_ptTypeName(programHeader->p_type),
          programHeader->p_offset,
          programHeader->p_vaddr ,
          programHeader->p_paddr ,
          programHeader->p_filesz,
          programHeader->p_memsz ,
-         programHeader->p_flags , get_pFlagsName(programHeader->p_flags),
-         programHeader->p_align
+         programHeader->p_align ,
+         programHeader->p_flags , get_pFlagsName(programHeader->p_flags)
    );
 }
 
@@ -973,12 +962,13 @@ void FlashImageT<dataType>::fixElfProgramHeaderSex(Elf32_Phdr *elfHeader) {
 //!
 template <class dataType>
 USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
-   FILE *fp = fopen(filePath.c_str(), "rb");
+   LOGGING_Q;
+   fp = fopen(filePath.c_str(), "rb");
    if (fp == NULL) {
-      Logging::print("FlashImageT::MemorySpace::loadElfFile(\"%s\") - Failed to open input file\n", filePath.c_str());
+      Logging::error("Failed to open input file \'%s\'\n", filePath.c_str());
       return SFILE_RC_FILE_OPEN_FAILED;
    }
-   Logging::print("FlashImageT::MemorySpace::loadElfFile(\"%s\")\n", filePath.c_str());
+   Logging::print("Input file - \'%s\'\n", filePath.c_str());
 
    Elf32_Ehdr elfHeader;
    if (fread(&elfHeader, 1, sizeof(elfHeader), fp) != sizeof(elfHeader)) {
@@ -990,7 +980,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
    if ((elfHeader.e_ident[EI_MAG0] != ELFMAG0V) ||(elfHeader.e_ident[EI_MAG1] != ELFMAG1V) ||
        (elfHeader.e_ident[EI_MAG2] != ELFMAG2V) ||(elfHeader.e_ident[EI_MAG3] != ELFMAG3V) ||
        (elfHeader.e_ident[EI_CLASS] != ELFCLASS32)) {
-      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid  format\n");
+      Logging::error("Invalid  format\n");
       fclose(fp);
       return SFILE_RC_UNKNOWN_FILE_FORMAT;
    }
@@ -1002,6 +992,7 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
 
 #if TARGET == HCS08
    if (elfHeader.e_machine != EM_68HC08) {
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid e_machine = %X\n", elfHeader.e_machine);
       return SFILE_RC_ELF_WRONG_TARGET;
    }
 #elif TARGET == S12Z
@@ -1011,25 +1002,29 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
    }
 #elif TARGET == HCS12
    if (elfHeader.e_machine != EM_68HC12) {
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid e_machine = %X\n", elfHeader.e_machine);
       return SFILE_RC_ELF_WRONG_TARGET;
    }
 #elif TARGET == ARM
    if (elfHeader.e_machine != EM_ARM) {
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid e_machine = %X\n", elfHeader.e_machine);
       return SFILE_RC_ELF_WRONG_TARGET;
    }
 #elif (TARGET == CFV1) || (TARGET == CFVx)
    if (elfHeader.e_machine != EM_68K) {
+      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid e_machine = %X\n", elfHeader.e_machine);
       return SFILE_RC_ELF_WRONG_TARGET;
    }
 #elif TARGET == MC56F80xx
-   if (elfHeader.e_machine != EM_56K) {
+   if ((elfHeader.e_machine != EM_56K) && (elfHeader.e_machine != EM_56K_2)) {
+      Logging::error("Invalid e_machine = %X\n", elfHeader.e_machine);
       return SFILE_RC_ELF_WRONG_TARGET;
    }
 #else
    return SFILE_RC_ELF_WRONG_TARGET;
 #endif
    if ((elfHeader.e_type != ET_EXEC) || (elfHeader.e_phoff == 0) || (elfHeader.e_phentsize == 0) || (elfHeader.e_phnum == 0)) {
-      Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Invalid format\n");
+      Logging::error("Invalid format\n");
       fclose(fp);
       return SFILE_RC_ELF_FORMAT_ERROR;
    }
@@ -1039,29 +1034,40 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
       fseek(fp, elfHeader.e_phoff+entry*elfHeader.e_phentsize, SEEK_SET);
       size_t sz;
       if ((sz=fread(&programHeader, 1, sizeof(programHeader), fp)) != sizeof(programHeader)) {
-         Logging::print("FlashImageT::MemorySpace::loadElfFile() - Failed - Undersize read of Header (Expected %d, read %d)\n", sizeof(programHeader), sz);
+         Logging::error("Undersize read of Header (Expected %lu, read %lu)\n", (unsigned long)sizeof(programHeader), (unsigned long)sz);
          return SFILE_RC_ELF_FORMAT_ERROR;
       }
       fixElfProgramHeaderSex(&programHeader);
       if ((programHeader.p_type == PT_LOAD) && (programHeader.p_filesz > 0)) {
-//         printElfProgramHeader(&programHeader);
-#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12) || (TARGET == S12Z) || (TARGET == MC56F80xx)
-         // These targets use the virtual address as the paged address
-         if (loadElfBlock(fp, programHeader.p_offset, programHeader.p_filesz, programHeader.p_vaddr) != SFILE_RC_OK) {
-            return SFILE_RC_ELF_FORMAT_ERROR;
-         }
-#else
-         // These targets load at the physical address (VADDR is RAM copy destination)
-         if (loadElfBlock(fp, programHeader.p_offset, programHeader.p_filesz, programHeader.p_paddr) != SFILE_RC_OK) {
-            return SFILE_RC_ELF_FORMAT_ERROR;
-         }
-#endif
+         loadElfBlock(&programHeader);
       }
    }
    fclose(fp);
 //   Logging::print("FlashImageT::MemorySpace::loadElfFile()\n");
 //   printMemoryMap();
    return SFILE_RC_OK;
+}
+
+template <class dataType>
+USBDM_ErrorCode FlashImageT<dataType>::loadElfBlock(Elf32_Phdr *programHeader) {
+
+   printElfProgramHeader(programHeader);
+
+#if (TARGET == RS08) || (TARGET == HCS08) || (TARGET == HCS12) || (TARGET == S12Z) || (TARGET == MC56F80xx)
+   // These targets use the virtual address as the load address
+   Elf32_Addr loadAddress = programHeader->p_vaddr;
+#if (TARGET == MC56F80xx)
+   if ((programHeader->p_flags&PF_X) == 0) {
+      // Indicates X:ROM/X:RAM (not executable)
+      loadAddress += (DataOffset<<1);
+   }
+#endif
+
+#else
+   // Other targets load at the physical address (VADDR is RAM copy destination)
+   Elf32_Addr loadAddress = programHeader->p_paddr;
+#endif
+   return loadElfBlock(fp, programHeader->p_offset, programHeader->p_filesz, loadAddress);
 }
 
 //=====================================================================
@@ -1075,6 +1081,8 @@ USBDM_ErrorCode FlashImageT<dataType>::loadElfFile(const string &filePath) {
 template <class dataType>
 USBDM_ErrorCode  FlashImageT<dataType>::loadFile(const string &filePath,
                                                  bool          clearBuffer) {
+   LOGGING_Q;
+
    sourceFilename = "";
    sourcePath     = "";
 
@@ -1138,7 +1146,7 @@ dataType FlashImageT<dataType>::getValue(uint32_t address) {
    addressToPageOffset(address, pageNum, offset);
    memoryPage = getmemoryPage(pageNum);
    if (memoryPage == NULL)
-      return 0xFF;
+      return (dataType)-1;
    else
       return memoryPage->getValue(offset);
 }
@@ -1272,7 +1280,6 @@ bool FlashImageT<dataType>::Enumerator::nextValid() {
          }
          continue;
       }
-      // TODO - advance by size of bitmask
       // Check if valid byte in page
       if (memoryPage->isValid(offset)) {
 //         Logging::print("enumerator::nextValid(end  =0x%06X)\n", address);

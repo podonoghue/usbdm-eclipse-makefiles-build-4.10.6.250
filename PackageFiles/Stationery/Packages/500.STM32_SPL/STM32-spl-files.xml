@@ -7,9 +7,12 @@
       <applyWhen>
          <deviceSubfamilyIs>STM32</deviceSubfamilyIs>
       </applyWhen>
-      <variable id="STM32-spl" name="Standard Peripheral Library"
+      <variable id="projectOptionValue.STM32-spl" name="Standard Peripheral Library"
          description="Adds code for the STM32 Standard peripheral Library - check assumptions made" />
-      <condition variable="STM32-spl">
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.STM32-spl" />
+         </applyWhen>
          <createFolder target="spl" type="include" />
          <copy source="../spl/Release_Notes.html" target="SPL.html" type="link" />
          <copy source="../spl/inc" target="spl/inc" />
@@ -28,6 +31,6 @@
          <projectOption id="net.sourceforge.usbdm.gnu.c.compiler.option.preprocessor.def.symbols">
             <value>USE_STDPERIPH_DRIVER</value>
          </projectOption>
-      </condition>
+      </block>
    </projectActionList>
 </root>

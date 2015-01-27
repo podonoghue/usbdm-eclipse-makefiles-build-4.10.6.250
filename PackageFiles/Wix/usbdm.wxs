@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='windows-1252'?>
-<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
    <?define Manufacturer="pgo" ?>
    <?define ProductName="USBDM" ?>
@@ -373,13 +374,6 @@
                   WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
             </File>
          </Component>
-         <Component Id='C.DSCUnlocker' Guid='*'>
-            <File Id='DSCUnlockerEXE' DiskId='1'
-               Source='bin\DSC_Unlocker.exe' KeyPath='yes'>
-               <Shortcut Id="startmenuUSBDM_9a" Directory="D.UsbdmProgramMenuDir" Name="MC56F80xx Unlocker"
-                  WorkingDirectory='INSTALLDIR' Icon="ChipIcon.ico" IconIndex="0" Advertise="yes" />
-            </File>
-         </Component>
          <Component Id='C.SetBoot' Guid='*'>
             <File Id='SetBootEXE' DiskId='1'
                Source='bin\SetBoot.exe' KeyPath='yes'>
@@ -745,15 +739,6 @@
                AllowAdvertise="no"
                Level='1'>
             <ComponentRef Id='C.CFUnlocker' />
-            <ComponentRef Id='C.CommonFiles' />
-            <ComponentGroupRef Id='Cg.DeviceDataInstall' />
-         </Feature>
-         <Feature Id='F.DSCUnlocker'
-               Title='MC56F80xx Unlocker'
-               Description='MC56F80xx JTAG Unlocker.'
-               AllowAdvertise="no"
-               Level='1'>
-            <ComponentRef Id='C.DSCUnlocker' />
             <ComponentRef Id='C.CommonFiles' />
             <ComponentGroupRef Id='Cg.DeviceDataInstall' />
          </Feature>

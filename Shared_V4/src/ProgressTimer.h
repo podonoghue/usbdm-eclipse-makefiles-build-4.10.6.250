@@ -51,7 +51,7 @@ public:
    //! @param progress - How many bytes of progress since last call
    //! @param message  - Message to post, May be NULL to indicate no change.
    //!
-   USBDM_ErrorCode progress(int progress, const char *_message);
+   USBDM_ErrorCode progress(int progress, const char *_message=0);
 
    //! @return - elapsed time in seconds since creation or restart()
    //!

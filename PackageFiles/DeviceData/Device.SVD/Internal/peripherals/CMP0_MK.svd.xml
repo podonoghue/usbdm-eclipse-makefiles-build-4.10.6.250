@@ -26,6 +26,7 @@ Devices using this peripheral:
          <name>CMP0</name>
          <description>Comparator, Voltage Ref, D-to-A Converter and Analog Mux</description>
          <prependToName>CMP0</prependToName>
+         <headerStructName>CMP</headerStructName>
          <baseAddress>0x40073000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -536,7 +537,8 @@ Controls availability of the comparator output on the associated CMPO output pin
                   <field>
                      <name>PSTM</name>
                      <description>Pass Through Mode Enable\n
-This bit is used to enable to MUX pass through mode. Pass through mode is not available on all devices</description>
+This bit is used to enable to MUX pass through mode.\n
+Pass through mode is not available on all devices</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

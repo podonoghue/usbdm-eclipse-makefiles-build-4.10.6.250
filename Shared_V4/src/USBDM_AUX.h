@@ -48,7 +48,7 @@ public:
    void setInfo(const USBDM_bdmInformation_t& info)      { this->info = info; }
    void setSerialNumber(const std::string& serialNumber) { this->serialNumber = serialNumber; }
    void setSuitable(USBDM_ErrorCode suitable)            { this->suitable = suitable; }
-
+   
    const std::string&            getDescription() const  { return description; }
    unsigned                      getDeviceNumber() const { return deviceNumber; }
    const USBDM_bdmInformation_t& getInfo() const         { return info; }

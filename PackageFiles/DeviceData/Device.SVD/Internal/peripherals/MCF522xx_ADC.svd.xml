@@ -13,6 +13,7 @@ The analog-to-digital converter (ADC) consists of two separate and complete ADCs
 sample and hold circuits. The converters share a common voltage reference and common digital control
 module</description>
          <prependToName>ADC</prependToName>
+         <headerStructName>ADC</headerStructName>
          <baseAddress>0x40190000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -752,7 +753,7 @@ Note: These bits are sticky, and can only be cleared by writing a 1 to them</des
                <dim>8</dim>
                <dimIncrement>2</dimIncrement>
                <dimIndex>0,1,2,3,4,5,6,7</dimIndex>
-               <name>ADRSLT[%s]</name>
+               <name>ADRSLT</name>
                <description>Result Registers\n
 The result registers contain the converted results from a scan</description>
                <addressOffset>0x12</addressOffset>

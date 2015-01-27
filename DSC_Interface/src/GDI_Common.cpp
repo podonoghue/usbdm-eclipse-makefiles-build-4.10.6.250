@@ -24,6 +24,7 @@
 \verbatim
 Change History
 -=====================================================================================================
+|  Jan 20 2015 | Moved logging messages to USBDM log file                          - pgo V4.10.6.260
 |  Nov 09 2013 | Minor changes for security                                        - pgo V4.10.6.80
 |  Oct 28 2013 | Added connect with RESET retry to targetConnecvt for ARM          - pgo V4.10.6.40
 |  Dec 22 2012 | Improved Secured device handling & mass erase                     - pgo V4.10.4
@@ -484,7 +485,7 @@ DiReturnT DiGdiOpen ( DiUInt32T      dnGdiVersionH,
    usbdm_gdi_dll_open();
    
 #if TARGET == MC56F80xx
-   DSC_SetLogFile(Logging::getLogFileHandle());
+   DSC_SetLogFile(0);
 #endif
 
    Logging::print("DiGdiOpen(\n"
@@ -709,7 +710,7 @@ DiReturnT DiGdiInitIO( pDiCommSetupT pdcCommSetup ) {
 #endif
 
 #if TARGET == MC56F80xx
-   DSC_SetLogFile(Logging::getLogFileHandle());
+   DSC_SetLogFile(0);
 #endif
    // Open & Configure BDM
    bdmRc = initialiseBDMInterface();
@@ -1201,6 +1202,8 @@ MemorySpace_t   memorySpace;                     // Memory space & size
 int             organization;                    // For display
 uint32_t        endAddress;                      // End address
 
+   LOGGING;
+
    CHECK_ERROR_STATE();
 
    switch(daTarget.dmsMemSpace) {
@@ -1419,14 +1422,16 @@ uint32_t        address      = (U32c)daTarget;   // Load address
 MemorySpace_t   memorySpace;                     // Memory space & size
 uint32_t        endAddress;                      // End address
 uint32_t        numBytes;                        // Number of bytes to transfer
-uint32_t        organization;
+//uint32_t        organization;
+
+   LOGGING;
 
    CHECK_ERROR_STATE();
 
    switch(daTarget.dmsMemSpace) {
       case 0x13 :  // (cw-e, word address, elements=2bytes)
          memorySpace  = MS_XByte;
-         organization = BYTE_ADDRESS|BYTE_DISPLAY;
+//         organization = BYTE_ADDRESS|BYTE_DISPLAY;
          address     *= 2; // Change to byte address
          endAddress   = address + 2*dnBufferItems - 1;
          numBytes     = 2*dnBufferItems;
@@ -1434,20 +1439,20 @@ uint32_t        organization;
       case 0x10 :  // (cw)
       case 0x14 :  // (cw-e, word address, elements=2bytes)
          memorySpace  = MS_XWord;
-         organization = WORD_ADDRESS|WORD_DISPLAY;
+//         organization = WORD_ADDRESS|WORD_DISPLAY;
          endAddress   = address + dnBufferItems - 1;
          numBytes     = 2*dnBufferItems;
          break;
       case 0x15 :
          memorySpace  = MS_XLong;
-         organization = WORD_ADDRESS|LONG_DISPLAY;
+//         organization = WORD_ADDRESS|LONG_DISPLAY;
          endAddress   = address + 2*dnBufferItems - 1;
          numBytes     = 4*dnBufferItems;
          break;
       case 0x11 :  // (cw-e, word address, elements=2bytes)
       case 0x17 :
          memorySpace  = MS_PWord;
-         organization = WORD_ADDRESS|WORD_DISPLAY;
+//         organization = WORD_ADDRESS|WORD_DISPLAY;
          endAddress   = address + dnBufferItems - 1;
          numBytes     = 2*dnBufferItems;
          break;

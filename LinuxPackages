@@ -21,7 +21,7 @@ else
    echo "Usage $0 [32|64]"
 fi
 
-exit
+#exit
 
 if [ "${BITNESS}" == "32" ]; then
 # Native build

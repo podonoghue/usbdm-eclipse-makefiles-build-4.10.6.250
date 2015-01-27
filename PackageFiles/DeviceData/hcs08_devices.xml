@@ -1951,14 +1951,35 @@
          <memory type="ram">
             <memoryRange start="0x000090" end="0x28F" />
          </memory>
-         <memory registerAddress="0x1820" type="flash" securityAddress="0xFFB0">
-            <securityEntryRef ref="HCS08-fnored-security" />
-            <memoryRange start="0x00C000" end="0xDFBF" />
+         <memory registerAddress="0x1820" type="flash">
+            <memoryRange start="0x00C000" end="0xDFFF" />
          </memory>
          <sdid value="0x002C" />
          <flashProgramRef ref="HCS08-alt-load-flash-program" />
          <note>Untested</note>
       </device>
+      <!-- 
+      ====================================================================================
+      Experimental
+       -->
+      <!-- 
+      ====================================================================================
+      Experimental
+       -->
+      <device family="HCS08" name="FXTH87xx11-Full-Erase">
+         <memory type="ram">
+            <memoryRange start="0x000090" end="0x28F" />
+         </memory>
+         <memory registerAddress="0x1820" type="flash" securityAddress="0xFFB0">
+            <securityEntryRef ref="HCS08-fnored-security" />
+            <memoryRange start="0x00C000" end="0xFFFF" />
+         </memory>
+         <sdid value="0x002C" />
+         <flashProgramRef ref="HCS08-alt-load-flash-program" />
+         <note>Untested</note>
+      </device>
+      
+      <device name="FXTH870000" alias="FXTH87xx11" hidden="true"> </device>
       <!-- 
       ====================================================================================
       Experimental

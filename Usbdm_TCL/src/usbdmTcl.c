@@ -3049,6 +3049,7 @@ int sub;
    return TCL_OK;
 }
 
+#ifdef INTERACTIVE
 //! Set logging
 static int setLogCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv) {
    // setTarget <value>
@@ -3133,6 +3134,7 @@ static int guiDialogue(ClientData notneededhere, Tcl_Interp *interp, int argc, T
    Tcl_SetObjResult(interp, Tcl_NewIntObj(rc));
    return TCL_OK;
 }
+#endif
 
 #ifdef INTERACTIVE
 static int exitCommand(ClientData notneededhere, Tcl_Interp *interp, int argc, Tcl_Obj *const *argv)
@@ -3296,13 +3298,13 @@ const char *name;
       { wRegCommand,            "wreg"},
       { wCRegCommand,           "wcreg"},
       { wDRegCommand,           "wdreg"},
-      { setLogCommand,          "log"},
       { setTargetVppCommand,    "settargetvpp" },
       { setTargetVddCommand,    "settargetvcc" },
       { setTargetVddCommand,    "settargetvdd" },
-      { guiDialogue,            "dialogue"},
       { massEraseCommand,       "massErase"},
 #ifdef INTERACTIVE
+      { setLogCommand,          "log"},
+      { guiDialogue,            "dialogue"},
       { openBDM,                "openbdm" },
       { closeBDM,               "closebdm" },
       { setTargetCommand,       "settarget" },

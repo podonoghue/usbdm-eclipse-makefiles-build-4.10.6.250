@@ -13,7 +13,7 @@ class ProgressTimer;
 //! Header at the start of flash programming code (describes flash code)
 struct LargeTargetImageHeader {
    uint32_t         loadAddress;       //!< Address where to load this image
-   uint32_t         entry;             //!< Pointer to entry routine
+   uint32_t         entry;             //!< Pointer to entry routine (for currently loaded routine)
    uint32_t         capabilities;      //!< Capabilities of routine
    uint16_t         reserved;
    uint32_t         calibFactor;       //!< Calibration factor for speed determination
@@ -105,8 +105,10 @@ private:
    };
 
    enum AddressModifiers {
+      ADDRESS_DATA   = 1UL<<31,  //!< DATA (X:) memory (DSC)
       ADDRESS_LINEAR = 1UL<<31,  //!< Linear address (HCS12)
       ADDRESS_EEPROM = 1UL<<30,  //!< EEPROM
+      ADDRESS_A23    = 1UL<<23,  //!< A23 bit for Flex/DataFlash on ARM/CFV1+
    };
 
    typedef USBDM_ErrorCode (*CallBackT)(USBDM_ErrorCode status, int percent, const char *message);

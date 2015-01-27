@@ -569,12 +569,27 @@ public:
    //!
    static bool isProgrammableMemory(MemType_t memoryType);
 
+   //! Indicates if a simple writable type e.g RAM etc.
+   //!
+   //! @param memoryType - Memory type
+   //!
+   //! @return - true/false result
+   //!
+   static bool isWritableMemory(MemType_t memoryType);
+
    //! Indicates if the memory region is of a programmable type e.g Flash, eeprom etc.
    //!
    //! @return - true/false result
    //!
    bool isProgrammableMemory() const {
       return isProgrammableMemory(type);
+   }
+   //! Indicates if the memory region is of a programmable type e.g Flash, eeprom etc.
+   //!
+   //! @return - true/false result
+   //!
+   bool isWritableMemory() const {
+      return isWritableMemory(type);
    }
    //! Get name of memory type
    //!

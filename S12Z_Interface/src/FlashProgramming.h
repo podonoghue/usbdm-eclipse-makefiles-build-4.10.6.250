@@ -100,8 +100,10 @@ private:
    };
 
    enum AddressModifiers {
+      ADDRESS_DATA   = 1UL<<31,  //!< DATA (X:) memory (DSC)
       ADDRESS_LINEAR = 1UL<<31,  //!< Linear address (HCS12)
       ADDRESS_EEPROM = 1UL<<30,  //!< EEPROM
+      ADDRESS_A23    = 1UL<<23,  //!< A23 bit for Flex/DataFlash on ARM/CFV1+
    };
 
    typedef USBDM_ErrorCode (*CallBackT)(USBDM_ErrorCode status, int percent, const char *message);

@@ -202,7 +202,7 @@ Devices using this peripheral:
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
-                     <name>LPBOOT</name>
+                     <name>LPBOOT0</name>
                      <description>Low-power Boot State Bit 0\n
 LPBOOT1:LPBOOT \n
 00 =&gt; Core and system clock divider (OUTDIV1) is 0x7 (divide by 8). Device is VLPR mode from reset.\n

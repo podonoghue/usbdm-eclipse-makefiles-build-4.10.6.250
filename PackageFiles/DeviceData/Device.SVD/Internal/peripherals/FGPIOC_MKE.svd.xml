@@ -9,6 +9,7 @@ Devices using this peripheral:
          <name>FGPIOC</name>
          <description>General Purpose Input/Output</description>
          <prependToName>FGPIOC</prependToName>
+         <headerStructName>GPIOC</headerStructName>
          <baseAddress>0xF8000000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -37,10 +38,10 @@ Controls the level driven on pin provided it is configured as GPIO output</descr
                <addressOffset>0x0</addressOffset>
                <fields>
                   <field>
-                     <name>PTI</name>
+                     <name>I0</name>
                      <description>Port Data Output</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
+                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -54,7 +55,24 @@ Controls the level driven on pin provided it is configured as GPIO output</descr
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
+                  <field derivedFrom="I0" > <name>I1</name> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I2</name> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I3</name> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I4</name> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I5</name> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I6</name> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I7</name> <bitOffset>7</bitOffset> </field>
                </fields>
+            </register>
+            <register>
+               <name>PDORI</name>
+               <?hide?>
+               <description>Port Data Output Register\n
+Controls the level driven on pin provided it is configured as GPIO output</description>
+               <addressOffset>0x0</addressOffset>
+               <size>8</size>
+               <access>read-write</access>
+               <resetMask>0xFF</resetMask>
             </register>
             <register>
                <name>PSOR</name>
@@ -64,10 +82,10 @@ Writing 1 to a bit sets the corresponding bit in the PDOR</description>
                <access>write-only</access>
                <fields>
                   <field>
-                     <name>PTI</name>
+                     <name>I0</name>
                      <description>Port Set Output</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
+                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0bX</name>
@@ -76,7 +94,24 @@ Writing 1 to a bit sets the corresponding bit in the PDOR</description>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
+                  <field derivedFrom="I0" > <name>I1</name> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I2</name> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I3</name> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I4</name> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I5</name> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I6</name> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I7</name> <bitOffset>7</bitOffset> </field>
                </fields>
+            </register>
+            <register>
+               <name>PSORI</name>
+               <?hide?>
+               <description>Port Set Output Register\n
+Writing 1 to a bit sets the corresponding bit in the PDOR</description>
+               <addressOffset>0x4</addressOffset>
+               <size>8</size>
+               <access>write-only</access>
+               <resetMask>0xFF</resetMask>
             </register>
             <register>
                <name>PCOR</name>
@@ -86,10 +121,10 @@ Writing 1 to a bit clears the corresponding bit in the PDOR</description>
                <access>write-only</access>
                <fields>
                   <field>
-                     <name>PTI</name>
+                     <name>I0</name>
                      <description>Port Clear Output</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
+                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0bX</name>
@@ -98,7 +133,24 @@ Writing 1 to a bit clears the corresponding bit in the PDOR</description>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
+                  <field derivedFrom="I0" > <name>I1</name> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I2</name> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I3</name> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I4</name> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I5</name> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I6</name> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I7</name> <bitOffset>7</bitOffset> </field>
                </fields>
+            </register>
+            <register>
+               <name>PCORI</name>
+               <?hide?>
+               <description>Port Clear Output Register\n
+Writing 1 to a bit clears the corresponding bit in the PDOR</description>
+               <addressOffset>0x8</addressOffset>
+               <size>8</size>
+               <access>write-only</access>
+               <resetMask>0xFF</resetMask>
             </register>
             <register>
                <name>PTOR</name>
@@ -108,10 +160,10 @@ Writing 1 to a bit toggles the corresponding bit in the PDOR</description>
                <access>write-only</access>
                <fields>
                   <field>
-                     <name>PTI</name>
+                     <name>I0</name>
                      <description>Port Toggle Output</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
+                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0bX</name>
@@ -120,7 +172,24 @@ Writing 1 to a bit toggles the corresponding bit in the PDOR</description>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
+                  <field derivedFrom="I0" > <name>I1</name> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I2</name> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I3</name> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I4</name> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I5</name> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I6</name> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I7</name> <bitOffset>7</bitOffset> </field>
                </fields>
+            </register>
+            <register>
+               <name>PTORI</name>
+               <?hide?>
+               <description>Port Toggle Output Register\n
+Writing 1 to a bit toggles the corresponding bit in the PDOR</description>
+               <addressOffset>0xC</addressOffset>
+               <size>8</size>
+               <access>write-only</access>
+               <resetMask>0xFF</resetMask>
             </register>
             <register>
                <name>PDIR</name>
@@ -130,10 +199,10 @@ This register directly reflects the value on the port pins if configured as GPIO
                <access>read-only</access>
                <fields>
                   <field>
-                     <name>PTI</name>
+                     <name>I0</name>
                      <description>Port Data Input</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
+                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -147,7 +216,24 @@ This register directly reflects the value on the port pins if configured as GPIO
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
+                  <field derivedFrom="I0" > <name>I1</name> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I2</name> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I3</name> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I4</name> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I5</name> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I6</name> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I7</name> <bitOffset>7</bitOffset> </field>
                </fields>
+            </register>
+            <register>
+               <name>PDIRI</name>
+               <?hide?>
+               <description>Port Data Input Register\n
+This register directly reflects the value on the port pins if configured as GPIO</description>
+               <addressOffset>0x10</addressOffset>
+               <size>8</size>
+               <access>read-only</access>
+               <resetMask>0xFF</resetMask>
             </register>
             <register>
                <name>PDDR</name>
@@ -156,10 +242,10 @@ Controls the direction of port pins</description>
                <addressOffset>0x14</addressOffset>
                <fields>
                   <field>
-                     <name>PTI</name>
+                     <name>I0</name>
                      <description>Port Data Direction</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
+                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
@@ -173,7 +259,24 @@ Controls the direction of port pins</description>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
+                  <field derivedFrom="I0" > <name>I1</name> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I2</name> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I3</name> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I4</name> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I5</name> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I6</name> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I7</name> <bitOffset>7</bitOffset> </field>
                </fields>
+            </register>
+            <register>
+               <name>PDDRI</name>
+               <?hide?>
+               <description>Port Data Direction Register\n
+Controls the direction of port pins</description>
+               <addressOffset>0x14</addressOffset>
+               <size>8</size>
+               <access>read-write</access>
+               <resetMask>0xFF</resetMask>
             </register>
             <register>
                <name>PIDR</name>
@@ -183,11 +286,11 @@ Used to disable the pin input function</description>
                <resetValue>0xFFFFFFFF</resetValue>
                <fields>
                   <field>
-                     <name>PTI</name>
+                     <name>I0</name>
                      <description>Port Input Disable\n
 Disables a pin as General Purpose Input. Corresponding Pin Data Input Register bit will read zero</description>
                      <bitOffset>0</bitOffset>
-                     <bitWidth>8</bitWidth>
+                     <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b1</name>
@@ -201,7 +304,25 @@ Disables a pin as General Purpose Input. Corresponding Pin Data Input Register b
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
+                  <field derivedFrom="I0" > <name>I1</name> <bitOffset>1</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I2</name> <bitOffset>2</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I3</name> <bitOffset>3</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I4</name> <bitOffset>4</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I5</name> <bitOffset>5</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I6</name> <bitOffset>6</bitOffset> </field>
+                  <field derivedFrom="I0" > <name>I7</name> <bitOffset>7</bitOffset> </field>
                </fields>
+            </register>
+            <register>
+               <name>PIDRI</name>
+               <?hide?>
+               <description>Port Input Disable Register\n
+Used to disable the pin input function</description>
+               <addressOffset>0x18</addressOffset>
+               <size>8</size>
+               <access>read-write</access>
+               <resetValue>0xFFFFFFFF</resetValue>
+               <resetMask>0xFF</resetMask>
             </register>
          </registers>
       </peripheral>

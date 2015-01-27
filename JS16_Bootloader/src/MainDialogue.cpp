@@ -119,7 +119,7 @@ void MainDialogue::OnProgramButtonClick( wxCommandEvent& event ) {
    else {
       wxMessageBox(_("Programming complete\n"
                      "Please remove & replace the BDM."),
-                   _("Programming Error"), wxOK, this);
+                   _("Programming Done"), wxOK, this);
    }
 }
 

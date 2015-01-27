@@ -199,13 +199,6 @@ USBDM_ErrorCode bdm_usb_init( void ) {
    Logging::print("Using libusbx v%d.%d.%d.%d\n", version->major, version->minor, version->micro, version->nano);
 #endif
 #endif
-
-#ifdef LOG
-   //Enable libUSB logging
-//    Hangs windows????
-//   libusb_set_debug(NULL, LIBUSB_LOG_LEVEL_WARNING);
-#endif
-
    // Initialize LIBUSB
    if (libusb_init(NULL) != LIBUSB_SUCCESS) {
       Logging::error("libusb_init() Failed\n");
@@ -1006,6 +999,7 @@ USBDM_ErrorCode bdmJMxx_simple_usb_transaction( bool                 commandTogg
                                                 unsigned int        *actualRxSize) {
 //   const unsigned  MaxFirstTransaction = 30;
    const unsigned  MaxFirstTransaction = 62;
+//   uint8_t        *sendBuffer = (uint8_t*) alloca(txSize);
    uint8_t         sendBuffer[txSize];
    USBDM_ErrorCode rc;
    LOGGING;

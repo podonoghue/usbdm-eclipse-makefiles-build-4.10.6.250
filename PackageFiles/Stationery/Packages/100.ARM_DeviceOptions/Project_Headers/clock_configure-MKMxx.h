@@ -22,8 +22,8 @@ extern "C" {
 
 //===================================
 // Validators
-// Common clock settings
-// <validate=net.sourceforge.usbdm.annotationEditor.validators.ClockValidate_MKMxx>
+// Common clock settings                                                           Core       Bus
+// <validate=net.sourceforge.usbdm.annotationEditor.validators.ClockValidate_MKMxx(50000000, 25000000)>
 // PLL clock
 // <validate=net.sourceforge.usbdm.annotationEditor.validators.PllClockValidate_MKMxx>
 // FLL clock
@@ -87,56 +87,56 @@ extern "C" {
 //   <o> Clock Mode <name=clock_mode>
 //   <i> Basic choice for final clock mode
 //<i> FLL Engaged Internal(FEI)
-//<i> In FEI mode, MCGOUT is derived from the FLL clock (DCOCLK) that is controlled by the 32 kHz Internal Reference Clock (IRC). 
-//<i> The FLL loop will lock the DCO frequency to the FLL factor, as selected by the C4[DRST_DRS] and C4[DMX32] bits, times the 
+//<i> In FEI mode, MCGOUT is derived from the FLL clock (DCOCLK) that is controlled by the 32 kHz Internal Reference Clock (IRC).
+//<i> The FLL loop will lock the DCO frequency to the FLL factor, as selected by the C4[DRST_DRS] and C4[DMX32] bits, times the
 //<i> internal reference frequency.
 //<i>
 //<i> FLL Engaged External(FEE)
-//<i> In FEE mode, MCGOUT is derived from the FLL clock (DCOCLK) that is controlled by the external reference clock. 
-//<i> The FLL loop will lock the DCO frequency to the FLL factor, as selected by C4[DRST_DRS] and C4[DMX32] bits, times 
+//<i> In FEE mode, MCGOUT is derived from the FLL clock (DCOCLK) that is controlled by the external reference clock.
+//<i> The FLL loop will lock the DCO frequency to the FLL factor, as selected by C4[DRST_DRS] and C4[DMX32] bits, times
 //<i> the external reference frequency, as specified by the C1[FRDIV] and C2[RANGE].
 //<i>
 //<i> FLL Bypassed Internal(FBI)
-//<i> In FBI mode, the MCGOUT clock is derived either from the slow (32 kHz IRC) or fast (4 MHz IRC) internal reference clock, 
+//<i> In FBI mode, the MCGOUT clock is derived either from the slow (32 kHz IRC) or fast (4 MHz IRC) internal reference clock,
 //<i> as selected by the C2[IRCS] bit. The FLL is operational but its output is not used. This mode is useful to allow the FLL
-//<i> to acquire its target frequency while the MCGOUT clock is driven from the C2[IRCS] selected internal reference clock. 
-//<i> The FLL clock (DCOCLK) is controlled by the slow internal reference clock, and the DCO clock frequency locks to a 
+//<i> to acquire its target frequency while the MCGOUT clock is driven from the C2[IRCS] selected internal reference clock.
+//<i> The FLL clock (DCOCLK) is controlled by the slow internal reference clock, and the DCO clock frequency locks to a
 //<i> multiplication factor, as selected by the C4[DRST_DRS] and C4[DMX32] bits, times the internal reference frequency.
 //<i>
 //<i> FLL Bypassed External(FBE)
 //<i> In FBE mode, the MCGOUT clock is derived from the external reference clock. The FLL is operational but its output is not
-//<i> used. This mode is useful to allow the FLL to acquire its target frequency while the MCGOUT clock is driven from the 
+//<i> used. This mode is useful to allow the FLL to acquire its target frequency while the MCGOUT clock is driven from the
 //<i> external reference clock. The FLL clock (DCOCLK) is controlled by the external reference clock, and the DCO clock frequency
 //<i> locks to a multiplication factor, as selected by the C4[DRST_DRS] and C4[DMX32] bits, times the divided external reference
-//<i> frequency. 
+//<i> frequency.
 //<i>
 //<i> PLL Engaged External(PEE)
 //<i> In PEE mode, the MCGOUTCLK is derived from the output of PLL which is controlled by a selectable external reference
 //<i> clock - either RTC or RTC/OSC divided by the FRDIV reference clock. The PLL clock frequency locks to a multiplication
-//<i> factor of 375 times the selected PLL reference frequency. 
+//<i> factor of 375 times the selected PLL reference frequency.
 //<i> The FLL is disabled in a low power state.
 //<i>
 //<i> PLL Bypassed External(PBE)
-//<i> In PBE mode, MCGOUT is derived from the OSCSEL external reference clock; the PLL is operational, but its output clock is 
-//<i> not used. This mode is useful to allow the PLL to acquire its target frequency while MCGOUT is driven from the external 
+//<i> In PBE mode, MCGOUT is derived from the OSCSEL external reference clock; the PLL is operational, but its output clock is
+//<i> not used. This mode is useful to allow the PLL to acquire its target frequency while MCGOUT is driven from the external
 //<i> reference clock. The PLL clock frequency locks to a multiplication factor of 375 times the PLL reference frequency.
 //<i>
 //<i> Bypassed Low Power Internal (BLPI/FBILP)
-//<i> In BLPI mode, MCGOUT is derived from the internal reference clock.  
-//<i> The FLL is disabled and PLL is disabled even if the C5[PLLCLKEN] is set to 1. 
+//<i> In BLPI mode, MCGOUT is derived from the internal reference clock.
+//<i> The FLL is disabled and PLL is disabled even if the C5[PLLCLKEN] is set to 1.
 //<i>
-//<i> Bypassed Low Power External (BLPE/FBELP) 
-//<i> In BLPE mode, MCGOUT is derived from the external reference clock. 
+//<i> Bypassed Low Power External (BLPE/FBELP)
+//<i> In BLPE mode, MCGOUT is derived from the external reference clock.
 //<i> The FLL is disabled and PLL is disabled even if the C5[PLLCLKEN] is set to 1.
 //<i>
 //<i> PLL Engaged Internal(PEI)
-//<i> In PEI mode, the MCGOUTCLK is derived from the PLL clock, which is controlled by the 32 kHz IRC reference clock. 
-//<i> The PLL locks to a multiplication factor times the internal reference frequency. 
+//<i> In PEI mode, the MCGOUTCLK is derived from the PLL clock, which is controlled by the 32 kHz IRC reference clock.
+//<i> The PLL locks to a multiplication factor times the internal reference frequency.
 //<i> The FLL is disabled in a low-power state.
 //<i>
 //<i> PLL Bypassed Internal(PBI)
-//<i> In PBI mode, MCGOUTCLK is derived from the IRCS clock select; the PLL is operational, but its output clock is not used. 
-//<i> This mode is useful to allow the PLL to acquire its target frequency while MCGOUTCLK is driven from the IRCS selected 
+//<i> In PBI mode, MCGOUTCLK is derived from the IRCS clock select; the PLL is operational, but its output clock is not used.
+//<i> This mode is useful to allow the PLL to acquire its target frequency while MCGOUTCLK is driven from the IRCS selected
 //<i> reference clock. The PLL locks to a multiplication factor times the PLL reference frequency. In preparation for transition
 //<i> to PEI, the PLL's programmable reference divider must be configured to produce a valid PLL reference clock.
 //<i> The FLL is disabled in a low-power state.
@@ -199,7 +199,7 @@ extern "C" {
 //  <o> System Core Clock (Hz) <name=system_core_clock> <constant>
 //  <i> Clocks the ARM Cortex-M4 core
 //  <i> Derived from MCGOUT Clock after division by SIM_CLKDIV1_SYSDIV
-//  <i> Must be less than or equal to 50 MHz. 
+//  <i> Must be less than or equal to 50 MHz.
 #define SYSTEM_CORE_CLOCK 41943040UL
 
 // SYSTEM_BUS_CLOCK =======================================
@@ -207,7 +207,7 @@ extern "C" {
 //  <o> System Bus and Flash Clock (Hz) <name=system_bus_clock> <constant>
 //  <i> Clocks the bus slaves & peripheral and flash
 //  <i> Derived from Core Clock after division by SIM_CLKDIV1_SYSCLKMODE factor
-//  <i> Must be less than or equal to 25 MHz. 
+//  <i> Must be less than or equal to 25 MHz.
 #define SYSTEM_BUS_CLOCK 20971520UL
 
 //========================================================================================
@@ -218,7 +218,7 @@ extern "C" {
 //
 //   <o> System Clock divider (SYSDIV) - Divide by <1-16> <#-1> <name=sim_clkdiv1_sysdiv>
 //   <i> This field can be used to program Core/Platform divider [SIM_CLKDIV1_SYSDIV]
-//   <i> Must be less than or equal to 48 MHz. 
+//   <i> Must be less than or equal to 48 MHz.
 #define SIM_CLKDIV1_SYSDIV_V (0)
 #define SIM_CLKDIV1_SYSDIV_M SIM_CLKDIV1_SYSDIV(SIM_CLKDIV1_SYSDIV_V)
 
@@ -236,11 +236,11 @@ extern "C" {
 
 //========================================================================================
 //========================================================================================
-// <h> OSC Control Register (OSC_CR) 
+// <h> OSC Control Register (OSC_CR)
 
 // OSC_CR_ERCLKEN ===============================
 //
-//   <q> External Reference Enable (ERCLKEN) 
+//   <q> External Reference Enable (ERCLKEN)
 //   <i> Enables external reference clock [OSC_CR_ERCLKEN]
 //     <0=> Disabled
 //     <1=> Enabled
@@ -289,11 +289,11 @@ extern "C" {
 
 //========================================================================================
 //========================================================================================
-// <h> RTC OSC Control Register (RTC_GP_DATA_REG = RTC_OSC) 
+// <h> RTC OSC Control Register (RTC_GP_DATA_REG = RTC_OSC)
 
 // RTC_OSC_OSC_DISABLE ===============================
 //
-//   <q> External Reference Enable (OSC_DISABLE) 
+//   <q> External Reference Enable (OSC_DISABLE)
 //   <i> Enables external reference clock [RTC_OSC_OSC_DISABLE]
 //     <0=> Enabled
 //     <1=> Disabled
@@ -332,7 +332,7 @@ extern "C" {
 
 // RTC_OSC_BOOT_MODE ===============================
 //
-//   <q> Boot mode override bit (BOOT_MODE) 
+//   <q> Boot mode override bit (BOOT_MODE)
 //   <i> This bit can be used to override the boot to happen in VLPR mode. [RTC_OSC_BOOT_MODE]
 //     <0=> Boot in RUN mode
 //     <1=> Boot in VLPR mode
@@ -411,7 +411,7 @@ extern "C" {
 //
 //   <q> Action on Loss of Clock (LOCRE0)
 //   <i> Determines if an Interrupt or Reset occurs on loss of OSC0 external reference [MCG_C2_LOCRE0]
-//   <i> This option only has effect if the clock monitor is first enabled CME0 = 1 
+//   <i> This option only has effect if the clock monitor is first enabled CME0 = 1
 //      <0=> Interrupt
 //      <1=> Reset
 #define MCG_C2_LOCRE0_V (0)
@@ -499,7 +499,7 @@ extern "C" {
 
 // MCG_C5_PLLCLKEN0 ==============================
 //
-//   <q> PLL Clock Enable (PLLCLKEN0) 
+//   <q> PLL Clock Enable (PLLCLKEN0)
 //   <i> Enables the PLL independent of PLLS and enables the PLL clock for use as MCGPLLCLK. [MCG_C5_PLLCLKEN0]
 //     <0=> MCGPLLCLK is inactive.
 //     <1=> MCGPLLCLK is active.
@@ -631,7 +631,7 @@ extern "C" {
 //
 //   <q> Clock Monitor Enable 1 (CME1)
 //   <i> Enables the loss of clock monitoring circuit for the output of the RTC. [MCG_C6_CME0]
-//   <i> The MCG_C8_LOCRE1 determines action (interrupt/reset) 
+//   <i> The MCG_C8_LOCRE1 determines action (interrupt/reset)
 //   <i> This field should be set to a logic 1 only when the MCG or RTC is in an operational mode that uses the external clock (FEE, FBE, or FBELP).
 //      <0=> RTC clock monitor is disabled.
 //      <1=> RTC clock monitor is enabled.
@@ -640,7 +640,7 @@ extern "C" {
 
 // MCG_C8_COARSE_LOLIE ==============================
 //
-//   <q> Loss of Coarse Lock Interrrupt Enable (COARSE_LOLIE) 
+//   <q> Loss of Coarse Lock Interrrupt Enable (COARSE_LOLIE)
 //   <i> Determines if an interrupt or reset follows a course loss of lock. [MCG_C8_COARSE_LOLIE]
 //     <0=> Interrupt request
 //     <1=> No interrupt request
@@ -687,7 +687,7 @@ extern "C" {
 #elif SIM_SOPT1_OSC32KSEL_V == 1
 #define SYSTEM_OSC32KSEL_CLOCK SYSTEM_ERCLK32_CLOCK   // External RTC clock pin
 #elif SIM_SOPT1_OSC32KSEL_V == 2
-#define SYSTEM_OSC32KSEL_CLOCK SYSTEM_MCGIRCLK_CLOCK   
+#define SYSTEM_OSC32KSEL_CLOCK SYSTEM_MCGIRCLK_CLOCK
 #elif SIM_SOPT1_OSC32KSEL_V == 3
 #define SYSTEM_OSC32KSEL_CLOCK SYSTEM_LOW_POWER_CLOCK   // LPO
 #endif

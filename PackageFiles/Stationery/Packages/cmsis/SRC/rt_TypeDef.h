@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------
- *      RL-ARM - RTX
+ *      CMSIS-RTOS  -  RTX
  *----------------------------------------------------------------------------
  *      Name:    RT_TYPEDEF.H
  *      Purpose: Type Definitions
- *      Rev.:    V4.70
+ *      Rev.:    V4.73
  *----------------------------------------------------------------------------
  *
  * Copyright (c) 1999-2009 KEIL, 2009-2013 ARM Germany GmbH
@@ -64,10 +64,11 @@ typedef struct OS_TCB {
   U16    events;                  /* Event flags                             */
   U16    waits;                   /* Wait flags                              */
   void   **msg;                   /* Direct message passing when task waits  */
+  struct OS_MUCB *p_mlnk;         /* Link pointer for mutex owner list       */
+  U8     prio_base;               /* Base priority                           */
 
   /* Hardware dependant part: specific for CM processor                      */
   U8     stack_frame;             /* Stack frame: 0=Basic, 1=Extended        */
-  U8     reserved;
   U16    priv_stack;              /* Private stack size, 0= system assigned  */
   U32    tsk_stack;               /* Current task Stack pointer (R13)        */
   U32    *stack;                  /* Pointer to Task Stack memory block      */
@@ -75,8 +76,8 @@ typedef struct OS_TCB {
   /* Task entry point used for uVision debugger                              */
   FUNCP  ptask;                   /* Task entry address                      */
 } *P_TCB;
-#define TCB_STACKF      32        /* 'stack_frame' offset                    */
-#define TCB_TSTACK      36        /* 'tsk_stack' offset                      */
+#define TCB_STACKF      37        /* 'stack_frame' offset                    */
+#define TCB_TSTACK      40        /* 'tsk_stack' offset                      */
 
 typedef struct OS_PSFE {          /* Post Service Fifo Entry                 */
   void  *id;                      /* Object Identification                   */
@@ -132,10 +133,10 @@ typedef struct OS_SCB {
 
 typedef struct OS_MUCB {
   U8     cb_type;                 /* Control Block Type                      */
-  U8     prio;                    /* Owner task default priority             */
   U16    level;                   /* Call nesting level                      */
   struct OS_TCB *p_lnk;           /* Chain of tasks waiting for mutex        */
   struct OS_TCB *owner;           /* Mutex owner task                        */
+  struct OS_MUCB *p_mlnk;         /* Chain of mutexes by owner task          */
 } *P_MUCB;
 
 typedef struct OS_XTMR {

@@ -34,18 +34,18 @@ struct LargeTargetFlashDataHeader {
    uint32_t         controller;        //!< Ptr to flash controller
    uint32_t         frequency;         //!< Target frequency (kHz)
    uint16_t         errorCode;         //!< Error code from action
-   uint16_t         sectorSize;        //!< Size of flash sectors (minimum erase size)
+   uint16_t         sectorSize;        //!< Size of Flash memory sectors (smallest erasable block)
    uint32_t         address;           //!< Memory address being accessed (reserved/page/address)
    uint32_t         dataSize;          //!< Size of memory range being accessed
    uint32_t         dataAddress;       //!< Ptr to data to program
 };
 //! Holds program execution result
 struct ResultStruct {
-   uint32_t         flags;             //!< Incomplete actions of routine
-   uint32_t         reserved1;
-   uint32_t         reserved2;
-   uint16_t         errorCode;         //!< Error code from action
-   uint16_t         padding;
+   uint32_t          flags;            //!< Incomplete actions of routine
+   uint32_t          reserved1;
+   uint32_t          reserved2;
+   uint16_t          errorCode;        //!< Error code from action
+   uint16_t          padding;
 };
 #pragma pack()
 
@@ -100,8 +100,10 @@ private:
    };
 
    enum AddressModifiers {
+      ADDRESS_DATA   = 1UL<<31,  //!< DATA (X:) memory (DSC)
       ADDRESS_LINEAR = 1UL<<31,  //!< Linear address (HCS12)
       ADDRESS_EEPROM = 1UL<<30,  //!< EEPROM
+      ADDRESS_A23    = 1UL<<23,  //!< A23 bit for Flex/DataFlash on ARM/CFV1+
    };
    //! Structure for MCGCG parameters
    struct MK_MCG_ClockParameters_t {
@@ -199,7 +201,7 @@ public:
    USBDM_ErrorCode verifyFlash(FlashImage  *flashImage, CallBackT errorCallBack=NULL);
    USBDM_ErrorCode readTargetChipId(uint32_t *targetSDID, bool doInit=false);
    USBDM_ErrorCode confirmSDID(void);
-
+   
    USBDM_ErrorCode getCalculatedTrimValue(uint16_t &value) {
       value = parameters.getClockTrimValue();
       return PROGRAMMING_RC_OK;

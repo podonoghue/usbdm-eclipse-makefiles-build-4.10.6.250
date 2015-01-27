@@ -156,7 +156,7 @@ const int deviceNumber = 0; // USBDM device to open, devices enumerated from 0..
    CHECK((bdmInformation.BDMsoftwareVersion < 0x40905)?BDM_RC_WRONG_BDM_REVISION:BDM_RC_OK);
 
    // Change any options here (>V4.9.4)
-   USBDM_ExtendedOptions_t options = {sizeof(USBDM_ExtendedOptions_t), T_CFV1};
+   USBDM_ExtendedOptions_t options = {sizeof(USBDM_ExtendedOptions_t), T_ARM};
    CHECK(USBDM_GetDefaultExtendedOptions(&options));
    options.resetDuration         = 1000;
    options.resetReleaseInterval  = 500;

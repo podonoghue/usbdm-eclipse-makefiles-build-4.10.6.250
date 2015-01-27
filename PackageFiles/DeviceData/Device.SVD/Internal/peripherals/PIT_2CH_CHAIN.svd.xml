@@ -5,7 +5,6 @@ Devices using this peripheral:
       MKE04Z4
       MKE04Z8M4
       MKE06Z4
-      SKEAZ4
 -->
       <peripheral>
          <?sourceFile "PIT_2CH_CHAIN" ?>
@@ -78,7 +77,7 @@ Disabled PIT module clock</description>
                <dim>2</dim>
                <dimIncrement>16</dimIncrement>
                <dimIndex>0,1</dimIndex>
-               <name>CS,@p@f@i</name>
+               <name>CHANNEL,@p@f@i</name>
                <addressOffset>0x100</addressOffset>
                <register>
                   <name>LDVAL</name>

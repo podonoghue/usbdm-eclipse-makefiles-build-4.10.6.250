@@ -175,10 +175,10 @@
 // FRDM_KL25Z
 //==========================================================
 #define LED_RED_PORT               B   // Port register
-#define LED_RED_NUM                19  // Pin number
+#define LED_RED_NUM                18  // Pin number
 
 #define LED_GREEN_PORT             B   
-#define LED_GREEN_NUM              18  
+#define LED_GREEN_NUM              19
 
 #define LED_BLUE_PORT              D   
 #define LED_BLUE_NUM               1   

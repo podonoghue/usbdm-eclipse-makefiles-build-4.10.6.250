@@ -165,7 +165,7 @@ int                sub;
 const UnlockerDeviceData  *device = NULL;
 
 #ifdef LOG
-  Logging::print("lookUpDevice: idcode         => 0x%3.3lx\n",  idcode);
+  Logging::print("lookUpDevice: idcode         => 0x%3.3lx\n",  (long unsigned int)idcode);
   Logging::print("lookUpDevice: JEDEC code     => 0x%3.3x%s\n",
            jedec, (jedec==FREESCALE_JEDEC)?"(Freescale)":"");
   Logging::print("lookUpDevice: part Number    => 0x%3.3x\n",   partNum);

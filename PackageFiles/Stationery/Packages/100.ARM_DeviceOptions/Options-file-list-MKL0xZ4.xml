@@ -11,15 +11,23 @@
             <deviceSubfamilyIs>MKL05Z4</deviceSubfamilyIs>
          </or>
       </applyWhen>
-      <variable id="Clock-setup-MKL0x" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
-      <variable id="UART-setup-MKL0x" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
-      <condition variable="Clock-setup-MKL0x">
+      <variable id="projectOptionValue.Clock-setup" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="projectOptionValue.UART-setup" name="UART setup code" description="Adds C stdio (UART) support for newlib" >
+         <requirement idRef="projectOptionValue.Clock-setup"/>
+      </variable>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Clock-setup" />
+         </applyWhen>
          <copy source="Startup_Code/clock-MKL0x.c" target="Startup_Code/clock.c" />
          <copy source="Project_Headers/clock_configure-MKL0x.h" target="Project_Headers/clock_configure.h" />
-      </condition>
-      <condition variable="UART-setup-MKL0x">
+      </block>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.UART-setup" />
+         </applyWhen>
          <copy source="Startup_Code/uart-mkl.c" target="Startup_Code/uart.c" />
          <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
-      </condition>
+      </block>
    </projectActionList>
 </root>

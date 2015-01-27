@@ -30,31 +30,32 @@
 \verbatim
  Change History
 +======================================================================================================
-|  1 Dec 2014 | Fixed format in printf()s                                           - pgo 4.10.6.230
-| 12 Nov 2014 | Added armDisconnect() to allow reset behaviour to be restored       - pgo - V4.10.6.230
-| 12 Nov 2014 | Refactored armConnect()                                             - pgo - V4.10.6.230
-| 12 Oct 2014 | Added automatic alignment correction to memory (FIX_ALIGNMENT)      - pgo - V4.10.6.210
-| 25 Apr 2014 | Added check for Power sense option in Power-on sequence             - pgo - V4.10.6.140
-| 23 Mar 2014 | Changes to handling pendingResetRelease                             - pgo - V4.10.6.130
-| 01 Mar 2014 | Removed MCF51AC256 CSR.VBD hack                                     - pgo - V4.10.6.120
-| 16 Mar 2013 | Added default frequency to getDefaultExtendedOptions()              - pgo - V4.10.4
-| 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo - V4.10.4
-|  1 Dec 2012 | Changed Logg                                                     - pgo - V4.10.4
-| 30 Nov 2012 | Extended timeout for USBDM_ControlPins()                            - pgo - V4.10.4
-| 30 Oct 2012 | Added MS_Fast report                                                - pgo - V4.10.4
-| 17 Oct 2012 | USBDM_SetTarget() now only does POR if actual TVdd change and       - pgo - V4.10.3
+| 20 Jan 2015 | Added USBDM_SetLogFile() and USBDM_GetLogFile()                     - pgo V4.10.6.250
+|  1 Dec 2014 | Fixed format in printf()s                                           - pgo V4.10.6.230
+| 12 Nov 2014 | Added armDisconnect() to allow reset behaviour to be restored       - pgo V4.10.6.230
+| 12 Nov 2014 | Refactored armConnect()                                             - pgo V4.10.6.230
+| 12 Oct 2014 | Added automatic alignment correction to memory (FIX_ALIGNMENT)      - pgo V4.10.6.210
+| 25 Apr 2014 | Added check for Power sense option in Power-on sequence             - pgo V4.10.6.140
+| 23 Mar 2014 | Changes to handling pendingResetRelease                             - pgo V4.10.6.130
+| 01 Mar 2014 | Removed MCF51AC256 CSR.VBD hack                                     - pgo V4.10.6.120
+| 16 Mar 2013 | Added default frequency to getDefaultExtendedOptions()              - pgo V4.10.4
+| 27 Dec 2012 | Added Reset rise checks to reset code                               - pgo V4.10.4
+|  1 Dec 2012 | Changed Logg                                                        - pgo V4.10.4
+| 30 Nov 2012 | Extended timeout for USBDM_ControlPins()                            - pgo V4.10.4
+| 30 Oct 2012 | Added MS_Fast report                                                - pgo V4.10.4
+| 17 Oct 2012 | USBDM_SetTarget() now only does POR if actual TVdd change and       - pgo V4.10.3
 |             |   leaves RESET asserted for ARM targets until end of Connect()      -
-| 23 Sep 2012 | USBDM_ControlInterface() now filters value by target type           - pgo - V4.10.2
-| 17 Sep 2012 | USBDM_GetVersion() check for invalid ICP.HW version                 - pgo - V4.10.1
-|  7 Aug 2012 | USBDM_ControlInterface() now uses USBDM_ControlPins()               - pgo - V4.10.0
-| 20 May 2012 | Extended firmware version information                                       V4.9.5
-| 16 May 2012 | Corrected possible buffer overrun in USBDM_JTAG_ExecuteSequence()   - pgo - V4.9.5
-|  4 May 2012 | Unified error code handling                                         - pgo - V4.9.5
-|  4 Apr 2012 | Added RESET_DEFAULT option to targetReset()                         - pgo - V4.9.4
-| 27 Mar 2012 | Implemented USBDM_SetExtendedOptions() etc                          - pgo - V4.9.4
-| 30 Jan 2012 | Changes to USBDM_Read/WriteMemory() for HCS12 Global access         - pgo - V4.9
-| 26 Jan 2012 | Changes to USBDM_SetSpeed() to pass 0 speed to BDM                  - pgo - V4.9
-| 10 Dec 2011 | Changed so VDD not enabled unless target type set first             - pgo - V4.8
+| 23 Sep 2012 | USBDM_ControlInterface() now filters value by target type           - pgo V4.10.2
+| 17 Sep 2012 | USBDM_GetVersion() check for invalid ICP.HW version                 - pgo V4.10.1
+|  7 Aug 2012 | USBDM_ControlInterface() now uses USBDM_ControlPins()               - pgo V4.10.0
+| 20 May 2012 | Extended firmware version information                                     V4.9.5
+| 16 May 2012 | Corrected possible buffer overrun in USBDM_JTAG_ExecuteSequence()   - pgo V4.9.5
+|  4 May 2012 | Unified error code handling                                         - pgo V4.9.5
+|  4 Apr 2012 | Added RESET_DEFAULT option to targetReset()                         - pgo V4.9.4
+| 27 Mar 2012 | Implemented USBDM_SetExtendedOptions() etc                          - pgo V4.9.4
+| 30 Jan 2012 | Changes to USBDM_Read/WriteMemory() for HCS12 Global access         - pgo V4.9
+| 26 Jan 2012 | Changes to USBDM_SetSpeed() to pass 0 speed to BDM                  - pgo V4.9
+| 10 Dec 2011 | Changed so VDD not enabled unless target type set first             - pgo V4.8
 | 12 Jul 2011 | Added call to USBDM_SetSpeed() for CFVx USBDM_SetTargetType()       - pgo
 | 07 Jul 2011 | Changes to reset & connection for all targets                       - pgo
 | 24 Nov 2010 | Fixed stupid non-static static buffers!                             - pgo
@@ -1390,14 +1391,18 @@ USBDM_ErrorCode rc;
    usb_data[0] = 0;
    usb_data[1] = CMD_USBDM_CONNECT;
    rc = bdm_usb_transaction(2, 1, usb_data, 100);
-   Logging::print("basic connect, rc = %d\n", rc);
    if (rc != BDM_RC_OK) {
+      Logging::print("Basic connect failed, rc = %d\n", rc);
       return rc;
    }
    if ((bdmOptions.targetType == T_ARM_SWD) || (bdmOptions.targetType == T_ARM_JTAG)) {
       rc = armConnect(bdmOptions.targetType);
-      if (rc != BDM_RC_OK) {
+      // Don't retry if secured as it will upset detection
+      if ((rc != BDM_RC_OK) && (rc != BDM_RC_SECURED)) {
          rc = armConnect(bdmOptions.targetType);
+      }
+      if (rc != BDM_RC_OK) {
+         Logging::print("ARM connect, rc = %d\n", rc);
       }
    }
    if (pendingResetRelease) {
@@ -2607,7 +2612,7 @@ USBDM_ErrorCode USBDM_ReadMemory( unsigned int  memorySpace,
                                   unsigned char *data) {
    LOGGING_Q;
    if (Logging::getLoggingLevel()>=0) {
-      // Turn off Logg below this level
+      // Turn off Log below this level
       Logging::setLoggingLevel(0);
    }
    USBDM_ErrorCode rc, stickyRc = BDM_RC_OK;
@@ -3458,6 +3463,24 @@ USBDM_ErrorCode USBDM_JTAG_ExecuteSequence(unsigned char       length,
       Logging::printDump(usb_data+1, inLength);
    }
    return rc;
+}
+
+//====================================================================================================
+//====================================================================================================
+//====================================================================================================
+
+//! Set log file for messages
+//!
+USBDM_API
+void USBDM_SetLogFile(FILE *fp) {
+   Logging::setLogFileHandle(fp);
+}
+
+//! Get current log file for messages
+//!
+USBDM_API
+FILE *USBDM_GetLogFile(void) {
+   return Logging::getLogFileHandle();
 }
 
 //====================================================================================================

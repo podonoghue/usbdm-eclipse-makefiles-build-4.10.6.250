@@ -21,6 +21,7 @@ Devices using this peripheral:
          <name>FGPIOA</name>
          <description>General Purpose Input/Output</description>
          <prependToName>FGPIOA</prependToName>
+         <headerStructName>GPIO</headerStructName>
          <baseAddress>0xF80FF000</baseAddress>
          <size>32</size>
          <access>read-write</access>

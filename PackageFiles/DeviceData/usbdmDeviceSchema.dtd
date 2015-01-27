@@ -105,7 +105,7 @@
      description?,
      (memoryRange+))>
      <!ATTLIST memory id               ID #IMPLIED>
-     <!ATTLIST memory type             (ram|flash|pFlash|dFlash|eeprom|flexNVM|flexRAM|io|pRAM|pROM|xRAM|xROM) #REQUIRED>
+     <!ATTLIST memory type             (ram|flash|pFlash|dFlash|eeprom|flexNVM|flexRAM|io|pRAM|pROM|xRAM|xROM|bitband) #REQUIRED>
      <!ATTLIST memory subType          CDATA "1">
      <!ATTLIST memory pageAddress      CDATA "0">
      <!ATTLIST memory registerAddress  CDATA "0">
@@ -162,6 +162,7 @@
 <!ELEMENT flashScripts (tclScriptRef|tclScript)*>
   <!--Specifies a memory range-->
 <!ELEMENT memoryRange (#PCDATA)>
+     <!ATTLIST memoryRange name             CDATA #IMPLIED>
      <!-- Various combinations may be used. Addresses are inclusive
      start  + end
      start  + size

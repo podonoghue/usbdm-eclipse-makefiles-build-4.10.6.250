@@ -5,7 +5,6 @@ Devices using this peripheral:
       MKE04Z4
       MKE04Z8M4
       MKE06Z4
-      SKEAZ4
 -->
       <peripheral>
          <?sourceFile "OSC_MKE" ?>

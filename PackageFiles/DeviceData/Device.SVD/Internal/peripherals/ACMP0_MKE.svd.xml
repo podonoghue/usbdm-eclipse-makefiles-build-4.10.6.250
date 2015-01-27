@@ -5,13 +5,13 @@ Devices using this peripheral:
       MKE04Z4
       MKE04Z8M4
       MKE06Z4
-      SKEAZ4
 -->
       <peripheral>
          <?sourceFile "ACMP0_MKE" ?>
          <name>ACMP0</name>
          <description>Analog comparator</description>
          <prependToName>ACMP0</prependToName>
+         <headerStructName>ACMP</headerStructName>
          <baseAddress>0x40073000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -39,40 +39,41 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>ACMP interrupt on output falling edge</description>
+                           <description>Output falling edge</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>ACMP interrupt on output rising edge</description>
+                           <description>Output rising edge</description>
                            <value>0b01</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10</name>
-                           <description>ACMP interrupt on output falling edge</description>
+                           <description>Output falling edge</description>
                            <value>0b10</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11</name>
-                           <description>ACMP interrupt on output falling or rising edge</description>
+                           <description>Output falling or rising edge</description>
                            <value>0b11</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>ACOPE</name>
-                     <description>ACMP Output Pin Enable</description>
+                     <description>ACMP Output Pin Enable\n
+Allows the ACMP output to be placed onto external pin</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>ACMP output cannot be placed onto external pin</description>
+                           <description>Pin disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>ACMP output can be placed onto external pin</description>
+                           <description>Pin enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -116,18 +117,21 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>ACF</name>
-                     <description>ACMP Interrupt Flag Bit - Synchronously set by hardware when ACMP output has a valid edge defined by ACMOD. The setting of this bit lags the ACMPO to bus clocks</description>
+                     <description>ACMP Interrupt Flag Bit\n
+Synchronously set by hardware when ACMP output has a valid edge defined by ACMOD.\n
+Cleared by writing a 0 to this bit. Writing a 1 to this bit has no effect
+The setting of this bit lags the ACMPO to bus clocks</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>ACMP output has no valid edge</description>
+                           <description>No request</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>ACMP output has a valid edge - Clear by writing a 0 to this bit. Writing a 1 to this bit has no effect</description>
+                           <description>Interrupt pending</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -244,8 +248,9 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>DACVAL</name>
-                     <description>DAC Output Level Selection - Selects the output voltage using the formula: \n
-    Voutput= (Vin/64)x(DACVAL[5:0]+1) \n
+                     <description>DAC Output Level Selection\n
+Selects the output voltage using the formula: \n
+\tVoutput= (Vin/64)x(DACVAL[5:0]+1) \n
 The Voutput range is from Vin/64 to Vin, the step is Vin/64</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>6</bitWidth>
@@ -258,12 +263,12 @@ The Voutput range is from Vin/64 to Vin, the step is Vin/64</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The DAC selects Bandgap as the reference</description>
+                           <description>Bandgap reference</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The DAC selects VDDA as the reference</description>
+                           <description>VDDA reference</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -304,12 +309,12 @@ This field controls if the corresponding ACMP external pin can be driven by an a
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>The corresponding external analog input is not allowed</description>
+                           <description>Input disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>The corresponding external analog input is allowed</description>
+                           <description>Input enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

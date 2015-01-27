@@ -238,7 +238,6 @@ DSC_Registers_t mapReg(unsigned cwRegNo) {
 }
 #endif
 
-
 //! 2.2.6.1 Write Value to Register
 //!
 //! @param dnRegNumber
@@ -252,7 +251,7 @@ DiReturnT DiRegisterWrite ( DiUInt32T        dnRegNumber,
    DSC_Registers_t regNum = mapReg(dnRegNumber);
    USBDM_ErrorCode rc = BDM_RC_OK;
 
-   Logging::print("DiRegisterWrite(0x%X,%s) => %lX\n", dnRegNumber, DSC_GetRegisterName(regNum), (uint32_t)regValue);
+   Logging::print("DiRegisterWrite(0x%lX,%s) => %lX\n", (unsigned long)dnRegNumber, DSC_GetRegisterName(regNum), (unsigned long)regValue);
 
    CHECK_ERROR_STATE();
 
@@ -386,7 +385,6 @@ DiReturnT DiExecGetStatus ( pDiExitStatusT pdesExitStatus ) {
    static DiExitCauseT lastStatus = DI_WAIT_USER;
    static int pollCount = 0;
    OnceStatus_t onceStatus;
-   pcResetValue;
 //   Logging::print("DiExecGetStatus()\n");
 
    // Defaults

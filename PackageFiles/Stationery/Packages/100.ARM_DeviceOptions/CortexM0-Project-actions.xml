@@ -31,6 +31,7 @@ Cortex-M0
       <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
       <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
       <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+      <copy source="Project_Headers/bme.h"                                    target="Project_Headers/bme.h" />
       <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
       <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
       <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />
@@ -65,6 +66,7 @@ Cortex-M0
       <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
       <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
       <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+      <copy source="Project_Headers/bme.h"                                    target="Project_Headers/bme.h" />
       <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
       <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
       <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />
@@ -99,6 +101,7 @@ Cortex-M0
       <copy source="Project_Settings/Linker_Files/MemoryMap.ld"               target="Project_Settings/Linker_Files/MemoryMap-$(targetDeviceName).ld" />
       <copy source="Project_Headers/derivative.h"                             target="Project_Headers/derivative.h" />
       <copy source="Project_Headers/TargetDevice.h"                           target="Project_Headers/$(targetDevice).h" />
+      <copy source="Project_Headers/bme.h"                                    target="Project_Headers/bme.h" />
       <copy source="Project_Headers/system.h"                                 target="Project_Headers/system.h" />
       <copy source="Project_Headers/core_cm0plus.h"                           target="Project_Headers/core_cm0plus.h" />
       <copy source="Project_Headers/core_cmFunc.h"                            target="Project_Headers/core_cmFunc.h" />

@@ -528,7 +528,7 @@ WARN_LOGFILE =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT = USBDM_JS16_Documentation.txt Software_Installation.txt Driver_Installation.txt Construction.txt Configuring_EclipseV10_1.txt Configuring_HCS08_HCS12.txt EclipseLuna_Install.txt CodeSourcery_Install.txt CodeSourcery_NewProject.txt Building_Software.txt API_Example.txt Tips.txt History.txt What_Is_Provided.txt ..\..\Shared_V4\src\USBDM_ErrorMessages.h ..\..\Shared_V4\src\USBDM_API.h
+INPUT = USBDM_JS16_Documentation.txt Software_Installation.txt Driver_Installation.txt Construction.txt Configuring_EclipseV10_1.txt Configuring_HCS08_HCS12.txt EclipseLuna_Install.txt CodeSourcery_Install.txt CodeSourcery_NewProject.txt FXTH87xx11.txt Building_Software.txt API_Example.txt Tips.txt History.txt What_Is_Provided.txt ..\..\Shared_V4\src\USBDM_ErrorMessages.h ..\..\Shared_V4\src\USBDM_API.h
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -605,7 +605,7 @@ EXAMPLE_RECURSIVE = NO
 # directories that contain image that are included in the documentation (see 
 # the \image command).
 
-IMAGE_PATH = Images Images/CodeSourcery Images/DeviceDriver Images/Coldfire Images/JSBootloader
+IMAGE_PATH = Images Images/CodeSourcery Images/DeviceDriver Images/Coldfire Images/JSBootloader Images/Hints
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should 
 # invoke to filter for each input file. Doxygen will invoke the filter program 

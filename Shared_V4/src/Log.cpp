@@ -313,7 +313,7 @@ void Logging::warning(const char *format, ...) {
  * @param data         Pointer to data to print
  * @param size         Number of bytes to print
  * @param startAddress Address to display against values
- * @param organization Size of data & address increment
+ * @param organisation Size of data & address increment
  */
 void Logging::printDump(unsigned const char *data,
       unsigned int size,

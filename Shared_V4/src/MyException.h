@@ -11,7 +11,9 @@
 #include <stdexcept>
 #include "Log.h"
 
+#ifdef __GNUC__
 #pragma GCC visibility push(default)
+#endif
 
 class MyException : public std::runtime_error {
 
@@ -22,6 +24,9 @@ public:
 #endif
    }
 };
+
+#ifdef __GNUC__
 #pragma GCC visibility pop
+#endif
 
 #endif /* MYEXCEPTION_HPP_ */

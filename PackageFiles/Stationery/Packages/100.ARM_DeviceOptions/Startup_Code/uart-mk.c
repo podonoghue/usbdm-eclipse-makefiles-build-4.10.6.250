@@ -25,17 +25,17 @@
 __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
-   SIM_SCGC4 |= SIM_SCGC4_UART1_MASK;
+   SIM->SCGC4 |= SIM_SCGC4_UART1_MASK;
 
    // Enable clock to port pins used by UART
-   SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
+   SIM->SCGC5 |= SIM_SCGC5_PORTE_MASK;
 
    // Select Tx & Rx pins to use
-   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
+   SIM->SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
 
    // Set Tx & Rx Pin function
-   PORTE_PCR0 = PORT_PCR_MUX(3);
-   PORTE_PCR1 = PORT_PCR_MUX(3);
+   PORTE->PCR[0] = PORT_PCR_MUX(3);
+   PORTE->PCR[1] = PORT_PCR_MUX(3);
 }
 #elif defined(MCU_MK21F12) || defined(MCU_MK22F12) || defined(MCU_MK20D5)
 //=================================================================================
@@ -50,17 +50,17 @@ inline static void initDefaultUart()  {
 __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
-   SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
+   SIM->SCGC4 |= SIM_SCGC4_UART0_MASK;
 
    // Enable clock to port pins used by UART
-   SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+   SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
 
    // Select Tx & Rx pins to use
-   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
+   SIM->SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
 
    // Set Tx & Rx Pin function
-   PORTB_PCR16 = PORT_PCR_MUX(3);
-   PORTB_PCR17 = PORT_PCR_MUX(3);
+   PORTB->PCR[16] = PORT_PCR_MUX(3);
+   PORTB->PCR[17] = PORT_PCR_MUX(3);
 }
 #elif defined(MCU_MK20D10) || defined(MCU_MK20DZ10) || defined(MCU_MK40D10) || defined(MCU_MK40DZ10) || defined(MCU_MK20D7)
 //=================================================================================
@@ -75,17 +75,17 @@ inline static void initDefaultUart()  {
 __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
-   SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
+   SIM->SCGC4 |= SIM_SCGC4_UART0_MASK;
 
    // Enable clock to port pins used by UART
-   SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
+   SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
 
    // Select Tx & Rx pins to use
-   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
+   SIM->SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
 
    // Set Tx & Rx Pin function
-   PORTD_PCR6 = PORT_PCR_MUX(3);
-   PORTD_PCR7 = PORT_PCR_MUX(3);
+   PORTD->PCR[6] = PORT_PCR_MUX(3);
+   PORTD->PCR[7] = PORT_PCR_MUX(3);
 }
 #elif defined(MCU_MK60DZ10) || defined(MCU_MK60D10) || defined(MCU_MK60F12) || defined(MCU_MK10DZ10) || defined(MCU_MK10D10) || defined(MCU_MK10F12)
 //=================================================================================
@@ -100,17 +100,17 @@ inline static void initDefaultUart()  {
 __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
-   SIM_SCGC1 |= SIM_SCGC1_UART5_MASK;
+   SIM->SCGC1 |= SIM_SCGC1_UART5_MASK;
 
    // Enable clock to port pins used by UART
-   SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
+   SIM->SCGC5 |= SIM_SCGC5_PORTE_MASK;
 
    // Set Tx & Rx pins in use
-   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
+   SIM->SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
 
    // Set Tx & Rx Pin function
-   PORTE_PCR8 = PORT_PCR_MUX(3);
-   PORTE_PCR9 = PORT_PCR_MUX(3);
+   PORTE->PCR[8] = PORT_PCR_MUX(3);
+   PORTE->PCR[9] = PORT_PCR_MUX(3);
 }
 #elif defined(MCU_MK64F12)
 //=================================================================================
@@ -125,17 +125,17 @@ inline static void initDefaultUart()  {
 __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
-   SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
+   SIM->SCGC4 |= SIM_SCGC4_UART0_MASK;
 
    // Enable clock to port pins used by UART
-   SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+   SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
 
    // Select Tx & Rx pins to use
-   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
+   SIM->SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
 
    // Set Tx & Rx Pin function
-   PORTB_PCR16 = PORT_PCR_MUX(3);
-   PORTB_PCR17 = PORT_PCR_MUX(3);
+   PORTB->PCR[16] = PORT_PCR_MUX(3);
+   PORTB->PCR[17] = PORT_PCR_MUX(3);
 
 #ifdef USE_IRQ
    // Enable IRQs in NVIC
@@ -157,17 +157,17 @@ inline static void initDefaultUart()  {
 __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
-   SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
+   SIM->SCGC4 |= SIM_SCGC4_UART0_MASK;
 
    // Enable clock to port pins used by UART
-   SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
+   SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
 
    // Select Tx & Rx pins to use
-   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
+   SIM->SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
 
    // Set Tx & Rx Pin function
-   PORTD_PCR6 = PORT_PCR_MUX(3);
-   PORTD_PCR7 = PORT_PCR_MUX(3);
+   PORTD->PCR[6] = PORT_PCR_MUX(3);
+   PORTD->PCR[7] = PORT_PCR_MUX(3);
 }
 #endif
 

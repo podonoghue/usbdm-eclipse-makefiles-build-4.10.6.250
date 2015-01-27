@@ -1,7 +1,5 @@
 ;#<![CDATA[
 ;#
-;# Kinetis-KExx-flash-scripts.tcl
-;#
 ;######################################################################################
 ;#  This file defines the following flash functions
 ;#  
@@ -9,7 +7,7 @@
 ;#                    The target should be left in an unsecured state.
 ;#
 ;#  isUnsecure - indicates if the target is secured in some fashion (read/write protected)
-;#               Returns TCL_OK if NOT secured
+;#               Returns 0 if NOT secured
 ;#
 ;#  initFlash - initialises the target for flash programing (if needed)
 ;#
@@ -22,6 +20,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.19.4.250 - Simplified
 ;#  V4.19.4.240 - Added return error codes
 ;#  V4.10.4.140 - Changed Mass erase sequence (added retry etc.)
 ;#  V4.10.4     - Changed return code handling
@@ -34,6 +33,10 @@
 proc loadSymbols {} {
    # LittleEndian format for writing numbers to memory
    setbytesex littleEndian
+
+   set ::NAME  "Kinetis-KExx-flash-scripts"
+
+   puts "$::NAME.loadSymbols{}"
    
    set ::MDM_AP_Status                   0x01000000
    set ::MDM_AP_Control                  0x01000004
@@ -168,12 +171,6 @@ proc loadSymbols {} {
    set ::F_PGMPART                       0x80
    set ::F_SETRAM                        0x81
    
-   set ::WDOG_UNLOCK                     0x4005200E
-   set ::WDOG_UNLOCK_SEQ_1               0xC520
-   set ::WDOG_UNLOCK_SEQ_2               0xD928
-   set ::WDOG_STCTRLH                    0x40052000
-   set ::WDOG_DISABLED_CTRL              0x0012
-
    set ::BDM_CAP_HCS12                   0x0001  ;# Supports HCS12
    set ::BDM_CAP_RS08                    0x0002  ;# 12 V Flash programming supply available (RS08 support)
    set ::BDM_CAP_VDDCONTROL              0x0004  ;# Control over target Vdd
@@ -189,71 +186,12 @@ proc loadSymbols {} {
    set ::BDM_CAP_CDC                     0x1000  ;# Supports CDC Serial over USB interface
    set ::BDM_CAP_ARM_SWD                 0x2000  ;# Supports ARM targets via SWD
 
+   set ::PROGRAMMING_RC_OK                         0
    set ::PROGRAMMING_RC_ERROR_SECURED              114
    set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
    set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
    
    return
-}
-
-;######################################################################################
-;#
-proc executeCommand {} {
-   ;# Clear any existing errors
-   wb $::FTFL_FSTAT [expr $::FTFL_FSTAT_ACCERR|$::FTFL_FSTAT_FPVIOL]
-
-   ;# Start command
-   wb $::FTFL_FSTAT $::FTFL_FSTAT_CCIF
-
-   ;# Wait for command complete
-   set flashBusy 0
-   set retry 0
-   while { $flashBusy == 0} {
-      set fstat [ rb $::FTFL_FSTAT ]
-      set flashBusy [expr $fstat & $::FTFL_FSTAT_CCIF]
-      if [ expr $retry == 10] {
-         puts "Flash busy timeout"
-         return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
-      }
-      after 100
-      incr retry
-   }
-   if [ expr ( $fstat & $::FTFL_FSTAT_ACCERR ) != 0 ] {
-      puts "Flash access error"
-      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
-   }
-   if [ expr ( $fstat & $::FTFL_FSTAT_FPVIOL ) != 0 ] {
-      puts "Flash write protect error"
-      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
-   }  
-   if [ expr ( $fstat & $::FTFL_FSTAT_MGSTAT0 ) != 0 ] {
-      puts "Flash command failed error"
-      return $::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND
-   }  
-}
-
-;######################################################################################
-;#
-proc setFCCOB { cmd addr data } {
-   wl $::FTFL_FCCOB3 [expr ($cmd << 24) | $addr]
-   rl $::FTFL_FCCOB3
-   wl $::FTFL_FCCOB7 $data
-   rl $::FTFL_FCCOB7
-   rblock $::FTFL_FCCOB3 0x10
-}
-
-;######################################################################################
-;#
-proc programLong { addr data } {
-   setFCCOB $::F_PGM4 $addr $data
-   executeCommand
-}
-
-;######################################################################################
-;#
-proc eraseBlock { addr } {
-   setFCCOB $::F_ERSBLK $addr 0x0
-   executeCommand
 }
 
 ;######################################################################################
@@ -277,7 +215,8 @@ proc initFlash { frequency } {
 ;#  Target is mass erased and left unsecured (non-blank!)
 ;#
 proc massEraseTarget { } {
-
+   puts "$::NAME.massEraseTarget{}"
+   
    ;# hold target reset to be sure
    pinSet rst=0
 
@@ -331,24 +270,25 @@ proc massEraseTarget { } {
    
    puts "massEraseTarget{} - Doing reset sh"
    reset sh
-   
-   return
+
+   return [ isUnsecure ] 
 }
-
-
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
    puts "isUnsecure{} - Checking if unsecured"
+   
+   catch { connect }
+
    set securityValue [ rcreg $::MDM_AP_Status ]
-   puts [format "isUnsecure{} - MDM_AP_Status=%X" $securityValue ]
+   puts [format "isUnsecure{} - MDM_AP_Status=0x%X" $securityValue ]
    if [ expr ( $securityValue & $::MDM_AP_ST_SYSTEM_SECURITY ) != 0 ] {
       puts "isUnsecure{} - Target is secured!"
       return $::PROGRAMMING_RC_ERROR_SECURED
    }
    puts "isUnsecure{} - Target is unsecured"
-   return
+   return $::PROGRAMMING_RC_OK
 }
 
 ;######################################################################################

@@ -41,17 +41,17 @@ Devices using this vector table:
             <value>7</value>
          </interrupt>
          <interrupt>
-            <name>PMC</name>
+            <name>LVD_LVW</name>
             <description>PMC Low Voltage Detect, Low Voltage Warning</description>
             <value>8</value>
          </interrupt>
          <interrupt>
-            <name>LLWU</name>
-            <description>LLWU Low Leakage Wakeup</description>
+            <name>LLW</name>
+            <description>LLW Low Leakage Wakeup</description>
             <value>9</value>
          </interrupt>
          <interrupt>
-            <name>WDOG</name>
+            <name>Watchdog</name>
             <description>WDOG interrupt</description>
             <value>10</value>
          </interrupt>
@@ -81,32 +81,32 @@ Devices using this vector table:
             <value>15</value>
          </interrupt>
          <interrupt>
-            <name>UART0_RxTx</name>
+            <name>UART0_RX_TX</name>
             <description>UART0 receive/transmit interrupt</description>
             <value>16</value>
          </interrupt>
          <interrupt>
-            <name>UART0_Error</name>
+            <name>UART0_ERR</name>
             <description>UART0 error interrupt</description>
             <value>17</value>
          </interrupt>
          <interrupt>
-            <name>UART1_RxTx</name>
+            <name>UART1_RX_TX</name>
             <description>UART1 receive/transmit interrupt</description>
             <value>18</value>
          </interrupt>
          <interrupt>
-            <name>UART1_Error</name>
+            <name>UART1_ERR</name>
             <description>UART1 error interrupt</description>
             <value>19</value>
          </interrupt>
          <interrupt>
-            <name>UART2_RxTx</name>
+            <name>UART2_RX_TX</name>
             <description>UART2 receive/transmit interrupt</description>
             <value>20</value>
          </interrupt>
          <interrupt>
-            <name>UART2_Error</name>
+            <name>UART2_ERR</name>
             <description>UART0 error interrupt</description>
             <value>21</value>
          </interrupt>
@@ -141,7 +141,7 @@ Devices using this vector table:
             <value>27</value>
          </interrupt>
          <interrupt>
-            <name>RTC_Alarm</name>
+            <name>RTC</name>
             <description>RTC interrupt</description>
             <value>28</value>
          </interrupt>
@@ -151,22 +151,22 @@ Devices using this vector table:
             <value>29</value>
          </interrupt>
          <interrupt>
-            <name>PIT_Ch0</name>
+            <name>PIT0</name>
             <description>PIT timer channel 0 interrupt</description>
             <value>30</value>
          </interrupt>
          <interrupt>
-            <name>PIT_Ch1</name>
+            <name>PIT1</name>
             <description>PIT timer channel 1 interrupt</description>
             <value>31</value>
          </interrupt>
          <interrupt>
-            <name>PIT_Ch2</name>
+            <name>PIT2</name>
             <description>PIT timer channel 2 interrupt</description>
             <value>32</value>
          </interrupt>
          <interrupt>
-            <name>PIT_Ch3</name>
+            <name>PIT3</name>
             <description>PIT timer channel 3 interrupt</description>
             <value>33</value>
          </interrupt>
@@ -176,7 +176,7 @@ Devices using this vector table:
             <value>34</value>
          </interrupt>
          <interrupt>
-            <name>USBOTG</name>
+            <name>USB0</name>
             <description>USB0 OTG interrupt</description>
             <value>35</value>
          </interrupt>
@@ -196,7 +196,7 @@ Devices using this vector table:
             <value>38</value>
          </interrupt>
          <interrupt>
-            <name>LPTMR0</name>
+            <name>LPTimer</name>
             <description>LPTMR Low Power Timer interrupt</description>
             <value>39</value>
          </interrupt>

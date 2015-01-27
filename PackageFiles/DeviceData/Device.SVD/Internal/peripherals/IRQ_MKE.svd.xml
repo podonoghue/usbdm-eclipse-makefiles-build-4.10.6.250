@@ -5,7 +5,6 @@ Devices using this peripheral:
       MKE04Z4
       MKE04Z8M4
       MKE06Z4
-      SKEAZ4
 -->
       <peripheral>
          <?sourceFile "IRQ_MKE" ?>
@@ -33,47 +32,58 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>IRQMOD</name>
-                     <description>IRQ Detection Mode</description>
+                     <description>IRQ Detection Mode\n
+This read/write control field selects either edge-only detection or edge-and-level detection</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>IRQ event is detected only on falling/rising edges</description>
+                           <description>Falling/rising edges</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>IRQ event is detected on falling/rising edges and low/high levels</description>
+                           <description>Falling/rising edges and low/high levels</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>IRQIE</name>
-                     <description>IRQ Interrupt Enable</description>
+                     <description>IRQ Interrupt Enable\n
+This read/write control field determines whether IRQ events (IRQF=1) generate an interrupt request</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>No interrupt request when IRQF set (use polling)</description>
+                           <description>Interrupt disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Interrupt requested whenever IRQF = 1</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>IRQACK</name>
-                     <description>IRQ Acknowledge -  \n
-This write-only field is used to acknowledge interrupt request events (write 1 to clear IRQF). Writing 0 has no meaning or effect. Reads always return 0. If edge-and-level detection is selected (IRQMOD = 1), IRQF cannot be cleared while the IRQ pin remains at its asserted level</description>
+                     <description>IRQ Acknowledge\n
+This write-only field is used to acknowledge interrupt request events (write 1 to clear IRQF).\n
+Writing 0 has no meaning or effect. Reads always return 0. If edge-and-level detection is selected (IRQMOD = 1),\n
+IRQF cannot be cleared while the IRQ pin remains at its asserted level</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>write-only</access>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0bX</name>
+                           <description>Write 1 to clear</description>
+                           <value>0bX</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>IRQF</name>
@@ -120,12 +130,12 @@ This write-only field is used to acknowledge interrupt request events (write 1 t
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>IRQ is falling-edge or falling-edge/low-level sensitive</description>
+                           <description>IRQ is falling-edge (and low-level) sensitive</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>IRQ is rising-edge or rising-edge/high-level sensitive</description>
+                           <description>IRQ is rising-edge (and high-level) sensitive</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

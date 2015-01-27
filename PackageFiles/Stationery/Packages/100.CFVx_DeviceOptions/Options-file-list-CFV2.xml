@@ -11,11 +11,14 @@
             <deviceSubfamilyIs>MCF5225x</deviceSubfamilyIs>
          </and>
       </applyWhen>
-      <variable id="Clock-setup-CFV2-mcf5225x" name="Clock setup code"  description="Adds code for basic clock initialization - check assumptions made" />
-      <condition variable="Clock-setup-CFV2-mcf5225x" >
+      <variable id="projectOptionValue.Clock-setup" name="Clock setup code"  description="Adds code for basic clock initialization - check assumptions made" />
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Clock-setup" />
+         </applyWhen>
          <copy source="Startup_Code/clock-mcf5225x.c"                    target="Startup_Code/clock.c" />
          <copy source="Project_Headers/clock_configure-mcf5225x.h"       target="Project_Headers/clock_configure.h" />
-      </condition>
+      </block>
    </projectActionList>
 
    <!-- Extra Optional files for Coldfire MCF5223x -->
@@ -26,11 +29,14 @@
             <deviceSubfamilyIs>MCF5223x</deviceSubfamilyIs>
          </and>
       </applyWhen>
-      <variable id="Clock-setup-CFV2-mcf5223x" name="Clock setup code"   description="Adds code for basic clock initialization - check assumptions made" />
-      <condition variable="Clock-setup-CFV2-mcf5223x" >
+      <variable id="projectOptionValueClock-setup" name="Clock setup code"   description="Adds code for basic clock initialization - check assumptions made" />
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Clock-setup" />
+         </applyWhen>
          <copy source="Startup_Code/clock-mcf5223x.c"                    target="Startup_Code/clock.c" />
          <copy source="Project_Headers/clock_configure-mcf5223x.h"       target="Project_Headers/clock_configure.h" />
-      </condition>
+      </block>
    </projectActionList>
 
 </root>

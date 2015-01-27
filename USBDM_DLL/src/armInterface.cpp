@@ -579,13 +579,13 @@ static USBDM_ErrorCode debugPowerUp(void) {
       }
       rc = USBDM_ReadDReg(ARM_DRegSTATUS, &dataIn);
       Logging::print("DP_ControlStatus= 0x%08lX\n", dataIn);
-      milliSleep(100);
       if (rc != BDM_RC_OK) {
          return rc;
       }
       if ((dataIn & (CSYSPWRUPACK|CDBGPWRUPACK)) == (unsigned long)(CSYSPWRUPACK|CDBGPWRUPACK)) {
          break;
       }
+      milliSleep(20);
    } while(retry-- > 0);
    if ((dataIn & (CSYSPWRUPACK|CDBGPWRUPACK)) != (unsigned long)(CSYSPWRUPACK|CDBGPWRUPACK)) {
       return BDM_RC_ARM_PWR_UP_FAIL;

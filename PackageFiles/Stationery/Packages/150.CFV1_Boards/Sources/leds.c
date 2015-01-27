@@ -3,18 +3,18 @@
 #include "utilities.h"
 #include "Board_LEDs.h"
 
-#define ORANGE_LED_PTxPF        MXC_PTAPF4
+#define ORANGE_LED_PTxPF        MXC->PTAPF4
 #define ORANGE_LED_PTxPF_n(x)   MXC_PTAPF4_A0(x)
 #define ORANGE_LED_FN           (1)
-#define ORANGE_LED_DD           PTA_DD
-#define ORANGE_LED_D            PTA_D
+#define ORANGE_LED_DD           PTA->DD
+#define ORANGE_LED_D            PTA->D
 #define ORANGE_LED_MASK         (1<<0)
 
-#define GREEN_LED_PTxPF         MXC_PTCPF2
+#define GREEN_LED_PTxPF         MXC->PTCPF2
 #define GREEN_LED_PTxPF_n(x)    MXC_PTCPF2_C5(x)
 #define GREEN_LED_FN            (1)
-#define GREEN_LED_DD            PTC_DD
-#define GREEN_LED_D             PTC_D
+#define GREEN_LED_DD            PTC->DD
+#define GREEN_LED_D             PTC->D
 #define GREEN_LED_MASK          (1<<5)
 
 void greenLedOn(void) {
@@ -44,7 +44,7 @@ void orangeLedToggle(void) {
 }
 #endif
 
-#define PORT_CLOCK_ENABLE_REG SIM_SCGC6
+#define PORT_CLOCK_ENABLE_REG SIM->SCGC6
 #define CLOCK_MASK(port) CONCAT4_(SIM_SCGC6,_PORT,port,_MASK)
 
 void led_initialise(void) {

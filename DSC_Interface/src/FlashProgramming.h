@@ -13,7 +13,7 @@ class ProgressTimer;
 //! Header at the start of flash programming code (describes flash code)
 struct LargeTargetImageHeader {
    uint32_t         loadAddress;       //!< Address where to load this image
-   uint32_t         entry;             //!< Pointer to entry routine
+   uint32_t         entry;             //!< Pointer to entry routine (for currently loaded routine)
    uint16_t         capabilities;      //!< Capabilities of routine
    uint16_t         calibFrequency;    //!< Frequency (kHz) used for calibFactor
    uint32_t         calibFactor;       //!< Calibration factor for speed determination
@@ -27,6 +27,7 @@ struct LargeTargetTimingDataHeader {
    uint32_t         controller;        //!< Ptr to flash controller (unused)
    uint32_t         timingCount;       //!< Timing count
 };
+
 //! Header at the start of flash programming buffer (controls program action)
 struct LargeTargetFlashDataHeader {
    uint16_t         flags;             //!< Controls actions of routine
@@ -38,7 +39,7 @@ struct LargeTargetFlashDataHeader {
    uint16_t         dataSize;          //!< Size of memory range being accessed
    uint16_t         pad;
    uint32_t         dataAddress;       //!< Ptr to data to program
-} ;
+};
 //! Holds program execution result
 struct ResultStruct {
    uint16_t          flags;            //!< Controls actions of routine
@@ -98,9 +99,12 @@ private:
    };
 
    enum AddressModifiers {
+      ADDRESS_DATA   = 1UL<<31,  //!< DATA (X:) memory (DSC)
       ADDRESS_LINEAR = 1UL<<31,  //!< Linear address (HCS12)
       ADDRESS_EEPROM = 1UL<<30,  //!< EEPROM
+      ADDRESS_A23    = 1UL<<23,  //!< A23 bit for Flex/DataFlash on ARM/CFV1+
    };
+
    typedef USBDM_ErrorCode (*CallBackT)(USBDM_ErrorCode status, int percent, const char *message);
 
    DeviceData              parameters;                   //!< Parameters describing the target device
@@ -151,6 +155,7 @@ private:
    USBDM_ErrorCode doBlankCheck(FlashImage *flashImage);
    USBDM_ErrorCode doWriteRam(FlashImage *flashImage);
    USBDM_ErrorCode loadTargetProgram(FlashOperation flashOperation);
+   USBDM_ErrorCode loadTargetProgram(MemoryRegionConstPtr memoryRegionPtr, FlashOperation flashOperation);
    USBDM_ErrorCode loadTargetProgram(FlashProgramConstPtr flashProgram, FlashOperation flashOperation);
    USBDM_ErrorCode loadSmallTargetProgram(memoryElementType   *buffer,
                                           uint32_t             loadAddress,

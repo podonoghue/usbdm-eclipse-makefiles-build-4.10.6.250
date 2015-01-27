@@ -8,6 +8,7 @@ Devices using this peripheral:
          <name>PTA</name>
          <description>GPIO Port</description>
          <prependToName>PTA</prependToName>
+         <headerStructName>PT</headerStructName>
          <baseAddress>0xFFFF8000</baseAddress>
          <size>8</size>
          <access>read-write</access>

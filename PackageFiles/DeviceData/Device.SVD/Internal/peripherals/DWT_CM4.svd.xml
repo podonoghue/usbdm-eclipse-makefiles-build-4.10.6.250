@@ -107,21 +107,21 @@ This bit is UNK/SBZP if the NOCYCCNT bit is RAO</description>
                   </field>
                   <field>
                      <name>POSTPRESET</name>
-                     <description>POSTPRESET bits. Reload value for the POSTCNT counter. \n
+                     <description>Reload value for the POSTCNT counter. \n
 This field is UNK/SBZP if the NOCYCCNT bit is RAO</description>
                      <bitOffset>1</bitOffset>
                      <bitWidth>4</bitWidth>
                   </field>
                   <field>
                      <name>POSTINIT</name>
-                     <description>POSTINIT bits. Initial value for the POSTCNT counter. \n
+                     <description>Initial value for the POSTCNT counter. \n
 This field is UNK/SBZP if the NOCYCCNT bit is RAO</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>4</bitWidth>
                   </field>
                   <field>
                      <name>CYCTAP</name>
-                     <description>CYCTAP bit. Selects the position of the POSTCNT tap on the CYCCNT counter.\n
+                     <description>Selects the position of the POSTCNT tap on the CYCCNT counter.\n
 This bit is UNK/SBZP if the NOCYCCNT bit is RAO</description>
                      <bitOffset>9</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -140,7 +140,7 @@ This bit is UNK/SBZP if the NOCYCCNT bit is RAO</description>
                   </field>
                   <field>
                      <name>SYNCTAP</name>
-                     <description>SYNCTAP bits. Selects the position of the synchronization packet counter tap on the CYCCNT counter. This determines the Synchronization packet rate</description>
+                     <description>Selects the position of the synchronization packet counter tap on the CYCCNT counter. This determines the Synchronization packet rate</description>
                      <bitOffset>10</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -168,7 +168,7 @@ This bit is UNK/SBZP if the NOCYCCNT bit is RAO</description>
                   </field>
                   <field>
                      <name>PCSAMPLENA</name>
-                     <description>PCSAMPLENA bit. Enables use of POSTCNT counter as a timer for Periodic PC sample packet generation.\n
+                     <description>Enables use of POSTCNT counter as a timer for Periodic PC sample packet generation.\n
 This bit is UNK/SBZP if the NOTRCPKT bit is RAO or the NOCYCCNT bit is RAO</description>
                      <bitOffset>12</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -187,7 +187,7 @@ This bit is UNK/SBZP if the NOTRCPKT bit is RAO or the NOCYCCNT bit is RAO</desc
                   </field>
                   <field>
                      <name>EXCTRCENA</name>
-                     <description>EXCTRCENA bit. Enables generation of exception trace.\n
+                     <description>Enables generation of exception trace.\n
 This bit is UNK/SBZP if the NOTRCPKT bit is RAO</description>
                      <bitOffset>16</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -206,7 +206,7 @@ This bit is UNK/SBZP if the NOTRCPKT bit is RAO</description>
                   </field>
                   <field>
                      <name>CPIEVTENA</name>
-                     <description>CPIEVTENA bit. Enables generation of the CPI counter overflow event.\n
+                     <description>Enables generation of the CPI counter overflow event.\n
 This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                      <bitOffset>17</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -225,7 +225,7 @@ This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                   </field>
                   <field>
                      <name>EXCEVTENA</name>
-                     <description>EXCEVTENA bit. Enables generation of the Exception overhead counter overflow event.\n
+                     <description>Enables generation of the Exception overhead counter overflow event.\n
 This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                      <bitOffset>18</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -244,7 +244,7 @@ This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                   </field>
                   <field>
                      <name>SLEEPEVTENA</name>
-                     <description>SLEEPEVTENA bit. Enables generation of the Sleep counter overflow event.\n
+                     <description>Enables generation of the Sleep counter overflow event.\n
 This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                      <bitOffset>19</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -263,7 +263,7 @@ This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                   </field>
                   <field>
                      <name>LSUEVTENA</name>
-                     <description>LSUEVTENA bit. Enables generation of the LSU counter overflow event.\n
+                     <description>Enables generation of the LSU counter overflow event.\n
 This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                      <bitOffset>20</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -282,7 +282,7 @@ This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                   </field>
                   <field>
                      <name>FOLDEVTENA</name>
-                     <description>FOLDEVTENA bit. Enables generation of the Folded-instruction counter overflow event.\n
+                     <description>Enables generation of the Folded-instruction counter overflow event.\n
 This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                      <bitOffset>21</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -301,7 +301,7 @@ This bit is UNK/SBZP if the NOPRFCNT bit is RAO</description>
                   </field>
                   <field>
                      <name>CYCEVTENA</name>
-                     <description>CYCEVTENA bit. Enables POSTCNT underflow Event counter packets generation.\n
+                     <description>Enables POSTCNT underflow Event counter packets generation.\n
 This bit is UNK/SBZP if the NOTRCPKT bit is RAO or the NOCYCCNT bit is RAO</description>
                      <bitOffset>22</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -320,7 +320,7 @@ This bit is UNK/SBZP if the NOTRCPKT bit is RAO or the NOCYCCNT bit is RAO</desc
                   </field>
                   <field>
                      <name>NOPFRCNT</name>
-                     <description>NOPFRCNT bit. Shows whether the implementation supports the profiling counters</description>
+                     <description>Shows whether the implementation supports the profiling counters</description>
                      <bitOffset>24</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -339,7 +339,7 @@ This bit is UNK/SBZP if the NOTRCPKT bit is RAO or the NOCYCCNT bit is RAO</desc
                   </field>
                   <field>
                      <name>NOCYCCNT</name>
-                     <description>NOCYCCNT bit. Shows whether the implementation supports a cycle counter</description>
+                     <description>Shows whether the implementation supports a cycle counter</description>
                      <bitOffset>25</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -358,7 +358,7 @@ This bit is UNK/SBZP if the NOTRCPKT bit is RAO or the NOCYCCNT bit is RAO</desc
                   </field>
                   <field>
                      <name>NOEXTTRIG</name>
-                     <description>NOEXTRRIG bit. Shows whether the implementation includes external match signals, CMPMATCH[N]</description>
+                     <description>Shows whether the implementation includes external match signals, CMPMATCH[N]</description>
                      <bitOffset>26</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>read-only</access>
@@ -377,7 +377,7 @@ This bit is UNK/SBZP if the NOTRCPKT bit is RAO or the NOCYCCNT bit is RAO</desc
                   </field>
                   <field>
                      <name>NOTRCPKT</name>
-                     <description>NOTRCPKT bit. Shows whether the implementation supports trace sampling and exception tracing.\n
+                     <description>Shows whether the implementation supports trace sampling and exception tracing.\n
 If this bit is RAZ, the NOCYCCNT bit must also RAZ</description>
                      <bitOffset>27</bitOffset>
                      <bitWidth>1</bitWidth>
@@ -397,7 +397,7 @@ If this bit is RAZ, the NOCYCCNT bit must also RAZ</description>
                   </field>
                   <field>
                      <name>NUMCOMP</name>
-                     <description>NUMCOMP bits. Number of comparators implemented.\n
+                     <description>Number of comparators implemented.\n
 A value of zero indicates no comparator support</description>
                      <bitOffset>28</bitOffset>
                      <bitWidth>4</bitWidth>
@@ -412,7 +412,7 @@ A value of zero indicates no comparator support</description>
                <fields>
                   <field>
                      <name>CYCCNT</name>
-                     <description>CYCCNT[31:0]. Incrementing cycle counter value. When enabled, CYCCNT increments on each processor clock cycle. On overflow, CYCCNT wraps to zero</description>
+                     <description>Incrementing cycle counter value. When enabled, CYCCNT increments on each processor clock cycle. On overflow, CYCCNT wraps to zero</description>
                      <bitOffset>0</bitOffset>
                   </field>
                </fields>
@@ -424,7 +424,7 @@ A value of zero indicates no comparator support</description>
                <fields>
                   <field>
                      <name>CPICNT</name>
-                     <description>CPICNT[7:0]. The base CPI counter. Counts additional cycles required to execute multi-cycle instructions, except those recorded by DWT_LSUCNT, and counts any instruction fetch stalls</description>
+                     <description>The base CPI counter. Counts additional cycles required to execute multi-cycle instructions, except those recorded by DWT_LSUCNT, and counts any instruction fetch stalls</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                   </field>
@@ -437,7 +437,7 @@ A value of zero indicates no comparator support</description>
                <fields>
                   <field>
                      <name>EXCCNT</name>
-                     <description>EXCCNT[7:0]. The exception overhead counter. Counts the total cycles spent in exception processing</description>
+                     <description>The exception overhead counter. Counts the total cycles spent in exception processing</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                   </field>
@@ -450,7 +450,7 @@ A value of zero indicates no comparator support</description>
                <fields>
                   <field>
                      <name>SLEEPCNT</name>
-                     <description>SLEEPCNT[7:0]. Sleep counter. Counts the total number of cycles that the processor is sleeping</description>
+                     <description>Sleep counter. Counts the total number of cycles that the processor is sleeping</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                   </field>
@@ -463,7 +463,7 @@ A value of zero indicates no comparator support</description>
                <fields>
                   <field>
                      <name>LSUCNT</name>
-                     <description>LSUCNT[7:0]. Load-store counter. Increments on any additional cycles required to execute load or store instructions</description>
+                     <description>Load-store counter. Increments on any additional cycles required to execute load or store instructions</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                   </field>
@@ -476,7 +476,7 @@ A value of zero indicates no comparator support</description>
                <fields>
                   <field>
                      <name>FOLDCNT</name>
-                     <description>FOLDCNT[7:0]. Folded-instruction counter. Increments on each instruction that takes 0 cycles</description>
+                     <description>Folded-instruction counter. Increments on each instruction that takes 0 cycles</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>8</bitWidth>
                   </field>
@@ -490,7 +490,7 @@ A value of zero indicates no comparator support</description>
                <fields>
                   <field>
                      <name>EIASAMPLE</name>
-                     <description>EIASAMPLE[31:0]. Executed Instruction Address sample value</description>
+                     <description>Executed Instruction Address sample value</description>
                      <bitOffset>0</bitOffset>
                   </field>
                </fields>
@@ -503,24 +503,24 @@ A value of zero indicates no comparator support</description>
                <addressOffset>0x20</addressOffset>
                <register>
                   <name>COMP</name>
-                  <description>Comparator Register 0</description>
+                  <description>Comparator Register %c</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
                         <name>COMP</name>
-                        <description>COMP[31:0]. Reference value for comparison</description>
+                        <description>Reference value for comparison</description>
                         <bitOffset>0</bitOffset>
                      </field>
                   </fields>
                </register>
                <register>
                   <name>MASK</name>
-                  <description>Mask Register 0</description>
+                  <description>Mask Register %c</description>
                   <addressOffset>0x4</addressOffset>
                   <fields>
                      <field>
                         <name>MASK</name>
-                        <description>MASK[4:0]. The size of the ignore mask, 0-31 bits, applied to address range matching.\n
+                        <description>The size of the ignore mask, 0-31 bits, applied to address range matching.\n
 The maximum mask size is IMPLEMENTATION DEFINED. A debugger can write 0b11111 to this field and then read the register back to determine the maximum mask size supported</description>
                         <bitOffset>0</bitOffset>
                         <bitWidth>5</bitWidth>
@@ -529,19 +529,19 @@ The maximum mask size is IMPLEMENTATION DEFINED. A debugger can write 0b11111 to
                </register>
                <register>
                   <name>FUNCTION</name>
-                  <description>Function Register 0</description>
+                  <description>Function Register %c</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
                      <field>
                         <name>FUNCTION</name>
-                        <description>FUNCTION[3:0]. Selects action taken on comparator match.\n
+                        <description>Selects action taken on comparator match.\n
 This field resets to zero</description>
                         <bitOffset>0</bitOffset>
                         <bitWidth>4</bitWidth>
                      </field>
                      <field>
                         <name>EMITRANGE</name>
-                        <description>EMITRANGE bit. If the implementation supports trace sampling, enables generation of Data trace address offset packets, that hold Daddr[15:0].\n
+                        <description>If the implementation supports trace sampling, enables generation of Data trace address offset packets, that hold Daddr[15:0].\n
 If DWT_CTRL.NOTRCPKT is RAZ then this bit is UNK/SBZP</description>
                         <bitOffset>5</bitOffset>
                         <bitWidth>1</bitWidth>
@@ -560,7 +560,7 @@ If DWT_CTRL.NOTRCPKT is RAZ then this bit is UNK/SBZP</description>
                      </field>
                      <field>
                         <name>CYCMATCH</name>
-                        <description>CYCMATCH bit. If the implementation supports cycle counting, enable cycle count comparison for comparator 0.\n
+                        <description>If the implementation supports cycle counting, enable cycle count comparison for comparator 0.\n
 If DWT_CTRL.NOCYCCNT is RAZ then this bit is UNK/SBZP</description>
                         <bitOffset>7</bitOffset>
                         <bitWidth>1</bitWidth>
@@ -579,7 +579,7 @@ If DWT_CTRL.NOCYCCNT is RAZ then this bit is UNK/SBZP</description>
                      </field>
                      <field>
                         <name>DATAVMATCH</name>
-                        <description>DATAVMATCH bit. Enables data value comparison, if supported.\n
+                        <description>Enables data value comparison, if supported.\n
 For comparator 0, when the CYCMATCH is set to 1, DATAVMATCH must be set to 0 for it to perform cycle count comparison.\n
 See LNK1ENA, DATAVSIZE, DATAVADDR0 and DATAVADDR1 for related information.\n
 If the implementation does not support data value comparison this bit is RAZ/WI</description>
@@ -600,7 +600,7 @@ If the implementation does not support data value comparison this bit is RAZ/WI<
                      </field>
                      <field>
                         <name>LNK1ENA</name>
-                        <description>LNK1ENA bit. Indicates whether the implementation supports use of a second linked comparator.\n
+                        <description>Indicates whether the implementation supports use of a second linked comparator.\n
 When LNK1ENA is RAO, the DATAVADDR1 field specifies the comparator to use as the second linked comparator</description>
                         <bitOffset>9</bitOffset>
                         <bitWidth>1</bitWidth>
@@ -620,7 +620,7 @@ When LNK1ENA is RAO, the DATAVADDR1 field specifies the comparator to use as the
                      </field>
                      <field>
                         <name>DATAVSIZE</name>
-                        <description>DATAVSIZE[1:0]. For data value matching, specifies the size of the required data comparison</description>
+                        <description>For data value matching, specifies the size of the required data comparison</description>
                         <bitOffset>10</bitOffset>
                         <bitWidth>2</bitWidth>
                         <enumeratedValues>
@@ -648,14 +648,14 @@ When LNK1ENA is RAO, the DATAVADDR1 field specifies the comparator to use as the
                      </field>
                      <field>
                         <name>DATAVADDR0</name>
-                        <description>DATAVADDR0[3:0]. When the DATAVMATCH bit is set to 1 this field can hold the comparator number of a comparator to use for linked address comparison. \n
+                        <description>When the DATAVMATCH bit is set to 1 this field can hold the comparator number of a comparator to use for linked address comparison. \n
 The DWT unit ignores the value of this field if the DATAVMATCH bit is set to 0</description>
                         <bitOffset>12</bitOffset>
                         <bitWidth>4</bitWidth>
                      </field>
                      <field>
                         <name>DATAVADDR1</name>
-                        <description>DATAVADDR1[3:0]. When the DATAVMATCH and LNK1ENA bits are both 1, this field can hold the comparator number of a second comparator to use for linked address comparison. \n
+                        <description>When the DATAVMATCH and LNK1ENA bits are both 1, this field can hold the comparator number of a second comparator to use for linked address comparison. \n
 The DWT unit ignores the value of this field unless the LNK1ENA bit is RAO and the DATAVMATCH bit is set to 1.\n
 If LNK1ENA is RAZ, this field is RAZ/WI</description>
                         <bitOffset>16</bitOffset>
@@ -663,7 +663,7 @@ If LNK1ENA is RAZ, this field is RAZ/WI</description>
                      </field>
                      <field>
                         <name>MATCHED</name>
-                        <description>MATCHED bit. Comparator match.\n
+                        <description>Comparator match.\n
 A value of 1 indicates that the operation defined by the FUNCTION field occurred since the last read of the register.\n
 Reading the register clears this bit to 0</description>
                         <bitOffset>24</bitOffset>

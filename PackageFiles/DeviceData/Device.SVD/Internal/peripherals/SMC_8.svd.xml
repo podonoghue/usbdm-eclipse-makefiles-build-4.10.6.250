@@ -1,7 +1,6 @@
 <!--
 Devices using this peripheral: 
       MK22F12
-      MK22F51212
 -->
       <peripheral>
          <?sourceFile "SMC_8" ?>

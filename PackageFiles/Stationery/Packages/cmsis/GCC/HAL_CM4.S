@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------
- *      RL-ARM - RTX
+ *      CMSIS-RTOS  -  RTX
  *----------------------------------------------------------------------------
  *      Name:    HAL_CM4.S
  *      Purpose: Hardware Abstraction Layer for Cortex-M4
@@ -37,8 +37,8 @@
         .file   "HAL_CM4.S"
         .syntax unified
 
-        .equ    TCB_STACKF, 32
-        .equ    TCB_TSTACK, 36
+        .equ    TCB_STACKF, 37
+        .equ    TCB_TSTACK, 40
 
 
 /*----------------------------------------------------------------------------

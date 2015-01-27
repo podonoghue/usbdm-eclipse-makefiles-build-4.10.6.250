@@ -8,6 +8,7 @@ Devices using this peripheral:
          <name>PORT</name>
          <description>Port control</description>
          <prependToName>PORT</prependToName>
+         <headerStructName>PORT</headerStructName>
          <baseAddress>0x40049000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -703,70 +704,19 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
+                           <description>Pull-up disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
+                           <description>Pull-up enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>PTBPE</name>
-                     <description>Pull-up control for Port B</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>PTCPE</name>
-                     <description>Pull-up control for Port C</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>PTDPE</name>
-                     <description>Pull-up control for Port D</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="PTAPE" > <name>PTBPE</name> <description>Pull-up control for Port B</description> <bitOffset>8</bitOffset> </field>
+                  <field derivedFrom="PTAPE" > <name>PTCPE</name> <description>Pull-up control for Port C</description> <bitOffset>16</bitOffset> </field>
+                  <field derivedFrom="PTAPE" > <name>PTDPE</name> <description>Pull-up control for Port D</description> <bitOffset>24</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -782,70 +732,19 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
+                           <description>Pull-up disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
+                           <description>Pull-up enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
-                  <field>
-                     <name>PTFPE</name>
-                     <description>Pull-up control for Port F</description>
-                     <bitOffset>8</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>PTGPE</name>
-                     <description>Pull-up control for Port G</description>
-                     <bitOffset>16</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
-                  <field>
-                     <name>PTHPE</name>
-                     <description>Pull-up control for Port H</description>
-                     <bitOffset>24</bitOffset>
-                     <bitWidth>8</bitWidth>
-                     <enumeratedValues>
-                        <enumeratedValue>
-                           <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
-                           <value>0b0</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
-                           <value>0b1</value>
-                        </enumeratedValue>
-                     </enumeratedValues>
-                  </field>
+                  <field derivedFrom="PTEPE" > <name>PTFPE</name> <description>Pull-up control for Port F</description> <bitOffset>8</bitOffset> </field>
+                  <field derivedFrom="PTEPE" > <name>PTGPE</name> <description>Pull-up control for Port G</description> <bitOffset>16</bitOffset> </field>
+                  <field derivedFrom="PTEPE" > <name>PTHPE</name> <description>Pull-up control for Port H</description> <bitOffset>24</bitOffset> </field>
                </fields>
             </register>
             <register>
@@ -862,12 +761,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Pull-up is disabled for port pin</description>
+                           <description>Pull-up disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Pull-up is enabled for port pin</description>
+                           <description>Pull-up enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -887,12 +786,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High drive strength is disabled for port pin</description>
+                           <description>Low drive strength</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>High drive strength is enabled for port pin</description>
+                           <description>High drive strength</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -905,12 +804,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High drive strength is disabled for port pin</description>
+                           <description>Low drive strength</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>High drive strength is enabled for port pin</description>
+                           <description>High drive strength</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -923,12 +822,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High drive strength is disabled for port pin</description>
+                           <description>Low drive strength</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>High drive strength is enabled for port pin</description>
+                           <description>High drive strength</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -941,12 +840,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High drive strength is disabled for port pin</description>
+                           <description>Low drive strength</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>High drive strength is enabled for port pin</description>
+                           <description>High drive strength</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -959,12 +858,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High drive strength is disabled for port pin</description>
+                           <description>Low drive strength</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>High drive strength is enabled for port pin</description>
+                           <description>High drive strength</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -977,12 +876,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High drive strength is disabled for port pin</description>
+                           <description>Low drive strength</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>High drive strength is enabled for port pin</description>
+                           <description>High drive strength</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -995,12 +894,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High drive strength is disabled for port pin</description>
+                           <description>Low drive strength</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>High drive strength is enabled for port pin</description>
+                           <description>High drive strength</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1013,12 +912,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High drive strength is disabled for port pin</description>
+                           <description>Low drive strength</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>High drive strength is enabled for port pin</description>
+                           <description>High drive strength</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

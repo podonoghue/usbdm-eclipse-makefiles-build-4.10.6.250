@@ -3,15 +3,22 @@
    <!ATTLIST root version CDATA #REQUIRED >
  
 <!-- List of actions to be applied to a project -->
-<!ELEMENT projectActionList (applyWhen|projectActionList|projectActionListRef|variable|condition|excludeSourceFile|excludeSourceFolder|createFolder|copy|projectOption|customAction)*>
+<!ELEMENT projectActionList (applyWhen|projectActionList|projectActionListRef|variable|block|excludeSourceFile|excludeSourceFolder|createFolder|copy|projectOption|customAction)*>
    <!ATTLIST projectActionList id    ID     #IMPLIED>
    <!ATTLIST projectActionList root  CDATA  #IMPLIED>
 
-<!ELEMENT applyWhen (deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches|and|or|not)>
+<!-- Condition controlling when list action is applied -->
+<!ELEMENT applyWhen (and|or|not|variableRef|deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches)>
 
-<!ELEMENT and ((deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches|and|or|not)*) >
-<!ELEMENT or  ((deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches|and|or|not)*) >
-<!ELEMENT not  (deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches|and|or|not) >
+<!ELEMENT and ((and|or|not|variableRef|deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches)*) >
+<!ELEMENT or  ((and|or|not|variableRef|deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches)*) >
+<!ELEMENT not  (and|or|not|variableRef|deviceNameIs|deviceFamilyIs|deviceSubfamilyIs|deviceNameMatches|deviceFamilyMatches|deviceSubfamilyMatches) >
+
+<!ELEMENT variableRef EMPTY >
+   <!ATTLIST variableRef idRef 			CDATA 			#REQUIRED>
+   <!ATTLIST variableRef condition 		(isTrue|lessThan|lessThanOrEqual|equal|greaterThan|greaterThanOrEqual) "isTrue">
+   <!ATTLIST variableRef defaultValue 	(true|false) 	#IMPLIED>
+   <!ATTLIST variableRef value   		CDATA 			#IMPLIED>
 
 <!ELEMENT deviceNameIs (#PCDATA) >
 <!ELEMENT deviceFamilyIs (#PCDATA) >
@@ -23,19 +30,25 @@
 <!ELEMENT projectActionListRef EMPTY>
    <!ATTLIST projectActionListRef ref IDREF #REQUIRED>
  
-<!-- Variable controlling a condition -->
-<!ELEMENT variable EMPTY >
-   <!ATTLIST variable id           ID    #REQUIRED>
-   <!ATTLIST variable name         CDATA #REQUIRED>
+<!-- Variable controlling a block -->
+<!ELEMENT variable ((requirement|preclusion)*) >
+   <!ATTLIST variable id           CDATA #REQUIRED>
+   <!ATTLIST variable name         CDATA #IMPLIED>
    <!ATTLIST variable description  CDATA #IMPLIED>
-   <!ATTLIST variable type         (boolean) "boolean" >
-   <!ATTLIST variable defaultValue CDATA #IMPLIED>
+   <!ATTLIST variable type         (boolean) 	"boolean" >
+   <!ATTLIST variable defaultValue (true|false) "false">
    <!ATTLIST variable values       CDATA #IMPLIED>
    
+<!ELEMENT requirement EMPTY >
+   <!ATTLIST requirement idRef CDATA #REQUIRED>
+
+<!ELEMENT preclusion EMPTY >
+   <!ATTLIST preclusion idRef CDATA #REQUIRED>
+
 <!-- Condition controlling actions -->
-<!ELEMENT condition (excludeSourceFile|excludeSourceFolder|createFolder|copy|projectOption|customAction)*>
-   <!ATTLIST condition variable    IDREF  #REQUIRED>
-   <!ATTLIST condition negated     (true|false) "false" >
+<!ELEMENT block (applyWhen,(excludeSourceFile|excludeSourceFolder|createFolder|copy|deleteResource|projectOption|customAction)*)>
+   <!--ATTLIST block variable    IDREF  #REQUIRED -->
+   <!--ATTLIST block negated     (true|false) "false" -->
    
 <!-- Exclude/include source file in Eclipse project -->
 <!ELEMENT excludeSourceFile EMPTY >
@@ -46,6 +59,10 @@
 <!ELEMENT excludeSourceFolder EMPTY >
    <!ATTLIST excludeSourceFolder target  CDATA         #REQUIRED>
    <!ATTLIST excludeSourceFolder excluded (true|false) "true" >
+
+<!-- Remove file from Eclipse project -->
+<!ELEMENT deleteResource EMPTY >
+   <!ATTLIST deleteResource target  CDATA         #REQUIRED>
 
  <!ELEMENT createFolder EMPTY >
    <!ATTLIST createFolder target  CDATA #REQUIRED>
@@ -62,7 +79,7 @@
 <!-- Eclipse project options (for gcc, gdb etc) -->
 <!ELEMENT projectOption (value*)>
    <!ATTLIST projectOption id        CDATA        #REQUIRED>
-   <!ATTLIST projectOption replace   (true|false) "true">
+   <!ATTLIST projectOption replace   (true|false) "false">
 
 <!-- Custom build action -->
 <!ELEMENT customAction (value)* >

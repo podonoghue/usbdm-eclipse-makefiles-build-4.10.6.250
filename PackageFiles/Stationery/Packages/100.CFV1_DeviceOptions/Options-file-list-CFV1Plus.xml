@@ -7,16 +7,25 @@
       <applyWhen>
          <deviceFamilyIs>CFV1Plus</deviceFamilyIs>
       </applyWhen>
-      <variable id="Clock-setup-CFV1Plus" name="Clock setup code"       description="Adds code for basic clock initialization - check assumptions made" />
-      <variable id="UART-setup-CFV1Plus"  name="UART setup code"        description="Adds C stdio (UART) support for newlib" />
-      <condition variable="Clock-setup-CFV1Plus" >
+      <variable id="projectOptionValue.Clock-setup" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="projectOptionValue.UART-setup" name="UART setup code" description="Adds C stdio (UART) support for newlib">
+         <requirement idRef="projectOptionValue.Clock-setup"/>
+      </variable>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Clock-setup" />
+         </applyWhen>
          <copy source="Startup_Code/clock-cfv1plus.c"                   target="Startup_Code/clock.c" />
          <copy source="Project_Headers/clock_configure-cfv1plus.h"      target="Project_Headers/clock_configure.h" />
-      </condition>
-      <condition variable="UART-setup-CFV1Plus">
+      </block>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.UART-setup" />
+         </applyWhen>
          <copy source="Startup_Code/uart.c"                         target="Startup_Code/uart.c" />
          <copy source="Project_Headers/uart.h"                      target="Project_Headers/uart.h" />
          <copy source="Sources/main-uart.c"                         target="Sources/main.c" replace="true"/>
-      </condition>
+      </block>
    </projectActionList>
+
 </root>

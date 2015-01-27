@@ -7,15 +7,23 @@
       <applyWhen>
          <deviceSubfamilyIs>MKE02Z4</deviceSubfamilyIs>
       </applyWhen>
-      <variable id="Clock-setup-MKE02M4" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
-      <variable id="UART-setup-MKE02M4" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
-      <condition variable="Clock-setup-MKE02M4">
+      <variable id="projectOptionValue.Clock-setup" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="projectOptionValue.UART-setup" name="UART setup code" description="Adds C stdio (UART) support for newlib" >
+         <requirement idRef="projectOptionValue.Clock-setup"/>
+      </variable>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Clock-setup" />
+         </applyWhen>
          <copy source="Startup_Code/clock-MKE0x.c" target="Startup_Code/clock.c" />
          <copy source="Project_Headers/clock_configure-MKE02M4.h" target="Project_Headers/clock_configure.h" />
-      </condition>
-      <condition variable="UART-setup-MKE02M4">
+      </block>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.UART-setup" />
+         </applyWhen>
          <copy source="Startup_Code/uart-mke.c" target="Startup_Code/uart.c" />
          <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
-      </condition>
+      </block>
    </projectActionList>
 </root>

@@ -3,7 +3,6 @@ Devices using this peripheral:
       MKE02Z2
       MKE02Z4
       MKE04Z8M4
-      SKEAZ4
 -->
       <peripheral>
          <?sourceFile "KBI0_MKE" ?>
@@ -37,12 +36,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Keyboard detects edges only</description>
+                           <description>Edges only</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Keyboard detects both edges and levels</description>
+                           <description>Edges and levels</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -55,22 +54,30 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>KBI interrupt not enabled</description>
+                           <description>Interrupt not enabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>KBI interrupt enabled</description>
+                           <description>Interrupt enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
                   <field>
                      <name>KBACK</name>
-                     <description>KBI Acknowledge - Writing a 1 to KBACK is part of the flag clearing mechanism</description>
+                     <description>KBI Acknowledge\n
+Writing a 1 to KBACK is part of the flag clearing mechanism</description>
                      <bitOffset>2</bitOffset>
                      <bitWidth>1</bitWidth>
                      <access>write-only</access>
+                     <enumeratedValues>
+                        <enumeratedValue>
+                           <name>0bX</name>
+                           <description>Write 1 to clear</description>
+                           <value>0bX</value>
+                        </enumeratedValue>
+                     </enumeratedValues>
                   </field>
                   <field>
                      <name>KBF</name>
@@ -81,12 +88,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>KBI interrupt request not detected</description>
+                           <description>No interrupt</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>KBI interrupt request detected</description>
+                           <description>Interrupt pending</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -95,7 +102,8 @@ Devices using this peripheral:
             </register>
             <register>
                <name>PE</name>
-               <description>KBI Pin Enable Register</description>
+               <description>KBI Pin Enables\n
+Each of the KBIPEn bits enable the corresponding KBI interrupt pin</description>
                <addressOffset>0x1</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
@@ -108,12 +116,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Pin is not enabled as KBI interrupt</description>
+                           <description>Detection disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Pin is enabled as KBI interrupt</description>
+                           <description>Detection enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -122,7 +130,8 @@ Devices using this peripheral:
             </register>
             <register>
                <name>ES</name>
-               <description>KBI Edge Select Register</description>
+               <description>KBI Edge Selects\n
+Each of the KBEDGn bits selects the falling edge/low-level or rising edge/high-level function of the corresponding pin</description>
                <addressOffset>0x2</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>

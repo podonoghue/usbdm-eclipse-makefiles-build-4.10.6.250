@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------
- *      RL-ARM - RTX
+ *      CMSIS-RTOS  -  RTX
  *----------------------------------------------------------------------------
  *      Name:    RTX_CM_LIB.H
  *      Purpose: RTX Kernel System Configuration
- *      Rev.:    V4.70
+ *      Rev.:    V4.75
  *----------------------------------------------------------------------------
  *
  * Copyright (c) 1999-2009 KEIL, 2009-2013 ARM Germany GmbH
@@ -50,14 +50,14 @@
 #define _declare_box(pool,size,cnt)  uint32_t pool[(((size)+3)/4)*(cnt) + 3]
 #define _declare_box8(pool,size,cnt) uint64_t pool[(((size)+7)/8)*(cnt) + 2]
 
-#define OS_TCB_SIZE     48
+#define OS_TCB_SIZE     52
 #define OS_TMR_SIZE     8
 
 #if defined (__CC_ARM) && !defined (__MICROLIB)
 
 typedef void    *OS_ID;
 typedef uint32_t OS_TID;
-typedef uint32_t OS_MUT[3];
+typedef uint32_t OS_MUT[4];
 typedef uint32_t OS_RESULT;
 
 #define runtask_id()    rt_tsk_self()
@@ -65,6 +65,7 @@ typedef uint32_t OS_RESULT;
 #define mutex_wait(m)   os_mut_wait(m,0xFFFF)
 #define mutex_rel(m)    os_mut_release(m)
 
+extern uint8_t   os_running;
 extern OS_TID    rt_tsk_self    (void);
 extern void      rt_mut_init    (OS_ID mutex);
 extern OS_RESULT rt_mut_release (OS_ID mutex);
@@ -82,6 +83,14 @@ OS_RESULT _os_mut_wait    (uint32_t p, OS_ID mutex, uint16_t timeout) __svc_indi
 /*----------------------------------------------------------------------------
  *      Global Variables
  *---------------------------------------------------------------------------*/
+
+#if (OS_TASKCNT == 0)
+#error "Invalid number of concurrent running threads!"
+#endif
+
+#if (OS_PRIVCNT >= OS_TASKCNT)
+#error "Too many threads with user-provided stack size!"
+#endif
 
 #if (OS_TIMERS != 0)
 #define OS_TASK_CNT (OS_TASKCNT + 1)
@@ -103,6 +112,8 @@ uint32_t const os_trv        = OS_TRV;
 uint8_t  const os_flags      = OS_RUNPRIV;
 
 /* Export following defines to uVision debugger. */
+__USED uint32_t const CMSIS_RTOS_API_Version = osCMSIS;
+__USED uint32_t const CMSIS_RTOS_RTX_Version = osCMSIS_RTX;
 __USED uint32_t const os_clockrate = OS_TICK;
 __USED uint32_t const os_timernum  = 0;
 
@@ -144,7 +155,7 @@ osMessageQId osMessageQId_osTimerMessageQ;
 #endif
 
 /* Legacy RTX User Timers not used */
-//uint32_t       os_tmr = 0;
+uint32_t       os_tmr = 0; 
 uint32_t const *m_tmr = NULL;
 uint16_t const mp_tmr_size = 0;
 
@@ -183,7 +194,7 @@ void *__user_perthread_libspace (void) {
   /* Provide a separate libspace for each task. */
   uint32_t idx;
 
-  idx = runtask_id ();
+  idx = os_running ? runtask_id () : 0;
   if (idx == 0) {
     /* RTX not running yet. */
     return (&__libspace_start);
@@ -210,7 +221,7 @@ int _mutex_initialize (OS_ID *mutex) {
 
 __attribute__((used)) void _mutex_acquire (OS_ID *mutex) {
   /* Acquire a system mutex, lock stdlib resources. */
-  if (runtask_id ()) {
+  if (os_running) {
     /* RTX running, acquire a mutex. */
     mutex_wait (*mutex);
   }
@@ -221,7 +232,7 @@ __attribute__((used)) void _mutex_acquire (OS_ID *mutex) {
 
 __attribute__((used)) void _mutex_release (OS_ID *mutex) {
   /* Release a system mutex, unlock stdlib resources. */
-  if (runtask_id ()) {
+  if (os_running) {
     /* RTX running, release a mutex. */
     mutex_rel (*mutex);
   }

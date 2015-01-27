@@ -824,12 +824,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -842,12 +842,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -860,12 +860,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -878,12 +878,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -896,12 +896,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -914,12 +914,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -932,12 +932,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -950,12 +950,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -968,12 +968,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -986,12 +986,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1004,12 +1004,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1022,12 +1022,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1040,12 +1040,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1058,12 +1058,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1076,12 +1076,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1094,12 +1094,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1112,12 +1112,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1130,12 +1130,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1148,12 +1148,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -1166,12 +1166,12 @@ Selects the RTCO port pins</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock disabled</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Bus clock to module is disabled</description>
+                           <description>Clock enabled</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

@@ -1,13 +1,17 @@
 /*!
- \mainpage USBDM (combined TBDML/OSBDM code) for JB16
+ \mainpage USBDM (combined TBDML/OSBDM code) for JB16 (Obsolete)
 
  \section introSection Introduction
 <b>
-   Please note that these designs are no longer recommended.\n\n
+   Please note that these designs are obsolete.\n\n
+   The JB16 chip used in these designs have a ROM firmware flaw which makes it impossible to reprogram the chip firmware.
+   When the chip is in bootloader mode it fails to enumerate properly under Windows 7 or 8 and later updates of WIN-XP.
+   Because of this it is not possible to update the firmware which make it impractical to support them.\n\n
+   The USBDM software <i>may</i> still work to some extent but I cannot make any guarantees.\n\n
+</b>     
    The main purpose in providing this version is so that existing users of JB16 based
    USBDMs or TBDML or OSBDM can upgrade to a system that is usable with the current
-   Codewarrior tools and the USBDM programmers provided. 
-</b>\n\n
+   Codewarrior tools and the USBDM programmers provided. \n\n
    The attached files provide a port of a combined TBDML/OSBDM code to a MC9S08JB16 processor.  
    The primary motivation for this was to produce a single BDM that could be used with the HC12
    and HCS08 microcontrollers without needing to change the firmware in the BDM between uses.  

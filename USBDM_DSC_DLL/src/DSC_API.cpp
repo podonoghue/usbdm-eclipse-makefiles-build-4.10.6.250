@@ -2379,10 +2379,11 @@ USBDM_ErrorCode DSC_Connect(void){
    Logging::print("   DSC_Connect() Core IDCODE = %8.8X\n", coreIdcode);
 
    rc = enableONCE(&onceStatus);
-//   if (onceStatus == debugMode)
-//      saveVolatileTargetRegs();
-   if (rc != BDM_RC_OK) {
-      return rc;
+   if (rc == BDM_RC_OK) {
+      Logging::print("   enableONCE() status => %s\n", DSC_GetOnceStatusName(onceStatus));
+   }
+   else {
+      Logging::print("   enableONCE() rc = %d (%s)\n", rc, USBDM_GetErrorString(rc));
    }
    return rc;
 }
@@ -2486,7 +2487,7 @@ USBDM_ErrorCode DSC_ReadRegister(unsigned int regNum, unsigned long *regValue) {
       rc = BDM_RC_OK;
    }
    if (rc == BDM_RC_OK) {
-      Logging::print("   DSC_ReadRegister(%s(0x%X)) => 0x%X\n", getRegisterName(regNo), (uint32_t)regNo, *regValue);
+      Logging::print("   DSC_ReadRegister(%s(0x%lX)) => 0x%lX\n", getRegisterName(regNo), (unsigned long)regNo, (unsigned long)*regValue);
    }
    else {
       Logging::print("   DSC_ReadRegister(%d(0x%X)) - illegal\n", (uint32_t)regNo, (uint32_t)regNo);
@@ -2511,7 +2512,7 @@ USBDM_ErrorCode DSC_WriteRegister(unsigned int regNum, unsigned long regValue) {
    if ((regNo >= DSC_FirstCoreRegister) && (regNo <= DSC_LastCoreRegister)) {
       // Save core register before access as needs to USE code registers
       saveVolatileTargetRegs();
-      Logging::print("   DSC_WriteRegister(%s(0x%X), 0x%X) - doing CORE reg\n", getRegisterName(regNo), regNo, regValue);
+      Logging::print("   DSC_WriteRegister(%s(0x%lX), 0x%lX) - doing CORE reg\n", getRegisterName(regNo), (unsigned long)regNo, (unsigned long)regValue);
       switch(regNo) {
          case DSC_RegA0: volatileRegs.A0 = regValue; return BDM_RC_OK;
          case DSC_RegA1: volatileRegs.A1 = regValue; return BDM_RC_OK;
@@ -2525,10 +2526,10 @@ USBDM_ErrorCode DSC_WriteRegister(unsigned int regNum, unsigned long regValue) {
       }
    }
    else if ((regNo >= DSC_FirstONCERegister) && (regNo <= DSC_LastONCERegister)) {
-      Logging::print("   DSC_WriteRegister(%s, 0x%X) - doing ONCE reg\n", getRegisterName(regNo), regValue);
+      Logging::print("   DSC_WriteRegister(%s, 0x%lX) - doing ONCE reg\n", getRegisterName(regNo), (unsigned long)regValue);
       return writeONCEReg((DSC_Registers_t)regNo, regValue, 0);
    }
-   Logging::print("   DSC_WriteRegister(%d(0x%X)) <= %X, - illegal\n", regValue, (uint32_t)regNo, (uint32_t)regNo);
+   Logging::print("   DSC_WriteRegister(%lu(0x%lX)) <= %lX, - illegal\n", (unsigned long)regValue, (unsigned long)regNo, (unsigned long)regNo);
    return BDM_RC_ILLEGAL_PARAMS;
 }
 
@@ -2607,8 +2608,7 @@ unsigned long currentOCR;
    restoreVolatileTargetRegs();
 
    // Write EONCE command register - Leave debug & execute
-   rc = executeJTAGSequence(sizeof(writeONCESequence), writeONCESequence,
-                              0, NULL, false);
+   rc = executeJTAGSequence(sizeof(writeONCESequence), writeONCESequence, 0, NULL, false);
    return rc;
 }
 
@@ -2678,7 +2678,12 @@ int timeout;
 //!
 USBDM_DSC_API
 void DSC_SetLogFile(FILE *fp) {
-   Logging::setLogFileHandle(fp);
+   if (fp == 0) {
+      Logging::setLogFileHandle(USBDM_GetLogFile());
+   }
+   else {
+      Logging::setLogFileHandle(fp);
+   }
 }
 
 //! Get current log file for messages

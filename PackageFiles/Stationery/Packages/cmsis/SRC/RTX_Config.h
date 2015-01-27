@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------
- *      RL-ARM - RTX
+ *      CMSIS-RTOS  -  RTX
  *----------------------------------------------------------------------------
  *      Name:    RTX_CONFIG.H
  *      Purpose: Exported functions of RTX_Config.c
@@ -31,6 +31,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
+
 
 /* Error Codes */
 #define OS_ERR_STK_OVF          1

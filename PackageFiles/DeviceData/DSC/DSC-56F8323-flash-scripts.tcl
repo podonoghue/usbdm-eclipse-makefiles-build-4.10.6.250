@@ -20,7 +20,8 @@
 ;#####################################################################################
 ;#  History
 ;#
-;#  V4.10.4 - Changed return code handling
+;#  V4.10.6.250 - Updated to include unsecure device
+;#  V4.10.4     - Changed return code handling
 ;# 
 
 ;######################################################################################
@@ -31,14 +32,6 @@ proc loadSymbols {} {
    setbytesex  littleEndian
    defaultMemorySpace X
 
-   set ::DSC_FSEC_SEC_MASK     0x03   ;# Security bits
-   set ::DSC_FSEC_SEC_UNSEC    0x02   ;# Security bits for unsecured device
-   set ::DSC_FSEC_SEC_KEYEN    0x80   ;# Backdoor Key enable
-   set ::DSC_FSEC_SEC_FNORED   0x40   ;# Vector redirection disable
-   set ::DSC_FSEC_UNSEC_VALUE  0xFFFE ;# Value to use when unsecuring (0xFF:NVSEC value)
-      
-;#   set ::OCCS_OSCTL            x:0xF2D5
-   
    set ::HFM_FCLKD             x:0xF400
    set ::HFM_CR                x:0xF401
    set ::HFM_SECH              x:0xF403
@@ -51,6 +44,9 @@ proc loadSymbols {} {
    set ::HFM_OPT1              x:0xF41B
    set ::HFM_OPT2              x:0xF41C
 
+   set ::HFM_SECH_SECSTAT_MASK     0x4000
+   set ::HFM_SECH_SECSTAT_UNSECURE 0x0000
+   
    set ::HFM_USTAT_CBEIF       0x80
    set ::HFM_USTAT_CCIF        0x40
    set ::HFM_USTAT_PVIOL       0x20
@@ -65,7 +61,12 @@ proc loadSymbols {} {
    set ::DSC_PRDIV8            0x40
      
    set ::BUS_FREQUENCY         4000
+   set ::JTAG_UNLOCK_CMD       0x08
    
+   set ::SIM_MSHID             x:0xF356
+   set ::SIM_LSHID             x:0xF357
+   
+   set ::PROGRAMMING_RC_OK                         0
    set ::BDM_RC_ILLEGAL_COMMAND                    4
    set ::PROGRAMMING_RC_ERROR_SECURED              114
    set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
@@ -78,21 +79,13 @@ proc loadSymbols {} {
 ;#
 ;#
 proc initTarget { args } {
-   ;#  puts "initTarget {}"
-   return
-     
-   ;# Trim the clock from internal value
-   set clockTrim [rw $::HFM_OPT1] 
-   set osctl     [rw $::OCCS_OSCTL] 
-   set osctl     [expr ($osctl & 0xFFFFFC00) | ($clockTrim & 0x000003FF)] 
-   ww $::OCCS_OSCTL $osctl
-   
+   puts "initTarget {}"
    return
 }
 
 ;######################################################################################
 ;#
-;#  busFrequency - Target bus busFrequency in kHz
+;#  busFrequency - Target bus frequency in kHz
 ;#
 proc initFlash { busFrequency } {
    puts "initFlash {}"
@@ -101,12 +94,11 @@ proc initFlash { busFrequency } {
 
    ;# Set up Flash
    set cfmclkd [calculateFlashDivider $busFrequency]
-   ;# set cfmclkd 10 ;# Fixed value based on value used by Codewarrior 
    ww $::HFM_FCLKD $cfmclkd   ;# Flash divider
    ww $::HFM_CR    0x0001     ;# select flash bank 1 => Data
-   ww $::HFM_PROT  0x0000     ;# unprotect Flash
+   ww $::HFM_PROT  0x0000     ;# unprotect Flash-Data
    ww $::HFM_CR    0x0000     ;# select flash bank 0 => Program/Boot
-   ww $::HFM_PROT  0x0000     ;# unprotect Flash
+   ww $::HFM_PROT  0x0000     ;# unprotect Flash-Program/Boot
    ww $::HFM_PROTB 0x0000
    
    return
@@ -118,7 +110,7 @@ proc initFlash { busFrequency } {
 ;#
 proc calculateFlashDivider { busFrequency } {
 ;# NOTES:
-;# According to data sheets the Flash uses the sysclock
+;# According to data sheets the Flash uses the sysclock/2
 ;#
 ;# This code assumes that busFrequency = sysclock = oscclk/2
 ;#
@@ -127,18 +119,18 @@ proc calculateFlashDivider { busFrequency } {
       puts "Clock too low for flash programming"
       error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
    }
-   set sysclk [expr 2*$busFrequency]
-   if { [expr $sysclk > 12800] } {
+   set inFrequency [expr $busFrequency/2]
+   if { [expr $inFrequency > 12800] } {
       set cfmclkd $::DSC_PRDIV8 
-      set inFrequency [expr $sysclk/8]
+      set inFrequency [expr $inFrequency/8]
    } else {
       set cfmclkd 0
-      set inFrequency $sysclk 
+      set inFrequency $inFrequency 
    }
    set minPeriod [expr (1/200.0)]
    set cfmclkd [expr $cfmclkd + round(floor(($inFrequency*$minPeriod)))] 
    set flashClk [expr $inFrequency / (($cfmclkd&0x3F)+1)]
-   puts "inFrequency = $inFrequency cfmclkd = $cfmclkd, flashClk = $flashClk"
+   puts [ format "inFrequency = %d kHz cfmclkd = 0x%02X, flashClk = %d kHz" $inFrequency $cfmclkd $flashClk ]
    if { [expr ($flashClk<150)] } {
       puts "Not possible to find suitable flash clock divider"
       error $::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE
@@ -151,24 +143,79 @@ proc calculateFlashDivider { busFrequency } {
 proc massEraseTarget { } {
 
    puts "massEraseTarget{}"
-   puts "Mass erase is not supported"
-   return $::BDM_RC_ILLEGAL_COMMAND
-   return
+   
+   catch { reset s h }
+   catch { connect }
+
+   ;# Calculate clock divider using reset assumed value (4MHz)
+   set cfmclkd [calculateFlashDivider $::BUS_FREQUENCY]
+   
+   ;#puts "jtag-idcode"
+   ;#jtag-idcode
+
+   puts "jtag-reset"
+   jtag-reset
+
+   puts "Lockout Recovery CMD to instruction register"
+   puts "jtag-shift-ir"
+         jtag-shift-ir
+   puts "jtag-shift D 8 $::JTAG_UNLOCK_CMD"
+         jtag-shift D 8 $::JTAG_UNLOCK_CMD
+   
+   puts "Clk Divider to data register"
+   puts "jtag-shift R 16 0 $cfmclkd"
+         jtag-shift R 16 0 $cfmclkd
+   
+   puts "Erase Delay"
+
+   after 2000
+
+   puts "Erase Complete"
+   
+   catch { reset sh }
+   
+   return [ isUnsecure ] 
 }
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
-   return
-   ;#  puts "Checking if unsecured"
-   set securityValue [rb $::DSC_FSEC]
+   puts "isUnsecure{} - Checking if unsecured"
 
-   if [ expr ( $securityValue & $::DSC_FSEC_SEC_MASK ) != $::DSC_FSEC_SEC_UNSEC ] {
+   ;# Check HFM_SECH
+   ;# This is unreliable as a secured device reads as zero anyway!
+   ;# set securityValueH [rw $::HFM_SECH]
+   ;# puts [format "isUnsecure{} - HFM_SECH = 0x%08X" $securityValueH ]
+   ;# if [ expr ( ( $securityValueH & $::HFM_SECH_SECSTAT_MASK ) != $::HFM_SECH_SECSTAT_UNSECURE ) ] {
+   ;#    puts "isUnsecure{} - Target is secured!"
+   ;#    return $::PROGRAMMING_RC_ERROR_SECURED
+   ;# }
+   
+   ;# Check if the idcode can be read
+   set jtag_idcode [ jtag-idcode ]
+   puts [ format "isUnsecure{} - jtag_idcode =0x%08X" $jtag_idcode ]
+   catch { connect }
+   
+   set idcodeH [rw $::SIM_MSHID]
+   set idcodeL [rw $::SIM_LSHID]
+   set idcode  [ expr ($idcodeH<<16) + $idcodeL ]
+   puts [format "isUnsecure{} - idcode =0x%08X" $idcode ]
+   if [ expr ( $jtag_idcode != $idcode ) ] {
       puts "isUnsecure{} - Target is secured!"
       return $::PROGRAMMING_RC_ERROR_SECURED
    }
    puts "isUnsecure{} - Target is unsecured"
-   return
+   return $::PROGRAMMING_RC_OK
+}
+
+proc try {} {
+   openbdm
+   settarget DSC
+   catch { reset s h }
+   catch { connect }
+   catch { isUnsecure }   
+   catch { massEraseTarget }
+   closebdm
 }
 
 ;######################################################################################

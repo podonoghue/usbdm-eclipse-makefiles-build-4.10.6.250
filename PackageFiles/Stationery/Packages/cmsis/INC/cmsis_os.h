@@ -134,10 +134,10 @@ used throughout the whole project.
 #define osCMSIS           0x10002      ///< API version (main [31:16] .sub [15:0])
 
 /// \note CAN BE CHANGED: \b osCMSIS_KERNEL identifies the underlying RTOS kernel and version number.
-#define osCMSIS_RTX     ((4<<16)|70)   ///< RTOS identification and version (main [31:16] .sub [15:0])
+#define osCMSIS_RTX     ((4<<16)|75)   ///< RTOS identification and version (main [31:16] .sub [15:0])
 
 /// \note MUST REMAIN UNCHANGED: \b osKernelSystemId shall be consistent in every CMSIS-RTOS.
-#define osKernelSystemId "RTX V4.70"   ///< RTOS identification string
+#define osKernelSystemId "RTX V4.75"   ///< RTOS identification string
 
 
 /// \note MUST REMAIN UNCHANGED: \b osFeature_xxx shall be consistent in every CMSIS-RTOS.
@@ -504,7 +504,7 @@ int32_t osSignalSet (osThreadId thread_id, int32_t signals);
 /// Clear the specified Signal Flags of an active thread.
 /// \param[in]     thread_id     thread ID obtained by \ref osThreadCreate or \ref osThreadGetId.
 /// \param[in]     signals       specifies the signal flags of the thread that shall be cleared.
-/// \return previous signal flags of the specified thread or 0x80000000 in case of incorrect parameters.
+/// \return previous signal flags of the specified thread or 0x80000000 in case of incorrect parameters or call from ISR.
 /// \note MUST REMAIN UNCHANGED: \b osSignalClear shall be consistent in every CMSIS-RTOS.
 int32_t osSignalClear (osThreadId thread_id, int32_t signals);
 
@@ -527,7 +527,7 @@ os_InRegs osEvent osSignalWait (int32_t signals, uint32_t millisec);
 extern const osMutexDef_t os_mutex_def_##name
 #else                            // define the object
 #define osMutexDef(name)  \
-uint32_t os_mutex_cb_##name[3]; \
+uint32_t os_mutex_cb_##name[4] = { 0 }; \
 const osMutexDef_t os_mutex_def_##name = { (os_mutex_cb_##name) }
 #endif
 
@@ -577,7 +577,7 @@ osStatus osMutexDelete (osMutexId mutex_id);
 extern const osSemaphoreDef_t os_semaphore_def_##name
 #else                            // define the object
 #define osSemaphoreDef(name)  \
-uint32_t os_semaphore_cb_##name[2]; \
+uint32_t os_semaphore_cb_##name[2] = { 0 }; \
 const osSemaphoreDef_t os_semaphore_def_##name = { (os_semaphore_cb_##name) }
 #endif
 
@@ -687,7 +687,7 @@ osStatus osPoolFree (osPoolId pool_id, void *block);
 extern const osMessageQDef_t os_messageQ_def_##name
 #else                            // define the object
 #define osMessageQDef(name, queue_sz, type)   \
-uint32_t os_messageQ_q_##name[4+(queue_sz)]; \
+uint32_t os_messageQ_q_##name[4+(queue_sz)] = { 0 }; \
 const osMessageQDef_t os_messageQ_def_##name = \
 { (queue_sz), (os_messageQ_q_##name) }
 #endif
@@ -739,7 +739,7 @@ os_InRegs osEvent osMessageGet (osMessageQId queue_id, uint32_t millisec);
 extern const osMailQDef_t os_mailQ_def_##name
 #else                            // define the object
 #define osMailQDef(name, queue_sz, type) \
-uint32_t os_mailQ_q_##name[4+(queue_sz)]; \
+uint32_t os_mailQ_q_##name[4+(queue_sz)] = { 0 }; \
 uint32_t os_mailQ_m_##name[3+((sizeof(type)+3)/4)*(queue_sz)]; \
 void *   os_mailQ_p_##name[2] = { (os_mailQ_q_##name), os_mailQ_m_##name }; \
 const osMailQDef_t os_mailQ_def_##name =  \
@@ -796,6 +796,15 @@ os_InRegs osEvent osMailGet (osMailQId queue_id, uint32_t millisec);
 osStatus osMailFree (osMailQId queue_id, void *mail);
 
 #endif  // Mail Queues available
+
+
+//  ==== RTX Extensions ====
+
+/// os_suspend: http://www.keil.com/support/man/docs/rlarm/rlarm_os_suspend.htm
+uint32_t os_suspend (void);
+
+/// os_resume: http://www.keil.com/support/man/docs/rlarm/rlarm_os_resume.htm
+void os_resume (uint32_t sleep_time);
 
 
 #ifdef  __cplusplus

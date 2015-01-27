@@ -6,13 +6,13 @@ Devices using this peripheral:
       MKE04Z8M4
       MKE06Z4
       MKL02Z4
-      SKEAZ4
 -->
       <peripheral>
          <?sourceFile "SPI0_MKE" ?>
          <name>SPI0</name>
          <description>Serial Peripheral Interface</description>
          <prependToName>SPI0</prependToName>
+         <headerStructName>SPI</headerStructName>
          <baseAddress>0x40076000</baseAddress>
          <size>32</size>
          <access>read-write</access>

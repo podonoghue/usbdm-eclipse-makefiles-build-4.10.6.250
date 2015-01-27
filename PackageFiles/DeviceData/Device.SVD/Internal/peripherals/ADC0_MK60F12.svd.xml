@@ -12,6 +12,7 @@ Devices using this peripheral:
          <name>ADC0</name>
          <description>Analog-to-Digital Converter</description>
          <prependToName>ADC0</prependToName>
+         <headerStructName>ADC</headerStructName>
          <baseAddress>0x4003B000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -34,7 +35,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>ADCH</name>
-                     <description>Input channel select</description>
+                     <description>Input Channel Select</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>5</bitWidth>
                      <enumeratedValues>
@@ -613,7 +614,8 @@ Controls whether a single threshold is used (CV1) or an range defined by CV1 &am
                   </field>
                   <field>
                      <name>ADTRG</name>
-                     <description>Conversion Trigger Select</description>
+                     <description>Conversion Trigger Select\n
+Controls whether conversions are triggered by writes to ADC_SC1 (software) or assertion of ADHWT input (hardware).</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

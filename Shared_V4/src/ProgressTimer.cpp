@@ -73,7 +73,7 @@ USBDM_ErrorCode ProgressTimer::progress(int progress, const char *message) {
    }
    char messageBuffer[200];
    snprintf(messageBuffer, sizeof(messageBuffer), "%s (%2.2f kBytes/sec)", this->message, kBytesPerSec);
-   if ((progressCallBack != NULL) && (progress != 0)){
+   if ((progressCallBack != NULL)/* && (progress != 0)*/) {
       if (bytesDone>0) {
          rc = progressCallBack(PROGRAMMING_RC_OK, percent, messageBuffer);
       }

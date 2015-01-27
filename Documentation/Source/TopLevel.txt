@@ -92,7 +92,14 @@
          in Codewarrior Eclipse or Eclipse Juno (with suitable plugin). 
        
 <hr>
- \subsection JB16Designs JB16 based versions (These design are longer recommended)
+ \subsection JB16Designs JB16 based versions - These design are obsolete
+ <b>
+   Please note that these designs are obsolete.\n\n
+   The JB16 chip used in these designs have a ROM firmware flaw which makes it impossible to reprogram the chip firmware.
+   When the chip is in bootloader mode it fails to enumerate properly under Windows 7 or 8 and later updates of WIN-XP.
+   Because of this it is not possible to update the firmware which make it impractical to support them.\n
+   The USBDM software <i>may</i> still work to some extent but I cannot make any guarantees.\n\n
+</b>
    These versions were mainly produced to be compatible with the previous hardware versions of TBDML or OSBDM which
    were based on the MC908JB16.  This is a USB low speed device.
    The provided firmware versions allow (some) of these devices to be updated to a combined TBDML/OSBDM.  It also allows
@@ -137,7 +144,7 @@ The table below shows the support provided by each version and provides links to
   <td width=60 valign=top > <p  align=center >Serial Port</p> </td>
  </tr>
  <tr>
-  <td valign=top > <p><a href="USBDM_V4.10/USBDM_JB16/html/index.html"><b>USBDM_JB16</b></a></p> </td>
+  <td valign=top > <p><a href="USBDM_V4.10/USBDM_JB16/html/index.html"><b>USBDM_JB16 (Unsupported)</b></a></p> </td>
   <td valign=top > <p  align=center >No</p> </td>
   <td valign=top > <p  align=center >  </p> </td>
   <td valign=top > <p  align=center >X </p> </td>

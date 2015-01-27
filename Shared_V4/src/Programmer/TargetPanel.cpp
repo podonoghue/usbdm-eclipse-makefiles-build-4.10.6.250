@@ -25,6 +25,10 @@
  \verbatim
 Change History
 -==========================================================================================
+| 20 Jan 2015 | Added ".S" as accepted file extension                     - pgo 4.10.6.250
+| 20 Jan 2015 | Fixed leave target powered option regression              - pgo 4.10.6.250
+| 19 Jan 2015 | Enabled Mass Erase option in DSC                          - pgo 4.10.6.250
+| 29 Dec 2014 | Added .axf with .afx extension - I'm still confused       - pgo 4.10.6.250
 | 29 Aug 2014 | Changes to SDID wildcards                                 - pgo 4.10.6.190
 | 27 Jul 2014 | Fixed .axf => .afx extension - I'm confused               - pgo 4.10.6.170
 | 10 Apr 2014 | Fixed .afx extension                                      - pgo 4.10.20
@@ -79,9 +83,9 @@ Change History
 #define MASS_ERASE_OPTIONAL  1
 #define MASS_ERASE_ALWAYS    2
 
-#if (TARGET == CFVx) || (TARGET == MC56F80xx)
+#if (TARGET == CFVx)
 #define MASS_ERASE (MASS_ERASE_NEVER)
-#elif (TARGET==ARM) || (TARGET == CFV1) || (TARGET == HC12) || (TARGET == HCS08)|| (TARGET == S12Z)
+#elif (TARGET==ARM) || (TARGET == CFV1) || (TARGET == HC12) || (TARGET == HCS08)|| (TARGET == S12Z) || (TARGET == MC56F80xx)
 #define MASS_ERASE (MASS_ERASE_OPTIONAL)
 #else
 #define MASS_ERASE (MASS_ERASE_ALWAYS)
@@ -567,7 +571,7 @@ LOGGING;
       flashRc = BDM_RC_FAIL;
    }
    else {
-      Logging::print("Found %d chips\n", filterChipIds.size());
+      Logging::print("Found %lu chips\n", (unsigned long)filterChipIds.size());
    }
    // Returns OK as errors at end have already been reported
    return BDM_RC_OK;
@@ -585,15 +589,15 @@ TargetPanel::TargetPanel( wxWindow* parent, SharedPtr shared, HardwareCapabiliti
       flashprogrammer(NULL),
       beep(0)   {
    Logging log("TargetPanel::TargetPanel");
-   logWindow = new wxLogWindow(this, _("Log Window"), false, false);
-   logWindow->SetTimestamp(wxEmptyString);
+//   logWindow = new wxLogWindow(this, _("Log Window"), false, false);
+//   logWindow->SetTimestamp(wxEmptyString);
    Init();
    Create(parent);
 }
 
 bool TargetPanel::Create(wxWindow* parent) {
    Logging log("TargetPanel::Create");
-   wxLogMessage(_("TargetPanel::Create"));
+//   wxLogMessage(_("TargetPanel::Create"));
 
    if (!wxPanel::Create(parent) || !CreateControls()) {
       return false;
@@ -1034,10 +1038,10 @@ bool TargetPanel::updateState() {
 #if defined(FLASH_PROGRAMMER)
 
 USBDM_ErrorCode TargetPanel::loadHexFile( wxString hexFilename, bool clearBuffer ) {
-   Logging log("TargetPanel::loadHexFile");
+//   LOGGING_Q;
    USBDM_ErrorCode rc;
 
-   Logging::print("(%s)\n", (const char *)hexFilename.ToAscii());
+//   Logging::print("(%s)\n", (const char *)hexFilename.ToAscii());
    loadedFilenameStaticControl->SetLabel(_("Loading File"));
    rc = flashImageData.loadFile((const char*)hexFilename.mb_str(wxConvUTF8), clearBuffer);
    if (rc != BDM_RC_OK) {
@@ -1143,9 +1147,9 @@ void TargetPanel::OnLoadFileButtonClick( wxCommandEvent& event ) {
 //   Logging::print("TargetPanel::OnLoadFileButtonClick()\n");
 
    wxString caption  = _("Select Binary File to Load");
-   wxString wildcard = _("Binary Files(*.s19,*.sx,*.afx,*.elf)|*.s19;*.sx;*.afx;*.elf|"
-                         "SREC Hex files (*.s19,*.sx)|*.s19;*.sx|"
-                         "Elf files (*.afx,*.elf)|*.afx;*.elf|"
+   wxString wildcard = _("Binary Files(*.s19,*.sx,*.s,*.afx,*.axf,*.elf)|*.s19;*.sx;*.s;*.afx;*.axf;*.elf|"
+                         "SREC Hex files (*.s19,*.sx,*.s)|*.s19;*.sx;*.s|"
+                         "Elf files (*.afx,*.axf,*.elf)|*.afx;*.axf;*.elf|"
                          "All Files|*");
    wxString defaultDir = wxEmptyString;
    wxString defaultFilename = wxEmptyString;
@@ -1369,7 +1373,7 @@ USBDM_ErrorCode TargetPanel::programFlash(bool loadAndGo) {
    do {
       // Temporarily change power options for "load & Go"
       bool leaveTargetPowered = bdmOptions.leaveTargetPowered;
-      bdmOptions.leaveTargetPowered = loadAndGo;
+      bdmOptions.leaveTargetPowered = loadAndGo||leaveTargetPowered;
       rc = shared->initBdm();
       bdmOptions.leaveTargetPowered = leaveTargetPowered;
       if (rc != BDM_RC_OK) {
@@ -1390,7 +1394,7 @@ USBDM_ErrorCode TargetPanel::programFlash(bool loadAndGo) {
       if (rc != BDM_RC_OK) {
          continue;
       }
-      rc = flashprogrammer->programFlash(&flashImageData, progressCallBack);
+      rc = flashprogrammer->programFlash(&flashImageData, progressCallBack, true);
       if (rc != BDM_RC_OK) {
          continue;
       }

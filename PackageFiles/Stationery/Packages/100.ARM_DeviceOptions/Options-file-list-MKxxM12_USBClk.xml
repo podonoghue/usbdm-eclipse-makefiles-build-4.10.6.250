@@ -6,21 +6,28 @@
    <projectActionList id="Options-file-list-MKxxM12_USBClk">
       <applyWhen>
          <or>
-            <deviceSubfamilyIs>MK22F51212</deviceSubfamilyIs>
             <deviceSubfamilyIs>MK63F12</deviceSubfamilyIs>
             <deviceSubfamilyIs>MK64F12</deviceSubfamilyIs>
          </or>
       </applyWhen>
-      <variable id="Clock-setup-MK64M12" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
-      <variable id="UART-setup-MK64M12" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
-      <condition variable="Clock-setup-MK64M12">
+      <variable id="projectOptionValue.Clock-setup" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="projectOptionValue.UART-setup" name="UART setup code" description="Adds C stdio (UART) support for newlib" >
+         <requirement idRef="projectOptionValue.Clock-setup"/>
+      </variable>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Clock-setup" />
+         </applyWhen>
          <copy source="Startup_Code/clock-MK64M12.c" target="Startup_Code/clock.c" />
          <copy source="Project_Headers/clock_configure-MK64M12.h" target="Project_Headers/clock_configure.h" />
-      </condition>
-      <condition variable="UART-setup-MK64M12">
+      </block>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.UART-setup" />
+         </applyWhen>
          <copy source="Startup_Code/uart-mk.c" target="Startup_Code/uart.c" />
          <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
-      </condition>
+      </block>
    </projectActionList>
 
 </root>

@@ -15,6 +15,7 @@ Devices using this peripheral:
          <name>UART1</name>
          <description>Universal Asynchronous Receiver/Transmitter</description>
          <prependToName>UART1</prependToName>
+         <headerStructName>UART1</headerStructName>
          <baseAddress>0x4006B000</baseAddress>
          <size>32</size>
          <access>read-write</access>

@@ -1,7 +1,5 @@
 ;#<![CDATA[
 ;#
-;# Kinetis-KMxx-flash-scripts.tcl
-;#
 ;######################################################################################
 ;#  This file defines the following flash functions
 ;#  
@@ -9,7 +7,7 @@
 ;#                    The target should be left in an unsecured state.
 ;#
 ;#  isUnsecure - indicates if the target is secured in some fashion (read/write protected)
-;#               Returns TCL_OK if NOT secured
+;#               Returns 0 if NOT secured
 ;#
 ;#  initFlash - initialises the target for flash programing (if needed)
 ;#
@@ -22,6 +20,7 @@
 ;#####################################################################################
 ;#  History
 ;#
+;#  V4.19.4.250 - Simplified
 ;#  V4.19.4.240 - Added return error codes
 ;#  V4.10.4.190 - Simplified Mass erase sequence according to App note AN4835
 ;#  V4.10.4.190 - Created
@@ -33,6 +32,10 @@
 proc loadSymbols {} {
    # LittleEndian format for writing numbers to memory
    setbytesex littleEndian
+
+   set ::NAME  "Kinetis-KMxx-flash-scripts"
+
+   puts "$::NAME.loadSymbols{}"
    
    set ::MDM_AP_Status                   0x01000000
    set ::MDM_AP_Control                  0x01000004
@@ -167,12 +170,6 @@ proc loadSymbols {} {
    set ::F_PGMPART                       0x80
    set ::F_SETRAM                        0x81
    
-   set ::WDOG_UNLOCK                     0x4005300E
-   set ::WDOG_UNLOCK_SEQ_1               0xC520
-   set ::WDOG_UNLOCK_SEQ_2               0xD928
-   set ::WDOG_STCTRLH                    0x40053000
-   set ::WDOG_DISABLED_CTRL              0x0012
-
    set ::BDM_CAP_HCS12                   0x0001  ;# Supports HCS12
    set ::BDM_CAP_RS08                    0x0002  ;# 12 V Flash programming supply available (RS08 support)
    set ::BDM_CAP_VDDCONTROL              0x0004  ;# Control over target Vdd
@@ -188,6 +185,7 @@ proc loadSymbols {} {
    set ::BDM_CAP_CDC                     0x1000  ;# Supports CDC Serial over USB interface
    set ::BDM_CAP_ARM_SWD                 0x2000  ;# Supports ARM targets via SWD
 
+   set ::PROGRAMMING_RC_OK                         0
    set ::PROGRAMMING_RC_ERROR_SECURED              114
    set ::PROGRAMMING_RC_ERROR_FAILED_FLASH_COMMAND 115
    set ::PROGRAMMING_RC_ERROR_NO_VALID_FCDIV_VALUE 116
@@ -209,7 +207,6 @@ proc initTarget { args } {
 ;#
 proc initFlash { frequency } {
    ;# Uprotecting flash and caching done  by target routines
-   ;# Doesn't work here (H/W bug?)
    return
 }
 
@@ -217,97 +214,7 @@ proc initFlash { frequency } {
 ;#  Target is mass erased and left unsecured (non-blank!)
 ;#
 proc massEraseTarget { } {
-   ;# MK64FX512M12 - SWD
-   ;# Confirmed with blank secured chip (~47us solid reset pulsing) 
-   ;# Required final reset to unsecure
-   ;# Status before sequence (secured)
-   ;#    MDM-AP.Status  => 0x00000034 SECURE|MASS_ERASE_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;# Status after sequence (still secured) 
-   ;#    MDM-AP.Status  => 0x00000035 MASS_ERASE_ACK|SECURE|MASS_ERASE_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;# After reset sh (unsecured)
-   ;#    MDM-AP.Status  => 0x0001003A FLASH_READY|RESET|MASS_ERASE_EN|HALT|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
-   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|
-   ;# Cycle power - oscillates as above
-   ;# Opening mass erased chip stops oscillation
-   
-   ;# MK22FN512M12 - SWD
-   ;# Confirmed with blank secured chip (~96us solid reset pulsing) 
-   ;# Status before sequence (secured)
-   ;#    MDM-AP.Status  => 0x00000074 SECURE|MASS_ERASE_EN|BACKDOOR_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;# Status after sequence (unsecured) 
-   ;#    MDM-AP.Status  => 0x00000031 MASS_ERASE_ACK|MASS_ERASE_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x02010000 S_RESET|S_REGRDY|
-   ;#    DEMCR          => 0x00000000
-   ;#    MC_SRSH        => 0x      00
-   ;#    MC_SRSL        => 0x      00
-   ;#    WDOG_RSTCNT    => Failed
-   ;# After reset sh (unsecured)
-   ;#    MDM-AP.Status  => 0x0001003A FLASH_READY|RESET|MASS_ERASE_EN|HALT|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
-   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|
-   ;# Cycle power - oscillates as above
-   ;# Opening mass erased chip stops oscillation
-   
-   ;# MKL25Z128M4 - SWD
-   ;# Confirmed with blank secured chip (~1us minor reset pulsing) 
-   ;# Status before sequence (secured)
-   ;#    MDM-AP.Status  => 0x00000076 FLASH_READY|SECURE|MASS_ERASE_EN|BACKDOOR_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;# Status after sequence (unsecured) 
-   ;#    MDM-AP.Status  => 0x00000073 MASS_ERASE_ACK|FLASH_READY|MASS_ERASE_EN|BACKDOOR_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x02000000 S_RESET|
-   ;#    DEMCR          => 0x00000000
-   ;# After reset sh (unsecured)
-   ;#    MDM-AP.Status  => 0x0001003B MASS_ERASE_ACK|FLASH_READY|RESET|MASS_ERASE_EN|HALT|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
-   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|   ;# After reset sh (unsecured)
-   ;# Cycle power - oscillates as above
-   ;# Opening mass erased chip stops oscillation
-   
-   ;# MK20DX128M5 - SWD
-   ;# Confirmed with blank secured chip (~1.4us minor reset pulsing) 
-   ;# Status before sequence (secured)
-   ;#    MDM-AP.Status  => 0x00000034 SECURE|MASS_ERASE_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;# Status after sequence (unsecured) 
-   ;#    MDM-AP.Status  => 0x00000073 MASS_ERASE_ACK|FLASH_READY|MASS_ERASE_EN|BACKDOOR_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x02010000 S_RESET|S_REGRDY|
-   ;#    DEMCR          => 0x00000000
-   ;# After reset sh (unsecured)
-   ;#    MDM-AP.Status  => 0x0001003A FLASH_READY|RESET|MASS_ERASE_EN|HALT|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
-   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|
-   ;# Cycle power - oscillates as above
-   ;# Opening mass erased chip stops oscillation
-   
-    ;# PK40X256/PK60N512 - JTAG & SWD
-   ;# Confirmed with blank secured chip (~460us minor reset pulsing) 
-   ;# Status before sequence (secured)
-   ;#    MDM-AP.Status  => 0x00000034 SECURE|MASS_ERASE_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;# Status after sequence (unsecured) 
-   ;#    MDM-AP.Status  => 0x00000073 MASS_ERASE_ACK|FLASH_READY|MASS_ERASE_EN|BACKDOOR_EN|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x02010000 S_RESET|S_REGRDY|
-   ;#    DEMCR          => 0x00000000
-   ;# After reset sh (unsecured)
-   ;#    MDM-AP.Status  => 0x0001003A FLASH_READY|RESET|MASS_ERASE_EN|HALT|
-   ;#    MDM-AP.Control => 0x00000000
-   ;#    DHCSR          => 0x00030003 S_HALT|S_REGRDY|C_HALT|C_DEBUGEN|
-   ;#    DEMCR          => 0x01000001 TRCENA|VC_CORERESET|
-   ;# Cycle power - oscillates as above
-   ;# Opening mass erased chip stops oscillation
+   puts "$::NAME.massEraseTarget{}"
    
    ;# hold target reset to be sure
    pinSet rst=0
@@ -356,39 +263,25 @@ proc massEraseTarget { } {
    
    puts "massEraseTarget{} - Doing reset sh"
    reset sh
-   
-   return
+
+   return [ isUnsecure ] 
 }
 
 ;######################################################################################
 ;#
 proc isUnsecure { } {
+   puts "isUnsecure{} - Checking if unsecured"
+   
+   catch { connect }
+
    set securityValue [ rcreg $::MDM_AP_Status ]
-   puts [format "isUnsecure{} - MDM_AP_Status=%X" $securityValue ]
+   puts [format "isUnsecure{} - MDM_AP_Status=0x%X" $securityValue ]
    if [ expr ( $securityValue & $::MDM_AP_ST_SYSTEM_SECURITY ) != 0 ] {
       puts "isUnsecure{} - Target is secured!"
       return $::PROGRAMMING_RC_ERROR_SECURED
    }
    puts "isUnsecure{} - Target is unsecured"
-   return 0
-}
-
-;############################################
-;# Disable watchdog - not used
-;# Only persists until next reset
-;#
-proc disableWatchdog {} {
-   pinSet rst=0
-   catch { connect }
-   rw $::WDOG_STCTRLH 
-   ww 0x20000000 0x4b03 0x4904 0x81d9 0x4904 0x81d9 0x4904 0x8019 0xbe00
-   wl 0x20000010 0x40053000 0x0000c520 0x0000d928 0x000000d2 
-   pinSet
-   catch { connect }
-   wpc 0x20000000
-   go
-   after 100
-   rw $::WDOG_STCTRLH 
+   return $::PROGRAMMING_RC_OK
 }
 
 ;######################################################################################

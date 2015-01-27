@@ -22,23 +22,25 @@ void SystemCoreClockUpdate(void) {
 /* Actual Vector table */
 extern int const __vector_table[];
 
-#ifndef SCB_VTOR
-#define SCB_VTOR (*(uint32_t *)0xE000ED08)
-#endif
-
-#ifndef SCB_CCR
-   #define SCB_CCR                  (*(uint32_t *)(0xE000ED14))
+#ifndef SCB
+   #define SCB_VTOR                 (*(uint32_t *)0xE000ED08)
+   #define SCB_CCR                  (*(uint32_t *)0xE000ED14)
    #define SCB_CCR_DIV_0_TRP_MASK   (1<<4)
    #define SCB_CCR_UNALIGN_TRP_MASK (1<<3)
+#else
+   #define SCB_VTOR  (SCB->VTOR)
+   #define SCB_CCR   (SCB->CCR)
 #endif
 
-#if !defined(WDOG_UNLOCK)
-   /* Defaults for MK devices */
+#if !defined(WDOG)
 
    /* Watchdog unlock register */
    #define WDOG_BASE_ADDR (0x40052000)
    #define WDOG_STCTRLH  (*(uint16_t *)(WDOG_BASE_ADDR+0x00))
    #define WDOG_UNLOCK   (*(uint16_t *)(WDOG_BASE_ADDR+0x0E))
+#else
+   #define WDOG_STCTRLH  (WDOG->STCTRLH)
+   #define WDOG_UNLOCK   (WDOG->UNLOCK)
 #endif
 
    /* Unlocking Watchdog sequence words*/
@@ -68,6 +70,10 @@ __attribute__((weak))
 void software_init_hook (void) {
 }
 
+#ifdef __NO_STARTFILES__
+#warning Due to limited RAM the C library standard initialisation is not called - BSS and DATA are still initialised
+#endif
+
 /*!
  *  @brief Low-level initialize the system
  *
@@ -88,7 +94,7 @@ void SystemInitLowLevel(void) {
    WDOG_STCTRLH = KINETIS_WDOG_DISABLED_CTRL;
 
    // Enable trapping of divide by zero
-   SCB_CCR |= SCB_CCR_DIV_0_TRP_MASK;
+   SCB_CCR |= SCB_CCR_DIV_0_TRP_Msk;
 }
 
 /**

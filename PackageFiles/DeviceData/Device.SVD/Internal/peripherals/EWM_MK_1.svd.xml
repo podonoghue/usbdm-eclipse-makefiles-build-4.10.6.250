@@ -23,7 +23,19 @@ Devices using this peripheral:
          <addressBlock>
             <?width "8" ?>
             <offset>0x0</offset>
-            <size>0x4</size>
+            <size>0x1</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <?width "8" ?>
+            <offset>0x1</offset>
+            <size>0x1</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <?width "8" ?>
+            <offset>0x2</offset>
+            <size>0x2</size>
             <usage>registers</usage>
          </addressBlock>
          <addressBlock>
@@ -128,6 +140,7 @@ The EWM service mechanism requires the CPU to write two values to the SERV regis
 \t- followed by a second data byte of 0x2C</description>
                <addressOffset>0x1</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>

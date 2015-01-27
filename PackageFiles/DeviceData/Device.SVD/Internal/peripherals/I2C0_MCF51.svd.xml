@@ -8,6 +8,7 @@ Devices using this peripheral:
          <name>I2C0</name>
          <description>Inter-Integrated Circuit</description>
          <prependToName>I2C0</prependToName>
+         <headerStructName>I2C</headerStructName>
          <baseAddress>0xFFFF81C0</baseAddress>
          <size>32</size>
          <access>read-write</access>

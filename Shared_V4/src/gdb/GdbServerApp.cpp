@@ -24,9 +24,10 @@
 
 \verbatim
 Change History
--=================================================================================
-|   9 Jul 2013 | Created                                               4.9.6 - pgo
-+=================================================================================
+-====================================================================================================
+|  Jan 20 2015 | Moved logging messages to USBDM log file                          - pgo V4.10.6.260
+|  Jul 9  2013 | Created                                                           - pgo V4.9.6
++====================================================================================================
 \endverbatim
 */
 
@@ -157,7 +158,7 @@ bool GDBServerApp::OnInit(void) {
    const wxString title(_("GDB Server"));
 
 #if TARGET == MC56F80xx
-   DSC_SetLogFile(Logging::getLogFileHandle());
+   DSC_SetLogFile(0);
 #endif
 
    // Create the main application window

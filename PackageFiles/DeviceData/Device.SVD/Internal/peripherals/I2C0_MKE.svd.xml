@@ -5,13 +5,13 @@ Devices using this peripheral:
       MKE04Z4
       MKE04Z8M4
       MKE06Z4
-      SKEAZ4
 -->
       <peripheral>
          <?sourceFile "I2C0_MKE" ?>
          <name>I2C0</name>
          <description>Inter-Integrated Circuit</description>
          <prependToName>I2C0</prependToName>
+         <headerStructName>I2C</headerStructName>
          <baseAddress>0x40066000</baseAddress>
          <size>32</size>
          <access>read-write</access>

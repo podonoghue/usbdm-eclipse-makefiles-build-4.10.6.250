@@ -9,6 +9,7 @@ Devices using this peripheral:
          <name>ADC</name>
          <description>Analog-to-digital converter</description>
          <prependToName>ADC</prependToName>
+         <headerStructName>ADC</headerStructName>
          <baseAddress>0x4003B000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -34,27 +35,27 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0XXXX</name>
-                           <description>one of AD0-AD15 is selected as input</description>
+                           <description>One of AD0-AD15</description>
                            <value>0b0XXXX</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b100XX</name>
-                           <description>Vss is selected as input</description>
+                           <description>Vss</description>
                            <value>0b100XX</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b10110</name>
-                           <description>Bandgap is selected as input; when DIFF=1, it is reserved</description>
+                           <description>Bandgap reserved</description>
                            <value>0b10110</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11101</name>
-                           <description>VRefH is selected as input</description>
+                           <description>VRefH</description>
                            <value>0b11101</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b11110</name>
-                           <description>VRefSL is selected as input</description>
+                           <description>VRefSL</description>
                            <value>0b11110</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -66,18 +67,22 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>ADCO</name>
-                     <description>Continuous Conversion Enable</description>
+                     <description>Continuous Conversion Enable\n
+Selects between single and multiple conversions.\n
+Conversions are triggered by a write to the ADC_SC1 when software triggered operation is selected,\n
+or following assertion of ADHWT when hardware triggered operation is selected.\n
+When the FIFO function is enabled (AFDEP &gt; 0), a set of conversions are triggered</description>
                      <bitOffset>5</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>One conversion following a write to the ADC_SC1 when software triggered operation is selected, or one conversion following assertion of ADHWT when hardware triggered operation is selected. When the FIFO function is enabled (AFDEP &gt; 0), a set of conversions are triggered</description>
+                           <description>Single conversion or set</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Continuous conversions are initiated following a write to ADC_SC1 when software triggered operation is selected. Continuous conversions are initiated by an ADHWT event when hardware triggered operation is selected. When the FIFO function is enabled (AFDEP &gt; 0), a set of conversions are loop triggered</description>
+                           <description>Continuous conversions</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -109,12 +114,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Conversion is not completed</description>
+                           <description>Not complete</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Conversion is completed</description>
+                           <description>Complete</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -134,13 +139,18 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b00</name>
-                           <description>Default voltage reference pin pair (VREFH/VREFL)</description>
+                           <description>VREFH and VREFL</description>
                            <value>0b00</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b01</name>
-                           <description>Analog supply pin pair (VDDA/VSSA)</description>
+                           <description>VDDA and VSSA</description>
                            <value>0b01</value>
+                        </enumeratedValue>
+                        <enumeratedValue>
+                           <name>0b1X</name>
+                           <description>Reserved</description>
+                           <value>0b1X</value>
                         </enumeratedValue>
                      </enumeratedValues>
                   </field>
@@ -153,12 +163,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Indicates that ADC result FIFO is not full and next conversion data still can be stored into FIFO</description>
+                           <description>FIFO not full</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Indicates that ADC result FIFO is full and next conversion will override old data in case of no read action</description>
+                           <description>FIFO full</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -172,12 +182,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Indicates that ADC result FIFO have at least one valid new data</description>
+                           <description>FIFO has new data</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Indicates that ADC result FIFO have no valid new data</description>
+                           <description>FIFO empty</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -190,12 +200,12 @@ Devices using this peripheral:
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Compare triggers when input is less than compare level</description>
+                           <description>Trigger when input &lt; level</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Compare triggers when input is greater than or equal to compare level</description>
+                           <description>Trigger when input is &gt;= level</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -220,18 +230,19 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>ADTRG</name>
-                     <description>Conversion Trigger Select</description>
+                     <description>Conversion Trigger Select\n
+Controls whether conversions are triggered by writes to ADC_SC1 (software) or assertion of ADHWT input (hardware).</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>Software trigger - A conversion is initiated following a write to ADC_SC1</description>
+                           <description>Software trigger selected</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Hardware trigger - A conversion is initiated following the assertion of the ADHWT input</description>
+                           <description>Hardware trigger selected</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -361,18 +372,19 @@ Devices using this peripheral:
                   </field>
                   <field>
                      <name>ADLPC</name>
-                     <description>Low-Power Configuration</description>
+                     <description>Low-Power Configuration\n
+Controls trade-off between speed and power consumption</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>High speed configuration</description>
+                           <description>High speed</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>Low power configuration: The power is reduced at the expense of maximum clock speed</description>
+                           <description>Low power</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -386,7 +398,7 @@ Devices using this peripheral:
                <fields>
                   <field>
                      <name>AFDEP</name>
-                     <description>no description available</description>
+                     <description>FIFO Depth</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>3</bitWidth>
                      <enumeratedValues>
@@ -479,12 +491,12 @@ This field enables hardware trigger multiple conversion</description>
                      <enumeratedValues>
                         <enumeratedValue>
                            <name>0b0</name>
-                           <description>One hardware trigger pulse triggers one conversion</description>
+                           <description>Hardware triggers one conversion</description>
                            <value>0b0</value>
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b1</name>
-                           <description>One hardware trigger pulse triggers multiple conversions in fifo mode</description>
+                           <description>Hardware triggers multiple conversions in fifo mode</description>
                            <value>0b1</value>
                         </enumeratedValue>
                      </enumeratedValues>

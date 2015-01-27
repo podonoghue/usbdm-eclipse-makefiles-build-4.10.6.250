@@ -206,7 +206,7 @@ bool XmlParser::nodesMatch(DOMElement *mergeEl, DOMElement *patchEl) {
       }
       DualString patchAttributeValue(attribute->getNodeValue());
       DualString mergeAttributeValue(mergeEl->getAttribute(attributeName.asXMLString()));
-      wxRegEx regEx(patchAttributeValue.asCString(), wxRE_NOSUB);
+      wxRegEx regEx(wxString(patchAttributeValue.asCString(), wxConvUTF8), wxRE_NOSUB);
 
       if (verbose) {
          cerr << "\' (value=\'" << mergeAttributeValue.asCString();
@@ -214,7 +214,7 @@ bool XmlParser::nodesMatch(DOMElement *mergeEl, DOMElement *patchEl) {
       if (!regEx.IsValid()) {
          throw new invalid_argument("Illegal regular expression: " + string(patchAttributeValue.asCString()));
       }
-      if (!regEx.Matches(mergeAttributeValue.asCString())) {
+      if (!regEx.Matches(wxString(mergeAttributeValue.asCString(), wxConvUTF8))) {
          if (verbose) {
             cerr << "\') doesn't match \'" << patchAttributeValue.asCString() << "\'\n";
          }
@@ -642,7 +642,7 @@ int rc = 0;
             if (verbose) {
                cerr << "Saving changes to : '" << sourcePath << "'" << endl;
             }
-            parser.commit(sourcePath);
+            parser.commit(sourcePath.ToAscii());
          }
       }
    }

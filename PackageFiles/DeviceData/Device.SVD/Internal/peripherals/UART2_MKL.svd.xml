@@ -7,6 +7,7 @@ Devices using this peripheral:
          <name>UART2</name>
          <description>Universal Asynchronous Receiver/Transmitter</description>
          <prependToName>UART2</prependToName>
+         <headerStructName>UART2</headerStructName>
          <baseAddress>0x4006C000</baseAddress>
          <size>32</size>
          <access>read-write</access>

@@ -2,14 +2,16 @@ include ../Common.mk
 
 TARGET = MergeXML
 
+ifeq ($(UNAME_S),Windows)
 Version.o : src/Version.rc src/uacManifest.xml
 	@echo -- Building $@ from $<
 	$(WINDRES) $< $(DEFS) $(INCS) -o $@
+endif
 
-$(TARGET): Version.o
+$(TARGET): # Version.o
 	$(MAKE) exe -f Target.mk TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX) CDEFS='-DUSE_ICON'
 
-$(TARGET)-debug: Version.o
+$(TARGET)-debug: # Version.o
 	$(MAKE) exe -f Target.mk TARGET=$@ BUILDDIR=$@$(BUILDDIR_SUFFIX)  DEBUG='Y' CDEFS='-DUSE_ICON -DDEBUG'
 
 all: $(TARGET) $(TARGET)-debug

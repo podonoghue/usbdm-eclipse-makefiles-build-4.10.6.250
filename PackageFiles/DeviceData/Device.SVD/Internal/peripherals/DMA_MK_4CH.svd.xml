@@ -26,7 +26,12 @@ Devices using this peripheral:
          </addressBlock>
          <addressBlock>
             <offset>0x14</offset>
-            <size>0xC</size>
+            <size>0x4</size>
+            <usage>registers</usage>
+         </addressBlock>
+         <addressBlock>
+            <offset>0x18</offset>
+            <size>0x8</size>
             <usage>registers</usage>
          </addressBlock>
          <addressBlock>
@@ -385,6 +390,7 @@ Provides a simple memory-mapped mechanism to clear a given bit in the EEI to dis
 The data value on a register write causes the corresponding bit in the EEI to be cleared</description>
                <addressOffset>0x18</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -435,6 +441,7 @@ Provides a simple memory-mapped mechanism to set a given bit in the EEI to enabl
 The data value on a register write causes the corresponding bit in the EEI to be set</description>
                <addressOffset>0x19</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -485,11 +492,12 @@ Provides a simple memory-mapped mechanism to clear a given bit in the ERQ to dis
 The data value on a register write causes the corresponding bit in the ERQ to be cleared</description>
                <addressOffset>0x1A</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>CERQ</name>
-                     <description>Clear enable request</description>
+                     <description>Clear Enable Request</description>
                      <bitOffset>0</bitOffset>
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
@@ -536,6 +544,7 @@ Provides a simple memory-mapped mechanism to set a given bit in the ERQ to enabl
 The data value on a register write causes the corresponding bit in the ERQ to be set</description>
                <addressOffset>0x1B</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -585,6 +594,7 @@ The data value on a register write causes the corresponding bit in the ERQ to be
 Provides a simple memory-mapped mechanism to clear the DONE bit in the TCD of the given channel</description>
                <addressOffset>0x1C</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -634,6 +644,7 @@ Provides a simple memory-mapped mechanism to clear the DONE bit in the TCD of th
 Provides a simple memory-mapped mechanism to set the START bit in the TCD of the given channel</description>
                <addressOffset>0x1D</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -682,6 +693,7 @@ Provides a simple memory-mapped mechanism to set the START bit in the TCD of the
                <description>Clear Error Register</description>
                <addressOffset>0x1E</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -730,6 +742,7 @@ Provides a simple memory-mapped mechanism to set the START bit in the TCD of the
                <description>Clear Interrupt Request Register</description>
                <addressOffset>0x1F</addressOffset>
                <size>8</size>
+               <access>write-only</access>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
@@ -833,7 +846,6 @@ Provides a simple memory-mapped mechanism to set the START bit in the TCD of the
                <name>HRS</name>
                <description>Hardware Request Status Register</description>
                <addressOffset>0x34</addressOffset>
-               <access>read-only</access>
                <fields>
                   <field>
                      <name>HRS0</name>
@@ -948,7 +960,7 @@ Enables suspension of this channel by a higher priority channel</description>
                   <fields>
                      <field>
                         <name>SOFF</name>
-                        <description>Source address signed offset</description>
+                        <description>Source Address Signed Offset</description>
                         <bitOffset>0</bitOffset>
                      </field>
                   </fields>
@@ -1265,7 +1277,7 @@ If SMLOE or DMLOE is set, this field represents a sign-extended offset applied t
                   </fields>
                </register>
                <register>
-                  <name>DLASTSGA</name>
+                  <name>DLAST_SGA</name>
                   <description>Last Destination Address Adjustment/Scatter Gather Address\n
 This is either the:\n
 \t- Destination last address adjustment or

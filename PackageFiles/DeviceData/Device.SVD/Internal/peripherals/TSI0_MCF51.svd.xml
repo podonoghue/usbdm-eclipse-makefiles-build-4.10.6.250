@@ -107,7 +107,7 @@ Selects between End-of-Scan or Out-of-Range Interrupt</description>
                   </field>
                   <field>
                      <name>TSIIE</name>
-                     <description>TSI Interrupt Enable</description>
+                     <description>Interrupt Enable</description>
                      <bitOffset>6</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>
@@ -125,7 +125,7 @@ Selects between End-of-Scan or Out-of-Range Interrupt</description>
                   </field>
                   <field>
                      <name>TSIEN</name>
-                     <description>TSI Module Enable</description>
+                     <description>Module Enable</description>
                      <bitOffset>7</bitOffset>
                      <bitWidth>1</bitWidth>
                      <enumeratedValues>

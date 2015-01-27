@@ -151,6 +151,8 @@
       <device name="MK70FN1M0M15">     <svdFileName>MK70F12</svdFileName>    </device>
       <device name="MK70FX512M15">     <svdFileName>MK70F12</svdFileName>    </device>
 
+      <device name="SKEAZN8M4">        <svdFileName>MKE04Z8M4</svdFileName>  </device>
+      
       <device name="MKE02Z16M2">       <svdFileName>MKE02Z2</svdFileName>    </device>
       <device name="MKE02Z32M2">       <svdFileName>MKE02Z2</svdFileName>    </device>
       <device name="MKE02Z64M2">       <svdFileName>MKE02Z2</svdFileName>    </device>
@@ -162,6 +164,7 @@
       <device name="MKE04Z128M4">      <svdFileName>MKE04Z4</svdFileName>    </device>
       <device name="MKE06Z64M4">       <svdFileName>MKE06Z4</svdFileName>    </device>
       <device name="MKE06Z128M4">      <svdFileName>MKE06Z4</svdFileName>    </device>
+
       <device name="MKL02Z8M4">        <svdFileName>MKL02Z4</svdFileName>    </device>
       <device name="MKL02Z16M4">       <svdFileName>MKL02Z4</svdFileName>    </device>
       <device name="MKL02Z32M4">       <svdFileName>MKL02Z4</svdFileName>    </device>
@@ -201,13 +204,13 @@
       <device name="MKL46Z128M4">      <svdFileName>MKL46Z4</svdFileName>    </device>
       <device name="MKL46Z256M4">      <svdFileName>MKL46Z4</svdFileName>    </device>
       <device name="MKV10Z32M7">       <svdFileName>MKV10Z7</svdFileName>    </device>
-      
+
+      <device name="MKM14Z64M5">       <svdFileName>MKM33Z5</svdFileName>    </device>
+      <device name="MKM14Z128M5">      <svdFileName>MKM33Z5</svdFileName>    </device>
       <device name="MKM33Z64M5">       <svdFileName>MKM33Z5</svdFileName>    </device>
       <device name="MKM33Z128M5">      <svdFileName>MKM33Z5</svdFileName>    </device>
+      <device name="MKM34Z128M5">      <svdFileName>MKM33Z5</svdFileName>    </device>
 
-      <device name="SKEAZ64M4">        <svdFileName>SKEAZ4</svdFileName>     </device>
-      <device name="SKEAZ128M4">       <svdFileName>SKEAZ4</svdFileName>     </device>
-      
       <device name="FRDM-K20D50M">     <svdFileName>MK20D5</svdFileName> 		</device>
       <device name="FRDM-K22F">        <svdFileName>MK22F51212</svdFileName> 		</device>
       <device name="FRDM-K64F">        <svdFileName>MK64F12</svdFileName> 		</device>

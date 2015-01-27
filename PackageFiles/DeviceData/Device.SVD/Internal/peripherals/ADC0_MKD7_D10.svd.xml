@@ -21,6 +21,7 @@ Devices using this peripheral:
          <name>ADC0</name>
          <description>Analog-to-Digital Converter</description>
          <prependToName>ADC0</prependToName>
+         <headerStructName>ADC</headerStructName>
          <baseAddress>0x4003B000</baseAddress>
          <size>32</size>
          <access>read-write</access>

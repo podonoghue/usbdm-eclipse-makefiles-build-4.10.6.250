@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------
- *      RL-ARM - RTX
+ *      CMSIS-RTOS  -  RTX
  *----------------------------------------------------------------------------
  *      Name:    rt_CMSIS.c
  *      Purpose: CMSIS RTOS API
- *      Rev.:    V4.70
+ *      Rev.:    V4.75
  *----------------------------------------------------------------------------
  *
  * Copyright (c) 1999-2009 KEIL, 2009-2013 ARM Germany GmbH
@@ -30,6 +30,9 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Modified to suppress warnings about unused parameters - pgo
+ * Modified for gcc bug 
  *---------------------------------------------------------------------------*/
 
 #define __CMSIS_GENERIC
@@ -81,12 +84,6 @@
 
 #define __NO_RETURN __declspec(noreturn)
 
-#define osEvent_type       osEvent
-#define osEvent_ret_status ret
-#define osEvent_ret_value  ret
-#define osEvent_ret_msg    ret
-#define osEvent_ret_mail   ret
-
 #define osCallback_type    osCallback
 #define osCallback_ret     ret
 
@@ -96,6 +93,14 @@ __svc_indirect(0) t  _##f (t(*)());                                            \
 __attribute__((always_inline))                                                 \
 static __inline   t __##f (void) {                                             \
   return _##f(f);                                                              \
+}
+
+#define SVC_1_0(f,t,t1,...)                                                    \
+__svc_indirect(0) t  _##f (t(*)(t1),t1);                                       \
+                  t     f (t1 a1);                                             \
+__attribute__((always_inline))                                                 \
+static __inline   t __##f (t1 a1) {                                            \
+  _##f(f,a1);                                                                  \
 }
 
 #define SVC_1_1(f,t,t1,...)                                                    \
@@ -138,9 +143,6 @@ static __inline   t __##f (t1 a1, t2 a2, t3 a3, t4 a4) {                       \
 
 #define __NO_RETURN __attribute__((noreturn))
 
-typedef uint32_t __attribute__((vector_size(8)))  ret64;
-typedef uint32_t __attribute__((vector_size(16))) ret128;
-
 #define RET_pointer    __r0
 #define RET_int32_t    __r0
 #define RET_uint32_t   __r0
@@ -149,14 +151,8 @@ typedef uint32_t __attribute__((vector_size(16))) ret128;
 #define RET_osEvent    {(osStatus)__r0, {(uint32_t)__r1}, {(void *)__r2}}
 #define RET_osCallback {(void *)__r0, (void *)__r1}
 
-#define osEvent_type        ret128
-#define osEvent_ret_status (ret128){ret.status}
-#define osEvent_ret_value  (ret128){ret.status, ret.value.v}
-#define osEvent_ret_msg    (ret128){ret.status, ret.value.v, (uint32_t)ret.def.message_id}
-#define osEvent_ret_mail   (ret128){ret.status, ret.value.v, (uint32_t)ret.def.mail_id}
-
-#define osCallback_type     ret64
-#define osCallback_ret     (ret64) {(uint32_t)ret.fp, (uint32_t)ret.arg}
+#define osCallback_type    uint64_t
+#define osCallback_ret     ((uint64_t)(uint32_t)ret.fp | ((uint64_t)((uint32_t)ret.arg)) << 32)
 
 #define SVC_ArgN(n) \
   register int __r##n __asm("r"#n);
@@ -195,6 +191,20 @@ typedef uint32_t __attribute__((vector_size(16))) ret128;
   SVC_ArgR(3,t4,a4)
 
 #if (defined (__CORTEX_M0))
+#if 0
+// Original code
+// Modified to avoid r7 use as conflicts with FP use by GCC - pgo
+#define SVC_Call(f)                                                            \
+  __asm volatile                                                               \
+  (                                                                            \
+    "ldr r4,="#f"\n\t"                                                         \
+    "mov r12,r4\n\t"                                                           \
+    "svc 0"                                                                    \
+    :               "=r" (__r0), "=r" (__r1), "=r" (__r2), "=r" (__r3)         \
+    :                "r" (__r0),  "r" (__r1),  "r" (__r2),  "r" (__r3)         \
+    : "r4", "r12", "lr", "cc"                                                  \
+  );
+#endif
 // This is an ugly workaround for a bug in the compiler - pgo
 #define SVC_Call(f)                                                            \
   __asm volatile                                                               \
@@ -208,25 +218,18 @@ typedef uint32_t __attribute__((vector_size(16))) ret128;
     "2:"                                                                       \
     :               "=r" (__r0), "=r" (__r1), "=r" (__r2), "=r" (__r3)         \
     :                "r" (__r0),  "r" (__r1),  "r" (__r2),  "r" (__r3)         \
-    : "r12", "lr", "cc"                                                        \
+    : "r4", "r12", "lr", "cc"                                                  \
   );
-#elif (defined (__CORTEX_M3)) || (defined (__CORTEX_M4)) || (defined (__CORTEX_M4F))
-// This is an ugly workaround for a bug in the compiler - pgo
+#else // !(defined (__CORTEX_M0))
 #define SVC_Call(f)                                                            \
   __asm volatile                                                               \
   (                                                                            \
-    "   ldr r12,1f\n"                                                          \
-    "   svc 0\n"                                                               \
-    "   b  2f\n"                                                               \
-    "   .align 4\n"                                                            \
-    "1: .word "#f"\n"                                                          \
-    "2:"                                                                       \
+    "ldr r12,="#f"\n\t"                                                        \
+    "svc 0"                                                                    \
     :               "=r" (__r0), "=r" (__r1), "=r" (__r2), "=r" (__r3)         \
     :                "r" (__r0),  "r" (__r1),  "r" (__r2),  "r" (__r3)         \
     : "r12", "lr", "cc"                                                        \
   );
-#else
-#error "Only __CORTEX_M0, __CORTEX_M3, __CORTEX_M4, __CORTEX_M4F supported"
 #endif
 
 #define SVC_0_1(f,t,rv)                                                        \
@@ -235,6 +238,13 @@ static inline  t __##f (void) {                                                \
   SVC_Arg0();                                                                  \
   SVC_Call(f);                                                                 \
   return (t) rv;                                                               \
+}
+
+#define SVC_1_0(f,t,t1)                                                        \
+__attribute__((always_inline))                                                 \
+static inline  t __##f (t1 a1) {                                               \
+  SVC_Arg1(t1);                                                                \
+  SVC_Call(f);                                                                 \
 }
 
 #define SVC_1_1(f,t,t1,rv)                                                     \
@@ -270,8 +280,49 @@ static inline  t __##f (t1 a1, t2 a2, t3 a3, t4 a4) {                          \
 }
 
 #define SVC_1_2 SVC_1_1 
-#define SVC_1_3 SVC_1_1 
-#define SVC_2_3 SVC_2_1 
+
+#define SVC_1_3(f,t,t1,rv)                                                     \
+t    f    (t1 a1);                                                             \
+__attribute__((naked))                                                         \
+void f##_ (t1 a1) {                                                            \
+  __asm volatile                                                               \
+  (                                                                            \
+    "push {lr}\n"                                                              \
+    "sub  sp,#12\n"                                                            \
+    "mov  r1,r0\n"                                                             \
+    "mov  r0,sp\n"                                                             \
+    "bl   "#f"\n"                                                              \
+    "pop  {r0-r2,pc}\n"                                                        \
+  );                                                                           \
+}                                                                              \
+__attribute__((always_inline))                                                 \
+static inline  t __##f (t1 a1) {                                               \
+  SVC_Arg1(t1);                                                                \
+  SVC_Call(f##_);                                                              \
+  return (t) rv;                                                               \
+}
+
+#define SVC_2_3(f,t,t1,t2,rv)                                                  \
+t    f    (t1 a1, t2 a2);                                                      \
+__attribute__((naked))                                                         \
+void f##_ (t1 a1 __attribute__((unused)), t2 a2 __attribute__((unused))) {     \
+  __asm volatile                                                               \
+  (                                                                            \
+    "push {lr}\n"                                                              \
+    "sub  sp,#12\n"                                                            \
+    "mov  r2,r1\n"                                                             \
+    "mov  r1,r0\n"                                                             \
+    "mov  r0,sp\n"                                                             \
+    "bl   "#f"\n"                                                              \
+    "pop  {r0-r2,pc}\n"                                                        \
+  );                                                                           \
+}                                                                              \
+__attribute__((always_inline))                                                 \
+static inline  t __##f (t1 a1, t2 a2) {                                        \
+  SVC_Arg2(t1,t2);                                                             \
+  SVC_Call(f##_);                                                              \
+  return (t) rv;                                                               \
+}
 
 #elif defined (__ICCARM__)      /* IAR Compiler */
 
@@ -280,23 +331,17 @@ static inline  t __##f (t1 a1, t2 a2, t3 a3, t4 a4) {                          \
 #define RET_osEvent        "=r"(ret.status), "=r"(ret.value), "=r"(ret.def)
 #define RET_osCallback     "=r"(ret.fp), "=r"(ret.arg)
 
-#define osEvent_type       osEvent
-#define osEvent_ret_status ret
-#define osEvent_ret_value  ret
-#define osEvent_ret_msg    ret
-#define osEvent_ret_mail   ret
-
 #define osCallback_type    uint64_t
 #define osCallback_ret     ((uint64_t)ret.fp | ((uint64_t)ret.arg)<<32)
 
 #define SVC_Setup(f)                                                           \
-  __asm(                                                                         \
+  __asm(                                                                       \
     "mov r12,%0\n"                                                             \
     :: "r"(&f): "r12"                                                          \
   );
 
 #define SVC_Ret3()                                                             \
-  __asm(                                                                         \
+  __asm(                                                                       \
     "ldr r0,[sp,#0]\n"                                                         \
     "ldr r1,[sp,#4]\n"                                                         \
     "ldr r2,[sp,#8]\n"                                                         \
@@ -308,6 +353,14 @@ _Pragma("swi_number=0") __swi t _##f (void);                                   \
 static inline t __##f (void) {                                                 \
   SVC_Setup(f);                                                                \
   return _##f();                                                               \
+}
+
+#define SVC_1_0(f,t,t1,...)                                                    \
+t f (t1 a1);                                                                   \
+_Pragma("swi_number=0") __swi t _##f (t1 a1);                                  \
+static inline t __##f (t1 a1) {                                                \
+  SVC_Setup(f);                                                                \
+  _##f(a1);                                                                    \
 }
 
 #define SVC_1_1(f,t,t1,...)                                                    \
@@ -349,7 +402,7 @@ static inline t __##f (t1 a1) {                                                \
   t ret;                                                                       \
   SVC_Setup(f);                                                                \
   _##f(a1);                                                                    \
-  __asm("" : rr : :);                                                            \
+  __asm("" : rr : :);                                                          \
   return ret;                                                                  \
 }
 
@@ -364,7 +417,7 @@ static inline t __##f (t1 a1) {                                                \
   t ret;                                                                       \
   SVC_Setup(f##_);                                                             \
   _##f(a1);                                                                    \
-  __asm("" : rr : :);                                                            \
+  __asm("" : rr : :);                                                          \
   return ret;                                                                  \
 }
 
@@ -379,7 +432,7 @@ static inline t __##f (t1 a1, t2 a2) {                                         \
   t ret;                                                                       \
   SVC_Setup(f##_);                                                             \
   _##f(a1,a2);                                                                 \
-  __asm("" : rr : :);                                                            \
+  __asm("" : rr : :);                                                          \
   return ret;                                                                  \
 }
 
@@ -505,6 +558,7 @@ osStatus svcKernelInitialize (void) {
   sysThreadError(osOK);
 
   os_initialized = 1;
+  os_running = 0;
 
   return osOK;
 }
@@ -514,9 +568,14 @@ osStatus svcKernelStart (void) {
 
   if (os_running) return osOK;
 
-  rt_tsk_prio(0, 0);                            // Lowest priority
-  __set_PSP(os_tsk.run->tsk_stack + 8*4);       // New context
-  os_tsk.run = NULL;                            // Force context switch
+  rt_tsk_prio(0, os_tsk.run->prio_base);        // Restore priority
+  if (os_tsk.run->task_id == 0xFF) {            // Idle Thread
+    __set_PSP(os_tsk.run->tsk_stack + 8*4);     // Setup PSP
+  }
+  if (os_tsk.new == NULL) {                     // Force context switch
+    os_tsk.new = os_tsk.run;
+    os_tsk.run = NULL;
+  }
 
   rt_sys_start();
 
@@ -561,7 +620,7 @@ osStatus osKernelInitialize (void) {
 /// Start the RTOS Kernel
 osStatus osKernelStart (void) {
   uint32_t stack[8];
-  
+
   if (__get_IPSR() != 0) return osErrorISR;     // Not allowed in ISR
   switch (__get_CONTROL() & 0x03) {
     case 0x00:                                  // Privileged Thread mode & MSP
@@ -610,8 +669,7 @@ uint32_t osKernelSysTick (void) {
 // ==== Thread Management ====
 
 /// Set Thread Error (for Create functions which return IDs)
-static void sysThreadError (osStatus status) {
-   (void)status;
+static void sysThreadError (osStatus status __attribute__((unused))) {
   // To Do
 }
 
@@ -817,19 +875,19 @@ osStatus svcDelay (uint32_t millisec) {
 
 /// Wait for Signal, Message, Mail, or Timeout
 #if osFeature_Wait != 0
-os_InRegs osEvent_type svcWait (uint32_t millisec) {
+os_InRegs osEvent svcWait (uint32_t millisec) {
   osEvent ret;
 
   if (millisec == 0) {
     ret.status = osOK;
-    return osEvent_ret_status;
+    return ret;
   }
 
   /* To Do: osEventSignal, osEventMessage, osEventMail */
   rt_dly_wait(rt_ms2tick(millisec));
   ret.status = osEventTimeout;
 
-  return osEvent_ret_status;
+  return ret;
 }
 #endif
 
@@ -843,11 +901,10 @@ osStatus osDelay (uint32_t millisec) {
 }
 
 /// Wait for Signal, Message, Mail, or Timeout
-os_InRegs osEvent osWait (uint32_t millisec) {
+os_InRegs osEvent osWait (uint32_t millisec __attribute__((unused))) {
   osEvent ret;
 
 #if osFeature_Wait == 0
-  (void)millisec;
   ret.status = osErrorOS;
   return ret;
 #else
@@ -974,6 +1031,7 @@ osTimerId svcTimerCreate (const osTimerDef_t *timer_def, os_timer_type type, voi
     return NULL;
   }
 
+  pt->next  = NULL;
   pt->state = osTimerStopped;
   pt->type  =  (uint8_t)type;
   pt->arg   = argument;
@@ -1070,7 +1128,7 @@ os_InRegs osCallback_type svcTimerCall (osTimerId timer_id) {
   return osCallback_ret;
 }
 
-static __INLINE osStatus isrMessagePut (osMessageQId queue_id, uint32_t info, uint32_t millisec);
+static __INLINE osStatus isrMessagePut (osMessageQId queue_id, uint32_t info, uint32_t millisec __attribute__((unused)));
 
 /// Timer Tick (called each SysTick)
 void sysTimerTick (void) {
@@ -1089,6 +1147,30 @@ void sysTimerTick (void) {
       rt_timer_insert(pt, pt->icnt);
     } else {
       pt->state = osTimerStopped;
+    }
+  }
+}
+
+/// Get user timers wake-up time 
+uint32_t sysUserTimerWakeupTime (void) {
+
+  if (os_timer_head) {
+    return os_timer_head->tcnt;
+  }
+  return 0xFFFF;
+}
+
+/// Update user timers on resume
+void sysUserTimerUpdate (uint32_t sleep_time) {
+
+  while (os_timer_head && sleep_time) {
+    if (sleep_time >= os_timer_head->tcnt) {
+      sleep_time -= os_timer_head->tcnt;
+      os_timer_head->tcnt = 1;
+      sysTimerTick();
+    } else {
+      os_timer_head->tcnt -= sleep_time;
+      break;
     }
   }
 }
@@ -1133,10 +1215,10 @@ os_InRegs osCallback osTimerCall (osTimerId timer_id) {
 
 
 // Timer Thread
-__NO_RETURN void osTimerThread (void const *argument) {
+__NO_RETURN void osTimerThread (void const *argument __attribute__((unused))) {
   osCallback cb;
   osEvent    evt;
-  (void) argument;
+
   for (;;) {
     evt = osMessageGet(osMessageQId_osTimerMessageQ, osWaitForever);
     if (evt.status == osEventMessage) {
@@ -1193,13 +1275,13 @@ int32_t svcSignalClear (osThreadId thread_id, int32_t signals) {
 }
 
 /// Wait for one or more Signal Flags to become signaled for the current RUNNING thread
-os_InRegs osEvent_type svcSignalWait (int32_t signals, uint32_t millisec) {
+os_InRegs osEvent svcSignalWait (int32_t signals, uint32_t millisec) {
   OS_RESULT res;
   osEvent   ret;
 
   if (signals & (0xFFFFFFFF << osFeature_Signals)) {
     ret.status = osErrorValue;
-    return osEvent_ret_status;
+    return ret;
   }
 
   if (signals != 0) {                           // Wait for all specified signals
@@ -1216,7 +1298,7 @@ os_InRegs osEvent_type svcSignalWait (int32_t signals, uint32_t millisec) {
     ret.value.signals = 0;
   }
 
-  return osEvent_ret_value;
+  return ret;
 }
 
 
@@ -1253,7 +1335,7 @@ int32_t osSignalSet (osThreadId thread_id, int32_t signals) {
 
 /// Clear the specified Signal Flags of an active thread
 int32_t osSignalClear (osThreadId thread_id, int32_t signals) {
-  if (__get_IPSR() != 0) return osErrorISR;     // Not allowed in ISR
+  if (__get_IPSR() != 0) return 0x80000000;     // Not allowed in ISR
   return __svcSignalClear(thread_id, signals);
 }
 
@@ -1649,8 +1731,8 @@ SVC_2_3(svcMessageGet, os_InRegs osEvent,            osMessageQId,      uint32_t
 // Message Queue Service Calls
 
 /// Create and Initialize Message Queue
-osMessageQId svcMessageCreate (const osMessageQDef_t *queue_def, osThreadId thread_id) {
-  (void)thread_id;
+osMessageQId svcMessageCreate (const osMessageQDef_t *queue_def, osThreadId thread_id __attribute__((unused))) {
+
   if ((queue_def == NULL) ||
       (queue_def->queue_sz == 0) ||
       (queue_def->pool == NULL)) {
@@ -1686,30 +1768,30 @@ osStatus svcMessagePut (osMessageQId queue_id, uint32_t info, uint32_t millisec)
 }
 
 /// Get a Message or Wait for a Message from a Queue
-os_InRegs osEvent_type svcMessageGet (osMessageQId queue_id, uint32_t millisec) {
+os_InRegs osEvent svcMessageGet (osMessageQId queue_id, uint32_t millisec) {
   OS_RESULT res;
   osEvent   ret;
 
   if (queue_id == NULL) {
     ret.status = osErrorParameter;
-    return osEvent_ret_status;
+    return ret;
   }
 
   if (((P_MCB)queue_id)->cb_type != MCB) {
     ret.status = osErrorParameter;
-    return osEvent_ret_status;
+    return ret;
   }
 
   res = rt_mbx_wait(queue_id, &ret.value.p, rt_ms2tick(millisec));
   
   if (res == OS_R_TMO) {
     ret.status = millisec ? osEventTimeout : osOK;
-    return osEvent_ret_value;
+    return ret;
   }
 
   ret.status = osEventMessage;
 
-  return osEvent_ret_value;
+  return ret;
 }
 
 
@@ -1803,12 +1885,10 @@ SVC_3_1(sysMailFree,   osStatus,        osMailQId,      void *,   uint32_t,     
 // Mail Queue Management Service & ISR Calls
 
 /// Create and Initialize mail queue
-osMailQId svcMailCreate (const osMailQDef_t *queue_def, osThreadId thread_id) {
+osMailQId svcMailCreate (const osMailQDef_t *queue_def, osThreadId thread_id __attribute__((unused))) {
   uint32_t blk_sz;
   P_MCB    pmcb;
   void    *pool;
-
-  (void)thread_id;
 
   if ((queue_def == NULL) ||
       (queue_def->queue_sz == 0) ||
@@ -1831,7 +1911,6 @@ osMailQId svcMailCreate (const osMailQDef_t *queue_def, osThreadId thread_id) {
   _init_box(pool, sizeof(struct OS_BM) + queue_def->queue_sz * blk_sz, blk_sz);
 
   rt_mbx_init(pmcb, 4*(queue_def->queue_sz + 4));
-
 
   return queue_def->pool;
 }
@@ -1892,7 +1971,7 @@ osStatus sysMailFree (osMailQId queue_id, void *mail, uint32_t isr) {
 
   if (res != 0) return osErrorValue;
 
-  if (pmcb->state == 3) {
+  if ((pmcb->p_lnk != NULL) && (pmcb->state == 3)) {
     // Task is waiting to allocate a message
     if (isr) {
       rt_psq_enq (pmcb, (U32)pool);
@@ -1901,9 +1980,6 @@ osStatus sysMailFree (osMailQId queue_id, void *mail, uint32_t isr) {
       mem = rt_alloc_box(pool);
       if (mem != NULL) {
         ptcb = rt_get_first((P_XCB)pmcb);
-        if (pmcb->p_lnk == NULL) {
-          pmcb->state = 0;
-        }
         rt_ret_val(ptcb, (U32)mem);
         rt_rmv_dly(ptcb);
         rt_dispatch(ptcb);
@@ -1975,4 +2051,24 @@ os_InRegs osEvent osMailGet (osMailQId queue_id, uint32_t millisec) {
   if (ret.status == osEventMessage) ret.status = osEventMail;
 
   return ret;
+}
+
+
+//  ==== RTX Extensions ====
+
+// Service Calls declarations
+SVC_0_1(rt_suspend, uint32_t, RET_uint32_t)
+SVC_1_0(rt_resume,  void,     uint32_t)
+
+
+// Public API
+
+/// Suspends the OS task scheduler
+uint32_t os_suspend (void) {
+  return __rt_suspend();
+}
+
+/// Resumes the OS task scheduler
+void os_resume (uint32_t sleep_time) {
+  __rt_resume(sleep_time);
 }

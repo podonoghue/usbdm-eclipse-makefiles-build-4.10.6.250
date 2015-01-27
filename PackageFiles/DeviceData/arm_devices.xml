@@ -11,6 +11,7 @@
 <!ENTITY Kinetis-FTMRH-flash-program       SYSTEM "ARM/Kinetis-FTMRH-flash-program-gcc.hex">
 <!ENTITY Kinetis-FTMRH-eeprom-program      SYSTEM "ARM/Kinetis-FTMRH-eeprom-program-gcc.hex">
 <!ENTITY Kinetis-FTMRE-flash-program       SYSTEM "ARM/Kinetis-FTMRE-flash-program-gcc.hex">
+<!ENTITY Kinetis-Default-flash-scripts     SYSTEM "ARM/Kinetis-Default-flash-scripts.tcl">
 <!ENTITY Kinetis-Kxx-flashScripts          SYSTEM "ARM/Kinetis-Kxx-flash-scripts.tcl">
 <!ENTITY Kinetis-KExx-flashScripts         SYSTEM "ARM/Kinetis-KExx-flash-scripts.tcl">
 <!ENTITY Kinetis-KLxx-flashScripts         SYSTEM "ARM/Kinetis-KLxx-flash-scripts.tcl">
@@ -24,6 +25,7 @@
 ]>
 <!-- 
 ToDo - review flash block sizes for MK20-MK70
+      V4.10.6.250 - Added default TCL script
       V4.10.6.240 - Added various devices, updated FRDM aliases
       V4.10.6.190 - Added MKL43 devices
       V4.10.6.190 - Added MKL03 devices
@@ -54,7 +56,7 @@ NOTES:
    subfamily="XXX" is used to determine header file
    
  -->
-<root version="4.10.6.170">
+<root version="4.10.6.250">
    <description>ARM device characteristics 21/6/2014</description>
    <sharedInformation>
       <!-- 
@@ -62,6 +64,7 @@ NOTES:
       -->
       <flashProgram id="STM32F100xx-default-FlashProgram">  &STM32F100xx-default-flashProgram;  </flashProgram>
       <tclScript    id="STM32F100xx-default-Scripts">       &STM32F100xx-default-flashScripts;  </tclScript>
+      <tclScript    id="Kinetis-Default-flash-scripts">     &Kinetis-Default-flash-scripts;     </tclScript>
       <tclScript    id="Kinetis-Kxx-Scripts">               &Kinetis-Kxx-flashScripts;          </tclScript>
       <tclScript    id="Kinetis-KExx-Scripts">              &Kinetis-KExx-flashScripts;         </tclScript>
       <tclScript    id="Kinetis-KLxx-Scripts">              &Kinetis-KLxx-flashScripts;         </tclScript>
@@ -278,60 +281,60 @@ NOTES:
       -->
       <!-- KE -->
       <memory id="kinetisE1K_Ram" type="ram">
-         <memoryRange start="0x1FFFFF00" size="1K" />
+         <memoryRange start="0x1FFFFF00" size="1K" name= "ram" />
       </memory>
       <memory id="kinetisE2K_Ram" type="ram">
-         <memoryRange start="0x1FFFFE00" size="2K" />
+         <memoryRange start="0x1FFFFE00" size="2K" name= "ram" />
       </memory>
       <memory id="kinetisE4K_Ram" type="ram">
-         <memoryRange start="0x1FFFFC00" size="4K" />
+         <memoryRange start="0x1FFFFC00" size="4K" name= "ram" />
       </memory>
       <memory id="kinetisE8K_Ram" type="ram">
-         <memoryRange start="0x1FFFF800" size="8K" />
+         <memoryRange start="0x1FFFF800" size="8K" name= "ram" />
       </memory>
       <memory id="kinetisE16K_Ram" type="ram">
-         <memoryRange start="0x1FFFF000" size="16K" />
+         <memoryRange start="0x1FFFF000" size="16K" name= "ram" />
       </memory>
       <!-- KL -->
       <memory id="kinetisL1K_Ram" type="ram">
-         <memoryRange start="0x1FFFFF00" size="1K" />
+         <memoryRange start="0x1FFFFF00" size="1K" name= "ram" />
       </memory>
       <memory id="kinetisL2K_Ram" type="ram">
-         <memoryRange start="0x1FFFFE00" size="2K" />
+         <memoryRange start="0x1FFFFE00" size="2K" name= "ram" />
       </memory>
       <memory id="kinetisL4K_Ram" type="ram">
-         <memoryRange start="0x1FFFFC00" size="4K" />
+         <memoryRange start="0x1FFFFC00" size="4K" name= "ram" />
       </memory>
       <memory id="kinetisL8K_Ram" type="ram">
-         <memoryRange start="0x1FFFF800" size="8K" />
+         <memoryRange start="0x1FFFF800" size="8K" name= "ram" />
       </memory>
       <memory id="kinetisL16K_Ram" type="ram">
-         <memoryRange start="0x1FFFF000" size="16K" />
+         <memoryRange start="0x1FFFF000" size="16K" name= "ram" />
       </memory>
       <memory id="kinetisL32K_Ram" type="ram">
-         <memoryRange start="0x1FFFE000" size="32K" />
+         <memoryRange start="0x1FFFE000" size="32K" name= "ram" />
       </memory>
       <!-- K -->
       <memory id="kinetis8K_Ram" type="ram">
-         <memoryRange middle="0x20000000" size="8K" />
+         <memoryRange middle="0x20000000" size="8K" name= "ram" />
       </memory>
       <memory id="kinetis16K_Ram" type="ram">
-         <memoryRange middle="0x20000000" size="16K" />
+         <memoryRange middle="0x20000000" size="16K" name= "ram" />
       </memory>
       <memory id="kinetis32K_Ram" type="ram">
-         <memoryRange middle="0x20000000" size="32K" />
+         <memoryRange middle="0x20000000" size="32K" name= "ram" />
       </memory>
       <memory id="kinetis48K_Ram" type="ram">
-         <memoryRange start="0x1FFFC000" size="48K" />
+         <memoryRange start="0x1FFFC000" size="48K" name= "ram" />
       </memory>
       <memory id="kinetis64K_Ram" type="ram">
-         <memoryRange middle="0x20000000" size="64K" />
+         <memoryRange middle="0x20000000" size="64K" name= "ram" />
       </memory>
       <memory id="kinetis128K_Ram" type="ram">
-         <memoryRange middle="0x20000000" size="128K" />
+         <memoryRange middle="0x20000000" size="128K" name= "ram" />
       </memory>
       <memory id="kinetis256K_Ram" type="ram">
-         <memoryRange middle="0x20000000" size="256K" />
+         <memoryRange middle="0x20000000" size="256K" name= "ram" />
       </memory>
       
       <!-- 
@@ -591,38 +594,47 @@ NOTES:
       <!-- 
             Kinetis I/O space 
       -->
+      <memory id="kinetisIO_MKE02" type="io">
+         <memoryRange start="0x40000000" end="0x4007FFFF" name="aips"         />  <!-- AIPS Peripherals -->
+         <memoryRange start="0x400FF000" end="0x400FFFFF" name="gpio"         />  <!-- General purpose input/output (GPIO) -->
+         <memoryRange start="0x44000000" end="0x5FFFFFFF" name="bme"          />  <!-- Bit Manipulation Engine (BME) -->
+         <memoryRange start="0xE0000000" end="0xE00FFFFF" name="peripheral"   />  <!-- Private Peripherals -->
+         <memoryRange start="0xF0002000" end="0xF0002FFF" name="romTable"     />  <!-- ROM table -->
+         <memoryRange start="0xF0003000" end="0xF0003FFF" name="mcm"          />  <!-- Miscellaneous Control Module (MCM) -->
+         <memoryRange start="0xF8000000" end="0xFFFFFFFF" name="fgpio"        />  <!-- IOPORT: GPIO (single cycle) -->
+      </memory>         
       <memory id="kinetisIO_MKE" type="io">
-         <memoryRange start="0x40000000" end="0x4007FFFF" />  <!-- AIPS Peripherals -->
-         <memoryRange start="0x400FF000" end="0x400FFFFF" />  <!-- General purpose input/output (GPIO) -->
-         <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
-         <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
-         <memoryRange start="0xF0002000" end="0xF0002FFF" />  <!-- ROM table -->
-         <memoryRange start="0xF0003000" end="0xF0003FFF" />  <!-- Miscellaneous Control Module (MCM) -->
-         <memoryRange start="0xF8000000" end="0xFFFFFFFF" />  <!-- IOPORT: GPIO (single cycle) -->
+         <memoryRange start="0x22000000" end="0x2205FFFF" name="bitband"      />  <!-- SRAM_U bitband region -->
+         <memoryRange start="0x40000000" end="0x4007FFFF" name="aips"         />  <!-- AIPS Peripherals -->
+         <memoryRange start="0x400FF000" end="0x400FFFFF" name="gpio"         />  <!-- General purpose input/output (GPIO) -->
+         <memoryRange start="0x44000000" end="0x5FFFFFFF" name="bme"          />  <!-- Bit Manipulation Engine (BME) -->
+         <memoryRange start="0xE0000000" end="0xE00FFFFF" name="peripheral"   />  <!-- Private Peripherals -->
+         <memoryRange start="0xF0002000" end="0xF0002FFF" name="romTable"     />  <!-- ROM table -->
+         <memoryRange start="0xF0003000" end="0xF0003FFF" name="mcm"          />  <!-- Miscellaneous Control Module (MCM) -->
+         <memoryRange start="0xF8000000" end="0xFFFFFFFF" name="fgpio"        />  <!-- IOPORT: GPIO (single cycle) -->
       </memory>         
       <memory id="kinetisIO_MKL" type="io">
-         <memoryRange start="0x40000000" end="0x4007FFFF" />  <!-- AIPS Peripherals -->
-         <memoryRange start="0x400FF000" end="0x400FFFFF" />  <!-- General purpose input/output (GPIO) -->
-         <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
-         <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
-         <memoryRange start="0xF0000000" end="0xF0000FFF" />  <!-- Micro Trace Buffer (MTB) registers -->
-         <memoryRange start="0xF0001000" end="0xF0001FFF" />  <!-- MTB Data Watchpoint and Trace (MTBDWT) registers -->
-         <memoryRange start="0xF0002000" end="0xF0002FFF" />  <!-- ROM table -->
-         <memoryRange start="0xF0003000" end="0xF0003FFF" />  <!-- Miscellaneous Control Module (MCM) -->
-         <memoryRange start="0xF8000000" end="0xFFFFFFFF" />  <!-- IOPORT: GPIO (single cycle) -->
+         <memoryRange start="0x40000000" end="0x4007FFFF" name="aips"         />  <!-- AIPS Peripherals -->
+         <memoryRange start="0x400FF000" end="0x400FFFFF" name="gpio"         />  <!-- General purpose input/output (GPIO) -->
+         <memoryRange start="0x44000000" end="0x5FFFFFFF" name="bme"          />  <!-- Bit Manipulation Engine (BME) -->
+         <memoryRange start="0xE0000000" end="0xE00FFFFF" name="peripheral"   />  <!-- Private Peripherals -->
+         <memoryRange start="0xF0000000" end="0xF0000FFF" name="mtb"          />  <!-- Micro Trace Buffer (MTB) registers -->
+         <memoryRange start="0xF0001000" end="0xF0001FFF" name="mtbdwt"       />  <!-- MTB Data Watchpoint and Trace (MTBDWT) registers -->
+         <memoryRange start="0xF0002000" end="0xF0002FFF" name="romTable"     />  <!-- ROM table -->
+         <memoryRange start="0xF0003000" end="0xF0003FFF" name="mcm"          />  <!-- Miscellaneous Control Module (MCM) -->
+         <memoryRange start="0xF8000000" end="0xFFFFFFFF" name="fgpio"        />  <!-- IOPORT: GPIO (single cycle) -->
       </memory>         
       <memory id="kinetisIO_MK" type="io">
-         <memoryRange start="0x22000000" end="0x23FFFFFF" />  <!-- Aliased to SRAM_U bit-band -->
-         <memoryRange start="0x40000000" end="0x4007FFFF" />  <!-- Bit-band AIPS-Lite0 -->
-         <memoryRange start="0x40080000" end="0x400FEFFF" />  <!-- Bit-band AIPS-Lite1 -->
-         <memoryRange start="0x400FF000" end="0x400FFFFF" />  <!-- Bit-band GPIO -->
-         <memoryRange start="0x42000000" end="0x43FFFFFF" />  <!-- General purpose input/output (GPIO) -->
-         <memoryRange start="0x44000000" end="0x5FFFFFFF" />  <!-- Bit Manipulation Engine (BME) -->
-         <memoryRange start="0xE0000000" end="0xE00FFFFF" />  <!-- Private Peripherals -->
+         <memoryRange start="0x22000000" end="0x23FFFFFF" name="bitband"      />  <!-- Aliased to SRAM_U bit-band -->
+         <memoryRange start="0x40000000" end="0x4007FFFF" name="aips0"        />  <!-- Bit-band AIPS-Lite0 -->
+         <memoryRange start="0x40080000" end="0x400FEFFF" name="aips1"        />  <!-- Bit-band AIPS-Lite1 -->
+         <memoryRange start="0x400FF000" end="0x400FFFFF" name="gpio"         />  <!-- General purpose input/output (GPIO) -->
+         <memoryRange start="0x42000000" end="0x43FFFFFF" name="gpioBitband"  />  <!-- Bit-band GPIO -->  
+         <memoryRange start="0xE0000000" end="0xE00FFFFF" name="peripherals"  />  <!-- Private Peripherals -->
       </memory>         
       <memory id="STM32_IO" type="io">
-         <memoryRange start="0x40000000" end="0x43FFFFFF" />  <!-- Bit-band Peripheral -->
-         <memoryRange start="0xE0000000" end="0xE03FFFFF" />  <!-- Private Peripherals -->
+         <memoryRange start="0x40000000" end="0x43FFFFFF" name="bitband" />  <!-- Bit-band Peripheral -->
+         <memoryRange start="0xE0000000" end="0xE03FFFFF" name="private" />  <!-- Private Peripherals -->
       </memory>
            
       <!--  
@@ -647,7 +659,8 @@ NOTES:
    </sharedInformation>
    
    <deviceList>
-   <!-- Default -->
+<!-- ===================================================================================== -->
+<!-- Default -->
       <device name="_Default" family="CortexM4" isDefault="true">
          <!-- Regular flash or pFlash memory -->
          <memory type="flash" registerAddress="0x40020000" securityAddress="0x0400" sectorSize="1024" alignment="4">
@@ -749,7 +762,7 @@ NOTES:
          -->
          <sdidMask value="0xFFFF0FF0" />
          <sdid value="0x00000000" mask="0x00000000" />
-         <tclScriptRef ref="Kinetis-Kxx-Scripts" />
+         <tclScriptRef ref="Kinetis-Default-flash-scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <registerDescriptionRef ref="CortexM4-register-description" />
          <note>Default ARM Device</note>
@@ -761,7 +774,7 @@ NOTES:
          <memoryRef ref="kinetisE2K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
-         <memoryRef ref="kinetisIO_MKE" />
+         <memoryRef ref="kinetisIO_MKE02" />
          <sdidAddress value="0x40048000" />
          <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
@@ -771,7 +784,7 @@ NOTES:
          <memoryRef ref="kinetisE4K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
-         <memoryRef ref="kinetisIO_MKE" />
+         <memoryRef ref="kinetisIO_MKE02" />
          <sdidAddress value="0x40048000" />
          <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
@@ -781,7 +794,7 @@ NOTES:
          <memoryRef ref="kinetisE4K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
-         <memoryRef ref="kinetisIO_MKE" />
+         <memoryRef ref="kinetisIO_MKE02" />
          <sdidAddress value="0x40048000" />
          <sdid value="0x02040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
@@ -791,7 +804,7 @@ NOTES:
          <memoryRef ref="kinetisE2K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_16K_512bS" />
-         <memoryRef ref="kinetisIO_MKE" />
+         <memoryRef ref="kinetisIO_MKE02" />
          <sdidAddress value="0x40048000" />
          <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
@@ -801,7 +814,7 @@ NOTES:
          <memoryRef ref="kinetisE4K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_32K_512bS" />
-         <memoryRef ref="kinetisIO_MKE" />
+         <memoryRef ref="kinetisIO_MKE02" />
          <sdidAddress value="0x40048000" />
          <sdid value="0x02070000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
@@ -811,7 +824,7 @@ NOTES:
          <memoryRef ref="kinetisE4K_Ram" />
          <memoryRef ref="FTMRH_EEPROM_256b_2bS" />
          <memoryRef ref="FTMRH_PFlash0_SEC_64K_512bS" />
-         <memoryRef ref="kinetisIO_MKE" />
+         <memoryRef ref="kinetisIO_MKE02" />
          <sdidAddress value="0x40048000" />
          <sdid value="0x02040000" mask="0xFF000000"/>
          <tclScriptRef ref="Kinetis-KExx-Scripts" />
@@ -1227,7 +1240,7 @@ NOTES:
 
 <!-- ===================================================================================== -->
 <!-- MKM14Z5 -->
-      <device name="MKM14Z64M5" family="CortexM0" subfamily="MKM14Z5">
+      <device name="MKM14Z64M5" family="CortexM0" subfamily="MKM33Z5">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
@@ -1238,7 +1251,7 @@ NOTES:
          <registerDescriptionRef ref="CortexM0-register-description" />
          <note>No LCD</note>
       </device>
-      <device name="MKM14Z128M5" family="CortexM0" subfamily="MKM14Z5">
+      <device name="MKM14Z128M5" family="CortexM0" subfamily="MKM33Z5">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
@@ -1273,7 +1286,7 @@ NOTES:
          <note>8x17 LCD</note>
       </device>
 <!-- MKM34Z5 -->
-      <device name="MKM34Z128M5" family="CortexM0" subfamily="MKM34Z5">
+      <device name="MKM34Z128M5" family="CortexM0" subfamily="MKM33Z5">
          <memoryRef ref="kinetisL16K_Ram" />
          <memoryRef ref="FTFA_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MKL" />
@@ -1291,7 +1304,7 @@ NOTES:
          <memoryRef ref="kinetis8K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" mask="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1300,7 +1313,7 @@ NOTES:
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" mask="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1309,7 +1322,7 @@ NOTES:
          <memoryRef ref="kinetis16K_Ram" />
          <memoryRef ref="FTFL_PFlash0_SEC_128K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" mask="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1319,7 +1332,7 @@ NOTES:
          <memoryRef ref="FTFL_PFlash0_SEC_32K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" mask="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -1329,7 +1342,7 @@ NOTES:
          <memoryRef ref="FTFL_PFlash0_SEC_64K_1KS" />
          <memoryRef ref="FTFL_DFlash0_32K_1KS" />
          <memoryRef ref="kinetisIO_MK" />
-         <sdid value="0x00000000" mask="0x00000000" />
+         <sdid value="0x00000000" mask="0x00000FF0" />
          <tclScriptRef ref="Kinetis-Kxx-Scripts" />
          <flashProgramRef ref="Kinetis-FTFL-flash-program" />
          <registerDescriptionRef ref="CortexM4-register-description" />
@@ -2363,10 +2376,14 @@ NOTES:
       <device name="TWR-K40X256"     alias="MK40DX256ZM10" />
       <device name="TWR-K60N512"     alias="MK60DN512ZM10" />
 
-      <device name="S9KEAZN16"       alias="MKE02Z16M4" />
-      <device name="S9KEAZN32"       alias="MKE02Z32M4" />
-      <device name="S9KEAZN64"       alias="MKE02Z64M4" />
-      <device name="S9KEAZN8"        alias="MKE04Z8M4" />
+      <device name="SKEAZN8M4"          alias="MKE04Z8M4" />
+      
+      <device name="SKEAZN16M4"         alias="MKE02Z16M4" />
+      <device name="SKEAZN32M4"         alias="MKE02Z32M4" />
+      <device name="SKEAZN64M4"         alias="MKE04Z64M4" />
+      
+      <device name="SKEAZ64M4"          alias="MKE06Z64M4" />
+      <device name="SKEAZ128M4"         alias="MKE06Z128M4" />
 
 <!-- Codewarrior IDE aliases -->
       <device name="K10DN32"           alias="MK10DN32M5"        hidden="true"/>

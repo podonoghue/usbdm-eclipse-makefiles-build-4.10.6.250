@@ -29,11 +29,11 @@
 __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
-   SIM_SCGC1 |= SIM_SCGC1_UART0_MASK;
+   SIM->SCGC1 |= SIM_SCGC1_UART0_MASK;
 
    // Set Tx (A7) & Rx (D6) Pin function
-   MXC_PTDPF1 = (MXC_PTDPF1 & ~MXC_PTDPF1_D6_MASK) | MXC_PTDPF1_D6(2); // UART0_Rx
-   MXC_PTAPF1 = (MXC_PTAPF1 & ~MXC_PTAPF1_A7_MASK) | MXC_PTAPF1_A7(2); // UART0_Tx
+   MXC->PTDPF1 = (MXC->PTDPF1 & ~MXC_PTDPF1_D6_MASK) | MXC_PTDPF1_D6(2); // UART0_Rx
+   MXC->PTAPF1 = (MXC->PTAPF1 & ~MXC_PTAPF1_A7_MASK) | MXC_PTAPF1_A7(2); // UART0_Tx
 
    // Set Tx & Rx pins in use
 //   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);
@@ -54,11 +54,11 @@ inline static void initDefaultUart()  {
 __attribute__((always_inline))
 inline static void initDefaultUart()  {
    // Enable clock to UART
-   SIM_SCGC1 |= SIM_SCGC1_UART0_MASK;
+   SIM->SCGC1 |= SIM_SCGC1_UART0_MASK;
 
    // Set Tx (C6) & Rx (C7) Pin function
-   MXC_PTDPF1 = (MXC_PTCPF1 & ~MXC_PTCPF1_C6_MASK) | MXC_PTCPF1_C6(2); // UART0_Rx
-   MXC_PTAPF1 = (MXC_PTCPF1 & ~MXC_PTCPF1_C7_MASK) | MXC_PTCPF1_C7(2); // UART0_Tx
+   MXC->PTDPF1 = (MXC_PTCPF1 & ~MXC_PTCPF1_C6_MASK) | MXC_PTCPF1_C6(2); // UART0_Rx
+   MXC->PTAPF1 = (MXC_PTCPF1 & ~MXC_PTCPF1_C7_MASK) | MXC_PTCPF1_C7(2); // UART0_Tx
 
    // Set Tx & Rx pins in use
 //   SIM_SOPT5 &= ~(SIM_SOPT5_UART0RXSRC_MASK|SIM_SOPT5_UART0TXSRC_MASK);

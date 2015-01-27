@@ -22,8 +22,14 @@ void SystemCoreClockUpdate(void) {
 /* Actual Vector table */
 extern int const __vector_table[];
 
-#ifndef SCB_VTOR
-#define SCB_VTOR (*(uint32_t *)0xE000ED08)
+#ifndef SCB
+   #define SCB_VTOR                 (*(uint32_t *)0xE000ED08)
+   #define SCB_CCR                  (*(uint32_t *)0xE000ED14)
+   #define SCB_CCR_DIV_0_TRP_MASK   (1<<4)
+   #define SCB_CCR_UNALIGN_TRP_MASK (1<<3)
+#else
+   #define SCB_VTOR  (SCB->VTOR)
+   #define SCB_CCR   (SCB->CCR)
 #endif
 
 /* This definition is overridden if Clock initialisation is provided */
@@ -42,7 +48,7 @@ void rtc_initialise(void) {
 }
 
 // Dummy hook routine for when CMSIS is not used.
-__attribute__((weak)) 
+__attribute__((weak))
 void software_init_hook (void) {
 }
 
@@ -51,6 +57,10 @@ void software_init_hook (void) {
 #define WDOG_UNLOCK_SEQ_2   (0xD928)
 
 #define WDOG_DISABLED_CTRL  (0xD2)
+
+#ifdef __NO_STARTFILES__
+#warning Due to limited RAM the C library standard initialisation is not called - BSS and DATA are still initialised
+#endif
 
 /*!
  *  @brief Low-level initialize the system

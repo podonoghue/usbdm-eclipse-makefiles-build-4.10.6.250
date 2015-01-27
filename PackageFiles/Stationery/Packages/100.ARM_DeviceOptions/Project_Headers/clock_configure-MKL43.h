@@ -28,8 +28,8 @@ extern "C" {
 
 //===================================
 // Validators
-// Common clock settings
-// <validate=net.sourceforge.usbdm.annotationEditor.validators.ClockValidate_KLxx_LP>
+// Common clock settings                                                             Core       Bus
+// <validate=net.sourceforge.usbdm.annotationEditor.validators.ClockValidate_KLxx_LP(48000000, 24000000)>
 
 // Convention
 // name_V = field value
@@ -560,15 +560,16 @@ extern "C" {
 //     <1=> 48MHz internal reference clock (IRC48M clock)
 //     <2=> Oscillator External Reference Clock (OSCERCLK)
 //     <3=> MCG Internal Reference Clock (MCGIRCLK)
-#define SIM_SOPT2_TPMSRC_M SIM_SOPT2_TPMSRC(1)
+#define SIM_SOPT2_TPMSRC_V (1)
+#define SIM_SOPT2_TPMSRC_M SIM_SOPT2_TPMSRC(SIM_SOPT2_TPMSRC_V)
 
-#if (SIM_SOPT2_TPMSRC_M == SIM_SOPT2_TPMSRC(0))
+#if (SIM_SOPT2_TPMSRC_V == (0))
 #define SYSTEM_TPM_CLOCK (0)
-#elif (SIM_SOPT2_TPMSRC_M == SIM_SOPT2_TPMSRC(1))
+#elif (SIM_SOPT2_TPMSRC_V == (1))
 #define SYSTEM_TPM_CLOCK IRC48M_CLOCK
-#elif (SIM_SOPT2_TPMSRC_M == SIM_SOPT2_TPMSRC(2))
+#elif (SIM_SOPT2_TPMSRC_V == (2))
 #define SYSTEM_TPM_CLOCK SYSTEM_OSCER_CLOCK
-#elif (SIM_SOPT2_TPMSRC_M == SIM_SOPT2_TPMSRC(3))
+#elif (SIM_SOPT2_TPMSRC_V == (3))
 #define SYSTEM_TPM_CLOCK SYSTEM_MCGIRCLK_CLOCK
 #endif
 
@@ -586,7 +587,7 @@ extern "C" {
 
 // SIM_SOPT2_RTCCLKOUTSEL ================================
 //
-//   <o> RTC clock out select
+//   <o> RTC clock out select (RTCCLKOUTSEL)
 //   <i> Selects the clock to be output on the RTC_CLKOUT pin [SIM_SOPT2_RTCCLKOUTSEL]
 //     <0=> RTC 1 Hz clock
 //     <1=> OSCERCLK clock

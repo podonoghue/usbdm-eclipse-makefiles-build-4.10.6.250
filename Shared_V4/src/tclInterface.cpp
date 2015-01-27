@@ -49,7 +49,7 @@ USBDM_ErrorCode TclInterface::runTCLScript(TclScriptConstPtr script) {
    }
    if (evalTclScript(tclInterpreter, script->getScript().c_str()) != 0) {
       Logging::print("TclInterface::runTCLScript(): Failed\n");
-      Logging::print(script->toString().c_str());
+      Logging::print("%s", script->toString().c_str());
       return PROGRAMMING_RC_ERROR_TCL_SCRIPT;
    }
 //   Logging::print("TclInterface::runTCLScript(): Script = %s\n",

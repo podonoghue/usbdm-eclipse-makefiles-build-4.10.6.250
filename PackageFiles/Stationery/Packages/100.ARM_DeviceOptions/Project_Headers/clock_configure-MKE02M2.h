@@ -1,8 +1,8 @@
 /*
  * clock_private-MKE02M2.h
- * 
+ *
  *  Used for MKE02M2
- * 
+ *
  *  Created on: Nov 6, 2012
  *      Author: podonoghue
  */
@@ -22,10 +22,11 @@ extern "C" {
 
 //===================================
 // Validators
-// Common clock settings
-// <validate=net.sourceforge.usbdm.annotationEditor.validators.ClockValidate_MKE02M2>
-// FLL clock
-// <validate=net.sourceforge.usbdm.annotationEditor.validators.ICSClockValidate_MKE02M2>
+// Common clock settings                                                           Core       Bus
+// <validate=net.sourceforge.usbdm.annotationEditor.validators.ClockValidate_MKE02(20000000, 20000000)>
+//
+// FLL clock                                                                    fllFactor
+// <validate=net.sourceforge.usbdm.annotationEditor.validators.ICSClockValidate(1024     )>
 
 // Convention
 // name_V = field value
@@ -58,8 +59,8 @@ extern "C" {
 //   <o> Clock Mode <name=clock_mode>
 //   <i> Basic choice for final clock mode
 //<i> FLL Engaged Internal(FEI)
-//<i> In FEI mode, ICSOUT is derived from the FLL clock (DCOCLK) that is controlled by the 32 kHz Internal Reference Clock (IRC). 
-//<i> The FLL loop will lock the DCO frequency to the FLL factor, as selected by the C4[DRST_DRS] and C4[DMX32] bits, times the 
+//<i> In FEI mode, ICSOUT is derived from the FLL clock (DCOCLK) that is controlled by the 32 kHz Internal Reference Clock (IRC).
+//<i> The FLL loop will lock the DCO frequency to the FLL factor, as selected by the C4[DRST_DRS] and C4[DMX32] bits, times the
 //<i> internal reference frequency.
 //<i>
 //<i> FLL Engaged External(FEE)
@@ -68,7 +69,7 @@ extern "C" {
 //<i> frequency, as specified by the C1[FRDIV] and C2[RANGE].
 //<i>
 //<i> FLL Bypassed Internal(FBI)
-//<i> In FBI mode, the ICSOUT clock is derived either from the slow (32 kHz IRC) or fast (2 MHz IRC) internal reference clock, 
+//<i> In FBI mode, the ICSOUT clock is derived either from the slow (32 kHz IRC) or fast (2 MHz IRC) internal reference clock,
 //<i> as selected by the C2[IRCS] bit. The FLL is operational but its output is not used. This mode is useful to allow the FLL
 //<i> to acquire its target frequency while the ICSOUT clock is driven from the C2[IRCS] selected internal reference clock. The
 //<i> FLL clock (DCOCLK) is controlled by the slow internal reference clock, and the DCO clock frequency locks to a multiplication
@@ -76,16 +77,16 @@ extern "C" {
 //<i>
 //<i> FLL Bypassed External(FBE)
 //<i> In FBE mode, the ICSOUT clock is derived from the external reference clock. The FLL is operational but its output is not
-//<i> used. This mode is useful to allow the FLL to acquire its target frequency while the ICSOUT clock is driven from the 
+//<i> used. This mode is useful to allow the FLL to acquire its target frequency while the ICSOUT clock is driven from the
 //<i> external reference clock. The FLL clock (DCOCLK) is controlled by the external reference clock, and the DCO clock frequency
 //<i> locks to a multiplication factor, as selected by the C4[DRST_DRS] and C4[DMX32] bits, times the divided external reference
-//<i> frequency. 
+//<i> frequency.
 //<i>
 //<i> FLL Bypassed Low Power Internal (BLPI/FBILP)
-//<i> In BLPI mode, ICSOUT is derived from the internal reference clock. The FLL is disabled and PLL is disabled even if the 
-//<i> C5[PLLCLKEN] is set to 1. 
+//<i> In BLPI mode, ICSOUT is derived from the internal reference clock. The FLL is disabled and PLL is disabled even if the
+//<i> C5[PLLCLKEN] is set to 1.
 //<i>
-//<i> FLL Bypassed Low Power External (BLPE/FBELP) 
+//<i> FLL Bypassed Low Power External (BLPE/FBELP)
 //<i> In BLPE mode, ICSOUT is derived from the external reference clock. The FLL is disabled and PLL is disabled even if the
 //<i> C5[PLLCLKEN] is set to 1.
 //     <0=> No setup (Reset default)
@@ -105,7 +106,7 @@ extern "C" {
 #define CLOCK_MODE_FBILP    4
 #define CLOCK_MODE_FBE      5
 #define CLOCK_MODE_FBELP    6
- 
+
 // FLL_TARGET_CLOCK =======================================
 //
 //  <o> FLL Output clock frequency (Hz) <name=fllTargetFrequency>
@@ -132,7 +133,7 @@ extern "C" {
 //  <o> System Core Clock (Hz) <name=system_core_clock> <constant>
 //  <i> Clocks the ARM Cortex-M4 core
 //  <i> From ICSOUT Clock
-//  <i> Must be less than or equal to 20 MHz. 
+//  <i> Must be less than or equal to 20 MHz.
 #define SYSTEM_CORE_CLOCK 16000000UL
 
 // SYSTEM_BUS_CLOCK =======================================
@@ -140,7 +141,7 @@ extern "C" {
 //  <o> System Bus and Flash Clock (Hz) <name=system_bus_clock> <constant>
 //  <i> Clocks the bus slaves & peripheral and flash
 //  <i> Derived from Core Clock after division by BUSDIV
-//  <i> Must be less than or equal to 20 MHz. 
+//  <i> Must be less than or equal to 20 MHz.
 #define SYSTEM_BUS_CLOCK 16000000UL
 
 // <h> System Clock dividers

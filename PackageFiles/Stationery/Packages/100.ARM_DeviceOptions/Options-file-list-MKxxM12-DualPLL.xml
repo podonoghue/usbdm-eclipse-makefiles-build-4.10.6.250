@@ -9,16 +9,24 @@
             <deviceSubfamilyIs>-----</deviceSubfamilyIs>
          </or>
       </applyWhen>
-      <variable id="Clock-setup-MKxxM12-DualPLL" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
-      <variable id="UART-setup-MKxxM12-DualPLL" name="UART setup code" description="Adds C stdio (UART) support for newlib" />
-      <condition variable="Clock-setup-MKxxM12-DualPLL">
+      <variable id="projectOptionValue.Clock-setup" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="projectOptionValue.UART-setup" name="UART setup code" description="Adds C stdio (UART) support for newlib" >
+         <requirement idRef="projectOptionValue.Clock-setup"/>
+      </variable>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Clock-setup" />
+         </applyWhen>
          <copy source="Startup_Code/clock-MKxxM12-DualPLL.c" target="Startup_Code/clock.c" />
          <copy source="Project_Headers/clock_configure-MKxxM12-DualPLL.h" target="Project_Headers/clock_configure.h" />
-      </condition>
-      <condition variable="UART-setup-MKxxM12-DualPLL">
+      </block>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.UART-setup" />
+         </applyWhen>
          <copy source="Startup_Code/uart-mk.c" target="Startup_Code/uart.c" />
          <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
-      </condition>
+      </block>
    </projectActionList>
 
 </root>

@@ -40,8 +40,11 @@ protected:
 };
 
 class ConvertTraverser : public MyTraverser {
+private:
+    const wxString mergePath;
+
 public:
-   ConvertTraverser(const char *mergePath) : mergePath(strdup(mergePath)) {
+   ConvertTraverser(const char *mergePath) : mergePath(strdup(mergePath), wxConvUTF8) {
    }
 
    virtual ~ConvertTraverser() {
@@ -70,8 +73,6 @@ public:
     {
         return wxDIR_CONTINUE;
     }
-private:
-    const wxString mergePath;
 };
 
 class RestoreTraverser : public MyTraverser

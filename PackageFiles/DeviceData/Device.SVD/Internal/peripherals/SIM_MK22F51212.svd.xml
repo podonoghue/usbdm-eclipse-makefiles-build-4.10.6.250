@@ -354,7 +354,7 @@ Reset), overriding the existing pin mux configuration for that pin. This field i
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b010</name>
-                           <description>Flash ungated clock</description>
+                           <description>Flash clock</description>
                            <value>0b010</value>
                         </enumeratedValue>
                         <enumeratedValue>
@@ -379,7 +379,7 @@ Reset), overriding the existing pin mux configuration for that pin. This field i
                         </enumeratedValue>
                         <enumeratedValue>
                            <name>0b111</name>
-                           <description>Reserved</description>
+                           <description>IRC 48 MHz</description>
                            <value>0b111</value>
                         </enumeratedValue>
                      </enumeratedValues>
@@ -391,12 +391,7 @@ Reset), overriding the existing pin mux configuration for that pin. This field i
                      <bitWidth>2</bitWidth>
                      <enumeratedValues>
                         <enumeratedValue>
-                           <name>0b00</name>
-                           <description>All off-chip accesses (op code and data) via the FlexBus are disallowed</description>
-                           <value>0b00</value>
-                        </enumeratedValue>
-                        <enumeratedValue>
-                           <name>0b01</name>
+                           <name>0b0X</name>
                            <description>All off-chip accesses (op code and data) via the FlexBus are disallowed</description>
                            <value>0b00</value>
                         </enumeratedValue>

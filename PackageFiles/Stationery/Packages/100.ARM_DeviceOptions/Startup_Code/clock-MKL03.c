@@ -13,9 +13,9 @@
 #include "utilities.h"
 #include "stdbool.h"
 
-// Some MCUs call OSC_CR0 just OSC_CR
-#ifndef OSC0_CR
-#define OSC0_CR OSC_CR
+// Some MCUs call OSC_CR0 just OSC->CR
+#ifndef OSC0->CR
+#define OSC0->CR OSC->CR
 #endif
 
 uint32_t SystemCoreClock = SYSTEM_CORE_CLOCK;   // Hz
@@ -27,36 +27,36 @@ uint32_t SystemBusClock  = SYSTEM_BUS_CLOCK; // Hz
 void clock_initialise(void) {
 
    // Enable HIRC if used
-   MCG_MC |= MCG_MC_HIRCEN_M;
+   MCG->MC |= MCG_MC_HIRCEN_M;
 
 #if (CLOCK_MODE == CLOCK_MODE_NONE)
    // No clock setup
 #else
    // XTAL/EXTAL Pins
-   SIM_SCGC5  |= SIM_SCGC5_PORTA_MASK;
-   PORTA_PCR18 = PORT_PCR_MUX(0);
-   PORTA_PCR19 = PORT_PCR_MUX(0);
+   SIM->SCGC5  |= SIM_SCGC5_PORTA_MASK;
+   PORTA->PCR[18] = PORT_PCR_MUX(0);
+   PORTA->PCR[19] = PORT_PCR_MUX(0);
 
    // Configure the Crystal Oscillator
-   OSC0_CR = OSC_CR_ERCLKEN_M|OSC_CR_EREFSTEN_M|OSC_CR_SCP_M;
+   OSC0->CR = OSC_CR_ERCLKEN_M|OSC_CR_EREFSTEN_M|OSC_CR_SCP_M;
 
 #if defined(RTC_CR_OSCE_M) && defined(RTC_CR_OSCE_V)
-   SIM_SCGC6 |= SIM_SCGC6_RTC_MASK;
-   RTC_CR = RTC_CR_SCP_M|RTC_CR_CLKO_M|RTC_CR_OSCE_M|RTC_CR_SCP_M|RTC_CR_WPS_M|RTC_CR_UM_M|RTC_CR_SUP_M|RTC_CR_WPE_M;
+   SIM->SCGC6 |= SIM_SCGC6_RTC_MASK;
+   RTC->CR = RTC_CR_SCP_M|RTC_CR_CLKO_M|RTC_CR_OSCE_M|RTC_CR_SCP_M|RTC_CR_WPS_M|RTC_CR_UM_M|RTC_CR_SUP_M|RTC_CR_WPE_M;
 #endif
 
 #if defined(MCG_MC_HIRCEN_M)
-   MCG_MC = MCG_MC_HIRCEN_M|MCG_MC_LIRC_DIV2_M;
+   MCG->MC = MCG_MC_HIRCEN_M|MCG_MC_LIRC_DIV2_M;
 #endif
 
    // Fast Internal Clock divider
-   MCG_SC = MCG_SC_FCRDIV_M;
+   MCG->SC = MCG_SC_FCRDIV_M;
 
    // Out of reset MCG is in LIRC mode
    // =============================================================
 
    // Set conservative SIM clock dividers BEFORE switching to ensure the clock speed remain within specification
-   SIM_CLKDIV1 = SIM_CLKDIV1_OUTDIV1(3) | SIM_CLKDIV1_OUTDIV2(7) | SIM_CLKDIV1_OUTDIV3(3) | SIM_CLKDIV1_OUTDIV4(7);
+   SIM->CLKDIV1 = SIM_CLKDIV1_OUTDIV1(3) | SIM_CLKDIV1_OUTDIV2(7) | SIM_CLKDIV1_OUTDIV3(3) | SIM_CLKDIV1_OUTDIV4(7);
 
    // Switch from LIRC -> LIRC/HIRC/EXT
    // =============================================================
@@ -64,17 +64,17 @@ void clock_initialise(void) {
    // Transition via HIRC
    //=====================================
 #define HIRC_BYPASS (0) // HIRC mode used while LIRC mode changed
-   MCG_C1 =  MCG_C1_CLKS(HIRC_BYPASS) | // CLKS     = X     -> HIRC source while PLL locks
-             MCG_C1_IRCLKEN_M         | // IRCLKEN  = 0,1   -> IRCLK disable/enable
-             MCG_C1_IREFSTEN_M;         // IREFSTEN = 0,1   -> Internal reference enabled in STOP mode
+   MCG->C1 =  MCG_C1_CLKS(HIRC_BYPASS) | // CLKS     = X     -> HIRC source while PLL locks
+              MCG_C1_IRCLKEN_M         | // IRCLKEN  = 0,1   -> IRCLK disable/enable
+              MCG_C1_IREFSTEN_M;         // IREFSTEN = 0,1   -> Internal reference enabled in STOP mode
 
    // Wait for S_CLKST to indicating that OUTCLK has switched to bypass HIRC
    do {
       __asm__("nop");
-   } while ((MCG_S & MCG_S_CLKST_MASK) != MCG_S_CLKST(HIRC_BYPASS));
+   } while ((MCG->S & MCG_S_CLKST_MASK) != MCG_S_CLKST(HIRC_BYPASS));
 
    // Set up crystal or external clock source & select final IRC mode
-   MCG_C2 =
+   MCG->C2 =
 #ifdef MCG_C2_RANGE0_M
             MCG_C2_RANGE0_M     | // RANGE0 = 0,1,2 -> Oscillator low/high/very high clock range
             MCG_C2_HGO0_M       | // HGO0   = 0,1   -> Oscillator low power/high gain
@@ -86,22 +86,22 @@ void clock_initialise(void) {
    // Wait for oscillator stable (if used)
    do {
       __asm__("nop");
-   } while ((MCG_S & MCG_S_OSCINIT0_MASK) == 0);
+   } while ((MCG->S & MCG_S_OSCINIT0_MASK) == 0);
 #endif
 
    // Transition to final LIRC/HIRC/EXT/LIRC clock mode
    //=====================================
-   MCG_C1 =  MCG_C1_CLKS_M        | // CLKS     = 0,1,2 -> Select FLL/IRCSCLK/ERCLK
-             MCG_C1_IRCLKEN_M     | // IRCLKEN  = 0,1   -> IRCLK disable/enable
-             MCG_C1_IREFSTEN_M;     // IREFSTEN = 0,1   -> Internal reference enabled in STOP mode
+   MCG->C1 =  MCG_C1_CLKS_M        | // CLKS     = 0,1,2 -> Select FLL/IRCSCLK/ERCLK
+              MCG_C1_IRCLKEN_M     | // IRCLKEN  = 0,1   -> IRCLK disable/enable
+              MCG_C1_IREFSTEN_M;     // IREFSTEN = 0,1   -> Internal reference enabled in STOP mode
 
    // Wait for S_CLKST to indicating that OUTCLK has switched to final mode
    do {
       __asm__("nop");
-   } while ((MCG_S & MCG_S_CLKST_MASK) != MCG_S_CLKST(MCG_C1_CLKS_V));
+   } while ((MCG->S & MCG_S_CLKST_MASK) != MCG_S_CLKST(MCG_C1_CLKS_V));
 
    // Set the SIM _CLKDIV dividers
-   SIM_CLKDIV1 = SIM_CLKDIV1_OUTDIV1_M | SIM_CLKDIV1_OUTDIV2_M | SIM_CLKDIV1_OUTDIV3_M | SIM_CLKDIV1_OUTDIV4_M;
+   SIM->CLKDIV1 = SIM_CLKDIV1_OUTDIV1_M | SIM_CLKDIV1_OUTDIV2_M | SIM_CLKDIV1_OUTDIV3_M | SIM_CLKDIV1_OUTDIV4_M;
 
 #endif // (CLOCK_MODE == CLOCK_MODE_NONE)
 
@@ -109,63 +109,63 @@ void clock_initialise(void) {
     * SOPT1 Clock multiplexing
     */
 #if defined(SIM_SOPT1_OSC32KSEL_MASK) && defined(SIM_SOPT1_OSC32KSEL_M) // ERCLK32K source
-   SIM_SOPT1 = (SIM_SOPT1&~SIM_SOPT1_OSC32KSEL_MASK)|SIM_SOPT1_OSC32KSEL_M;
+   SIM->SOPT1 = (SIM->SOPT1&~SIM_SOPT1_OSC32KSEL_MASK)|SIM_SOPT1_OSC32KSEL_M;
 #endif
 
    /*!
     * SOPT2 Clock multiplexing
     */
 #if defined(SIM_SOPT2_SDHCSRC_MASK) && defined(SIM_SOPT2_SDHCSRC_M) // SDHC clock
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_SDHCSRC_MASK)|SIM_SOPT2_SDHCSRC_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_SDHCSRC_MASK)|SIM_SOPT2_SDHCSRC_M;
 #endif
 
 #if defined(SIM_SOPT2_TIMESRC_MASK) && defined(SIM_SOPT2_TIMESRC_M) // Ethernet time-stamp clock
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_TIMESRC_MASK)|SIM_SOPT2_TIMESRC_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_TIMESRC_MASK)|SIM_SOPT2_TIMESRC_M;
 #endif
 
 #if defined(SIM_SOPT2_RMIISRC_MASK) && defined(SIM_SOPT2_RMIISRC_M) // RMII clock
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_RMIISRC_MASK)|SIM_SOPT2_RMIISRC_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_RMIISRC_MASK)|SIM_SOPT2_RMIISRC_M;
 #endif
 
 #ifdef SIM_SCGC4_USBOTG_MASK
    // !! WARNING !! The USB interface must be disabled for clock changes to have effect !! WARNING !!
-   SIM_SCGC4 &= ~SIM_SCGC4_USBOTG_MASK;
+   SIM->SCGC4 &= ~SIM_SCGC4_USBOTG_MASK;
 #endif
 
 #if defined(SIM_SOPT2_USBSRC_MASK) && defined(SIM_SOPT2_USBSRC_M) // USB clock (48MHz req.)
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_USBSRC_MASK)|SIM_SOPT2_USBSRC_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_USBSRC_MASK)|SIM_SOPT2_USBSRC_M;
 #endif
 
 #if defined(SIM_SOPT2_USBFSRC_MASK) && defined(SIM_SOPT2_USBFSRC_M) // USB clock (48MHz req.)
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_USBFSRC_MASK)|SIM_SOPT2_USBFSRC_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_USBFSRC_MASK)|SIM_SOPT2_USBFSRC_M;
 #endif
 
 #if defined(SIM_SOPT2_PLLFLLSEL_MASK) && defined(SIM_SOPT2_PLLFLLSEL_M) // Peripheral clock
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_PLLFLLSEL_MASK)|SIM_SOPT2_PLLFLLSEL_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_PLLFLLSEL_MASK)|SIM_SOPT2_PLLFLLSEL_M;
 #endif
 
 #if defined(SIM_SOPT2_UART0SRC_MASK) && defined(SIM_SOPT2_UART0SRC_M) // UART0 clock
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_UART0SRC_MASK)|SIM_SOPT2_UART0SRC_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_UART0SRC_MASK)|SIM_SOPT2_UART0SRC_M;
 #endif
 
 #if defined(SIM_SOPT2_LPUART0SRC_MASK) && defined(SIM_SOPT2_LPUART0SRC_M) // LPUART0 clock
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_LPUART0SRC_MASK)| SIM_SOPT2_LPUART0SRC_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_LPUART0SRC_MASK)| SIM_SOPT2_LPUART0SRC_M;
 #endif
 
 #if defined(SIM_SOPT2_TPMSRC_MASK) && defined(SIM_SOPT2_TPMSRC_M) // TPM clock
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_TPMSRC_MASK)|SIM_SOPT2_TPMSRC_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_TPMSRC_MASK)|SIM_SOPT2_TPMSRC_M;
 #endif
 
 #if defined(SIM_SOPT2_CLKOUTSEL_MASK) && defined(SIM_SOPT2_CLKOUTSEL_M)
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_CLKOUTSEL_MASK)|SIM_SOPT2_CLKOUTSEL_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_CLKOUTSEL_MASK)|SIM_SOPT2_CLKOUTSEL_M;
 #endif
 
 #if defined(SIM_SOPT2_RTCCLKOUTSEL_MASK) && defined(SIM_SOPT2_RTCCLKOUTSEL_M)
-   SIM_SOPT2 = (SIM_SOPT2&~SIM_SOPT2_RTCCLKOUTSEL_MASK)|SIM_SOPT2_RTCCLKOUTSEL_M;
+   SIM->SOPT2 = (SIM->SOPT2&~SIM_SOPT2_RTCCLKOUTSEL_MASK)|SIM_SOPT2_RTCCLKOUTSEL_M;
 #endif
 
 #if defined(SIM_CLKDIV2_USBDIV_MASK) && defined(SIM_CLKDIV2_USBFRAC_MASK) && defined(SIM_CLKDIV2_USB_M)
-   SIM_CLKDIV2 = (SIM_CLKDIV2&~(SIM_CLKDIV2_USBDIV_MASK|SIM_CLKDIV2_USBFRAC_MASK)) | SIM_CLKDIV2_USB_M;
+   SIM->CLKDIV2 = (SIM->CLKDIV2&~(SIM_CLKDIV2_USBDIV_MASK|SIM_CLKDIV2_USBFRAC_MASK)) | SIM_CLKDIV2_USB_M;
 #endif
 
    SystemCoreClockUpdate();
@@ -178,12 +178,12 @@ void clock_initialise(void) {
  */
 void SystemCoreClockUpdate(void) {
    uint32_t oscerclk = OSCCLK_CLOCK;
-   switch (MCG_S&MCG_S_CLKST_MASK) {
+   switch (MCG->S&MCG_S_CLKST_MASK) {
       case MCG_S_CLKST(0) : // HIRC
          SystemCoreClock = IRC48M_CLOCK;
          break;
       case MCG_S_CLKST(1) : // LIRC
-         if ((MCG_C2&MCG_C2_IRCS_MASK) != 0) {
+         if ((MCG->C2&MCG_C2_IRCS_MASK) != 0) {
             SystemCoreClock = IRC8M_CLOCK;
          }
          else {
@@ -194,7 +194,7 @@ void SystemCoreClockUpdate(void) {
          SystemCoreClock = oscerclk;
          break;
    }
-   SystemCoreClock   = SystemCoreClock/(((SIM_CLKDIV1&SIM_CLKDIV1_OUTDIV1_MASK)>>SIM_CLKDIV1_OUTDIV1_SHIFT)+1);
-   SystemBusClock    = SystemCoreClock/(((SIM_CLKDIV1&SIM_CLKDIV1_OUTDIV4_MASK)>>SIM_CLKDIV1_OUTDIV4_SHIFT)+1);
+   SystemCoreClock   = SystemCoreClock/(((SIM->CLKDIV1&SIM_CLKDIV1_OUTDIV1_MASK)>>SIM_CLKDIV1_OUTDIV1_SHIFT)+1);
+   SystemBusClock    = SystemCoreClock/(((SIM->CLKDIV1&SIM_CLKDIV1_OUTDIV4_MASK)>>SIM_CLKDIV1_OUTDIV4_SHIFT)+1);
 }
 

@@ -491,7 +491,7 @@ This field defines the number of wait states required to access the bank flash m
                <name>TAGVDW,@pTAGVDW@i@f</name>
                <addressOffset>0x100</addressOffset>
                <register>
-                  <name>S0</name>
+                  <name>S0,TAGVD0</name>
                   <description>Cache Tag Storage\n
 Tag &amp; valid information for Set 0 in Way %s</description>
                   <addressOffset>0x0</addressOffset>
@@ -529,12 +529,9 @@ Tag &amp; valid information for Set 0 in Way %s</description>
                      </field>
                   </fields>
                </register>
-               <register derivedFrom="S0"> <name>S1</name> <description>Cache Tag Storage\n
-Tag &amp; valid information for Set 1 in Way %s</description> <addressOffset>0x4</addressOffset> </register>
-               <register derivedFrom="S0"> <name>S2</name> <description>Cache Tag Storage\n
-Tag &amp; valid information for Set 2 in Way %s</description> <addressOffset>0x8</addressOffset> </register>
-               <register derivedFrom="S0"> <name>S3</name> <description>Cache Tag Storage\n
-Tag &amp; valid information for Set 3 in Way %s</description> <addressOffset>0xC</addressOffset> </register>
+               <register derivedFrom="S0,TAGVD0"> <name>S1,TAGVD1</name> <description>Cache Tag Storage\nTag &amp; valid information for Set 1 in Way %s</description> <addressOffset>0x4</addressOffset> </register>
+               <register derivedFrom="S0,TAGVD0"> <name>S2,TAGVD2</name> <description>Cache Tag Storage\nTag &amp; valid information for Set 2 in Way %s</description> <addressOffset>0x8</addressOffset> </register>
+               <register derivedFrom="S0,TAGVD0"> <name>S3,TAGVD3</name> <description>Cache Tag Storage\nTag &amp; valid information for Set 3 in Way %s</description> <addressOffset>0xC</addressOffset> </register>
             </cluster>
             <cluster>
                <dim>4</dim>
@@ -543,7 +540,7 @@ Tag &amp; valid information for Set 3 in Way %s</description> <addressOffset>0xC
                <name>DATAW,@pDATAW@i@f</name>
                <addressOffset>0x200</addressOffset>
                <register>
-                  <name>S0U</name>
+                  <name>S0U,DATAWU</name>
                   <description>Cache Data Storage (upper word)\n
 Data storage for Set 0 in Way %s</description>
                   <addressOffset>0x0</addressOffset>
@@ -563,7 +560,7 @@ Data storage for Set 0 in Way %s</description>
                   </fields>
                </register>
                <register>
-                  <name>S0L</name>
+                  <name>S0L,DATAWL</name>
                   <description>Cache Data Storage (lower word)\n
 Data storage for Set 0 in Way %s</description>
                   <addressOffset>0x4</addressOffset>
@@ -582,18 +579,12 @@ Data storage for Set 0 in Way %s</description>
                      </field>
                   </fields>
                </register>
-               <register derivedFrom="S0U"> <name>S1U</name> <description>Cache Data Storage (upper word)\n
-Data storage for Set 1 in Way %s</description> <addressOffset>0x8</addressOffset> </register>
-               <register derivedFrom="S0L"> <name>S1L</name> <description>Cache Data Storage (lower word)\n
-Data storage for Set 1 in Way %s</description> <addressOffset>0xC</addressOffset> </register>
-               <register derivedFrom="S0U"> <name>S2U</name> <description>Cache Data Storage (upper word)\n
-Data storage for Set 2 in Way %s</description> <addressOffset>0x10</addressOffset> </register>
-               <register derivedFrom="S0L"> <name>S2L</name> <description>Cache Data Storage (lower word)\n
-Data storage for Set 2 in Way %s</description> <addressOffset>0x14</addressOffset> </register>
-               <register derivedFrom="S0U"> <name>S3U</name> <description>Cache Data Storage (upper word)\n
-Data storage for Set 3 in Way %s</description> <addressOffset>0x18</addressOffset> </register>
-               <register derivedFrom="S0L"> <name>S3L</name> <description>Cache Data Storage (lower word)\n
-Data storage for Set 3 in Way %s</description> <addressOffset>0x1C</addressOffset> </register>
+               <register derivedFrom="S0U,DATAWU"> <name>S1U,DATAW1U</name> <description>Cache Data Storage (upper word)\nData storage for Set 1 in Way %s</description> <addressOffset>0x8</addressOffset> </register>
+               <register derivedFrom="S0L,DATAWL"> <name>S1L,DATAW1L</name> <description>Cache Data Storage (lower word)\nData storage for Set 1 in Way %s</description> <addressOffset>0xC</addressOffset> </register>
+               <register derivedFrom="S0U,DATAWU"> <name>S2U,DATAW2U</name> <description>Cache Data Storage (upper word)\nData storage for Set 2 in Way %s</description> <addressOffset>0x10</addressOffset> </register>
+               <register derivedFrom="S0L,DATAWL"> <name>S2L,DATAW2L</name> <description>Cache Data Storage (lower word)\nData storage for Set 2 in Way %s</description> <addressOffset>0x14</addressOffset> </register>
+               <register derivedFrom="S0U,DATAWU"> <name>S3U,DATAW3U</name> <description>Cache Data Storage (upper word)\nData storage for Set 3 in Way %s</description> <addressOffset>0x18</addressOffset> </register>
+               <register derivedFrom="S0L,DATAWL"> <name>S3L,DATAW3L</name> <description>Cache Data Storage (lower word)\nData storage for Set 3 in Way %s</description> <addressOffset>0x1C</addressOffset> </register>
             </cluster>
          </registers>
       </peripheral>

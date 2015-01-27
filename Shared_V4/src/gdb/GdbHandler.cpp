@@ -6,6 +6,9 @@
 \verbatim
 Change History
 -==================================================================================
+| 19 Jan 2015 | Started looking at hosting                                    - pgo V4.10.6.250
+| 19 Jan 2015 | Added printf prototypes                                       - pgo V4.10.6.250
+| 13 Jan 2015 | Modified target status reporting so stepping empty loops work - pgo V4.10.6.250
 |  2 Dec 2014 | Added resetTarget() to handle GDB read of PC unsetting SP     - pgo V4.10.6.240
 | 24 Nov 2014 | Changed CFV1 PC access from CFV1_CRegPC to CFV1_RegPC         - pgo V4.10.6.230s
 | 12 Nov 2014 | Removed initial reset to allow connection to running target   - pgo V4.10.6.230
@@ -58,26 +61,26 @@ using namespace std;
 #include "GdbMiscellaneous.h"
 
 #if TARGET == CFV1
-#define USBDM_ReadPC(x)                      USBDM_ReadReg(CFV1_RegPC, x);
-#define USBDM_WritePC(x)                     USBDM_WriteReg(CFV1_RegPC, x);
-#define USBDM_ReadSP(x)                      USBDM_ReadReg(CFV1_RegSP, x);
-#define USBDM_WriteSP(x)                     USBDM_WriteReg(CFV1_RegSP, x);
-#define USBDM_ReadSR(x)                      USBDM_ReadCReg(CFV1_CRegSR, x);
-#define USBDM_WriteSR(x)                     USBDM_WriteCReg(CFV1_CRegSR, x);
+#define USBDM_ReadPC(x)                      USBDM_ReadReg(CFV1_RegPC, x)
+#define USBDM_WritePC(x)                     USBDM_WriteReg(CFV1_RegPC, x)
+#define USBDM_ReadSP(x)                      USBDM_ReadReg(CFV1_RegSP, x)
+#define USBDM_WriteSP(x)                     USBDM_WriteReg(CFV1_RegSP, x)
+#define USBDM_ReadSR(x)                      USBDM_ReadCReg(CFV1_CRegSR, x)
+#define USBDM_WriteSR(x)                     USBDM_WriteCReg(CFV1_CRegSR, x)
 #elif TARGET == CFVx
-#define USBDM_ReadPC(x)                      USBDM_ReadCReg(CFVx_CRegPC, x);
-#define USBDM_WritePC(x)                     USBDM_WriteCReg(CFVx_CRegPC, x);
-#define USBDM_ReadSP(x)                      USBDM_ReadCReg(CFVx_CRegSP, x);
-#define USBDM_WriteSP(x)                     USBDM_WriteCReg(CFVx_CRegSP, x);
-#define USBDM_ReadSR(x)                      USBDM_ReadCReg(CFVx_CRegSR, x);
-#define USBDM_WriteSR(x)                     USBDM_WriteCReg(CFVx_CRegSR, x);
+#define USBDM_ReadPC(x)                      USBDM_ReadCReg(CFVx_CRegPC, x)
+#define USBDM_WritePC(x)                     USBDM_WriteCReg(CFVx_CRegPC, x)
+#define USBDM_ReadSP(x)                      USBDM_ReadCReg(CFVx_CRegSP, x)
+#define USBDM_WriteSP(x)                     USBDM_WriteCReg(CFVx_CRegSP, x)
+#define USBDM_ReadSR(x)                      USBDM_ReadCReg(CFVx_CRegSR, x)
+#define USBDM_WriteSR(x)                     USBDM_WriteCReg(CFVx_CRegSR, x)
 #elif TARGET == ARM
-#define USBDM_ReadPC(x)                      USBDM_ReadReg(ARM_RegPC, x);
-#define USBDM_WritePC(x)                     USBDM_WriteReg(ARM_RegPC, x);
-#define USBDM_ReadSP(x)                      USBDM_ReadReg(ARM_RegSP, x);
-#define USBDM_WriteSP(x)                     USBDM_WriteReg(ARM_RegSP, x);
-#define USBDM_ReadSR(x)                      USBDM_ReadReg(ARM_RegSR, x);
-#define USBDM_WriteSR(x)                     USBDM_WriteReg(ARM_RegSR, x);
+#define USBDM_ReadPC(x)                      USBDM_ReadReg(ARM_RegPC, x)
+#define USBDM_WritePC(x)                     USBDM_WriteReg(ARM_RegPC, x)
+#define USBDM_ReadSP(x)                      USBDM_ReadReg(ARM_RegSP, x)
+#define USBDM_WriteSP(x)                     USBDM_WriteReg(ARM_RegSP, x)
+#define USBDM_ReadSR(x)                      USBDM_ReadReg(ARM_RegSR, x)
+#define USBDM_WriteSR(x)                     USBDM_WriteReg(ARM_RegSR, x)
 #else
 #error "Unhandled TARGET"
 #endif
@@ -91,6 +94,12 @@ using namespace std;
 #else
 #error "Unhandled case"
 #endif
+
+USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, USBDM_ErrorCode rc, const char *format, ...) __attribute__ ((format (printf, 3, 4)));
+USBDM_ErrorCode reportGdbPrintf(GdbMessageLevel level, const char *format, ...)                     __attribute__ ((format (printf, 2, 3)));
+USBDM_ErrorCode reportGdbPrintf(const char *format, ...)                                            __attribute__ ((format (printf, 1, 2)));
+
+uint32_t lastStoppedPC = 0;
 
 /*
  * =======================================================================
@@ -120,7 +129,7 @@ static USBDM_ErrorCode resetTarget(TargetMode_t mode = (TargetMode_t)(RESET_SPEC
       return rc;
    }
    // Initialise the target after programming
-   reportGdbPrintf(M_INFO, "Resetting target\n", getTargetModeName(mode));
+   reportGdbPrintf(M_INFO, "Resetting target - %s\n", getTargetModeName(mode));
 #if TARGET == CFV1
    // CFV1 targets are confused by the following sequence:
    // - Reset target
@@ -515,7 +524,9 @@ int registerMap[] = {
       ARM_RegFPS0+0x18, ARM_RegFPS0+0x19, ARM_RegFPS0+0x1A, ARM_RegFPS0+0x1B,
       ARM_RegFPS0+0x1C, ARM_RegFPS0+0x1D, ARM_RegFPS0+0x1E, ARM_RegFPS0+0x1F,
 };
-#define CACHED_PC_VALUE  (*(uint32_t*)(registerBuffer+(4*ARM_RegPC)))
+#define CACHED_PC_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*ARM_RegPC)))
+#define CACHED_R0_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*ARM_RegR0)))
+#define CACHED_R1_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*ARM_RegR1)))
 #elif TARGET == CFV1
 int registerMap[] = {
       CFV1_RegD0,CFV1_RegD1,CFV1_RegD2,CFV1_RegD3,
@@ -524,7 +535,9 @@ int registerMap[] = {
       CFV1_RegA4,CFV1_RegA5,CFV1_RegA6,CFV1_RegA7,
       0x100+CFV1_CRegSR, CFV1_RegPC,         // +0x100 indicates USBDM_ReadCReg/USBDM_WriteCReg
 };
-#define CACHED_PC_VALUE  (*(uint32_t*)(registerBuffer+(4*17)))
+#define CACHED_PC_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*17)))
+#define CACHED_D0_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*CFV1_RegD0)))
+#define CACHED_D1_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*CFV1_RegD1)))
 #elif TARGET == CFVx
 int registerMap[] = {
       CFVx_RegD0,CFVx_RegD1,CFVx_RegD2,CFVx_RegD3,
@@ -533,7 +546,9 @@ int registerMap[] = {
       CFVx_RegA4,CFVx_RegA5,CFVx_RegA6,CFVx_RegA7,
       0x100+CFVx_CRegSR, 0x100+CFVx_CRegPC,        // +0x100 indicates USBDM_ReadCReg
 };
-#define CACHED_PC_VALUE  (*(uint32_t*)(registerBuffer+(4*17)))
+#define CACHED_PC_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*17)))
+#define CACHED_D0_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*CFVx_RegD0)))
+#define CACHED_D1_VALUE_OFFSET  (*(uint32_t*)(registerBuffer+(4*CFVx_RegD1)))
 #endif
 
 #include <algorithm>
@@ -652,14 +667,47 @@ static unsigned registerBufferSize = 0;  // Number of bytes valid in buffer, 0 =
 static bool useFastRegisterRead = true;
 
 /*
+ *  Get cached value of PC
+ *  Note: Assumes cache valid
+ *
+ *  @return 32-bit value
+ */
+uint32_t getCachedPC() {
+   return targetToNative32(CACHED_PC_VALUE_OFFSET);
+}
+
+#if (TARGET == ARM)
+/*
+ *  Get cached value of R0
+ *  Note: Assumes cache valid
+ *
+ *  @return 32-bit value
+ */
+uint32_t getCachedR0() {
+   return targetToNative32(CACHED_R0_VALUE_OFFSET);
+}
+
+/*
+ *  Get cached value of R1
+ *  Note: Assumes cache valid
+ *
+ *  @return 32-bit value
+ */
+uint32_t getCachedR1() {
+   return targetToNative32(CACHED_R1_VALUE_OFFSET);
+}
+#endif
+
+/*
  *  Get cached value of PC as a string
+ *  Note: Assumes cache valid
  *
  *  @return ptr to static buffer
  */
-const char *getCachedPC() {
+const char *getCachedPcAsString() {
    static char buff[20];
 
-   sprintf(buff, "0x%08X", targetToNative32(CACHED_PC_VALUE));
+   sprintf(buff, "0x%08X", getCachedPC());
    return buff;
 }
 
@@ -1433,7 +1481,7 @@ static USBDM_ErrorCode programImage(FlashImage *flashImage) {
    deviceData.setClockTrimNVAddress(0);
    rc = flashProgrammer.setDeviceData(deviceData);
    if (rc == BDM_RC_OK) {
-      rc = flashProgrammer.programFlash(flashImage);
+      rc = flashProgrammer.programFlash(flashImage, 0, true);
    }
    if (rc != PROGRAMMING_RC_OK) {
       Logging::print("programImage() - failed, rc = %s\n", USBDM_GetErrorString(rc));
@@ -1860,6 +1908,61 @@ GdbTargetStatus getGdbTargetStatus(void) {
    return gdbTargetStatus;
 }
 
+boolean checkHostedBreak(uint32_t currentPC) {
+LOGGING_E;
+#if (TARGET == ARM)
+   static const uint16_t SEMI_HOSTING_OPCODE = 0xbeab;
+   uint16_t opcode;
+   if (USBDM_ReadMemory(MS_Word, 2, currentPC, (uint8_t *)&opcode) != BDM_RC_OK) {
+      return false;
+   }
+   Logging::print("opcode = 0x%04X\n", targetToNative16(opcode));
+   return(targetToNative16(opcode) == SEMI_HOSTING_OPCODE);
+#endif
+   return false;
+}
+
+uint32_t get32Bits(uint8_t buff[], int offset) {
+   uint32_t value = buff[offset] + (buff[offset+1]<<8) +(buff[offset+2]<<16) +(buff[offset+3]<<24);
+   return targetToNative32(value);
+}
+
+#define SEMI_HOSTED_WRITE_OPCODE (5)
+
+#if (TARGET == ARM)
+GdbTargetStatus handleHostedBreak() {
+   uint32_t r0 = getCachedR0();
+   uint32_t r1 = getCachedR1();
+
+   uint8_t commandBuff[2000];
+   uint32_t arg0, buffPtr, buffLength;
+   switch(r0) {
+   case SEMI_HOSTED_WRITE_OPCODE:
+      USBDM_ReadMemory(MS_Long, 12, r1, commandBuff);
+      arg0 = get32Bits(commandBuff, 0);
+      buffPtr    = get32Bits(commandBuff, 4);
+      buffLength = get32Bits(commandBuff, 8);
+      reportGdbPrintf(M_INFO, "Semi-hosting %d, 0x%X, %d\n", arg0, buffPtr, buffLength);
+      if (buffLength>sizeof(commandBuff)) {
+         buffLength = sizeof(commandBuff);
+      }
+      USBDM_ReadMemory(MS_Byte, buffLength, buffPtr, commandBuff);
+      commandBuff[buffLength] = '\0';
+      reportGdbPrintf(M_INFO, "%s", commandBuff);
+      break;
+
+   default:
+      // Treat as regular halt
+      return T_HALT;
+   }
+   return T_HALT;
+}
+#else
+GdbTargetStatus handleHostedBreak() {
+   return T_HALT;
+}
+#endif
+
 /*!  Check for change in target run state
  *   - Polls target
  *   - Report changes to GDB
@@ -1884,37 +1987,51 @@ GdbTargetStatus gdbPollTarget(void) {
       gdbTargetStatus = getTargetStatus();
    }
    if (gdbTargetStatus == T_HALT) {
-      //      Logging::print("Polling - runState\n");
+      boolean looping = false;
+      if (runState != halted) {
+         // Target has just halted - cache registers
+         readRegs();
+         uint32_t currentPC = getCachedPC();
+         looping = (currentPC == lastStoppedPC);
+         lastStoppedPC = currentPC;
+         if (checkHostedBreak(currentPC)) {
+            gdbTargetStatus = handleHostedBreak();
+         }
+      }
       switch(runState) {
       case halted :  // halted -> halted
          break;
-      case breaking : // user break -> halted
+      case breaking : // user breaking -> halted
          reportLocation('T', TARGET_SIGNAL_INT);
-         readRegs();
-         Logging::print("Target has halted (from breaking) @%s\n", getCachedPC());
-         reportGdbPrintf(M_INFO, "Target has halted (due to user break)  @%s\n", getCachedPC());
+         Logging::print("Target has halted (from breaking) @0x%08X\n", lastStoppedPC);
+         reportGdbPrintf(M_INFO, "Target has halted (due to user break)  @0x%08X\n", lastStoppedPC);
          deactivateBreakpoints();
          checkAndAdjustBreakpointHalt();
          break;
       case stepping : // stepping -> halted
-         reportLocation('T', TARGET_SIGNAL_TRAP);
-         readRegs();
-         Logging::print("Target has halted (from stepping) @%s\n", getCachedPC());
-         reportGdbPrintf(M_BORINGINFO, "Target has halted (from stepping)  @%s\n", getCachedPC());
+         // GDB has a bug where stepping on an empty loop will cause an infinite loop of trying to step to the next location
+         // This detects the PC not changing on step and return TARGET_SIGNAL_INT rather than TARGET_SIGNAL_TRAP to abort stepping
+         if (looping) {
+               reportLocation('T', TARGET_SIGNAL_INT);
+            }
+            else {
+               reportLocation('T', TARGET_SIGNAL_TRAP);
+            }
+         Logging::print("Target has halted (from stepping) @0x%08X\n", lastStoppedPC);
+         reportGdbPrintf(M_BORINGINFO, "Target has halted (from stepping) @0x%08X\n", lastStoppedPC);
          deactivateBreakpoints();
          checkAndAdjustBreakpointHalt();
          break;
       default:       // ???     -> halted
       case running : // running -> halted
          reportLocation('T', TARGET_SIGNAL_TRAP);
-         readRegs();
-         Logging::print("Target has halted (from running) @%s\n", getCachedPC());
-         reportGdbPrintf(M_INFO, "Target has halted (from running)  @%s\n", getCachedPC());
+         Logging::print("Target has halted (from running) @%s\n", getCachedPcAsString());
+         reportGdbPrintf(M_INFO, "Target has halted (from running)  @%s\n", getCachedPcAsString());
          deactivateBreakpoints();
          checkAndAdjustBreakpointHalt();
          break;
       }
-      runState     = halted;
+      runState = halted;
    }
    else if (gdbTargetStatus == T_SLEEPING) {
       if (runState == halted) {

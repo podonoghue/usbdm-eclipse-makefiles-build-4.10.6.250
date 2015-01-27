@@ -15,13 +15,16 @@
             </or>
          </and>
       </applyWhen>
-      <variable id="TWR-Blinky-CFV2-V" name="Blinky example" description="Add Blinky Example code for Tower board" />
-      <condition variable="TWR-Blinky-CFV2-V">
+      <variable id="projectOptionValue.TWR-Blinky" name="Blinky example" description="Add Blinky Example code for Tower board" />
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.TWR-Blinky" />
+         </applyWhen>
          <copy source="Project_Headers/Board_LEDs.h"  target="Project_Headers/Board_LEDs.h" />
          <copy source="Project_Headers/leds.h"        target="Project_Headers/leds.h" />
          <copy source="Sources/leds.c"                target="Sources/leds.c" />
          <copy source="Sources/main.c"                target="Sources/main.c" replace="true" />
-      </condition>
+      </block>
    </projectActionList>
 
 </root>

@@ -587,7 +587,7 @@ This allows the processor core to determine the BDT entry that was updated by th
             </register>
             <register>
                <name>CTL</name>
-               <description>Control register</description>
+               <description>Control Register</description>
                <addressOffset>0x94</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
@@ -889,14 +889,14 @@ Contains the token type executed by the USB module</description>
             <register>
                <name>BDTPAGE2</name>
                <description>BDT Page Register 2\n
-Address bits 7 through 0 of the BDT base address</description>
+Address bits 23 through 16 of the BDT base address</description>
                <addressOffset>0xB0</addressOffset>
                <size>8</size>
                <resetMask>0xFF</resetMask>
                <fields>
                   <field>
                      <name>BDTBA</name>
-                     <description>BDT base address[7:0]</description>
+                     <description>BDT base address[23:16]</description>
                      <bitOffset>0</bitOffset>
                   </field>
                </fields>
@@ -920,7 +920,7 @@ Address bits 15 through 8 of the BDT base address</description>
                <dim>16</dim>
                <dimIncrement>4</dimIncrement>
                <dimIndex>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15</dimIndex>
-               <name>ENDPOINT,@p@f@i</name>
+               <name>ENDPOINT</name>
                <addressOffset>0xC0</addressOffset>
                <register>
                   <name>ENDPT</name>

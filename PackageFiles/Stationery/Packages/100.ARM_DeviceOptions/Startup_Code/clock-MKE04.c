@@ -12,8 +12,8 @@
 #include "utilities.h"
 
 // Some MCUs call OSC_CR0 just OSC_CR
-#ifndef OSC0_CR
-#define OSC0_CR OSC_CR
+#ifndef OSC0
+#define OSC0 OSC
 #endif
 
 uint32_t SystemCoreClock = SYSTEM_CORE_CLOCK;   // Hz
@@ -31,7 +31,7 @@ void clock_initialise(void) {
    // Must not enable I2C0, PTB6, PTB7 as conflicting
 
    // Configure the Crystal Oscillator
-   OSC_CR = OSC_CR_OSCEN_M|OSC_CR_OSCSTEN_M|OSC_CR_OSCOS_M|OSC_CR_RANGE_M|OSC_CR_HGO_M;
+   OSC0->CR = OSC_CR_OSCEN_M|OSC_CR_OSCSTEN_M|OSC_CR_OSCOS_M|OSC_CR_RANGE_M|OSC_CR_HGO_M;
 
 
    // Out of reset ICS is in FEI mode
@@ -43,13 +43,13 @@ void clock_initialise(void) {
    // Wait for oscillator stable (if used)
    do {
       __asm__("nop");
-   } while ((OSC_CR & OSC_CR_OSCINIT_MASK) == 0);
+   } while ((OSC->CR & OSC_CR_OSCINIT_MASK) == 0);
 #endif
 
    // Reset default
-   ICS_C2 = ICS_C2_BDIV(1);
+   ICS->C2 = ICS_C2_BDIV(1);
 
-   ICS_C1 = ICS_C1_CLKS_M|ICS_C1_RDIV_M|ICS_C1_IREFS_M|ICS_C1_IRCLKEN_M|ICS_C1_IREFSTEN_M;
+   ICS->C1 = ICS_C1_CLKS_M|ICS_C1_RDIV_M|ICS_C1_IREFS_M|ICS_C1_IRCLKEN_M|ICS_C1_IREFSTEN_M;
 
 #if (ICS_C1_IREFS_M == 0)
 #define ICS_S_IREFST_M 0
@@ -60,20 +60,20 @@ void clock_initialise(void) {
    // Wait for mode change
    do {
       __asm__("nop");
-   } while ((ICS_S & ICS_S_IREFST_MASK) != ICS_S_IREFST_M);
+   } while ((ICS->S & ICS_S_IREFST_MASK) != ICS_S_IREFST_M);
 
    // Wait for S_CLKST to indicating that OUTCLK has switched
    do {
       __asm__("nop");
-   } while ((ICS_S & ICS_S_CLKST_MASK) != ICS_S_CLKST(ICS_C1_CLKS_V));
+   } while ((ICS->S & ICS_S_CLKST_MASK) != ICS_S_CLKST(ICS_C1_CLKS_V));
 
    // Set clock divider
-   SIM_CLKDIV = SIM_CLKDIV_OUTDIV1_M|SIM_CLKDIV_OUTDIV2_M|SIM_CLKDIV_OUTDIV3_M;
+   SIM->CLKDIV = SIM_CLKDIV_OUTDIV1_M|SIM_CLKDIV_OUTDIV2_M|SIM_CLKDIV_OUTDIV3_M;
 
-   //SIM_BUSDIV = SIM_BUSDIV_BUSDIV_M;
-   ICS_C2 = (ICS_C2 & ~ICS_C2_BDIV_MASK)|ICS_C2_BDIV_M;
+   //SIM->BUSDIV = SIM_BUSDIV_BUSDIV_M;
+   ICS->C2 = (ICS->C2 & ~ICS_C2_BDIV_MASK)|ICS_C2_BDIV_M;
 
-   ICS_C4 = (ICS_C4&~(ICS_C4_LOLIE0_MASK|ICS_C4_CME_MASK))|ICS_C4_LOLIE_M|ICS_C4_CME_M;
+   ICS->C4 = (ICS->C4&~(ICS_C4_LOLIE0_MASK|ICS_C4_CME_MASK))|ICS_C4_LOLIE_M|ICS_C4_CME_M;
 
 #endif
    SystemCoreClockUpdate();
@@ -85,12 +85,12 @@ void clock_initialise(void) {
  * Updates the SystemCoreClock variable with current core Clock retrieved from CPU registers.
  */
 void SystemCoreClockUpdate(void) {
-   switch (ICS_C1&ICS_C1_CLKS_MASK) {
+   switch (ICS->C1&ICS_C1_CLKS_MASK) {
       case ICS_C1_CLKS(0) : // FLL
-         if ((ICS_C1&ICS_C1_IREFS_MASK) == 0) {
-            int factor = 1<<(10-((ICS_C1&ICS_C1_RDIV_MASK)>>ICS_C1_RDIV_SHIFT));
+         if ((ICS->C1&ICS_C1_IREFS_MASK) == 0) {
+            int factor = 1<<(10-((ICS->C1&ICS_C1_RDIV_MASK)>>ICS_C1_RDIV_SHIFT));
             SystemCoreClock = SYSTEM_OSCER_CLOCK*factor;
-            if ((OSC_CR&OSC_CR_RANGE_MASK) != 0) {
+            if ((OSC->CR&OSC_CR_RANGE_MASK) != 0) {
                SystemCoreClock /= (1<<5);
             }
          }
@@ -105,8 +105,8 @@ void SystemCoreClockUpdate(void) {
          SystemCoreClock = SYSTEM_OSCER_CLOCK;
          break;
    }
-   SystemCoreClock = SystemCoreClock/(1<<((ICS_C2&ICS_C2_BDIV_MASK)>>ICS_C2_BDIV_SHIFT));
-   SystemCoreClock = SystemCoreClock/(((SIM_CLKDIV&SIM_CLKDIV_OUTDIV1_MASK)>>SIM_CLKDIV_OUTDIV1_SHIFT)+1);
-   SystemBusClock  = SystemCoreClock/(((SIM_CLKDIV&SIM_CLKDIV_OUTDIV2_MASK)>>SIM_CLKDIV_OUTDIV2_SHIFT)+1);
+   SystemCoreClock = SystemCoreClock/(1<<((ICS->C2&ICS_C2_BDIV_MASK)>>ICS_C2_BDIV_SHIFT));
+   SystemCoreClock = SystemCoreClock/(((SIM->CLKDIV&SIM_CLKDIV_OUTDIV1_MASK)>>SIM_CLKDIV_OUTDIV1_SHIFT)+1);
+   SystemBusClock  = SystemCoreClock/(((SIM->CLKDIV&SIM_CLKDIV_OUTDIV2_MASK)>>SIM_CLKDIV_OUTDIV2_SHIFT)+1);
 }
 

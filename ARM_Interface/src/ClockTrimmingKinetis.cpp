@@ -572,7 +572,7 @@ USBDM_ErrorCode FlashProgrammer::setFlashTrimValues(FlashImage *flashImage) {
    LOGGING_Q;
    ClockParameters clockTrimParameters;
    USBDM_ErrorCode rc;
-   uint16_t  ftrimMergeValue;
+   uint16_t ftrimMergeValue __attribute__((unused));
 
    // Assume no trim or failure
    parameters.setClockTrimValue(0);
@@ -588,8 +588,8 @@ USBDM_ErrorCode FlashProgrammer::setFlashTrimValues(FlashImage *flashImage) {
    uint32_t NVTRIM_address  = parameters.getClockTrimNVAddress();
    uint32_t NVFTRIM_address = parameters.getClockTrimNVAddress()+1;
 #else
-   uint32_t NVFTRIM_address = parameters.getClockTrimNVAddress();
-   uint32_t NVTRIM_address  = parameters.getClockTrimNVAddress()+1;
+   uint32_t NVFTRIM_address  __attribute__((unused)) = parameters.getClockTrimNVAddress();
+   uint32_t NVTRIM_address   __attribute__((unused)) = parameters.getClockTrimNVAddress()+1;
 #endif
 
    switch (parameters.getClockType()) {

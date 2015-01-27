@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE root SYSTEM "../package.dtd">
+
+<root version="1.0">
+   <!-- Extra Optional files for MK22F51212 with USB derived Clock (MK22FN(some)) -->
+   <projectActionList id="Options-file-list-MK22F512M12">
+      <applyWhen>
+         <or>
+            <deviceSubfamilyIs>MK22F51212</deviceSubfamilyIs>
+	      </or>
+      </applyWhen>
+      <variable id="projectOptionValue.Clock-setup" name="Clock setup code" description="Adds code for basic clock initialization - check assumptions made" />
+      <variable id="projectOptionValue.UART-setup" name="UART setup code" description="Adds C stdio (UART) support for newlib" >
+         <requirement idRef="projectOptionValue.Clock-setup"/>
+      </variable>
+      
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.Clock-setup" />
+         </applyWhen>
+         <copy source="Startup_Code/clock-MK22F512M12.c" target="Startup_Code/clock.c" />
+         <copy source="Project_Headers/clock_configure-MK22F512M12.h" target="Project_Headers/clock_configure.h" />
+      </block>
+      <block>
+         <applyWhen>
+            <variableRef idRef="projectOptionValue.UART-setup" />
+         </applyWhen>
+         <copy source="Startup_Code/uart-mk.c" target="Startup_Code/uart.c" />
+         <copy source="Project_Headers/uart.h" target="Project_Headers/uart.h" />
+      </block>
+   </projectActionList>
+
+</root>

@@ -17,13 +17,16 @@
             </or>
          </and>
       </applyWhen>
-      <variable id="FRDM-Blinky-MK-V" name="Blinky example" description="Add Blinky Example code for Freedom board" />
-      <condition variable="FRDM-Blinky-MK-V">
+      <variable id="projectOptionValue.FRDM-Blinky" name="Blinky example" description="Add Blinky Example code for Freedom board" />
+      <block>
+         <applyWhen >
+            <variableRef idRef="projectOptionValue.FRDM-Blinky" />
+         </applyWhen>
          <copy source="Project_Headers/leds.h"        target="Project_Headers/leds.h" />
          <copy source="Project_Headers/Board_LEDs.h"  target="Project_Headers/Board_LEDs.h" />
          <copy source="Sources/leds.c"                target="Sources/leds.c" />
          <copy source="Sources/main.c"                target="Sources/main.c" replace="true" />
-      </condition>
+      </block>
    </projectActionList>
 
    <!-- Blinky example for Freedom board -->
@@ -35,13 +38,16 @@
             <deviceSubfamilyMatches>^MKL\d+.*</deviceSubfamilyMatches>
          </and>
       </applyWhen>
-      <variable id="FRDM-Blinky-MKL-V" name="Blinky example" description="Add Blinky Example code for Freedom board" />
-      <condition variable="FRDM-Blinky-MKL-V">
+      <variable id="projectOptionValue.FRDM-Blinky" name="Blinky example" description="Add Blinky Example code for Freedom board" />
+      <block>
+         <applyWhen >
+            <variableRef idRef="projectOptionValue.FRDM-Blinky" />
+         </applyWhen>
          <copy source="Project_Headers/leds.h"        target="Project_Headers/leds.h" />
          <copy source="Project_Headers/Board_LEDs.h"  target="Project_Headers/Board_LEDs.h" />
          <copy source="Sources/leds.c"                target="Sources/leds.c" />
          <copy source="Sources/main.c"                target="Sources/main.c" replace="true" />
-      </condition>
+      </block>
    </projectActionList>
 
    <!-- Blinky example for Freedom board -->
@@ -53,13 +59,16 @@
             <deviceSubfamilyMatches>^MKE\d+.*</deviceSubfamilyMatches>
          </and>
       </applyWhen>
-      <variable id="FRDM-Blinky-MKE-V" name="Blinky example" description="Add Blinky Example code for Freedom board" />
-      <condition variable="FRDM-Blinky-MKE-V">
+      <variable id="projectOptionValue.FRDM-Blinky" name="Blinky example" description="Add Blinky Example code for Freedom board" />
+      <block>
+         <applyWhen >
+            <variableRef idRef="projectOptionValue.FRDM-Blinky" />
+         </applyWhen>
          <copy source="Project_Headers/leds.h"        target="Project_Headers/leds.h" />
          <copy source="Project_Headers/Board_LEDs.h"  target="Project_Headers/Board_LEDs.h" />
          <copy source="Sources/leds-mke.c"            target="Sources/leds.c" />
          <copy source="Sources/main.c"                target="Sources/main.c" replace="true" />
-      </condition>
+      </block>
    </projectActionList>
 
    <!-- Blinky example for Freedom board -->
@@ -71,13 +80,16 @@
             <deviceSubfamilyMatches>^MKM\d+.*</deviceSubfamilyMatches>
          </and>
       </applyWhen>
-      <variable id="FRDM-Blinky-MKM-V" name="Blinky example" description="Add Blinky Example code for Freedom board" />
-      <condition variable="FRDM-Blinky-MKM-V">
+      <variable id="projectOptionValue.FRDM-Blinky" name="Blinky example" description="Add Blinky Example code for Freedom board" />
+      <block>
+         <applyWhen >
+            <variableRef idRef="projectOptionValue.FRDM-Blinky" />
+         </applyWhen>
          <copy source="Project_Headers/leds.h"        target="Project_Headers/leds.h" />
          <copy source="Project_Headers/Board_LEDs.h"  target="Project_Headers/Board_LEDs.h" />
          <copy source="Sources/leds-mkm.c"            target="Sources/leds.c" />
          <copy source="Sources/main.c"                target="Sources/main.c" replace="true" />
-      </condition>
+      </block>
    </projectActionList>
 
 </root>

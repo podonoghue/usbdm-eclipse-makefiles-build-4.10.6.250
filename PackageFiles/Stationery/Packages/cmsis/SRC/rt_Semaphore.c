@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------
- *      RL-ARM - RTX
+ *      CMSIS-RTOS  -  RTX
  *----------------------------------------------------------------------------
  *      Name:    RT_SEMAPHORE.C
  *      Purpose: Implements binary and counting semaphores
@@ -145,7 +145,7 @@ OS_RESULT rt_sem_wait (OS_ID semaphore, U16 timeout) {
 /*--------------------------- isr_sem_send ----------------------------------*/
 
 void isr_sem_send (OS_ID semaphore) {
-  /* Same function as "os_sem"send", but to be called by ISRs */
+  /* Same function as "os_sem_send", but to be called by ISRs */
   P_SCB p_SCB = semaphore;
 
   rt_psq_enq (p_SCB, 0);

@@ -15,6 +15,7 @@ Devices using this peripheral:
          <name>DAC0</name>
          <description>12-Bit Digital-to-Analog Converter</description>
          <prependToName>DAC0</prependToName>
+         <headerStructName>DAC</headerStructName>
          <baseAddress>0x4003F000</baseAddress>
          <size>32</size>
          <access>read-write</access>
@@ -33,29 +34,32 @@ Devices using this peripheral:
             <usage>registers</usage>
          </addressBlock>
          <registers>
+            <register>
+               <dim>2</dim>
+               <dimIncrement>2</dimIncrement>
+               <dimIndex>0,1</dimIndex>
+               <name>DATA</name>
+               <description>Data Register\n
+When the DAC Buffer is not enabled DATA controls the output voltage based on the following formula:
+V out = V in * (1 + DATA[0])/4096\n
+When the DAC buffer is enabled, DATA is mapped to the 16-word buffer</description>
+               <addressOffset>0x0</addressOffset>
+               <size>16</size>
+               <resetMask>0xFFFF</resetMask>
+               <fields>
+                  <field>
+                     <name>DATA</name>
+                     <bitOffset>0</bitOffset>
+                     <bitWidth>12</bitWidth>
+                  </field>
+               </fields>
+            </register>
             <cluster>
                <dim>2</dim>
                <dimIncrement>2</dimIncrement>
                <dimIndex>0,1</dimIndex>
                <name>DAT,@p@f@i</name>
                <addressOffset>0x0</addressOffset>
-               <register>
-                  <name>DATA</name>
-                  <description>Data Register\n
-When the DAC Buffer is not enabled DATA controls the output voltage based on the following formula:
-V out = V in * (1 + DACDAT0)/4096\n
-When the DAC buffer is enabled, DATA is mapped to the 16-word buffer</description>
-                  <addressOffset>0x0</addressOffset>
-                  <size>16</size>
-                  <resetMask>0xFFFF</resetMask>
-                  <fields>
-                     <field>
-                        <name>DATA</name>
-                        <bitOffset>0</bitOffset>
-                        <bitWidth>11</bitWidth>
-                     </field>
-                  </fields>
-               </register>
                <register>
                   <name>DATL</name>
                   <?hide?>

@@ -33,133 +33,142 @@ Devices using this peripheral:
                <dim>4</dim>
                <dimIncrement>16</dimIncrement>
                <dimIndex>0,1,2,3</dimIndex>
-               <name>CHANNEL,@p@f@i</name>
+               <name>DMA,@p@f@i</name>
                <addressOffset>0x100</addressOffset>
                <register>
                   <name>SAR</name>
-                  <description>Source Address Register</description>
+                  <description>Source Address Register\n
+                  Contains the byte address used by the DMA controller to read data.\n
+                  Bits 31-20 must be written with a value corresponding to a valid region of device memory.\n
+                  If written with an allowed values, bits 31-20 read back as the written value otherwise the value is indeterminate</description>
                   <addressOffset>0x0</addressOffset>
-                  <fields>
-                     <field>
-                        <name>SAR</name>
-                        <description>Each SAR contains the byte address used by the DMA controller to read data. The SARn is typically aligned on a 0-modulo-ssize boundary-that is, on the natural alignment of the source data. Bits 31-20 of this register must be written with one of only four allowed values. Each of these four allowed values corresponds to a valid region of the device&apos;s memory map. The allowed values are: 0x000x_xxxx 0x1FFx_xxxx 0x200x_xxxx 0x400x_xxxx After being written with one of the allowed values, bits 31-20 read back as the written value. After being written with any other value, bits 31-20 read back as an indeterminate value</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
+                  <size>32</size>
+                  <access>read-write</access>
                </register>
                <register>
                   <name>DAR</name>
-                  <description>Destination Address Register</description>
+                  <description>Destination Address Register\n
+                  Contains the byte address used by the DMA controller to write data.\n
+                  Bits 31-20 must be written with a value corresponding to a valid region of device memory.\n
+                  If written with an allowed values, bits 31-20 read back as the written value otherwise the value is indeterminate</description>
                   <addressOffset>0x4</addressOffset>
-                  <fields>
-                     <field>
-                        <name>DAR</name>
-                        <description>Each DAR contains the byte address used by the DMA controller to write data. The DARn is typically aligned on a 0-modulo-dsize boundary-that is, on the natural alignment of the destination data. Bits 31-20 of this register must be written with one of only four allowed values. Each of these four allowed values corresponds to a valid region of the device&apos;s memory map. The allowed values are: 0x000x_xxxx 0x1FFx_xxxx 0x200x_xxxx 0x400x_xxxx After being written with one of the allowed values, bits 31-20 read back as the written value. After being written with any other value, bits 31-20 read back as an indeterminate value</description>
-                        <bitOffset>0</bitOffset>
-                     </field>
-                  </fields>
+                  <size>32</size>
+                  <access>read-write</access>
                </register>
                <register>
                   <name>DSR_BCR</name>
-                  <description>DMA Status Register / Byte Count Register</description>
+                  <description>DMA Status / Byte Count Register</description>
                   <addressOffset>0x8</addressOffset>
                   <fields>
                      <field>
                         <name>BCR</name>
-                        <description>This field contains the number of bytes yet to be transferred for a given block. BCR must be written with a value equal to or less than 0F_FFFFh. After being written with a value in this range, bits 23-20 of BCR read back as 1110b. A write to BCR of a value greater than 0F_FFFFh causes a configuration error when the channel starts to execute. After being written with a value in this range, bits 23-20 of BCR read back as 1111b</description>
+                        <description>Byte Count Register\n
+                        This field contains the number of bytes yet to be transferred for a given block.\n
+                        BCR must be written with a value equal to or less than 0F_FFFFh.\n
+                        After being written with a value in this range, bits 23-20 of BCR read back as 1110b.\n
+                        A write to BCR of a value greater than 0F_FFFFh causes a configuration error when the channel starts to execute.\n
+                        After being written with a value in this range, bits 23-20 of BCR read back as 1111b</description>
                         <bitOffset>0</bitOffset>
                         <bitWidth>24</bitWidth>
                      </field>
                      <field>
                         <name>DONE</name>
-                        <description>Transactions done</description>
+                        <description>Transactions done\n
+                        Indicates if the transfer has been completed\n
+                        Writing a 1 to this bit clears all DMA status bits and should be used in an ISR to clear the DMA interrupt and error bits</description>
                         <bitOffset>24</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>DMA transfer is not yet complete. Writing a 0 has no effect</description>
+                              <description>Transfer not complete</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>DMA transfer completed. Writing a 1 to this bit clears all DMA status bits and should be used in an interrupt service routine to clear the DMA interrupt and error bits</description>
+                              <description>Transfer complete</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BSY</name>
-                        <description>Busy</description>
+                        <description>Channel Busy\n
+                        Indicates the channel is busy.\n
+                        Cleared when the DMA has finished the last transaction\n
+                        Set the first time the channel is enabled after a transfer is initiated</description>
                         <bitOffset>25</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>DMA channel is inactive. Cleared when the DMA has finished the last transaction</description>
+                              <description>Channel inactive</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>BSY is set the first time the channel is enabled after a transfer is initiated</description>
+                              <description>Channel is busy</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>REQ</name>
-                        <description>Request</description>
+                        <description>Request pending\n
+                        Indicates a request is pending and channel has not been selected</description>
                         <bitOffset>26</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No request is pending or the channel is currently active. Cleared when the channel is selected</description>
+                              <description>No request pending</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The DMA channel has a transfer remaining and the channel is not selected</description>
+                              <description>Request pending</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BED</name>
-                        <description>Bus error on destination</description>
+                        <description>Bus error on destination\n
+                        Indicates the DMA channel terminated with a bus error during the write portion of a transfer</description>
                         <bitOffset>28</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No bus error occurred</description>
+                              <description>No bus error</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The DMA channel terminated with a bus error during the write portion of a transfer</description>
+                              <description>Write bus error</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BES</name>
-                        <description>Bus error on source</description>
+                        <description>Bus error on source\n
+                        Indicates the DMA channel terminated with a bus error during the read portion of a transfer</description>
                         <bitOffset>29</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No bus error occurred</description>
+                              <description>No bus error</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The DMA channel terminated with a bus error during the read portion of a transfer</description>
+                              <description>Read bus error</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -173,12 +182,12 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No configuration error exists</description>
+                              <description>No configuration error</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>A configuration error has occurred</description>
+                              <description>Configuration error</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -194,94 +203,102 @@ Devices using this peripheral:
                   <fields>
                      <field>
                         <name>DONE</name>
-                        <description>Transactions done</description>
+                        <description>Transactions done\n
+                        Indicates if the transfer has been completed\n
+                        Writing a 1 to this bit clears all DMA status bits and should be used in an ISR to clear the DMA interrupt and error bits</description>
                         <bitOffset>0</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>DMA transfer is not yet complete. Writing a 0 has no effect</description>
+                              <description>Transfer not complete</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>DMA transfer completed. Writing a 1 to this bit clears all DMA status bits and should be used in an interrupt service routine to clear the DMA interrupt and error bits</description>
+                              <description>Transfer complete</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BSY</name>
-                        <description>Busy</description>
+                        <description>Channel Busy\n
+                        Indicates the channel is busy.\n
+                        Cleared when the DMA has finished the last transaction\n
+                        Set the first time the channel is enabled after a transfer is initiated</description>
                         <bitOffset>1</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>DMA channel is inactive. Cleared when the DMA has finished the last transaction</description>
+                              <description>Channel inactive</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>BSY is set the first time the channel is enabled after a transfer is initiated</description>
+                              <description>Channel is busy</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>REQ</name>
-                        <description>Request</description>
+                        <description>Request pending\n
+                        Indicates a request is pending and channel has not been selected</description>
                         <bitOffset>2</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No request is pending or the channel is currently active. Cleared when the channel is selected</description>
+                              <description>No request pending</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The DMA channel has a transfer remaining and the channel is not selected</description>
+                              <description>Request pending</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BED</name>
-                        <description>Bus error on destination</description>
+                        <description>Bus error on destination\n
+                        Indicates the DMA channel terminated with a bus error during the write portion of a transfer</description>
                         <bitOffset>4</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No bus error occurred</description>
+                              <description>No bus error</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The DMA channel terminated with a bus error during the write portion of a transfer</description>
+                              <description>Write bus error</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>BES</name>
-                        <description>Bus error on source</description>
+                        <description>Bus error on source\n
+                        Indicates the DMA channel terminated with a bus error during the read portion of a transfer</description>
                         <bitOffset>5</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>read-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No bus error occurred</description>
+                              <description>No bus error</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The DMA channel terminated with a bus error during the read portion of a transfer</description>
+                              <description>Read bus error</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -295,12 +312,12 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No configuration error exists</description>
+                              <description>No configuration error</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>A configuration error has occurred</description>
+                              <description>Configuration error</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -340,34 +357,7 @@ Devices using this peripheral:
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
-                     <field>
-                        <name>LCH1</name>
-                        <description>Link channel 1</description>
-                        <bitOffset>2</bitOffset>
-                        <bitWidth>2</bitWidth>
-                        <enumeratedValues>
-                           <enumeratedValue>
-                              <name>0b00</name>
-                              <description>DMA Channel 0</description>
-                              <value>0b00</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b01</name>
-                              <description>DMA Channel 1</description>
-                              <value>0b01</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b10</name>
-                              <description>DMA Channel 2</description>
-                              <value>0b10</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b11</name>
-                              <description>DMA Channel 3</description>
-                              <value>0b11</value>
-                           </enumeratedValue>
-                        </enumeratedValues>
-                     </field>
+                     <field derivedFrom="LCH2" > <name>LCH1</name> <description>Link channel 1</description> <bitOffset>2</bitOffset> </field>
                      <field>
                         <name>LINKCC</name>
                         <description>Link channel control</description>
@@ -376,7 +366,7 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b00</name>
-                              <description>No channel-to-channel linking</description>
+                              <description>No linking</description>
                               <value>0b00</value>
                            </enumeratedValue>
                            <enumeratedValue>
@@ -398,25 +388,27 @@ Devices using this peripheral:
                      </field>
                      <field>
                         <name>D_REQ</name>
-                        <description>Disable request</description>
+                        <description>Disable request\n
+                        Control whether the ERQ bit is cleared when the BCR is exhausted</description>
                         <bitOffset>7</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>ERQ bit is not affected</description>
+                              <description>ERQ not affected</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>ERQ bit is cleared when the BCR is exhausted</description>
+                              <description>ERQ cleared</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>DMOD</name>
-                        <description>Destination address modulo</description>
+                        <description>Destination address modulo\n
+                        Sets the size of the destination circular buffer</description>
                         <bitOffset>8</bitOffset>
                         <bitWidth>4</bitWidth>
                         <enumeratedValues>
@@ -427,185 +419,96 @@ Devices using this peripheral:
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b0001</name>
-                              <description>Circular buffer size is 16 bytes</description>
+                              <description>16 bytes</description>
                               <value>0b0001</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b0010</name>
-                              <description>Circular buffer size is 32 bytes</description>
+                              <description>32 bytes</description>
                               <value>0b0010</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b0011</name>
-                              <description>Circular buffer size is 64 bytes</description>
+                              <description>64 bytes</description>
                               <value>0b0011</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b0100</name>
-                              <description>Circular buffer size is 128 bytes</description>
+                              <description>128 bytes</description>
                               <value>0b0100</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b0101</name>
-                              <description>Circular buffer size is 256 bytes</description>
+                              <description>256 bytes</description>
                               <value>0b0101</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b0110</name>
-                              <description>Circular buffer size is 512 bytes</description>
+                              <description>512 bytes</description>
                               <value>0b0110</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b0111</name>
-                              <description>Circular buffer size is 1 KB</description>
+                              <description>1 KB</description>
                               <value>0b0111</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1000</name>
-                              <description>Circular buffer size is 2 KB</description>
+                              <description>2 KB</description>
                               <value>0b1000</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1001</name>
-                              <description>Circular buffer size is 4 KB</description>
+                              <description>4 KB</description>
                               <value>0b1001</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1010</name>
-                              <description>Circular buffer size is 8 KB</description>
+                              <description>8 KB</description>
                               <value>0b1010</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1011</name>
-                              <description>Circular buffer size is 16 KB</description>
+                              <description>16 KB</description>
                               <value>0b1011</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1100</name>
-                              <description>Circular buffer size is 32 KB</description>
+                              <description>32 KB</description>
                               <value>0b1100</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1101</name>
-                              <description>Circular buffer size is 64 KB</description>
+                              <description>64 KB</description>
                               <value>0b1101</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1110</name>
-                              <description>Circular buffer size is 128 KB</description>
+                              <description>128 KB</description>
                               <value>0b1110</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1111</name>
-                              <description>Circular buffer size is 256 KB</description>
+                              <description>256 KB</description>
                               <value>0b1111</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
-                     <field>
-                        <name>SMOD</name>
-                        <description>Source address modulo</description>
-                        <bitOffset>12</bitOffset>
-                        <bitWidth>4</bitWidth>
-                        <enumeratedValues>
-                           <enumeratedValue>
-                              <name>0b0000</name>
-                              <description>Buffer disabled</description>
-                              <value>0b0000</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b0001</name>
-                              <description>Circular buffer size is 16 bytes</description>
-                              <value>0b0001</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b0010</name>
-                              <description>Circular buffer size is 32 bytes</description>
-                              <value>0b0010</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b0011</name>
-                              <description>Circular buffer size is 64 bytes</description>
-                              <value>0b0011</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b0100</name>
-                              <description>Circular buffer size is 128 bytes</description>
-                              <value>0b0100</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b0101</name>
-                              <description>Circular buffer size is 256 bytes</description>
-                              <value>0b0101</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b0110</name>
-                              <description>Circular buffer size is 512 bytes</description>
-                              <value>0b0110</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b0111</name>
-                              <description>Circular buffer size is 1 KB</description>
-                              <value>0b0111</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1000</name>
-                              <description>Circular buffer size is 2 KB</description>
-                              <value>0b1000</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1001</name>
-                              <description>Circular buffer size is 4 KB</description>
-                              <value>0b1001</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1010</name>
-                              <description>Circular buffer size is 8 KB</description>
-                              <value>0b1010</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1011</name>
-                              <description>Circular buffer size is 16 KB</description>
-                              <value>0b1011</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1100</name>
-                              <description>Circular buffer size is 32 KB</description>
-                              <value>0b1100</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1101</name>
-                              <description>Circular buffer size is 64 KB</description>
-                              <value>0b1101</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1110</name>
-                              <description>Circular buffer size is 128 KB</description>
-                              <value>0b1110</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1111</name>
-                              <description>Circular buffer size is 256 KB</description>
-                              <value>0b1111</value>
-                           </enumeratedValue>
-                        </enumeratedValues>
-                     </field>
+                     <field derivedFrom="DMOD" > <name>SMOD</name> <description>Source address modulo\nSets the size of the source circular buffer</description> <bitOffset>12</bitOffset> </field>
                      <field>
                         <name>START</name>
-                        <description>Start transfer</description>
+                        <description>Start transfer\n
+                        Set to start the DMA transfer\n
+                        The DMA begins the transfer in accordance to the values in the TCDn.\n
+                        START is cleared automatically after one module clock and always reads as logic 0</description>
                         <bitOffset>16</bitOffset>
                         <bitWidth>1</bitWidth>
                         <access>write-only</access>
                         <enumeratedValues>
                            <enumeratedValue>
-                              <name>0b0</name>
-                              <description>DMA inactive</description>
-                              <value>0b0</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1</name>
-                              <description>The DMA begins the transfer in accordance to the values in the TCDn. START is cleared automatically after one module clock and always reads as logic 0</description>
-                              <value>0b1</value>
+                              <name>0bX</name>
+                              <description>Write 1 to start</description>
+                              <isDefault>true</isDefault>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
@@ -632,75 +535,33 @@ Devices using this peripheral:
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b11</name>
-                              <description>Reserved (generates a configuration error (DSRn[CE]) if incorrectly specified at time of channel activation)</description>
+                              <description>Reserved</description>
                               <value>0b11</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>DINC</name>
-                        <description>Destination increment</description>
+                        <description>Destination increment\n
+                        Controls whether the destination address increments</description>
                         <bitOffset>19</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No change to the DAR after a successful transfer</description>
+                              <description>No increment</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>The DAR increments by 1, 2, 4 depending upon the size of the transfer</description>
+                              <description>Increments by transfer size</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
-                     <field>
-                        <name>SSIZE</name>
-                        <description>Source size</description>
-                        <bitOffset>20</bitOffset>
-                        <bitWidth>2</bitWidth>
-                        <enumeratedValues>
-                           <enumeratedValue>
-                              <name>0b00</name>
-                              <description>32-bit</description>
-                              <value>0b00</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b01</name>
-                              <description>8-bit</description>
-                              <value>0b01</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b10</name>
-                              <description>16-bit</description>
-                              <value>0b10</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b11</name>
-                              <description>Reserved (generates a configuration error (DSRn[CE]) if incorrectly specified at time of channel activation)</description>
-                              <value>0b11</value>
-                           </enumeratedValue>
-                        </enumeratedValues>
-                     </field>
-                     <field>
-                        <name>SINC</name>
-                        <description>Source increment</description>
-                        <bitOffset>22</bitOffset>
-                        <bitWidth>1</bitWidth>
-                        <enumeratedValues>
-                           <enumeratedValue>
-                              <name>0b0</name>
-                              <description>No change to SAR after a successful transfer</description>
-                              <value>0b0</value>
-                           </enumeratedValue>
-                           <enumeratedValue>
-                              <name>0b1</name>
-                              <description>The SAR increments by 1, 2, 4 as determined by the transfer size</description>
-                              <value>0b1</value>
-                           </enumeratedValue>
-                        </enumeratedValues>
-                     </field>
+                     <field derivedFrom="DSIZE" > <name>SSIZE</name> <description>Source size</description> <bitOffset>20</bitOffset> </field>
+                     <field derivedFrom="DINC" > <name>SINC</name> <description>Source increment\n
+                        Controls whether the source address increments</description> <bitOffset>22</bitOffset> </field>
                      <field>
                         <name>EADREQ</name>
                         <description>Enable asynchronous DMA requests</description>
@@ -721,54 +582,61 @@ Devices using this peripheral:
                      </field>
                      <field>
                         <name>AA</name>
-                        <description>Auto-align</description>
+                        <description>Auto-align\n
+                        If enabled:\n
+                        If SSIZE indicates a transfer no smaller than DSIZE, source accesses are auto-aligned; otherwise, destination accesses are auto-aligned.\n
+                        Source alignment takes precedence over destination alignment.\n
+                        If auto-alignment is enabled, the appropriate address register increments, regardless of DINC or SINC</description>
                         <bitOffset>28</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Auto-align disabled</description>
+                              <description>Disabled</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>If SSIZE indicates a transfer no smaller than DSIZE, source accesses are auto-aligned; otherwise, destination accesses are auto-aligned. Source alignment takes precedence over destination alignment. If auto-alignment is enabled, the appropriate address register increments, regardless of DINC or SINC</description>
+                              <description>Enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>CS</name>
-                        <description>Cycle steal</description>
+                        <description>Cycle steal\n
+                        Control whether cycle-stealing is used or the DMA monopolises the bus until complete</description>
                         <bitOffset>29</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>DMA continuously makes read/write transfers until the BCR decrements to 0</description>
+                              <description>DMA is continuously</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Forces a single read/write transfer per request</description>
+                              <description>Single read/write transfer</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
                      </field>
                      <field>
                         <name>ERQ</name>
-                        <description>Enable peripheral request</description>
+                        <description>Enable peripheral request\n
+                        Allows the appropriate peripheral request REQC[DMACn] field to initiate transfer.\n
+                        A software-initiated request (setting the START bit) is always enabled</description>
                         <bitOffset>30</bitOffset>
                         <bitWidth>1</bitWidth>
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>Peripheral request is ignored</description>
+                              <description>Request ignored</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Enables peripheral request, defined by the appropriate REQC[DMACn] field, to initiate transfer. A software-initiated request (setting the START bit) is always enabled</description>
+                              <description>Request honoured</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>
@@ -781,12 +649,12 @@ Devices using this peripheral:
                         <enumeratedValues>
                            <enumeratedValue>
                               <name>0b0</name>
-                              <description>No interrupt is generated</description>
+                              <description>Interrupt masked</description>
                               <value>0b0</value>
                            </enumeratedValue>
                            <enumeratedValue>
                               <name>0b1</name>
-                              <description>Interrupt signal is enabled</description>
+                              <description>Interrupt enabled</description>
                               <value>0b1</value>
                            </enumeratedValue>
                         </enumeratedValues>

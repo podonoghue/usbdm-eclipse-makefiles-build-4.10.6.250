@@ -790,7 +790,7 @@ This field selects the timeout period (measured in system bus clock cycles) for 
                <dimIncrement>1</dimIncrement>
                <dimIndex>0,1,2,3,4,5,6,7,8,9,10</dimIndex>
                <name>PACR%s</name>
-               <description>Peripheral Access Control Register\n
+               <description>Peripheral Access Control Register %s\n
 Access to several on-chip peripherals is controlled by shared peripheral access control register.\n
 A single PACR defines the access level for each of the two modules:\n
 PACR0  \tSCM     \t\t--------\n

@@ -325,12 +325,14 @@ This field defines the number of wait states required to access the bank 0 flash
                <dim>4</dim>
                <dimIncrement>8</dimIncrement>
                <dimIndex>0,1,2,3</dimIndex>
-               <name>TAGVDW,@pTAGVDW@i@f</name>
+               <name>TAGVDW</name>
                <addressOffset>0x100</addressOffset>
                <register>
-                  <name>S0</name>
-                  <description>Cache Tag Storage\n
-Tag &amp; valid information for Set 0 in Way %s</description>
+                  <dim>2</dim>
+                  <dimIncrement>4</dimIncrement>
+                  <dimIndex>0,1</dimIndex>
+                  <name>S,TAGVD</name>
+                  <description>Cache Tag Storage\nTag &amp; valid information for Set %s in Way %c</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
@@ -366,19 +368,19 @@ Tag &amp; valid information for Set 0 in Way %s</description>
                      </field>
                   </fields>
                </register>
-               <register derivedFrom="S0"> <name>S1</name> <description>Cache Tag Storage\n
-Tag &amp; valid information for Set 1 in Way %s</description> <addressOffset>0x4</addressOffset> </register>
             </cluster>
             <cluster>
                <dim>4</dim>
                <dimIncrement>8</dimIncrement>
                <dimIndex>0,1,2,3</dimIndex>
-               <name>DATAW,@pDATAW@i@f</name>
+               <name>DATAW</name>
                <addressOffset>0x200</addressOffset>
                <register>
-                  <name>S0</name>
-                  <description>Cache Data Storage\n
-Data storage for Set 0 in Way %s</description>
+                  <dim>2</dim>
+                  <dimIncrement>4</dimIncrement>
+                  <dimIndex>0,1</dimIndex>
+                  <name>S,DATAW</name>
+                  <description>Cache Data Storage\nData storage for Set %s in Way %c</description>
                   <addressOffset>0x0</addressOffset>
                   <fields>
                      <field>
@@ -395,8 +397,6 @@ Data storage for Set 0 in Way %s</description>
                      </field>
                   </fields>
                </register>
-               <register derivedFrom="S0"> <name>S1</name> <description>Cache Data Storage\n
-Data storage for Set 1 in Way %s</description> <addressOffset>0x4</addressOffset> </register>
             </cluster>
          </registers>
       </peripheral>

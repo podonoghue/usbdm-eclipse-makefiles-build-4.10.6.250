@@ -36,14 +36,13 @@ LIBDIRS += $(TCL_LIBDIRS)
 LIBS += -l$(LIB_USBDM) 
 LIBS += -l$(LIB_USBDM_DSC)
 LIBS += $(TCL_LIBS)
-LIBS += -l$(LIB_WX_PLUGIN)
 ifneq ($(UNAME_S),Windows)
 LIBS += -ldl
 LIBS += -lm
 endif
 
 # Extra libraries for EXE only
-EXELIBS += $(WXWIDGETS_SHARED_LIBS)
+EXELIBS += $(WXWIDGETS_SHARED_LIBS) -l$(LIB_WX_PLUGIN)
 
 # Each module will add to this
 SRC :=

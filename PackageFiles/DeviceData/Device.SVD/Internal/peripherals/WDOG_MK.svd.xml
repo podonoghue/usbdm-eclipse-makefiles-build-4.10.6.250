@@ -41,7 +41,7 @@ Devices using this peripheral:
          <?sourceFile "WDOG_MK" ?>
          <?preferredAccessWidth "16" ?>
          <name>WDOG</name>
-         <description>Generation 2008 Watchdog Timer</description>
+         <description>Watchdog Timer</description>
          <prependToName>WDOG</prependToName>
          <baseAddress>0x40052000</baseAddress>
          <size>32</size>

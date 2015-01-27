@@ -11,11 +11,20 @@
             <deviceFamilyIs>CortexM4F</deviceFamilyIs>
          </or>
       </applyWhen>
-      <variable id="Kinetis-PE-enable" name="Kinetis PE" description="Run Processor Expert Wizard to add PE features" />
-      <condition variable="Kinetis-PE-enable">
+      <variable id="projectOptionValue.Kinetis-PE-enable" name="Kinetis PE" description="Run Processor Expert Wizard to add PE features" >
+         <preclusion idRef="projectOptionValue.Clock-setup" />
+      </variable>
+      <block>
+         <applyWhen>
+            <and>
+            <variableRef idRef="projectOptionValue.Kinetis-PE-enable"/>
+            </and>
+         </applyWhen>
+         <!--
          <copy source="com.freescale.processorexpert.core.prefs" target=".settings/com.freescale.processorexpert.core.prefs" />
          <copy source="com.processorexpert.core.ide.newprojectwizard.prefs" target=".settings/com.processorexpert.core.ide.newprojectwizard.prefs" />
          <copy source="ProcessorExpert.pe" target="ProcessorExpert.pe" />
+         -->
          <projectOption id="net.sourceforge.usbdm.cdt.toolchain.c.linker.linkerFile" replace="true">
             <value>ProcessorExpert.ld</value>
          </projectOption>
@@ -23,9 +32,9 @@
             <value>ProcessorExpert.ld</value>
          </projectOption>
          <excludeSourceFolder target="Startup_Code" excluded="true" />
-         <excludeSourceFile target="Sources/main_backupxx.c" excluded="true" />
-         <excludeSourceFile target="Sources/main_backupxx.cpp" excluded="true" />
+         <deleteResource target="Sources/main.c" />
+         <deleteResource target="Sources/main.cpp" />
          <customAction class="net.sourceforge.usbdm.cdt.ui.actions.AddProcessorExpert" />
-      </condition>
+      </block>
    </projectActionList>
 </root>

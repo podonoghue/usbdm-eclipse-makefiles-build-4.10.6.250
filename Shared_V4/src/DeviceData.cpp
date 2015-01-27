@@ -25,6 +25,7 @@
     \verbatim
    Change History
    -====================================================================================================
+   | 20 Jan 2015 | Added isWritableMemory()                                            - pgo 4.10.6.250
    |  1 Dec 2014 | Fixed format in printf()s                                           - pgo 4.10.6.230
    | 12 Dec 2014 | Started changes for Kinetis clock trimming                          - pgo 4.10.6.220
    | 29 Aug 2014 | Changes to SDID wildcards                                           - pgo 4.10.6.190
@@ -384,8 +385,7 @@ MemoryRegionConstPtr DeviceData::getMemoryRegionFor(uint32_t address, MemorySpac
          break;
       }
       if (lastMemoryRegionUsed->isCompatibleType(memorySpace) &&
-          lastMemoryRegionUsed->contains(address)
-          ) {
+          lastMemoryRegionUsed->contains(address) ) {
          return lastMemoryRegionUsed;
       }
    }
@@ -569,7 +569,7 @@ void DeviceDataBase::loadDeviceData(void) {
 #if defined(LOG) && 0
    listDevices();
 #endif
-   Logging::print(" - %d devices loaded\n", deviceData.size());
+   Logging::print(" - %lu devices loaded\n", (unsigned long)deviceData.size());
 }
 
 void DeviceDataBase::listDevices() const {
@@ -850,6 +850,25 @@ bool MemoryRegion::isProgrammableMemory(MemType_t memoryType) {
       case MemDFlash  :
       case MemXROM    :
       case MemPROM    :
+         return true;
+         break;
+      default :
+         return false;
+   }
+}
+
+//! Indicates if a simple writable type e.g RAM etc.
+//!
+//! @param memoryType - Memory type
+//!
+//! @return - true/false result
+//!
+bool MemoryRegion::isWritableMemory(MemType_t memoryType) {
+   switch (memoryType) {
+      case MemFlexRAM  :
+      case MemRAM      :
+      case MemXRAM     :
+      case MemPRAM     :
          return true;
          break;
       default :

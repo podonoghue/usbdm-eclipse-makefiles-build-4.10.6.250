@@ -23,6 +23,7 @@ enum GdbMessageLevel {
    M_WARN,
    M_ERROR,
    M_FATAL,
+   M_SEMI_HOSTING,
    M_DIALOGUE = 0x80,
 };
 
