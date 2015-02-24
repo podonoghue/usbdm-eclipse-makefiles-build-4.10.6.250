@@ -1908,7 +1908,7 @@ GdbTargetStatus getGdbTargetStatus(void) {
    return gdbTargetStatus;
 }
 
-boolean checkHostedBreak(uint32_t currentPC) {
+bool checkHostedBreak(uint32_t currentPC) {
 LOGGING_E;
 #if (TARGET == ARM)
    static const uint16_t SEMI_HOSTING_OPCODE = 0xbeab;
@@ -1987,7 +1987,7 @@ GdbTargetStatus gdbPollTarget(void) {
       gdbTargetStatus = getTargetStatus();
    }
    if (gdbTargetStatus == T_HALT) {
-      boolean looping = false;
+      bool looping = false;
       if (runState != halted) {
          // Target has just halted - cache registers
          readRegs();
