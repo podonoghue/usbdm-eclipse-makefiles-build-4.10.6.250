@@ -1,5 +1,5 @@
-usbdm-eclipse-makefiles-build (4.10.6.250 Final version)
-========================================================
+usbdm-eclipse-makefiles-build (4.10.6.250)
+==================================================
 This version is no longer being updated
 
 USBDM files built using Eclipse (using makefiles)
